@@ -1,6 +1,6 @@
 [submodule "public/javascript/proj4js"]
 	path = public/javascript/proj4js
-	url = ../../../third-party/proj4js.git
+	url = ../../third-party/proj4js.git
 	branch = master
 	ignore = dirty
 [submodule "public/javascript/redmic-widgets"]

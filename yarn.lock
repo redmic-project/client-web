@@ -2485,10 +2485,6 @@ pathval@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.0.tgz#b942e6d4bde653005ef6b71361def8727d0645e0"
 
-"pdfjs@https://github.com/mozilla/pdf.js.git#gh-pages":
-  version "0.0.0"
-  resolved "https://github.com/mozilla/pdf.js.git#e14eaf5f40af3c5623c06b23c42b08104e75bc26"
-
 pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"

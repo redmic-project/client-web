@@ -1,0 +1,35 @@
+<div>
+	<form class="form-horizontal">
+
+		<div data-redmic-type="filter" data-redmic-model="documentType"></div>
+
+		<div data-redmic-type="text" data-redmic-model="code" data-redmic-props="
+			class: 'inputLittleWidth'
+		"></div>
+
+		<div data-redmic-type="number" data-redmic-model="year" data-redmic-props="
+			class: 'inputLittleWidth'
+		"></div>
+
+		<div data-redmic-type="text" data-redmic-model="language" data-redmic-props="
+			class: 'inputLittleWidth'
+		"></div>
+
+		<div data-redmic-type="text" data-redmic-model="author"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="title"></div>
+
+		<div data-redmic-type="text" data-redmic-model="source"></div>
+
+		<div data-redmic-type="keywords" data-redmic-model="keyword"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="remark"></div>
+
+		<div data-redmic-type="upload" data-redmic-model="url" data-redmic-props="
+			maxFiles:1,
+			maxFilesize: 100,
+			acceptedFiles:'application/pdf',
+			url: '${redmicConfig.services.uploadDocuments}'
+		"></div>
+	</form>
+</div>

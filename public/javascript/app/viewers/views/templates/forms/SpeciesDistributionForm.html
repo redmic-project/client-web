@@ -1,0 +1,73 @@
+<div class='scrollWrapper'>
+	<form class="form-horizontal">
+
+		<div data-redmic-type="annotation" data-redmic-props="
+			propertyName: 'annotation',
+			content: '* ${i18n.speciesDistributionAnnotation}.',
+			required: true
+		"></div>
+
+		<fieldset id="modeGrid">
+			<legend>${i18n.modeLabel}</legend>
+
+			<div data-redmic-type="uniqueGroup" data-redmic-props="
+				propertyName: 'mode',
+				values: ['0', '1', '2', '3'],
+				labels: ['exist', 'registersCount', 'speciesCount', 'speciesPresence'],
+				descriptions: ['${i18n.existInfo}.', '${i18n.registersCountInfo}.'
+					, '${i18n.speciesCountInfo}.', '${i18n.speciesPresenceInfo}.'],
+				checked: '0',
+				required: true
+			"></div>
+
+		</fieldset>
+
+		<fieldset id="confidences">
+			<legend>${i18n.confidence}</legend>
+
+			<div data-redmic-type="booleanGroup" data-redmic-props="
+				propertyName: 'confidences',
+				values: ['2', '3', '4', '1'],
+				labels: ['low', 'medium', 'high', 'notDefined'],
+				checked: [true, true, true, true],
+				minChecked: 1,
+				required: true
+			"></div>
+
+		</fieldset>
+
+		<fieldset id="changeGrid">
+			<legend>${i18n.gridLabel}</legend>
+
+			<div data-redmic-type="uniqueGroup" data-redmic-props="
+				propertyName: 'grid',
+				values: ['0', '1', '2', '3'],
+				labels: ['grid5000x5000', 'grid1000x1000', 'grid500x500', 'grid100x100'],
+				checked: '0',
+				required: true
+			"></div>
+
+		</fieldset>
+
+		<fieldset>
+			<legend>${i18n.filters}</legend>
+			<div data-redmic-type="rangeSlider" class="rangeSlider" data-redmic-props="
+				propertyName: 'precisionSlider',
+				label: 'precision',
+				unit: 'm',
+				valueMinMax: [0, 5000],
+				isDisableInput: true,
+				disable: true
+			"></div>
+
+			<div data-redmic-type="rangeSlider" class="rangeSlider" data-redmic-props="
+				propertyName: 'zSlider',
+				label: 'zDepthAltitude',
+				unit: 'm',
+				valueMinMax: [-5000, 5000],
+				isDisableInput: true,
+				disable: true
+			"></div>
+		</fieldset>
+	</form>
+</div>

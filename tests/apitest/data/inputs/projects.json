@@ -1,0 +1,144 @@
+[{
+	"objectid": 1,
+	"id": 1,
+	"updated": "2014-04-24T14:20:45.182+01:00",
+	"code": "001",
+	"description": "Proyecto 1",
+	"enddate": "2014-01-01T00:00:00.000Z",
+	"name": "project1",
+	"note": "ok",
+	"startdate": "2013-01-01T00:00:00.000Z",
+	"program": {
+		"objectid": 1,
+		"id": 1,
+		"updated": "2014-04-24T14:17:07.243+01:00",
+		"scope": {
+			"objectid": 1,
+			"id": 1,
+			"name": "prueba1"
+		},
+		"name": "prueba",
+		"code": "1",
+		"description": "fff",
+		"startdate": "2013-01-01T00:00:00.000Z",
+		"enddate": "2014-01-01T00:00:00.000Z",
+		"note": "22"
+	},
+	"projectgroup": {
+		"objectid": 1,
+		"id": 1,
+		"name": "prueba1"
+	},
+	"scope": {
+		"objectid": 1,
+		"id": 1,
+		"name": "prueba1"
+	},
+	"contacts": [
+		{
+			"id": "2",
+			"name": "Pedro",
+			"role": [{
+				"id": 1,
+				"name": "rol1"
+			},
+			{
+				"id": 2,
+				"name": "rol2"
+			}]
+		},
+		{
+			"id": "17",
+			"name": "Alioth",
+			"role": [{
+				"id": 1,
+				"name": "rol1"
+			}]
+		},
+		{
+			"id": "27",
+			"name": "Nacho",
+			"role": [{
+				"id": 1,
+				"name": "rol1"
+			},
+			{
+				"id": 2,
+				"name": "rol2"
+			}]
+		}]
+},
+{
+	"objectid": 2,
+	"id": 6,
+	"updated": null,
+	"code": "ff",
+	"description": "dd",
+	"enddate": null,
+	"name": "ff",
+	"note": null,
+	"startdate": "2014-05-05T00:00:00.000+01:00",
+	"program": {
+		"objectid": 1,
+		"id": 1,
+		"updated": "2014-04-24T14:17:07.243+01:00",
+		"scope": {
+			"objectid": 1,
+			"id": 1,
+			"name": "prueba1"
+		},
+		"name": "prueba",
+		"code": "1",
+		"description": "fff",
+		"startdate": "2013-01-01T00:00:00.000Z",
+		"enddate": "2014-01-01T00:00:00.000Z",
+		"note": "22"
+	},
+	"projectgroup": {
+		"objectid": 1,
+		"id": 1,
+		"name": "prueba1"
+	},
+	"scope": {
+		"objectid": 1,
+		"id": 1,
+		"name": "prueba1"
+	}
+},
+{
+	"objectid": 3,
+	"id": 8,
+	"updated": null,
+	"code": null,
+	"description": null,
+	"enddate": null,
+	"name": "dd",
+	"note": null,
+	"startdate": "2014-05-14T00:00:00.000+01:00",
+	"program": {
+		"objectid": 1,
+		"id": 1,
+		"updated": "2014-04-24T14:17:07.243+01:00",
+		"scope": {
+			"objectid": 1,
+			"id": 1,
+			"name": "prueba1"
+		},
+		"name": "prueba",
+		"code": "1",
+		"description": "fff",
+		"startdate": "2013-01-01T00:00:00.000Z",
+		"enddate": "2014-01-01T00:00:00.000Z",
+		"note": "22"
+	},
+	"projectgroup": {
+		"objectid": 1,
+		"id": 1,
+		"name": "prueba1"
+	},
+	"scope": {
+		"objectid": 1,
+		"id": 1,
+		"name": "prueba1"
+	}
+}]

@@ -1,0 +1,63 @@
+<div>
+	<form class="form-horizontal">
+		<div data-redmic-type="select" data-redmic-model="style/field" data-redmic-props="
+			options: [{
+				key:'Animal',
+				type: 'string',
+				divisions: [5]
+			},{
+				key:'Parent',
+				type: 'number',
+				divisions: [2,3,4,5,6,7]
+			}],
+			idProperty: 'key',
+			labelAttr: 'key',
+			includeEmptyValue: false,
+			valueIsObject: true
+		"></div>
+
+		<div data-redmic-type="select" data-redmic-model="style/cuantil" data-redmic-props="
+			options: [{
+				value: 'Cuantil'
+			},{
+				value: 'Intervalos iguales'
+			},{
+				value: 'Cabeza/cola'
+			},{
+				value: 'Categoría'
+			}],
+			includeEmptyValue: false,
+			propertyNameDependence: 'style/field',
+			dependenceType: 'hidden',
+			propertyDependenceHidden: 'type',
+			valueDependenceHidden: 'number'
+		"></div>
+
+		<div data-redmic-type="select" data-redmic-model="style/division" data-redmic-props="
+			includeEmptyValue: false,
+			propertyNameDependence: 'style/field',
+			propertyDependenceHidden: 'type',
+			dependenceType: 'value',
+			valueDependenceHidden: 'number',
+			dependenceAction: 'addOptions',
+			propertyPath: 'divisions'
+		"></div>
+
+		<div data-redmic-type="colorRamp" data-redmic-model="style/color" data-redmic-props="
+			dependenceType: 'value',
+			propertyNameDependence: 'style/division',
+			dependenceAction: 'addOptions'
+		"></div>
+
+		<div data-redmic-type="rangeSlider" class="rangeSlider" data-redmic-model="style/radius" data-redmic-props="
+			unit: 'px',
+			precision: 0,
+			valueMinMax: [1, 20]
+		"></div>
+
+		<div data-redmic-type="slider" class="sliderInput" data-redmic-model="style/opacity" data-redmic-props="
+			unit: '',
+			valueMinMax: [0, 1]
+		"></div>
+	</form>
+</div>

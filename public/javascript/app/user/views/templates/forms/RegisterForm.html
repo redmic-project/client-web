@@ -1,0 +1,19 @@
+<form class="form-horizontal">
+	<div data-redmic-type="email" data-redmic-model="email"></div>
+	<div data-redmic-type="text" data-redmic-model="firstName"></div>
+	<div data-redmic-type="text" data-redmic-model="lastName"></div>
+	<!--<div data-redmic-type="filter"
+		data-redmic-model="sector"
+		data-redmic-props="
+			class: 'containerTextSearch containerFilteringSelect containerFilteringSelectRegister'
+		"></div>-->
+	<div data-redmic-type="password" data-redmic-model="password"></div>
+	<div data-redmic-type="confirm" data-redmic-props="
+		propertyName:'confirm',
+		propertyNameDependence: 'password',
+		label: 'confirmPassword'
+	"></div>
+	<div data-redmic-type="boolean" data-redmic-model="accept"></div>
+	<span class="href" data-dojo-attach-event="click: _onShowTermsAndConditions">${i18n.termCondition}</span>
+	<div class="reCaptcha" data-dojo-attach-point="reCaptchaNode"></div>
+</form>

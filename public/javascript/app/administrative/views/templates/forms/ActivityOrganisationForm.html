@@ -1,0 +1,18 @@
+<div>
+	<form class="form-horizontal">
+		<div data-redmic-type="filter" data-redmic-model="organisation" data-redmic-props="
+			template: 'templates/OrganisationFilter'
+		"></div>
+		<div data-redmic-type="filter" data-redmic-model="role"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="startDate" data-redmic-props="
+			propertyNameDependence: 'endDate',
+			dependenceType: 'startDate'
+		"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="endDate" data-redmic-props="
+			propertyNameDependence: 'startDate',
+			dependenceType: 'endDate'
+		"></div>
+	</form>
+</div>

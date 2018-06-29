@@ -1,0 +1,31 @@
+doctype html
+
+html
+	head
+		meta(charset = 'utf-8')
+		meta(name = 'viewport' content = 'width = device-width, initial-scale = 1')
+
+		script.
+			var lang = '#{lang}';
+
+		- var basePath = '/' + (useBuilt ? 'dist' : 'public')
+		- var jsPath = basePath + '/javascript/'
+
+		script(src = jsPath + 'dojoConfig.js')
+		script(src = jsPath + 'dojo/dojo.js' data-dojo-config = 'locale:"' + lang + '"')
+
+		link(rel='shortcut icon', href=basePath + '/resources/images/favicon.ico')
+
+	body(class=['db'])
+		//- Contenedor de carga de la aplicación
+		block loading
+
+		//- Contenedores de la aplicación
+		block error404
+		block root
+
+if !useBuilt
+	link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,600,400')
+	link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Exo+2:700')
+
+link(rel='stylesheet', href=basePath + '/stylesheets/style.css')

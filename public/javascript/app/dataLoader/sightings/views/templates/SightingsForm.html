@@ -1,0 +1,43 @@
+<form class="form-horizontal">
+	<fieldset>
+		<legend>${i18n.species}</legend>
+
+		<div data-redmic-type="filter" data-redmic-model="properties/species"
+			data-redmic-props="
+				labelAttr: 'scientificName',
+				fields: ['scientificName', 'aphia', 'scientificName.suggest', 'commonName', 'commonName.suggest'],
+				template: 'templates/SpeciesFilter'
+		"></div>
+
+		<div data-redmic-type="point" data-redmic-model="geometry/coordinates" data-redmic-actions="onGetMapLocation: 'onGetMapLocation'"></div>
+
+		<div data-redmic-type="number" data-redmic-model="properties/radius" data-redmic-props="intermediateChanges: true"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="properties/sex"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="properties/lifeStage"></div>
+
+		<div data-redmic-type="text" data-redmic-model="properties/nickname"></div>
+
+		<div data-redmic-type="upload" data-redmic-model="properties/images" data-redmic-props="url:redmicConfig.services.uploadSpecies"></div>
+	</fieldset>
+
+	<fieldset>
+		<legend>${i18n.collector}</legend>
+
+		<div data-redmic-type="text" data-redmic-model="properties/collectorName"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="properties/date"></div>
+
+		<div data-redmic-type="number" data-redmic-model="properties/specimenCount"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="properties/confidence"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="properties/note"></div>
+	</fieldset>
+
+	<fieldset>
+		<legend></legend>
+		<div data-redmic-type="filter" data-redmic-model="properties/accessibility"></div>
+	</fieldset>
+</form>

@@ -1,0 +1,101 @@
+{
+  "name": "REDMIC",
+  "version": "0.10.1",
+  "author": "Observatorio Ambiental Granadilla",
+  "homepage": "https://redmic.es",
+  "description": "Integrated marine data repository of Canary Islands - Client",
+  "contributors": [
+    {
+      "name": "Ignacio Lorenzo García",
+      "email": "nacho@oag-fundacion.org"
+    },
+    {
+      "name": "Pedro E. Trujillo Brito",
+      "email": "pedro@redmic.es"
+    },
+    {
+      "name": "Noel Alonso Expósito",
+      "email": "noel@redmic.es"
+    },
+    {
+      "name": "Carlos Alberto González Carballo",
+      "email": "carlos@redmic.es"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://git.redmic.net/redmic-client/web.git"
+  },
+  "private": true,
+  "scripts": {
+    "preinstall": "depsToUnlock='pdfjs'; lockBefore=$(md5sum yarn.lock); for dep in $depsToUnlock; do echo \"Unlocking ${dep}\"; sed -i \"/${dep}@/,/^$/ d\" yarn.lock; done; lockAfter=$(md5sum yarn.lock); if [ \"${lockBefore}\" != \"${lockAfter}\" ]; then echo \"Some dependencies were unlocked, retry install in case of failure\"; fi",
+    "start": "node app"
+  },
+  "dependencies": {
+    "commander": "^2.15.1",
+    "express": "^4.16.3",
+    "morgan": "^1.8.2",
+    "prom-client": "^11.0.0",
+    "pug": "^2.0.3",
+    "response-time": "^2.3.2",
+    "winston": "^2.4.2"
+  },
+  "devDependencies": {
+    "alertifyjs": "^1.11.1",
+    "cbtree": "https://github.com/pjekel/cbtree.git#master",
+    "color-js": "^1.0.4",
+    "d3": "^5.3.0",
+    "d3-tip": "^0.7.1",
+    "deepmerge": "^2.1.0",
+    "dijit": "^1.13.0",
+    "dojo": "^1.13.0",
+    "dojo-dstore": "^1.1.2",
+    "dojo-util": "^1.13.0",
+    "dojox": "^1.13.0",
+    "draggabilly": "^2.2.0",
+    "dropzone": "^5.4.0",
+    "glob": "^7.1.2",
+    "grunt": "^1.0.2",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-uglify": "^3.3.0",
+    "grunt-force-task": "^2.0.0",
+    "grunt-git": "^1.0.9",
+    "grunt-shell": "^2.1.0",
+    "handlebars": "^4.0.11",
+    "intern": "^4.2.0",
+    "jshint": "^2.9.5",
+    "json-schema-ref-parser": "^5.0.3",
+    "leaflet": "^1.3.0",
+    "leaflet-areaselect": "https://github.com/heyman/leaflet-areaselect.git#master",
+    "leaflet-awesome-markers": "https://github.com/lvoogdt/Leaflet.awesome-markers.git#2.0/develop",
+    "leaflet-draw": "^1.0.2",
+    "leaflet-measure": "^2.1.7",
+    "leaflet-minimap": "^3.6.1",
+    "leaflet-navbar": "https://github.com/davidchouse/Leaflet.NavBar.git#master",
+    "leaflet.coordinates": "^0.1.5",
+    "leaflet.wms": "https://github.com/heigeo/leaflet.wms.git#gh-pages",
+    "load-grunt-tasks": "^4.0.0",
+    "mediator-js": "^0.11.0",
+    "moment": "^2.22.1",
+    "nib": "^1.1.2",
+    "node-uuid": "https://github.com/kelektiv/node-uuid.git#v1.4.7",
+    "packery": "^2.1.1",
+    "pdfjs": "https://github.com/mozilla/pdf.js.git#gh-pages",
+    "prunecluster": "https://github.com/pedroetb/PruneCluster.git",
+    "put-selector": "^0.3.6",
+    "sockjs-client": "^1.1.4",
+    "stompjs": "https://github.com/jmesnil/stomp-websocket.git#master",
+    "stylus": "^0.54.5",
+    "tv4": "https://github.com/geraintluff/tv4.git#master",
+    "uglify-js": "^3.3.24"
+  },
+  "engines": {
+    "node": ">=6.0",
+    "npm": ">=3.10"
+  },
+  "main": "app",
+  "license": "ISC",
+  "dojoBuild": "redmic.profile.js"
+}

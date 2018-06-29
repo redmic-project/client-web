@@ -1,0 +1,32 @@
+<div>
+	<form class="form-horizontal">
+		<div data-redmic-type="text" data-redmic-model="name"></div>
+
+		<div data-redmic-type="text" data-redmic-model="model"></div>
+
+		<div data-redmic-type="text" data-redmic-model="serialNumber"></div>
+
+		<div data-redmic-type="text" data-redmic-model="note"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="description"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="manufacturedDate" data-redmic-props="
+			propertyNameDependence: 'adquisitionDate',
+			dependenceType: 'startDate'
+		"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="adquisitionDate" data-redmic-props="
+			propertyNameDependence: 'manufacturedDate',
+			dependenceType: 'endDate'
+		"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="platform" data-redmic-props="
+			template: 'templates/PlatformFilter'
+		"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="document" data-redmic-props="
+			labelAttr: 'title',
+			template: 'templates/DocumentFilter'
+		"></div>
+	</form>
+</div>

@@ -1,0 +1,16 @@
+extends layout
+
+block loading
+	#loadingContainer
+		span.fa.fa-refresh.spinningElement
+
+block root
+	#rootContainer
+	script(type='text/javascript').
+		require([
+			'app/components/Router'
+		], function(
+			Router
+		){
+			new Router();
+		});

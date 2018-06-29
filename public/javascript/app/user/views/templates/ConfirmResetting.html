@@ -1,0 +1,48 @@
+<div class="boxContainer">
+	<div class="col-xs-10 col-sm-8 col-md-5 col-lg-4 accessGroup bgWhite" data-dojo-attach-point="resettingManagerNode">
+		<div class="header">
+			<h1 class="subtitle">${i18n.resetting}</h1>
+		</div>
+
+		<div class="formLogin" data-dojo-type="dijit/form/Form" data-dojo-attach-point="resettingFormNode">
+			<input name="password"
+				type="password"
+				placeholder=${i18n.password}
+				required="required"
+				class="input-transparent not-removable formPadding"
+				data-dojo-type="dijit/form/ValidationTextBox"
+				data-dojo-attach-point="password"
+				data-dojo-props="pattern: '^......(.)*', invalidMessage: '${i18n.invalidPassword}'">
+
+			<input name="confirm"
+				type="password"
+				placeholder=${i18n.confirm}
+				required="required"
+				class="input-transparent not-removable formPadding"
+				data-dojo-type="dijit/form/ValidationTextBox"
+				data-dojo-attach-point="confirm"
+				data-dojo-props="validator: this._confirmValidator, pattern: '^......(.)*', invalidMessage: '${i18n.invalidConfirm}'">
+
+			<div class="boxButton resettingBoxButton">
+				<div data-dojo-type="dijit/form/Button"
+					data-dojo-props="class: 'primary btn-block'"
+					data-dojo-attach-event="click: _onSubmitResetting"><i class="fa fa-floppy-o"></i></div>
+				<div data-dojo-type="dijit/form/Button"
+					data-dojo-props="class: 'danger btn-block'"
+					data-dojo-attach-event="click: _onCloseResetting"><i class="fa fa-times"></i></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="boxContainer">
+	<div class="hidden col-xs-6 col-sm-6 col-md-5 col-lg-4 bgWhite accessGroup" data-dojo-attach-point="successNode">
+		<div class="header">
+			<div class="title">
+				<img class="logoRedmic" src="/resources/images/logos/logo.svg">
+				<h1 class="titleRedmic">REDMIC</h1>
+			</div>
+			<h4>${i18n.subtitle}</h4>
+		</div>
+		<p>${i18n.successResetting} <a href="/" class="link">${i18n.pressHere}</a></p>
+	</div>
+</div>

@@ -1,0 +1,19 @@
+<div class="boxContainer">
+	<div class="col-xs-6 col-sm-6 col-md-5 col-lg-4 bgWhite onlyBox accessGroup"
+		data-dojo-attach-point="registerNode">
+
+		<div>
+			<h1 class="titleRedmic">${i18n.register}</h1>
+		</div>
+
+		<div class="registerForm" data-dojo-attach-point="registerForm"></div>
+		<div class="boxButton">
+			<div data-dojo-type="dijit/form/Button"
+					data-dojo-props="class: 'primary btn-block'"
+					data-dojo-attach-event="click: _onSubmitRegister"><i class="fa fa-floppy-o"></i></div>
+			<div data-dojo-type="dijit/form/Button"
+				data-dojo-props="class: 'danger btn-block'"
+				data-dojo-attach-event="click: _onCloseRegister"><i class="fa fa-times"></i></div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,64 @@
+<div>
+	<form class="form-horizontal">
+		<div data-redmic-type="text" data-redmic-model="scientificName">
+			<div class="embeddedButton" data-redmic-type="button" data-redmic-props="
+				propertyName: 'searchByScientificName',
+				iconClass: 'fa-search',
+				class: 'primary',
+				notLabel: true,
+				label: 'WoRMS',
+				title: '${i18n.searchByScientificName}'
+			" data-redmic-actions="
+				onClick: 'onSearchByScientificName'
+			"></div>
+		</div>
+
+		<div data-redmic-type="text" data-redmic-model="authorship"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="rank"></div>
+
+		<div data-redmic-type="text" data-redmic-model="commonName"></div>
+
+		<div data-redmic-type="number" data-redmic-model="aphia">
+			<div class="embeddedButton" data-redmic-type="button" data-redmic-props="
+				propertyName: 'searchByAphia',
+				iconClass: 'fa-search',
+				class: 'primary',
+				showLabel: true,
+				label: 'WoRMS',
+				title: '${i18n.searchByAphia}'
+			" data-redmic-actions="
+				onClick: 'onSearchByAphia'
+			"></div>
+		</div>
+
+		<div data-redmic-type="filter" data-redmic-model="parent"
+			data-redmic-props="
+			label: 'parentalTaxon',
+			labelAttr: 'scientificName',
+			template: 'templates/SpeciesFilter'
+		"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="status" data-redmic-props="
+			labelAttr: 'name'
+		"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="validAs"
+			data-redmic-props="
+			labelAttr: 'scientificName',
+			template: 'templates/SpeciesFilter'
+		"></div>
+
+		<!--div data-redmic-type="text" data-redmic-model="worms"></div-->
+		<!--div data-redmic-type="upload" data-redmic-model="groupIcon" data-redmic-props="maxFiles:1, url:redmicConfig.services.uploadSpecies"></div-->
+
+		<div data-redmic-type="upload" data-redmic-model="image" data-redmic-props="
+			maxFiles:1,
+			maxFilesize: 15,
+			acceptedFiles:'image/*',
+			url:'${redmicConfig.services.uploadSpecies}'
+		"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="note"></div>
+	</form>
+</div>

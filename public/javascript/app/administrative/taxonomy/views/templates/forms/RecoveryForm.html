@@ -1,0 +1,24 @@
+<div>
+	<form class="form-horizontal">
+
+		<div data-redmic-type="filter" data-redmic-model="destiny"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="ending"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="admissionDate" data-redmic-props="
+			propertyNameDependence: 'releaseDate',
+			dependenceType: 'startDate'
+		"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="releaseDate" data-redmic-props="
+			propertyNameDependence: 'admissionDate',
+			dependenceType: 'endDate'
+		"></div>
+
+		<div data-redmic-type="text" data-redmic-model="releasePlace"></div>
+
+		<div data-redmic-type="number" data-redmic-model="convalescence"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="note"></div>
+	</form>
+</div>

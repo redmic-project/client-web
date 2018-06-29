@@ -1,0 +1,29 @@
+<div>
+	<form class="form-horizontal">
+		<div data-redmic-type="text" data-redmic-model="name"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="sex"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="taxon" data-redmic-props="
+			labelAttr: 'scientificName',
+			template: 'templates/SpeciesFilter'
+		"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="lifeStage"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="description"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="note"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="releaseDate"></div>
+
+		<div data-redmic-type="text" data-redmic-model="releaseLocality"></div>
+
+		<div data-redmic-type="upload" data-redmic-model="photo" data-redmic-props="
+			maxFiles:1,
+			maxFilesize: 15,
+			acceptedFiles:'image/*',
+			url:'${redmicConfig.services.uploadAnimals}'
+		"></div>
+	</form>
+</div>

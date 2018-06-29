@@ -1,0 +1,10 @@
+[Unit]
+Description=REDMIC web client
+
+[Service]
+ExecStart=/usr/bin/npm start --prefix /home/REDMIC/WEB -- --use-built
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

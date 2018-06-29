@@ -1,0 +1,36 @@
+<div class='scrollWrapper'>
+	<form class="form-horizontal">
+		<fieldset>
+			<legend>${i18n.peculiarities}</legend>
+
+			<div data-redmic-type="filter" data-redmic-model="origin"></div>
+			<div data-redmic-type="filter" data-redmic-model="permanence"></div>
+			<div data-redmic-type="filter" data-redmic-model="endemicity"></div>
+			<div data-redmic-type="filter" data-redmic-model="ecology"></div>
+			<div data-redmic-type="filter" data-redmic-model="interest"></div>
+			<div data-redmic-type="filter" data-redmic-model="trophicRegime"></div>
+			<div data-redmic-type="keywords" data-redmic-model="popularNames"></div>
+		</fieldset>
+		<fieldset>
+			<legend>${i18n.levelProtectionForm}</legend>
+			<div data-redmic-type="filter" data-redmic-model="canaryProtection"></div>
+			<div data-redmic-type="filter" data-redmic-model="spainProtection"></div>
+			<div data-redmic-type="filter" data-redmic-model="euProtection"></div>
+		</fieldset>
+		<fieldset>
+			<legend>${i18n.bibliographyForm}</legend>
+			<div data-redmic-type="filter" data-redmic-model="canaryCatalogue" data-redmic-props="
+				labelAttr: 'title',
+				template: 'templates/DocumentFilter'
+			"></div>
+			<div data-redmic-type="filter" data-redmic-model="spainCatalogue" data-redmic-props="
+				labelAttr: 'title',
+				template: 'templates/DocumentFilter'
+			"></div>
+			<div data-redmic-type="filter" data-redmic-model="euDirective" data-redmic-props="
+				labelAttr: 'title',
+				template: 'templates/DocumentFilter'
+			"></div>
+		</fieldset>
+	</form>
+</div>

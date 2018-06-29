@@ -1,0 +1,62 @@
+define([
+	"app/base/views/extensions/_EditionView"
+	, "app/base/views/extensions/_FormInDialogView"
+	,"app/designs/textSearchFacetsList/main/Domain"
+	, "dojo/_base/declare"
+	, "dojo/_base/lang"
+	, "templates/ActivityTypeList"
+], function(
+	_EditionView
+	, _FormInDialogView
+	, DomainMain
+	, declare
+	, lang
+	, templateList
+){
+	return declare([DomainMain, _EditionView, _FormInDialogView], {
+		// summary:
+		// 	Vista de ActivityType.
+		// description:
+		// 	Muestra la información.
+
+		constructor: function(args) {
+
+			this.config = {
+				title: this.i18n.activityType,
+				target: this.services.activityType
+			};
+
+			lang.mixin(this, this.config, args);
+		},
+
+		_setConfigurations: function() {
+
+			this.formConfig = this._merge([{
+				template: "maintenance/domains/admin/views/templates/forms/ActivityTypes"
+			}, this.formConfig || {}]);
+
+			this.browserConfig = this._merge([{
+				template: templateList,
+				orderConfig: {
+					options: [
+						{value: "name"},
+						{value: "activityField.name", label: this.i18n.activityField}/*,
+						{value: "updated"}*/
+					]
+				}
+			}, this.browserConfig || {}]);
+
+			this.facetsConfig = this._merge([{
+				aggs: {
+					"activityField": {
+						'open': true,
+						"terms": {
+							"field": "activityField.name",
+							"size": 20
+						}
+					}
+				}
+			}, this.facetsConfig || {}]);
+		}
+	});
+});

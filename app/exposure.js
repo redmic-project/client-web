@@ -1,0 +1,155 @@
+var express = require('express'),
+	fs = require('fs'),
+	path = require('path');
+
+var params, app, version;
+
+
+function getLang(req) {
+
+	return req && req.headers && req.headers['content-language'] || params.lang;
+}
+
+function onGeneralRequest(req, res) {
+
+	res.render('index', {
+		useBuilt: params.useBuilt,
+		lang: getLang(req)
+	});
+}
+
+function onEnvRequest(req, res) {
+
+	res.send({
+		version: version,
+		useBuilt: params.useBuilt,
+		debug: params.debug
+	});
+}
+
+function onResettingRequest(req, res) {
+
+	res.render('resetting', {
+		useBuilt: params.useBuilt,
+		lang: getLang(req),
+		token: req.param('token')
+	});
+}
+
+function onActivateAccountRequest(req, res) {
+
+	res.render('activateAccount', {
+		useBuilt: params.useBuilt,
+		lang: getLang(req),
+		token: req.param('token')
+	});
+}
+
+function onNoSupportBrowserRequest(req, res) {
+
+	res.render('noSupportBrowser', {
+		useBuilt: params.useBuilt,
+		lang: getLang(req)
+	});
+}
+
+function on404Request(req, res) {
+
+	res.status(404);
+	res.render('404', { useBuilt: params.useBuilt });
+}
+
+function onSitemapRequest(req, res) {
+
+	var fileData = fs.readFileSync('sitemap.xml', 'ascii');
+
+	res.set('Content-Type', 'text/xml');
+	res.send(fileData);
+}
+
+function onRobotsRequest(req, res) {
+
+	var fileData = fs.readFileSync('robots.txt', 'utf8');
+
+	res.set('Content-Type', 'text/plain');
+	res.send(fileData);
+}
+
+function onJqueryRequest(req, res) {
+
+	res.set('Content-Type', 'application/json');
+	res.send('{}');
+}
+
+function onUnknownRequest(req, res, next) {
+
+	res.redirect('/404');
+}
+
+function exposeRoutes() {
+
+	app.get(
+		/^((?!\/(activateAccount|resetting|noSupportBrowser|404|sitemap.xml|robots.txt|node_modules|env|.*\/jquery.js)))(\/.*)$/,
+		onGeneralRequest)
+
+		.get('/env', onEnvRequest)
+
+		.get('/resetting/:token', onResettingRequest)
+
+		.get('/activateAccount/:token', onActivateAccountRequest)
+
+		.get('/noSupportBrowser', onNoSupportBrowserRequest)
+
+		.get('/404', on404Request)
+
+		.get('/sitemap.xml', onSitemapRequest)
+
+		.get('/robots.txt', onRobotsRequest)
+
+		.get(/.*\/jquery.js/, onJqueryRequest)
+
+		.use(onUnknownRequest);
+}
+
+function exposeContents(directoryName) {
+
+	var pathOptions = {
+		maxAge: 600000,
+		index: false
+	};
+
+	var exposedPath = path.join(__dirname, '..', directoryName),
+		servedPath = express['static'](exposedPath, pathOptions);
+
+	app.use(servedPath)
+		.use('/' + directoryName, servedPath);
+}
+
+function expose(appParameter) {
+
+	app = appParameter;
+
+	if (params.useBuilt) {
+		exposeContents('dist');
+	} else {
+		require('./styles')(app);
+		exposeContents('public');
+		exposeContents('tests');
+		exposeContents('node_modules');
+	}
+
+	app.set('view engine', 'pug')
+		.set('views', path.join(__dirname, '..', 'views'));
+
+	exposeRoutes();
+}
+
+module.exports = function(paramsParameter, versionParameter) {
+
+	params = paramsParameter;
+	version = versionParameter;
+
+	return {
+		exposeApp: expose
+	};
+};

@@ -1,0 +1,35 @@
+<div class='scrollWrapper'>
+	<form class="form-horizontal">
+
+		<div data-redmic-type="annotation" data-redmic-props="
+			propertyName: 'annotation',
+			content: '* ${i18n.noteForAttributeType}.'
+		"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="attributeType"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="startDate" data-redmic-props="
+			propertyNameDependence: 'endDate',
+			dependenceType: 'startDate'
+		"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="endDate" data-redmic-props="
+			propertyNameDependence: 'startDate',
+			dependenceType: 'endDate'
+		"></div>
+
+		<div data-redmic-type="select" data-redmic-model="vFlag" data-redmic-props="
+			labelAttr: 'name',
+			idProperty: 'id',
+			target: 'vFlag'
+		"></div>
+
+		<div data-redmic-type="select" data-redmic-model="qFlag" data-redmic-props="
+			labelAttr: 'name',
+			idProperty: 'id',
+			target: 'qFlag'
+		"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="remark"></div>
+	</form>
+</div>

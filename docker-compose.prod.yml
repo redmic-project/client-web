@@ -1,0 +1,26 @@
+version: '3.5'
+
+services:
+  web:
+    ports:
+      - ${WEB_PORT}
+    networks:
+      - traefik-net
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        traefik.port: "${WEB_PORT}"
+        traefik.docker.network: traefik-net
+        traefik.frontend.rule: PathPrefix:/
+        traefik.backend: web
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+networks:
+  traefik-net:
+    external: true

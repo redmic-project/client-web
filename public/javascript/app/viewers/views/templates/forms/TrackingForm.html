@@ -1,0 +1,53 @@
+<div class=''>
+	<form class="form-horizontal">
+
+		<fieldset>
+			<legend>${i18n.displacementMode}</legend>
+
+			<div data-redmic-type="uniqueGroup" data-redmic-props="
+				propertyName: 'mode',
+				values: ['0', '1'],
+				labels: ['stepByStepMode', 'timeMode'],
+				descriptions: ['${i18n.stepByStepModeInfo}.', '${i18n.timeModeInfo}.'],
+				checked: '0'
+			"></div>
+		</fieldset>
+
+		<fieldset>
+			<legend>${i18n.displacement}</legend>
+
+			<div data-redmic-type="valueAndUnit" data-redmic-props="
+				propertyName: 'rate',
+				label: 'rateEditor',
+				value: 0.5,
+				minSlider: 0.5,
+				delta: 0.5,
+				options: [{
+					name: 'sec',
+					convertToBase: 1
+				}]
+			"></div>
+
+			<div data-redmic-type="valueAndUnit" data-redmic-props="
+				propertyName: 'interval',
+				label: 'valueAndUnitSelector',
+				value: 1,
+				minSlider: 1,
+				delta: 1
+			"></div>
+		</fieldset>
+
+		<fieldset>
+			<legend>${i18n.markersType}</legend>
+
+			<div data-redmic-type="uniqueGroup" data-redmic-props="
+				propertyName: 'markers',
+				values: ['0', '1'],
+				labels: ['registeredPoints', 'headingAndDirection'],
+				checked: '0'
+			"></div>
+
+		</fieldset>
+
+	</form>
+</div>

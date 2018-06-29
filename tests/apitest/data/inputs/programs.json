@@ -1,0 +1,31 @@
+[{
+	"id": 1,
+	"code": "code1",
+	"begindate": "1989-10-28T00:00:00.000Z",
+	"enddate": "1989-10-29T00:00:00.000Z",
+	"updated": "1989-10-29T00:00:00.000Z",
+	"name": "name1",
+	"description": "description1",
+	"note": "note1",
+	"scope": 1
+},{
+	"id": 2,
+	"code": "code2",
+	"begindate": "1989-10-29T00:00:00.000Z",
+	"enddate": "1989-10-30T00:00:00.000Z",
+	"updated": "1989-10-30T00:00:00.000Z",
+	"name": "name2",
+	"description": "description2",
+	"note": "note2",
+	"scope": 2
+},{
+	"id": 3,
+	"code": "code3",
+	"begindate": "1989-10-30T00:00:00.000Z",
+	"enddate": "1989-10-31T00:00:00.000Z",
+	"updated": "1989-10-31T00:00:00.000Z",
+	"name": "name3",
+	"description": "description3",
+	"note": "note3",
+	"scope": 3
+}]

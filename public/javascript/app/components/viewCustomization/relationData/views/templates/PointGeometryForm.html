@@ -1,0 +1,31 @@
+<div>
+	<form class="form-horizontal">
+		<!--<fieldset>
+			<div data-redmic-type="uniqueGroup" data-redmic-props="
+				propertyName: 'mode',
+				values: ['0', '1'],
+				labels: ['separateColumns', 'singleColumn'],
+				descriptions: ['${i18n.separateColumnsInfo}.', '${i18n.singleColumnInfo}.'],
+				checked: '0'
+			"></div>
+		</fieldset>-->
+
+		<fieldset>
+			<div data-redmic-type="select" data-redmic-model="columns/0" data-redmic-props="
+				idProperty: 'value',
+				label: 'x',
+				propertyPath: 'columns',
+				target: 'relationData',
+				omitRequest: true
+			"></div>
+
+			<div data-redmic-type="select" data-redmic-model="columns/1" data-redmic-props="
+				idProperty: 'value',
+				label: 'y',
+				propertyPath: 'columns',
+				target: 'relationData',
+				omitRequest: true
+			"></div>
+		</fieldset>
+	</form>
+</div>

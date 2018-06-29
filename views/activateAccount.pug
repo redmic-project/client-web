@@ -1,0 +1,15 @@
+extends layout
+
+block root
+	#rootContainer
+	script(type='text/javascript').
+		var token = '#{token}';
+		require([
+			'app/views/ActivateAccount'
+		], function(
+			ActivateAccount
+		){
+			new ActivateAccount({
+				token: token
+			});
+		});

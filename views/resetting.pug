@@ -1,0 +1,15 @@
+extends layout
+
+block root
+	#rootContainer
+	script(type='text/javascript').
+		var token = '#{token}';
+		require([
+			'app/user/views/ConfirmResettingView'
+		], function(
+			ConfirmResettingView
+		){
+			new ConfirmResettingView({
+				token: token
+			}).placeAt('rootContainer');
+		});

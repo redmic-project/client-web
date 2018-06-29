@@ -1,0 +1,15 @@
+<div class="boxContainer">
+	<div class="onlyBox feedback bgWhite" data-dojo-attach-point="feedbackNode">
+
+		<div>
+			<h1 data-dojo-attach-point="titleFeedbackForm" class="titleRedmic">${i18n.feedback}</h1>
+		</div>
+
+		<div class="feedbackForm" data-dojo-attach-point="feedbackForm"></div>
+		<div class="boxButton">
+			<div data-dojo-type="dijit/form/Button"
+					data-dojo-props="class: 'primary btn-block'"
+					data-dojo-attach-event="click: _onSubmitFeedback">${i18n.send}</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Test page</title>
+		<link rel="stylesheet" type="text/css" href="/public/stylesheets/style.css">
+	</head>
+
+	<body class="db">
+		<script src="/public/javascript/dojoConfig.js"></script>
+		<script>
+			dojoConfig.packages.push({
+				name: 'tests',
+				location: '../../../tests'
+			});
+		</script>
+		<script src="/public/javascript/dojo/dojo.js"></script>
+
+		<div style="margin: 20px; height: calc(100% - 40px)">
+			<div id="container"></div>
+		</div>
+
+		<script>
+			require([
+				'dojo/io-query'
+				, 'dojo/request/script'
+			], function(
+				ioQuery
+				, script
+			) {
+
+				var url = window.location.href,
+					urlParams = url.substring(url.indexOf('?') + 1),
+					paramsObj = ioQuery.queryToObject(urlParams),
+					scriptUrl = paramsObj.script;
+
+				script.get(scriptUrl)
+					.then(function(res) {
+
+						console.warn('Script load succeeded');
+						console.warn(scriptUrl);
+					}, function(err) {
+
+						console.warn('Script load failed');
+						console.warn(scriptUrl);
+						console.error(err);
+					});
+			});
+		</script>
+	</body>
+</html>

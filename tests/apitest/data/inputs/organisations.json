@@ -1,0 +1,43 @@
+[{
+	"id": 1,
+	"name": "name1",
+	"acronym": "acronym1",
+	"webpage": "webpage1",
+	"description": "description1",
+	"address": "address1",
+	"updated": "1989-10-28T00:00:00.000Z",
+	"note": "note1",
+	"email": "email1",
+	"phone": "+34123456789",
+	"countryid": 1,
+	"typeid": 1,
+	"scopeid": 1
+},{
+	"id": 2,
+	"name": "name2",
+	"acronym": "acronym2",
+	"webpage": "webpage2",
+	"description": "description2",
+	"address": "address2",
+	"updated": "1989-10-29T00:00:00.000Z",
+	"note": "note2",
+	"email": "email2",
+	"phone": "+35123456789",
+	"countryid": 2,
+	"typeid": 2,
+	"scopeid": 2
+},{
+	"id": 3,
+	"name": "name3",
+	"acronym": "acronym3",
+	"webpage": "webpage3",
+	"description": "description3",
+	"address": "address3",
+	"updated": "1989-10-30T00:00:00.000Z",
+	"note": "note3",
+	"email": "email3",
+	"phone": "+36123456789",
+	"countryid": 3,
+	"typeid": 3,
+	"scopeid": 3
+}]

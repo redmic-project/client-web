@@ -1,0 +1,24 @@
+<div>
+	<form class="form-horizontal">
+		<div data-redmic-type="selectOnListPopup" data-redmic-model="type" data-redmic-props="
+			label: '${i18n.thematic-type}',
+			title: '${i18n.thematic-type}',
+			template: 'templates/DomainList',
+			idProperty: 'id',
+			placeHolder: 'thematicTypePlaceHolderInput',
+			target: 'thematicType'
+		"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="startDate" data-redmic-props="
+			propertyNameDependence: 'endDate',
+			dependenceType: 'startDate'
+		"></div>
+
+		<div data-redmic-type="dateTimeTextBox" data-redmic-model="endDate" data-redmic-props="
+			propertyNameDependence: 'startDate',
+			dependenceType: 'endDate'
+		"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="remark"></div>
+	</form>
+</div>

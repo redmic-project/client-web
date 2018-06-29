@@ -1,0 +1,12 @@
+extends layout
+
+block root
+	#rootContainer
+	script(type='text/javascript').
+		require([
+			'app/views/NoSupportBrowser'
+		], function(
+			NoSupportBrowser
+		){
+			new NoSupportBrowser().placeAt('rootContainer');
+		});

@@ -1,0 +1,26 @@
+<div>
+	<form class="form-horizontal">
+
+		<div data-redmic-type="annotation" data-redmic-props="
+			propertyName: 'annotation',
+			content: '* ${i18n.noteForContact}.',
+			required: true
+		"></div>
+
+		<div data-redmic-type="text" data-redmic-model="surname"></div>
+
+		<div data-redmic-type="text" data-redmic-model="firstName"></div>
+
+		<div data-redmic-type="filter" data-redmic-model="affiliation" data-redmic-props="
+			template: 'templates/OrganisationFilter'
+		"></div>
+
+		<div data-redmic-type="text" data-redmic-model="email"></div>
+
+		<div data-redmic-type="text" data-redmic-model="mobile"></div>
+
+		<div data-redmic-type="text" data-redmic-model="phone"></div>
+
+		<div data-redmic-type="textarea" data-redmic-model="note"></div>
+	</form>
+</div>

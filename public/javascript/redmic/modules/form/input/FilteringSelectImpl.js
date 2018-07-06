@@ -137,6 +137,10 @@ define([
 
 		_reset: function() {
 
+			if (!this._inputInstance) {
+				return;
+			}
+
 			this._inputInstance.emit('reset');
 			this._enable();
 		},
@@ -147,7 +151,7 @@ define([
 				return;
 			}
 
-			this._inputInstance.emit('clear');
+			this._inputInstance.emit('reset');
 			this._enable();
 		},
 

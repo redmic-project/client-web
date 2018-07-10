@@ -322,7 +322,8 @@ define([
 
 			return {
 				parent: {
-					name: layerLabel
+					name: layerLabel,
+					id: layerIdPrefix
 				},
 				parentName: "name",
 				children: data.features

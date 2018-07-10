@@ -198,6 +198,17 @@ define([
 			}
 		},
 
+		_doClear: function() {
+
+			this._clear();
+
+			if (this.modelChannel && this.propertyName && this.propertyName !== this.getChannel()) {
+				this._publish(this._buildChannel(this.modelChannel, this.actions.CLEAR), {
+					properties: [this.propertyName]
+				});
+			}
+		},
+
 		_isPropertyNameObject: function(obj) {
 
 			if (obj[this.propertyName][this._inputProps.labelAttr] && obj[this.propertyName][this.idProperty]) {

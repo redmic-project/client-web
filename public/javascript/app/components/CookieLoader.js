@@ -1,11 +1,13 @@
 define([
 	'alertify/alertify.min'
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"
 	, "redmic/base/Credentials"
 ], function(
 	alertify
+	, redmicConfig
 	, declare
 	, lang
 	, i18n
@@ -114,7 +116,7 @@ define([
 				m.parentNode.insertBefore(a,m);
 			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			ga('create', '<GoogleAnalyticsID>', 'auto');
+			ga('create', redmicConfig.googleAnalyticsId, 'auto');
 			ga('send', 'pageview');
 		}
 	});

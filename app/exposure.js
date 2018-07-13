@@ -1,9 +1,10 @@
 var express = require('express'),
 	fs = require('fs'),
-	path = require('path');
+	path = require('path'),
+	request = require('request');
 
-var params, app, version;
-
+var params, app, version,
+	oauthClientCredentials = process.env.OAUTH_CLIENT_CREDENTIALS || '';
 
 function getLang(req) {
 
@@ -86,6 +87,27 @@ function onUnknownRequest(req, res, next) {
 	res.redirect('/404');
 }
 
+function onOauthTokenRequest(req, res) {
+
+	var password = req.params.password,
+		username = req.params.username,
+		options = {
+			url: req.headers.origin + '/api' + req.url,
+			method: 'POST',
+			body: "grant_type=password&username=" + username + "&password=" + password + "&scope=write",
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Authorization': 'Basic ' + oauthClientCredentials
+			}
+		};
+
+	request(options, function(res, error, response, body) {
+
+		res.statusCode = response.statusCode;
+		res.send(body);
+	}.bind(this, res));
+}
+
 function exposeRoutes() {
 
 	app.get(
@@ -107,6 +129,8 @@ function exposeRoutes() {
 		.get('/robots.txt', onRobotsRequest)
 
 		.get(/.*\/jquery.js/, onJqueryRequest)
+
+		.post('/oauth/token', onOauthTokenRequest)
 
 		.use(onUnknownRequest);
 }

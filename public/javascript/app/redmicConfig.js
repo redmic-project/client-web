@@ -5,7 +5,10 @@ define([], function() {
 	var retObj = {
 		"numMaxView": 10,
 		"apiVersion": 1,
-		"pathSeparator": '/'
+		"pathSeparator": "/",
+		"siteKeyReCaptcha": "6LfA6_0SAAAAACT3i8poH1NqztZCtIW1OahT0cXs",
+		"siteKeyForDebugReCaptcha": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
+		"googleAnalyticsId": "UA-58848624-1"
 	};
 
 	retObj.viewPaths = {
@@ -252,7 +255,7 @@ define([], function() {
 		"speciesValidity": baseUri + "speciesvalidities",
 		"themes": baseUri + "themes",
 		"thematicType": baseUri + "thematictypes",
-		"token": baseUri + "oauth/token",
+		"token": "/oauth/token",
 		"logout": baseUri + "oauth/token/revoke",
 		"unit": baseUri + "units",
 		"unitType": baseUri + "unittypes",

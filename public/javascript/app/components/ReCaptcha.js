@@ -18,8 +18,8 @@ define([
 				callback: null,
 				node: null,
 
-				_siteKey: '<ReCaptchaSiteKey>',
-				_siteKeyForDebug: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+				_siteKey: redmicConfig.siteKeyReCaptcha,
+				_siteKeyForDebug: redmicConfig.siteKeyForDebugReCaptcha,
 				_theme: 'dark',
 				_instanceId: null
 			};

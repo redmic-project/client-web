@@ -136,7 +136,7 @@ define([
 			}
 		},
 
-		_getAccessToken: function(/*obj*/ values){
+		_getAccessToken: function(/*obj*/ values) {
 			// summary:
 			//		Función que se realiza un request con los valores que le pasas
 			//		para obtener el token.
@@ -146,10 +146,14 @@ define([
 			//		values private: credenciales para obtener el token
 			//
 
-			return request(redmicConfig.services.token, {
-				method: "POST",
-				handleAs: "json",
-				query: "username=" + values.email + "&password=" + values.password
+			var url = redmicConfig.services.getToken,
+				clientId = redmicConfig.oauthClientId,
+				query = 'clientid=' + clientId + '&username=' + values.email + '&password=' + values.password;
+
+			return request(url, {
+				method: 'POST',
+				handleAs: 'json',
+				query: query
 			});
 		}
 	});

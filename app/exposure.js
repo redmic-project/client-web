@@ -4,7 +4,7 @@ var express = require('express'),
 	request = require('request');
 
 var params, app, version,
-	oauthClientCredentials = process.env.OAUTH_CLIENT_CREDENTIALS || '';
+	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET || 'secret';
 
 function getLang(req) {
 
@@ -89,23 +89,35 @@ function onUnknownRequest(req, res, next) {
 
 function onOauthTokenRequest(req, res) {
 
-	var password = req.params.password,
-		username = req.params.username,
+	var query = req.query,
+		headers = req.headers,
+
+		clientId = query.clientid,
+		password = query.password,
+		username = query.username,
+
+		clientCredentials = clientId + ':' + oauthClientSecret,
+		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
+
+		url = headers.origin + '/api/oauth/token',
+		authorization = 'Basic ' + base64ClientCredentials,
+		body = "grant_type=password&username=" + username + "&password=" + password + "&scope=write",
+
 		options = {
-			url: req.headers.origin + '/api' + req.url,
+			url: url,
 			method: 'POST',
-			body: "grant_type=password&username=" + username + "&password=" + password + "&scope=write",
+			body: body,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
-				'Authorization': 'Basic ' + oauthClientCredentials
+				'Authorization': authorization
 			}
 		};
 
-	request(options, function(res, error, response, body) {
+	request(options, (function(res, error, response, body) {
 
 		res.statusCode = response.statusCode;
 		res.send(body);
-	}.bind(this, res));
+	}).bind(this, res));
 }
 
 function exposeRoutes() {

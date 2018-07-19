@@ -7,6 +7,7 @@ define([
 	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "dojo/aspect"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_HierarchicalLazyLoad"
@@ -31,6 +32,7 @@ define([
 	, ContentPane
 	, declare
 	, lang
+	, aspect
 	, _Selection
 	, _ButtonsInRow
 	, _HierarchicalLazyLoad
@@ -65,6 +67,8 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			aspect.before(this, "_serializedFilter", lang.hitch(this, this._beforeSerializedFilter));
 		},
 
 		_setConfigurations: function() {
@@ -257,6 +261,22 @@ define([
 		_beforeShow: function() {
 
 			this._emitEvt('REFRESH');
+		},
+
+		_beforeSerializedFilter: function(req) {
+
+			var data = req.data,
+				queryDataChildren = {};
+
+			for (var key in data) {
+				if (data[key] !== null) {
+					queryDataChildren[key] = data[key];
+				}
+			}
+
+			this._publish(this.browserWork.getChannel("SET_QUERY_DATA_CHILDREN"), {
+				query: queryDataChildren
+			});
 		}
 	});
 });

@@ -98,7 +98,8 @@ define([
 			this.target[1] = target;
 
 			this._publish(this._widgets.tracking.getChannel("UPDATE_TARGET"), {
-				target: target
+				target: target,
+				refresh: true
 			});
 		}
 	});

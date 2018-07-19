@@ -5,6 +5,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, "redmic/modules/base/_SelectionBase"
+	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
@@ -20,6 +22,8 @@ define([
 	, declare
 	, lang
 	, aspect
+	, _SelectionBase
+	, Total
 	, ListImpl
 	, _ButtonsInRow
 	, _Framework
@@ -29,7 +33,7 @@ define([
 	, templateAnimalList
 	, templatePlatformList
 ){
-	return declare(null, {
+	return declare(_SelectionBase, {
 		//	summary:
 		//		Vista de Tracking.
 		//	description:
@@ -60,6 +64,9 @@ define([
 			this.browserWorkConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.targetBrowserWork,
+				bars: [{
+					instance: Total
+				}],
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{

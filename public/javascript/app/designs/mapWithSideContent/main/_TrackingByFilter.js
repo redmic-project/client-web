@@ -74,6 +74,11 @@ define([
 
 		_subSerializedFilter: function(req) {
 
+			this._serializedFilter(req);
+		},
+
+		_serializedFilter: function(req) {
+
 			var data = req.data;
 
 			delete data.size;
@@ -81,21 +86,11 @@ define([
 
 			this._lastDataFilter = data;
 
-			for (var key in this._layerInstances)
+			for (var key in this._layerInstances) {
 				this._publish(this._layerInstances[key].getChildChannel('filter', "ADD_TO_QUERY"), {
 					query: data
 				});
-
-			var queryDataChildren = {};
-
-			for (key in data) {
-				if (data[key] !== null)
-					queryDataChildren[key] = data[key];
 			}
-
-			this._publish(this.browserWork.getChannel("SET_QUERY_DATA_CHILDREN"), {
-				query: queryDataChildren
-			});
 		},
 
 		_configByLayerInstance: function(obj) {

@@ -342,35 +342,25 @@ define([
 
 			if (!this.chartsViewer) {
 				this.chartsViewerConfig.parentChannel = this.dynamicContainer.getChannel();
-				// TODO para esto podría usar parentChannel, no hace falta pasarle más canales
 				this.chartsViewerConfig.noDataChannel = this.getChannel();
 				this.chartsViewerConfig.filterConfig.modelChannel = this.modelChannelFilter;
 				this.chartsViewer = new TrashCharts(this.chartsViewerConfig);
 			}
 
-			//if (this._newDataAvailable[inputKey]) {
-				//delete this._newDataAvailable[inputKey];
-				var chartsViewerData = {
-					"parentId": this.currentData.parentId,
-					"grandparentId": this.currentData.grandparentId,
-					"data": this.currentData.feature.properties,
-					"interval": this.intervalValue,
-					"intervalLabelKey": this._intervalLabelKey
-				};
+			var chartsViewerData = {
+				"parentId": this.currentData.parentId,
+				"grandparentId": this.currentData.grandparentId,
+				"data": this.currentData.feature.properties,
+				"interval": this.intervalValue,
+				"intervalLabelKey": this._intervalLabelKey
+			};
 
-				this._noDataMessageEnabled = false;
+			this._noDataMessageEnabled = false;
 
-				this._publish(this.chartsViewer.getChannel("SET_PROPS"), {
-					data: chartsViewerData,
-					objQuery: this._objQuery
-				});
-			//}
-
-			/*if (this._noDataMessageEnabled) {
-				this._lastButtonKeyEmbedded = inputKey;
-				this._showTemplateDisplayerNoDataViewer();
-				return;
-			}*/
+			this._publish(this.chartsViewer.getChannel("SET_PROPS"), {
+				data: chartsViewerData,
+				objQuery: this._objQuery
+			});
 
 			this._publish(this.dynamicContainer.getChannel("SET_PROPS"), {
 				primaryContent: this.chartsViewer

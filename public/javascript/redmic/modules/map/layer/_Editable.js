@@ -324,7 +324,7 @@ define([
 
 		_subMapClickedEditable: function(featureId, res) {
 
-			this._drawSubscriber = null;	// TODO no hace falta cancelarlo??
+			this._drawSubscriber = null;
 			this._onMapClicked(featureId, res);
 		},
 
@@ -416,7 +416,7 @@ define([
 
 			var marker = new L.marker(latlng, {
 				icon: icon,
-				zIndexOffset: 1000
+				zIndexOffset: 1100
 			});
 
 			this._emitEvt('ADD_LAYER', {

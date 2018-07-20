@@ -91,6 +91,8 @@ function onOauthTokenRequest(req, res) {
 
 	var query = req.query,
 		headers = req.headers,
+		protocol = headers['x-forwarded-proto'],
+		host = headers.host,
 
 		clientId = query.clientid,
 		password = query.password,
@@ -99,7 +101,7 @@ function onOauthTokenRequest(req, res) {
 		clientCredentials = clientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
-		url = headers.origin + '/api/oauth/token',
+		url = protocol + '://' + host + '/api/oauth/token',
 		authorization = 'Basic ' + base64ClientCredentials,
 		body = "grant_type=password&username=" + username + "&password=" + password + "&scope=write",
 

@@ -99,7 +99,8 @@ module.exports = function(grunt) {
 				reporters: functionalReporters,
 				functionalSuites: functionalSuites,
 				reportersOutputPath: reportersOutputPath,
-				dojoBaseUrl: '.' + dojoCommonBaseUrl
+				dojoBaseUrl: '.' + dojoCommonBaseUrl,
+				userDataDir: outputPath + '/.config-' + ownServerPort
 			}),
 
 			testUnitLocalOptions = require(testUnitLocalPath)(testUnitParams),

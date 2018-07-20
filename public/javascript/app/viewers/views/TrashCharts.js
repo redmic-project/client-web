@@ -60,7 +60,8 @@ define([
 				},
 
 				actions: {
-					SHOW_NO_DATA: "showNoData"
+					SHOW_NO_DATA: "showNoData",
+					REFRESH: "refresh"
 				},
 
 				target: redmicConfig.services.objectCollectingSeriesClassification
@@ -72,6 +73,22 @@ define([
 		_setOwnCallbacksForEvents: function() {
 
 			this._onEvt('DATA_SET', lang.hitch(this, this._onDataSet));
+		},
+
+		_defineSubscriptions: function() {
+
+			this.subscriptionsConfig.push({
+				channel: this.getChannel("REFRESH"),
+				callback: "_subRefresh"
+			});
+		},
+
+		_subRefresh: function(res) {
+
+			this._intervalValue = res.intervalValue;
+			this._intervalLabelKey = res.intervalLabelKey;
+
+			this._emitEvt('REFRESH');
 		},
 
 		_onDataSet: function(changeObj) {

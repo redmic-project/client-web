@@ -200,7 +200,7 @@ define({
 	, "undefined": "Indefinido"
 
 	, "domains": "Dominios"
-	, "activity-fields": "Campos de acción"
+	, "activity-fields": "Áreas de la actividad"
 	, "organisation-types": "Tipos de organización"
 	, "platform-types": "Tipos de plataforma"
 	, "activity-types": "Tipos de actividad"
@@ -279,6 +279,7 @@ define({
 
 	, "feedback": "Contacto"
 	, "message": "Mensaje"
+	, "createReport": "Crear report"
 	, "errorReport": "Reporte de error"
 	, "subject": "Asunto"
 	, "sendFeedback": "Mensaje enviado correctamente, muchas gracias por su colaboración."

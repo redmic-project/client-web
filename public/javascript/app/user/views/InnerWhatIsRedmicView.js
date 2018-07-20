@@ -8,13 +8,12 @@ define([
 	, "redmic/modules/layout/TabsDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/WhatIsRedmicLongTermChallenge"
-	, "templates/WhatIsRedmicLogicalDataModel"
-	, "templates/WhatIsRedmicSystemArchitecture"
+	//, "templates/WhatIsRedmicSystemArchitecture"
 	, "templates/WhatIsRedmicInfoType"
 	, "templates/WhatIsRedmicUserType"
 	, "templates/WhatIsRedmicDataPolicy"
 	, "templates/WhatIsRedmicProductsAndServices"
-	, "templates/WhatIsRedmicInteroperability"
+	//, "templates/WhatIsRedmicInteroperability"
 ], function(
 	Controller
 	, Layout
@@ -25,13 +24,12 @@ define([
 	, TabsDisplayer
 	, TemplateDisplayer
 	, TemplateWhatIsRedmicLongTermChallenge
-	, TemplateWhatIsRedmicLogicalDataModel
-	, TemplateWhatIsRedmicSystemArchitecture
+	//, TemplateWhatIsRedmicSystemArchitecture
 	, TemplateWhatIsRedmicInfoType
 	, TemplateWhatIsRedmicUserType
 	, TemplateWhatIsRedmicDataPolicy
 	, TemplateWhatIsRedmicProductsAndServices
-	, TemplateWhatIsRedmicInteroperability
+	//, TemplateWhatIsRedmicInteroperability
 ){
 	return declare([Layout, Controller, _AddBasicTitle], {
 		//	summary:
@@ -74,13 +72,13 @@ define([
 								urlPdf: '/resources/documents/ModeloLogico.pdf',
 								roleGuestActive: true
 							}
-						},{
+						}/*,{
 							type: TemplateDisplayer,
 							title: this.i18n.systemArchitecture,
 							props: {
 								template: TemplateWhatIsRedmicSystemArchitecture
 							}
-						},{
+						}*/,{
 							type: TemplateDisplayer,
 							title: this.i18n.infoType,
 							props: {
@@ -104,13 +102,13 @@ define([
 							props: {
 								template: TemplateWhatIsRedmicProductsAndServices
 							}
-						},{
+						}/*,{
 							type: TemplateDisplayer,
 							title: this.i18n.interoperability,
 							props: {
 								template: TemplateWhatIsRedmicInteroperability
 							}
-						}]
+						}*/]
 					}
 				}
 			}, this.widgetConfigs || {}]);

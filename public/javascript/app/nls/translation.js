@@ -280,6 +280,7 @@ define({
 
 		, "feedback": "Feedback"
 		, "message": "Message"
+		, "createReport": "Create informe"
 		, "errorReport": "Error report"
 		, "subject": "Subject"
 		, "sendFeedback": "Message sent correctly, thank you very much for your feedback."

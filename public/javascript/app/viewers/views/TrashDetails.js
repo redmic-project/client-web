@@ -454,7 +454,10 @@ define([
 
 		_changeTimeIntervalForChart: function(value) {
 
-			this._publish(this.chartsViewer.getChildChannel('filter', "REFRESH"));
+			this._publish(this.chartsViewer.getChannel("REFRESH"), {
+				intervalValue: this.intervalValue,
+				intervalLabelKey: this._intervalLabelKey
+			});
 		},
 
 		_getNodeSelectTimeInterval: function() {

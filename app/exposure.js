@@ -4,7 +4,8 @@ var express = require('express'),
 	request = require('request');
 
 var params, app, version,
-	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET || 'secret';
+	publicHostname = process.env.PUBLIC_HOSTNAME,
+	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET;
 
 function getLang(req) {
 
@@ -90,7 +91,6 @@ function onUnknownRequest(req, res, next) {
 function onOauthTokenRequest(req, res) {
 
 	var query = req.query,
-		headers = req.headers,
 
 		clientId = query.clientid,
 		password = query.password,
@@ -99,7 +99,7 @@ function onOauthTokenRequest(req, res) {
 		clientCredentials = clientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
-		url = headers.origin + '/api/oauth/token',
+		url = publicHostname + '/api/oauth/token',
 		authorization = 'Basic ' + base64ClientCredentials,
 		body = "grant_type=password&username=" + username + "&password=" + password + "&scope=write",
 

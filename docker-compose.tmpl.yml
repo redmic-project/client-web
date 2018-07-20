@@ -5,6 +5,8 @@ services:
     image: ${IMAGE_NAME}:${IMAGE_TAG:-latest}
     networks:
       - redmic-net
+    environment:
+      - OAUTH_CLIENT_SECRET
     healthcheck:
       test: wget --spider -S -t 3 http://localhost:${WEB_PORT}
       interval: 30s

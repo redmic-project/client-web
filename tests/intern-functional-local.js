@@ -4,8 +4,10 @@ module.exports = function(args) {
 
 		_internFunctional = require('./_intern-functional')(args),
 
+		serverUrl = args.serverUrl || 'http://redmic.local',
+
 		config = {
-			serverUrl: 'http://redmic.local'
+			serverUrl: serverUrl
 		};
 
 	return deepmerge(_internFunctional, config, {

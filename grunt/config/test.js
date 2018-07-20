@@ -19,6 +19,7 @@ module.exports = function(grunt) {
 			ownSocketPort = parseInt(grunt.option('ownSocketPort'), 10),
 			ownTunnelPort = parseInt(grunt.option('ownTunnelPort'), 10),
 			headless = grunt.option('headless') || false,
+			serverUrl = grunt.option('server-url'),
 			role = grunt.option('role'),
 			user = grunt.option('user'),
 			pass = grunt.option('pass'),
@@ -92,6 +93,7 @@ module.exports = function(grunt) {
 				dojoBaseUrl: dojoCommonBaseUrl
 			}),
 			testFunctionalParams = deepmerge(testParams, {
+				serverUrl: serverUrl,
 				role: role,
 				user: user,
 				pass: pass,

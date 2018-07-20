@@ -14,9 +14,9 @@ prepare-unbuilt-version:
   variables:
     GIT_SUBMODULE_STRATEGY: normal
   script:
-    - 'type yarn grunt java'
-    - 'yarn install || yarn install'
-    - 'grunt preBuild'
+    - type yarn grunt java
+    - yarn install || yarn install
+    - grunt preBuild
   only:
     - branches
   except:
@@ -42,7 +42,7 @@ prepare-unbuilt-version:
 
 run-unit-tests:
   stage: test-code
-  script: 'grunt test-unit-local'
+  script: grunt test
   only:
     - branches
   except:
@@ -59,9 +59,9 @@ run-unit-tests:
 run-modules-functional-tests:
   stage: test-code
   script:
-    - 'echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts'
-    - 'npm start -- -p 80 &'
-    - 'grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless'
+    - echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts
+    - npm start -- -p 80 &
+    - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
   only:
     - branches
   except:
@@ -80,9 +80,9 @@ prepare-built-version:
   variables:
     GIT_SUBMODULE_STRATEGY: normal
   script:
-    - 'type yarn grunt java'
-    - 'yarn install || yarn install'
-    - 'grunt'
+    - type yarn grunt java
+    - yarn install || yarn install
+    - grunt
   only:
     - branches
     - tags
@@ -212,18 +212,17 @@ deploy-supporting-branch:
 run-functional-tests:
   stage: test-deploy
   script:
-    - 'echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts'
-    - 'npm start -- -p 80 &'
-    - 'grunt test-functional-local-parallel --user=${REDMIC_USER} --pass=${REDMIC_PASS}'
+    - type yarn grunt java
+    - yarn install || yarn install
+    - >
+      grunt test-functional-local-parallel --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_USER}"
+      --pass="${REDMIC_PASS}"
   only:
     - schedules
   cache:
     key: '${CI_COMMIT_REF_NAME}'
     paths:
       - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
     policy: pull
 
 deploy-pro:

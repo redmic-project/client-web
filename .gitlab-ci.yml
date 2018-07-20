@@ -170,7 +170,7 @@ deploy-dev:
     IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
+    PUBLIC_HOSTNAME: https://appdev.${DEV_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
@@ -194,7 +194,7 @@ deploy-supporting-branch:
     IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
+    PUBLIC_HOSTNAME: https://appdev.${DEV_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
@@ -244,7 +244,7 @@ deploy-pro:
     IMAGE_TAG: ${CI_COMMIT_TAG}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
     OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
+    PUBLIC_HOSTNAME: https://${PRO_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:

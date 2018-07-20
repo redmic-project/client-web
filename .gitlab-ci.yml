@@ -1,14 +1,16 @@
 image: redmic/web-gitlab
 
 stages:
+  - pre-build
+  - test-code
   - build
-  - test
   - package
   - test-package
   - deploy
+  - test-deploy
 
-prepare-for-unbuilt:
-  stage: build
+prepare-unbuilt-version:
+  stage: pre-build
   variables:
     GIT_SUBMODULE_STRATEGY: normal
   script:
@@ -18,7 +20,6 @@ prepare-for-unbuilt:
   only:
     - branches
   except:
-    - pre
     - master
   cache:
     key: '${CI_COMMIT_REF_NAME}'
@@ -39,7 +40,42 @@ prepare-for-unbuilt:
       - public/stylesheets/src/
       - public/stylesheets/submodules/
 
-prepare-for-built:
+run-unit-tests:
+  stage: test-code
+  script: 'grunt test-unit-local'
+  only:
+    - branches
+  except:
+    - master
+  cache:
+    key: '${CI_COMMIT_REF_NAME}'
+    paths:
+      - node_modules/
+      - public/javascript/redmic-widgets/node_modules/
+      - public/javascript/templates/node_modules/
+      - public/stylesheets/node_modules/
+    policy: pull
+
+run-modules-functional-tests:
+  stage: test-code
+  script:
+    - 'echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts'
+    - 'npm start -- -p 80 &'
+    - 'grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless'
+  only:
+    - branches
+  except:
+    - master
+  cache:
+    key: '${CI_COMMIT_REF_NAME}'
+    paths:
+      - node_modules/
+      - public/javascript/redmic-widgets/node_modules/
+      - public/javascript/templates/node_modules/
+      - public/stylesheets/node_modules/
+    policy: pull
+
+prepare-built-version:
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: normal
@@ -48,7 +84,9 @@ prepare-for-built:
     - 'yarn install || yarn install'
     - 'grunt'
   only:
-    - pre
+    - branches
+    - tags
+  except:
     - master
   cache:
     key: '${CI_COMMIT_REF_NAME}'
@@ -64,60 +102,6 @@ prepare-for-built:
     paths:
       - dist*.tar.gz
 
-run-local-unit-tests:
-  stage: test
-  script: 'grunt test-unit-local'
-  only:
-    - branches
-  except:
-    - pre
-    - master
-  cache:
-    key: '${CI_COMMIT_REF_NAME}'
-    paths:
-      - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
-    policy: pull
-
-run-local-modules-functional-tests:
-  stage: test
-  script:
-    - 'echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts'
-    - 'npm start -- -p 80 &'
-    - 'grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless'
-  only:
-    - branches
-  except:
-    - pre
-    - master
-  cache:
-    key: '${CI_COMMIT_REF_NAME}'
-    paths:
-      - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
-    policy: pull
-
-run-local-functional-tests:
-  stage: test
-  script:
-    - 'echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts'
-    - 'npm start -- -p 80 &'
-    - 'grunt test-functional-local-parallel --user=${REDMIC_USER} --pass=${REDMIC_PASS}'
-  only:
-    - schedules
-  cache:
-    key: '${CI_COMMIT_REF_NAME}'
-    paths:
-      - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
-    policy: pull
-
 docker-build-commit:
   stage: package
   image: redmic/docker-gitlab
@@ -126,7 +110,9 @@ docker-build-commit:
   services:
     - docker:dind
   only:
-    - pre
+    - branches
+  except:
+    - master
   script:
     - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
     - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}-latest .
@@ -155,7 +141,10 @@ container_scanning:
   services:
     - docker:stable-dind
   only:
-    - pre
+    - branches
+    - tags
+  except:
+    - master
   script:
     - docker run -d --name db arminc/clair-db:latest
     - docker run -p 6060:6060 --link db:postgres -d --name clair arminc/clair-local-scan:v2.0.1
@@ -177,26 +166,86 @@ deploy-dev:
     DOCKER_DRIVER: overlay2
     SSH_REMOTE: ${DEV_SSH_REMOTE}
     SERVICE: ${CI_PROJECT_NAME}
-    IMAGE_NAME: ${DOCKER_ENV_CI_REGISTRY_IMAGE}
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
     IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
+    OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
   services:
     - docker:dind
   script:
-    - deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+    - >
+      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+      OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
   environment:
     name: dev
     url: https://appdev.${DEV_PUBLIC_HOSTNAME}
   only:
-    - pre
+    - dev
+
+deploy-supporting-branch:
+  stage: deploy
+  image: redmic/docker-gitlab
+  variables:
+    DOCKER_DRIVER: overlay2
+    SSH_REMOTE: ${DEV_SSH_REMOTE}
+    SERVICE: ${CI_PROJECT_NAME}
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
+    IMAGE_TAG: ${CI_COMMIT_SHA}
+    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
+    OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
+  services:
+    - docker:dind
+  script:
+    - >
+      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+      OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+  environment:
+    name: dev
+    url: https://appdev.${DEV_PUBLIC_HOSTNAME}
+  only:
+    - branches
+  except:
+    - master
+    - dev
+  when: manual
+
+run-functional-tests:
+  stage: test-deploy
+  script:
+    - 'echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts'
+    - 'npm start -- -p 80 &'
+    - 'grunt test-functional-local-parallel --user=${REDMIC_USER} --pass=${REDMIC_PASS}'
+  only:
+    - schedules
+  cache:
+    key: '${CI_COMMIT_REF_NAME}'
+    paths:
+      - node_modules/
+      - public/javascript/redmic-widgets/node_modules/
+      - public/javascript/templates/node_modules/
+      - public/stylesheets/node_modules/
+    policy: pull
 
 deploy-pro:
   stage: deploy
+  image: redmic/docker-gitlab
+  variables:
+    DOCKER_DRIVER: overlay2
+    SSH_REMOTE: ${PRO_SSH_REMOTE}
+    SERVICE: ${CI_PROJECT_NAME}
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
+    IMAGE_TAG: ${CI_COMMIT_TAG}
+    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
+    OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
+  services:
+    - docker:dind
   script:
-    - 'echo deploy-pro'
+    - >
+      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+      OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
   environment:
     name: pro
-    url: https://redmic.es
+    url: https://${PRO_PUBLIC_HOSTNAME}
   only:
     - tags
   when: manual

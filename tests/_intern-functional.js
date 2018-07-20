@@ -22,7 +22,13 @@ module.exports = function(args) {
 	} else if (suitesGroups) {
 		config.functionalSuites = _functions.getSuites(pathPrefix, suitesGroups);
 	} else {
-		var defaultFunctionalSuites = _functions.getSuites(pathPrefix),
+		var suitesLimitedByRole;
+
+		if (role === 'guest') {
+			suitesLimitedByRole = ['common', 'catalog', 'catalogDetails', 'viewers', 'products'];
+		}
+
+		var defaultFunctionalSuites = _functions.getSuites(pathPrefix, suitesLimitedByRole),
 			excludePattern = '!' + path.join(pathPrefix, 'modules', '**');
 
 		defaultFunctionalSuites.push(excludePattern);

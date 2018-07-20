@@ -22,6 +22,12 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				listButtonsEdition: [{
+					icon: "fa-edit",
+					btnId: "edit",
+					title: "edit",
+					option: "default"
+				}],
 				title: this.i18n.activityType,
 				target: this.services.activityType
 			};

@@ -39,8 +39,10 @@ define([
 				innerHTML: "<a href='/home' d-state-url=true title='" + this.i18n.home +
 					"'><img class='logo' src='/resources/images/logos/redmicSimple.png'></a>"
 			});
-			if (this.show.left)
+
+			if (this.show.left) {
 				this.leftNode = put(this.domNode, "div.manager");
+			}
 
 			this.manager = new Manager({
 				parentChannel: this.parentChannel

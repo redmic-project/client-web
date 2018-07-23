@@ -224,10 +224,11 @@ deploy-supporting-branch:
 
 run-functional-tests:
   stage: test-deploy
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
   script:
     - type yarn grunt java
     - yarn install || yarn install
-    - grunt preBuild
     - >
       grunt test-functional-local-parallel --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_USER}"
       --pass="${REDMIC_PASS}"

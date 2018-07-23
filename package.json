@@ -97,6 +97,6 @@
     "npm": ">=3.10"
   },
   "main": "app",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "dojoBuild": "redmic.profile.js"
 }

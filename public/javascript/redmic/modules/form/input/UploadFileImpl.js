@@ -162,6 +162,11 @@ define([
 
 		_submit: function(req) {
 
+			if (!this._fileCount) {
+
+				return this.inherited(arguments);
+			}
+
 			if (!this._inputInstance.validate()) {
 
 				var error = this._lastObjStatusUpdate && this._lastObjStatusUpdate.error,
@@ -173,11 +178,6 @@ define([
 						description: description
 					}
 				});
-			}
-
-			if (!this._fileCount) {
-
-				return this.inherited(arguments);
 			}
 
 			this._submitDfd = new Deferred();

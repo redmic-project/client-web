@@ -435,6 +435,8 @@ define([
 				return;
 			}
 
+			this.listAndEditorNode.set('title', this.i18n.form);
+
 			this.listAndEditorNode.selectChild(this.editorNode);
 			//this._emitEvt('CLEAR_SELECTION');
 
@@ -480,6 +482,8 @@ define([
 			this._publish(this.geoJsonLayer.getChannel("EDITION_DONE"));
 
 			this._currentData = null;
+
+			this.listAndEditorNode.set('title', this.i18n.list);
 
 			this.listAndEditorNode.selectChild(this.browserAndSearchContainer);
 		},

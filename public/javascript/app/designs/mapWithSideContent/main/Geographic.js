@@ -165,7 +165,7 @@ define([
 				channel: this.browser.getChannel("UPDATE_TARGET")
 			});
 
-			if (!this.notTextSearch)
+			if (!this.notTextSearch) {
 				this.publicationsConfig.push({
 					event: 'CLEAR',
 					channel: this.textSearch.getChannel("RESET")
@@ -173,6 +173,7 @@ define([
 					event: 'UPDATE_TARGET',
 					channel: this.textSearch.getChannel("UPDATE_TARGET")
 				});
+			}
 		},
 
 		postCreate: function() {

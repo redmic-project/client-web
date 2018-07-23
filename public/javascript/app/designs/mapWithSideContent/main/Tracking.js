@@ -256,14 +256,15 @@ define([
 
 		_subChanged: function(res) {
 
-			if (res.name === "markers")
+			if (res.name === "markers") {
 				this._changeMarkers(res.value);
-			else if (res.name === "mode")
+			} else if (res.name === "mode") {
 				this._changeMode(res.value);
-			else if (res.name === "rate")
+			} else if (res.name === "rate") {
 				this._changeRate(res.value);
-			else if (res.name === "interval")
+			} else if (res.name === "interval") {
 				this._changeInterval(res.value);
+			}
 		},
 
 		_createAtlas: function() {
@@ -458,8 +459,9 @@ define([
 
 		_subClearLayers: function() {
 
-			for (var idProperty in this._layerInstances)
+			for (var idProperty in this._layerInstances) {
 				this._removeDataLayer(idProperty);
+			}
 		},
 
 		_subAddLayers: function(item) {
@@ -557,8 +559,7 @@ define([
 		},
 
 		_subZoomSet: function(res) {
-// TODO puede que esto sea innecesario ya
-
+			// TODO puede que esto sea innecesario ya
 			this._currentZoomLevel = res.zoom;
 		},
 
@@ -611,7 +612,7 @@ define([
 				info: {
 					category: TRACK.category.button,
 					action: TRACK.action.click,
-					label: "changeTrackingMode:"+(newMode === 0 ? "Step" : "Time")
+					label: "changeTrackingMode:" + (newMode === 0 ? "Step" : "Time")
 				}
 			});
 
@@ -644,7 +645,7 @@ define([
 				info: {
 					category: TRACK.category.button,
 					action: TRACK.action.click,
-					label: "changeTrackingMarkers:"+(value === 0 ? "Points" : "Direction")
+					label: "changeTrackingMarkers:" + (value === 0 ? "Points" : "Direction")
 				}
 			});
 		},

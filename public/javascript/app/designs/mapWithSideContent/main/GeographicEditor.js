@@ -83,11 +83,6 @@ define([
 		//	description:
 		//		Permite editar datos geográficos.
 
-		//	config: Object
-		//		Opciones y asignaciones por defecto.
-		//	title: String
-		//		Título de la vista.
-
 		constructor: function (args) {
 
 			this.config = {
@@ -247,10 +242,7 @@ define([
 			},{
 				event: 'UPDATE_TARGET',
 				channel: this.textSearch.getChannel("UPDATE_TARGET")
-			}/*,{
-				event: 'REFRESH',
-				channel: this.textSearch.getChannel("REFRESH")
-			}*/,{
+			},{
 				event: 'CLEAR',
 				channel: this.textSearch.getChannel("RESET")
 			});
@@ -258,14 +250,60 @@ define([
 
 		postCreate: function() {
 
+			this._createBrowserAndEditorContainers();
+
+			this._createTextSearchNode();
+
+			this.inherited(arguments);
+
+			this._createBrowserNode();
+
+			this._createEditorNode();
+
+			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});
+
+			this._createTabContainers();
+
+			this._emitEvt('REFRESH');
+		},
+
+		_createBrowserAndEditorContainers: function() {
+
+			this.browserAndEditorNode = new declare([StackContainer, Animation])({
+				'class': "marginedContainer noScrolledContainer",
+				title: this.i18n.list,
+				region:"center"
+			});
+
 			this.browserAndSearchContainer = new BorderContainer({
 				'class': "noScrolledContainer"
 			});
+
+			this.browserAndEditorNode.addChild(this.browserAndSearchContainer);
+		},
+
+		_createTabContainers: function() {
+
+			this.tabs = new TabContainer({
+				tabPosition: "top",
+				splitter: true,
+				region: "left",
+				'class': "col-xs-6 col-sm-6 col-md-6 col-lg-5 col-xl-4 mediumTexturedContainer sideTabContainer borderRadiusTabContainer"
+			});
+
+			this.tabs.addChild(this.browserAndEditorNode);
+			this.tabs.addChild(this._createAtlas());
+
+			this.contentNode.addChild(this.tabs);
+		},
+
+		_createTextSearchNode: function() {
 
 			this.textSearchNode = new ContentPane({
 				'class': "topZone topZoneCitation",
 				region: "top"
 			});
+
 			this._publish(this.textSearch.getChannel("SHOW"), {
 				node: this.textSearchNode.domNode
 			});
@@ -273,8 +311,9 @@ define([
 			this.buttonsNode = this.textSearchNode;
 
 			this.browserAndSearchContainer.addChild(this.textSearchNode);
+		},
 
-			this.inherited(arguments);
+		_createBrowserNode: function() {
 
 			this.gridNode = new ContentPane({
 				'class': 'stretchZone',
@@ -286,6 +325,9 @@ define([
 			});
 
 			this.browserAndSearchContainer.addChild(this.gridNode);
+		},
+
+		_createEditorNode: function() {
 
 			this.editorNode = new ContentPane({
 				'class': "scrollWrapper"
@@ -300,32 +342,24 @@ define([
 				});
 			}));
 
-			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});
+			this.browserAndEditorNode.addChild(this.editorNode);
+		},
 
-			this.listAndEditorNode = new declare([StackContainer, Animation])({
-				'class': "marginedContainer noScrolledContainer",
-				title: this.i18n.list,
-				region:"center"
+		_beforeShowMain: function() {
+
+			if (!this._setNewTarget()) {
+				return;
+			}
+
+			this._publish(this.map.getChannel("SET_CENTER_AND_ZOOM"), {
+				center: [28.5, -16.0],
+				zoom: 7
 			});
-			this.listAndEditorNode.addChild(this.browserAndSearchContainer);
-			this.listAndEditorNode.addChild(this.editorNode);
-
-			this.tabs = new TabContainer({
-				tabPosition: "top",
-				splitter: true,
-				region: "left",
-				'class': "col-xs-6 col-sm-6 col-md-6 col-lg-5 col-xl-4 mediumTexturedContainer sideTabContainer borderRadiusTabContainer"
-			});
-
-			this.tabs.addChild(this.listAndEditorNode);
-			this.tabs.addChild(this._createAtlas());
-
-			this.contentNode.addChild(this.tabs);
 
 			this._emitEvt('REFRESH');
 		},
 
-		_beforeShowMain: function() {
+		_setNewTarget: function() {
 
 			if (!this.pathVariableId) {
 				return;
@@ -345,12 +379,7 @@ define([
 				target: this.target
 			});
 
-			this._publish(this.map.getChannel("SET_CENTER_AND_ZOOM"), {
-				center: [28.5, -16.0],
-				zoom: 7
-			});
-
-			this._emitEvt('REFRESH');
+			return newTarget;
 		},
 
 		_createAtlas: function() {
@@ -425,24 +454,29 @@ define([
 
 		_subShownForm: function(request) {
 
-			var activityId = this.pathVariableId;
-			if (!(activityId && activityId.length)) {
-				this._emitEvt('COMMUNICATION', {
-					description: this.i18n.noActivity
-				});
+			if (!this._chkActivity()) {
+				this._actionWhenNoActivity();
 
-				this._publish(this.editor.getChannel("HIDE"));
 				return;
 			}
 
-			this.listAndEditorNode.set('title', this.i18n.form);
+			this._shownForm(request);
+		},
 
-			this.listAndEditorNode.selectChild(this.editorNode);
-			//this._emitEvt('CLEAR_SELECTION');
+		_shownForm: function(request) {
+
+			this._changeTabForForm();
 
 			this._publish(this.geoJsonLayer.getChannel("DISCONNECT"), {
 				actions: ["REQUEST"/*, "SELECT"*/]
 			});
+
+			this._publish(this.geoJsonLayer.getChannel("EDITION"), this._objToPublishForGeoJsonLayer(request));
+
+			this._currentData = request.data || null;
+		},
+
+		_objToPublishForGeoJsonLayer: function(request) {
 
 			var data = request.data,
 				objToPublish = {};
@@ -454,23 +488,26 @@ define([
 					objToPublish.data = data;
 				}
 			}
-
-			this._publish(this.geoJsonLayer.getChannel("EDITION"), objToPublish);
-
-			if (data) {
-				this._currentData = data;
-			} else {
-				this._currentData = null;
-				this._setPropsForNewInstance();
-			}
 		},
 
-		_setPropsForNewInstance: function() {
+		_actionWhenNoActivity: function() {
 
-			/*this._emitEvt('SET_FORM_PROPERTY', {
-				propertyName: "geometry/type",
-				value: "Point"
-			});*/
+			this._emitEvt('COMMUNICATION', {
+				description: this.i18n.noActivity
+			});
+
+			this._publish(this.editor.getChannel("HIDE"));
+		},
+
+		_chkActivity: function() {
+
+			var activityId = this.pathVariableId;
+
+			if (!(activityId && activityId.length)) {
+				return false;
+			}
+
+			return true;
 		},
 
 		_subFormHidden: function() {
@@ -483,9 +520,24 @@ define([
 
 			this._currentData = null;
 
-			this.listAndEditorNode.set('title', this.i18n.list);
+			this._changeTabForList();
+		},
 
-			this.listAndEditorNode.selectChild(this.browserAndSearchContainer);
+		_changeTabForList: function() {
+
+			this._changeTab(this.browserAndSearchContainer, this.i18n.list);
+		},
+
+		_changeTabForForm: function() {
+
+			this._changeTab(this.editorNode, this.i18n.form);
+		},
+
+		_changeTab: function(container, title) {
+
+			this.browserAndEditorNode.set('title', title);
+
+			this.browserAndEditorNode.selectChild(container);
 		},
 
 		_subFormChanged: function(change) {
@@ -522,7 +574,7 @@ define([
 
 		_onHide: function() {
 
-			this.listAndEditorNode.selectChild(this.browserAndSearchContainer);
+			this.browserAndEditorNode.selectChild(this.browserAndSearchContainer);
 		},
 
 		_getNodeForForm: function () {

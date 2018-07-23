@@ -87,8 +87,9 @@ define([
 
 		_styleCallback: function() {
 
-			if (!this.editorLayer)
+			if (!this.editorLayer) {
 				this.editorLayer = new EditorLayerWithVariableForm(this.editorLayerConfig);
+			}
 
 			return {
 				instance: this.editorLayer,

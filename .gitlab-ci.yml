@@ -224,6 +224,9 @@ deploy-supporting-branch:
 
 run-functional-tests:
   stage: test-deploy
+  tags:
+    - client
+    - functional
   variables:
     GIT_SUBMODULE_STRATEGY: normal
   script:
@@ -244,7 +247,7 @@ run-functional-tests:
     expire_in: 1 month
     when: always
     paths:
-      - test_reports/test-functional-local*/
+      - "test_reports/test-functional-local*/"
 
 deploy-pro:
   stage: deploy

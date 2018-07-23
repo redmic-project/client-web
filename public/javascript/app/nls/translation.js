@@ -105,6 +105,7 @@ define({
 		, "data": "Data"
 		, "method": "Method"
 		, "trophic-regime": "Trophic regimen"
+		, "trophicRegime": "Trophic regimen"
 		, "descriptor": "Descriptor"
 		, "chooseReportTitle": "Choose a title for your report"
 		, "documentsAssociatedSpecies": "Associated documents with the species"

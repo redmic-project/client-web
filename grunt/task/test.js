@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 		grunt.config('shell.test-functional-local-parallel', {
 			command: function() {
 
-				var serverUrlParam = grunt.option('server-url'),
+				var serverUrlParam = grunt.option('server-url') || 'http://redmic.local',
 					userParam = grunt.option('user'),
 					passParam = grunt.option('pass'),
 					serverPort = 9000,

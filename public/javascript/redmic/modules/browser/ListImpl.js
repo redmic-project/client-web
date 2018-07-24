@@ -24,46 +24,81 @@ define([
 
 		_addData: function(response) {
 
-			var rowsOld = this._rows,
-				data = response.data;
+			this._clearRowsData();
+
+			this._proccesNewData(response);
+
+			this._clearOldRowsData();
+		},
+
+		_clearRowsData: function(response) {
+
+			this._rowsOld = this._rows;
+			this._rows = {};
+		},
+
+		_clearOldRowsData: function() {
+
+			for (var key in this._rowsOld) {
+				this._removeRowInstance(this._rowsOld[key].instance);
+			}
+
+			delete this._rowsOld;
+		},
+
+		_proccesNewData: function(response) {
+
+			var data = response.data;
 
 			if (data.data) {
 				data = data.data;
 			}
 
-			this._rows = {};
-
 			for (var i = 0; i < data.length; i++) {
-
-				var item = data[i],
-					idProperty = item[this.idProperty];
-					row = rowsOld[idProperty];
-					rowInstance = row && row.instance;
-
-				if (rowInstance) {
-					this._setRow(idProperty, {
-						instance: rowInstance,
-						data: item
-					});
-
-					delete rowsOld[idProperty];
-				}
-
-				this._addItem(item);
+				this._rescueOldInstance(data[i]);
+				this._addItem(data[i]);
 			}
+		},
 
-			for (var key in rowsOld) {
-				this._removeRowInstance(rowsOld[key].instance);
+		_rescueOldInstance: function(item) {
+
+			var idProperty = item[this.idProperty],
+				row = this._rowsOld[idProperty],
+				rowInstance = row && row.instance;
+
+			if (rowInstance) {
+				this._setRow(idProperty, {
+					instance: rowInstance,
+					data: item
+				});
+
+				if (this._rowsOld) {
+					delete this._rowsOld[idProperty];
+				}
 			}
 		},
 
 		_addItem: function(item) {
 
 			var idProperty = item[this.idProperty],
-				rowInstance = this._getRowInstance(idProperty),
+				rowInstance = this._addOrUpdateRow(item),
 				obj = {
 					node: this.rowsContainerNode
 				};
+
+			obj.data = this._getRowData(idProperty);
+
+			if (this.insertInFront) {
+				obj.inFront = true;
+			}
+
+			rowInstance && this._publish(rowInstance.getChannel('SHOW'), obj);
+		},
+
+		_addOrUpdateRow: function(item) {
+
+			var idProperty = item[this.idProperty],
+				rowInstance = this._getRowInstance(idProperty);
 
 			if (!rowInstance) {
 				this._addRow(idProperty, item);
@@ -76,13 +111,7 @@ define([
 				});
 			}
 
-			obj.data = this._getRowData(idProperty);
-
-			if (this.insertInFront) {
-				obj.inFront = true;
-			}
-
-			rowInstance && this._publish(rowInstance.getChannel('SHOW'), obj);
+			return rowInstance;
 		}
 	});
 });

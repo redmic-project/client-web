@@ -12,8 +12,8 @@ define([
 
 	var namePrefix = 'Project metadata page',
 		urlValue = '/admin/project',
-		wizardEditionUrlValue = '/admin/project-edit/19',
-		wizardAdditionUrlValue = '/admin/project-add/new',
+		wizardEditionUrlValue = urlValue + '-edit/22',
+		wizardAdditionUrlValue = urlValue + '-add/new',
 		textSearchValue = 'Red Natura 2000',
 		configSteps = [{
 			type: 'form',

@@ -6,6 +6,7 @@ define([
 	, "put-selector/put"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "RWidgets/Utilities"
+	, "templates/DefaultDetailsTitle"
 ], function (
 	declare
 	, lang
@@ -14,6 +15,7 @@ define([
 	, put
 	, TemplateDisplayer
 	, Utilities
+	, TemplateTitle
 ){
 	return declare(null, {
 		//	summary:
@@ -22,12 +24,6 @@ define([
 		constructor: function(args) {
 
 			this.configTitle = {
-				_titleWidgetConfig: {
-					parentChannel: this.getChannel(),
-					ownChannel: "title",
-					associatedIds: [this.ownChannel]
-				},
-
 				_titleLeftButtonsList: [],
 
 				_titleRightButtonsList: [{
@@ -37,13 +33,9 @@ define([
 				}],
 
 				tabs: [],
-
 				centerTitle: false,
-
 				pathParent: null,
-
 				_closeTitle: false,
-
 				_idTitle: false,
 
 				_close: {
@@ -54,18 +46,41 @@ define([
 
 			lang.mixin(this, this.configTitle, args);
 
+			aspect.after(this, "_afterSetConfigurations", lang.hitch(this, this._setTitleConfigurations));
 			aspect.before(this, "_initialize", this._initializeTitle);
+			aspect.before(this, "_defineSubscriptions", this._defineTitleSubscriptions);
 			aspect.after(this, "postCreate", this._postCreateTitle);
+		},
+
+		_setTitleConfigurations: function() {
+
+			this._titleWidgetConfig = this._merge([{
+				parentChannel: this.getChannel(),
+				ownChannel: "title",
+				associatedIds: [this.ownChannel],
+				template: TemplateTitle,
+				target: this.target instanceof Array ? this.target[0] : this.target
+			}, this.titleWidgetConfig || {}]);
 		},
 
 		_initializeTitle: function() {
 
-			lang.mixin(this._titleWidgetConfig, this.titleWidgetConfig);
-
 			this.titleWidget = new TemplateDisplayer(this._titleWidgetConfig);
 
-			aspect.after(this.titleWidget, "_dataAvailable", lang.hitch(this, this._dataInTitle));
-			aspect.after(this.titleWidget, "_itemAvailable", lang.hitch(this, this._dataInTitle));
+			aspect.after(this.titleWidget, "_dataAvailable", lang.hitch(this, this._addDataInTitle));
+			aspect.after(this.titleWidget, "_itemAvailable", lang.hitch(this, this._addDataInTitle));
+		},
+
+		_defineTitleSubscriptions: function () {
+
+			this.subscriptionsConfig.push({
+				channel : this.titleWidget.getChannel("UPDATED"),
+				callback: "_subTitleUpdated"
+			});
+		},
+
+		_subTitleUpdated: function(res) {
+
 		},
 
 		_postCreateTitle: function() {
@@ -86,19 +101,19 @@ define([
 			put(this.containerNode.firstChild, "-", this.topNode);
 		},
 
-		_dataInTitle: function() {
+		_addDataInTitle: function() {
 
+			this._updateDataTitle();
 			this._createTitle();
+			this._addIconsAndTabs();
+		},
+
+		_updateDataTitle: function() {
 
 			this.data = this.titleWidget.data;
+		},
 
-			if (this._idTitle) {
-				this._addIdTitle();
-			}
-
-			if (this.pathParent && this.activeTitleParent) {
-				this._addParentTitle();
-			}
+		_addIconsAndTabs: function() {
 
 			var leftButtons = this._titleLeftButtonsList.concat(this.titleLeftButtonsList || []),
 				rightButtons = this._titleRightButtonsList.concat(this.titleRightButtonsList || []);
@@ -111,7 +126,24 @@ define([
 
 		_createTitle: function() {
 
-			if (this._titleLeftNode) {
+			this._createTitleNodes();
+
+			this._publish(this.titleWidget.getChannel("SHOW"), {
+				node: this._titleCenterNode
+			});
+
+			if (this._idTitle) {
+				this._addIdTitle();
+			}
+
+			if (this.pathParent && this.activeTitleParent) {
+				this._addParentTitle();
+			}
+		},
+
+		_createTitleNodes: function() {
+
+			if (this._titleLeftNode || !this.titleNode) {
 				return;
 			}
 
@@ -119,10 +151,6 @@ define([
 			this._titleCenterNode = put(this.titleNode, "div.center");
 			this._titleRightNode = put(this.titleNode, "div.right.hidden");
 			put(this.titleNode, "div.rightSpace");
-
-			this._publish(this.titleWidget.getChannel("SHOW"), {
-				node: this._titleCenterNode
-			});
 		},
 
 		_addIdTitle: function() {
@@ -171,10 +199,6 @@ define([
 
 			if (this._insertTabByCondition(this.tabs[pos])) {
 				var classTab = ".tab.tabSelect";
-
-				/*if (this.tabs[pos].select) {
-					classTab += ".tabSelect";
-				}*/
 
 				tabNode = put(this._tabstitleNode, "div" + classTab + " a",
 					this.i18n[this.tabs[pos].title] ? this.i18n[this.tabs[pos].title] : this.tabs[pos].title);
@@ -238,6 +262,28 @@ define([
 
 			if ((!buttonProp.condition) || (buttonProp.condition && this.data && this.data[buttonProp.condition])) {
 				this._insertIcon(buttonProp, node);
+			}
+		},
+
+		_insertIcon: function(config, node) {
+
+			if (config.condition && this._evaluateCondition(config.condition)) {
+				return;
+			}
+
+			var iconNode = put(node, (config.href ? 'a' : 'i') + ".iconList." + config.icon.split("-")[0] + "." + config.icon);
+
+			if (config.title) {
+				iconNode.setAttribute("title", config.title);
+			}
+
+			if (config.href) {
+				iconNode.setAttribute('href', lang.replace(config.href, this.data));
+				iconNode.setAttribute('d-state-url', true);
+			}
+
+			if (config.btnId) {
+				iconNode.onclick = lang.hitch(this, this._emitEvt, 'BUTTON_EVENT', config.btnId);
 			}
 		}
 	});

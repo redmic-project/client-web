@@ -28,7 +28,11 @@ define([
 			this.config = {
 				actions: {
 					CLEAR: "clear",
-					CHANGE_TEMPLATE: "changeTemplate"
+					CHANGE_TEMPLATE: "changeTemplate",
+					UPDATED: "updated"
+				},
+				events: {
+					UPDATE: "update"
 				},
 				data: {},
 				ownChannel: "templateDisplayer"
@@ -61,6 +65,14 @@ define([
 			});
 		},
 
+		_definePublications: function() {
+
+			this.publicationsConfig.push({
+				event: 'UPDATE',
+				channel: this.getChannel("UPDATED")
+			});
+		},
+
 		postCreate: function() {
 
 			this.inherited(arguments);
@@ -76,6 +88,8 @@ define([
 			} else {
 				this._loadedTemplate = this._emptyTemplate;
 			}
+
+			this._setContent(this._loadedTemplate);
 		},
 
 		_loadTemplate: function(template, data) {
@@ -112,14 +126,17 @@ define([
 
 				this.data = data;
 				this._loadedTemplate = this._loadTemplate(this.template, this.data);
+				this._setContent(this._loadedTemplate);
 			}
-
-			this._setContent(this._loadedTemplate);
 		},
 
 		_setContent: function(content) {
 
 			this.container.innerHTML = content;
+
+			this._emitEvt('UPDATE', {
+				data: this.data
+			});
 		},
 
 		_dataAvailable: function(response) {

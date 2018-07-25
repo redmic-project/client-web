@@ -69,8 +69,7 @@ define([
 		_setMainConfigurations: function() {
 
 			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle,
-				target: this.target
+				template: TemplateTitle
 			}, this.titleWidgetConfig || {}]);
 
 			this.widgetConfigs = this._merge([{

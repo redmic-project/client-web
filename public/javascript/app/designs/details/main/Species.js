@@ -10,7 +10,6 @@ define([
 	, "dojo/Deferred"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/_Select"
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/layout/TabsDisplayer"
@@ -33,7 +32,6 @@ define([
 	, Deferred
 	, _ButtonsInRow
 	, _Framework
-	, _Select
 	, ListImpl
 	, Total
 	, TabsDisplayer
@@ -97,9 +95,8 @@ define([
 						title: this.i18n.additionalInfo,
 						childTabs: [{
 							title: this.i18n.activities,
-							type: declare([ListImpl, _Framework, _ButtonsInRow, _Select]),
+							type: declare([ListImpl, _Framework, _ButtonsInRow]),
 							props: {
-								selectionTarget: redmicConfig.services.activity,
 								target: this.activityTarget,
 								template: TemplateActivities,
 								bars: [{
@@ -151,11 +148,6 @@ define([
 					}
 				}
 			}, this.widgetConfigs || {}]);
-		},
-
-		_afterShow: function(request) {
-
-			this.startup();
 		},
 
 		_clearModules: function() {

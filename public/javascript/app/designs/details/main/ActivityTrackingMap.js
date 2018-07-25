@@ -10,7 +10,6 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "templates/ActivityTitle"
 ], function(
 	_ListenActivityDataAndAccessByActivityCategory
 	, _Main
@@ -23,7 +22,6 @@ define([
 	, redmicConfig
 	, declare
 	, lang
-	, TemplateTitle
 ){
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection, _ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
@@ -49,11 +47,6 @@ define([
 
 		_setMainConfigurations: function() {
 
-			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle,
-				target: redmicConfig.services.activity
-			}, this.titleWidgetConfig || {}]);
-
 			this.widgetConfigs = this._merge([{
 				tracking: {
 					width: 6,
@@ -64,11 +57,6 @@ define([
 					}
 				}
 			}, this.widgetConfigs || {}]);
-		},
-
-		_afterShow: function(request) {
-
-			this.startup();
 		},
 
 		_clearModules: function() {

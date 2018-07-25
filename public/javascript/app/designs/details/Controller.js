@@ -99,6 +99,11 @@ define([
 			this._onEvt('BUTTON_EVENT', lang.hitch(this, this._onButtonEvent));
 		},
 
+		_afterShow: function(request) {
+
+			this.startup();
+		},
+
 		_afterControllerShow: function() {
 
 			if (!this._widgetsAlreadyGenerated) {
@@ -123,21 +128,25 @@ define([
 			this._classRow = this.noScroll ? this._relativeRowsClass : this._fixedRowsClass;
 
 			for (var key in this.widgetConfigs) {
-				var config = this.widgetConfigs[key],
-					noCreate = true;
-
-				if (this._nodes[key]) {
-					noCreate = false;
-				}
-
-				noCreate && this._createBox(key, config);
-
-				noCreate && this._showWidget(key, config);
-
-				noCreate && this._makeNodeInteractive(this._nodes[key]);
+				this._widgetVisualization(key);
 			}
 
 			this._updateInteractive();
+		},
+
+		_widgetVisualization: function(key) {
+
+			var config = this.widgetConfigs[key];
+
+			if (this._nodes[key]) {
+				return;
+			}
+
+			this._createBox(key, config);
+
+			this._showWidget(key, config);
+
+			this._makeNodeInteractive(this._nodes[key]);
 		},
 
 		_subParentResized: function() {
@@ -180,28 +189,6 @@ define([
 			return this.centerNode;
 		},
 
-		_insertIcon: function(config, node) {
-
-			if (config.condition && this._evaluateCondition(config.condition)) {
-				return;
-			}
-
-			var iconNode = put(node, (config.href ? 'a' : 'i') + ".iconList." + config.icon.split("-")[0] + "." + config.icon);
-
-			if (config.title) {
-				iconNode.setAttribute("title", config.title);
-			}
-
-			if (config.href) {
-				iconNode.setAttribute('href', lang.replace(config.href, this.data));
-				iconNode.setAttribute('d-state-url', true);
-			}
-
-			if (config.btnId) {
-				iconNode.onclick = lang.hitch(this, this._emitEvt, 'BUTTON_EVENT', config.btnId);
-			}
-		},
-
 		_evaluateCondition: function(condition) {
 
 			if (typeof condition === "function") {
@@ -222,7 +209,6 @@ define([
 			}
 
 			config.props = this._merge([this.propsWidget || {}, config.props]);
-
 			config.props.ownChannel = key;
 			config.props.parentChannel = this.getChannel();
 
@@ -379,11 +365,25 @@ define([
 			}
 		},
 
-		_showWindow: function(key, config) {
+		_showWindow: function(key) {
 
 			var module = this._widgets[key];
 
 			this._publish(module.getChannel('SHOW_WINDOW'));
+		},
+
+		_resizeWindowContainers: function() {
+
+			for (var key in this._widgets) {
+				this._resizeWindowContainer(key);
+			}
+		},
+
+		_resizeWindowContainer: function(key) {
+
+			var module = this._widgets[key];
+
+			this._publish(module.getChannel('RESIZE'));
 		},
 
 		_reportClicked: function() {

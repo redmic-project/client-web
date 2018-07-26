@@ -223,7 +223,7 @@ deploy-supporting-branch:
   when: manual
 
 run-basic-user-functional-tests:
-  stage: test-deploy
+  stage: pre-build
   tags:
     - client
     - functional
@@ -234,7 +234,7 @@ run-basic-user-functional-tests:
     - yarn install || yarn install
     - >
       grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_USER}"
-      --pass="${REDMIC_PASS}" --role=administrator --suitesGroups=common
+      --pass="${REDMIC_PASS}" --role=administrator --suitesGroups=common --headless
   when: manual
   cache:
     key: ${CI_COMMIT_REF_NAME}
@@ -249,7 +249,7 @@ run-basic-user-functional-tests:
       - "test_reports/test-functional-local*/"
 
 run-basic-guest-functional-tests:
-  stage: test-deploy
+  stage: pre-build
   tags:
     - client
     - functional
@@ -259,7 +259,7 @@ run-basic-guest-functional-tests:
     - type yarn grunt java
     - yarn install || yarn install
     - >
-      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --role=guest
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --role=guest --headless
       --suitesGroups=common
   when: manual
   cache:

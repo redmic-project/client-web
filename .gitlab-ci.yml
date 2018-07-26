@@ -260,7 +260,7 @@ run-basic-guest-functional-tests:
     - yarn install || yarn install
     - >
       grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --role=guest --headless
-      --suitesGroups=common
+      --suitesGroups=catalog
   when: manual
   cache:
     key: ${CI_COMMIT_REF_NAME}
@@ -272,7 +272,7 @@ run-basic-guest-functional-tests:
     expire_in: 1 month
     when: always
     paths:
-      - "test_reports/test-functional-local*/"
+      - "test_reports/test-functional-local_on-port_9000/"
 
 run-functional-tests:
   stage: test-deploy

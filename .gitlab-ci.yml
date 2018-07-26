@@ -246,7 +246,7 @@ run-basic-user-functional-tests:
     expire_in: 1 month
     when: always
     paths:
-      - "test_reports/test-functional-local*/"
+      - "test_reports/test-functional-local*"
 
 run-basic-guest-functional-tests:
   stage: pre-build
@@ -272,7 +272,7 @@ run-basic-guest-functional-tests:
     expire_in: 1 month
     when: always
     paths:
-      - "test_reports/test-functional-local_on-port_9000/"
+      - "test_reports/test-functional-local*"
 
 run-functional-tests:
   stage: test-deploy

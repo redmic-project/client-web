@@ -3,6 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
+	, "RWidgets/Utilities"
 	, "put-selector/put"
 	, "./_RowItfc"
 ], function(
@@ -10,6 +11,7 @@ define([
 	, lang
 	, _Module
 	, _Show
+	, Utilities
 	, put
 	, _RowItfc
 ){
@@ -91,6 +93,8 @@ define([
 
 			put(this.templateNode, "[data-redmic-id=$]", this._getId(item));
 
+			this._replaceHighlightInItem(item);
+
 			this.templateNode.innerHTML = this._insertTemplate(item);
 		},
 
@@ -143,6 +147,32 @@ define([
 		_getNodeToShow: function() {
 
 			return this.domNode;
+		},
+
+		_replaceHighlightInItem: function(item) {
+
+			if (item && item._meta) {
+				var highlight = item._meta.highlight;
+
+				for (var content in highlight) {
+					var value = Utilities.getDeepProp(item, content),
+						attr = highlight[content];
+
+					for (var i = 0; i < attr.length; i++) {
+						var valueReplace = attr[i],
+							cleanValueReplace = this._cleanValueHighlight(valueReplace);
+
+						value = value.replace(cleanValueReplace, valueReplace);
+					}
+
+					Utilities.setDeepProp(item, content, value);
+				}
+			}
+		},
+
+		_cleanValueHighlight: function(value) {
+
+			return value.replace(/<b>/g, '').replace(/<\/b>/g, '');
 		}
 	});
 });

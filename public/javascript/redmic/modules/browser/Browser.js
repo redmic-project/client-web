@@ -5,6 +5,7 @@ define([
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 	, "redmic/modules/base/_Store"
+	, "RWidgets/Utilities"
 	, "put-selector/put"
 	, "./_BrowserItfc"
 	, "./_NoDataTemplate"
@@ -16,6 +17,7 @@ define([
 	, _Module
 	, _Show
 	, _Store
+	, Utilities
 	, put
 	, _BrowserItfc
 	, _NoDataTemplate
@@ -83,6 +85,8 @@ define([
 			aspect.after(this, "_removeItem", lang.hitch(this, this._emitEvt, 'DATA_REMOVED'));
 			aspect.after(this, "_clearData", lang.hitch(this, this._emitEvt, 'CLEARED'));
 			aspect.after(this, "_updateTemplate", lang.hitch(this, this._emitEvt, 'TEMPLATE_UPDATED'));
+
+			aspect.before(this, "_addItem", lang.hitch(this, this._addReplaceHighlightInItem));
 		},
 
 		_defineSubscriptions: function () {
@@ -445,6 +449,24 @@ define([
 			}
 
 			return true;
+		},
+
+		_addReplaceHighlightInItem: function(item) {
+
+			if (item && item._meta) {
+				var highlight = item._meta.highlight;
+
+				for (var content in highlight) {
+					var value = '',
+						attr = highlight[content];
+
+					for (var i = 0; i < attr.length; i++) {
+						value += attr[i];
+					}
+
+					Utilities.setDeepProp(item, content, value);
+				}
+			}
 		}
 	});
 });

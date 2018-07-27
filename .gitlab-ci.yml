@@ -224,7 +224,7 @@ deploy-supporting-branch:
     - schedules
   when: manual
 
-run-functional-tests:
+run-public-zone-functional-tests:
   stage: test-deploy
   image: registry.gitlab.com/redmic-project/docker/web-build:latest
   tags:
@@ -236,8 +236,204 @@ run-functional-tests:
     - type yarn grunt java
     - yarn install || yarn install
     - >
-      grunt test-functional-local-parallel --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}"
-      --user="${REDMIC_TEST_USER}" --pass="${REDMIC_TEST_PASS}"
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups=catalog,catalogDetails,viewers,products --headless
+  only:
+    - schedules
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
+    expire_in: 1 month
+    when: always
+    paths:
+      - "test_reports/test-functional-local*"
+
+run-administrative-zone-functional-tests:
+  stage: test-deploy
+  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  tags:
+    - client
+    - functional
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - type yarn grunt java
+    - yarn install || yarn install
+    - >
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups=administrative,!administrative/taxonomy --headless
+  only:
+    - schedules
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
+    expire_in: 1 month
+    when: always
+    paths:
+      - "test_reports/test-functional-local*"
+
+run-taxonomy-zone-functional-tests:
+  stage: test-deploy
+  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  tags:
+    - client
+    - functional
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - type yarn grunt java
+    - yarn install || yarn install
+    - >
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups=administrative/taxonomy --headless
+  only:
+    - schedules
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
+    expire_in: 1 month
+    when: always
+    paths:
+      - "test_reports/test-functional-local*"
+
+run-dataloader-zone-functional-tests:
+  stage: test-deploy
+  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  tags:
+    - client
+    - functional
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - type yarn grunt java
+    - yarn install || yarn install
+    - >
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups=administrativeDetails,dataLoader --headless
+  only:
+    - schedules
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
+    expire_in: 1 month
+    when: always
+    paths:
+      - "test_reports/test-functional-local*"
+
+run-maintenance-zone-functional-tests:
+  stage: test-deploy
+  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  tags:
+    - client
+    - functional
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - type yarn grunt java
+    - yarn install || yarn install
+    - >
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups=maintenance,!maintenance/domains,maintenance/domains/admin --headless
+  only:
+    - schedules
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
+    expire_in: 1 month
+    when: always
+    paths:
+      - "test_reports/test-functional-local*"
+
+run-geometry-zone-functional-tests:
+  stage: test-deploy
+  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  tags:
+    - client
+    - functional
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - type yarn grunt java
+    - yarn install || yarn install
+    - >
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups=maintenance/domains/geometry --headless
+  only:
+    - schedules
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
+    expire_in: 1 month
+    when: always
+    paths:
+      - "test_reports/test-functional-local*"
+
+run-observations-zone-functional-tests:
+  stage: test-deploy
+  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  tags:
+    - client
+    - functional
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - type yarn grunt java
+    - yarn install || yarn install
+    - >
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups=maintenance/domains/observations --headless
+  only:
+    - schedules
+  cache:
+    key: ${CI_COMMIT_REF_NAME}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
+    expire_in: 1 month
+    when: always
+    paths:
+      - "test_reports/test-functional-local*"
+
+run-taxon-zone-functional-tests:
+  stage: test-deploy
+  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  tags:
+    - client
+    - functional
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - type yarn grunt java
+    - yarn install || yarn install
+    - >
+      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups=maintenance/domains/taxon --headless
   only:
     - schedules
   cache:

@@ -120,7 +120,8 @@ define([
 					obj = {
 						size: terms.size || null,
 						field: field,
-						term: item
+						term: item,
+						minCount: 1 // TODO
 					};
 
 				if (nested) {

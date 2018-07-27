@@ -1,9 +1,10 @@
 var express = require('express'),
+	bodyParser = require('body-parser'),
 	fs = require('fs'),
 	path = require('path'),
 	request = require('request');
 
-var params, app, version,
+var logger, params, version,
 	publicHostname = process.env.PUBLIC_HOSTNAME,
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET;
 
@@ -90,37 +91,43 @@ function onUnknownRequest(req, res, next) {
 
 function onOauthTokenRequest(req, res) {
 
-	var query = req.query,
+	var body = req.body,
 
-		clientId = query.clientid,
-		password = query.password,
-		username = query.username,
+		clientId = body.clientid,
+		password = body.password,
+		username = body.username,
 
 		clientCredentials = clientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
 		url = publicHostname + '/api/oauth/token',
 		authorization = 'Basic ' + base64ClientCredentials,
-		body = "grant_type=password&username=" + username + "&password=" + password + "&scope=write",
+		bodyData = "grant_type=password&username=" + username + "&password=" + password + "&scope=write",
 
 		options = {
 			url: url,
 			method: 'POST',
-			body: body,
+			body: bodyData,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 				'Authorization': authorization
 			}
 		};
 
-	request(options, (function(res, error, response, body) {
+	request(options, (function(originalRes, err, res, body) {
 
-		res.statusCode = response.statusCode;
-		res.send(body);
+		if (err) {
+			logger.error(err);
+			originalRes.sendStatus(500);
+			return;
+		}
+
+		originalRes.statusCode = res.statusCode;
+		originalRes.send(body);
 	}).bind(this, res));
 }
 
-function exposeRoutes() {
+function exposeRoutes(app) {
 
 	app.get(
 		/^((?!\/(activateAccount|resetting|noSupportBrowser|404|sitemap.xml|robots.txt|node_modules|env|.*\/jquery.js)))(\/.*)$/,
@@ -147,7 +154,7 @@ function exposeRoutes() {
 		.use(onUnknownRequest);
 }
 
-function exposeContents(directoryName) {
+function exposeContents(app, directoryName) {
 
 	var pathOptions = {
 		maxAge: 600000,
@@ -161,27 +168,28 @@ function exposeContents(directoryName) {
 		.use('/' + directoryName, servedPath);
 }
 
-function expose(appParameter) {
+function expose(app) {
 
-	app = appParameter;
+	app.use(bodyParser.urlencoded({ extended: false }));
 
 	if (params.useBuilt) {
-		exposeContents('dist');
+		exposeContents(app, 'dist');
 	} else {
 		require('./styles')(app);
-		exposeContents('public');
-		exposeContents('tests');
-		exposeContents('node_modules');
+		exposeContents(app, 'public');
+		exposeContents(app, 'tests');
+		exposeContents(app, 'node_modules');
 	}
 
 	app.set('view engine', 'pug')
 		.set('views', path.join(__dirname, '..', 'views'));
 
-	exposeRoutes();
+	exposeRoutes(app);
 }
 
-module.exports = function(paramsParameter, versionParameter) {
+module.exports = function(loggerParameter, paramsParameter, versionParameter) {
 
+	logger = loggerParameter;
 	params = paramsParameter;
 	version = versionParameter;
 

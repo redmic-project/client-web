@@ -148,12 +148,12 @@ define([
 
 			var url = redmicConfig.services.getToken,
 				clientId = redmicConfig.oauthClientId,
-				query = 'clientid=' + clientId + '&username=' + values.email + '&password=' + values.password;
+				bodyData = 'clientid=' + clientId + '&username=' + values.email + '&password=' + values.password;
 
 			return request(url, {
 				method: 'POST',
 				handleAs: 'json',
-				query: query
+				data: bodyData
 			});
 		}
 	});

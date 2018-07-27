@@ -15,7 +15,7 @@ define([
 	var registerSuite = intern.getInterface('object').registerSuite,
 		assert = intern.getPlugin('chai').assert;
 
-	registerSuite('SwitchWithMapImpl tests', {
+	registerSuite('MapSearchImpl tests', {
 		before: function() {
 
 			this.remote.setFindTimeout(timeout);
@@ -34,7 +34,7 @@ define([
 
 		tests: {
 
-			Should_ChangeStatus_When_ClickInInput: function() {
+			/*Should_ChangeStatus_When_ClickInInput: function() {
 
 				return this.remote
 					.findByCssSelector('div.primaryContainerRight')
@@ -55,7 +55,7 @@ define([
 						.end()
 					.findByCssSelector('div.leaflet-areaselect-handle')
 						.end();
-			}
+			}*/
 		}
 	});
 });

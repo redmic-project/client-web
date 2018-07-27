@@ -140,17 +140,11 @@ define([
 
 			if (req.inputKey === "submit") {
 				this._submit();
-			}
-
-			else if (req.inputKey === "cancel") {
+			} else if (req.inputKey === "cancel") {
 				this._cancel();
-			}
-
-			else if (req.inputKey === "clear") {
+			} else if (req.inputKey === "clear") {
 				this._clear();
-			}
-
-			else if (req.inputKey === "reset") {
+			} else if (req.inputKey === "reset") {
 				this._reset();
 			}
 		},

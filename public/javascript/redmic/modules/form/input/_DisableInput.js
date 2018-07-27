@@ -42,7 +42,7 @@ define([
 
 				this.containerSwitchDisable.onclick = lang.hitch(this, this._onClickSwitchDisable);
 
-				this._enableButton();
+				this._inputDisabled ? this._disable() : this._enableButton();
 			}
 		},
 

@@ -18,7 +18,6 @@ define([
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_GeoJsonParser"
 	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/map/layer/WmsLayerImpl"
 	, "redmic/modules/search/TextImpl"
 	, "templates/CitationList"
 ], function(
@@ -41,7 +40,6 @@ define([
 	, _Framework
 	, _GeoJsonParser
 	, ListImpl
-	, WmsLayerImpl
 	, TextImpl
 	, TemplateList
 ){
@@ -100,20 +98,6 @@ define([
 			}, this.browserConfig || {}], {
 				arrayMergingStrategy: 'concatenate'
 			});
-
-			this.batimetriasLayerConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: "https://atlas.redmic.es/geoserver/el/wms",
-					props: {
-						layers: ["batimetriaGlobal"],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
-			}, this.batimetriasLayerConfig || {}]);
 		},
 
 		_initializeMain: function() {
@@ -129,10 +113,6 @@ define([
 
 			this.browserConfig.queryChannel = this.queryChannel;
 			this.browser = new declare(exts)(this.browserConfig);
-
-			this.batimetriasLayerConfig.mapChannel = this.map.getChannel();
-
-			this.batimetriasLayer = new WmsLayerImpl(this.batimetriasLayerConfig);
 
 			this.mapCenteringGateway = new MapCenteringGatewayImpl({
 				parentChannel: this.getChannel(),
@@ -179,13 +159,6 @@ define([
 		postCreate: function() {
 
 			this.inherited(arguments);
-
-			this._publish(this.map.getChannel("ADD_LAYER"), {
-				layer: this.batimetriasLayer,
-				layerId: "batimetrias",
-				layerLabel: this.i18n.bathymetry,
-				optional: true
-			});
 
 			this.browserAndSearchContainer = new BorderContainer({
 				title: "<i class='fa fa-table'></i>",

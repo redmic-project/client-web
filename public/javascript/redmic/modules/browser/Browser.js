@@ -292,7 +292,8 @@ define([
 			this.rowConfig = this._merge([this.rowConfig || {}, {
 				parentChannel: this.getChannel(),
 				template: this._getTemplate(item),
-				idProperty: this.idProperty
+				idProperty: this.idProperty,
+				pathSeparator: this.pathSeparator
 			}]);
 		},
 

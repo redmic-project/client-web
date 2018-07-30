@@ -32,7 +32,7 @@ define([
 						.then(indexPage.checkApplyFilter(false));
 				},
 
-				Should_NoUpdateData_When_clickCancelFilter: function() {
+				Should_NoUpdateData_When_ClickCancelFilter: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -40,7 +40,7 @@ define([
 						.then(indexPage.checkChanges());
 				},
 
-				Should_NoUpdateData_When_clickResetAndCancelFilter: function() {
+				Should_NoUpdateData_When_ClickResetAndCancelFilter: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -50,7 +50,7 @@ define([
 						.then(indexPage.checkChanges());
 				},
 
-				Should_AllowApply_When_modifyFilter: function() {
+				Should_AllowApply_When_ModifyFilter: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -58,7 +58,7 @@ define([
 						.then(indexPage.checkApplyFilter(true));
 				},
 
-				Should_NoUpdateData_When_modifyAndClickCancelFilter: function() {
+				Should_NoUpdateData_When_CodifyAndClickCancelFilter: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -67,7 +67,7 @@ define([
 						.then(indexPage.checkChanges());
 				},
 
-				Should_BlockApply_When_modifyAndClickCancelFilter: function() {
+				Should_BlockApply_When_ModifyAndClickCancelFilter: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -77,7 +77,7 @@ define([
 						.then(indexPage.checkApplyFilter(false));
 				},
 
-				Should_BlockApply_When_modifyFilterAndClickReset: function() {
+				Should_BlockApply_When_ModifyFilterAndClickReset: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -86,7 +86,7 @@ define([
 						.then(indexPage.checkApplyFilter(false));
 				},
 
-				Should_UpdateData_When_modifyFilter: function() {
+				Should_UpdateData_When_ModifyFilter: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -95,7 +95,7 @@ define([
 						.then(indexPage.checkChanges(true));
 				},
 
-				Should_UpdateData_When_cancelAndModifyFilter: function() {
+				Should_UpdateData_When_CancelAndModifyFilter: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -106,7 +106,7 @@ define([
 						.then(indexPage.checkChanges(true));
 				},
 
-				Should_UpdateData_When_resetAndModifyFilter: function() {
+				Should_UpdateData_When_ResetAndModifyFilter: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())
@@ -118,7 +118,7 @@ define([
 						.then(indexPage.checkChanges(true));
 				},
 
-				Should_UpdateData_When_modifyFilterAndDisableInputs: function() {
+				Should_UpdateData_When_ModifyFilterAndDisableInputs: function() {
 
 					return this.remote
 						.then(indexPage.openFilter())

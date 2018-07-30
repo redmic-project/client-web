@@ -71,8 +71,8 @@ module.exports = function(grunt) {
 					administrativeZoneGroup = 'administrative,!administrative/taxonomy',
 					taxonomyZoneGroup = 'administrative/taxonomy',
 					dataLoaderAndAdministrativeDetailsZoneGroup = 'administrativeDetails,dataLoader',
-					maintenanceAndAdminDomainsZoneGroup = 'maintenance,!maintenance/domains,maintenance/domains/admin',
-					geometryDomainsZoneGroup = 'maintenance/domains/geometry',
+					maintenanceAndAdminDomainsZoneGroup = 'maintenance,!maintenance/domains/taxon' +
+						',!maintenance/domains/observations',
 					observationDomainsZoneGroup = 'maintenance/domains/observations',
 					taxonDomainsZoneGroup = 'maintenance/domains/taxon',
 
@@ -92,7 +92,7 @@ module.exports = function(grunt) {
 					userZoneGroupsList = [
 						publicZoneGroups, administrativeZoneGroup, taxonomyZoneGroup,
 						dataLoaderAndAdministrativeDetailsZoneGroup, maintenanceAndAdminDomainsZoneGroup,
-						geometryDomainsZoneGroup, observationDomainsZoneGroup, taxonDomainsZoneGroup
+						 observationDomainsZoneGroup, taxonDomainsZoneGroup
 					],
 
 					commonGuestZoneGroups = guestCommonTestsParams + 'common',

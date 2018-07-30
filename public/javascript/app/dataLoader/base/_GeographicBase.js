@@ -162,21 +162,25 @@ define([
 
 			this.geoJsonLayer = new geoJsonLayerDefinition(this.geoJsonLayerConfig);
 
-			this.mapCenteringGateway = new MapCenteringGatewayImpl({
-				parentChannel: this.getChannel(),
+			this.dataDisplayer = new DataDisplayer({
+				parentChannel: this.getChannel()
+			});
+
+			this._mapCenteringGatewayAddChannels();
+		},
+
+		_mapCenteringGatewayAddChannels: function(layer) {
+
+			this._publish(this.mapCenteringGateway.getChannel("ADD_CHANNELS_DEFINITION"), {
 				channelsDefinition: [{
 					input: this.browser.getChannel("BUTTON_EVENT"),
-					output: this.map.getChannel("SET_CENTER"),
+					output: this.geoJsonLayer.getChannel("SET_CENTER"),
 					subMethod: "setCenter"
 				},{
 					input: this.browser.getChannel("BUTTON_EVENT"),
 					output: this.geoJsonLayer.getChannel("ANIMATE_MARKER"),
 					subMethod: "animateMarker"
 				}]
-			});
-
-			this.dataDisplayer = new DataDisplayer({
-				parentChannel: this.getChannel()
 			});
 		},
 

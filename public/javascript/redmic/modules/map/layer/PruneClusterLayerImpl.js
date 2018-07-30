@@ -521,6 +521,24 @@ define([
 
 				this._initAnimateMarker(icon);
 			}
+		},
+
+		_setCenter: function(obj) {
+
+			var markerId = obj.markerId,
+				layer = this._getMarkerById(markerId),
+				objEmit = {
+					options: obj.options
+				};
+
+			if (layer) {
+				objEmit.center = layer.getLatLng();
+			} else {
+				layer = this._getMarkerInCluster(markerId);
+				objEmit.center = layer.averagePosition;
+			}
+
+			this._emitEvt('SET_CENTER', objEmit);
 		}
 	});
 });

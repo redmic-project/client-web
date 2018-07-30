@@ -317,6 +317,28 @@ define([
 			for (var featureId in this._lineMarkersById) {
 				this._removeLineMarkersFromMap(featureId);
 			}
+		},
+
+		_setCenter: function(obj) {
+
+			var layer = this._getMarkerById(obj.markerId),
+				options = obj.options;
+
+			if (!layer) {
+				return;
+			}
+
+			if (layer.getBounds) {
+				this._emitEvt('FIT_BOUNDS', {
+					bounds: layer.getBounds(),
+					options: options
+				});
+			} else {
+				this._emitEvt('SET_CENTER', {
+					center: layer.getLatLng(),
+					options: options
+				});
+			}
 		}
 	});
 });

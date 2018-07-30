@@ -181,7 +181,7 @@ define([
 				parentChannel: this.getChannel(),
 				channelsDefinition: [{
 					input: this.browser.getChannel("BUTTON_EVENT"),
-					output: this.map.getChannel("SET_CENTER"),
+					output: this.geoJsonLayer.getChannel("SET_CENTER"),
 					subMethod: "setCenter"
 				},{
 					input: this.browser.getChannel("BUTTON_EVENT"),

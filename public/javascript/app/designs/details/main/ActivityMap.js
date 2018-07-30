@@ -117,11 +117,16 @@ define([
 
 				this._publish(this._widgets.geographic.getChildChannel("map", "ADD_LAYER"), this.layerInstance);
 
+				var widgetInstance = this._widgets.geographic;
+
 				this._publish(
-					this._widgets.geographic.getChildChannel("mapCenteringGateway", "ADD_CHANNELS_DEFINITION"),
-					{
+					widgetInstance.getChildChannel("mapCenteringGateway", "ADD_CHANNELS_DEFINITION"), {
 						channelsDefinition: [{
-							input: this._widgets.geographic.getChildChannel("browser", "BUTTON_EVENT"),
+							input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
+							output: this.layerInstance.getChannel("SET_CENTER"),
+							subMethod: "setCenter"
+						},{
+							input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
 							output: this.layerInstance.getChannel("ANIMATE_MARKER"),
 							subMethod: "animateMarker"
 						}]

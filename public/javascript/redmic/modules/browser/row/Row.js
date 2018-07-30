@@ -158,6 +158,10 @@ define([
 					var value = Utilities.getDeepProp(item, content),
 						attr = highlight[content];
 
+					if (!value) {
+						return;
+					}
+
 					for (var i = 0; i < attr.length; i++) {
 						var valueReplace = attr[i],
 							cleanValueReplace = this._cleanValueHighlight(valueReplace);

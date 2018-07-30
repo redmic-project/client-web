@@ -49,17 +49,10 @@ define([
 			}
 
 			var item = objReceived.item,
-				itemCoords = item.coordinates,
-				coordinates;
-
-			if (!itemCoords) {
-				return;
-			}
-
-			coordinates = [this._getLatitude(itemCoords), this._getLongitude(itemCoords)];
+				itemId = item[this.idProperty];
 
 			this._emitEvt('SET_CENTER', {
-				center: coordinates,
+				markerId: itemId,
 				options: {
 					animate: true,
 					duration: this.centeringDuration

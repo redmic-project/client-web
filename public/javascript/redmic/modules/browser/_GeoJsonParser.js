@@ -52,7 +52,11 @@ define([
 
 			if (item.geometry) {
 
-				item.coordinates = this._getCoordinates(item.geometry);
+				var geometry = this._getCoordinates(item.geometry);
+
+				if (geometry) {
+					item.coordinates = this._getCoordinates(geometry);
+				}
 
 				delete item.geometry;
 			}
@@ -64,21 +68,6 @@ define([
 				var coordinates = geometry.coordinates;
 				if (geometry.type === "Point") {
 					return this._getFirstPointCoordinates(geometry.coordinates);
-				} else if (geometry.type === "LineString") {
-					if (coordinates && coordinates[0]) {
-						var firstCoordinate = geometry.coordinates[0];
-						return this._getFirstPointCoordinates(firstCoordinate);
-					}
-				} else if (geometry.type === "Polygon") {
-					if (coordinates && coordinates[0] && coordinates[0][0]) {
-						var firstCoordinateFirstPolygon = coordinates[0][0];
-						return this._getFirstPointCoordinates(firstCoordinateFirstPolygon);
-					}
-				} else if (geometry.type === "MultiPolygon") {
-					if (coordinates && coordinates[0] && coordinates[0][0] && coordinates[0][0][0]) {
-						var firstCoordinateFirstMultiPolygon = coordinates[0][0][0];
-						return this._getFirstPointCoordinates(firstCoordinateFirstMultiPolygon);
-					}
 				}
 			}
 		},

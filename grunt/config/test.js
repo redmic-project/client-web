@@ -29,10 +29,13 @@ module.exports = function(grunt) {
 			coverage = grunt.option('coverage'),
 
 			currOutputDirName = gruntTaskName + '_on-port_' + ownServerPort,
+			configDirName = '.config-' + ownServerPort,
 
+			configPath = path.join(rootPath, outputPath, configDirName),
 			reportersOutputPath = path.join(rootPath, outputPath, currOutputDirName),
 			absoluteTestsPath = path.join(rootPath, testsPath);
 
+		grunt.file['delete'](configPath);
 		grunt.file['delete'](reportersOutputPath);
 		grunt.file.mkdir(reportersOutputPath);
 

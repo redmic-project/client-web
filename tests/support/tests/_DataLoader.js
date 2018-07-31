@@ -28,7 +28,9 @@ define([
 
 		constructor: function(args) {
 
-			this.propsConfig = {};
+			this.propsConfig = {
+				listIntabs: true
+			};
 
 			lang.mixin(this.propsConfig, args);
 

@@ -20,6 +20,7 @@ define([
 				suiteName: suiteName,
 				definition: SpeciesDistribution,
 				properties: {
+					listIntabs: true,
 					textSearchValue: this.textSearchValue,
 					suiteName: suiteName
 				}

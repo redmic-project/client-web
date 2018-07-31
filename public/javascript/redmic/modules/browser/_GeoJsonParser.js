@@ -50,12 +50,14 @@ define([
 
 			delete item.properties;
 
-			if (item.geometry) {
+			var geometry = item.geometry;
 
-				var geometry = this._getCoordinates(item.geometry);
+			if (geometry) {
+
+				geometry = this._getCoordinates(geometry);
 
 				if (geometry) {
-					item.coordinates = this._getCoordinates(geometry);
+					item.coordinates = geometry;
 				}
 
 				delete item.geometry;

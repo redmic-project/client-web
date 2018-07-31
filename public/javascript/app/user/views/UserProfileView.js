@@ -363,13 +363,14 @@ define([
 
 		_showBoxUser: function(target) {
 
-			var label = "userData",
-				instanceWidget = this._widgets[label];
+			var label = "userData";
 
 			if (target === this.targetImage) {
 				label = "userImage";
 				this._subscriptionOnceChangeImage();
 			}
+
+			var instanceWidget = this._widgets[label];
 
 			this._publish(instanceWidget.getChannel("SHOW"), {
 				node: this._nodes[label]

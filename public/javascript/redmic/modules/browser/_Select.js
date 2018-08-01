@@ -226,8 +226,6 @@ define([
 
 			var idProperty = args[0];
 
-			console.log(this._selection);
-
 			if (this._selection[idProperty]) {
 				this._selectRow(idProperty);
 			}

@@ -164,7 +164,7 @@ define([
 		_subRefresh: function(res) {
 
 			if (res && res.initData && this._initData) {
-				this._dataAvailable(lang.clone(this._initData));
+				this._addData(lang.clone(this._initData));
 			}
 		},
 

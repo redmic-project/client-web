@@ -8,7 +8,6 @@ define([
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/browser/_Select"
 	, "app/base/views/extensions/_LocalSelectionView"
 ], function (
 	_Controller
@@ -20,7 +19,6 @@ define([
 	, _Module
 	, _Show
 	, Total
-	, _Select
 	, _LocalSelectionView
 ){
 	return declare([_Module, _Controller, _Show, _LocalSelectionView, _Store], {
@@ -53,10 +51,8 @@ define([
 			});
 
 			this.browserLeftConfig = this._merge([this.browserConfig, {
-				browserExts: [_Select],
 				title: this.title,
 				browserConfig: {
-					simpleSelection: true,
 					noDataMessage: null
 				}
 			}, this.browserLeftConfig || {}]);

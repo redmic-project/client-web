@@ -46,13 +46,20 @@ define([
 			delete this._rowsOld;
 		},
 
-		_proccesNewData: function(response) {
+		_parserIndexData: function(response) {
 
 			var data = response.data;
 
 			if (data.data) {
 				data = data.data;
 			}
+
+			return data;
+		},
+
+		_proccesNewData: function(response) {
+
+			var data = this._parserIndexData(response);
 
 			for (var i = 0; i < data.length; i++) {
 				this._rescueOldInstance(data[i]);

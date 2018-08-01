@@ -155,9 +155,18 @@ define([
 
 		_addData: function(res) {
 
-			for (var key in this._rows) {
-				this._removeRow(key);
-			}
+			this._clearData();
+
+			this._proccesNewData(res);
+
+			this._createHeaders();
+			this._showListMenu();
+			this._addClassCols();
+
+			this._updateWidth();
+		},
+
+		_parserIndexData: function(res) {
 
 			var headers = res.headers || res.header,
 				data = res.data;
@@ -172,15 +181,16 @@ define([
 
 			this._headers = headers;
 
+			return data;
+		},
+
+		_proccesNewData: function(res) {
+
+			var data = this._parserIndexData(res);
+
 			for (var i= 0; i < data.length; i++) {
 				this._addItem(data[i]);
 			}
-
-			this._createHeaders();
-			this._showListMenu();
-			this._addClassCols();
-
-			this._updateWidth();
 		},
 
 		_updateWidth: function() {

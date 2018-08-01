@@ -58,6 +58,9 @@ define([
 			aspect.after(this, "_definitionRow", lang.hitch(this, this._definitionHierarchicalRow));
 			aspect.before(this, "_configRow", lang.hitch(this, this._configHierarchicalRow));
 
+			aspect.before(this, "_addData", lang.hitch(this, this._addBeforeData));
+			aspect.after(this, "_addData", lang.hitch(this, this._addAfterData));
+
 			aspect.before(this, "_removeRow", lang.hitch(this, this._removeHierarchicalRow));
 		},
 
@@ -163,8 +166,6 @@ define([
 			if (row && !row.instance) {
 				this._addRow(idProperty, row.data);
 
-				console.log(row.instance);
-
 				this._showInstanceRow(this._getRowInstance(idProperty), row.data, node, false);
 			}
 		},
@@ -174,9 +175,26 @@ define([
 			this._emitEvt('COLLAPSE_ROW', req);
 		},
 
+		_addBeforeData: function(response) {
+
+			this._pendingParentsToShow = [];
+		},
+
 		_addData: function(response) {
 
 			this._pendingParentsToShow = [];
+
+			this._clearData();
+
+			this._proccesNewData(response);
+		},
+
+		_addAfterData: function(response) {
+
+			this._showPendingParents();
+		},
+
+		_parserIndexData: function(response) {
 
 			var data = response.data;
 
@@ -184,15 +202,18 @@ define([
 				data = data.data;
 			}
 
-			this._clearData();
+			return data;
+		},
+
+		_proccesNewData: function(response) {
+
+			var data = this._parserIndexData(response);
 
 			for (var i = 0; i < data.length; i++) {
 				var item = data[i];
 
 				this._addItem(item);
 			}
-
-			this._showPendingParents();
 		},
 
 		_addItem: function(item) {
@@ -203,7 +224,7 @@ define([
 			if (!this._getRowInstance(idProperty)) {
 				this._addRowItem(item);
 			} else {
-				this._updateRow(item);
+				this._updateRow(rowInstance, item);
 			}
 
 			this._showRow(item);
@@ -224,7 +245,7 @@ define([
 			this._parentWithRowPending(idProperty, item);
 		},
 
-		_updateRow: function(item) {
+		_updateRow: function(rowInstance, item) {
 
 			var idProperty = item[this.idProperty];
 

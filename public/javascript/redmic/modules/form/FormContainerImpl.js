@@ -271,14 +271,14 @@ define([
 			}
 		},
 
-		_descriptionError: function() {
+		_descriptionError: function(inputName) {
 
-			var inputName;
-
-			for (var key in this._inputsInfo) {
-				if (!this._inputsInfo[key].isValid) {
-					inputName = key;
-					break;
+			if (!inputName) {
+				for (var key in this._inputsInfo) {
+					if (!this._inputsInfo[key].isValid) {
+						inputName = key;
+						break;
+					}
 				}
 			}
 
@@ -335,6 +335,7 @@ define([
 			if (res.success) {
 				dfd.resolve();
 			} else if (res.error) {
+				res.error.propertyName = res.propertyName;
 				dfd.reject(res.error);
 			} else if (res.cancel) {
 				dfd.cancel(res.cancel);
@@ -352,7 +353,7 @@ define([
 			this._emitEvt('LOADED');
 			this._emitEvt('ENABLE_BUTTONS');
 
-			var description = this._descriptionError();
+			var description = this._descriptionError(res.propertyName);
 
 			if (res.description) {
 				description += '. ' + res.description + '.';

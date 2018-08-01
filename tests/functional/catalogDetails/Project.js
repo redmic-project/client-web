@@ -6,7 +6,7 @@ define([
 
 	new _DetailsInfo({
 		namePrefix: 'Project catalog',
-		urlValue: '/catalog/project-info/19',
+		urlValue: '/catalog/project-info/22',
 		reports: true
 	});
 });

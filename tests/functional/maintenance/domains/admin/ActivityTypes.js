@@ -10,7 +10,7 @@ define([
 
 	var namePrefix = 'Activity type domain page',
 		urlValue = '/domains-admin/activity-types',
-		textSearchValue = 'Censos puntuales';
+		textSearchValue = 'Biometrías y desarrollo';
 
 	new _Domain({
 		namePrefix: namePrefix,

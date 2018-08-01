@@ -76,11 +76,6 @@ define([
 			}, this.widgetConfigs || {}]);
 		},
 
-		_afterShow: function(request) {
-
-			this.startup();
-		},
-
 		_clearModules: function() {
 
 			this._publish(this._widgets.administrative.getChannel("CLEAR"));

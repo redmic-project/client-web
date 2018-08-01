@@ -17,9 +17,6 @@ define([
 		//	description:
 		//		Proporciona métodos y contenedor para la búsqueda de tipo bbox.
 
-		//	config: Object
-		//		Opciones por defecto.
-
 		constructor: function(args) {
 
 			this.config = {
@@ -32,13 +29,14 @@ define([
 
 		_initialize: function() {
 
-			this.mapSearch = new Map();
+			this.mapSearch = new Map({});
+
 			this.mapSearch.on("queryMap", lang.hitch(this, this._onNewSearch));
+			this.mapSearch.placeAt(this.domNode);
 		},
 
-		_beforeShow: function(/*Object*/ obj) {
+		_afterShow: function() {
 
-			this.mapSearch.placeAt(obj.node);
 			this.mapSearch.resize();
 		},
 
@@ -54,7 +52,7 @@ define([
 
 		_restore: function() {
 
-			this.mapSearch.emit(this.mapSearch.events.REQUEST_QUERY);
+			this.mapSearch.emit('requestQuery');
 		},
 
 		_onNewSearch: function(evt) {

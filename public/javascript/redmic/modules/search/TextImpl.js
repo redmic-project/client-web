@@ -149,7 +149,6 @@ define([
 			var query = req.query,
 				text = (query.text && query.text.text) || '';
 
-			this.textValue = text;
 			this.textSearch.setValue(text);
 		},
 
@@ -177,17 +176,9 @@ define([
 			if (obj.execute) {
 				this.textSearch.emit('execute');
 			}
-
-			this.textValue = obj.data || '';
 		},
 
 		_newSearch: function(evt) {
-
-			if ((evt && evt.length === 1 )|| (this.textValue === evt)) {
-				return;
-			}
-
-			this.textValue = evt;
 
 			this._emitEvt('TRACK', {
 				type: TRACK.type.event,
@@ -243,7 +234,6 @@ define([
 
 		_reset: function() {
 
-			this.textValue = null;
 			this.textSearch.setI18n(this.i18n);
 			this.textSearch.emit("reset");
 		},

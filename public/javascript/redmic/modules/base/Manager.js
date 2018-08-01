@@ -81,7 +81,7 @@ function(
 								props: {
 									showLabel: false,
 									"class": "primary",
-									label: "download",
+									label: this.i18n.createReport,
 									iconClass: "fa-print",
 									action: "_downloadFile"
 								}
@@ -234,6 +234,7 @@ function(
 			this.handlers.create.remove();
 			this.handlers.location.remove();
 			this.handlers.info.remove();
+
 			this._cleanManager();
 
 			this.destroyRecursive();
@@ -241,13 +242,16 @@ function(
 
 		_createManager: function(showBtn) {
 
-			for (var item in this.zones){
+			for (var item in this.zones) {
 				var zone = this.zones[item];
 				if (!zone.node) {
-					if (zone.align == "left")
-						zone.node = put(this.leftContainer, zone["class"], {});
-					else
-						zone.node = put(this.rightContainer, zone["class"], {});
+					var node = this.rightContainer;
+
+					if (zone.align == "left") {
+						node = this.leftContainer;
+					}
+
+					zone.node = put(node, zone["class"], {});
 				}
 				// Si tiene permisos de edición o no es la zona de edición
 				if (this.perms > 0 || item !== "edit") {
@@ -259,10 +263,9 @@ function(
 							btn.props.onClick = lang.hitch(this, this[btn.props.action]);
 							btn.node = new Button(btn.props).placeAt(zone.node);
 							btn.shared += 1;
-						}
-						// Hay más de un widget usando este botón
-						else if (showBtn[key2] && (btn.node))
+						} else if (showBtn[key2] && (btn.node)) { // Hay más de un widget usando este botón
 							btn.shared += 1;
+						}
 					}
 				}
 			}
@@ -313,8 +316,9 @@ function(
 
 		_getRootChannel: function(/*String*/ channel, /*String?*/ action) {
 
-			if (action)
+			if (action) {
 				channel += this.channelSeparator + action;
+			}
 
 			return "app" + this.channelSeparator + channel;
 		}

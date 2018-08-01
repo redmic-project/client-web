@@ -43,6 +43,7 @@ define([
 						.then(lang.hitch(this, function(values, textArr) {
 
 							var oldTitles = values.oldTitles;
+
 							if (oldTitles.length > 1) {
 								Utils.notSameOrderedMembers(oldTitles, textArr,
 									'No se ha actualizado el listado tras filtrar');

@@ -11,12 +11,11 @@ define([
 ) {
 
 	new DataLoader({
-		urlValue: '/data-loader/activity/522/area',
-		wizardEditionUrlValue: '/data-loader/activity/1143/geo-data/edit/b7df3428-5d0c-4975-bce5-94a937381a87',
-		wizardLoadUrlValue: '/data-loader/activity/1143/geo-data/add/new',
-		textSearchValue: 'Mencáfete',
+		urlValue: '/data-loader/activity/1152/area',
+		wizardEditionUrlValue: '/data-loader/activity/1152/geo-data/edit/78883b11-e89d-44f9-aece-d86763882358',
+		wizardLoadUrlValue: '/data-loader/activity/1152/geo-data/add/new',
+		textSearchValue: 'Aguas interiores',
 		namePrefix: 'Area data loader page',
-
 
 		configSteps: [{
 			type: 'form',

@@ -28,6 +28,9 @@ define([
 			},
 			codeError: {
 				type: ["string", "null"]
+			},
+			reCaptcha: {
+				type: "string"
 			}
 		}
 	};

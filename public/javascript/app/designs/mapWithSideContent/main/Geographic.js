@@ -18,7 +18,6 @@ define([
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_GeoJsonParser"
 	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/map/layer/WmsLayerImpl"
 	, "redmic/modules/search/TextImpl"
 	, "templates/CitationList"
 ], function(
@@ -41,7 +40,6 @@ define([
 	, _Framework
 	, _GeoJsonParser
 	, ListImpl
-	, WmsLayerImpl
 	, TextImpl
 	, TemplateList
 ){
@@ -100,20 +98,6 @@ define([
 			}, this.browserConfig || {}], {
 				arrayMergingStrategy: 'concatenate'
 			});
-
-			this.batimetriasLayerConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: "https://atlas.redmic.es/geoserver/el/wms",
-					props: {
-						layers: ["batimetriaGlobal"],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
-			}, this.batimetriasLayerConfig || {}]);
 		},
 
 		_initializeMain: function() {
@@ -130,17 +114,13 @@ define([
 			this.browserConfig.queryChannel = this.queryChannel;
 			this.browser = new declare(exts)(this.browserConfig);
 
-			this.batimetriasLayerConfig.mapChannel = this.map.getChannel();
+			this._mapCenteringGateway();
+		},
 
-			this.batimetriasLayer = new WmsLayerImpl(this.batimetriasLayerConfig);
+		_mapCenteringGateway: function() {
 
 			this.mapCenteringGateway = new MapCenteringGatewayImpl({
-				parentChannel: this.getChannel(),
-				channelsDefinition: [{
-					input: this.browser.getChannel("BUTTON_EVENT"),
-					output: this.map.getChannel("SET_CENTER"),
-					subMethod: "setCenter"
-				}]
+				parentChannel: this.getChannel()
 			});
 		},
 
@@ -165,7 +145,7 @@ define([
 				channel: this.browser.getChannel("UPDATE_TARGET")
 			});
 
-			if (!this.notTextSearch)
+			if (!this.notTextSearch) {
 				this.publicationsConfig.push({
 					event: 'CLEAR',
 					channel: this.textSearch.getChannel("RESET")
@@ -173,18 +153,12 @@ define([
 					event: 'UPDATE_TARGET',
 					channel: this.textSearch.getChannel("UPDATE_TARGET")
 				});
+			}
 		},
 
 		postCreate: function() {
 
 			this.inherited(arguments);
-
-			this._publish(this.map.getChannel("ADD_LAYER"), {
-				layer: this.batimetriasLayer,
-				layerId: "batimetrias",
-				layerLabel: this.i18n.bathymetry,
-				optional: true
-			});
 
 			this.browserAndSearchContainer = new BorderContainer({
 				title: "<i class='fa fa-table'></i>",

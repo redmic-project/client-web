@@ -22,7 +22,7 @@ define([
 
 	new _DetailsMap({
 		namePrefix: namePrefix + ' area',
-		urlValue: '/admin/activity-area/1143'
+		urlValue: '/admin/activity-area/1152'
 	});
 
 	new _DetailsMap({

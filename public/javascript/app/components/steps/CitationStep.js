@@ -42,6 +42,19 @@ define([
 
 		_setConfigurations: function() {
 
+			this.browserConfig = this._merge([{
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+							icon: "fa-map-marker",
+							title: "map centering",
+							btnId: "mapCentering",
+							returnItem: true
+						}]
+					}
+				}
+			}, this.browserConfig || {}]);
+
 			this.geoJsonLayerConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				selectorChannel: this.getChannel(),
@@ -66,6 +79,23 @@ define([
 
 			var geoJsonLayerDefinition = declare([GeoJsonLayerImpl, _Selectable, _SelectOnClick]);
 			this.geoJsonLayer = new geoJsonLayerDefinition(this.geoJsonLayerConfig);
+
+			this._mapCenteringGatewayAddChannels();
+		},
+
+		_mapCenteringGatewayAddChannels: function(layer) {
+
+			this._publish(this.mapCenteringGateway.getChannel("ADD_CHANNELS_DEFINITION"), {
+				channelsDefinition: [{
+					input: this.browser.getChannel("BUTTON_EVENT"),
+					output: this.geoJsonLayer.getChannel("SET_CENTER"),
+					subMethod: "setCenter"
+				},{
+					input: this.browser.getChannel("BUTTON_EVENT"),
+					output: this.geoJsonLayer.getChannel("ANIMATE_MARKER"),
+					subMethod: "animateMarker"
+				}]
+			});
 		},
 
 		_beforeShowMapWithSideContent: function() {

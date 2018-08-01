@@ -104,6 +104,7 @@ define({
 	, "data": "Datos"
 	, "method": "Método"
 	, "trophic-regime": "Régimen trófico"
+	, "trophicRegime": "Régimen trófico"
 	, "descriptor": "Descriptor"
 	, "chooseReportTitle": "Elija un título para su informe"
 	, "documentsAssociated": "Documentos asociados"
@@ -200,7 +201,7 @@ define({
 	, "undefined": "Indefinido"
 
 	, "domains": "Dominios"
-	, "activity-fields": "Campos de acción"
+	, "activity-fields": "Áreas de la actividad"
 	, "organisation-types": "Tipos de organización"
 	, "platform-types": "Tipos de plataforma"
 	, "activity-types": "Tipos de actividad"
@@ -279,6 +280,7 @@ define({
 
 	, "feedback": "Contacto"
 	, "message": "Mensaje"
+	, "createReport": "Crear report"
 	, "errorReport": "Reporte de error"
 	, "subject": "Asunto"
 	, "sendFeedback": "Mensaje enviado correctamente, muchas gracias por su colaboración."
@@ -659,7 +661,7 @@ define({
 	, "scientificName": "Nombre científico"
 	, "scientificNames": "Nombres científicos"
 	, "commonName": "Nombre común"
-	, "worms": "Worms"
+	, "worms": "WoRMS"
 	, "listingOrder": "Orden de listado"
 	, "aphia": "Aphia"
 	, "family": "Familia"

@@ -34,6 +34,9 @@ define([
 				'class': "flexibleCenteredContainer",
 				widthAreaSelect: 256,
 				heightAreaSelect: 256,
+				zoom: 7,
+				latCenter: 28.3,
+				lonCenter: -16.5,
 				_defaultData: {},
 
 				ownChannel: "mapSelectAreaStep",
@@ -60,7 +63,9 @@ define([
 				"class": "mapSearch mapSearchNotSelectArea",
 				widthAreaSelect: this.widthAreaSelect,
 				heightAreaSelect: this.heightAreaSelect,
-				zoom: 7
+				zoom: this.zoom,
+				latCenter: this.latCenter,
+				lonCenter: this.lonCenter
 			});
 
 			//	TODO cambiar a modulo

@@ -156,6 +156,9 @@ define([
 			//
 
 			this.reCaptchaVerify = true;
+			this._emitEvt('SET_VALUE', {
+				reCaptcha: this.reCaptcha.getResponse()
+			});
 		},
 
 		_resetForm: function() {
@@ -178,8 +181,7 @@ define([
 			//		callback private
 			//
 
-			this._once(this.modelInstance.getChannel("WAS_VALID"),
-				lang.hitch(this, this._wasValid));
+			this._once(this.modelInstance.getChannel("WAS_VALID"), lang.hitch(this, this._wasValid));
 
 			this._submitActive = true;
 
@@ -210,11 +212,14 @@ define([
 			this._emitEvt('LOADED');
 
 			if (result.success) {
-				alertify.alert(this.i18n.success, this.i18n.sendFeedback,
+				alertify.alert(
+					this.i18n.success,
+					this.i18n.sendFeedback,
 					lang.hitch(this, function() {
 						this._resetForm();
 						window.location.href = "/";
-					}));
+					})
+				);
 			} else {
 				this._handleError(result.error);
 			}

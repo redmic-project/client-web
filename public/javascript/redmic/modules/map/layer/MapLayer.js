@@ -33,6 +33,8 @@ define([
 					CLICK: "click",
 					PRE_CLICK: "preClick",
 					MOUSE_OVER: "mouseOver",
+					FIT_BOUNDS: "fitBounds",
+					SET_CENTER: "setCenter",
 					LAYER_LOADING: "layerLoading",
 					LAYER_LOADED: "layerLoaded",
 					LAYER_LEGEND: "layerLegend"
@@ -53,7 +55,9 @@ define([
 					LAYER_REMOVED: "layerRemoved",
 					LAYER_REMOVED_FORWARDED: "layerRemovedForwarded",
 					DELETE_INSTANCE: "deleteInstance",
-					ANIMATE_MARKER: "animateMarker"
+					ANIMATE_MARKER: "animateMarker",
+					FIT_BOUNDS: "fitBounds",
+					SET_CENTER: "setCenter"
 				}
 			};
 
@@ -93,6 +97,9 @@ define([
 				options: {
 					predicate: this._chkLayerIsMe
 				}
+			},{
+				channel : this.getChannel("SET_CENTER"),
+				callback: "_subSetCenter"
 			});
 		},
 
@@ -125,7 +132,18 @@ define([
 			},{
 				event: 'LAYER_REMOVED',
 				channel: this._buildChannel(this.mapChannel, this.actions.LAYER_REMOVED_FORWARDED)
+			},{
+				event: 'SET_CENTER',
+				channel: this._buildChannel(this.mapChannel, this.actions.SET_CENTER)
+			},{
+				event: 'FIT_BOUNDS',
+				channel: this._buildChannel(this.mapChannel, this.actions.FIT_BOUNDS)
 			});
+		},
+
+		_subSetCenter: function(req) {
+
+			this._setCenter(req);
 		},
 
 		_subClear: function() {

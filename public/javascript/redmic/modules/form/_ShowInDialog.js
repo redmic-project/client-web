@@ -2,15 +2,17 @@ define([
 	"dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "dojo/aspect"
 	, "redmic/layout/DialogComplex"
-	, "redmic/modules/components/Keypad/TrizoneKeypadImpl"
+	//, "redmic/modules/components/Keypad/TrizoneKeypadImpl"
 	, "redmic/modules/form/_CreateKeypad"
 ], function(
 	ContentPane
 	, declare
 	, lang
+	, aspect
 	, DialogComplex
-	, TrizoneKeypadImpl
+	//, TrizoneKeypadImpl
 	, _CreateKeypad
 ){
 	return declare([_CreateKeypad], {
@@ -19,22 +21,24 @@ define([
 
 		constructor: function(args) {
 
+			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setShowInDialogConfigurations));
+			aspect.before(this, "_initialize", lang.hitch(this, this._initializeShowInDialog));
 		},
 
-		_initializeCreateKeypad: function() {
+		_setShowInDialogConfigurations: function() {
 
-			this.dialog = new DialogComplex({
+			this.dialogConfig = this._merge([{
 				width: this.width || 6,
 				height: this.height || "lg",
 				title: this.title,
 				onCancel: lang.hitch(this, this._cancel),
 				notDestroyRecursive: true
-			});
+			}, this.dialogConfig || {}]);
+		},
 
-			this.keypad = new TrizoneKeypadImpl({
-				parentChannel: this.getChannel(),
-				items: this.buttons
-			});
+		_initializeShowInDialog: function() {
+
+			this.dialog = new DialogComplex(this.dialogConfig);
 		},
 
 		_getNodeToShowCreateKeypadBefore: function() {

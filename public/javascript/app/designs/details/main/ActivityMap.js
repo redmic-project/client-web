@@ -10,7 +10,6 @@ define([
 	, "redmic/modules/map/layer/PruneClusterLayerImpl"
 	, "redmic/modules/map/layer/_RadiusOnClick"
 	, "app/designs/mapWithSideContent/main/Geographic"
-	, "templates/ActivityTitle"
 ], function(
 	_ListenActivityDataAndAccessByActivityCategory
 	, _Main
@@ -23,7 +22,6 @@ define([
 	, PruneClusterLayerImpl
 	, _RadiusOnClick
 	, Geographic
-	, TemplateTitle
 ){
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection, _ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
@@ -47,11 +45,6 @@ define([
 		_setMainConfigurations: function() {
 
 			this.targetChange = lang.replace(this.templateTargetChange, {id: this.pathVariableId});
-
-			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle,
-				target: this.target
-			}, this.titleWidgetConfig || {}]);
 
 			this.widgetConfigs = this._merge([{
 				geographic: {
@@ -124,11 +117,16 @@ define([
 
 				this._publish(this._widgets.geographic.getChildChannel("map", "ADD_LAYER"), this.layerInstance);
 
+				var widgetInstance = this._widgets.geographic;
+
 				this._publish(
-					this._widgets.geographic.getChildChannel("mapCenteringGateway", "ADD_CHANNELS_DEFINITION"),
-					{
+					widgetInstance.getChildChannel("mapCenteringGateway", "ADD_CHANNELS_DEFINITION"), {
 						channelsDefinition: [{
-							input: this._widgets.geographic.getChildChannel("browser", "BUTTON_EVENT"),
+							input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
+							output: this.layerInstance.getChannel("SET_CENTER"),
+							subMethod: "setCenter"
+						},{
+							input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
 							output: this.layerInstance.getChannel("ANIMATE_MARKER"),
 							subMethod: "animateMarker"
 						}]

@@ -71,11 +71,6 @@ define([
 			}, this.selectionBoxConfig || {}]);
 		},
 
-		_setShowOwnCallbacksForEvents: function () {
-
-			this._onEvt('ANCESTOR_SHOW', lang.hitch(this, this._ancestorShownSelectionBox));
-		},
-
 		_subSelectedRow: function(res) {
 
 		},
@@ -171,7 +166,7 @@ define([
 			!this.omitShowSelectedOnly && this._createSelect();
 		},
 
-		_ancestorShownSelectionBox: function(request) {
+		_afterShow: function(request) {
 
 			var target = this.selectionTarget ? this.selectionTarget : this.target;
 

@@ -110,10 +110,13 @@ define([
 
 		_loginError: function(err) {
 
-			var error = "Error";
+			var error = "Error",
+				res = err.response;
 
-			if (err.response && err.response.data && err.response.data.error_description) {
-				error = err.response.data.error_description;
+			if (res && res.data && res.data.error_description) {
+				error = res.data.error_description;
+			} else if (err.message) {
+				error = err.message;
 			}
 
 			alertify.error(error);
@@ -133,7 +136,7 @@ define([
 			}
 		},
 
-		_getAccessToken: function(/*obj*/ values){
+		_getAccessToken: function(/*obj*/ values) {
 			// summary:
 			//		Función que se realiza un request con los valores que le pasas
 			//		para obtener el token.
@@ -143,14 +146,14 @@ define([
 			//		values private: credenciales para obtener el token
 			//
 
-			return request(redmicConfig.services.token, {
-				handleAs: "json",
-				method: "POST",
-				data: "grant_type=password&username=" + values.email + "&password=" + values.password + "&scope=write",
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-					'Authorization': 'Basic <application:secret>'
-				}
+			var url = redmicConfig.services.getToken,
+				clientId = redmicConfig.oauthClientId,
+				bodyData = 'clientid=' + clientId + '&username=' + values.email + '&password=' + values.password;
+
+			return request(url, {
+				method: 'POST',
+				handleAs: 'json',
+				data: bodyData
 			});
 		}
 	});

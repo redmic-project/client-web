@@ -3,13 +3,11 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "app/designs/details/_AddTitle"
-	, "templates/DefaultDetailsTitle"
 ], function (
 	declare
 	, lang
 	, aspect
 	, _AddTitle
-	, TemplateTitle
 ){
 	return declare(_AddTitle, {
 		//	summary:
@@ -30,7 +28,6 @@ define([
 		_setAddBasicTitleConfigurations: function() {
 
 			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle,
 				target: this.getOwnChannel() + "DetailsTitle"
 			}, this.titleWidgetConfig || {}]);
 		},

@@ -70,8 +70,7 @@ define([
 		_setMainConfigurations: function() {
 
 			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle,
-				target: this.target
+				template: TemplateTitle
 			}, this.titleWidgetConfig || {}]);
 
 			this.widgetConfigs = this._merge([{
@@ -135,11 +134,6 @@ define([
 					}
 				}
 			}, this.widgetConfigs || {}]);
-		},
-
-		_afterShow: function(request) {
-
-			this.startup();
 		},
 
 		_publishMapBox: function(action, obj) {

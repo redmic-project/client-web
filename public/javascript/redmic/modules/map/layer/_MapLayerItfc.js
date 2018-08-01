@@ -27,7 +27,8 @@ define([
 				"_afterLayerAdded": {},
 				"_afterLayerRemoved": {},
 				"_redraw": {},
-				"_animateMarker": {}
+				"_animateMarker": {},
+				"_setCenter": {}
 			});
 		}
 	});

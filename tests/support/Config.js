@@ -48,7 +48,7 @@ define([], function() {
 			veryLongSleep: 5000
 		},
 		counter: {
-			findLoading: 100
+			findLoading: 300
 		}
 	};
 });

@@ -137,6 +137,10 @@ define([
 
 		_reset: function() {
 
+			if (!this._inputInstance) {
+				return;
+			}
+
 			this._inputInstance.emit('reset');
 			this._enable();
 		},
@@ -147,7 +151,7 @@ define([
 				return;
 			}
 
-			this._inputInstance.emit('clear');
+			this._inputInstance.emit('reset');
 			this._enable();
 		},
 
@@ -191,6 +195,17 @@ define([
 			} else if (this._isPropertyNameObject(obj)) {
 				this._inputInstance && this._inputInstance.emit('setItem', obj[this.propertyName]);
 				this._emitChanged(obj[this.propertyName][this.idProperty]);
+			}
+		},
+
+		_doClear: function() {
+
+			this._clear();
+
+			if (this.modelChannel && this.propertyName && this.propertyName !== this.getChannel()) {
+				this._publish(this._buildChannel(this.modelChannel, this.actions.CLEAR), {
+					properties: [this.propertyName]
+				});
 			}
 		},
 

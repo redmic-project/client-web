@@ -160,7 +160,7 @@ define([
 				item = value;
 
 			if (itemDefault) {
-				item =lang.clone(itemDefault);
+				item = lang.clone(itemDefault);
 				item = Utilities.setDeepProp(item, propertyPath, value);
 			}
 

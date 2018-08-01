@@ -164,7 +164,7 @@ define([
 		_subRefresh: function(res) {
 
 			if (res && res.initData && this._initData) {
-				this._dataAvailable(lang.clone(this._initData));
+				this._addData(lang.clone(this._initData));
 			}
 		},
 
@@ -292,7 +292,8 @@ define([
 			this.rowConfig = this._merge([this.rowConfig || {}, {
 				parentChannel: this.getChannel(),
 				template: this._getTemplate(item),
-				idProperty: this.idProperty
+				idProperty: this.idProperty,
+				pathSeparator: this.pathSeparator
 			}]);
 		},
 

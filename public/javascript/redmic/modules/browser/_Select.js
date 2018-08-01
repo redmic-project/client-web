@@ -127,6 +127,8 @@ define([
 				return;
 			}
 
+			this._selection[idProperty] = true;
+
 			this._emitEvt('SELECTED_ROW', {
 				idProperty: idProperty
 			});
@@ -145,6 +147,8 @@ define([
 			if (!this._isIdProperty(idProperty)) {
 				return;
 			}
+
+			delete this._selection[idProperty];
 
 			this._emitEvt('DESELECTED_ROW', {
 				idProperty: idProperty
@@ -174,7 +178,7 @@ define([
 
 			this._emitEvt('CLEAR_SELECTION_ROWS');
 
-			this._getSelections();
+			this._selection = {};
 		},
 
 		_getItemToSelect: function(ids) {
@@ -210,6 +214,10 @@ define([
 
 			var selections = req.selections,
 				selection = selections && selections[this._getSelectionTarget()] || {};
+
+			if (!selections) {
+				return;
+			}
 
 			this._selection = selection.items || {};
 		},

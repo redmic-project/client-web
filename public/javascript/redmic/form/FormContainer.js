@@ -47,7 +47,7 @@ define([
 	, 'redmic/modules/form/input/UploadFileImpl'
 	, 'redmic/modules/form/input/TextAreaImpl'
 	, 'redmic/modules/form/input/GeometryImpl'
-	, 'redmic/modules/form/input/SwitchWithMapImpl'
+	, 'redmic/modules/form/input/MapSearchImpl'
 
 	, 'templates/SpeciesFilter'
 	, 'templates/ProjectFilter'
@@ -107,7 +107,7 @@ define([
 	, UploadFileImpl
 	, TextAreaImpl
 	, GeometryImpl
-	, SwitchWithMapImpl
+	, MapSearchImpl
 
 	, SpeciesFilter
 	, ProjectFilter
@@ -438,8 +438,8 @@ define([
 					inputDefinition = GeometryImpl;
 					break;
 
-				case 'switchWithMap':
-					inputDefinition = SwitchWithMapImpl;
+				case 'mapSearch':
+					inputDefinition = MapSearchImpl;
 					break;
 
 				case 'button':

@@ -169,10 +169,7 @@ define([
 
 			this.subscriptionsConfig.push({
 				channel: this.persistence.getChannel("SAVED"),
-				callback: "_subSaved",
-				options: {
-					predicate: lang.hitch(this, this._chkSuccessful)
-				}
+				callback: "_subSaved"
 			});
 		},
 
@@ -195,6 +192,10 @@ define([
 		_subSaved: function(result) {
 
 			this._emitEvt('LOADED');
+
+			if (!result.success) {
+				return;
+			}
 
 			result.hide = true;
 			this._publish(this.formActive.getChannel("SAVED"), result);
@@ -276,35 +277,7 @@ define([
 
 		_createAndShowForm: function(obj) {
 
-			if (!this[obj.label + 'Form']) {
-
-				this._setIdDefault(obj);
-
-				var formDef = declare([FormContainerImpl, _ListenModelHasChanged, _CreateKeypad]);
-
-				this[obj.label + 'Form'] = new declare(formDef).extend(_Window)(obj.formConfig);
-
-				this._subscribe(this[obj.label + 'Form'].getChannel("CANCELLED"), lang.hitch(this, function(res) {
-					this._showBoxUser(obj.formConfig.targetSave ? obj.formConfig.targetSave : obj.formConfig.target);
-				}));
-
-				this._subscribe(this[obj.label + 'Form'].getChannel("SUBMITTED"), lang.hitch(this, function(res) {
-
-					if (res.error) {
-						return;
-					}
-
-					this._emitEvt('LOADING', {
-						global: true
-					});
-
-					this._emitEvt('SAVED_FORM', {
-						item: res.data,
-						target: obj.formConfig.targetSave ? obj.formConfig.targetSave : obj.formConfig.target,
-						idProperty: this.idProperty
-					});
-				}));
-			}
+			this._createForm(obj);
 
 			this.formActive = this[obj.label + 'Form'];
 
@@ -324,6 +297,48 @@ define([
 			} else {
 				this._showFormAndHideBoxUser(this.formActive, obj.labelNode);
 			}
+		},
+
+		_createForm: function(obj) {
+
+			var nameForm = obj.label + 'Form',
+				instanceForm = this[nameForm];
+
+			if (instanceForm) {
+				return;
+			}
+
+			this._setIdDefault(obj);
+
+			var formDef = declare([FormContainerImpl, _ListenModelHasChanged, _CreateKeypad]);
+
+			this[obj.label + 'Form'] = instanceForm = new declare(formDef).extend(_Window)(obj.formConfig);
+
+			this._createSubscriptionsForm(instanceForm, obj);
+		},
+
+		_createSubscriptionsForm: function(instanceForm, obj) {
+
+			this._subscribe(instanceForm.getChannel("CANCELLED"), lang.hitch(this, function(res) {
+				this._showBoxUser(obj.formConfig.targetSave ? obj.formConfig.targetSave : obj.formConfig.target);
+			}));
+
+			this._subscribe(instanceForm.getChannel("SUBMITTED"), lang.hitch(this, function(res) {
+
+				if (res.error) {
+					return;
+				}
+
+				this._emitEvt('LOADING', {
+					global: true
+				});
+
+				this._emitEvt('SAVED_FORM', {
+					item: res.data,
+					target: obj.formConfig.targetSave ? obj.formConfig.targetSave : obj.formConfig.target,
+					idProperty: this.idProperty
+				});
+			}));
 		},
 
 		_setIdDefault: function(obj) {
@@ -348,23 +363,20 @@ define([
 
 		_showBoxUser: function(target) {
 
-			var label;
+			var label = "userData";
 
 			if (target === this.targetImage) {
 				label = "userImage";
-			} else {
-				label = "userData";
-			}
-
-			if (target === this.targetImage) {
 				this._subscriptionOnceChangeImage();
 			}
 
-			this._publish(this._widgets[label].getChannel("SHOW"), {
+			var instanceWidget = this._widgets[label];
+
+			this._publish(instanceWidget.getChannel("SHOW"), {
 				node: this._nodes[label]
 			});
 
-			this._publish(this._widgets[label].getChannel('SHOW_WINDOW'));
+			this._publish(instanceWidget.getChannel('SHOW_WINDOW'));
 		},
 
 		_subscriptionOnceChangeImage: function() {

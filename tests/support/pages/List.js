@@ -16,7 +16,8 @@ define([
 
 		constructor: function(args) {
 
-			global.listContainerWithoutLoadingSelector = 'div.containerList' + Config.selector.notLoading;
+			global.listContainerWithoutLoadingSelector = this._getParentList() +
+				'div.containerList' + Config.selector.notLoading;
 
 			global.listSelector = listContainerWithoutLoadingSelector + ' div.contentList';
 			global.listRowCheckboxSelector = 'div.check span';
@@ -33,6 +34,19 @@ define([
 			global.listModeInputSelectSelector = listModeInputSelector + ' > select';
 
 			global.listOrderSelector = listBottomAreaSelector + ' > div.orderZone > div.containerOrder';
+		},
+
+		_getParentList: function() {
+
+			var config = this.externalContext.config;
+
+			if (config.listIntabs) {
+				return 'div.dijitTabContainerTopChildWrapper:not(.dijitHidden) ';
+			} else if (config.listParentSelector) {
+				return config.listParentSelector;
+			}
+
+			return '';
 		},
 
 		getElementByTextInRow: function(text) {

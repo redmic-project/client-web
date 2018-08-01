@@ -32,7 +32,14 @@ define([
 				modelSchema: this.modelSchema,
 				idProperty: this.idProperty,
 				lockBackground: true,
-				parentChannel: this.getChannel()
+				parentChannel: this.getChannel(),
+				buttonsConfig: {
+					submit: {
+						props: {
+							label: this.i18n.save
+						}
+					}
+				}
 			}, this.formConfig || {}]);
 		},
 

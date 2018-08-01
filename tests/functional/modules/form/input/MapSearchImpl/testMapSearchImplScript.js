@@ -1,7 +1,7 @@
 require([
 	'dojo/_base/declare'
 	, 'dojo/dom'
-	, 'redmic/modules/form/input/SwitchWithMapImpl'
+	, 'redmic/modules/form/input/MapSearchImpl'
 ], function(
 	declare
 	, dom

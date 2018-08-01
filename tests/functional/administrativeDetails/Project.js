@@ -6,7 +6,7 @@ define([
 
 	new _DetailsInfo({
 		namePrefix: 'Project',
-		urlValue: '/admin/project-info/19',
+		urlValue: '/admin/project-info/22',
 		editionLink: true
 	});
 });

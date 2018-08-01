@@ -70,7 +70,7 @@ define([
 					.then(self.getCountItemWithExpand())
 					.then(function(value) {
 
-						var parent = this.parent,
+						/*var parent = this.parent,
 							values = {};
 
 						for (var i = 1; i <= value; i++) {
@@ -84,7 +84,9 @@ define([
 						return parent.then(lang.partial(function(values) {
 
 							return values.index;
-						}, values));
+						}, values));*/
+
+						return value ? 1 : null;
 					});
 
 			}, this);

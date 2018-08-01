@@ -5,7 +5,6 @@ define([
 	, "dojo/Deferred"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
-	, "RWidgets/Switch"
 	, "./_NodesCreation"
 	, "./_InputItfc"
 ], function(
@@ -15,7 +14,6 @@ define([
 	, Deferred
 	, _Module
 	, _Show
-	, Switch
 	, _NodesCreation
 	, _InputItfc
 ){
@@ -274,8 +272,9 @@ define([
 			this._createInputNodes();
 			this._inputInstance = this._createInputInstance();
 
-			if (this.dfdBeforeShow)
+			if (this.dfdBeforeShow) {
 				this.dfdBeforeShow.resolve();
+			}
 
 			this._linkLabelToInput();
 		},

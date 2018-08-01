@@ -120,8 +120,9 @@ define([
 
 		_formatColumn: function(unit, value) {
 
-			if (value === '-')
+			if (value === '-') {
 				return value;
+			}
 
 			return value && (value.toFixed(3) + ' ' + unit);
 		},
@@ -137,8 +138,9 @@ define([
 				elementuuid: this.pathVariableId.id
 			});
 
-			if (target === this.target[1])
+			if (target === this.target[1]) {
 				return;
+			}
 
 			this.target[1] = target;
 
@@ -174,10 +176,11 @@ define([
 				id: this.pathVariableId.activityid
 			});
 
-			if (this.target[2])
+			if (this.target[2]) {
 				this.target[2] = target;
-			else
+			} else {
 				this.target.push(target);
+			}
 
 			this._emitEvt('GET', {
 				target: target,
@@ -208,12 +211,13 @@ define([
 			var cat = data.activityCategory,
 				target;
 
-			if (cat === 'at')
+			if (cat === 'at') {
 				target = this.pointTrackAnimalTarget;
-			else if (cat === 'pt')
+			} else if (cat === 'pt') {
 				target = this.pointTrackPlatformTarget;
-			else
+			} else {
 				return;
+			}
 
 			target = lang.replace(target, {
 				activityid: this.pathVariableId.activityid

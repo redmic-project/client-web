@@ -72,7 +72,7 @@ define([
 			this.facetsConfig = this._merge([{
 				aggs: {
 					"activityType": {
-						'open': true,
+						"open": true,
 						"terms": {
 							"field": "activityType.name",
 							"size": 20

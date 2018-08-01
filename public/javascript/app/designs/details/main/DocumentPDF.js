@@ -7,7 +7,6 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "templates/DocumentTitle"
 	, "redmic/modules/components/PDFViewer/PDFViewer"
 ], function(
 	_Main
@@ -18,7 +17,6 @@ define([
 	, redmicConfig
 	, declare
 	, lang
-	, TemplateTitle
 	, PDFViewer
 ){
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
@@ -41,11 +39,6 @@ define([
 
 		_setMainConfigurations: function() {
 
-			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle,
-				target: this.target
-			}, this.titleWidgetConfig || {}]);
-
 			this.widgetConfigs = this._merge([{
 				pdf: {
 					width: 6,
@@ -57,11 +50,6 @@ define([
 					}
 				}
 			}, this.widgetConfigs || {}]);
-		},
-
-		_afterShow: function(request) {
-
-			this.startup();
 		},
 
 		_clearModules: function() {

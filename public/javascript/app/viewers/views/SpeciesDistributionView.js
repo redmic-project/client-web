@@ -402,12 +402,6 @@ define([
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this.map.getChannel("MOVE_START"),
-				callback: "_subMoveStart"
-			},{
-				channel : this.map.getChannel("CENTER_SET"),
-				callback: "_subCenterSet"
-			},{
 				channel : this.map.getChannel("SHOWN"),
 				callback: "_subMapShown"
 			},{
@@ -557,29 +551,6 @@ define([
 					label: "speciesDistributionZoom-" + response.zoom
 				}
 			});
-		},
-
-		_subMoveStart: function(response) {
-
-			this._okOpenList = false;
-			this._stopTimeOutOpenList();
-		},
-
-		_subCenterSet: function(response) {
-
-			this._startTimeOutOpenList();
-		},
-
-		_startTimeOutOpenList: function() {
-
-			this.timeOut = setTimeout(lang.hitch(this, function() {
-				this._okOpenList = true;
-			}), 100);
-		},
-
-		_stopTimeOutOpenList: function() {
-
-			clearTimeout(this.timeOut);
 		},
 
 		_checkZoomLevel: function() {

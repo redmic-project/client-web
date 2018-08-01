@@ -3,14 +3,12 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/DocumentInfo"
-	, "templates/DocumentTitle"
 	, "./_DetailsBase"
 ], function(
 	redmicConfig
 	, declare
 	, lang
 	, TemplateInfo
-	, TemplateTitle
 	, _DetailsBase
 ){
 	return declare([_DetailsBase], {
@@ -29,7 +27,6 @@ define([
 				target: redmicConfig.services.document,
 				activitiesTargetBase: redmicConfig.services.activityDocuments,
 				templateInfo: TemplateInfo,
-				templateTitle: TemplateTitle,
 
 				reportService: "document"
 			};

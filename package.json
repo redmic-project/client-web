@@ -24,7 +24,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://git.redmic.net/redmic-client/web.git"
+    "url": "https://gitlab.com/redmic-project/client/web.git"
   },
   "private": true,
   "scripts": {
@@ -38,6 +38,7 @@
     "prom-client": "^11.0.0",
     "pug": "^2.0.3",
     "response-time": "^2.3.2",
+    "request": "^2.71.0",
     "winston": "^2.4.2"
   },
   "devDependencies": {
@@ -96,6 +97,6 @@
     "npm": ">=3.10"
   },
   "main": "app",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "dojoBuild": "redmic.profile.js"
 }

@@ -14,7 +14,6 @@ define([
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/layout/TabsDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/ActivityTitle"
 	, "templates/ActivityList"
 ], function(
 	_Main
@@ -32,13 +31,11 @@ define([
 	, Total
 	, TabsDisplayer
 	, TemplateDisplayer
-	, TemplateTitle
 	, TemplateActivities
 ){
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
 		//	summary:
 		//		Vista detalle de Organisation.
-
 
 		constructor: function(args) {
 
@@ -46,8 +43,7 @@ define([
 
 			this.config = {
 				noScroll: true,
-				_titleRightButtonsList: [],
-				templateTitle: TemplateTitle
+				_titleRightButtonsList: []
 			};
 
 			lang.mixin(this, this.config, args);
@@ -57,10 +53,11 @@ define([
 
 			this.target = [this.target];
 
-			this.titleWidgetConfig = this._merge([{
-				template: this.templateTitle,
-				target: this.target[0]
-			}, this.titleWidgetConfig || {}]);
+			if (this.templateTitle) {
+				this.titleWidgetConfig = this._merge([{
+					template: this.templateTitle
+				}, this.titleWidgetConfig || {}]);
+			}
 
 			this.widgetConfigs = this._merge([{
 				info: {
@@ -113,11 +110,6 @@ define([
 					}
 				}
 			};
-		},
-
-		_afterShow: function(request) {
-
-			this.startup();
 		},
 
 		_clearModules: function() {

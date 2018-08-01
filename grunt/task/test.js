@@ -20,6 +20,7 @@ module.exports = function(grunt) {
 			, '"--user=userEmail" para definir el nombre de acceso del usuario'
 			, '"--pass=userPassword" para definir el password de acceso del usuario'
 			, '"--headless" para ejecutar sin interfaz'
+			, '"--server-url=url" para definir la dirección de la aplicación a testear'
 		];
 
 	grunt.registerTask('test-unit-local',
@@ -60,17 +61,18 @@ module.exports = function(grunt) {
 		grunt.config('shell.test-functional-local-parallel', {
 			command: function() {
 
-				var gruntCommand = 'grunt test-functional-local --headless',
+				var serverUrlParam = grunt.option('server-url') || 'http://redmic.local',
 					userParam = grunt.option('user'),
 					passParam = grunt.option('pass'),
 					serverPort = 9000,
+					gruntCommand = 'grunt test-functional-local --headless --server-url="' + serverUrlParam + '"',
 
 					publicZoneGroups = 'catalog,catalogDetails,viewers,products',
 					administrativeZoneGroup = 'administrative,!administrative/taxonomy',
 					taxonomyZoneGroup = 'administrative/taxonomy',
 					dataLoaderAndAdministrativeDetailsZoneGroup = 'administrativeDetails,dataLoader',
-					maintenanceAndAdminDomainsZoneGroup = 'maintenance,!maintenance/domains,maintenance/domains/admin',
-					geometryDomainsZoneGroup = 'maintenance/domains/geometry',
+					maintenanceAndAdminDomainsZoneGroup = 'maintenance,!maintenance/domains/taxon' +
+						',!maintenance/domains/observations',
 					observationDomainsZoneGroup = 'maintenance/domains/observations',
 					taxonDomainsZoneGroup = 'maintenance/domains/taxon',
 
@@ -90,7 +92,7 @@ module.exports = function(grunt) {
 					userZoneGroupsList = [
 						publicZoneGroups, administrativeZoneGroup, taxonomyZoneGroup,
 						dataLoaderAndAdministrativeDetailsZoneGroup, maintenanceAndAdminDomainsZoneGroup,
-						geometryDomainsZoneGroup, observationDomainsZoneGroup, taxonDomainsZoneGroup
+						 observationDomainsZoneGroup, taxonDomainsZoneGroup
 					],
 
 					commonGuestZoneGroups = guestCommonTestsParams + 'common',

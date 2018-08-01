@@ -661,7 +661,7 @@ define({
 	, "scientificName": "Nombre científico"
 	, "scientificNames": "Nombres científicos"
 	, "commonName": "Nombre común"
-	, "worms": "Worms"
+	, "worms": "WoRMS"
 	, "listingOrder": "Orden de listado"
 	, "aphia": "Aphia"
 	, "family": "Familia"

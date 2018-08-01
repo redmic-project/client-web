@@ -97,7 +97,7 @@ define([
 				channel: this.getChannel("COLLAPSED_ROW")
 			},{
 				event: 'EXPAND',
-				channel: this.getChannel("EXPAND")
+				channel: this. getChannel("EXPAND")
 			},{
 				event: 'COLLAPSE',
 				channel: this.getChannel("COLLAPSE")
@@ -149,19 +149,23 @@ define([
 
 			if (row.pendingChildren) {
 				for (var i = 0; i < children.length; i++) {
-					var idPropertyChild = children[i],
-					rowChild = this._getRow(idPropertyChild);
-
-					if (rowChild && !rowChild.instance) {
-						this._addRow(idPropertyChild, rowChild.data);
-						this._publish(this._getRowInstance(idPropertyChild).getChannel('SHOW'), {
-							data: rowChild.data,
-							node: node
-						});
-					}
+					this._addRowWithParentExpanded(children[i], node);
 				}
 
 				this._getRow(idProperty).pendingChildren = false;
+			}
+		},
+
+		_addRowWithParentExpanded: function(idProperty, node) {
+
+			var row = this._getRow(idProperty);
+
+			if (row && !row.instance) {
+				this._addRow(idProperty, row.data);
+
+				console.log(row.instance);
+
+				this._showInstanceRow(this._getRowInstance(idProperty), row.data, node, false);
 			}
 		},
 
@@ -171,6 +175,8 @@ define([
 		},
 
 		_addData: function(response) {
+
+			this._pendingParentsToShow = [];
 
 			var data = response.data;
 
@@ -185,54 +191,106 @@ define([
 
 				this._addItem(item);
 			}
+
+			this._showPendingParents();
 		},
 
 		_addItem: function(item) {
 
 			var idProperty = item[this.idProperty],
-				rowInstance = this._getRowInstance(idProperty),
-				evaluateItem = this._evaluateItem(item);
-
-			if (!rowInstance) {
-				this._checkParentAndAddChild(item, !evaluateItem);
-
-				if (evaluateItem) {
-					this._addRow(idProperty, item);
-				} else {
-					this._addItemWithoutInstance(idProperty, item);
-				}
-
-				this._parentWithRowPending(idProperty, item);
-
 				rowInstance = this._getRowInstance(idProperty);
+
+			if (!this._getRowInstance(idProperty)) {
+				this._addRowItem(item);
 			} else {
-				item = this._mergeRowData(idProperty, item);
-
-				this._publish(rowInstance.getChannel('UPDATE_TEMPLATE'), {
-					template: this._getTemplate(item)
-				});
-
-				if (!evaluateItem) {
-					this._publish(rowInstance.getChannel('UPDATE_DATA'), {
-						data: item
-					});
-				}
+				this._updateRow(item);
 			}
 
-			if (!evaluateItem) {
+			this._showRow(item);
+		},
+
+		_addRowItem: function(item) {
+
+			var idProperty = item[this.idProperty];
+
+			this._checkParentAndAddChild(item);
+
+			if (this._evaluateItem(item)) {
+				this._addRow(idProperty, item);
+			} else {
+				this._addItemWithoutInstance(idProperty, item);
+			}
+
+			this._parentWithRowPending(idProperty, item);
+		},
+
+		_updateRow: function(item) {
+
+			var idProperty = item[this.idProperty];
+
+			item = this._mergeRowData(idProperty, item);
+
+			this._publish(rowInstance.getChannel('UPDATE_TEMPLATE'), {
+				template: this._getTemplate(item)
+			});
+
+			if (!this._evaluateItem(item)) {
+				this._publish(rowInstance.getChannel('UPDATE_DATA'), {
+					data: item
+				});
+			}
+		},
+
+		_showRow: function(item) {
+
+			var idProperty = item[this.idProperty],
+				rowInstance = this._getRowInstance(idProperty);
+
+			if (!rowInstance || !this._evaluateItem(item)) {
+				return;
+			} else if (item[this.leavesProperty]) {
+				this._pendingParentsToShow.push(idProperty);
+
 				return;
 			}
 
+			this._showInstanceRow(rowInstance, item, this.rowsContainerNode, false);
+		},
+
+		_showInstanceRow: function(instance, item, node, inFront) {
+
 			var obj = {
 				data: item,
-				node: this.rowsContainerNode
+				node: node
 			};
 
-			if (item[this.leavesProperty]) {
+			if (inFront) {
 				obj.inFront = true;
 			}
 
-			rowInstance && this._publish(rowInstance.getChannel('SHOW'), obj);
+			instance && this._publish(instance.getChannel('SHOW'), obj);
+		},
+
+		_showPendingParents: function(item) {
+
+			var count = (this._pendingParentsToShow.length - 1);
+
+			for (var i = count; i >= 0; i--) {
+				this._showPendingParent(this._pendingParentsToShow[i]);
+			}
+		},
+
+		_showPendingParent: function(idProperty) {
+
+			var row = this._getRow(idProperty),
+				item = row.data,
+				instance = row.instance;
+
+			if (!instance) {
+				return;
+			}
+
+			this._showInstanceRow(instance, item, this.rowsContainerNode, true);
 		},
 
 		_evaluateItem: function(item) {
@@ -279,7 +337,7 @@ define([
 			row.leaves = item[this.leavesProperty];
 		},
 
-		_checkParentAndAddChild: function(item, pendingChild) {
+		_checkParentAndAddChild: function(item) {
 
 			var idProperty = item[this.idProperty],
 				path = item[this.pathProperty],
@@ -303,7 +361,7 @@ define([
 			if (!rowParent) {
 				this._addPendingParent(idProperty, idPropertyParent);
 			} else {
-				if (pendingChild) {
+				if (this._evaluateItem(item)) {
 					rowParent.pendingChildren = true;
 				}
 

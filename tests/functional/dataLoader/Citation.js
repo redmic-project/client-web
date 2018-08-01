@@ -12,12 +12,12 @@ define([
 	, Utils
 ) {
 
-	var urlValue = '/data-loader/activity/149/citation',
+	var urlValue = '/data-loader/activity/120/citation',
 		namePrefix = 'Citation data loader page';
 
 	new DataLoader({
 		urlValue,
-		textSearchValue: 'Brachytrichia quoyi',
+		textSearchValue: 'Polydora langerhansi',
 		namePrefix
 	});
 

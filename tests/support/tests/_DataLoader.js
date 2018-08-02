@@ -29,7 +29,7 @@ define([
 		constructor: function(args) {
 
 			this.propsConfig = {
-				listIntabs: true
+
 			};
 
 			lang.mixin(this.propsConfig, args);
@@ -51,6 +51,7 @@ define([
 
 				obj.suiteName = 'Atlas' + suiteName;
 				obj.notClickLayerMap = true;
+				obj.listIntabs = true;
 
 				Utils.registerTests({
 					suiteName: 'Atlas' + suiteName,
@@ -58,11 +59,13 @@ define([
 					properties: obj
 				});
 			} else {
+				obj = lang.clone(this.propsConfig);
+				obj.listIntabs = true;
 
 				Utils.registerTests({
 					suiteName: 'Map' + suiteName,
 					definition: MapTests,
-					properties: this.propsConfig
+					properties: obj
 				});
 			}
 

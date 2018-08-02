@@ -27,7 +27,7 @@ define([
 						.then(indexPage.getFirstIndexItemWithChildren())
 						.then(function(parentIndex) {
 
-							if (parentIndex !== undefined) {
+							if (parentIndex) {
 								return this.parent.then(indexPage.clickRowInExpandButton(parentIndex));
 							}
 						});
@@ -39,7 +39,7 @@ define([
 						.then(indexPage.getFirstIndexItemWithChildren())
 						.then(function(parentIndex) {
 
-							if (parentIndex !== undefined) {
+							if (parentIndex) {
 								return this.parent.then(indexPage.clickRowInExpandButton(parentIndex))
 									.then(indexPage.clickRowInCollapseButton(parentIndex));
 							}

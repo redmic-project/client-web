@@ -15,7 +15,8 @@ define([
 	new _Domain({
 		namePrefix: namePrefix,
 		urlValue: urlValue,
-		textSearchValue: textSearchValue
+		textSearchValue: textSearchValue,
+		newOrderingValue: 'name_en'
 	});
 
 	new _DomainFormEdition({

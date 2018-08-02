@@ -1,7 +1,7 @@
 define([
 	"app/base/views/_View"
-	, "app/administrative/views/DocumentView"
-	, "app/administrative/taxonomy/views/SpeciesView"
+	, "app/viewers/views/BibliographyView"
+	, "app/catalog/views/SpeciesCatalogView"
 	, "app/components/steps/CitationStep"
 	, "app/components/steps/MainDataStep"
 	, "app/components/steps/DocumentStepFiltered"
@@ -72,7 +72,15 @@ define([
 						// WizardStep params
 						label: this.i18n.correctionDocument,
 						propertyName: "document",
-						title: this.i18n.selectDocument
+						title: this.i18n.selectDocument,
+						facetsConfig: {
+							aggs: {
+								"language": {
+									"open": true
+								}
+							},
+							openFacets: false
+						}
 					}
 				},{
 					definition: declare([SpeciesView, _CompleteBySelection]),

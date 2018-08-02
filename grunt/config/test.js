@@ -33,7 +33,8 @@ module.exports = function(grunt) {
 
 			configPath = path.join(rootPath, outputPath, configDirName),
 			reportersOutputPath = path.join(rootPath, outputPath, currOutputDirName),
-			absoluteTestsPath = path.join(rootPath, testsPath);
+			absoluteTestsPath = path.join(rootPath, testsPath),
+			userDataDir = outputPath + '/' + configDirName;
 
 		grunt.file['delete'](configPath);
 		grunt.file['delete'](reportersOutputPath);
@@ -93,7 +94,8 @@ module.exports = function(grunt) {
 				reporters: unitReporters,
 				suites: suites,
 				coverage: coverage,
-				dojoBaseUrl: dojoCommonBaseUrl
+				dojoBaseUrl: dojoCommonBaseUrl,
+				userDataDir: userDataDir
 			}),
 			testFunctionalParams = deepmerge(testParams, {
 				serverUrl: serverUrl,
@@ -105,7 +107,7 @@ module.exports = function(grunt) {
 				functionalSuites: functionalSuites,
 				reportersOutputPath: reportersOutputPath,
 				dojoBaseUrl: '.' + dojoCommonBaseUrl,
-				userDataDir: outputPath + '/.config-' + ownServerPort
+				userDataDir: userDataDir
 			}),
 
 			testUnitLocalOptions = require(testUnitLocalPath)(testUnitParams),

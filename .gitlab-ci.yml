@@ -229,6 +229,7 @@ run-functional-tests:
   image: registry.gitlab.com/redmic-project/docker/web-build:latest
   tags:
     - client
+    - functional
   variables:
     GIT_SUBMODULE_STRATEGY: normal
   script:

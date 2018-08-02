@@ -182,8 +182,6 @@ define([
 
 		_addData: function(response) {
 
-			this._pendingParentsToShow = [];
-
 			this._clearData();
 
 			this._proccesNewData(response);
@@ -192,6 +190,7 @@ define([
 		_addAfterData: function(response) {
 
 			this._showPendingParents();
+			//this._pendingParentsToShow = [];
 		},
 
 		_parserIndexData: function(response) {

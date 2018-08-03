@@ -29,7 +29,7 @@ define([
 		constructor: function(args) {
 
 			this.propsConfig = {
-				listIntabs: true
+
 			};
 
 			lang.mixin(this.propsConfig, args);
@@ -45,12 +45,15 @@ define([
 					return function() {
 
 						return this.parent
+							.sleep(Config.timeout.shortSleep)
+							.then(Utils.checkLoadingIsGone())
 							.then(Utils.clickInToTab(2));
 					};
 				};
 
 				obj.suiteName = 'Atlas' + suiteName;
 				obj.notClickLayerMap = true;
+				obj.listIntabs = true;
 
 				Utils.registerTests({
 					suiteName: 'Atlas' + suiteName,
@@ -67,10 +70,13 @@ define([
 			}
 
 			if (this.propsConfig.textSearchValue) {
+				obj = lang.clone(this.propsConfig);
+				obj.listIntabs = true;
+
 				Utils.registerTests({
 					suiteName: 'List text search' + suiteName,
 					definition: ListWithTextSearchTests,
-					properties: this.propsConfig
+					properties: obj
 				});
 			}
 

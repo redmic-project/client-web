@@ -103,8 +103,6 @@ define([
 			this._publish(this.instanceContentPopup.getChannel("CLEAR_SELECTION"));
 
 			this._publish(this.instanceContentPopup.getChildChannel("textSearch", "RESET"));
-
-			this._publish(this.instanceContentPopup.getChildChannel("browser", "CLEAR"));
 		},
 
 		_subBrowserHidden: function(res) {

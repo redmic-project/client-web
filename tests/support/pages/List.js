@@ -196,6 +196,7 @@ define([
 		_selectItem: function(checkboxSelector) {
 
 			return this.parent
+				.then(Utils.checkLoadingIsGone())
 				.then(Utils.clickDisplayedElement(checkboxSelector))
 				.then(Utils.checkLoadingIsGone());
 		},

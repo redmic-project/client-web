@@ -97,7 +97,8 @@ define([
 
 			var idProperty = res.idProperty;
 
-			if (idProperty === undefined || idProperty === null || idProperty === this.currentData[this.idProperty]) {
+			if (idProperty === undefined || idProperty === null ||
+				(this.currentData && idProperty === this.currentData[this.idProperty])) {
 				return true;
 			}
 

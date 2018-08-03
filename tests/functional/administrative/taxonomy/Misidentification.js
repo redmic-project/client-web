@@ -91,7 +91,7 @@ define([
 		sidebarPrimaryValue: 'admin',
 		sidebarSecondaryValue: '/admin/taxonomy',
 		urlValue: '/taxon/misidentification',
-		wizardEditionUrlValue: '/admin/misidentification-edit/2',
+		wizardEditionUrlValue: '/admin/misidentification-edit/1',
 		wizardAdditionUrlValue: '/admin/misidentification-add/new',
 		textSearchValue: 'Diadema antillarum',
 		configSteps: [{

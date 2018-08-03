@@ -62,6 +62,7 @@ define([
 
 				return this.parent
 					.then(indexPage.addItem())
+					.sleep(Config.timeout.shortSleep)
 					.then(indexPage.complete(x, y))
 					.then(isGeometryCorrect())
 					.then(function(value) {

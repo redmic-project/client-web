@@ -118,7 +118,8 @@ define([
 				channel: this.getChannel("CLEARED")
 			},{
 				event: 'REFRESH_COMPLETE',
-				channel: this.getChannel("REFRESHED")
+				channel: this.getChannel("REFRESHED"),
+				callback: "_pubRefreshed"
 			},{
 				event: 'DATA_ADDED',
 				channel: this.getChannel("DATA_ADDED")
@@ -161,10 +162,17 @@ define([
 			return this.domNode;
 		},
 
+		_pubRefreshed: function(channel) {
+
+			this._publish(channel, {
+				total: Object.keys(this._rows).length
+			});
+		},
+
 		_subRefresh: function(res) {
 
 			if (res && res.initData && this._initData) {
-				this._addData(lang.clone(this._initData));
+				this._dataAvailable(lang.clone(this._initData));
 			}
 		},
 

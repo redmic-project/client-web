@@ -190,6 +190,7 @@ define([
 									.then(indexPage.clickRowButton(1, 'fa-toggle-off'));
 							}(this);
 						}, values))
+						.then(Utils.checkLoadingIsGone())
 						.then(indexPage.getLayersCount())
 						.then(lang.partial(function(values, count) {
 

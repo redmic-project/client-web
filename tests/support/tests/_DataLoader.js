@@ -45,6 +45,8 @@ define([
 					return function() {
 
 						return this.parent
+							.sleep(Config.timeout.shortSleep)
+							.then(Utils.checkLoadingIsGone())
 							.then(Utils.clickInToTab(2));
 					};
 				};
@@ -59,21 +61,22 @@ define([
 					properties: obj
 				});
 			} else {
-				obj = lang.clone(this.propsConfig);
-				obj.listIntabs = true;
 
 				Utils.registerTests({
 					suiteName: 'Map' + suiteName,
 					definition: MapTests,
-					properties: obj
+					properties: this.propsConfig
 				});
 			}
 
 			if (this.propsConfig.textSearchValue) {
+				obj = lang.clone(this.propsConfig);
+				obj.listIntabs = true;
+
 				Utils.registerTests({
 					suiteName: 'List text search' + suiteName,
 					definition: ListWithTextSearchTests,
-					properties: this.propsConfig
+					properties: obj
 				});
 			}
 

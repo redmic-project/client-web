@@ -139,6 +139,8 @@ define([
 			return lang.partial(function(self) {
 
 				return this.parent
+					.sleep(Config.timeout.shortSleep)
+					.then(Utils.checkLoadingIsGone())
 					.then(self.clickDisplayedElementWithControlError(selector))
 					.then(function(success) {
 
@@ -177,17 +179,38 @@ define([
 			return lang.partial(function(self) {
 
 				return this.parent
+					.then(self.clickDisplayedElementWithControlError('div.alertify-notifier > div.ajs-visible'))
+					.then(function(success) {
+
+						if (!success) {
+							return this.parent
+								.then(self.clickDisplayedElement(selector));
+						}
+
+						return this.parent
+							.then(self.clickElementTakingIntoAccountAlertify(selector));
+					});
+			}, this);
+		},
+
+		/*clickElementTakingIntoAccountAlertify: function(selector) {
+
+			return lang.partial(function(self) {
+
+				return this.parent
 					.then(self.clickDisplayedElementWithControlError(selector))
 					.then(function(success) {
 
 						if (!success) {
 							return this.parent
 								.then(self.clickDisplayedElement('div.alertify-notifier > div.ajs-visible'))
-								.then(self.clickDisplayedElementWithControlError(selector));
+								.then(self.clickElementTakingIntoAccountAlertify(selector));
 						}
+
+						return this.parent;
 					});
 			}, this);
-		},
+		},*/
 
 		checkUrl: function(urlExpr) {
 			//	summary:

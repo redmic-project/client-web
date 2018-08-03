@@ -103,6 +103,7 @@ define([
 			return function() {
 
 				return this.parent
+					.sleep(Config.timeout.longSleep)
 					.findAllByCssSelector(layersSelector + ' > *')
 						.then(function(children) {
 							return children.length;

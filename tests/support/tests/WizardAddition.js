@@ -91,7 +91,8 @@ define([
 				Should_BlockNextStep_When_Enter: function() {
 
 					return this.remote
-						.then(indexPage.getPrevStep())
+						.sleep(Config.timeout.longSleep)
+						.then(indexPage.getNextStep())
 						.then(function(nextStep) {
 
 							assert.isNotOk(nextStep, 'El botón de siguiente step está habilitado');
@@ -101,7 +102,8 @@ define([
 				Should_BlockPrevStep_When_Enter: function() {
 
 					return this.remote
-						.then(indexPage.goNextStep())
+						.sleep(Config.timeout.longSleep)
+						.then(indexPage.getPrevStep())
 						.then(function(prevStep) {
 
 							assert.isNotOk(prevStep, 'El botón de anterior step está habilitado');

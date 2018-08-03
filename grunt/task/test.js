@@ -73,8 +73,7 @@ module.exports = function(grunt) {
 					dataLoaderAndAdministrativeDetailsZoneGroup = 'administrativeDetails,dataLoader',
 					maintenanceAndAdminDomainsZoneGroup = 'maintenance,!maintenance/domains/taxon' +
 						',!maintenance/domains/observations',
-					observationDomainsZoneGroup = 'maintenance/domains/observations',
-					taxonDomainsZoneGroup = 'maintenance/domains/taxon',
+					taxonAndObservationDomainsZoneGroup = 'maintenance/domains/observations,maintenance/domains/taxon',
 
 					portParam = ' --ownServerPort=',
 
@@ -82,9 +81,8 @@ module.exports = function(grunt) {
 
 					guestTestsParams = guestCommonTestsParams + publicZoneGroups,
 
-					specificParamsList = [
-						guestTestsParams
-					],
+					specificParamsList = [],
+					specificParams,
 
 					userCommonTestsParams = ' --role=administrator --user=' + userParam + ' --pass=' + passParam +
 						' --suitesGroups=',
@@ -92,7 +90,7 @@ module.exports = function(grunt) {
 					userZoneGroupsList = [
 						publicZoneGroups, administrativeZoneGroup, taxonomyZoneGroup,
 						dataLoaderAndAdministrativeDetailsZoneGroup, maintenanceAndAdminDomainsZoneGroup,
-						 observationDomainsZoneGroup, taxonDomainsZoneGroup
+						taxonAndObservationDomainsZoneGroup
 					],
 
 					commonGuestZoneGroups = guestCommonTestsParams + 'common',
@@ -111,8 +109,23 @@ module.exports = function(grunt) {
 				commandsGrunt += gruntCommand + commonUserZoneGroups + portParam + serverPort + ' ; ';
 				serverPort += 3;
 
-				for (i = 0; i < specificParamsList.length; i++) {
-					var specificParams = specificParamsList[i];
+				commandsGrunt += gruntCommand + guestTestsParams + portParam + serverPort + ' ; ';
+				serverPort += 3;
+
+				var firstPartSpecificParamsList = Math.floor(specificParamsList.length / 2),
+					secondPartSpecificParamsList = specificParamsList.length - firstPartSpecificParamsList;
+
+				for (i = 0; i < firstPartSpecificParamsList; i++) {
+					specificParams = specificParamsList[i];
+
+					cmds.push(gruntCommand + specificParams + portParam + serverPort);
+					serverPort += 3;
+				}
+
+				commandsGrunt += cmds.join(' & ') + ' ; ';
+
+				for (i = firstPartSpecificParamsList; i < secondPartSpecificParamsList; i++) {
+					specificParams = specificParamsList[i];
 
 					cmds.push(gruntCommand + specificParams + portParam + serverPort);
 					serverPort += 3;

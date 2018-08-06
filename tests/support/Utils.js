@@ -140,7 +140,7 @@ define([
 
 				return this.parent
 					.sleep(Config.timeout.shortSleep)
-					.then(Utils.checkLoadingIsGone())
+					.then(self.checkLoadingIsGone())
 					.then(self.clickDisplayedElementWithControlError(selector))
 					.then(function(success) {
 

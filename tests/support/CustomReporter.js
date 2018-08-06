@@ -44,7 +44,7 @@ intern.registerReporter('customreporter', function(options) {
 			testStatus = '[ SKIP ]';
 		} else if (test.error) {
 			failCounter++;
-			testStatus = '[ FAIL ]';
+			testStatus = '[ FAIL ] ' + moment().format() + ' - ';
 		} else {
 			passCounter++;
 			testStatus = '[ PASS ]';

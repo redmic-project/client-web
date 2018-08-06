@@ -48,7 +48,6 @@ define([
 
 					return parent
 						.then(Utils.clickElement(reportButtonSelector))
-						.sleep(Config.timeout.longSleep)
 
 						.then(this.parent.externalContext.verifyNotificationCount(values))
 						.then(this.parent.externalContext.rememberLatestNotificationId(values))
@@ -76,7 +75,6 @@ define([
 						.sleep(Config.timeout.veryShortSleep)
 						.then(Utils.setInputValue(alertTextInputSelector, 'test'))
 						.then(Utils.clickElement(alertSubmitButtonSelector))
-						.sleep(Config.timeout.longSleep)
 
 						.then(this.parent.externalContext.verifyNotificationCount(values))
 						.then(this.parent.externalContext.rememberLatestNotificationId(values))
@@ -105,6 +103,7 @@ define([
 				var checkNotification = function(values) {
 
 					return this
+						.sleep(Config.timeout.longSleep)
 						.then(Utils.getNotificationCount())
 						.then(lang.partial(function(values, count) {
 
@@ -114,13 +113,15 @@ define([
 								values.count = 1;
 							}
 
-							if (values.count < 4 && count === values.previousNotificationCount) {
+							if (values.count < 5 && count <= values.previousNotificationCount) {
 								return this.parent
-									.then(lang.hitch(this, checkNotification, values));
+									.then(lang.hitch(this.parent, checkNotification, values));
 							}
 
 							assert.isAbove(count, values.previousNotificationCount,
 								'No hay más notificaciones que antes de pedir el informe');
+
+							return this.parent;
 						}, values));
 				};
 
@@ -139,6 +140,8 @@ define([
 					.then(lang.partial(function(values, id) {
 
 						values.latestNotificationId = id;
+
+						return this.parent;
 					}, values));
 			}, values);
 		},

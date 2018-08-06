@@ -179,16 +179,19 @@ define([
 			return lang.partial(function(self) {
 
 				return this.parent
+					.sleep(Config.timeout.shortSleep)
 					.then(self.clickDisplayedElementWithControlError('div.alertify-notifier > div.ajs-visible'))
 					.then(function(success) {
 
+						var parent = this.parent.sleep(Config.timeout.shortSleep),
+							actionName = 'clickElementTakingIntoAccountAlertify';
+
 						if (!success) {
-							return this.parent
-								.then(self.clickDisplayedElement(selector));
+							actionName = 'clickDisplayedElement';
 						}
 
-						return this.parent
-							.then(self.clickElementTakingIntoAccountAlertify(selector));
+						return parent
+							.then(self[actionName](selector));
 					});
 			}, this);
 		},

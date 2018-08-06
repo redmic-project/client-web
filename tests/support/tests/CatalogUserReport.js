@@ -103,7 +103,7 @@ define([
 				var checkNotification = function(values) {
 
 					return this
-						.sleep(Config.timeout.longSleep)
+						.sleep(Config.timeout.veryLongSleep)
 						.then(Utils.getNotificationCount())
 						.then(lang.partial(function(values, count) {
 

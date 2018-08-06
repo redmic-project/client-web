@@ -193,14 +193,14 @@ deploy-dev:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}
     IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
+    OAUTH_URL: ${DEV_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: https://appdev.${DEV_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
   environment:
     name: dev
     url: https://appdev.${DEV_PUBLIC_HOSTNAME}
@@ -219,14 +219,14 @@ deploy-supporting-branch:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}
     IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
+    OAUTH_URL: ${DEV_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: https://appdev.${DEV_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
   environment:
     name: dev
     url: https://appdev.${DEV_PUBLIC_HOSTNAME}
@@ -276,14 +276,14 @@ deploy-pro:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}
     IMAGE_TAG: ${CI_COMMIT_TAG}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
+    OAUTH_URL: ${PRO_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: https://${PRO_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
   environment:
     name: pro
     url: https://${PRO_PUBLIC_HOSTNAME}

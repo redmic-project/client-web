@@ -112,8 +112,7 @@ module.exports = function(grunt) {
 				commandsGrunt += gruntCommand + guestTestsParams + portParam + serverPort + ' ; ';
 				serverPort += 3;
 
-				var firstPartSpecificParamsList = Math.floor(specificParamsList.length / 2),
-					secondPartSpecificParamsList = specificParamsList.length - firstPartSpecificParamsList;
+				var firstPartSpecificParamsList = Math.floor(specificParamsList.length / 2);
 
 				for (i = 0; i < firstPartSpecificParamsList; i++) {
 					specificParams = specificParamsList[i];
@@ -123,8 +122,9 @@ module.exports = function(grunt) {
 				}
 
 				commandsGrunt += cmds.join(' & ') + ' ; ';
+				cmds = [];
 
-				for (i = firstPartSpecificParamsList; i < secondPartSpecificParamsList; i++) {
+				for (i = firstPartSpecificParamsList; i < specificParamsList.length; i++) {
 					specificParams = specificParamsList[i];
 
 					cmds.push(gruntCommand + specificParams + portParam + serverPort);

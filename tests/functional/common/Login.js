@@ -25,6 +25,7 @@ define([
 
 				return indexPage
 					.goToUrl()
+					.then(Utils.acceptCookies())
 					.then(Utils.clickElementAndCheckUrl(whatIsRedmicSelector, whatIsRedmicPageUrl));
 			},
 
@@ -45,7 +46,6 @@ define([
 
 				return indexPage
 					.goToUrl()
-					.then(Utils.acceptCookies())
 					.then(Utils.clickElementAndCheckUrl(registerLinkSelector, registerPageUrl));
 			},
 

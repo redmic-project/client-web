@@ -8,6 +8,7 @@ define([
 	, 'tests/support/tests/Map'
 	, 'tests/support/tests/WizardEdition'
 	, 'tests/support/tests/WizardAddition'
+	, 'tests/support/Config'
 	, 'tests/support/Utils'
 	, './_BaseCommons'
 ], function (
@@ -20,6 +21,7 @@ define([
 	, MapTests
 	, WizardEditionTests
 	, WizardAdditionTests
+	, Config
 	, Utils
 	, _BaseCommons
 ) {

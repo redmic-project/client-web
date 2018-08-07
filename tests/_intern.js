@@ -46,7 +46,7 @@ module.exports = function(args) {
 		},
 
 		maxConcurrency: 3,
-		defaultTimeout: 220000,
+		defaultTimeout: 250000,
 		leaveRemoteOpen: false,
 
 		loader: {

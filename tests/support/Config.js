@@ -38,7 +38,7 @@ define([], function() {
 			, feedback: '/feedback'
 		},
 		timeout: {
-			veryLongFindElement: 50000,
+			veryLongFindElement: 70000,
 			longFindElement: 30000,
 			findElement: 5000,
 			shortFindElement: 500,

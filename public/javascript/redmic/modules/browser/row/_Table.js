@@ -45,103 +45,168 @@ define([
 
 		_updateData: function(item) {
 
-			put(this.tableRowNode, "[data-redmic-id=$]", this._getId(item));
+			this.currentData = item;
+
+			put(this.tableRowNode, "[data-redmic-id=$]", this._getId());
+
+			this._clearTableRowNode();
+
+			this._updateColumns();
+		},
+
+		_clearTableRowNode: function() {
 
 			while (this.tableRowNode.firstChild) {
 				put(this.tableRowNode.firstChild, '!');
 			}
+		},
+
+		_updateColumns: function() {
 
 			if (this.columns) {
-
 				for (var i = 0; i < this.columns.length; i++) {
-					var column = this.columns[i],
-						content = this._getContent(item, column);
-
-					if (!column.type) {
-						this._createCell({
-							config: column,
-							content: content
-						});
-					} else if (column.type === "arrayColumns") {
-						this.columns[i].countData = 16;
-						this._generatorColumnsWithArray(column, content);
-					}
+					this._updateColumn(this.columns[i]);
 				}
 			}
 		},
 
-		_getContent: function(item, config, property) {
+		_updateColumn: function(column) {
 
-			var template = false;
+			this._currentColumn = column;
 
-			if (!config.type) {
-				if (!config.template) {
-					property = "property";
-				} else {
-					template = true;
-				}
-			} else if (config.type === "arrayColumns") {
-				if (!property) {
-					property = "property";
-				} else if (config.template) {
-					template = true;
-				}
+			var content = this._getContent();
+
+			if (this._isTypeArrayColumns()) {
+				this._currentColumn.countData = 16;
+				this._generatorColumnsWithArray(content);
+			} else {
+				this._createCell(content);
+			}
+		},
+
+		_getContent: function(property) {
+
+			if (this._isConfigWithTemplate() && !property) {
+				return this._getContentTemplate();
 			}
 
-			if (template) {
-				return config.template({
-					data: item,
-					i18n: this.i18n
-				});
+			return this._getContentWithPropertyInData(property);
+		},
+
+		_getContentWithPropertyInData: function(property) {
+
+			var data = this.currentData;
+
+			if (property) {
+				data = this._currentDataArray;
+			} else {
+				property = "property";
 			}
 
-			var content = Utilities.getDeepProp(item, config[property], this.pathSeparator);
+			var content = Utilities.getDeepProp(data, this._currentColumn[property], this.pathSeparator);
 
-			if (content !== null && content !== undefined) {
+			if (this._isContent(content)) {
 				return content;
 			}
 
-			return config.notContent || "";
+			return this._currentColumn.notContent || "";
 		},
 
-		_createCell: function(obj) {
+		_isContent: function(content) {
 
-			var itemConfig = obj.config,
-				content = obj.content,
-				colClass = 'table-col-' + (this.tableRowNode.children.length + 1),
-				nodeItem = put(this.tableRowNode, 'span.table-cell.' + colClass +
-					"[data-redmic-property=$]", this._generatePropertyRow(itemConfig)),
-				format = itemConfig.format;
+			if (content !== null && content !== undefined) {
+				return true;
+			}
 
-			if (!itemConfig.template) {
-				if (format) {
-					content = format(content);
-				}
+			return false;
+		},
 
-				nodeItem.innerText = content;
-			} else {
+		_getContentTemplate: function() {
+
+			return this._currentColumn.template({
+				data: this.currentData,
+				i18n: this.i18n
+			});
+		},
+
+		_createCell: function(content) {
+
+			var nodeItem = this._createNodeCell();
+
+			if (this._isConfigWithTemplate()) {
 				nodeItem.innerHTML = content;
+			} else {
+				nodeItem.innerText = this._formatContent(content);
 			}
 		},
 
-		_generatorColumnsWithArray: function(itemConfig, data) {
+		_createNodeCell: function() {
+
+			return put(this.tableRowNode, 'span' + this._classNewNodeCell() + this._attributeDataRemicProperty());
+		},
+
+		_classNewNodeCell: function() {
+
+			return '.table-cell.table-col-' + (this.tableRowNode.children.length + 1);
+		},
+
+		_attributeDataRemicProperty: function() {
+
+			return '[data-redmic-property="' + this._getProperty() + '"]';
+		},
+
+		_isConfigWithTemplate: function() {
+
+			if (this._currentColumn.template) {
+				return true;
+			}
+
+			return false;
+		},
+
+		_formatContent: function(content) {
+
+			var format = this._currentColumn.format;
+
+			if (format) {
+				return format(content);
+			}
+
+			return content;
+		},
+
+		_generatorColumnsWithArray: function(data) {
 
 			for (var i = 0; i < data.length; i++) {
+				this._currentDataArray = data[i];
 
-				this._createCell({
-					config: itemConfig,
-					content: this._getContent(data[i], itemConfig, "propertyInArrayItem")
-				});
+				var content = this._getContent("propertyInArrayItem");
+
+				this._createCell(content);
 			}
 		},
 
-		_generatePropertyRow: function(itemConfig) {
+		_getProperty: function() {
 
-			if (!itemConfig.type) {
-				return itemConfig.property;
-			} else if (itemConfig.type == "arrayColumns") {
-				return itemConfig.propertyInArrayItem;
+			if (this._isTypeArrayColumns()) {
+				return this._getArrayColumnsType();
+			} else {
+				return this._currentColumn.property;
 			}
+		},
+
+		_isTypeArrayColumns: function() {
+
+			if (this._currentColumn.type == "arrayColumns") {
+				return true;
+			}
+
+			return false;
+		},
+
+		_getArrayColumnsType: function() {
+
+			return this._currentColumn.propertyInArrayItem;
 		}
 	});
 });

@@ -40,9 +40,7 @@ define([
 				_paddingHeaderRow: 45,
 				_correctionHeaderRow: -20,
 				_valueRow: 25,
-				tableConfig: {
-
-				}
+				tableConfig: {}
 			};
 
 			lang.mixin(this, this.config);

@@ -270,7 +270,7 @@ define([
 							return this.parent;
 						} else {
 							return this.parent
-								.then(lang.hitch(this, expandItem, args));
+								.then(lang.hitch(this.parent, expandItem, args));
 						}
 					});
 			}

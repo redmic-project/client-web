@@ -53,6 +53,7 @@ define([
 
 			aspect.after(this, "_definitionRow", lang.hitch(this, this._definitionTableRow));
 			aspect.before(this, "_configRow", lang.hitch(this, this._configTableRow));
+			aspect.before(this, "_clear", lang.hitch(this, this._clearTable));
 		},
 
 		_setTableConfigurations: function() {
@@ -111,16 +112,6 @@ define([
 			});
 		},
 
-		_subListEventItem: function(res) {
-
-			var rules = this._tableStyle.rules,
-				value = res.value;
-
-			this._tableStyle.rules[rules.length - value].style.display = res.actionSelect ? "flex" : "none";
-
-			this._updateWidth();
-		},
-
 		_initializeTable: function() {
 
 			this.headerOptionListMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)(this.headerOptionConfig);
@@ -146,6 +137,16 @@ define([
 			this._tableStyle = this._tableStyle.sheet;
 		},
 
+		_subListEventItem: function(res) {
+
+			var rules = this._tableStyle.rules,
+				value = res.value;
+
+			this._tableStyle.rules[rules.length - value].style.display = res.actionSelect ? "flex" : "none";
+
+			this._updateWidth();
+		},
+
 		_getNodeBaseList: function() {
 
 			return this.containerScroll;
@@ -153,15 +154,26 @@ define([
 
 		_addData: function(res) {
 
-			this._clearData();
+			this._clear();
 
 			this._proccesNewData(res);
 
-			this._createHeaders();
-			this._showListMenu();
-			this._addClassCols();
+			this._addOthers();
+		},
 
-			this._updateWidth();
+		_clearTable: function() {
+
+			this._clearHeaders();
+			this._setStyleInNodes(0);
+		},
+
+		_proccesNewData: function(res) {
+
+			var data = this._parserIndexData(res);
+
+			for (var i= 0; i < data.length; i++) {
+				this._addItem(data[i]);
+			}
 		},
 
 		_parserIndexData: function(res) {
@@ -182,13 +194,13 @@ define([
 			return data;
 		},
 
-		_proccesNewData: function(res) {
+		_addOthers: function() {
 
-			var data = this._parserIndexData(res);
+			this._createHeaders();
+			this._showListMenu();
+			this._addClassColumns();
 
-			for (var i= 0; i < data.length; i++) {
-				this._addItem(data[i]);
-			}
+			setTimeout(lang.hitch(this, this._updateWidth), 200);
 		},
 
 		_updateWidth: function() {
@@ -197,30 +209,62 @@ define([
 				return;
 			}
 
+			this._setStyleInNodes(this._calculateWidthCount());
+		},
+
+		_calculateWidthCount: function() {
+
 			var nodeRow = this.rowsContainerNode.firstChild.firstChild,
 				children = nodeRow.children;
 				widthCount = 0;
 
 			for (var i = 0; i < children.length; i++) {
-
 				if (children[i]) {
 					widthCount += children[i].clientWidth;
 				}
 			}
 
-			var minWidthHeaders = widthCount + this._correctionHeaderRow,
-				paddingHeaders = this._paddingHeaderRow;
+			return widthCount;
+		},
 
-			if (this._definitionButtonsRow) {
-				var buttonsWidth = children[children.length - 1].clientWidth;
-				minWidthHeaders -= buttonsWidth;
-				paddingHeaders += buttonsWidth;
+		_setStyleInNodes: function(widthCount) {
+
+			this._calculateMinWidthAndPaddingRightHeaders(widthCount);
+
+			this._setStyleInHeaders(widthCount);
+			this._setStyleInContentList(widthCount);
+		},
+
+		_setStyleInHeaders: function(widthCount) {
+
+			var style = "min-width:" + this._minWidthHeaders + "px; padding-right: " + this._paddingRightHeaders + "px;";
+
+			this.headersNode.setAttribute("style", style);
+		},
+
+		_calculateMinWidthAndPaddingRightHeaders: function(widthCount) {
+
+			if (!this.rowsContainerNode.firstChild) {
+				return;
 			}
 
-			this.headersNode.setAttribute("style", "min-width:" + minWidthHeaders +
-				"px; padding-right: " + paddingHeaders + "px;");
+			var buttonsWidth = 0,
+				nodeRow = this.rowsContainerNode.firstChild.firstChild,
+				children = nodeRow.children;
 
-			this.contentListNode.setAttribute("style", "min-width:" + (widthCount + this._valueRow) + "px;");
+			if (this._definitionButtonsRow) {
+				buttonsWidth = children[children.length - 1].clientWidth;
+			}
+
+			this._minWidthHeaders = widthCount + this._correctionHeaderRow - buttonsWidth;
+			this._paddingRightHeaders = this._paddingHeaderRow + buttonsWidth;
+		},
+
+		_setStyleInContentList: function(widthCount) {
+
+			var style = "min-width:" + (widthCount + this._valueRow) + "px;";
+
+			this.contentListNode.setAttribute("style", style);
 		},
 
 		_afterShow: function(obj) {
@@ -228,39 +272,53 @@ define([
 			setTimeout(lang.hitch(this, this._updateWidth), 200);
 		},
 
-		_addClassCols: function() {
+		_addClassColumns: function() {
 
 			var columns = this.tableConfig.columns;
 
-			this._classCount = 1;
+			this._clearTableStyle();
 
 			for (var i = 0; i < columns.length; i++) {
-				var column = columns[i];
-
-				if (!column.type) {
-					this._addClassCol(columns[i]);
-				} else if (column.type === "arrayColumns") {
-					this._addClassArrayColumns(columns[i]);
-				}
+				this._addClassColumnType(columns[i]);
 			}
 		},
 
-		_addClassCol: function(column) {
+		_clearTableStyle: function() {
+
+			this._classCount = 1;
+
+			while (this._tableStyle.rules.length) {
+				this._tableStyle.deleteRule(0);
+			}
+		},
+
+		_addClassColumnType: function(column) {
+
+			this._currentColumn = column;
+
+			if (this._isTypeArrayColumns()) {
+				this._addClassArrayColumns();
+			} else {
+				this._addClassColumn();
+			}
+		},
+
+		_addClassColumn: function() {
 
 			var styleBasic = "min-width: 5rem; width: 5rem; display: flex; justify-content: center;",
-				style = column.style || "";
+				style = this._currentColumn.style || "";
 
 			this._tableStyle.insertRule(".table-col-" + (this._classCount) + " { " + styleBasic + style + " } ");
 
 			this._classCount ++;
 		},
 
-		_addClassArrayColumns: function(column, i) {
+		_addClassArrayColumns: function() {
 
-			var value = column.countData;
+			var value = this._currentColumn.countData;
 
 			for (var n = 0; n < value; n++) {
-				this._addClassCol(column);
+				this._addClassColumn(this._currentColumn);
 			}
 		},
 
@@ -276,7 +334,7 @@ define([
 
 			this.optionHeaderList = put(this.headersNode.firstChild, "-i.iconOptionHeader.fa.fa-columns");
 
-			for (var i= 0; i < this._headersData.length; i++) {
+			for (var i = 0; i < this._headersData.length; i++) {
 				this._emitEvt('ADD_ITEM', this._headersData[i]);
 			}
 
@@ -299,69 +357,102 @@ define([
 
 		_createHeaders: function() {
 
+			var columns = this.tableConfig.columns,
+				totalColumns = columns.length;
+
+			for (var i = 0; i < totalColumns; i++) {
+				this._createHeaderWithType(columns[i]);
+			}
+		},
+
+		_clearHeaders: function() {
+
 			this._headersData = [];
 
 			while (this.headersNode.firstChild) {
 				put(this.headersNode.firstChild, '!');
 			}
+		},
 
-			var columns = this.tableConfig.columns,
-				totalColumns = columns.length,
-				headerConfig = this.tableConfig.header || {};
+		_createHeaderWithType: function(column) {
 
-			for (var i = 0; i < totalColumns; i++) {
-				var column = columns[i],
-					type = column.type,
-					propHeader = column.propertyHeader;
+			var propHeader = column.propertyHeader;
 
-				if (!type) {
-					this._createHeader(column, this._getContentHeader(column), headerConfig);
-				} else if (type == "arrayColumns" && this._headers[propHeader]) {
-					this._createHeadersArrayColumns(column, this._headers[propHeader]);
-				}
+			this._currentColumn = column;
+
+			if (this._isTypeArrayColumns() && this._headers[propHeader]) {
+				column.countData = this._headers[propHeader].length;
+				this._createHeadersArrayColumns(this._headers[propHeader]);
+			} else {
+				this._createHeader(this._getContentHeader(), this.tableConfig.header || {});
 			}
 		},
 
-		_createHeadersArrayColumns: function(column, dataHeader) {
-
-			var headerConfig = this.tableConfig.header || {},
-				itemHeader,	content, label;
+		_createHeadersArrayColumns: function(dataHeader) {
 
 			for (var i = 0; i < dataHeader.length; i++) {
-				itemHeader = dataHeader[i];
+				var content = dataHeader[i].label || this._getContentHeader();
 
-				content = itemHeader.label || this._getContentHeader(column);
-
-				this._createHeader(column, content, headerConfig);
+				this._createHeader(content, this.tableConfig.header || {});
 			}
 		},
 
-		_createHeader: function(column, content, headerConfig) {
+		_createHeader: function(content, headerConfig) {
 
-			this._addHeaderInData(column, content);
+			this._addHeaderInData(content);
+
+			var node = this._addNodeHeader();
+
+			if (this._isConfigWithTemplate()) {
+				node.innerHTML = content;
+			} else {
+				node.innerText = this._formatContent(content, headerConfig.format);
+			}
+		},
+
+		_addNodeHeader: function() {
+
+			return put(this.headersNode, 'span' + this._getClassHeader());
+		},
+
+		_getClassHeader: function() {
 
 			var children = this.headersNode.children.length,
-				colClass = 'table-col-' + (children + 1);
+				colClass = '.table-cell.table-col-' + (children + 1);
 
 			if (!children) {
 				colClass += '.table-cell-header-1';
 			}
 
-			var node = put(this.headersNode, 'span.table-cell.' + colClass),
-				format = headerConfig.format;
-
-			if (!column.template) {
-				if (format) {
-					content = format(content);
-				}
-
-				node.innerText = content;
-			} else {
-				node.innerHTML = content;
-			}
+			return colClass;
 		},
 
-		_addHeaderInData: function(column, content) {
+		_formatContent: function(content, format) {
+
+			format = format || this._currentColumn.format;
+
+			if (format) {
+				return format(content);
+			}
+
+			return content;
+		},
+
+		_isConfigWithTemplate: function() {
+
+			if (this._currentColumn.template) {
+				return true;
+			}
+
+			return false;
+		},
+
+		_addHeaderInData: function(content) {
+
+			this._headersData.push(this._getPropertiesHeaders(content));
+		},
+
+		_getPropertiesHeaders: function(content) {
 
 			var obj = {
 					item: {
@@ -371,22 +462,31 @@ define([
 					select: true
 				};
 
-			if (column.noDisabled) {
+			if (this._currentColumn.noDisabled) {
 				obj.item.noDisabled = true;
 			}
 
-			if (column.noSelect) {
+			if (this._currentColumn.noSelect) {
 				obj.select = false;
 			}
 
-			this._headersData.push(obj);
+			return obj;
 		},
 
-		_getContentHeader: function(obj) {
+		_getContentHeader: function() {
 
-			var label = obj.label || obj.property;
+			var label = this._currentColumn.label || this._currentColumn.property;
 
 			return this.i18n[label] || label;
+		},
+
+		_isTypeArrayColumns: function() {
+
+			if (this._currentColumn.type == "arrayColumns") {
+				return true;
+			}
+
+			return false;
 		}
 	});
 });

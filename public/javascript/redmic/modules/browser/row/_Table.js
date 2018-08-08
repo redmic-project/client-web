@@ -77,7 +77,6 @@ define([
 			var content = this._getContent();
 
 			if (this._isTypeArrayColumns()) {
-				this._currentColumn.countData = 16;
 				this._generatorColumnsWithArray(content);
 			} else {
 				this._createCell(content);

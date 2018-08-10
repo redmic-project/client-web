@@ -91,52 +91,93 @@ define([
 
 		_updateData: function(item) {
 
-			put(this.templateNode, "[data-redmic-id=$]", this._getId(item));
+			this.currentData = item;
 
-			this._replaceHighlightInItem(item);
+			put(this.templateNode, "[data-redmic-id=$]", this._getId());
 
-			this.templateNode.innerHTML = this._insertTemplate(item);
+			this._replaceHighlights();
+
+			this.templateNode.innerHTML = this._getContent();
 		},
 
-		_getId: function(item) {
+		_getId: function() {
 
-			return item[this.idProperty];
+			return this.currentData[this.idProperty];
 		},
 
-		_insertTemplate: function(item) {
-
-			var json = {data: item};
-
-			if (this.i18n) {
-				json.i18n = this.i18n;
-			}
-
-			if (this.shownOptionTemplate) {
-				json.shownOption = this.shownOptionTemplate;
-			}
+		_getContent: function() {
 
 			if (this.itemLabel) {
-				return this._getLabelValue(item);
+				return this._getLabelValue();
 			} else {
-				return this._getTemplate(json);
+				return this._insertTemplate();
 			}
 		},
 
-		_getLabelValue: function(item) {
+		_getLabelValue: function() {
 
-			if (typeof this.itemLabel === "function") {
+			var item = this.currentData;
+
+			if (this._isItemLabelFunction()) {
 				return this.itemLabel(item);
 			}
 
-			if (typeof this.itemLabel === "string") {
-				if (this.itemLabel.indexOf("{") < 0) {
-					return item[this.itemLabel];
-				}
-
-				return lang.replace(this.itemLabel, item);
+			if (this._isItemLabelString()) {
+				return this._getItemLabelString();
 			}
 
 			return item[this.itemLabel];
+		},
+
+		_getItemLabelString: function() {
+
+			var item = this.currentData;
+
+			if (this.itemLabel.indexOf("{") < 0) {
+				return item[this.itemLabel];
+			}
+
+			return lang.replace(this.itemLabel, item);
+		},
+
+		_isItemLabelFunction: function() {
+
+			if (typeof this.itemLabel === "function") {
+				return true;
+			}
+
+			return false;
+		},
+
+		_isItemLabelString: function() {
+
+			if (typeof this.itemLabel === "string") {
+				return true;
+			}
+
+			return false;
+		},
+
+		_insertTemplate: function() {
+
+			return this._getTemplate(this._propertiesTemplate());
+		},
+
+		_propertiesTemplate: function() {
+
+			var obj = {
+				data: this.currentData
+			};
+
+			if (this.i18n) {
+				obj.i18n = this.i18n;
+			}
+
+			if (this.shownOptionTemplate) {
+				obj.shownOption = this.shownOptionTemplate;
+			}
+
+			return obj;
 		},
 
 		_getTemplate: function(dataObj) {
@@ -149,29 +190,44 @@ define([
 			return this.domNode;
 		},
 
-		_replaceHighlightInItem: function(item) {
+		_replaceHighlights: function() {
+
+			var item = this.currentData;
 
 			if (item && item._meta) {
 				var highlight = item._meta.highlight;
 
-				for (var content in highlight) {
-					var value = Utilities.getDeepProp(item, content),
-						attr = highlight[content];
-
-					if (!value) {
-						return;
-					}
-
-					for (var i = 0; i < attr.length; i++) {
-						var valueReplace = attr[i],
-							cleanValueReplace = this._cleanValueHighlight(valueReplace);
-
-						value = value.replace(cleanValueReplace, valueReplace);
-					}
-
-					Utilities.setDeepProp(item, content, value);
+				for (var property in highlight) {
+					this._replaceHighlight(property, highlight[property]);
 				}
 			}
+		},
+
+		_replaceHighlight: function(property, content) {
+
+			var value = Utilities.getDeepProp(this.currentData, property);
+
+			if (!value) {
+				return;
+			}
+
+			Utilities.setDeepProp(this.currentData, property, this._replaceHighlightInContent(value, content));
+		},
+
+		_replaceHighlightInContent: function(value, content) {
+
+			var returnValue = value;
+
+			for (var i = 0; i < content.length; i++) {
+				returnValue = this._replacePartHighlightInContent(returnValue, content[i]);
+			}
+
+			return returnValue;
+		},
+
+		_replacePartHighlightInContent: function(value, content) {
+
+			return value.replace(this._cleanValueHighlight(content), content);
 		},
 
 		_cleanValueHighlight: function(value) {

@@ -137,7 +137,9 @@ define([
 
 						context = context
 							.then(clickInput('changeGrid', 'radio', i))
+							.sleep(Config.timeout.shortSleep)
 							.then(Utils.checkLoadingIsGone())
+							.sleep(Config.timeout.shortSleep)
 							.findByCssSelector('div.leaflet-pane.leaflet-map-pane div.leaflet-overlay-pane > img')
 								.getAttribute('src')
 								.then(lang.partial(checkGridURL, item.id))

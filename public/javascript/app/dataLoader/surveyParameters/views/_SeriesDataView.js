@@ -495,6 +495,11 @@ define([
 			this.seriesData.definitionIndex = definitionIndexObj;
 		},
 
+		_localDeselected: function() {
+
+			this._localClearSelection();
+		},
+
 		_localClearSelection: function() {
 
 			this._publish(this.dataDefinitionList.getChildChannel("browser", "CLEAR_SELECTION"));

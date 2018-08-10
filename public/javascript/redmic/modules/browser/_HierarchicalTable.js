@@ -27,7 +27,8 @@ define([
 			lang.mixin(this, this.config);
 
 			aspect.before(this, "_addItem", lang.hitch(this, this._addHierarchicalTableItem));
-			aspect.before(this, "_addClassCols", lang.hitch(this, this._addClassHierarchicalCols));
+			aspect.after(this, "_addClassColumns", lang.hitch(this, this._addClassHierarchicalColumns));
+			aspect.before(this, "_clearTableStyle", lang.hitch(this, this._clearHierarchicalTableStyle));
 		},
 
 		postCreate: function() {
@@ -57,15 +58,26 @@ define([
 			}
 		},
 
-		_addClassHierarchicalCols: function() {
+		_clearHierarchicalTableStyle: function() {
+
+			while (this._hierarchicalTableStyle.rules.length) {
+				this._hierarchicalTableStyle.deleteRule(0);
+			}
+		},
+
+		_addClassHierarchicalColumns: function() {
 
 			for (var i = 1; i <= this._countPath; i++) {
-
-				var value = (this._countPath * 2) - (2 * i - 1) + 0.5,
-				style = "justify-content: flex-start;width: 30rem; padding-right: " + value +	"rem !important;";
-
-				this._hierarchicalTableStyle.insertRule(".table-col-hierrarchical-" + i + " { " + style + " }");
+				this._addClassHierarchicalColumn(i);
 			}
+		},
+
+		_addClassHierarchicalColumn: function(position) {
+
+			var value = (this._countPath * 2) - (2 * position - 1) + 0.5,
+			style = "justify-content: flex-start;width: 30rem; padding-right: " + value +	"rem !important;";
+
+			this._hierarchicalTableStyle.insertRule(".table-col-hierrarchical-" + position + " { " + style + " }");
 		}
 	});
 });

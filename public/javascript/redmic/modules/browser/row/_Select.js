@@ -147,15 +147,15 @@ define([
 
 		_eventChecked: function(idProperty, e) {
 
+			var action = 'SELECT';
+
 			if (this._isSelect()) {
-				this._emitEvt('DESELECT', {
-					idProperty: idProperty
-				});
-			} else {
-				this._emitEvt('SELECT', {
-					idProperty: idProperty
-				});
+				action = 'DESELECT';
 			}
+
+			this._emitEvt(action, {
+				idProperty: idProperty
+			});
 		},
 
 		_isSelect: function() {

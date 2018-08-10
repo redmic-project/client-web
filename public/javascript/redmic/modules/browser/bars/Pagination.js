@@ -36,7 +36,8 @@ define([
 					ADD_TO_QUERY: "addToQuery",
 					GO_TO_PAGE: "goToPage",
 					SET_TOTAL: "setTotal",
-					RESET_PAGINATION: "resetPagination"
+					RESET_PAGINATION: "resetPagination",
+					CLEAR: "clear"
 				}
 			};
 
@@ -54,6 +55,9 @@ define([
 			},{
 				channel : this.getChannel("RESET_PAGINATION"),
 				callback: "_subResetPagination"
+			},{
+				channel: this._buildChannel(this.browserChannel, this.actions.CLEAR),
+				callback: "_subClearBrowser"
 			});
 		},
 
@@ -108,6 +112,11 @@ define([
 		_subSetTotal: function(req) {
 
 			this._setTotal(req.value);
+		},
+
+		_subClearBrowser: function() {
+
+			this._setTotal(0);
 		},
 
 		postCreate: function() {

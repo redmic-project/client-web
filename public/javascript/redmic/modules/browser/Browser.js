@@ -178,6 +178,11 @@ define([
 
 		_subClear: function() {
 
+			this._clear();
+		},
+
+		_clear: function() {
+
 			this._clearData();
 		},
 

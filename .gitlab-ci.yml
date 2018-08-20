@@ -43,7 +43,10 @@ prepare-unbuilt-version:
 run-unit-tests:
   stage: test-code
   image: registry.gitlab.com/redmic-project/docker/web-build:latest
-  script: grunt test
+  script:
+    - "testOutput=$(grunt test | tee /dev/tty)"
+    - "coverage=$(echo \"${testOutput}\" | grep '^All files.*' | cut -d '|' -f 2 | tr -d ' ')"
+    - 'echo "Coverage: ${coverage}%"'
   only:
     - branches
   except:

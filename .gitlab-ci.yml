@@ -272,9 +272,10 @@ deploy-pro:
   variables:
     DOCKER_DRIVER: overlay2
     SSH_REMOTE: ${PRO_SSH_REMOTE}
-    SERVICE: ${CI_PROJECT_NAME}
+    STACK: redmic
+    SERVICES_TO_CHECK: redmic_${CI_PROJECT_NAME}
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}
-    IMAGE_TAG: ${CI_COMMIT_TAG}
+    IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
     OAUTH_URL: ${PRO_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}

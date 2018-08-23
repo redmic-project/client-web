@@ -276,6 +276,7 @@ deploy-pro:
   variables:
     DOCKER_DRIVER: overlay2
     SSH_REMOTE: ${PRO_SSH_REMOTE}
+    STATUS_CHECK_DELAY: '60'
     STACK: client
     SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}

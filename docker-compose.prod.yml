@@ -11,9 +11,6 @@ services:
         traefik.port: "${WEB_PORT}"
         traefik.docker.network: traefik-net
         traefik.frontend.rule: PathPrefix:/
-        traefik.frontend.errors.50x.status: "502-504"
-        traefik.frontend.errors.50x.backend: static-pages
-        traefik.frontend.errors.50x.query: '/50x'
         traefik.backend: web
       placement:
         constraints:

@@ -12,6 +12,9 @@ services:
         traefik.docker.network: traefik-net
         traefik.frontend.rule: PathPrefix:/
         traefik.backend: web
+        traefik.frontend.errors.5xx.status: "500-599"
+        traefik.frontend.errors.5xx.backend: static-pages-static-pages-static-pages
+        traefik.frontend.errors.5xx.query: '/web-5xx/'
       placement:
         constraints:
           - node.role == worker
@@ -19,6 +22,12 @@ services:
         condition: on-failure
         delay: 1m
         window: 3m
+      resources:
+        limits:
+          cpus: '2'
+          memory: 120M
+        reservations:
+          memory: 50M
 
 networks:
   traefik-net:

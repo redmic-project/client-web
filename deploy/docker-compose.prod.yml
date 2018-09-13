@@ -2,8 +2,6 @@ version: '3.5'
 
 services:
   web:
-    networks:
-      - traefik-net
     deploy:
       mode: replicated
       replicas: 1
@@ -19,16 +17,11 @@ services:
         constraints:
           - node.role == worker
       restart_policy:
-        condition: on-failure
-        delay: 1m
-        window: 3m
+        delay: 30s
+        window: 2m
       resources:
         limits:
           cpus: '2'
-          memory: 120M
+          memory: 128M
         reservations:
-          memory: 50M
-
-networks:
-  traefik-net:
-    external: true
+          memory: 103M

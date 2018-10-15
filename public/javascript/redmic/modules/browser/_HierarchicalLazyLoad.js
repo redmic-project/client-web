@@ -178,6 +178,18 @@ define([
 
 			this._pathGenerateParent = null;
 			this._nodeParent = null;
+		},
+
+		_showRow: function(item) {
+
+			var idProperty = item[this.idProperty],
+				rowInstance = this._getRowInstance(idProperty);
+
+			if (!rowInstance || !this._evaluateItem(item)) {
+				return;
+			}
+
+			this._showInstanceRow(rowInstance, item, this.rowsContainerNode, false);
 		}
 	});
 });

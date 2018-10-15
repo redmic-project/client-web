@@ -190,7 +190,6 @@ define([
 		_addAfterData: function(response) {
 
 			this._showPendingParents();
-			//this._pendingParentsToShow = [];
 		},
 
 		_parserIndexData: function(response) {
@@ -269,6 +268,9 @@ define([
 			if (!rowInstance || !this._evaluateItem(item)) {
 				return;
 			} else if (item[this.leavesProperty]) {
+				if (!this._pendingParentsToShow) {
+					this._pendingParentsToShow = [];
+				}
 				this._pendingParentsToShow.push(idProperty);
 
 				return;

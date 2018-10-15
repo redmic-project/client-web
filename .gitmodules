@@ -6,15 +6,15 @@
 [submodule "public/javascript/redmic-widgets"]
 	path = public/javascript/redmic-widgets
 	url = ../widgets.git
-	branch = dev
+	branch = master
 	ignore = dirty
 [submodule "public/stylesheets"]
 	path = public/stylesheets
 	url = ../style.git
-	branch = dev
+	branch = master
 	ignore = dirty
 [submodule "public/javascript/templates"]
 	path = public/javascript/templates
 	url = ../templates.git
-	branch = dev
+	branch = master
 	ignore = dirty

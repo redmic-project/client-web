@@ -121,9 +121,12 @@ define([
 			}
 
 			var value = obj.text,
-				target = this.baseTarget,
-				requestObj = {},
-				evt = 'REQUEST';
+				target = this.baseTarget;
+
+			if (!value.length) {
+				this._publish(this.browser.getChannel("CLEAR"));
+				return;
+			}
 
 			if (value == parseInt(value, 10)) {
 				target += "/" + value;
@@ -133,7 +136,7 @@ define([
 
 			this.target = target;
 
-			this._emitEvt('REQUEST', this._getRequestObj(requestObj));
+			this._emitEvt('REQUEST', this._getRequestObj({}));
 		},
 
 		_getRequestObj: function(request) {

@@ -3,25 +3,6 @@ version: '3.5'
 services:
   web:
     deploy:
-      mode: replicated
-      replicas: 1
-      labels:
-        traefik.port: "${WEB_PORT}"
-        traefik.docker.network: traefik-net
-        traefik.frontend.rule: PathPrefix:/
-        traefik.backend: web
-        traefik.frontend.errors.5xx.status: "500-599"
-        traefik.frontend.errors.5xx.backend: static-pages-static-pages-static-pages
-        traefik.frontend.errors.5xx.query: '/web-5xx/'
       placement:
         constraints:
           - node.role == worker
-      restart_policy:
-        delay: 30s
-        window: 2m
-      resources:
-        limits:
-          cpus: '2'
-          memory: 128M
-        reservations:
-          memory: 103M

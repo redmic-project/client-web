@@ -15,6 +15,34 @@ services:
       timeout: 10s
       retries: 3
       start_period: 2m
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        traefik.port: '${WEB_PORT}'
+        traefik.docker.network: traefik-net
+        traefik.default.frontend.rule: PathPrefix:/
+        traefik.es.frontend.rule: HostRegexp:{subdomain:^es\\..*$$}
+        traefik.es.frontend.priority: '13'
+        traefik.es.frontend.redirect.regex: ^(.*):\\/\\/es\\.(.*)$$
+        traefik.es.frontend.redirect.replacement: $$1://$$2
+        traefik.es.frontend.redirect.permanent: true
+        traefik.en.frontend.rule: HostRegexp:{subdomain:^en\\..*$$}
+        traefik.en.frontend.priority: '13'
+        traefik.en.frontend.headers.customRequestHeaders: content-language:en
+        traefik.backend: web
+        traefik.frontend.errors.5xx.status: 500-599
+        traefik.frontend.errors.5xx.backend: static-pages-static-pages-static-pages
+        traefik.frontend.errors.5xx.query: '/web-5xx/'
+      restart_policy:
+        delay: 30s
+        window: 2m
+      resources:
+        limits:
+          cpus: '2'
+          memory: 128M
+        reservations:
+          memory: 103M
 
 networks:
   redmic-net:

@@ -26,7 +26,7 @@ services:
         traefik.es.frontend.priority: '13'
         traefik.es.frontend.redirect.regex: ^(.*):\\/\\/es\\.(.*)$$
         traefik.es.frontend.redirect.replacement: $$1://$$2
-        traefik.es.frontend.redirect.permanent: true
+        traefik.es.frontend.redirect.permanent: 'true'
         traefik.en.frontend.rule: HostRegexp:{subdomain:^en\\..*$$}
         traefik.en.frontend.priority: '13'
         traefik.en.frontend.headers.customRequestHeaders: content-language:en

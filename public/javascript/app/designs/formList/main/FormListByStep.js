@@ -19,7 +19,7 @@ define([
 
 		constructor: function (args) {
 
-			this.config = {
+			this.mainConfig = {
 				mainActions: {
 					DESERIALIZE: "deserialize",
 					VALIDATION_ERRORS_CHANGED: "validationErrorsChanged",
@@ -34,7 +34,7 @@ define([
 				pathSeparator: "."
 			};
 
-			lang.mixin(this, this.config, args);
+			lang.mixin(this, this.mainConfig, args);
 
 			aspect.before(this, "_beforeShow", this._beforeShowController);
 		},
@@ -397,7 +397,7 @@ define([
 			// TODO: este atributo es propio de steps, y esto no es un step, ojo
 			this._results = [];
 			this._resultsByIdProperty = {};
-			this._totalSelected = this.config._totalSelected;
+			this._totalSelected = this.mainConfig._totalSelected;
 
 			this.form && this._publish(this.form.getChannel("CLEAR"));
 			this._publish(this.browser.getChildChannel("browser", "CLEAR"));

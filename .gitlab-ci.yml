@@ -188,7 +188,7 @@ container-scanning:
   artifacts:
     paths: [gl-sast-container-report.json]
 
-deploy-dev:
+deploy-supporting-branch-develop:
   stage: deploy
   image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
   variables:
@@ -201,47 +201,108 @@ deploy-dev:
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     OAUTH_URL: ${DEV_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
+    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
   environment:
     name: dev
-    url: https://appdev.${DEV_PUBLIC_HOSTNAME}
-  only:
-    - dev
-  except:
-    - schedules
-
-deploy-supporting-branch:
-  stage: deploy
-  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
-  variables:
-    DOCKER_DRIVER: overlay2
-    SSH_REMOTE: ${DEV_SSH_REMOTE}
-    STACK: client
-    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
-    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
-    IMAGE_TAG: ${CI_COMMIT_SHA}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
-    OAUTH_URL: ${DEV_OAUTH_URL}
-    OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
-  services:
-    - docker:dind
-  script:
-    - >
-      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
-  environment:
-    name: dev
-    url: https://appdev.${DEV_PUBLIC_HOSTNAME}
+    url: https://${DEV_PUBLIC_HOSTNAME}
   only:
     - branches
   except:
     - master
-    - dev
+    - schedules
+  when: manual
+
+deploy-stable-branch-develop:
+  stage: deploy
+  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+    SSH_REMOTE: ${DEV_SSH_REMOTE}
+    STACK: client
+    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
+    IMAGE_TAG: ${CI_COMMIT_SHA}
+    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
+    OAUTH_URL: ${DEV_OAUTH_URL}
+    OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
+    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
+  services:
+    - docker:dind
+  script:
+    - >
+      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+  environment:
+    name: dev
+    url: https://${DEV_PUBLIC_HOSTNAME}
+  only:
+    - master
+  except:
+    - schedules
+  when: manual
+
+deploy-supporting-branch-production:
+  stage: deploy
+  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+    SSH_REMOTE: ${PRO_SSH_REMOTE}
+    STACK: client
+    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
+    IMAGE_TAG: ${CI_COMMIT_SHA}
+    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
+    OAUTH_URL: ${PRO_OAUTH_URL}
+    OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
+    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
+  services:
+    - docker:dind
+  script:
+    - >
+      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+  environment:
+    name: pro
+    url: https://${PRO_PUBLIC_HOSTNAME}
+  only:
+    - branches
+  except:
+    - master
+    - schedules
+  when: manual
+
+deploy-stable-branch-production:
+  stage: deploy
+  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+    SSH_REMOTE: ${PRO_SSH_REMOTE}
+    STACK: client
+    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
+    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
+    IMAGE_TAG: ${CI_COMMIT_SHA}
+    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
+    OAUTH_URL: ${PRO_OAUTH_URL}
+    OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
+    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
+  services:
+    - docker:dind
+  script:
+    - >
+      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+  environment:
+    name: pro
+    url: https://${PRO_PUBLIC_HOSTNAME}
+  only:
+    - master
+  except:
     - schedules
   when: manual
 
@@ -249,15 +310,14 @@ run-functional-tests:
   stage: test-deploy
   image: registry.gitlab.com/redmic-project/docker/web-build:latest
   tags:
-    - client
-    - functional
+    - functional-testing
   variables:
     GIT_SUBMODULE_STRATEGY: normal
   script:
     - type yarn grunt java
     - yarn install || yarn install
     - >
-      grunt test-functional-local --server-url="https://appdev.${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      grunt test-functional-local --server-url="https://${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
       --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups="${SUITES_GROUPS}" --headless
   only:
     - schedules
@@ -272,31 +332,3 @@ run-functional-tests:
     when: always
     paths:
       - "test_reports/test-functional-local*"
-
-deploy-pro:
-  stage: deploy
-  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
-  variables:
-    DOCKER_DRIVER: overlay2
-    SSH_REMOTE: ${PRO_SSH_REMOTE}
-    STACK: client
-    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
-    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
-    IMAGE_TAG: ${CI_COMMIT_SHA}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
-    OAUTH_URL: ${PRO_OAUTH_URL}
-    OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
-  services:
-    - docker:dind
-  script:
-    - >
-      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
-  environment:
-    name: pro
-    url: https://${PRO_PUBLIC_HOSTNAME}
-  only:
-    - master
-  except:
-    - schedules
-  when: manual

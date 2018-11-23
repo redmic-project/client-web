@@ -7,28 +7,25 @@ services:
       - OAUTH_URL
       - OAUTH_CLIENT_SECRET
     networks:
-      - redmic-net
       - traefik-net
     healthcheck:
       test: wget --spider -S -t 3 http://localhost:${WEB_PORT}
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 2m
+      start_period: 1m
     deploy:
       mode: replicated
       replicas: 1
       labels:
         traefik.port: '${WEB_PORT}'
         traefik.docker.network: traefik-net
-        traefik.default.frontend.rule: PathPrefix:/
-        traefik.es.frontend.rule: HostRegexp:{subdomain:^es\\..*$$}
-        traefik.es.frontend.priority: '13'
+        traefik.default.frontend.rule: Host:${PUBLIC_HOSTNAME}
+        traefik.es.frontend.rule: Host:es.${PUBLIC_HOSTNAME}
         traefik.es.frontend.redirect.regex: ^(.*):\\/\\/es\\.(.*)$$
         traefik.es.frontend.redirect.replacement: $$1://$$2
         traefik.es.frontend.redirect.permanent: 'true'
-        traefik.en.frontend.rule: HostRegexp:{subdomain:^en\\..*$$}
-        traefik.en.frontend.priority: '13'
+        traefik.en.frontend.rule: Host:en.${PUBLIC_HOSTNAME}
         traefik.en.frontend.headers.customRequestHeaders: content-language:en
         traefik.backend: web
         traefik.frontend.errors.5xx.status: 500-599
@@ -45,8 +42,5 @@ services:
           memory: 103M
 
 networks:
-  redmic-net:
-    external: true
-
   traefik-net:
     external: true

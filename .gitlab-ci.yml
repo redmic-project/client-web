@@ -201,12 +201,13 @@ deploy-supporting-branch-develop:
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     OAUTH_URL: ${DEV_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
+    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
   environment:
     name: dev
     url: https://${DEV_PUBLIC_HOSTNAME}
@@ -230,12 +231,13 @@ deploy-stable-branch-develop:
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     OAUTH_URL: ${DEV_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
+    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
   environment:
     name: dev
     url: https://${DEV_PUBLIC_HOSTNAME}
@@ -258,12 +260,13 @@ deploy-supporting-branch-production:
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
     OAUTH_URL: ${PRO_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
+    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
   environment:
     name: pro
     url: https://${PRO_PUBLIC_HOSTNAME}
@@ -287,12 +290,13 @@ deploy-stable-branch-production:
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
     OAUTH_URL: ${PRO_OAUTH_URL}
     OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
+    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
   environment:
     name: pro
     url: https://${PRO_PUBLIC_HOSTNAME}

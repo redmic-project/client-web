@@ -1,21 +1,17 @@
 define([
-	"app/base/views/extensions/_LocalSelectionView"
+	"app/base/views/extensions/_Edition"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/_Select"
-	, "app/base/views/extensions/_Edition"
 ], function(
-	_LocalSelectionView
+	_Edition
 	, declare
 	, lang
 	, aspect
 	, _Store
-	, _Select
-	, _Edition
 ){
-	return declare([_Store, _Edition, _LocalSelectionView], {
+	return declare([_Store, _Edition], {
 		//	summary:
 		//		Extensión para las vistas de edición de datos.
 		//	description:
@@ -43,7 +39,6 @@ define([
 
 			lang.mixin(this, this.config);
 
-			aspect.before(this, "_afterSetConfigurations", this._setEditionFormListConfigurations);
 			aspect.before(this, "_createFormSubscriptions", this._addEditionFormSubscriptions);
 		},
 
@@ -60,18 +55,6 @@ define([
 				channel : this.form.getChannel("CLEARED"),
 				callback: "_subFormCleared"
 			}]);
-		},
-
-		_setEditionFormListConfigurations: function() {
-
-			this.browserConfig = this._merge([{
-				browserExts: [_Select],
-				browserConfig: {
-					selectorChannel: this.getChannel(),
-					noSeeSelect: true,
-					simpleSelection: true
-				}
-			}, this.browserConfig || {}]);
 		},
 
 		_getBrowserConfig: function() {
@@ -116,7 +99,6 @@ define([
 		_itemAvailable: function(response) {
 
 			if (response.target == this.target) {
-
 				var item = lang.clone(response.data);
 
 				if (this.type === "copy") {
@@ -125,15 +107,6 @@ define([
 
 				this._emitEvt('SHOW_FORM', {
 					data: item
-				});
-
-				this._publish(this.getChannel("SELECTED"), {
-					"success": true,
-					"body": {
-						"ids": [item[this.idProperty]],
-						"selectionTarget": this.getChannel(),
-						"total": 1
-					}
 				});
 			} else {
 				this.inherited(arguments);

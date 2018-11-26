@@ -1,15 +1,16 @@
-FROM node:alpine
+FROM node:11-alpine
 
 LABEL maintainer="info@redmic.es"
 
-ENV DIRPATH /opt/redmic
+ARG PORT=3050
+ARG DIRPATH=/redmic
+
+EXPOSE ${PORT}
 
 WORKDIR ${DIRPATH}
 
-ADD dist*.tar.gz ./
-
 RUN npm install --production
 
-EXPOSE ${WEB_PORT}
+ADD dist*.tar.gz ./
 
-ENTRYPOINT npm start -- -b
+CMD ["node", "app", "-b"]

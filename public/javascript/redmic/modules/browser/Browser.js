@@ -78,11 +78,27 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			aspect.after(this, "_addData", lang.hitch(this, this._emitEvt, 'REFRESH_COMPLETE'));
-			aspect.after(this, "_addItem", lang.hitch(this, this._emitEvt, 'DATA_ADDED'));
-			aspect.after(this, "_removeItem", lang.hitch(this, this._emitEvt, 'DATA_REMOVED'));
+			aspect.after(this, "_addData", lang.hitch(this, function(originalReturn, originalArgs) {
+
+				this._emitEvt('REFRESH_COMPLETE', originalArgs[0]);
+			}));
+
+			aspect.after(this, "_addItem", lang.hitch(this, function(originalReturn, originalArgs) {
+
+				this._emitEvt('DATA_ADDED', originalArgs[0]);
+			}));
+
+			aspect.after(this, "_removeItem", lang.hitch(this, function(originalReturn, originalArgs) {
+
+				this._emitEvt('DATA_REMOVED', { idProperty: originalArgs[0] });
+			}));
+
 			aspect.after(this, "_clearData", lang.hitch(this, this._emitEvt, 'CLEARED'));
-			aspect.after(this, "_updateTemplate", lang.hitch(this, this._emitEvt, 'TEMPLATE_UPDATED'));
+
+			aspect.after(this, "_updateTemplate", lang.hitch(this, function(originalReturn, originalArgs) {
+
+				this._emitEvt('TEMPLATE_UPDATED', originalArgs[0]);
+			}));
 		},
 
 		_defineSubscriptions: function () {

@@ -118,7 +118,7 @@ define([
 
 		_listDataRemoved: function(response) {
 
-			var removedItemId = response[this.idProperty] || response;
+			var removedItemId = response.idProperty || response;
 
 			this._removeItemFromResults(removedItemId);
 			this._emitRemoveItem(removedItemId);

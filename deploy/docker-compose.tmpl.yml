@@ -9,7 +9,7 @@ services:
     networks:
       - traefik-net
     healthcheck:
-      test: wget --spider -S -t 3 http://localhost:${WEB_PORT}
+      test: wget --spider -S -t 3 http://localhost:${PORT}
       interval: 30s
       timeout: 10s
       retries: 3
@@ -18,7 +18,7 @@ services:
       mode: replicated
       replicas: 1
       labels:
-        traefik.port: '${WEB_PORT}'
+        traefik.port: '${PORT}'
         traefik.docker.network: traefik-net
         traefik.default.frontend.rule: Host:${PUBLIC_HOSTNAME}
         traefik.es.frontend.rule: Host:es.${PUBLIC_HOSTNAME}

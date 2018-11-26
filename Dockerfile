@@ -9,8 +9,8 @@ EXPOSE ${PORT}
 
 WORKDIR ${DIRPATH}
 
-RUN npm install --production
-
 ADD dist*.tar.gz ./
+
+RUN npm install --production
 
 CMD ["node", "app", "-b"]

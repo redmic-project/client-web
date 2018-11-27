@@ -1158,4 +1158,6 @@ define({
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"
 	, "featurecod": "Feature code"
+
+	, "sexagesimalDegrees": "Grados sexagesimales"
 });

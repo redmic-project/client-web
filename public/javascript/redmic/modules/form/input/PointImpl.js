@@ -55,7 +55,7 @@ define([
 					crs: "32628"
 				},{
 					id: 1,
-					name: "Geographic coordinates",
+					name: this.i18n.sexagesimalDegrees,
 					crs: "1"
 				}],
 				_inputsNodes: {},

@@ -90,7 +90,7 @@ define([
 
 				ownChannel: "map",
 
-				defaultBaseLayer: "redmic"
+				defaultBaseLayer: "ortofoto"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -717,10 +717,10 @@ define([
 		_afterMapLoaded: function() {
 
 			// TODO revisar las capas base
-			this._changeBaseLayer(this.defaultBaseLayer);
+			//this._changeBaseLayer(this.defaultBaseLayer);
 			this._changeBaseLayer("topografico");
 			this._changeBaseLayer("ortofoto");
-			this._changeBaseLayer(this.defaultBaseLayer);
+			//this._changeBaseLayer(this.defaultBaseLayer);
 			this._addContainerListeners();
 		},
 

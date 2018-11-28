@@ -255,10 +255,10 @@ define({
 	, "bathymetry": "Batimetría"
 	, "identification": "Identificación"
 
-	, "misidentification": "Citas erróneas"
-	, "misidentificationAdd": "Añadir nueva cita errónea"
-	, "misidentificationPopup": "Citado como"
-	, "misidentificationEdit": "Editando cita errónea"
+	, "misidentification": "Identificaciones erróneas"
+	, "misidentificationAdd": "Añadir nueva identificación errónea"
+	, "misidentificationPopup": "Identificado como"
+	, "misidentificationEdit": "Editando identificación errónea"
 	, "openViewer": "Abrir"
 
 	, "copy": "Copiar"
@@ -423,7 +423,7 @@ define({
 
 	, "seaDepth": "Fondo"
 	, "legalValidity": "Validez legal"
-	, "containsMisidentification": "Contiene citas erróneas"
+	, "containsMisidentification": "Contiene identificaciones erróneas"
 	, "animalName": "Nombre del animal"
 	, "protocols": "Protocolos"
 	, "protocolsAssociated": "Protocolos asociados"
@@ -1158,4 +1158,6 @@ define({
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"
 	, "featurecod": "Feature code"
+
+	, "sexagesimalDegrees": "Grados sexagesimales"
 });

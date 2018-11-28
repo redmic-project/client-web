@@ -55,7 +55,7 @@ define([
 					crs: "32628"
 				},{
 					id: 1,
-					name: "Geographic coordinates",
+					name: this.i18n.sexagesimalDegrees,
 					crs: "1"
 				}],
 				_inputsNodes: {},
@@ -263,7 +263,7 @@ define([
 
 			var controlGroupNode = put(this.additionalPrevNode, "div.inputContainer.fWidth"),
 				key = "spatialReference",
-				label = this.i18n[key],
+				label = this.i18n[key] + '*',
 				placeholder = label + "PlaceHolder";
 
 			this.filteringSelect = new FilteringSelect({
@@ -286,7 +286,7 @@ define([
 
 			for (var i = this._coordinateProperties.length - 1; i >= 0; i--) {
 				var key = this._coordinateProperties[i],
-					label = this.i18n[key],
+					label = this.i18n[key] + '*',
 					controlGroupNode = put(this.mainNode, "div.inputContainer.fWidth");
 
 				this._inputsInstances[key] = this._createInput(key);

@@ -1163,6 +1163,8 @@ define({
 		, "descript_1": "Description"
 		, "descriptio": "Description"
 		, "featurecod": "Feature code"
+
+		, "sexagesimalDegrees": "Sexagesimal degrees"
 	}
 
 	, "es": true

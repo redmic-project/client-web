@@ -1164,7 +1164,8 @@ define({
 		, "descriptio": "Description"
 		, "featurecod": "Feature code"
 
-		, "sexagesimalDegrees": "Sexagesimal degrees"
+		, "wgs84DecimalDegrees": "WGS84 [EPSG: 4326] (decimal degrees)"
+		, "wgs84SexagesimalDegrees": "WGS84 [EPSG: 4326] (sexagesimal degrees)"
 	}
 
 	, "es": true

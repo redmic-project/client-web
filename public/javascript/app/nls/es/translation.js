@@ -1159,5 +1159,6 @@ define({
 	, "descriptio": "Descripción"
 	, "featurecod": "Feature code"
 
-	, "sexagesimalDegrees": "Grados sexagesimales"
+	, "wgs84DecimalDegrees": "WGS84 [EPSG: 4326] (grados decimales)"
+	, "wgs84SexagesimalDegrees": "WGS84 [EPSG: 4326] (grados sexagesimales)"
 });

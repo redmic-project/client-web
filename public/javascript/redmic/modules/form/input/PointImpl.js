@@ -43,8 +43,12 @@ define([
 				initialSr: 1,
 				spatialReferences: [{
 					id: 4326,
-					name: "WGS84 [EPSG: 4326]",
+					name: this.i18n.wgs84DecimalDegrees,
 					crs: "urn:ogc:def:crs:OGC:1.3:CRS84"
+				},{
+					id: 1,
+					name: this.i18n.wgs84SexagesimalDegrees,
+					crs: "1"
 				},{
 					id: 3857,
 					name: "WGS84 Web Mercator (Auxiliary Sphere) [EPSG: 3857]",
@@ -53,10 +57,6 @@ define([
 					id: 32628,
 					name: "WGS84 / UTM 28N [EPSG: 32628]",
 					crs: "32628"
-				},{
-					id: 1,
-					name: this.i18n.sexagesimalDegrees,
-					crs: "1"
 				}],
 				_inputsNodes: {},
 				_inputsInstances: {},

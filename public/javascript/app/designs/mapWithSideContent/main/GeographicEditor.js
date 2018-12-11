@@ -488,6 +488,8 @@ define([
 					objToPublish.data = data;
 				}
 			}
+
+			return objToPublish;
 		},
 
 		_actionWhenNoActivity: function() {

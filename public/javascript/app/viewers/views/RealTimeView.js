@@ -260,7 +260,7 @@ define([
 				filterConfig: {
 					modelChannel: this.modelChannel
 				},
-				getPopupContent: lang.hitch(this, this._getPopupContent),
+				getPopupContent: lang.hitch(this, this._getPopupContent)
 			});
 		},
 

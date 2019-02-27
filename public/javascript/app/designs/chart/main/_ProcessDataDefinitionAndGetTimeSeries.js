@@ -188,14 +188,13 @@ define([
 			return this._categoriesIndexed[rootCategory];
 		},
 
-		_iterateAndSetCategoryItems: function(rootCategory, level1, level2, level3, data1, data2,
-			data3, level3Selector1, level3Selector2) {
+		_iterateAndSetCategoryItems: function(rootCategory, level1, level2, level3, data1, data2, data3,
+			level3Selector1, level3Selector2) {
 			//	summary:
 			//		Construye la estructura por categorías con los elementos indexados por path.
 			//		Los path se componen de la forma: 'r.stationId.parameterId.zValue.definitionId'.
 
 			for (var level1Id in level1) {
-
 				var itemL1 = level1[level1Id],
 					pathL1 = "r" + this.pathSeparator + level1Id,
 					objL1 = data1[level1Id];
@@ -203,7 +202,6 @@ define([
 				this._categoriesIndexed[rootCategory][pathL1] = objL1;
 
 				for (var i = 0; i < itemL1.length; i++) {
-
 					var level2Id = itemL1[i],
 						itemL2 = level2[level2Id],
 						pathL2 = pathL1 + this.pathSeparator + level2Id,
@@ -212,19 +210,16 @@ define([
 					this._categoriesIndexed[rootCategory][pathL2] = objL2;
 
 					for (var level3Id in level3) {
-
 						var itemL3 = level3[level3Id];
-						if (itemL3[level3Selector1] == level2Id &&
-							itemL3[level3Selector2] == level1Id) {
-
+						if (itemL3[level3Selector1] == level2Id && itemL3[level3Selector2] == level1Id) {
 							var level3IdSplitted = level3Id.split(this.idSeparator);
 							for (var j = 0; j < level3IdSplitted.length; j++) {
-
 								var level3IdComponent = level3IdSplitted[j],
 									objL3 = data3[level3IdComponent],
 									zValue = objL3.z,
-									pathL3 = pathL2 + this.pathSeparator + zValue +
-										this.pathSeparator + level3IdComponent;
+									zId = zValue.toString().replace('.', ','),
+									pathL3 = pathL2 + this.pathSeparator + zId + this.pathSeparator +
+										level3IdComponent;
 
 								this._categoriesIndexed[rootCategory][pathL3] = objL3;
 							}

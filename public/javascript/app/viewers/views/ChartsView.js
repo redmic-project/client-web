@@ -23,7 +23,7 @@ define([
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/map/LeafletImpl"
 	, "redmic/modules/map/Map"
-	, "redmic/modules/map/layer/GeoJsonLayerImpl"
+	, "redmic/modules/map/layer/PruneClusterLayerImpl"
 	, "redmic/modules/map/layer/_Highlightable"
 	, "redmic/modules/map/layer/_Selectable"
 	, "templates/SurveyStationDataList"
@@ -52,7 +52,7 @@ define([
 	, SelectionBox
 	, LeafletImpl
 	, Map
-	, GeoJsonLayerImpl
+	, PruneClusterLayerImpl
 	, _Highlightable
 	, _Selectable
 	, ListTemplate
@@ -187,7 +187,8 @@ define([
 				selectorChannel: this.getChannel(),
 				selectionTarget: this._mapLayerSelectionTarget,
 				target: this.mapTarget,
-				onEachFeature: lang.hitch(this, this.onEachFeature)
+				onEachFeature: lang.hitch(this, this.onEachFeature),
+				bindPopupToMarkers: false
 			}, this.mapLayerDefinitionConfig || {}]);
 		},
 
@@ -371,16 +372,16 @@ define([
 				});
 			}
 
-			if (!this.geoJsonLayer) {
+			if (!this.mapLayerImpl) {
 				this.mapLayerDefinitionConfig.parentChannel = this.filterContainer.getChannel();
 				this.mapLayerDefinitionConfig.mapChannel = this.map.getChannel();
 
-				var mapLayerDefinition = declare([GeoJsonLayerImpl, _Highlightable, _Selectable]);
+				var mapLayerDefinition = declare([PruneClusterLayerImpl, _Highlightable, _Selectable]);
 
-				this.geoJsonLayer = new mapLayerDefinition(this.mapLayerDefinitionConfig);
+				this.mapLayerImpl = new mapLayerDefinition(this.mapLayerDefinitionConfig);
 
 				this._publish(this.map.getChannel("ADD_LAYER"), {
-					layer: this.geoJsonLayer
+					layer: this.mapLayerImpl
 				});
 			}
 
@@ -518,7 +519,7 @@ define([
 		_resetMarkerActive: function() {
 
 			if (this._activeBrowserPopup) {
-				this._publish(this.geoJsonLayer.getChannel("DELETE_HIGHLIGHT_MARKER"), {
+				this._publish(this.mapLayerImpl.getChannel("DELETE_HIGHLIGHT_MARKER"), {
 					id: this._activeBrowserPopup
 				});
 			}

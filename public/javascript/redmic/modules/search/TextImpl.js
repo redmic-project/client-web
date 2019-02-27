@@ -120,6 +120,7 @@ define([
 
 			this._emitEvt('SEARCH', {
 				suggest: evt,
+				query: this.initialQuery,
 				omitRefresh: true
 			});
 
@@ -131,16 +132,12 @@ define([
 
 		_subSerialized: function(evt, req) {
 
-			var obj = {
-				suggest: req.data && req.data.suggest
-			};
-
 			this._emitEvt('REQUEST', {
 				target: this._getTarget(),
 				action: this.action,
 				requesterId: this.getOwnChannel(),
 				method: this.methodSuggest,
-				query: obj
+				query: req.data
 			});
 		},
 

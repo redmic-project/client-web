@@ -23,6 +23,7 @@ define([
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/search/TextImpl"
 	, "templates/SurveyStationList"
+	, "templates/SurveyStationPopup"
 ], function(
 	_CompositeInTooltipFromIconKeypad
 	, Controller
@@ -48,6 +49,7 @@ define([
 	, _AddFilter
 	, TextImpl
 	, TemplateList
+	, TemplatePopup
 ){
 	return declare([Layout, Controller, _Filter, _CompositeInTooltipFromIconKeypad, _Selection], {
 		//	summary:
@@ -66,6 +68,8 @@ define([
 				title: this.i18n["real-time"],
 				"class": "",
 
+				templatePopup: TemplatePopup,
+
 				target: redmicConfig.services.timeSeriesStations,
 				layersTarget: redmicConfig.services.timeSeriesStations,
 
@@ -77,9 +81,9 @@ define([
 
 				filterConfig: {
 					initQuery: {
-						/*-terms: {
+						terms: {
 							"properties.site.dashboard": true
-						},*/
+						},
 						size: null,
 						from: null
 					}
@@ -96,7 +100,8 @@ define([
 				target: this.target,
 				highlightField: ['properties.site.name'],
 				suggestFields: ["properties.site.name", "properties.site.code"],
-				searchFields: ["properties.site.name^3", "properties.site.code^3"],
+				searchFields: ["properties.site.name", "properties.site.code"],
+				initialQuery: this.filterConfig.initQuery,
 				itemLabel: null
 			}, this.searchConfig || {}]);
 
@@ -255,19 +260,15 @@ define([
 				filterConfig: {
 					modelChannel: this.modelChannel
 				},
-				onEachFeature: lang.hitch(this, function(feature, layer) {
-					layer.on("click", lang.hitch(this, function(feature, item) {
+				getPopupContent: lang.hitch(this, this._getPopupContent),
+			});
+		},
 
-						/*-this._publish(this.realTimeSurveyDetails.getChannel("SHOW"), {
-							data: {
-								id: feature.id,
-								parentId: feature.uuid,
-								grandparentId: feature.properties.activityId,
-								feature: feature
-							}
-						});-*/
-					}, feature));
-				})
+		_getPopupContent: function(data) {
+
+			return this.templatePopup({
+				i18n: this.i18n,
+				feature: data.feature
 			});
 		},
 

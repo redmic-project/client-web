@@ -79,6 +79,13 @@ define([
 
 			this.dataSeriesChartsConfig = this._merge([{
 				parentChannel: this.getChannel(),
+				aggregationToolSelection: {
+					interval: [],
+					metrics: ["avg"]
+				},
+				aggregationToolConfig: {
+					defaultIntervalOptions: []
+				},
 				chartsContainerExts: [
 					_TemporalAxisWithGridDrawing,
 					_VerticalAxesWithGridDrawing,

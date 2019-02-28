@@ -75,7 +75,7 @@ define([
 						"open": true,
 						"terms": {
 							"field": "activityType.name",
-							"size": 20
+							"size": 100
 						}
 					},
 					"territorialScope": {

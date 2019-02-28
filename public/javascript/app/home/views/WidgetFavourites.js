@@ -34,6 +34,10 @@ define([
 			url: "/catalog/activity-infrastructure/1378",
 			label: "webcams",
 			icon: "fa-camera"
+		},{
+			url: "/viewer/real-time",
+			label: "real-time",
+			icon: "fa-clock-o"
 		}],
 
 		suffixI18n: '-view',

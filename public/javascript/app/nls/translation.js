@@ -885,6 +885,10 @@ define({
 
 		, "items": "items"
 
+		, "real-time": "Real time data"
+		, "goToDashboard": "Visualize data"
+		, "dashboard": "Dashboard"
+
 		, "trash-collection": "Trash survey"
 		, "collect": "Collect"
 		, "places": "Places"

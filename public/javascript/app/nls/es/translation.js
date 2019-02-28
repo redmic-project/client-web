@@ -879,6 +879,10 @@ define({
 
 	, "items": "elementos"
 
+	, "real-time": "Datos en tiempo real"
+	, "goToDashboard": "Visualizar datos"
+	, "dashboard": "Dashboard"
+
 	, "trash-collection": "Inventario de basura"
 	, "collect": "Añadir nls clave: Collect"
 	, "places": "Añadir nls clave: Places"

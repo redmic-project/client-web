@@ -22,7 +22,7 @@ define([
 			lang.mixin(this, this.configAddBasicTitle, args);
 
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setAddBasicTitleConfigurations));
-			aspect.before(this, "_refreshModules", lang.hitch(this, this._refreshModulesAddBasicTitle));
+			aspect.before(this, "_refreshModules", lang.hitch(this, this._beforeRefreshModulesAddBasicTitle));
 		},
 
 		_setAddBasicTitleConfigurations: function() {
@@ -32,7 +32,12 @@ define([
 			}, this.titleWidgetConfig || {}]);
 		},
 
-		_refreshModulesAddBasicTitle: function() {
+		_beforeRefreshModulesAddBasicTitle: function() {
+
+			this._updateTitle();
+		},
+
+		_updateTitle: function() {
 
 			this._emitEvt('INJECT_ITEM', {
 				data: {

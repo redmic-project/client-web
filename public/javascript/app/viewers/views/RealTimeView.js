@@ -1,6 +1,5 @@
 define([
-	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
-	, "app/designs/mapWithSideContent/Controller"
+	"app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
 	, "dijit/layout/BorderContainer"
@@ -9,14 +8,10 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Filter"
-	, "redmic/modules/base/_Selection"
-	, "redmic/modules/base/_ShowInPopup"
-	, "redmic/modules/base/_Store"
 	, "redmic/modules/browser/ListImpl"
+	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_GeoJsonParser"
 	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/map/Atlas"
 	, "redmic/modules/map/layer/PruneClusterLayerImpl"
@@ -25,8 +20,7 @@ define([
 	, "templates/SurveyStationList"
 	, "templates/SurveyStationPopup"
 ], function(
-	_CompositeInTooltipFromIconKeypad
-	, Controller
+	Controller
 	, Layout
 	, redmicConfig
 	, BorderContainer
@@ -35,14 +29,10 @@ define([
 	, declare
 	, lang
 	, _Filter
-	, _Selection
-	, _ShowInPopup
-	, _Store
 	, ListImpl
+	, _ButtonsInRow
 	, _GeoJsonParser
 	, _Framework
-	, _Select
-	, SelectionBox
 	, Total
 	, Atlas
 	, PruneClusterLayerImpl
@@ -51,7 +41,7 @@ define([
 	, TemplateList
 	, TemplatePopup
 ){
-	return declare([Layout, Controller, _Filter, _CompositeInTooltipFromIconKeypad, _Selection], {
+	return declare([Layout, Controller, _Filter], {
 		//	summary:
 		//		Vista de Realtime.
 		//	description:
@@ -73,7 +63,7 @@ define([
 				target: redmicConfig.services.timeSeriesStations,
 				layersTarget: redmicConfig.services.timeSeriesStations,
 
-				_layerInstances: {},
+				_layerInstance: null,
 				_layerIdPrefix: "realTime",
 				layerIdSeparator: "_",
 
@@ -111,10 +101,23 @@ define([
 				perms: this.perms,
 				selectionIdProperty: "id",
 				template: TemplateList,
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+							icon: "fa-tachometer",
+							btnId: "goToDashboard",
+							title: "Go to dashboard",
+							href: redmicConfig.viewPaths.realTimeDashboard
+						},{
+							icon: "fa-map-marker",
+							title: "map centering",
+							btnId: "mapCentering",
+							returnItem: true
+						}]
+					}
+				},
 				bars: [{
 					instance: Total
-				},{
-					instance: SelectionBox
 				}]
 			}, this.browserConfig || {}]);
 		},
@@ -127,6 +130,9 @@ define([
 			},{
 				channel: this.filter.getChannel("REQUEST_FILTER"),
 				callback: "_subRequestFilter"
+			},{
+				channel : this.browser.getChannel("BUTTON_EVENT"),
+				callback: "_subListBtnEvent"
 			});
 		},
 
@@ -136,7 +142,7 @@ define([
 			this.textSearch = new declare([TextImpl])(this.searchConfig);
 
 			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare([ListImpl, _Framework, _GeoJsonParser, _Select])(this.browserConfig);
+			this.browser = new declare([ListImpl, _Framework, _GeoJsonParser, _ButtonsInRow])(this.browserConfig);
 
 			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
@@ -145,6 +151,31 @@ define([
 			});
 
 			this.modelChannel = this.filter.modelChannel;
+		},
+
+		_afterShow: function(request) {
+
+			if (!this._layerInstance) {
+
+				this._layerInstance = new declare([PruneClusterLayerImpl, _AddFilter])({
+					parentChannel: this.getChannel(),
+					mapChannel: this.map.getChannel(),
+					geoJsonStyle: {
+						color: "red",
+						weight: 5
+					},
+					target: this.layersTarget,
+					infoTarget: this.layersTarget,
+					filterConfig: {
+						modelChannel: this.modelChannel
+					},
+					getPopupContent: lang.hitch(this, this._getPopupContent)
+				});
+			}
+
+			this._emitEvt('ADD_LAYER', {layer: this._layerInstance});
+
+			this._publish(this._layerInstance.getChannel('REFRESH'));
 		},
 
 		_setOwnCallbacksForEvents: function() {
@@ -194,74 +225,29 @@ define([
 			this.contentNode.addChild(this.tabs);
 		},
 
+		_subListBtnEvent: function(evt) {
+
+			var callback = "_" + evt.btnId + "Callback";
+			this[callback] && this[callback](evt);
+		},
+
+		_mapCenteringCallback: function(obj) {
+			console.debug("mapCentering ", obj)
+		},
+
 		_subChangedModelFilter: function(obj) {
 
 			this.modelChannel = obj.modelChannel;
 		},
 
 		_subRequestFilter: function(obj) {
-			console.debug("_subRequestFilter " + obj);
-			for (var key in this._layerInstances)
-				this._publish(this._layerInstances[key].getChildChannel('filter', "REQUEST_FILTER"), obj);
-		},
 
-		_select: function(item) {
-
-			item && this._addDataLayer(this._getIdFromPath(item));
-		},
-
-		_deselect: function(item) {
-
-			item && this._removeDataLayer(this._getIdFromPath(item));
+			this._publish(this._layerInstance.getChildChannel('filter', "REQUEST_FILTER"), obj);
 		},
 
 		_getIdFromPath: function(path) {
 
 			return path.split(this.pathSeparator).pop();
-		},
-
-		_clearSelection: function(response) {
-
-			for (var key in this._layerInstances) {
-				this._removeDataLayer(key);
-			}
-		},
-
-		_addDataLayer: function(item) {
-
-			console.debug("_addDataLayer " + item);
-
-			if (!this._layerInstances[item]) {
-				this._createLayerInstance(item);
-			}
-
-			this._emitEvt('ADD_LAYER', {layer: this._layerInstances[item]});
-
-			this._publish(this._layerInstances[item].getChannel('REFRESH'));
-		},
-
-		_createLayerInstance: function(item) {
-
-			console.debug("_createLayerInstance " + item);
-
-			var layerId = this._layerIdPrefix + this.layerIdSeparator + item;
-
-			this._layerInstances[item] =  new declare([PruneClusterLayerImpl, _AddFilter])({
-				parentChannel: this.getChannel(),
-				mapChannel: this.map.getChannel(),
-				geoJsonStyle: {
-					color: "red",
-					weight: 5
-				},
-				target: this.layersTarget,
-				infoTarget: this.layersTarget,
-				layerId: layerId,
-				layerLabel: layerId,
-				filterConfig: {
-					modelChannel: this.modelChannel
-				},
-				getPopupContent: lang.hitch(this, this._getPopupContent)
-			});
 		},
 
 		_getPopupContent: function(data) {
@@ -279,14 +265,14 @@ define([
 
 		_removeLayerInstance: function(item) {
 
-			this._publish(this._layerInstances[item].getChannel("CLEAR"));
+			this._publish(this._layerInstance.getChannel("CLEAR"));
 			this._emitEvt('REMOVE_LAYER', {
-				layer: this._layerInstances[item]
+				layer: this._layerInstance
 			});
-			this._publish(this._layerInstances[item].getChannel("DISCONNECT"));
+			this._publish(this._layerInstance.getChannel("DISCONNECT"));
 
-			this._layerInstances[item].destroy();
-			delete this._layerInstances[item];
+			this._layerInstance.destroy();
+			delete this._layerInstance;
 		},
 
 		_createAtlas: function() {
@@ -305,7 +291,6 @@ define([
 
 		_onHide: function() {
 
-			//this._publish(this.realTimeSurveyDetails.getChannel("HIDE"));
 		},
 
 		_beforeShow: function() {

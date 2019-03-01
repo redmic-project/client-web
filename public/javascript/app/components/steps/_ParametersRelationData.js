@@ -264,7 +264,12 @@ define([
 					this._formData.parameter = [];
 					for (var i = 0; i < parameters.length; i++) {
 						var item = parameters[i],
-							name = item.parameter.name + ' - ' + item.unit.name + ' (' + item.dataDefinition.z + ')';
+							name = item.parameter.name + ' - ' + item.unit.name + ' (z: ' + item.dataDefinition.z + ')';
+							device = item.dataDefinition.device;
+
+						if (device) {
+							name += ' - ' + device.name + ' (id: ' + device.id + ')';
+						}
 
 						this._formData.parameter.push({
 							id: item.dataDefinition.id,

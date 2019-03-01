@@ -114,7 +114,8 @@ define([
 
 		_initializeTable: function() {
 
-			this.headerOptionListMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)(this.headerOptionConfig);
+			this.headerOptionListMenu = new declare([ListMenu, _ShowOnEvt])
+				.extend(_ShowInTooltip)(this.headerOptionConfig);
 		},
 
 		postCreate: function() {
@@ -428,8 +429,6 @@ define([
 		},
 
 		_formatContent: function(content, format) {
-
-			format = format || this._currentColumn.format;
 
 			if (format) {
 				return format(content);

@@ -71,7 +71,7 @@ define([
 					"documentType": {
 						"terms": {
 							"field": "documentType.name",
-							"size": 30
+							"size": 100
 						}
 					},
 	 				"language": {

@@ -100,6 +100,9 @@ define([], function() {
 		"project": "/admin/project",
 		/*"serviceOGCCatalog": "/products/service-ogc-catalog",
 		"serviceOGCCatalogDetails": "/products/service-ogc-info/{id}",*/
+
+		"realTimeDashboard": "/viewer/real-time-dashboard/{uuid}",
+
 		"serviceOGCCatalog": "/service-ogc-catalog",
 		"serviceOGCCatalogDetails": "/service-ogc-catalog/service-ogc-info/{id}",
 		"serviceOGCEdit": "/maintenance/service-ogc-edit/{id}",

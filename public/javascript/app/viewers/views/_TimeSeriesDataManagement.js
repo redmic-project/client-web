@@ -53,7 +53,7 @@ define([
 						"terms": {
 							"field": "properties.measurements.parameter.name",
 							"nested": "properties.measurements",
-							"size": 20
+							"size": 100
 						}
 					}
 				}

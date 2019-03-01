@@ -51,7 +51,8 @@ define([
 				icons: [],
 				defaultColor: 'orange',
 				defaultIcon: 'star',
-				defaultPopupContent: LoadingTemplate()
+				defaultPopupContent: LoadingTemplate(),
+				bindPopupToMarkers: true
 			};
 
 			lang.mixin(this, this.config, args);
@@ -335,7 +336,9 @@ define([
 
 		_onMarkerClick: function(evt) {
 
-			this._setPopupContent(evt.layer, evt.data);
+			if (this.bindPopupToMarkers) {
+				this._setPopupContent(evt.layer, evt.data);
+			}
 		},
 
 		_setPopupContent: function(marker, data) {

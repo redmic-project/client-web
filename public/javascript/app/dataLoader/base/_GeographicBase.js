@@ -65,12 +65,9 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			aspect.before(this, "_setConfigurations", lang.hitch(this,
-				this._setGeographicBaseConfigurations));
-
+			aspect.before(this, "_setConfigurations", lang.hitch(this, this._setGeographicBaseConfigurations));
 			aspect.before(this, "_initialize", lang.hitch(this, this._initializeGeographicBase));
 			aspect.before(this, "_definePublications", lang.hitch(this, this._defineGeographicBasePublications));
-
 			aspect.before(this, "_beforeShow", lang.hitch(this, this._beforeShowGeographicBase));
 
 			if (!Utilities.isValidNumber(this.pathVariableId)) {

@@ -1158,6 +1158,13 @@ define({
 	, "webcams": "Webcams"
 	, "noDataLoaderExistActivityCategories": "No hay carga de datos disponible para esta actividad."
 
+	, "goToActivity": "Ir a actividad"
+	, "goToPlatform": "Ir a plataforma"
+
+	, "windrose": "Rosa de los vientos"
+	, "sliderSelector": "Selector desplazable"
+	, "dataFilter": "Filtro de datos"
+
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"

@@ -1,17 +1,19 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/chart/Controller"
-	, "app/designs/chart/layout/TopContent"
-	, "app/redmicConfig"
+	'app/designs/base/_Main'
+	, 'app/designs/chart/Controller'
+	, 'app/designs/chart/layout/TopContent'
+	, 'app/redmicConfig'
 	, 'd3/d3.min'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/base/_Filter"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/chart/layer/ChartLayer/WindRoseChartImpl"
-	, "redmic/modules/chart/layer/ChartLayer/_ObtainableValue"
-	, "redmic/modules/chart/Toolbar/SliderSelectorImpl"
-	, "redmic/modules/chart/Toolbar/GridManagementImpl"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'moment/moment.min'
+	, 'redmic/modules/base/_Filter'
+	, 'redmic/modules/base/_Store'
+	, 'redmic/modules/chart/layer/ChartLayer/WindRoseChartImpl'
+	, 'redmic/modules/chart/layer/ChartLayer/_ObtainableValue'
+	, 'redmic/modules/chart/Toolbar/DataFilterImpl'
+	, 'redmic/modules/chart/Toolbar/GridManagementImpl'
+	, 'redmic/modules/chart/Toolbar/SliderSelectorImpl'
 ], function (
 	_Main
 	, Controller
@@ -20,29 +22,33 @@ define([
 	, d3
 	, declare
 	, lang
+	, moment
 	, _Filter
 	, _Store
 	, WindRoseChartImpl
 	, _ObtainableValue
-	, SliderSelectorImpl
+	, DataFilterImpl
 	, GridManagementImpl
+	, SliderSelectorImpl
 ){
 	return declare([TopContentLayout, Controller, _Main, _Filter, _Store], {
 		//	summary:
-		//		Gráfica de multi rosa de los vientos con barra de herramientas.
+		//		Gráfica de rosa de los vientos multinivel con barra de herramientas.
 
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "multiPieChartWithToolbar",
+				ownChannel: 'multiPieChartWithToolbar',
 				events: {
-					ADD_LAYER: "addLayer",
-					REMOVE_LAYER: "removeLayer"
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer'
 				},
 				actions: {
 				},
 
 				target: redmicConfig.services.timeSeriesWindRose,
+
+				_unit: '%',
 
 				_domainSplit: 4,
 				_minDomainSplit: 1,
@@ -102,19 +108,26 @@ define([
 			}, this.gridManagementConfig || {}]);
 
 			this.gridManagement = new GridManagementImpl(this.gridManagementConfig);
+
+			this.dataFilter = new DataFilterImpl({
+				parentChannel: this.getChannel()
+			});
 		},
 
 		_defineMainSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel : this._directionSplitSelector.getChannel("TOOL_ACTUATED"),
-				callback: "_subDirectionSplitSelectorToolActuated"
+				channel : this._directionSplitSelector.getChannel('TOOL_ACTUATED'),
+				callback: '_subDirectionSplitSelectorToolActuated'
 			},{
-				channel : this._domainSplitSelector.getChannel("TOOL_ACTUATED"),
-				callback: "_subDomainSplitSelectorToolActuated"
+				channel : this._domainSplitSelector.getChannel('TOOL_ACTUATED'),
+				callback: '_subDomainSplitSelectorToolActuated'
 			},{
-				channel : this.chartsContainer.getChannel("SHOWN"),
-				callback: "_subChartsContainerShown"
+				channel : this.dataFilter.getChannel('TOOL_ACTUATED'),
+				callback: '_subDataFilterToolActuated'
+			},{
+				channel : this.chartsContainer.getChannel('SHOWN'),
+				callback: '_subChartsContainerShown'
 			});
 		},
 
@@ -122,10 +135,10 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'ADD_LAYER',
-				channel: this.chartsContainer.getChannel("ADD_LAYER")
+				channel: this.chartsContainer.getChannel('ADD_LAYER')
 			},{
 				event: 'REMOVE_LAYER',
-				channel: this.chartsContainer.getChannel("REMOVE_LAYER")
+				channel: this.chartsContainer.getChannel('REMOVE_LAYER')
 			});
 		},
 
@@ -133,21 +146,27 @@ define([
 
 			this.inherited(arguments);
 
-			this._publish(this._directionSplitSelector.getChannel("SHOW"), {
+			this._publish(this._directionSplitSelector.getChannel('SHOW'), {
 				node: this.buttonsContainerChartsTopNode
 			});
 
-			this._publish(this._domainSplitSelector.getChannel("SHOW"), {
+			this._publish(this._domainSplitSelector.getChannel('SHOW'), {
 				node: this.buttonsContainerChartsTopNode
 			});
 
-			this._publish(this.gridManagement.getChannel("SHOW"), {
+			this._publish(this.gridManagement.getChannel('SHOW'), {
 				node: this.buttonsContainerChartsTopNode
 			});
 
-			this._publish(this.chartsContainer.getChannel("SET_PROPS"), {
+			this._publish(this.dataFilter.getChannel('SHOW'), {
+				node: this.buttonsContainerChartsTopNode
+			});
+
+			this._publish(this.chartsContainer.getChannel('SET_PROPS'), {
 				buttonsContainer: this.buttonsContainerChartsTopNode
 			});
+
+			setTimeout(lang.hitch(this, this._dataAvailable, {data: {}}), 1000);
 		},
 
 		_getDirectionLabels: function(start, end) {
@@ -198,9 +217,76 @@ define([
 				chartsData = data.data,
 				limits = data.limits;
 
+			chartsData = [{
+					value: 6.5
+				},{
+					value: 1
+				},{
+					value: 3
+				},{
+					value: 5.1
+				},{
+					value: 2.2
+				},{
+					value: 4.3
+				},{
+					value: 2.1
+				},{
+					value: 5.715
+				},{
+					value: 2
+				},{
+					value: 1
+				},{
+					value: 3
+				},{
+					value: 5.1
+				},{
+					value: 2.2
+				},{
+					value: 4.3
+				},{
+					value: 2.1
+				},{
+					value: 5.715
+				},{
+					value: 2
+				},{
+					value: 1
+				},{
+					value: 3
+				},{
+					value: 5.1
+				},{
+					value: 2.2
+				},{
+					value: 4.3
+				},{
+					value: 2.1
+				},{
+					value: 5.715
+				},{
+					value: 2
+				},{
+					value: 1
+				},{
+					value: 3
+				},{
+					value: 5.1
+				},{
+					value: 2.2
+				},{
+					value: 4.3
+				},{
+					value: 2.1
+				},{
+					value: 5.715
+				}];
+			limits = [{"min":8.666,"max":10.525}];
+
 			this._chartsData = {
 				data: chartsData,
-				parameterName: "%"
+				parameterName: this._unit
 			};
 
 			this._limits = limits;
@@ -208,51 +294,65 @@ define([
 			this._updateCharts();
 		},
 
-		_subDirectionSplitSelectorToolActuated: function(req) {
+		_subDirectionSplitSelectorToolActuated: function(res) {
 
-			var value = req.value;
+			var value = res.value;
 
 			this._directionSplitPow = value;
 
-			this._addToQueryChartsData({
-				"dateLimits": {
-					"startDate":"2012-01-18T20:34:00.000Z",
-					"endDate":"2017-08-12T07:33:00.000Z"
-				},
-				"terms": {
-					"dataDefinition": {
-						"speed": 111,
-						"direction": 112
-					},
-					"numSectors": Math.pow(2, this._directionSplitPow)
-				}
-			});
+			this._updateQuery();
 		},
 
-		_subDomainSplitSelectorToolActuated: function(req) {
+		_subDomainSplitSelectorToolActuated: function(res) {
 
-			var value = req.value;
+			var value = res.value;
 
 			this._domainSplit = value;
 
+			this._updateQuery();
+		},
+
+		_subDataFilterToolActuated: function(res) {
+
+			var value = res.value;
+
+			this._startDate = value.startDate;
+			this._endDate = value.endDate;
+
+			this._updateQuery();
+		},
+
+		_updateQuery: function() {
+
+			if (this.speedDataDefinitionId === undefined || this.directionDataDefinitionId === undefined) {
+				return;
+			}
+
+			if (!this._startDate || !this._endDate) {
+				var currentDate = moment();
+				this._endDate = currentDate.toISOString();
+				this._startDate = currentDate.subtract(1, 'days').toISOString();
+			}
+
 			this._addToQueryChartsData({
-				"dateLimits": {
-					"startDate":"2012-01-18T20:34:00.000Z",
-					"endDate":"2017-08-12T07:33:00.000Z"
+				dateLimits: {
+					startDate: this._startDate,
+					endDate: this._endDate
 				},
-				"terms": {
-					"dataDefinition": {
-						"speed": 111,
-						"direction": 112
+				terms: {
+					dataDefinition: {
+						speed: this.speedDataDefinitionId,
+						direction: this.directionDataDefinitionId
 					},
-					"numSplits": this._domainSplit
+					numSectors: Math.pow(2, this._directionSplitPow),
+					numSplits: this._domainSplit
 				}
 			});
 		},
 
 		_subChartsContainerShown: function() {
 
-			this._emitEvt("REFRESH");
+			this._emitEvt('REFRESH');
 		},
 
 		_updateCharts: function() {
@@ -266,7 +366,7 @@ define([
 
 		_getColorScale: function() {
 
-			var colorReferences = ["#0000ff", "#00ffff", "#00ff00", "#ffff00", "#ff0000"],
+			var colorReferences = ['#0000ff', '#00ffff', '#00ff00', '#ffff00', '#ff0000'],
 				maxDomainLevelIndex = this._domainSplit - 1,
 				scaleDomain, scaleRange;
 
@@ -308,12 +408,11 @@ define([
 		_getLayerLabel: function(i) {
 
 			var param = this.i18n.frequency,
-				unit = '<unit>',	// TODO habrá que cogerlo del datadefinition
 				limits = this._limits[i],
 				min = limits.min,
 				max = limits.max;
 
-			return param + ' (' + min + ' - ' + max + ' ' + unit + ')';
+			return param + ' (' + min + ' - ' + max + ')';
 		},
 
 		_createChartLayer: function(layerConfig) {
@@ -335,7 +434,7 @@ define([
 
 		_addDataToChart: function(i) {
 
-			this._publish(this._chartInstances[i].getChannel("ADD_DATA"), this._chartsData);
+			this._publish(this._chartInstances[i].getChannel('ADD_DATA'), this._chartsData);
 		}
 	});
 });

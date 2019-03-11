@@ -22,10 +22,21 @@ define([
 
 		_cleanProp: function(item, prop) {
 
-			var propSplitted = prop.split(".");
+			var propSplitted = prop.split('.');
 
 			if (propSplitted.length > 1) {
-				this._cleanProp(item[propSplitted[0]], propSplitted[1]);
+				var currentPropertyKey = propSplitted[0],
+					nextPropertyKeys = propSplitted.slice(1).join('.');
+
+				if (currentPropertyKey === '{i}') {
+					for (var i = 0; i < item.length; i++) {
+						var currentPropertyValue = item[i];
+						this._cleanProp(currentPropertyValue, nextPropertyKeys);
+					}
+				} else {
+					var currentPropertyValue = item[currentPropertyKey];
+					this._cleanProp(currentPropertyValue, nextPropertyKeys);
+				}
 			} else {
 				var cleanValue = null;
 

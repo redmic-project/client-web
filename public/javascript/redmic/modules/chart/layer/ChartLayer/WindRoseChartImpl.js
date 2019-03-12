@@ -182,7 +182,7 @@ define([
 				return;
 			}
 
-			return this._labels[i];
+			return this._labels[i].toString();
 		},
 
 		_updateDataMetrics: function(data) {

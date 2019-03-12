@@ -28,13 +28,14 @@ define([
 				var currentPropertyKey = propSplitted[0],
 					nextPropertyKeys = propSplitted.slice(1).join('.');
 
+				var currentPropertyValue;
 				if (currentPropertyKey === '{i}') {
 					for (var i = 0; i < item.length; i++) {
-						var currentPropertyValue = item[i];
+						currentPropertyValue = item[i];
 						this._cleanProp(currentPropertyValue, nextPropertyKeys);
 					}
 				} else {
-					var currentPropertyValue = item[currentPropertyKey];
+					currentPropertyValue = item[currentPropertyKey];
 					this._cleanProp(currentPropertyValue, nextPropertyKeys);
 				}
 			} else {

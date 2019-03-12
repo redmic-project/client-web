@@ -27,6 +27,11 @@ define([
 
 		_setDataLoadedByStationManagementConfigurations: function() {
 
+			var copyPath = lang.replace(this.addPath, {
+				activityId: this.pathVariableId,
+				uuid: 'new'
+			}) + '?copy-source={uuid}';
+
 			this.browserConfig = this._merge([{
 				rowConfig: {
 					buttonsConfig: {
@@ -48,6 +53,11 @@ define([
 								title: "edit",
 								option: "default",
 								href: this.editPath
+							},{
+								icon: "fa-copy",
+								btnId: "copy",
+								title: "copy",
+								href: copyPath
 							},{
 								icon: "fa-upload",
 								btnId: "load",

@@ -40,7 +40,7 @@ define([
 			} else {
 				var cleanValue = null;
 
-				if (typeof item[prop] === "object") {
+				if (typeof item[prop] === "object" && item[prop] !== null) {
 					if (item[prop] instanceof Array) {
 						cleanValue = [];
 					} else {

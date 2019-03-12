@@ -31,7 +31,13 @@ define([
 
 			this.config = {
 				idPropertySave: 'uuid',
-				replaceTarget: redmicConfig.services.activityTimeSeriesStations
+				replaceTarget: redmicConfig.services.activityTimeSeriesStations,
+				propsToClean: [
+					"id", "uuid", "geometry.coordinates", "properties.site.name", "properties.site.code",
+					"properties.site.description", "properties.site.dashboard",
+					"properties.measurements.{i}.dataDefinition.id", "properties.measurements.{i}.dataDefinition.path",
+					"properties.measurements.{i}.parameter.path"
+				]
 			};
 
 			lang.mixin(this, this.config, args);
@@ -91,7 +97,6 @@ define([
 								required: false
 							}
 						},
-
 						formConfig: {
 							template: "components/viewCustomization/parameter/views/templates/FC"
 						}

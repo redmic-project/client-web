@@ -122,8 +122,13 @@ define([
 			if (this.pathVariableId && Number.isInteger(parseInt(this.pathVariableId, 10))) {
 				this._emitGet(this.pathVariableId);
 			} else if(this.pathVariableId && (this.pathVariableId === "new")) {
-				this._emitShowForm();
-			} else if (this.pathVariableId && Object.keys(this.pathVariableId).length > 1) {
+				var copySource = this.queryParameters ? this.queryParameters['copy-source'] : null;
+				if (copySource) {
+					this._emitGet(copySource);
+				} else {
+					this._emitShowForm();
+				}
+			} else if (this.pathVariableId && Object.keys(this.pathVariableId).length) {
 				this._pathVariableIdIsObject();
 			} else {
 				this._goTo404();
@@ -172,10 +177,16 @@ define([
 
 		_pathVariableIdIsObject: function() {
 
-			this.target = lang.replace(this.target, this.pathVariableId);
+			// TODO borrar este seteo, que cambia el target para siempre (efecinquitis) y creo que no es necesario
+			//this.target = lang.replace(this.target, this.pathVariableId);
 
 			if (this.pathVariableId.id === "new") {
-				this._emitShowForm();
+				var copySource = this.queryParameters ? this.queryParameters['copy-source'] : null;
+				if (copySource !== null) {
+					this._emitGet(copySource);
+				} else {
+					this._emitShowForm();
+				}
 			} else {
 				this._emitGet(this.pathVariableId[this.idProperty]);
 			}

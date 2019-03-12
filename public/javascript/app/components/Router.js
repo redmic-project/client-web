@@ -235,7 +235,7 @@ define([
 
 				// looking for all the links with 'ajax' class found
 				if (target && target.nodeName === 'A' && domAttr.get(target, 'd-state-url')) {
-					var url = /*'/'+kernel.locale+*/target.pathname;
+					var url = target.pathname + target.search;
 					if (mouse.isMiddle(event)) {
 						globalContext.open(globalContext.location.protocol + '//' + globalContext.location.hostname +
 							url, '_blank');
@@ -276,10 +276,8 @@ define([
 				query = urlSplitted[1];
 
 			if ((!route || (route === '') || (route === this.paths.ROOT)) && !this._userFound) {
-
 				this._addHistory(this.paths.LOGIN);
 				route = this.paths.LOGIN;
-
 			} else if (!route || (route === '')  || (route === this.paths.ROOT) ||
 				(route === this.paths.LOGIN && this._userFound)) {
 
@@ -385,9 +383,7 @@ define([
 
 			this._emitEvt('GET_MODULE', {
 				key: this._currModuleKey,
-				query: {
-					where: ioQuery.queryToObject(this.query)
-				}
+				query: ioQuery.queryToObject(this.query)
 			});
 		},
 

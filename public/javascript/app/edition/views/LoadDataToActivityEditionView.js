@@ -284,6 +284,7 @@ define([
 				activityData: this.activityData,
 				activityCategory: this.activityCategory,
 				pathVariableId: this.pathVariableId,
+				queryParameters: this.queryParameters,
 				editorConfig: {
 					_additionalData: {
 						activityCategory: this.activityCategory,

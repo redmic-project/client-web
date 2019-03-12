@@ -123,7 +123,7 @@ define([
 				this._emitGet(this.pathVariableId);
 			} else if(this.pathVariableId && (this.pathVariableId === "new")) {
 				var copySource = this.queryParameters ? this.queryParameters['copy-source'] : null;
-				if (copySource) {
+				if (copySource != null) {
 					this._emitGet(copySource);
 				} else {
 					this._emitShowForm();
@@ -182,7 +182,7 @@ define([
 
 			if (this.pathVariableId.id === "new") {
 				var copySource = this.queryParameters ? this.queryParameters['copy-source'] : null;
-				if (copySource !== null) {
+				if (copySource != null) {
 					this._emitGet(copySource);
 				} else {
 					this._emitShowForm();

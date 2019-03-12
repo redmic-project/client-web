@@ -27,6 +27,7 @@ define([
 
 			aspect.after(this, "_initialize", lang.hitch(this, this._initializeGetActivityData));
 			aspect.before(this, "_itemAvailable", lang.hitch(this, this._itemGetActivityDataAvailable));
+			aspect.before(this, "_beforeShow", lang.hitch(this, this._beforeShowGetActivityData));
 		},
 
 		_initializeGetActivityData: function() {
@@ -40,8 +41,6 @@ define([
 			} else {
 				this.target = [this.activityTarget];
 			}
-
-			this._emitGetActivity();
 		},
 
 		_emitGetActivity: function() {
@@ -51,6 +50,11 @@ define([
 				requesterId: this.getOwnChannel(),
 				id: this._gotActivityId()
 			});
+		},
+
+		_beforeShowGetActivityData: function() {
+
+			this._emitGetActivity();
 		},
 
 		_itemGetActivityDataAvailable: function(res) {

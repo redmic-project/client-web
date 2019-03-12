@@ -317,8 +317,8 @@ define([
 		_beforeShow: function(req) {
 
 			var data = req.data;
-			if (data) {
 
+			if (data && data.id) {
 				this._editing = true;
 
 				if (!this.noTitle) {

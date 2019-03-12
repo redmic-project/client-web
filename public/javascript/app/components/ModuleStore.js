@@ -148,23 +148,19 @@ define([
 
 			// Recorremos las categorías y sus módulos para generar nuestro store de módulos
 			for (var i = 0; i < categories.length; i++) {
-
 				var category = categories[i];
+
 				if (category.modules) {
-
 					for (var j = 0; j < category.modules.length; j++) {
-
-						var module = category.modules[j];
-						if (module.perms/* > 0*/ && module.enable) {
-
-							this._addModule(category.name + "/" + module.name, module.name, module.internPath,
-								module.perms);
+						var moduleItem = category.modules[j];
+						if (moduleItem.perms && moduleItem.enable) {
+							this._addModule(category.name + "/" + moduleItem.name, moduleItem.name,
+								moduleItem.internPath, moduleItem.perms);
 						}
 					}
 				}
 
-				if (category.perms/* && category.perms > 0*/ && category.enable) {
-
+				if (category.perms && category.enable) {
 					this._addModule(category.name, category.name, category.internPath, category.perms);
 				}
 			}
@@ -278,37 +274,42 @@ define([
 			//	returns:
 			//		Promesa de la instancia del módulo
 
-			var module = this._findModuleByPath(key);
+			var moduleList = this._findModuleByPath(key);
 
-			if (module.length < 1)
+			if (!moduleList.length) {
 				return;
+			}
 
-			module = module[0];
+			moduleItem = moduleList[0];
+
 			// Si aun no se ha creado la vista
-			if (!module.instance)
-				return this._createModule(module, query);	// return Object
+			if (!moduleItem.instance) {
+				return this._createModule(moduleItem, query);	// return Object
+			}
 
 			// Si ya se creó la vista anteriormente
-			module.timeStamp = new Date().getTime();	// Actualizamos el módulo
-			module.instance.pathVariableId = this.pathVariableId !== "$1" ? this.pathVariableId :null;
+			moduleItem.timeStamp = new Date().getTime();
+			this.moduleStore.put(moduleItem);
 
-			//module.instance._query.set(query);
-			this.moduleStore.put(module);
+			this._publish(moduleItem.instance.getChannel("CONNECT"));
 
-			this._publish(module.instance.getChannel("CONNECT"));
+			this._publish(moduleItem.instance.getChannel('SET_PROPS'), {
+				pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null,
+				queryParameters: query
+			});
 
 			var dfd = new Deferred();
-			dfd.resolve(module.instance);
+			dfd.resolve(moduleItem.instance);
 
 			return dfd;	// return Object
 		},
 
-		_createModule: function(/*Object*/ module, /*Object*/ query) {
+		_createModule: function(/*Object*/ moduleItem, /*Object*/ query) {
 			//	summary:
 			//		Crea la instancia de un módulo de la aplicación.
 			//	tags:
 			//		private
-			//	module:
+			//	moduleItem:
 			//		Módulo a crear
 			//	query:
 			//		Objeto de consulta
@@ -317,20 +318,20 @@ define([
 
 			var dfd = new Deferred();
 
-			require(["app" + module.internPath + "View"], lang.hitch(this, function(ModuleView) {
+			require(["app" + moduleItem.internPath + "View"], lang.hitch(this, function(ModuleView) {
 				// Creamos el módulo
 				var moduleInstance = new ModuleView({
-					perms: module.perms,
-					query: query,
+					perms: moduleItem.perms,
 					parentChannel: this.parentChannel,
-					ownChannel: this.viewSeparator+module.id,
-					pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId :null
+					ownChannel: this.viewSeparator + moduleItem.id,
+					pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null,
+					queryParameters: query
 				});
 
 				// Añadimos al store la instancia del módulo
-				module.instance = moduleInstance;
-				module.timeStamp = new Date().getTime();
-				this.moduleStore.put(module);
+				moduleItem.instance = moduleInstance;
+				moduleItem.timeStamp = new Date().getTime();
+				this.moduleStore.put(moduleItem);
 
 				// Resolvemos para devolver la instancia creada
 				dfd.resolve(moduleInstance);

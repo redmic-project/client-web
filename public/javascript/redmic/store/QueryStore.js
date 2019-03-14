@@ -34,18 +34,18 @@ define([
 
 			this.config = {
 				timeout: 45000,
-				type: "ES",
-				defaultType: "ES",
-				action: "_search",
+				type: 'ES',
+				defaultType: 'ES',
+				action: '_search',
 				headers: {},
-				target: "",
-				idProperty: "id",
-				ascendingPrefix: "%2B",
-				descendingPrefix: "-",
+				target: '',
+				idProperty: 'id',
+				ascendingPrefix: '%2B',
+				descendingPrefix: '-',
 				queryEngine: SimpleQueryEngine,
 				limitDefault: 100,
-				handleAs: "json",
-				accepts: "application/javascript, application/json"
+				handleAs: 'json',
+				accepts: 'application/javascript, application/json'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -53,7 +53,7 @@ define([
 
 		// TODO GENERAL: quitar Json.parser si api con elastic devuelve json no string line 84, 102 y 200
 
-		get: function (id, options) {
+		get: function(id, options) {
 			// summary:
 			//		Devuelve el item correspondiente al id en el servicio especificado por target
 			// id: Integer
@@ -63,34 +63,42 @@ define([
 			// returns: Object
 			//		El item traido del servicio
 
-			options = options || {};
-			var deferred = new Deferred(),
+			var responseDfd = new Deferred(),
 				target = this.target + id,
+				successCallback = lang.hitch(this, this._handleGetResponse, responseDfd),
+				errorCallback = lang.hitch(this, this._handleGetError, responseDfd);
 
-				xhrOptions = {
-					method: "GET",
-					handleAs: this.handleAs,
-					headers: this._getHeaders("get", options),
-					timeout: this.timeout
-				},
+			var requestDfd = xhr(target, {
+				method: 'GET',
+				handleAs: this.handleAs,
+				headers: this._getHeaders('get', options || {}),
+				timeout: this.timeout
+			});
 
-				callback = lang.hitch(this, function(data) {
-					if (data.success || data.success === undefined) {
-						deferred.resolve(data.body ? data.body : data);
-					} else {
-						deferred.reject(data);
-					}
-				});
+			requestDfd.response.then(successCallback, errorCallback);
 
-			xhr(target, xhrOptions).then(callback, lang.hitch(this, function(err) {
-
-				deferred.reject(this._parseError(err));
-			}));
-
-			return deferred;
+			return responseDfd;
 		},
 
-		query: function (query, options) {
+		_handleGetResponse: function(dfd, res) {
+
+			var data = res.data,
+				status = res.status;
+
+			// TODO sustituir propiedad 'success' por el uso del status de la respuesta
+			if (data.success || data.success === undefined) {
+				dfd.resolve(data.body || data);
+			} else {
+				dfd.reject(data);
+			}
+		},
+
+		_handleGetError: function(dfd, err) {
+
+			dfd.reject(this._parseError(err));
+		},
+
+		query: function(query, options) {
 			// summary:
 			//		Devuelve los items del servicio especificado por target, los cuales coinciden con la query establecida
 			// query: Object
@@ -99,78 +107,105 @@ define([
 			//
 			// returns: dojo/store/api/Store.QueryResults
 
-			if (this.type === this.defaultType) {
-				this.target += this.action;
-			}
+			var responseDfd = new Deferred(),
+				queryString = this._getQuery(query, options) || '',
+				target = this.target + (this.type === this.defaultType ? this.action : '') + queryString,
+				successCallback = lang.hitch(this, this._handleQueryResponse, responseDfd),
+				errorCallback = lang.hitch(this, this._handleQueryError, responseDfd);
 
-			var deferred = new Deferred(),
-				queryString = this._getQuery(query, options) || "",
-				results = xhr(this.target + queryString, {
-					method: "GET",
-					handleAs: this.handleAs,
-					headers: this._getHeaders("query", options),
-					timeout: this.timeout,
-					query : queryString ? {} : query
-				});
+			var requestDfd = xhr(target, {
+				method: 'GET',
+				handleAs: this.handleAs,
+				headers: this._getHeaders('query', options),
+				timeout: this.timeout,
+				query : queryString ? {} : query
+			});
 
-			deferred.total = new Deferred();
+			requestDfd.response.then(successCallback, errorCallback);
 
-			results.then (
-				lang.hitch(this, function(rest) {
-					if (rest.success) {
-						if (this.type !== this.defaultType) {
-							results.response.then(function(response) {
-								deferred.resolve(rest.body);
-								deferred.total.resolve(rest.total || rest.body.length);
-							});
-						} else {
-							deferred.resolve(rest.body);
-							deferred.total.resolve(rest.body.total || rest.body.length);
-						}
-					} else {
-						deferred.reject(lang.delegate(rest, {total: 0}));
-					}
-				}),
-				function(error) {
-					deferred.reject(lang.delegate(error, {total: 0}));
-				}
-			);
-			return QueryResults(deferred);
+			return QueryResults(responseDfd);
 		},
 
-		post: function(object, queryString, options) {
+		_handleQueryResponse: function(dfd, res) {
+
+			var data = res.data,
+				status = res.status;
+
+			// TODO sustituir propiedad 'success' por el uso del status de la respuesta
+			if (data.success) {
+				var response = data.body;
+
+				// TODO parece funcionar bien sin este bloque, borrar si sigue todo correcto
+				/*if (this.type !== this.defaultType) {
+					response.total = data.total || data.body.length;
+				} else {
+					response.total = data.body.total || data.body.length;
+				}*/
+
+				dfd.resolve(response);
+			} else {
+				dfd.reject(lang.delegate(data, {total: 0}));
+			}
+		},
+
+		_handleQueryError: function(dfd, err) {
+
+			dfd.reject(lang.delegate(err, { total: 0 }));
+		},
+
+		post: function(queryObject, queryString, options) {
 			// summary:
 			//		Consultas vía post
-			// object: Object
+			// queryObject: Object
 			//		Query object.
 			// options: __PutDirectives?
 			//
 			// returns: dojo/_base/Deferred
 
-			if (this.type === this.defaultType) {
-				this.target += this.action;
-			}
+			var responseDfd = new Deferred(),
+				target = this.target + (this.type === this.defaultType ? this.action : ''),
+				successCallback = lang.hitch(this, this._handlePostResponse, responseDfd),
+				errorCallback = lang.hitch(this, this._handlePostError, responseDfd);
 
-			options = options || {};
-
-			var self = this,
-				deferred = new Deferred();
-
-			deferred.total = new Deferred();
-
-			xhr(this.target, {
-				method: "POST",
-				data: JSON.stringify(object),
+			var requestDfd = xhr(target, {
+				method: 'POST',
+				data: JSON.stringify(queryObject),
 				handleAs: this.handleAs,
-				headers: self._getHeaders("post", options),
+				headers: this._getHeaders('post', options || {}),
 				timeout: this.timeout,
 				query: queryString
-			}).then(lang.hitch(this, this._responseParse, deferred), lang.hitch(this, function(err) {
+			});
 
-				deferred.reject(this._parseError(err));
-			}));
+			requestDfd.response.then(successCallback, errorCallback);
 
-			return deferred;
+			return responseDfd;
+		},
+
+		_handlePostResponse: function(dfd, res) {
+
+			var data = res.data,
+				status = res.status;
+
+			// TODO sustituir propiedad 'success' por el uso del status de la respuesta
+			if (data.success) {
+				var response = data.body;
+
+				// TODO parece funcionar bien sin este bloque, borrar si sigue todo correcto
+				/*if (!this.type || this.type === this.defaultType) {
+					response.total = response.length;
+				} else {
+					response.total = response.total || 0;
+				}*/
+
+				dfd.resolve(response);
+			} else {
+				dfd.reject(data);
+			}
+		},
+
+		_handlePostError: function(dfd, err) {
+
+			dfd.reject(this._parseError(err));
 		},
 
 		_parseError: function(err) {
@@ -187,26 +222,9 @@ define([
 			return data.error || data;
 		},
 
-		_responseParse: function(deferred, data) {
-
-			if (!data.success) {
-				deferred.reject(data);
-			}
-
-			data = data.body;
-
-			if (!this.type || this.type === this.defaultType) {
-				deferred.resolve(data);
-				deferred.total.resolve(data.length);
-			} else {
-				deferred.resolve(data);
-				deferred.total.resolve(data.total ? data.total : 0);
-			}
-		},
-
 		_getHeaders: function(type, options) {
 
-			if (type === "query") {
+			if (type === 'query') {
 				var headers = lang.mixin({ Accept: this.accepts }, this.headers, options.headers);
 
 				if (options.start >= 0 || options.count >= 0) {

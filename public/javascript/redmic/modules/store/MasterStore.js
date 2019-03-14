@@ -136,7 +136,8 @@ define([
 
 			queryResult.then(
 				lang.hitch(this, function(req, result) {
-					queryResult.total.then(lang.hitch(this, this._emitRequestResults, req, result));
+
+					this._emitRequestResults(req, result, result.total);
 				}, req),
 				lang.hitch(this, this._emitError, target));
 

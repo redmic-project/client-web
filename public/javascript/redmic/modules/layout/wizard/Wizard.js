@@ -318,11 +318,13 @@ define([
 
 			var data = req.data;
 
-			if (data && data.id) {
-				this._editing = true;
+			if (data) {
+				if (data.id) {
+					this._editing = true;
 
-				if (!this.noTitle) {
-					this._setTitle(this.editionTitle, data);
+					if (!this.noTitle) {
+						this._setTitle(this.editionTitle, data);
+					}
 				}
 
 				this._instanceDataToResults(data);

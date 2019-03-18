@@ -171,13 +171,19 @@ define([
 				description: data.description
 			});
 
+			var responseObj = {
+				target: target,
+				requesterId: requesterId
+			};
+
+			lang.mixin(responseObj, {
+				error: data,
+				status: status
+			});
+
 			this._emitEvt('REQUEST', {
 				success: false,
-				error: {
-					target: target,
-					requesterId: requesterId,
-					error: data
-				}
+				error: responseObj
 			});
 		},
 

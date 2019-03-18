@@ -139,9 +139,11 @@ define([
 
 		_subDataError: function(res) {
 
-			var err = res.error;
+			var data = res.error,
+				error = data.error,
+				status = data.status;
 
-			this._errorAvailable(err);
+			this._errorAvailable(error, status);
 
 			this._tryToEmitEvt('LOADED');
 		},

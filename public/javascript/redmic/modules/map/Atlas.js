@@ -453,10 +453,9 @@ define([
 			return false;
 		},
 
-		_errorAvailable: function(response) {
+		_errorAvailable: function(error) {
 
-			var error = response.error.response,
-				patt = new RegExp('_selection');
+			var patt = new RegExp('_selection');
 
 			if (!error || !error.url || !patt.test(error.url)) {
 				return;

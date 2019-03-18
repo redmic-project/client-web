@@ -235,13 +235,15 @@ define([
 
 		_subInjectItem: function(req) {
 
-			var res = req.data;
+			var data = req.data;
 
-			if (!res) {
-				res = [];
+			if (!data) {
+				data = [];
 			}
 
-			this._emitGetResults(req, res);
+			this._emitGetResults(req, {
+				data: data
+			});
 		}
 	});
 });

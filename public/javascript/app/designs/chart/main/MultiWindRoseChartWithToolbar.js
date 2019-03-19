@@ -7,7 +7,6 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'moment/moment.min'
-	, 'redmic/modules/base/_Filter'
 	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/chart/layer/ChartLayer/WindRoseChartImpl'
 	, 'redmic/modules/chart/layer/ChartLayer/_ObtainableValue'
@@ -23,7 +22,6 @@ define([
 	, declare
 	, lang
 	, moment
-	, _Filter
 	, _Store
 	, WindRoseChartImpl
 	, _ObtainableValue
@@ -31,7 +29,7 @@ define([
 	, GridManagementImpl
 	, SliderSelectorImpl
 ){
-	return declare([TopContentLayout, Controller, _Main, _Filter, _Store], {
+	return declare([TopContentLayout, Controller, _Main, _Store], {
 		//	summary:
 		//		Gráfica de rosa de los vientos multinivel con barra de herramientas.
 
@@ -46,20 +44,21 @@ define([
 				actions: {
 				},
 
-				target: redmicConfig.services.timeSeriesWindRose,
-
 				_unit: '%',
 
-				_domainSplit: 4,
+				_domainSplit: 5,
 				_minDomainSplit: 1,
 				_maxDomainSplit: 10,
 
-				_directionSplitPow: 2,
-				_minDirectionSplitPow: 1,
-				_maxDirectionSplitPow: 5,
+				_directionSplitMultiplier: 2,
+				_minDirectionSplitMultiplier: 1,
+				_maxDirectionSplitMultiplier: 9,
 
 				_chartInstances: {},
-				_marginForLabels: 30
+				_marginForLabels: 30,
+
+				directionDataDefinitionIds: [],
+				speedDataDefinitionIds: []
 			};
 
 			lang.mixin(this, this.config, args);
@@ -78,28 +77,18 @@ define([
 				parentChannel: this.getChannel(),
 				title: this.i18n.directions,
 				iconClass: 'fa-arrows-alt',
-				sliderConfig: {
-					inputProps: {
-						minimum: this._minDirectionSplitPow,
-						maximum: this._maxDirectionSplitPow,
-						labels: this._getDirectionLabels(this._minDirectionSplitPow, this._maxDirectionSplitPow),
-						value: this._directionSplitPow
-					}
-				}
+				value: this._directionSplitMultiplier,
+				range: [this._minDirectionSplitMultiplier, this._maxDirectionSplitMultiplier],
+				labels: this._getDirectionLabels()
 			});
 
 			this._domainSplitSelector = new SliderSelectorImpl({
 				parentChannel: this.getChannel(),
 				title: this.i18n.domainLevels,
 				iconClass: 'fa-scissors',
-				sliderConfig: {
-					inputProps: {
-						minimum: this._minDomainSplit,
-						maximum: this._maxDomainSplit,
-						labels: this._getDomainLabels(this._minDomainSplit, this._maxDomainSplit),
-						value: this._domainSplit
-					}
-				}
+				value: this._domainSplit,
+				range: [this._minDomainSplit, this._maxDomainSplit],
+				labels: this._getDomainLabels()
 			});
 
 			this.gridManagementConfig = this._merge([{
@@ -165,35 +154,39 @@ define([
 			this._publish(this.chartsContainer.getChannel('SET_PROPS'), {
 				buttonsContainer: this.buttonsContainerChartsTopNode
 			});
-
-			setTimeout(lang.hitch(this, this._dataAvailable, {data: {}}), 1000);
 		},
 
-		_getDirectionLabels: function(start, end) {
+		_getDirectionLabels: function() {
 
 			var labels = [];
-			for (var i = start; i <= end; i++) {
-				labels.push(Math.pow(2, i));
+			for (var i = this._minDirectionSplitMultiplier; i <= this._maxDirectionSplitMultiplier; i++) {
+				labels.push(4 * i);
 			}
 
 			return labels;
 		},
 
-		_getDomainLabels: function(start, end) {
+		_getDomainLabels: function() {
 
 			var labels = [];
-			for (var i = start; i <= end; i++) {
+			for (var i = this._minDomainSplit; i <= this._maxDomainSplit; i++) {
 				labels.push(i);
 			}
 
 			return labels;
 		},
 
+		_onTargetPropSet: function(res) {
 
-		_addToQueryChartsData: function(query) {
+			this._updateQuery();
+		},
 
-			this._emitEvt('ADD_TO_QUERY', {
-				query: query
+		_requestChartsData: function() {
+
+			this._emitEvt('REQUEST', {
+				target: this.target,
+				method: 'POST',
+				query: this._queryObj
 			});
 
 			this._prepareChartsForNextData();
@@ -214,75 +207,18 @@ define([
 		_dataAvailable: function(res) {
 
 			var data = res.data,
-				chartsData = data.data,
+				status = res.status;
+
+			if (status !== 200) {
+				// TODO imprimir gráfica vacía
+				return;
+			}
+
+			var chartsData = data.data,
 				limits = data.limits;
 
-			chartsData = [{
-					value: 6.5
-				},{
-					value: 1
-				},{
-					value: 3
-				},{
-					value: 5.1
-				},{
-					value: 2.2
-				},{
-					value: 4.3
-				},{
-					value: 2.1
-				},{
-					value: 5.715
-				},{
-					value: 2
-				},{
-					value: 1
-				},{
-					value: 3
-				},{
-					value: 5.1
-				},{
-					value: 2.2
-				},{
-					value: 4.3
-				},{
-					value: 2.1
-				},{
-					value: 5.715
-				},{
-					value: 2
-				},{
-					value: 1
-				},{
-					value: 3
-				},{
-					value: 5.1
-				},{
-					value: 2.2
-				},{
-					value: 4.3
-				},{
-					value: 2.1
-				},{
-					value: 5.715
-				},{
-					value: 2
-				},{
-					value: 1
-				},{
-					value: 3
-				},{
-					value: 5.1
-				},{
-					value: 2.2
-				},{
-					value: 4.3
-				},{
-					value: 2.1
-				},{
-					value: 5.715
-				}];
-			limits = [{"min":8.666,"max":10.525}];
+			//chartsData = [[{"value":5.863},{"value":0.826},{"value":0.413},{"value":0.578},{"value":0.826},{"value":0.413},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.495},{"value":0.661},{"value":0.413},{"value":0.413},{"value":0.0},{"value":0.165},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.413},{"value":0.33},{"value":0.165},{"value":0.33},{"value":0.165},{"value":0.0},{"value":0.083},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.495},{"value":0.413},{"value":0.248},{"value":0.413},{"value":0.0},{"value":0.0},{"value":0.165},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.578},{"value":1.156},{"value":0.578},{"value":0.661},{"value":0.083},{"value":0.083},{"value":0.165},{"value":0.083},{"value":0.0}],[{"value":0.0},{"value":0.33},{"value":0.33},{"value":0.083},{"value":0.33},{"value":0.248},{"value":0.083},{"value":0.248},{"value":0.083},{"value":0.0}],[{"value":0.0},{"value":0.248},{"value":0.413},{"value":0.413},{"value":0.661},{"value":0.165},{"value":0.0},{"value":0.495},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.495},{"value":1.073},{"value":0.33},{"value":0.33},{"value":0.083},{"value":0.165},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.248},{"value":0.083},{"value":0.083},{"value":0.165},{"value":0.165},{"value":0.165},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.413},{"value":0.248},{"value":0.0},{"value":0.413},{"value":0.248},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.661},{"value":0.578},{"value":0.248},{"value":0.578},{"value":0.083},{"value":0.248},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.826},{"value":0.908},{"value":0.248},{"value":0.578},{"value":0.495},{"value":0.248},{"value":0.165},{"value":0.083},{"value":0.0}],[{"value":0.0},{"value":0.991},{"value":0.578},{"value":0.991},{"value":1.486},{"value":0.248},{"value":0.495},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.165},{"value":0.413},{"value":0.165},{"value":0.495},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.578},{"value":0.33},{"value":0.165},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":1.156},{"value":0.743},{"value":0.083},{"value":0.248},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.495},{"value":0.165},{"value":0.248},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.083},{"value":0.0},{"value":0.083},{"value":0.248},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.0},{"value":0.743},{"value":0.578},{"value":0.248},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.165},{"value":0.743},{"value":0.578},{"value":0.413},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.991},{"value":1.156},{"value":1.982},{"value":0.908},{"value":0.248},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":1.239},{"value":1.652},{"value":0.743},{"value":0.743},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":1.486},{"value":1.404},{"value":0.991},{"value":0.743},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.578},{"value":0.991},{"value":0.661},{"value":0.661},{"value":0.248},{"value":0.0},{"value":0.083},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.743},{"value":0.578},{"value":0.661},{"value":1.321},{"value":0.578},{"value":0.0},{"value":0.248},{"value":0.0},{"value":0.083}],[{"value":0.0},{"value":0.578},{"value":0.578},{"value":0.578},{"value":0.661},{"value":0.083},{"value":0.578},{"value":0.33},{"value":0.248},{"value":0.165}],[{"value":0.0},{"value":0.413},{"value":0.33},{"value":0.248},{"value":0.33},{"value":1.321},{"value":0.743},{"value":0.578},{"value":0.248},{"value":0.083}],[{"value":0.0},{"value":0.826},{"value":0.413},{"value":1.321},{"value":1.899},{"value":0.991},{"value":1.073},{"value":0.248},{"value":0.165},{"value":0.083}],[{"value":0.0},{"value":1.239},{"value":2.064},{"value":1.239},{"value":1.073},{"value":0.083},{"value":0.083},{"value":0.165},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.33},{"value":1.156},{"value":0.743},{"value":0.578},{"value":0.33},{"value":0.165},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.33},{"value":1.404},{"value":0.908},{"value":0.495},{"value":0.661},{"value":0.165},{"value":0.083},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.33},{"value":0.578},{"value":0.826},{"value":0.578},{"value":0.33},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0}]];
+			//limits = [{"min":0.0,"max":2.53},{"min":2.53,"max":5.06},{"min":5.06,"max":7.59},{"min":7.59,"max":10.12},{"min":10.12,"max":12.65},{"min":12.65,"max":15.18},{"min":15.18,"max":17.71},{"min":17.71,"max":20.24},{"min":20.24,"max":22.77},{"min":22.77,"max":25.3}];
 
 			this._chartsData = {
 				data: chartsData,
@@ -298,7 +234,7 @@ define([
 
 			var value = res.value;
 
-			this._directionSplitPow = value;
+			this._directionSplitMultiplier = value;
 
 			this._updateQuery();
 		},
@@ -324,35 +260,38 @@ define([
 
 		_updateQuery: function() {
 
-			if (this.speedDataDefinitionId === undefined || this.directionDataDefinitionId === undefined) {
+			if (!this.speedDataDefinitionIds.length || !this.directionDataDefinitionIds.length) {
 				return;
 			}
 
 			if (!this._startDate || !this._endDate) {
 				var currentDate = moment();
 				this._endDate = currentDate.toISOString();
-				this._startDate = currentDate.subtract(1, 'days').toISOString();
+				this._startDate = currentDate.subtract(1, 'hours').toISOString();
 			}
 
-			this._addToQueryChartsData({
+			this._queryObj = {
 				dateLimits: {
 					startDate: this._startDate,
 					endDate: this._endDate
 				},
 				terms: {
 					dataDefinition: {
-						speed: this.speedDataDefinitionId,
-						direction: this.directionDataDefinitionId
+						speed: this.speedDataDefinitionIds,
+						direction: this.directionDataDefinitionIds
 					},
-					numSectors: Math.pow(2, this._directionSplitPow),
+					timeInterval: this.timeInterval,
+					numSectors: 4 * this._directionSplitMultiplier,
 					numSplits: this._domainSplit
 				}
-			});
+			};
+
+			this._requestChartsData();
 		},
 
 		_subChartsContainerShown: function() {
 
-			this._emitEvt('REFRESH');
+			//this._requestChartsData();
 		},
 
 		_updateCharts: function() {
@@ -372,7 +311,6 @@ define([
 
 			if (!maxDomainLevelIndex) {
 				scaleDomain = [0, maxDomainLevelIndex];
-
 				scaleRange = [colorReferences[0], colorReferences[0]];
 			} else {
 				scaleDomain = [0, maxDomainLevelIndex / 4, maxDomainLevelIndex / 3, maxDomainLevelIndex / 2,

@@ -46,8 +46,22 @@ define([
 				platformInfoTarget: 'platformInfo',
 				dashboardTarget: 'realTimeDashboard',
 
-				_directionUnitTypeId: 11,
-				_speedUnitTypeId: 12
+				// TODO esta información provendrá de un servicio en el futuro, siguiendo este formato
+				_timeSeriesDashboardSettings: {
+					'839c02ed-dc2c-4b5e-9100-8c9d88542152': {
+						panels: [{
+							type: 'windRose',
+							query: {
+								terms: {
+									dataDefinition: {
+										direction: [19],
+										speed: [20]
+									}
+								}
+							}
+						}]
+					}
+				}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -81,8 +95,8 @@ define([
 					}
 				},
 				windrose: {
-					width: 2,
-					height: 3,
+					width: 6,
+					height: 6,
 					type: MultiWindRoseChartWithToolbar,
 					props: {
 						title: this.i18n.windrose,
@@ -174,22 +188,38 @@ define([
 
 		_manageMeasurementData: function(data) {
 
-			var directionMeasurements = data.filter(function(measurement) {
+			var dashboardSettings = this._timeSeriesDashboardSettings[this.pathVariableId];
 
-				return measurement.unit.unitType.id === this._directionUnitTypeId;
+			var windRosePanelConfigs = dashboardSettings.panels.filter(function(panelConfig) {
+
+				return panelConfig.type === 'windRose';
 			}, this);
 
-			var speedMeasurements = data.filter(function(measurement) {
+			var windRosePanelConfig = windRosePanelConfigs[0],
+				dataDefinitions = windRosePanelConfig.query.terms.dataDefinition,
+				directionDataDefinitionIds = dataDefinitions.direction,
+				speedDataDefinitionIds = dataDefinitions.speed;
 
-				return measurement.unit.unitType.id === this._speedUnitTypeId;
-			}, this);
+			var maxTimeInterval;
 
-			var directionDataDefinitionId = directionMeasurements[0].dataDefinition.id,
-				speedDataDefinitionId = speedMeasurements[0].dataDefinition.id;
+			for (var i = 0; i < data.length; i++) {
+				var measurement = data[i],
+					dataDefinitionId = measurement.dataDefinition.id,
+					timeInterval = measurement.dataDefinition.timeInterval,
+					isDirectionDataDefinition = directionDataDefinitionIds.indexOf(dataDefinitionId) !== -1,
+					isSpeedDataDefinition = speedDataDefinitionIds.indexOf(dataDefinitionId) !== -1;
+
+				if (isDirectionDataDefinition || isSpeedDataDefinition) {
+					if (!maxTimeInterval || timeInterval > maxTimeInterval) {
+						maxTimeInterval = timeInterval;
+					}
+				}
+			}
 
 			this._publish(this._widgets.windrose.getChannel('SET_PROPS'), {
-				directionDataDefinitionId: directionDataDefinitionId,
-				speedDataDefinitionId: speedDataDefinitionId
+				directionDataDefinitionIds: directionDataDefinitionIds,
+				speedDataDefinitionIds: speedDataDefinitionIds,
+				timeInterval: maxTimeInterval
 			});
 		},
 
@@ -211,6 +241,17 @@ define([
 				};
 
 			this._manageActivityData(platformData);
+
+			this._updateChartsDataSource(activityData.id);
+		},
+
+		_updateChartsDataSource: function(activityId) {
+
+			var windRoseTarget = lang.replace(redmicConfig.services.timeSeriesWindRose, { id: activityId });
+
+			this._publish(this._widgets.windrose.getChannel('SET_PROPS'), {
+				target: windRoseTarget
+			});
 		},
 
 		_manageActivityData: function(data) {

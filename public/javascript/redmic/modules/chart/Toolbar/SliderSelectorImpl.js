@@ -50,7 +50,7 @@ define([
 					valueMinMax: this.range
 				},
 				orient: ['below-alt'],
-				//classTooltip: 'tooltipButtonMenu'
+				classTooltip: 'sliderInput'
 			}, this.sliderConfig || {}]);
 		},
 

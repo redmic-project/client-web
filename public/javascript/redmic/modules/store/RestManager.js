@@ -155,20 +155,22 @@ define([
 				data = handledError.data,
 				status = handledError.status;
 
-			// TODO creo que estos valores por defecto deberían ponerse donde se escuchan, no aquí
-			if (!data.code) {
-				data.code = this.defaultErrorCode;
-			}
-			if (!data.description) {
-				data.description = this.defaultErrorDescription/* + ' ' + (data.code || '')*/;
-			}
-
 			this._emitTargetLoadingState('TARGET_LOADED', target/*, requesterId, 'request'*/);
+
+			if (data) {
+				// TODO creo que estos valores por defecto deberían ponerse donde se escuchan, no aquí
+				if (!data.code) {
+					data.code = this.defaultErrorCode;
+				}
+				if (!data.description) {
+					data.description = this.defaultErrorDescription/* + ' ' + (data.code || '')*/;
+				}
+			}
 
 			this._emitEvt('COMMUNICATION', {
 				type: 'alert',
 				level: 'error',
-				description: data.description
+				description: data ? data.description : this.defaultErrorDescription
 			});
 
 			var responseObj = {

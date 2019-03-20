@@ -1163,7 +1163,7 @@ define({
 
 	, "windrose": "Rosa de los vientos"
 	, "sliderSelector": "Selector desplazable"
-	, "dataFilter": "Filtro de datos"
+	, "dateFilter": "Filtro por fecha"
 
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"

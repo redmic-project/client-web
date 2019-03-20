@@ -10,7 +10,7 @@ define([
 	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/chart/layer/ChartLayer/WindRoseChartImpl'
 	, 'redmic/modules/chart/layer/ChartLayer/_ObtainableValue'
-	, 'redmic/modules/chart/Toolbar/DataFilterImpl'
+	, 'redmic/modules/chart/Toolbar/DateFilterImpl'
 	, 'redmic/modules/chart/Toolbar/GridManagementImpl'
 	, 'redmic/modules/chart/Toolbar/SliderSelectorImpl'
 ], function (
@@ -25,7 +25,7 @@ define([
 	, _Store
 	, WindRoseChartImpl
 	, _ObtainableValue
-	, DataFilterImpl
+	, DateFilterImpl
 	, GridManagementImpl
 	, SliderSelectorImpl
 ){
@@ -98,7 +98,7 @@ define([
 
 			this.gridManagement = new GridManagementImpl(this.gridManagementConfig);
 
-			this.dataFilter = new DataFilterImpl({
+			this.dataFilter = new DateFilterImpl({
 				parentChannel: this.getChannel()
 			});
 		},
@@ -267,7 +267,7 @@ define([
 			if (!this._startDate || !this._endDate) {
 				var currentDate = moment();
 				this._endDate = currentDate.toISOString();
-				this._startDate = currentDate.subtract(1, 'hours').toISOString();
+				this._startDate = currentDate.subtract(1, 'days').toISOString();
 			}
 
 			this._queryObj = {

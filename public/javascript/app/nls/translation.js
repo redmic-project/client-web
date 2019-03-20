@@ -1168,7 +1168,7 @@ define({
 
 		, "windrose": "Wind rose"
 		, "sliderSelector": "Slider selector"
-		, "dataFilter": "Data filter"
+		, "dateFilter": "Date filter"
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

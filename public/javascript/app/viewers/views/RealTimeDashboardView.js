@@ -12,7 +12,12 @@ define([
 	, "redmic/modules/chart/ChartsContainer/_LegendBar"
 	, "redmic/modules/chart/ChartsContainer/_RadialAxisWithGridDrawing"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
+	, "redmic/modules/map/layer/GeoJsonLayerImpl"
+	, "redmic/modules/map/LeafletImpl"
+	, "redmic/modules/map/Map"
+	, "redmic/modules/map/_PlaceNamesButton"
 	, "templates/RealTimeInfo"
+	, "templates/SitePopup"
 	, "templates/SurveyStationDashboard"
 ], function(
 	_Main
@@ -28,7 +33,12 @@ define([
 	, _LegendBar
 	, _RadialAxisWithGridDrawing
 	, TemplateDisplayer
+	, GeoJsonLayerImpl
+	, LeafletImpl
+	, Map
+	, _PlaceNamesButton
 	, RealTimeInfo
+	, SitePopupTemplate
 	, SurveyStationDashboardTemplate
 ){
 	return declare([Layout, Controller, _Main, _AddBasicTitle], {
@@ -60,6 +70,19 @@ define([
 								}
 							}
 						}]
+					},
+					'27bad38e-ee75-4fdc-82c9-dfe3d421e677': {
+						panels: [{
+							type: 'windRose',
+							query: {
+								terms: {
+									dataDefinition: {
+										direction: [15],
+										speed: [18]
+									}
+								}
+							}
+						}]
 					}
 				}
 			};
@@ -74,7 +97,7 @@ define([
 			this.widgetConfigs = this._merge([{
 				info: {
 					width: 2,
-					height: 3,
+					height: 5,
 					type: TemplateDisplayer,
 					props: {
 						title: this.i18n.info,
@@ -86,7 +109,7 @@ define([
 				},
 				dashboard: {
 					width: 4,
-					height: 6,
+					height: 5,
 					type: TemplateDisplayer,
 					props: {
 						title: this.i18n.dashboard,
@@ -95,8 +118,8 @@ define([
 					}
 				},
 				windrose: {
-					width: 6,
-					height: 6,
+					width: 3,
+					height: 5,
 					type: MultiWindRoseChartWithToolbar,
 					props: {
 						title: this.i18n.windrose,
@@ -105,8 +128,15 @@ define([
 							_RadialAxisWithGridDrawing,
 							_InfoOnMouseOver,
 							_LegendBar
-						],
-						domainLevels: this.domainLevels
+						]
+					}
+				},
+				location: {
+					width: 3,
+					height: 5,
+					type: [LeafletImpl, Map, _PlaceNamesButton],
+					props: {
+						title: this.i18n.location
 					}
 				}
 			}, this.widgetConfigs || {}]);
@@ -154,6 +184,8 @@ define([
 				return;
 			}
 
+			this._manageGeometryData(itemData);
+
 			var siteData = itemData.properties.site;
 
 			siteData && this._manageSiteData(siteData);
@@ -169,6 +201,47 @@ define([
 				requesterId: this.getOwnChannel(),
 				id: activityId
 			});
+		},
+
+		_manageGeometryData: function(data) {
+
+			if (!this.mapLayer) {
+				this.mapLayer = new GeoJsonLayerImpl({
+					parentChannel: this.getChannel(),
+					mapChannel: this._widgets.location.getChannel(),
+					onEachFeature: lang.hitch(this, this.onEachFeature)
+				});
+
+				this._publish(this._widgets.location.getChannel('ADD_LAYER'), {
+					layer: this.mapLayer
+				});
+			} else {
+				this._publish(this.mapLayer.getChannel('CLEAR'));
+			}
+
+			this._publish(this.mapLayer.getChannel('ADD_DATA'), {
+				data: data
+			});
+			this._publish(this._widgets.location.getChannel('SET_CENTER'), {
+				center: data.geometry.coordinates.reverse()
+			});
+		},
+
+		onEachFeature: function(feature, layer) {
+
+			var geoJsonData = {
+				type: feature.type,
+				geometry: feature.geometry,
+				properties: {
+					name: feature.properties.site.name,
+					code: feature.properties.site.code
+				}
+			};
+
+			layer.bindPopup(SitePopupTemplate({
+				feature: geoJsonData,
+				i18n: this.i18n
+			}));
 		},
 
 		_manageSiteData: function(data) {

@@ -98,7 +98,7 @@ define([
 
 			this.gridManagement = new GridManagementImpl(this.gridManagementConfig);
 
-			this.dataFilter = new DateFilterImpl({
+			this.dateFilter = new DateFilterImpl({
 				parentChannel: this.getChannel()
 			});
 		},
@@ -112,8 +112,8 @@ define([
 				channel : this._domainSplitSelector.getChannel('TOOL_ACTUATED'),
 				callback: '_subDomainSplitSelectorToolActuated'
 			},{
-				channel : this.dataFilter.getChannel('TOOL_ACTUATED'),
-				callback: '_subDataFilterToolActuated'
+				channel : this.dateFilter.getChannel('TOOL_ACTUATED'),
+				callback: '_subDateFilterToolActuated'
 			},{
 				channel : this.chartsContainer.getChannel('SHOWN'),
 				callback: '_subChartsContainerShown'
@@ -147,7 +147,7 @@ define([
 				node: this.buttonsContainerChartsTopNode
 			});
 
-			this._publish(this.dataFilter.getChannel('SHOW'), {
+			this._publish(this.dateFilter.getChannel('SHOW'), {
 				node: this.buttonsContainerChartsTopNode
 			});
 
@@ -248,7 +248,7 @@ define([
 			this._updateQuery();
 		},
 
-		_subDataFilterToolActuated: function(res) {
+		_subDateFilterToolActuated: function(res) {
 
 			var value = res.value;
 
@@ -286,7 +286,25 @@ define([
 				}
 			};
 
+			this._updateChartsLegendTitle();
 			this._requestChartsData();
+		},
+
+		_updateChartsLegendTitle: function() {
+
+			if (!this._startDate || !this._endDate) {
+				return;
+			}
+
+			var param = this.i18n.speed,
+				humanizedStartDate = moment(this._startDate).format('YYYY-MM-DD hh:mm:ss'),
+				humanizedEndDate = moment(this._endDate).format('YYYY-MM-DD hh:mm:ss'),
+				dateRange = humanizedStartDate + ' - ' + humanizedEndDate,
+				legendTitle = param + ' (' + this.sourceUnit + ') ' + dateRange;
+
+			this._publish(this.chartsContainer.getChannel('SET_PROPS'), {
+				legendTitle: legendTitle
+			});
 		},
 
 		_subChartsContainerShown: function() {
@@ -345,12 +363,11 @@ define([
 
 		_getLayerLabel: function(i) {
 
-			var param = this.i18n.frequency,
-				limits = this._limits[i],
+			var limits = this._limits[i],
 				min = limits.min,
 				max = limits.max;
 
-			return param + ' (' + min + ' - ' + max + ')';
+			return '[' + min + ' - ' + max + ')';
 		},
 
 		_createChartLayer: function(layerConfig) {

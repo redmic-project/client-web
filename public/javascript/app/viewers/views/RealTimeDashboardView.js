@@ -273,12 +273,15 @@ define([
 				directionDataDefinitionIds = dataDefinitions.direction,
 				speedDataDefinitionIds = dataDefinitions.speed;
 
-			var maxTimeInterval;
+			var maxTimeInterval, unitAcronym;
 
 			for (var i = 0; i < data.length; i++) {
 				var measurement = data[i],
-					dataDefinitionId = measurement.dataDefinition.id,
-					timeInterval = measurement.dataDefinition.timeInterval,
+					dataDefinition = measurement.dataDefinition,
+					unit = measurement.unit;
+
+				var dataDefinitionId = dataDefinition.id,
+					timeInterval = dataDefinition.timeInterval,
 					isDirectionDataDefinition = directionDataDefinitionIds.indexOf(dataDefinitionId) !== -1,
 					isSpeedDataDefinition = speedDataDefinitionIds.indexOf(dataDefinitionId) !== -1;
 
@@ -287,12 +290,17 @@ define([
 						maxTimeInterval = timeInterval;
 					}
 				}
+
+				if (isSpeedDataDefinition) {
+					unitAcronym = unit.acronym;
+				}
 			}
 
 			this._publish(this._widgets.windrose.getChannel('SET_PROPS'), {
 				directionDataDefinitionIds: directionDataDefinitionIds,
 				speedDataDefinitionIds: speedDataDefinitionIds,
-				timeInterval: maxTimeInterval
+				timeInterval: maxTimeInterval,
+				sourceUnit: unitAcronym
 			});
 		},
 

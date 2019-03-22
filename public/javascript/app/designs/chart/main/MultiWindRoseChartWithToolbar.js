@@ -214,7 +214,6 @@ define([
 				status = res.status;
 
 			if (status !== 200) {
-				// TODO imprimir gráfica vacía
 				return;
 			}
 
@@ -265,9 +264,9 @@ define([
 			}
 
 			if (!this._startDate || !this._endDate) {
-				var currentDate = moment('2019-03-22');
+				var currentDate = moment();
 				this._endDate = currentDate.toISOString();
-				this._startDate = currentDate.subtract(7, 'days').toISOString();
+				this._startDate = currentDate.subtract(1, 'days').toISOString();
 			}
 
 			this._queryObj = {

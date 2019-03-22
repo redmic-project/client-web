@@ -100,7 +100,7 @@ define([
 				channel: this.getChannel("COLLAPSED_ROW")
 			},{
 				event: 'EXPAND',
-				channel: this. getChannel("EXPAND")
+				channel: this.getChannel("EXPAND")
 			},{
 				event: 'COLLAPSE',
 				channel: this.getChannel("COLLAPSE")

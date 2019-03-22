@@ -206,6 +206,10 @@ define([
 
 		_dataAvailable: function(res) {
 
+			if (this._chartsData) {
+				this._publish(this.chartsContainer.getChannel('CLEAR'));
+			}
+
 			var data = res.data,
 				status = res.status;
 
@@ -214,19 +218,14 @@ define([
 				return;
 			}
 
-			var chartsData = data.data,
-				limits = data.limits,
-				stats = data.stats;
-
 			this._chartsData = {
-				data: chartsData,
+				data: data.data,
 				parameterName: this._unit
 			};
 
-			this._limits = limits;
+			this._limits = data.limits;
 
-			delete stats.sum;
-			this._stats = stats;
+			this._stats = data.stats;
 
 			this._updateCharts();
 		},
@@ -266,9 +265,9 @@ define([
 			}
 
 			if (!this._startDate || !this._endDate) {
-				var currentDate = moment();
+				var currentDate = moment('2019-03-22');
 				this._endDate = currentDate.toISOString();
-				this._startDate = currentDate.subtract(1, 'days').toISOString();
+				this._startDate = currentDate.subtract(7, 'days').toISOString();
 			}
 
 			this._queryObj = {

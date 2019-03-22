@@ -8,6 +8,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/chart/ChartsContainer/_AngularAxisWithGridDrawing"
+	, "redmic/modules/chart/ChartsContainer/_InfoOnEmptyData"
 	, "redmic/modules/chart/ChartsContainer/_InfoOnMouseOver"
 	, "redmic/modules/chart/ChartsContainer/_LegendBar"
 	, "redmic/modules/chart/ChartsContainer/_RadialAxisWithGridDrawing"
@@ -30,6 +31,7 @@ define([
 	, declare
 	, lang
 	, _AngularAxisWithGridDrawing
+	, _InfoOnEmptyData
 	, _InfoOnMouseOver
 	, _LegendBar
 	, _RadialAxisWithGridDrawing
@@ -130,7 +132,8 @@ define([
 							_RadialAxisWithGridDrawing,
 							_InfoOnMouseOver,
 							_LegendBar,
-							_SummaryBox
+							_SummaryBox,
+							_InfoOnEmptyData
 						]
 					}
 				},

@@ -19,7 +19,7 @@ define([
 				ownChannel: 'radialAxis',
 				className: 'axis radialAxis',
 				opacity: 0.6,
-				domainLevels: 3
+				domainLevels: 7
 			};
 
 			lang.mixin(this, this.config, args);

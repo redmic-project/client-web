@@ -1,15 +1,11 @@
 define([
-	'd3/d3.min'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "RWidgets/Utilities"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
 ], function(
-	d3
-	, declare
+	declare
 	, lang
 	, aspect
-	, Utilities
 ) {
 	return declare(null, {
 		//	summary:
@@ -18,12 +14,15 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				summaryBoxClass: 'chartSummaryBox'
+				summaryBoxClass: 'chartSummaryBox',
+				summaryKeys: ['count', 'avg', 'min', 'max']
 			};
 
 			lang.mixin(this, this.config, args);
+
 			aspect.after(this, '_createElements', lang.hitch(this, this._createSummaryBoxElements));
 			aspect.after(this, '_resize', lang.hitch(this, this._summaryBoxAfterResize));
+			aspect.before(this, '_clear', lang.hitch(this, this._summaryBoxBeforeClear));
 		},
 
 		_createSummaryBoxElements: function() {
@@ -43,12 +42,16 @@ define([
 			var data = res.value,
 				yTranslate = 0;
 
-			this.summaryBoxArea.selectAll('*').remove();
+			this._clearSummaryBox();
 
-			for (var key in data) {
+			for (var i = 0; i < this.summaryKeys.length; i++) {
+				var key = this.summaryKeys[i],
+					value = data[key];
+
 				this.summaryBoxArea.append('svg:text')
-					.text((this.i18n[key] || key) + ': ' + data[key])
+					.text((this.i18n[key] || key) + ': ' + value)
 					.attr('transform', 'translate(0,' + yTranslate + ')');
+
 				yTranslate += 15;
 			}
 
@@ -64,6 +67,16 @@ define([
 				yTranslate = this._innerHeight - height;
 
 			this.summaryBoxArea.attr('transform', 'translate(' + xTranslate + ',' + yTranslate + ')');
+		},
+
+		_summaryBoxBeforeClear: function() {
+
+			this._clearSummaryBox();
+		},
+
+		_clearSummaryBox: function() {
+
+			this.summaryBoxArea.selectAll('*').remove();
 		}
 	});
 });

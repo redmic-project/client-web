@@ -11,6 +11,7 @@ define([
 	, "redmic/modules/chart/ChartsContainer/_InfoOnMouseOver"
 	, "redmic/modules/chart/ChartsContainer/_LegendBar"
 	, "redmic/modules/chart/ChartsContainer/_RadialAxisWithGridDrawing"
+	, "redmic/modules/chart/ChartsContainer/_SummaryBox"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/LeafletImpl"
@@ -32,6 +33,7 @@ define([
 	, _InfoOnMouseOver
 	, _LegendBar
 	, _RadialAxisWithGridDrawing
+	, _SummaryBox
 	, TemplateDisplayer
 	, GeoJsonLayerImpl
 	, LeafletImpl
@@ -127,7 +129,8 @@ define([
 							_AngularAxisWithGridDrawing,
 							_RadialAxisWithGridDrawing,
 							_InfoOnMouseOver,
-							_LegendBar
+							_LegendBar,
+							_SummaryBox
 						]
 					}
 				},

@@ -215,10 +215,8 @@ define([
 			}
 
 			var chartsData = data.data,
-				limits = data.limits;
-
-			//chartsData = [[{"value":5.863},{"value":0.826},{"value":0.413},{"value":0.578},{"value":0.826},{"value":0.413},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.495},{"value":0.661},{"value":0.413},{"value":0.413},{"value":0.0},{"value":0.165},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.413},{"value":0.33},{"value":0.165},{"value":0.33},{"value":0.165},{"value":0.0},{"value":0.083},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.495},{"value":0.413},{"value":0.248},{"value":0.413},{"value":0.0},{"value":0.0},{"value":0.165},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.578},{"value":1.156},{"value":0.578},{"value":0.661},{"value":0.083},{"value":0.083},{"value":0.165},{"value":0.083},{"value":0.0}],[{"value":0.0},{"value":0.33},{"value":0.33},{"value":0.083},{"value":0.33},{"value":0.248},{"value":0.083},{"value":0.248},{"value":0.083},{"value":0.0}],[{"value":0.0},{"value":0.248},{"value":0.413},{"value":0.413},{"value":0.661},{"value":0.165},{"value":0.0},{"value":0.495},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.495},{"value":1.073},{"value":0.33},{"value":0.33},{"value":0.083},{"value":0.165},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.248},{"value":0.083},{"value":0.083},{"value":0.165},{"value":0.165},{"value":0.165},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.413},{"value":0.248},{"value":0.0},{"value":0.413},{"value":0.248},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.661},{"value":0.578},{"value":0.248},{"value":0.578},{"value":0.083},{"value":0.248},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.826},{"value":0.908},{"value":0.248},{"value":0.578},{"value":0.495},{"value":0.248},{"value":0.165},{"value":0.083},{"value":0.0}],[{"value":0.0},{"value":0.991},{"value":0.578},{"value":0.991},{"value":1.486},{"value":0.248},{"value":0.495},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.165},{"value":0.413},{"value":0.165},{"value":0.495},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.578},{"value":0.33},{"value":0.165},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":1.156},{"value":0.743},{"value":0.083},{"value":0.248},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.495},{"value":0.165},{"value":0.248},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.083},{"value":0.0},{"value":0.083},{"value":0.248},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.0},{"value":0.743},{"value":0.578},{"value":0.248},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.165},{"value":0.743},{"value":0.578},{"value":0.413},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.991},{"value":1.156},{"value":1.982},{"value":0.908},{"value":0.248},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":1.239},{"value":1.652},{"value":0.743},{"value":0.743},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":1.486},{"value":1.404},{"value":0.991},{"value":0.743},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.578},{"value":0.991},{"value":0.661},{"value":0.661},{"value":0.248},{"value":0.0},{"value":0.083},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.743},{"value":0.578},{"value":0.661},{"value":1.321},{"value":0.578},{"value":0.0},{"value":0.248},{"value":0.0},{"value":0.083}],[{"value":0.0},{"value":0.578},{"value":0.578},{"value":0.578},{"value":0.661},{"value":0.083},{"value":0.578},{"value":0.33},{"value":0.248},{"value":0.165}],[{"value":0.0},{"value":0.413},{"value":0.33},{"value":0.248},{"value":0.33},{"value":1.321},{"value":0.743},{"value":0.578},{"value":0.248},{"value":0.083}],[{"value":0.0},{"value":0.826},{"value":0.413},{"value":1.321},{"value":1.899},{"value":0.991},{"value":1.073},{"value":0.248},{"value":0.165},{"value":0.083}],[{"value":0.0},{"value":1.239},{"value":2.064},{"value":1.239},{"value":1.073},{"value":0.083},{"value":0.083},{"value":0.165},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.33},{"value":1.156},{"value":0.743},{"value":0.578},{"value":0.33},{"value":0.165},{"value":0.0},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.33},{"value":1.404},{"value":0.908},{"value":0.495},{"value":0.661},{"value":0.165},{"value":0.083},{"value":0.0},{"value":0.0}],[{"value":0.0},{"value":0.33},{"value":0.578},{"value":0.826},{"value":0.578},{"value":0.33},{"value":0.083},{"value":0.0},{"value":0.0},{"value":0.0}]];
-			//limits = [{"min":0.0,"max":2.53},{"min":2.53,"max":5.06},{"min":5.06,"max":7.59},{"min":7.59,"max":10.12},{"min":10.12,"max":12.65},{"min":12.65,"max":15.18},{"min":15.18,"max":17.71},{"min":17.71,"max":20.24},{"min":20.24,"max":22.77},{"min":22.77,"max":25.3}];
+				limits = data.limits,
+				stats = data.stats;
 
 			this._chartsData = {
 				data: chartsData,
@@ -226,6 +224,9 @@ define([
 			};
 
 			this._limits = limits;
+
+			delete stats.sum;
+			this._stats = stats;
 
 			this._updateCharts();
 		},
@@ -297,10 +298,11 @@ define([
 			}
 
 			var param = this.i18n.speed,
-				humanizedStartDate = moment(this._startDate).format('YYYY-MM-DD hh:mm:ss'),
-				humanizedEndDate = moment(this._endDate).format('YYYY-MM-DD hh:mm:ss'),
+				dateFormat = 'YYYY-MM-DD hh:mm:ss',
+				humanizedStartDate = moment(this._startDate).format(dateFormat),
+				humanizedEndDate = moment(this._endDate).format(dateFormat),
 				dateRange = humanizedStartDate + ' - ' + humanizedEndDate,
-				legendTitle = param + ' (' + this.sourceUnit + ') ' + dateRange;
+				legendTitle = param + ' (' + this.sourceUnit + ') | ' + dateRange;
 
 			this._publish(this.chartsContainer.getChannel('SET_PROPS'), {
 				legendTitle: legendTitle
@@ -319,6 +321,10 @@ define([
 			for (var i = 0; i < this._domainSplit; i++) {
 				this._updateChart(i, colorScale(i));
 			}
+
+			this._publish(this.chartsContainer.getChannel('SET_PROPS'), {
+				summaryData: this._stats
+			});
 		},
 
 		_getColorScale: function() {

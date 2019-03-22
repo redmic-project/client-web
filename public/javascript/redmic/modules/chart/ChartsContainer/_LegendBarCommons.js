@@ -83,6 +83,10 @@ define([
 
 			this.legendBarTitleElement = this.legendBarTitleArea.append('svg:text');
 
+			if (this._currentLegendTitle) {
+				this._setLegendTitle(this._currentLegendTitle);
+			}
+
 			this.legendBarTitleElement
 				.on('mouseleave', lang.hitch(this, this._onLegendTitleMouseLeave))
 				.on('mouseenter', lang.partial(this._onLegendTitleMouseEnter, this));
@@ -304,7 +308,9 @@ define([
 
 			this._currentLegendTitle = title;
 
-			this.legendBarTitleElement.text(this._getClippedTitleText(title));
+			if (this.legendBarTitleElement) {
+				this.legendBarTitleElement.text(this._getClippedTitleText(title));
+			}
 		},
 
 		_placeLegendElement: function(legendElement) {

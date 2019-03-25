@@ -87,6 +87,534 @@ define([
 								}
 							}
 						}]
+					},
+					"0c6fc82e-cb39-4668-b732-047b14ecdfc0": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												845
+											],
+											"speed": [
+												844
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"2d2b3b42-3223-4290-804c-cbffab6e9689": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												758
+											],
+											"speed": [
+												757
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"bbb1e80c-11f8-4dea-be8a-81fa190f4ec0": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												956
+											],
+											"speed": [
+												955
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"ab233bc3-bdb1-4396-a8d5-1b50915d42ab": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												836
+											],
+											"speed": [
+												835
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"7f9945f7-5691-4307-9b34-bdc39abadb6f": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												889
+											],
+											"speed": [
+												890
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"8adce85f-00c8-464a-b5e5-1baf1082dea0": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												912
+											],
+											"speed": [
+												911
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"63bb4ef8-8066-40b8-badb-9d596a3733d7": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												921
+											],
+											"speed": [
+												920
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"1fba2156-74e9-4fe4-a7a6-d9c346ab63ba": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												946
+											],
+											"speed": [
+												947
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"3b9faf21-826c-449a-aa21-d3f1030f847e": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												775
+											],
+											"speed": [
+												776
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"4451fe86-9b43-4df8-b2f9-88f8688a4072": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												753
+											],
+											"speed": [
+												752
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"146c5133-1e36-4088-8daf-7ebdc9d3d0c1": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												747
+											],
+											"speed": [
+												746
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"b4181ed9-f90f-454b-8d5e-e59481f645ea": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [],
+											"speed": []
+										}
+									}
+								}
+							}
+						]
+					},
+					"2a1d5746-e7c0-4847-afb1-37dfa106c5a9": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												764
+											],
+											"speed": [
+												763
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"d4ec21c5-a80d-48f3-9152-43cbc277217a": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												1043
+											],
+											"speed": [
+												1042
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"bbfa1aec-3c16-4bbb-8621-b1675bc2d1c1": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												770
+											],
+											"speed": [
+												769
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"c6539063-30ab-4aa1-8eff-f7f065da7232": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												899
+											],
+											"speed": [
+												898
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"17e04f7b-8295-4095-9488-d2b61408c0ae": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												1021
+											],
+											"speed": [
+												1020
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"2383c489-41e4-4037-bb45-d49fe4aebae2": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												1010
+											],
+											"speed": [
+												1009
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"8b9ffedc-a511-4e59-bf45-3dc5e2963832": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												967
+											],
+											"speed": [
+												966
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"72a17192-3a03-4564-ac2d-e163f81baf9e": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												976
+											],
+											"speed": [
+												975
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"45f4e3fd-264b-41a2-83c1-52f7a4a9ac5c": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												1034
+											],
+											"speed": [
+												1033
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"9d9cddc6-f0a6-4749-97a5-778daf4af95d": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												1058
+											],
+											"speed": [
+												1057
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"acfe67e6-de22-4d7c-9d48-377f3348b30e": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												1001
+											],
+											"speed": [
+												1000
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"27cea414-c9ee-446a-ad09-a98fab82d452": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												819
+											],
+											"speed": [
+												818
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"6c1a04d9-c538-4efc-98d3-924103a1f38b": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												870
+											],
+											"speed": [
+												869
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"f7738bec-9ea8-4f37-8afb-2b7a88de2a04": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												985
+											],
+											"speed": [
+												984
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"2fbab8eb-328d-45c1-b658-b6d4b451e271": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												930
+											],
+											"speed": [
+												929
+											]
+										}
+									}
+								}
+							}
+						]
+					},
+					"7a072033-a592-4a45-b8a9-ea2cd7bafa14": {
+						"panels": [
+							{
+								"type": "windRose",
+								"query": {
+									"terms": {
+										"dataDefinition": {
+											"direction": [
+												857
+											],
+											"speed": [
+												856
+											]
+										}
+									}
+								}
+							}
+						]
 					}
 				}
 			};

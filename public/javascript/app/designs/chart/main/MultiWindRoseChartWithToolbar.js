@@ -76,7 +76,7 @@ define([
 			this._directionSplitSelector = new SliderSelectorImpl({
 				parentChannel: this.getChannel(),
 				title: this.i18n.directions,
-				iconClass: 'fa-arrows-alt',
+				iconClass: 'fa-compass',
 				value: this._directionSplitMultiplier,
 				range: [this._minDirectionSplitMultiplier, this._maxDirectionSplitMultiplier],
 				labels: this._getDirectionLabels()
@@ -85,7 +85,7 @@ define([
 			this._domainSplitSelector = new SliderSelectorImpl({
 				parentChannel: this.getChannel(),
 				title: this.i18n.domainLevels,
-				iconClass: 'fa-scissors',
+				iconClass: 'fa-sort',
 				value: this._domainSplit,
 				range: [this._minDomainSplit, this._maxDomainSplit],
 				labels: this._getDomainLabels()
@@ -179,10 +179,6 @@ define([
 		_onTargetPropSet: function(res) {
 
 			this._clearDateRange();
-
-			if (this._chartsData) {
-				this._clearCharts();
-			}
 
 			this._updateQuery();
 		},
@@ -291,6 +287,9 @@ define([
 				}
 			};
 
+			if (this._chartsData) {
+				this._clearCharts();
+			}
 			this._updateChartsLegendTitle();
 			this._requestChartsData();
 		},

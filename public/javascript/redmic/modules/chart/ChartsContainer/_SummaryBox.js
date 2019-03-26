@@ -76,7 +76,9 @@ define([
 
 		_clearSummaryBox: function() {
 
-			this.summaryBoxArea.selectAll('*').remove();
+			if (this.summaryBoxArea) {
+				this.summaryBoxArea.selectAll('*').remove();
+			}
 		}
 	});
 });

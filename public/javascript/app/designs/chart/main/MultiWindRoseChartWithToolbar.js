@@ -178,6 +178,12 @@ define([
 
 		_onTargetPropSet: function(res) {
 
+			this._clearDateRange();
+
+			if (this._chartsData) {
+				this._clearCharts();
+			}
+
 			this._updateQuery();
 		},
 
@@ -188,27 +194,27 @@ define([
 				method: 'POST',
 				query: this._queryObj
 			});
-
-			this._prepareChartsForNextData();
 		},
 
-		_prepareChartsForNextData: function() {
+		_clearDateRange: function() {
+
+			this._startDate = null;
+			this._endDate = null;
+		},
+
+		_clearCharts: function() {
+
+			this._publish(this.chartsContainer.getChannel('CLEAR'));
 
 			for (var i in this._chartInstances) {
 				var instance = this._chartInstances[i];
 
-				this._emitEvt('REMOVE_LAYER', {
-					layerId: instance.getOwnChannel()
-				});
+				this._publish(instance.getChannel('DESTROY'));
 				delete this._chartInstances[i];
 			}
 		},
 
 		_dataAvailable: function(res) {
-
-			if (this._chartsData) {
-				this._publish(this.chartsContainer.getChannel('CLEAR'));
-			}
 
 			var data = res.data,
 				status = res.status;

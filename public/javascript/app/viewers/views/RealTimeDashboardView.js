@@ -841,23 +841,33 @@ define([
 		_receiveActivityData: function(res) {
 
 			var activityData = res.data,
-				activityPlatformData = activityData.platforms[0].platform,
-				platformData = {
-					activityName: activityData.name,
-					activityUrl: lang.replace(redmicConfig.viewPaths.activityCatalogDetails, {
-						id: activityData.id
-					}),
-					platformName: activityPlatformData.name,
-					platformUrl: lang.replace(redmicConfig.viewPaths.platformCatalogDetails, {
-						id: activityPlatformData.id
-					}),
-					description: activityData.description,
-					image: activityPlatformData.image
-				};
+				activityPlatforms = this._buildActivityPlatformsData(activityData.platforms);
+
+			var platformData = {
+				activityName: activityData.name,
+				activityUrl: lang.replace(redmicConfig.viewPaths.activityCatalogDetails, {
+					id: activityData.id
+				}),
+				description: activityData.description,
+				platforms: activityPlatforms
+			};
 
 			this._manageActivityData(platformData);
-
 			this._updateChartsDataSource(activityData.id);
+		},
+
+		_buildActivityPlatformsData: function(platforms) {
+
+			if (platforms) {
+				for (var i = 0; i < platforms.length; i++) {
+					var platform = platforms[i].platform;
+					platform.url = lang.replace(redmicConfig.viewPaths.platformCatalogDetails, {
+						id: platform.id
+					});
+				}
+			}
+
+			return platforms;
 		},
 
 		_updateChartsDataSource: function(activityId) {

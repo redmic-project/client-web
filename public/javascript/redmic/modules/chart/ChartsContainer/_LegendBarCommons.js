@@ -46,6 +46,7 @@ define([
 
 			aspect.after(this, "_createElements", lang.hitch(this, this._createLegendBarCommonsElements));
 			aspect.after(this, "_resize", lang.hitch(this, this._legendBarCommonsAfterResize));
+			aspect.before(this, '_clear', lang.hitch(this, this._legendBarCommonsBeforeClear));
 		},
 
 		_setLegendBarCommonsOwnCallbacksForEvents: function() {
@@ -395,6 +396,11 @@ define([
 				transform = 'translate(' + xTranslate + ',' + yTranslate + ')';
 
 			this.legendBarTitleArea && this.legendBarTitleArea.transition().attr('transform', transform);
+		},
+
+		_legendBarCommonsBeforeClear: function() {
+
+			this._setLegendTitle('');
 		}
 	});
 });

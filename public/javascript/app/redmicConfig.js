@@ -266,7 +266,7 @@ define([], function() {
 
 		"timeSeries": baseUri + "timeseries",
 		"timeSeriesTemporalData": baseUri + "timeseries/temporaldata",
-		"timeSeriesWindRose": baseUri + "timeseries/windrose",
+		"timeSeriesWindRose": baseUri + "time-series/view/activities/{id}/timeseries/windrose",
 
 		"activityOrganisations": baseUri + "organisations/{id}/activities",
 		"activityPlatforms": baseUri + "platforms/{id}/activities",

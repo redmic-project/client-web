@@ -220,15 +220,15 @@ define([
 			this._resolveLoadedByErrorData();
 		},
 
-		_errorAvailable: function(response) {
+		_errorAvailable: function(error) {
 
-			this._errorData ++;
+			this._errorData++;
 		},
 
 		_resolveLoadedByErrorData: function(response) {
 
 			while (this._errorData !== 0) {
-				this._errorData --;
+				this._errorData--;
 				this._emitEvt('LAYER_LOADED');
 			}
 		},

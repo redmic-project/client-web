@@ -186,10 +186,8 @@ define([
 			return false;
 		},
 
-		_errorAvailable: function(res) {
+		_errorAvailable: function(error) {
 
-			var error = res.error,
-				status = error.response && error.response.status;
 		},
 
 		_updateCallback: function(data) {

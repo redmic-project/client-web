@@ -18,22 +18,21 @@ services:
       mode: replicated
       replicas: 1
       labels:
-        traefik.port: '${PORT}'
-        traefik.docker.network: traefik-net
         traefik.default.frontend.rule: Host:${PUBLIC_HOSTNAME}
-        traefik.es.frontend.rule: Host:es.${PUBLIC_HOSTNAME}
-        traefik.es.frontend.redirect.regex: ^(.*):\\/\\/es\\.(.*)$$
-        traefik.es.frontend.redirect.replacement: $$1://$$2
-        traefik.es.frontend.redirect.permanent: 'true'
+        traefik.redirect.frontend.rule: HostRegexp:{subdomain:www|es}.${PUBLIC_HOSTNAME}
+        traefik.redirect.frontend.redirect.regex: ^(.*):\\/\\/\\w+\\.(.*)$$
+        traefik.redirect.frontend.redirect.replacement: $$1://$$2
+        traefik.redirect.frontend.redirect.permanent: 'true'
         traefik.en.frontend.rule: Host:en.${PUBLIC_HOSTNAME}
         traefik.en.frontend.headers.customRequestHeaders: content-language:en
-        traefik.backend: web
         traefik.frontend.errors.5xx.status: 500-599
         traefik.frontend.errors.5xx.backend: static-pages-static-pages-static-pages
         traefik.frontend.errors.5xx.query: '/web-5xx/'
+        traefik.backend: web
+        traefik.port: '${PORT}'
       restart_policy:
-        delay: 30s
-        window: 2m
+        delay: 10s
+        window: 1m
       resources:
         limits:
           cpus: '2'

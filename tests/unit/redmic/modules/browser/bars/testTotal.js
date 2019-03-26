@@ -5,7 +5,6 @@ define([
 	, "redmic/base/Mediator"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/store/MasterStore"
 	, "templates/DomainList"
 ], function(
 	declare
@@ -14,7 +13,6 @@ define([
 	, Mediator
 	, Total
 	, ListImpl
-	, MasterStore
 	, template
 ){
 	var timeout = 100,
@@ -25,23 +23,23 @@ define([
 		registerSuite = intern.getInterface('object').registerSuite,
 		assert = intern.getPlugin('chai').assert,
 
-		masterStore = new MasterStore({
-			parentChannel: "app"
-		}),
-
 		publishData = function() {
 
-			Mediator.publish(masterStore.getChannel("INJECT_DATA"), {
-				data: data,
-				target: target
+			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.AVAILABLE), {
+				body: {
+					data: data,
+					target: target
+				}
 			});
 		},
 
 		publishItem = function() {
 
-			Mediator.publish(masterStore.getChannel("INJECT_ITEM"), {
-				data: item,
-				target: target
+			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.ITEM_AVAILABLE), {
+				body: {
+					data: item,
+					target: target
+				}
 			});
 		},
 

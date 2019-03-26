@@ -269,7 +269,7 @@ define([
 
 		_updateTooltipContent: function(layerId, title, res) {
 
-			if (!title || !Utilities.isValidNumber(res.value)) {
+			if (title == null || !Utilities.isValidNumber(res.value)) {
 				this._removeOldInfoReceivedFromLayer(layerId);
 			} else {
 				this._addNewInfoReceivedFromLayer(layerId, title, res);

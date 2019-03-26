@@ -60,6 +60,7 @@ define([
 				this._clearAxis(this._radialAxis);
 				this._unsubscribeFromAxis(this._radialAxis);
 				this._radialAxis = null;
+				this._radialAxisDomain = null;
 			}
 		},
 

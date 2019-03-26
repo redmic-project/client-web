@@ -8,12 +8,9 @@ function(
 		//	summary:
 		//		Gestiona los errores de los request
 		//	description:
-		//		Permite gestionar los errores de las peticiónes a la API
+		//		Permite gestionar los errores de las peticiones a la API
 
-		_errorAvailable: function(res) {
-
-			var error = res.error,
-				status = error.response && error.response.status;
+		_errorAvailable: function(error, status) {
 
 			if (status === 404) {
 				this._goTo404();

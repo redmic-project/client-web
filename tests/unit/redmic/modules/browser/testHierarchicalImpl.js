@@ -13,7 +13,6 @@ define([
 	, "redmic/modules/browser/_MultiTemplate"
 	, "redmic/modules/browser/_NoDataTemplate"
 	, "redmic/modules/browser/HierarchicalImpl"
-	, "redmic/modules/store/MasterStore"
 	, "templates/DomainList"
 ], function(
 	declare
@@ -30,7 +29,6 @@ define([
 	, _MultiTemplate
 	, _NoDataTemplate
 	, HierarchicalImpl
-	, MasterStore
 	, template
 ){
 	var timeout = 500,
@@ -41,23 +39,23 @@ define([
 		registerSuite = intern.getInterface('object').registerSuite,
 		assert = intern.getPlugin('chai').assert,
 
-		masterStore = new MasterStore({
-			parentChannel: "app"
-		}),
-
 		publishData = function(objData) {
 
-			Mediator.publish(masterStore.getChannel("INJECT_DATA"), {
-				data: objData || data,
-				target: target
+			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.AVAILABLE), {
+				body: {
+					data: objData || data,
+					target: target
+				}
 			});
 		},
 
 		publishItem = function(data) {
 
-			Mediator.publish(masterStore.getChannel("INJECT_ITEM"), {
-				data: data || item,
-				target: target
+			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.ITEM_AVAILABLE), {
+				body: {
+					data: data || item,
+					target: target
+				}
 			});
 		},
 
@@ -936,7 +934,7 @@ define([
 
 			var dfd = this.async(timeout);
 
-			Mediator.once(masterStore.getChannel('REQUEST'), function() {
+			Mediator.once(browser._buildChannel(browser.storeChannel, browser.actions.REQUEST), function() {
 				dfd.resolve();
 			});
 

@@ -28,7 +28,10 @@ define([
 			this.config = {
 				ownChannel: 'sliderSelector',
 				iconClass: 'fa-sliders',
-				_closeOnValueSetTimeout: 800
+				_closeOnValueSetTimeout: 800,
+				value: 1,
+				range: [1, 3],
+				labels: null
 			};
 
 			lang.mixin(this, this.config, args);
@@ -40,15 +43,15 @@ define([
 
 			this.sliderConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				inputProps: {
+				_inputProps: {
 					style: 'width:200px',
-					labels: []
+					labels: this.labels,
+					valueDefault: this.value,
+					valueMinMax: this.range
 				},
 				orient: ['below-alt'],
-				classTooltip: 'tooltipButtonMenu'
+				classTooltip: 'sliderInput'
 			}, this.sliderConfig || {}]);
-
-			this.sliderConfig.inputProps.discreteValues = this.sliderConfig.inputProps.labels.length;
 		},
 
 		_initialize: function() {

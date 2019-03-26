@@ -9,7 +9,7 @@ define([
 	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
-	, 'redmic/modules/store/MasterStore'
+	, 'redmic/modules/store/RestManagerImpl'
 	, 'redmic/modules/store/QueryStore'
 	, 'redmic/modules/notification/Notification'
 	, 'redmic/modules/socket/_IngestData'
@@ -29,7 +29,7 @@ define([
 	, Credentials
 	, Selector
 	, MainSidebarImpl
-	, MasterStore
+	, RestManagerImpl
 	, QueryStore
 	, Notification
 	, _IngestData
@@ -137,7 +137,7 @@ define([
 				parentChannel: this.ownChannel
 			});
 
-			new MasterStore({
+			new RestManagerImpl({
 				parentChannel: this.ownChannel
 			});
 

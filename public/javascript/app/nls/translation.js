@@ -1163,6 +1163,13 @@ define({
 		, "webcams": "Webcams"
 		, "noDataLoaderExistActivityCategories": "There is no data load available for this activity."
 
+		, "goToActivity": "Go to activity"
+		, "goToPlatform": "Go to platform"
+
+		, "windrose": "Wind rose"
+		, "sliderSelector": "Slider selector"
+		, "dateFilter": "Date filter"
+
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"
 		, "descriptio": "Description"

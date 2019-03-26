@@ -16,7 +16,6 @@ define([
 	, "redmic/modules/chart/ChartsContainer/_BreadcrumbsBar"
 	, "redmic/modules/chart/ChartsContainer/_GroupedLegendBar"
 	, "redmic/modules/chart/ChartsContainer/_LegendBar"
-	, "redmic/modules/chart/ChartsContainer/InfoChartsContainerImpl"
 	, "redmic/modules/chart/ChartsContainer/_InfoOnMouseOver"
 	, "redmic/modules/chart/ChartsContainer/_TemporalAxisWithGridDrawing"
 	, "redmic/modules/chart/ChartsContainer/_VerticalAxesWithGridDrawing"
@@ -39,7 +38,6 @@ define([
 	, _BreadcrumbsBar
 	, _GroupedLegendBar
 	, _LegendBar
-	, InfoChartsContainerImpl
 	, _InfoOnMouseOver
 	, _TemporalAxisWithGridDrawing
 	, _VerticalAxesWithGridDrawing

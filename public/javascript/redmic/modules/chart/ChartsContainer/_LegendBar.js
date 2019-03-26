@@ -82,7 +82,7 @@ define([
 				color = this._getSingleColor(chartColor, i),
 				entriesCount = props.entriesCount,
 				label = props.label,
-				clippedLabel = this._getClippedText(label);
+				clippedLabel = this._getClippedElementText(label);
 
 			if (!this._legendElements[chartId]) {
 				this._legendElements[chartId] = {};
@@ -164,6 +164,11 @@ define([
 		_setLegendElementColor: function(legendElement, color) {
 
 			legendElement.select("text").attr('fill', color);
+		},
+
+		_onLegendTitlePropSet: function(res) {
+
+			this._setLegendTitle(res.value);
 		}
 	});
 });

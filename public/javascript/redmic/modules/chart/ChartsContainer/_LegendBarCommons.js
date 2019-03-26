@@ -24,9 +24,11 @@ define([
 
 			this.config = {
 				legendBarClass: "chartLegendBar",
+				legendTitleClass: 'chartLegendTitle',
 				legendElementClass: "chartLegendElement",
 				legendElementMargin: 20,
 				legendLabelMaxLength: 40,
+				legendTitleMaxLength: 80,
 				disabledLegendClass: "hiddenChartLegend",
 
 				_currentLegendBarHeight: 0,
@@ -44,6 +46,7 @@ define([
 
 			aspect.after(this, "_createElements", lang.hitch(this, this._createLegendBarCommonsElements));
 			aspect.after(this, "_resize", lang.hitch(this, this._legendBarCommonsAfterResize));
+			aspect.before(this, '_clear', lang.hitch(this, this._legendBarCommonsBeforeClear));
 		},
 
 		_setLegendBarCommonsOwnCallbacksForEvents: function() {
@@ -62,6 +65,8 @@ define([
 				.attr("id", "legendBar")
 				.attr("class", this.legendBarClass);
 
+			this._createLegendTitle();
+
 			this._applyLegendBarTranslateValues();
 
 			this._currentLegendBarHeight = this._legendBarRowHeight;
@@ -70,6 +75,22 @@ define([
 			this.legendBarTooltip = d3Tip().attr("class", this.chartsTooltipClass);
 
 			this.svg.call(this.legendBarTooltip);
+		},
+
+		_createLegendTitle: function() {
+
+			this.legendBarTitleArea = this.legendBarArea.append('svg:g')
+				.attr('class', this.legendTitleClass);
+
+			this.legendBarTitleElement = this.legendBarTitleArea.append('svg:text');
+
+			if (this._currentLegendTitle) {
+				this._setLegendTitle(this._currentLegendTitle);
+			}
+
+			this.legendBarTitleElement
+				.on('mouseleave', lang.hitch(this, this._onLegendTitleMouseLeave))
+				.on('mouseenter', lang.partial(this._onLegendTitleMouseEnter, this));
 		},
 
 		_createLegendElement: function() {
@@ -156,10 +177,20 @@ define([
 			}
 		},
 
-		_getClippedText: function(text) {
+		_getClippedElementText: function(text) {
 
-			if (text.length > this.legendLabelMaxLength) {
-				text = text.substring(0, this.legendLabelMaxLength) + '...';
+			return this._getClippedText(text, this.legendLabelMaxLength);
+		},
+
+		_getClippedTitleText: function(text) {
+
+			return this._getClippedText(text, this.legendTitleMaxLength);
+		},
+
+		_getClippedText: function(text, length) {
+
+			if (text.length > length) {
+				text = text.substring(0, length) + '...';
 			}
 
 			return text;
@@ -252,6 +283,17 @@ define([
 			this._reorderAndTranslateLegend();
 		},
 
+		_onLegendTitleMouseEnter: function(self) {
+
+			self.legendBarTooltip.html(self._currentLegendTitle);
+			self.legendBarTooltip.show(null, this);
+		},
+
+		_onLegendTitleMouseLeave: function() {
+
+			this.legendBarTooltip.hide();
+		},
+
 		_onLegendElementMouseEnter: function(self, text) {
 
 			self.legendBarTooltip.html(text);
@@ -261,6 +303,15 @@ define([
 		_onLegendElementMouseLeave: function() {
 
 			this.legendBarTooltip.hide();
+		},
+
+		_setLegendTitle: function(title) {
+
+			this._currentLegendTitle = title;
+
+			if (this.legendBarTitleElement) {
+				this.legendBarTitleElement.text(this._getClippedTitleText(title));
+			}
 		},
 
 		_placeLegendElement: function(legendElement) {
@@ -319,12 +370,37 @@ define([
 
 			var node = this.legendBarArea ? this.legendBarArea.node() : null,
 				bbox = node ? node.getBBox() : null,
-				halfWidth = bbox ? bbox.width / 2 : 0,
-				xTranslate = (this._innerWidth / 2) - halfWidth + this._horizontalTranslate,
+				halfWidth = bbox ? bbox.width / 2 : 0;
+
+			this._translateLegendBarArea(halfWidth);
+			this._translateLegendBarTitle(halfWidth);
+		},
+
+		_translateLegendBarArea: function(halfWidth) {
+
+			var xTranslate = (this._innerWidth / 2) - halfWidth + this._horizontalTranslate,
 				yTranslate = this._height - this._currentLegendBarHeight,
 				transform = "translate(" + xTranslate + "," + yTranslate + ")";
 
 			this.legendBarArea && this.legendBarArea.transition().attr("transform", transform);
+		},
+
+		_translateLegendBarTitle: function(areaHalfWidth) {
+
+			var titleNode = this.legendBarTitleArea ? this.legendBarTitleArea.node() : null,
+				titleBbox = titleNode ? titleNode.getBBox() : null,
+				titleHalfWidth = titleBbox ? titleBbox.width / 2 : 0;
+
+			var xTranslate = areaHalfWidth - titleHalfWidth,
+				yTranslate = -this._legendBarRowHeight,
+				transform = 'translate(' + xTranslate + ',' + yTranslate + ')';
+
+			this.legendBarTitleArea && this.legendBarTitleArea.transition().attr('transform', transform);
+		},
+
+		_legendBarCommonsBeforeClear: function() {
+
+			this._setLegendTitle('');
 		}
 	});
 });

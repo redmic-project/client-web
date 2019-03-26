@@ -4,7 +4,6 @@ define([
 	, "put-selector/put"
 	, "redmic/base/Mediator"
 	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/store/MasterStore"
 	, "templates/DomainList"
 ], function(
 	declare
@@ -12,26 +11,24 @@ define([
 	, put
 	, Mediator
 	, Pagination
-	, MasterStore
 	, template
 ){
 	var timeout = 100,
 		parentChannel = "container",
 		target = "/api/domain",
-		row, config, data, item,
+		row, config, data, item, instance,
 
 		registerSuite = intern.getInterface('object').registerSuite,
 		assert = intern.getPlugin('chai').assert,
 
-		masterStore = new MasterStore({
-			parentChannel: "app"
-		}),
-
 		publishData = function() {
 
-			Mediator.publish(masterStore.getChannel("INJECT_DATA"), {
-				data: data,
-				target: target
+			Mediator.publish(instance._buildChannel(instance.storeChannel, instance.actions.AVAILABLE), {
+				body: {
+					data: data,
+					target: target,
+					total: data.length // TODO parche, revisar método _dataAvailable de Pagination para corregirlo
+				}
 			});
 		},
 

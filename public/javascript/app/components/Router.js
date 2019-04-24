@@ -273,16 +273,13 @@ define([
 			var moduleUrl = location.href.split('\/' + getGlobalContext().location.hostname + '\/')[1],
 				urlSplitted = moduleUrl.split('?'),
 				route = urlSplitted[0],
-				query = urlSplitted[1];
+				query = urlSplitted[1],
+				routeIsEmpty = !route || route === '' || route === this.paths.ROOT,
+				loginWasSuccessful = route === this.paths.LOGIN && this._userFound;
 
-			if ((!route || (route === '') || (route === this.paths.ROOT)) && !this._userFound) {
-				this._addHistory(this.paths.LOGIN);
-				route = this.paths.LOGIN;
-			} else if (!route || (route === '')  || (route === this.paths.ROOT) ||
-				(route === this.paths.LOGIN && this._userFound)) {
-
-				this._addHistory(this.paths.HOME);
+			if (routeIsEmpty || loginWasSuccessful) {
 				route = this.paths.HOME;
+				this._addHistory(route);
 			}
 
 			this._changeModule(route, query);

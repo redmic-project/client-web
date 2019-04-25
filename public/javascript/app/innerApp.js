@@ -17,6 +17,7 @@ define([
 	, 'redmic/modules/socket/_Worms'
 	, 'redmic/modules/socket/Socket'
 	, 'redmic/modules/socket/Task'
+	, 'redmic/modules/user/LanguageSelector'
 	, 'redmic/modules/user/UserArea'
 ], function(
 	App
@@ -37,6 +38,7 @@ define([
 	, _Worms
 	, Socket
 	, Task
+	, LanguageSelector
 	, UserArea
 ) {
 	return declare([LayoutContainer, App], {
@@ -104,13 +106,19 @@ define([
 
 			// TODO esto es un abuso, no deberíamos acceder a los nodos de un módulo desde fuera. Crear canal para
 			// añadir hijos al topbar
-			var topbarRightNode = this.topbar.domNode.children[1];
+			//
+			// TODO realmente, Topbar habría que replantearlo, ya que no es un módulo sino un ContentPane decorado.
+			var topbarRightNode = this.topbar.domNode.lastChild;
 
 			this._publish(this._buildChannel(this.notificationChannel, this.actions.SHOW), {
 				node: topbarRightNode
 			});
 
-			this._publish(this._buildChannel(this.userAreaChannel, this.actions.SHOW), {
+			this._publish(this.languageSelector.getChannel('SHOW'), {
+				node: topbarRightNode
+			});
+
+			this._publish(this.userArea.getChannel('SHOW'), {
 				node: topbarRightNode
 			});
 		},
@@ -166,7 +174,11 @@ define([
 				parentChannel: this.ownChannel
 			});
 
-			new UserArea({
+			this.userArea = new UserArea({
+				parentChannel: this.ownChannel
+			});
+
+			this.languageSelector = new LanguageSelector({
 				parentChannel: this.ownChannel
 			});
 		},

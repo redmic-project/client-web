@@ -6,6 +6,7 @@ define([
 	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'dojo/dom'
 	, 'dojo/dom-attr'
 	, 'dojo/has'
@@ -31,6 +32,7 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, Deferred
 	, dom
 	, domAttr
 	, has
@@ -71,6 +73,8 @@ define([
 				nativeLoadingNode = undefined;
 			}
 		};
+
+	getGlobalContext().env = new Deferred();
 
 	if (!CheckBrowser.isSupported()) {
 		hideNativeLoadingNode();
@@ -287,12 +291,19 @@ define([
 
 		_getEnv: function() {
 
-			!getGlobalContext().env && request('/env', {
-				handleAs: 'json'
-			}).then(lang.hitch(this, function(data) {
+			var envDfd = getGlobalContext().env;
 
-				getGlobalContext().env = data;
-			}));
+			if (envDfd && !envDfd.isFulfilled()) {
+				request('/env', {
+					handleAs: 'json'
+				}).then(lang.hitch(envDfd, function(data) {
+
+					this.resolve(data);
+				}),lang.hitch(envDfd, function(error) {
+
+					this.reject(error);
+				}));
+			}
 		},
 
 		_subCredentialsRemoved: function() {

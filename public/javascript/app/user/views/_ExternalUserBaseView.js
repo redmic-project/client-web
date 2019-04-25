@@ -8,7 +8,6 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/_base/kernel"
-	, "dojo/request"
 	, "put-selector/put"
 
 	, "dijit/form/Form"
@@ -24,7 +23,6 @@ define([
 	, declare
 	, lang
 	, kernel
-	, request
 	, put
 ){
 	return declare(_View, {
@@ -74,12 +72,9 @@ define([
 
 			this.addChild(this.template);
 
-			if (window.env) {
-				this._showVersion(window.env);
-			} else {
-				request("/env", {
-					handleAs: "json"
-				}).then(lang.hitch(this, this._showVersion));
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, this._showVersion));
 			}
 
 			this.inherited(arguments);

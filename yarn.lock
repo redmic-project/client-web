@@ -3070,6 +3070,10 @@ pathval@^1.0.0:
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.0.tgz#b942e6d4bde653005ef6b71361def8727d0645e0"
   integrity sha1-uULm1L3mUwBe9rcTYd74cn0GReA=
 
+"pdfjs@https://github.com/mozilla/pdf.js.git#gh-pages":
+  version "0.0.0"
+  resolved "https://github.com/mozilla/pdf.js.git#341d2f5a2fe82957fa94bd7b2b247a841de4d6ae"
+
 pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"

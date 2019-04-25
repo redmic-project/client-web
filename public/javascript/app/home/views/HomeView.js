@@ -9,6 +9,7 @@ define([
 	, "templates/InitialTitle"
 	, "templates/InitialInfo"
 	, "redmic/base/Credentials"
+	, "app/home/views/SocialWidget"
 	, "app/home/views/WidgetLastActivity"
 	, "app/home/views/WidgetFavourites"
 ], function(
@@ -22,6 +23,7 @@ define([
 	, TemplateTitle
 	, TemplateInfo
 	, Credentials
+	, SocialWidget
 	, WidgetLastActivity
 	, WidgetFavourites
 ){
@@ -67,13 +69,21 @@ define([
 				},
 				info: {
 					width: 3,
-					height: 2,
+					height: 1,
 					type: TemplateDisplayer,
 					props: {
 						title: this.i18n.info,
 						template: TemplateInfo,
 						"class": "hardTexturedContainer.borderRadiusBottom",
 						target: "initial_info"
+					}
+				},
+				social: {
+					width: 3,
+					height: 1,
+					type: SocialWidget,
+					props: {
+						title: this.i18n.followUs
 					}
 				}
 			};

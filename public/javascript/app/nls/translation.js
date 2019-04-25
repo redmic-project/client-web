@@ -1170,6 +1170,8 @@ define({
 		, "sliderSelector": "Slider selector"
 		, "dateFilter": "Date filter"
 
+		, "followUs": "Follow us"
+
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"
 		, "descriptio": "Description"

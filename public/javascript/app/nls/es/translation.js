@@ -1165,6 +1165,8 @@ define({
 	, "sliderSelector": "Selector desplazable"
 	, "dateFilter": "Filtro por fecha"
 
+	, "followUs": "Síguenos"
+
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"

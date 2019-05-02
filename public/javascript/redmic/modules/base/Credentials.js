@@ -11,7 +11,7 @@ define([
 	redmicConfig
 	, declare
 	, lang
-	, xhr
+	, request
 	, notify
 	, registry
 	, _Module
@@ -79,7 +79,7 @@ define([
 		_prepareRequestHandlers: function() {
 
 			notify('error', lang.hitch(this, this._requestErrorHandler));
-			registry.register(lang.hitch(this, this._preRequestHandler), xhr);
+			registry.register(lang.hitch(this, this._preRequestHandler), request);
 		},
 
 		_initializeCredentials: function() {
@@ -208,11 +208,21 @@ define([
 				'Accept': 'application/javascript, application/json'
 			};
 
-			xhr(redmicConfig.services.profile + '/', {
-				method: 'GET',
-				handleAs: 'json',
-				headers: headers
-			}).then(lang.hitch(this, this._onGetCredentialsSuccess), lang.hitch(this, this._onGetCredentialsError));
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
+
+					var target = redmicConfig.getServiceUrl(redmicConfig.services.profile, envData) + '/';
+
+					request(target, {
+						method: 'GET',
+						handleAs: 'json',
+						headers: headers
+					}).then(
+						lang.hitch(this, this._onGetCredentialsSuccess),
+						lang.hitch(this, this._onGetCredentialsError));
+				}));
+			}
 		},
 
 		_onGetCredentialsSuccess: function(res) {

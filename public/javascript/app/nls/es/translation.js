@@ -1105,8 +1105,7 @@ define({
 	, "radiusInMeters": "Precisión (m)"
 	, "depthInMeters": "Profundidad (m)"
 
-	, "messageRedmicLocal": "Estás en una versión local"
-	, "messageAppDev": "Estás en una versión de pruebas"
+	, "messageAppDev": "Esto es un entorno de pruebas"
 
 	, "infrastructure": "Infraestructura"
 	, "infrastructures": "Infraestructuras"

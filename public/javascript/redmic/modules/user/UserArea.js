@@ -1,26 +1,26 @@
 define([
 	'alertify/alertify.min'
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/request"
-	, "dojo/json"
-	, "put-selector/put"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
-	, "redmic/modules/base/_ShowInTooltip"
-	, "redmic/modules/base/_ShowOnEvt"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/layout/listMenu/ListMenu"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "redmic/base/Credentials"
-	, "templates/UserTopbarMenu"
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/request'
+	, 'dojo/json'
+	, 'put-selector/put'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
+	, 'redmic/modules/base/_ShowInTooltip'
+	, 'redmic/modules/base/_ShowOnEvt'
+	, 'redmic/modules/base/_Store'
+	, 'redmic/modules/layout/listMenu/ListMenu'
+	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
+	, 'redmic/base/Credentials'
+	, 'templates/UserTopbarMenu'
 ], function(
 	alertify
 	, redmicConfig
 	, declare
 	, lang
-	, xhr
+	, request
 	, JSON
 	, put
 	, _Module
@@ -47,10 +47,10 @@ define([
 			this.config = {
 				omitLoading: true,
 				// mediator params
-				ownChannel: "userArea",
-				idProperty: "id",
+				ownChannel: 'userArea',
+				idProperty: 'id',
 				actions: {
-					REQUEST: "request"
+					REQUEST: 'request'
 				},
 				target: redmicConfig.services.profile
 			};
@@ -63,21 +63,21 @@ define([
 			this.listMenuConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				items: [{
-					icon: "fa-eye",
+					icon: 'fa-eye',
 					label: 'myProfile',
-					href: "/user"
+					href: '/user'
 				},{
-					icon: "fa-question-circle-o",
+					icon: 'fa-question-circle-o',
 					label: 'whatIsRedmic',
-					href: "/inner-what-is-redmic"
+					href: '/inner-what-is-redmic'
 				},{
-					icon: "fa-file-text-o",
+					icon: 'fa-file-text-o',
 					label: 'termCondition',
-					href: "/inner-terms-and-conditions"
+					href: '/inner-terms-and-conditions'
 				},{
-					icon: "fa-power-off",
+					icon: 'fa-power-off',
 					label: 'logout',
-					callback: "_logout"
+					callback: '_logout'
 				}]
 			}, this.listMenuConfig || {}]);
 
@@ -85,7 +85,7 @@ define([
 				omitLoading: true,
 				parentChannel: this.getChannel(),
 				template: TemplateTopbarMenu,
-				"class": "tooltipUser",
+				'class': 'tooltipUser',
 				target: this.target
 			}, this.topbarMenuConfig || {}]);
 		},
@@ -103,10 +103,10 @@ define([
 
 			this.topbarMenu = new TemplateDisplayer(this.topbarMenuConfig);
 
-			put(this.domNode, ".userArea");
-			this.containerNode = put(this.domNode, "div[title=$]", this.i18n.user);
+			put(this.domNode, '.userArea');
+			this.containerNode = put(this.domNode, 'div[title=$]', this.i18n.user);
 
-			this.iconNode = put(this.containerNode, "i.fa.fa-user");
+			this.iconNode = put(this.containerNode, 'i.fa.fa-user');
 
 			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)(this.listMenuConfig);
 		},
@@ -127,8 +127,8 @@ define([
 
 			if (this._conditionShownItemUser()) {
 				this.subscriptionsConfig.push({
-					channel : this.listMenu.getChannel("EVENT_ITEM"),
-					callback: "_subEventItem"
+					channel : this.listMenu.getChannel('EVENT_ITEM'),
+					callback: '_subEventItem'
 				});
 			}
 		},
@@ -147,18 +147,13 @@ define([
 					dataCredentials: true
 				});
 
-				/*this._publish(this._buildChannel(this.storeChannel, this.actions.REQUEST), {
-					target: this.target,
-					type: "API"
-				});*/
-
 				put(this.listMenu.domNode.firstChild, '-', this.topbarMenu.container);
 			}
 		},
 
 		_subDataCredentialsGotProps: function(req) {
 
-			this._emitEvt("INJECT_DATA", {
+			this._emitEvt('INJECT_DATA', {
 				data: req.dataCredentials,
 				target: this.target
 			});
@@ -166,7 +161,7 @@ define([
 
 		_showMenu: function() {
 
-			this._publish(this.listMenu.getChannel("ADD_EVT"), {
+			this._publish(this.listMenu.getChannel('ADD_EVT'), {
 				sourceNode: this.iconNode
 			});
 		},
@@ -190,7 +185,7 @@ define([
 
 		_conditionShownItemUser: function() {
 
-			if (Credentials.get("userRole") != "ROLE_GUEST") {
+			if (Credentials.get('userRole') !== 'ROLE_GUEST') {
 				return true;
 			}
 
@@ -199,26 +194,60 @@ define([
 
 		_logout: function () {
 
-			if (Credentials.get("accessToken")) {
+			if (Credentials.get('accessToken')) {
+				var envDfd = window.env;
+				if (!envDfd) {
+					return;
+				}
 
-				var headers = {
-						"Content-Type": "application/json",
-						"Accept": "application/javascript, application/json"
-					},
-					data = {
-						"token": Credentials.get("accessToken")
-					};
+				envDfd.then(lang.hitch(this, function(envData) {
 
-				xhr(redmicConfig.services.logout, {
-					method: "POST",
-					handleAs: "json",
-					headers: headers,
-					data: JSON.stringify(data)
-				});
+					var target = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData),
+						headers = {
+							'Content-Type': 'application/json',
+							'Accept': 'application/javascript, application/json'
+						},
+						data = {
+							'token': Credentials.get('accessToken')
+						};
+
+					request(target, {
+						method: 'POST',
+						handleAs: 'json',
+						headers: headers,
+						data: JSON.stringify(data)
+					}).then(
+						lang.hitch(this, this._handleResponse),
+						lang.hitch(this, this._handleError));
+				}));
+			} else {
+				this._removeUserData();
 			}
+		},
 
-			Credentials.set("accessToken", null);
-			Credentials.set("selectIds", {});
+		_handleResponse: function(res) {
+
+			this._removeUserData();
+		},
+
+		_handleError: function(err) {
+
+			this._emitEvt('TRACK', {
+				type: TRACK.type.exception,
+				info: {
+					'exDescription': "_onLogout",
+					'exFatal': false,
+					'appName': 'API'
+				}
+			});
+
+			this._removeUserData();
+		},
+
+		_removeUserData: function() {
+
+			Credentials.set('accessToken', null);
+			Credentials.set('selectIds', {});
 		},
 
 		_dataAvailable: function(response) {
@@ -233,13 +262,13 @@ define([
 				return;
 			}
 
-			this.containerNode.firstChild && put(this.containerNode.firstChild, "!");
+			this.containerNode.firstChild && put(this.containerNode.firstChild, '!');
 
 			if (data.image) {
-				this.iconNode = put(this.containerNode, "img[src=" + data.image +
-					'?access_token=' + Credentials.get("accessToken") + "]");
+				this.iconNode = put(this.containerNode, 'img[src=' + data.image +
+					'?access_token=' + Credentials.get('accessToken') + ']');
 			} else {
-				this.iconNode = put(this.containerNode, "i.fa.fa-user");
+				this.iconNode = put(this.containerNode, 'i.fa.fa-user');
 			}
 
 			this._showMenu();

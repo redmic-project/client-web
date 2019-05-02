@@ -3,13 +3,15 @@ extends layout
 block root
 	#rootContainer
 	script(type='text/javascript').
-		var token = '#{token}';
+		var token = '#{token}',
+			apiUrl = '#{apiUrl}';
 		require([
 			'app/views/ActivateAccount'
 		], function(
 			ActivateAccount
 		){
 			new ActivateAccount({
-				token: token
+				token: token,
+				apiUrl: apiUrl
 			});
 		});

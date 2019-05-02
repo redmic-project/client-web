@@ -3,13 +3,13 @@ define([
 	"dojo/_base/lang",
 	"dojo/Deferred",
 	"dojo/dom-attr",
-	"dojo/request/xhr"
+	"dojo/request"
 ], function(
 	declare,
 	lang,
 	Deferred,
 	domAttr,
-	xhr
+	request
 ){
 	return declare(null, {
 		// summary:
@@ -57,7 +57,7 @@ define([
 			this.overflow = false;
 
 			// Lanzamos la petición
-			xhr(this._generateUrl(params), {
+			request(this._generateUrl(params), {
 				handleAs: "xml",
 				timeout: this.timeout
 			}).then(

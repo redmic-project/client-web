@@ -5,6 +5,7 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "dojo/Deferred"
 	, "put-selector/put"
 	, "templates/PlaceNamesList"
 	, "redmic/store/xml2json"
@@ -19,6 +20,7 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, Deferred
 	, put
 	, TemplateList
 	, xml2json
@@ -31,7 +33,7 @@ define([
 		//	summary:
 		//		main Placename.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				actions: {
@@ -54,7 +56,7 @@ define([
 
 				label: this.i18n.placeNames,
 				// General params
-				baseTarget: "/grafcan",
+				baseTarget: redmicConfig.services.grafcan,
 				numPage: 1,
 				maxSize: 100,
 				idProperty: "id",
@@ -162,23 +164,37 @@ define([
 
 		_resetTarget: function() {
 
-			var target = this.baseTarget;
+			var envDfd = window.env;
 
-			if (this.numPage !== 0) {
-				target += "/" + this.numPage;
+			if (!envDfd) {
+				var dfd = new Deferred();
+				dfd.resolve();
+
+				return dfd;
 			}
 
-			if (this.maxSize !== 0) {
-				target += "/" + this.maxSize;
-			}
+			envDfd.then(lang.hitch(this, function(envData) {
 
-			target += '/';
+				var target = redmicConfig.getServiceUrl(this.baseTarget, envData);
 
-			this.target = target;
+				if (this.numPage !== 0) {
+					target += "/" + this.numPage;
+				}
 
-			if (this.conversor) {
-				this.conversor.url = this.target;
-			}
+				if (this.maxSize !== 0) {
+					target += "/" + this.maxSize;
+				}
+
+				target += '/';
+
+				this.target = target;
+
+				if (this.conversor) {
+					this.conversor.url = this.target;
+				}
+			}));
+
+			return envDfd;
 		},
 
 		_beforeShow: function(request) {
@@ -305,8 +321,9 @@ define([
 			this.numPage = (from / size) + 1,
 			this.maxSize = size;
 
-			this._resetTarget();
-			this._newSearch(this._lastSearch);
+			var dfd = this._resetTarget();
+
+			dfd.then(lang.hitch(this, this._newSearch, this._lastSearch));
 		},
 
 		_newSearch: function(obj) {
@@ -315,17 +332,26 @@ define([
 				return;
 			}
 
-			var value = obj.text;
+			var value = obj.text,
+				dfd;
 
 			if (!this._lastSearch || this._lastSearch.text !== value) {
 				this._lastSearch = obj;
-				this._resetPagination();
+				dfd = this._resetPagination();
 			}
 
-			// Buscamos en el servicio
-			this.conversor.find({
-				texto: value
-			}).then(lang.hitch(this, this._responseDataConversor), lang.hitch(this, this._errorDataConversor));
+			if (!dfd) {
+				dfd = new Deferred();
+				dfd.resolve();
+			}
+
+			dfd.then(lang.hitch(this, function(value) {
+
+				// Buscamos en el servicio
+				this.conversor.find({
+					texto: value
+				}).then(lang.hitch(this, this._responseDataConversor), lang.hitch(this, this._errorDataConversor));
+			}, value));
 		},
 
 		_resetPagination: function() {
@@ -336,7 +362,7 @@ define([
 
 			this.numPage = 1;
 			this._publish(this.browser.getChannel("RESET_PAGINATION"));
-			this._resetTarget();
+			return this._resetTarget();
 		},
 
 		_responseDataConversor: function(res) {

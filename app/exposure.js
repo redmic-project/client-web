@@ -35,21 +35,13 @@ function onEnvRequest(req, res) {
 	});
 }
 
-function onResettingRequest(req, res) {
-
-	res.render('resetting', {
-		useBuilt: params.useBuilt,
-		lang: getLang(req),
-		token: req.param('token')
-	});
-}
-
 function onActivateAccountRequest(req, res) {
 
 	res.render('activateAccount', {
 		useBuilt: params.useBuilt,
 		lang: getLang(req),
-		token: req.param('token')
+		apiUrl: apiUrl,
+		token: req.params.token
 	});
 }
 
@@ -138,8 +130,6 @@ function exposeRoutes(app) {
 		onGeneralRequest)
 
 		.get('/env', onEnvRequest)
-
-		.get('/resetting/:token', onResettingRequest)
 
 		.get('/activateAccount/:token', onActivateAccountRequest)
 

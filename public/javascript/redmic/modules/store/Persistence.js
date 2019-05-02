@@ -1,13 +1,15 @@
 define([
-	"dojo/_base/declare"
+	'app/redmicConfig'
+	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/request"
 	, "dojo/json"
 	, "redmic/modules/base/_Module"
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
-	, xhr
+	, request
 	, JSON
 	, _Module
 ){
@@ -80,58 +82,76 @@ define([
 			});
 		},
 
-		_subSave: function(/*Object*/ request) {
+		_subSave: function(/*Object*/ req) {
 
-			if (!request || !request.target || !request.item || (!request.idProperty && !request.idInTarget)) {
+			if (!req || !req.target || !req.item || (!req.idProperty && !req.idInTarget)) {
 				console.warn("Faltan parámetros");
 				return;
 			}
 
-			this._save(request);
+			this._save(req);
 		},
 
-		_save: function(/*Object*/ request) {
+		_save: function(/*Object*/ req) {
 
-			var data = request.item,
-				id = data[request.idProperty],
-				idInTarget = request.idInTarget,
-				target = request.target + "/";
+			var envDfd = window.env;
+			if (!envDfd) {
+				return;
+			}
 
-			xhr(id ? target + id : target, {
-				handleAs: this.handleAs,
-				method: (id || idInTarget) ? "PUT" : "POST",
-				data: JSON.stringify(data),
-				headers: this.headers,
-				timeout: this.timeout
-			}).then(
-				lang.hitch(this, this._emitResult, request.target, 'SAVE'),
-				lang.hitch(this, this._emitError, request.target, 'SAVE')
-			);
+			envDfd.then(lang.hitch(this, function(req, envData) {
+
+				var data = req.item,
+					id = data[req.idProperty],
+					idInTarget = req.idInTarget,
+					target = redmicConfig.getServiceUrl(req.target, envData) + "/";
+
+				request(id ? target + id : target, {
+					handleAs: this.handleAs,
+					method: (id || idInTarget) ? "PUT" : "POST",
+					data: JSON.stringify(data),
+					headers: this.headers,
+					timeout: this.timeout
+				}).then(
+					lang.hitch(this, this._emitResult, req.target, 'SAVE'),
+					lang.hitch(this, this._emitError, req.target, 'SAVE')
+				);
+			}, req));
 		},
 
-		_subRemove: function(/*Object*/ request) {
+		_subRemove: function(/*Object*/ req) {
 
-			if (!request || !request.target || !request.id) {
+			if (!req || !req.target || !req.id) {
 				console.warn("Faltan parámetros");
 				return;
 			}
 
-			this._remove(request);
+			this._remove(req);
 		},
 
-		_remove: function(/*Object*/ request) {
+		_remove: function(/*Object*/ req) {
 
-			var id = request.id;
+			var id = req.id;
 
-			xhr(request.target + "/" + id, {
-				method: "DELETE",
-				headers: this.headers,
-				handleAs: this.handleAs,
-				timeout: this.timeout
-			}).then(
-				lang.hitch(this, this._emitResult, request.target, 'REMOVE'),
-				lang.hitch(this, this._emitError, request.target, 'REMOVE')
-			);
+			var envDfd = window.env;
+			if (!envDfd) {
+				return;
+			}
+
+			envDfd.then(lang.hitch(this, function(req, envData) {
+
+				var target = redmicConfig.getServiceUrl(req.target, envData);
+
+				request(target + "/" + id, {
+					method: "DELETE",
+					headers: this.headers,
+					handleAs: this.handleAs,
+					timeout: this.timeout
+				}).then(
+					lang.hitch(this, this._emitResult, req.target, 'REMOVE'),
+					lang.hitch(this, this._emitError, req.target, 'REMOVE')
+				);
+			}, req));
 		},
 
 		_emitResult: function(target, event, data) {

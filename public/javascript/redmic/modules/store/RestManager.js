@@ -100,6 +100,34 @@ define([
 
 			this._emitTargetLoadingState('TARGET_LOADING', req.target, req.requesterId, 'request');
 
+			this._getEnvironmentData(lang.hitch(this, this._doRequest, req));
+		},
+
+		_emitTargetLoadingState: function(event, target, requesterId, type) {
+
+			this._emitEvt(event, {
+				target: target,
+				requesterId: requesterId,
+				type: type
+			});
+		},
+
+		_getEnvironmentData: function(callback) {
+
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
+
+					if (!this._evt) {
+						this._evt = envData;
+					}
+					callback && callback();
+				}));
+			}
+		},
+
+		_doRequest: function(req) {
+
 			var target = this._getBuiltTarget(req),
 				method = req.method || 'GET',
 				query = req.query || {},
@@ -116,15 +144,6 @@ define([
 			this._emitEvt('REQUEST_QUERY', {
 				target: req.target,
 				query: query
-			});
-		},
-
-		_emitTargetLoadingState: function(event, target, requesterId, type) {
-
-			this._emitEvt(event, {
-				target: target,
-				requesterId: requesterId,
-				type: type
 			});
 		},
 
@@ -192,6 +211,11 @@ define([
 		_subGet: function(req) {
 
 			this._emitTargetLoadingState('TARGET_LOADING', req.target, req.requesterId, 'get');
+
+			this._getEnvironmentData(lang.hitch(this, this._doGet, req));
+		},
+
+		_doGet: function(req) {
 
 			var target = this._getSafeTarget(req.target),
 				result = this.get(target, req.id, req.options);

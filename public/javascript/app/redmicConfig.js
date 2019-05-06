@@ -350,17 +350,27 @@ define([], function() {
 		return this.outerPaths.indexOf(ancestorPath) !== -1;
 	};
 
-	retObj.getServiceUrl = function(serviceName, env) {
+	retObj.getServiceUrl = function(serviceName, envData) {
 
 		if (!serviceName || !serviceName.length) {
 			return;
 		}
 
-		if (!env || !env.apiUrl) {
+		if (!envData || !envData.apiUrl) {
 			return serviceName;
 		}
 
-		return serviceName.replace('{apiUrl}', env.apiUrl);
+		// TODO esto es necesario hasta que todos los lang.replace de rutas se centralicen y se puedan devolver como dfd
+		var undefinedIndex = serviceName.indexOf('undefined');
+		if (undefinedIndex !== -1) {
+			console.error('Service URL "%s" contains "undefined", variable replacement went wrong', serviceName);
+			if (undefinedIndex === 0) {
+				console.error('Trying to replace "undefined" with API URL..');
+				return serviceName.replace('undefined', envData.apiUrl);
+			}
+		}
+
+		return serviceName.replace('{apiUrl}', envData.apiUrl);
 	};
 
 	return retObj;

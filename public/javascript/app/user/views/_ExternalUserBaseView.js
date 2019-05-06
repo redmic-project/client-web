@@ -1,6 +1,5 @@
 define([
 	"app/base/views/_View"
-	, 'app/redmicConfig'
 	, "dijit/_TemplatedMixin"
 	, "dijit/_WidgetBase"
 	, "dijit/_WidgetsInTemplateMixin"
@@ -15,7 +14,6 @@ define([
 	, "dijit/form/Button"
 ], function(
 	_View
-	, redmicConfig
 	, _TemplatedMixin
 	, _WidgetBase
 	, _WidgetsInTemplateMixin
@@ -62,13 +60,9 @@ define([
 
 			var template = { template : this.templateProps.templateString };
 
-			this.templateProps.templateString =
-				lang.replace(baseTemplate, template, this.replaceReg);
+			this.templateProps.templateString = lang.replace(baseTemplate, template, this.replaceReg);
 
-			this.template = new declare(
-				[_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin],
-				this.templateProps
-			)();
+			this.template = new declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], this.templateProps)();
 
 			this.addChild(this.template);
 
@@ -78,28 +72,6 @@ define([
 			}
 
 			this.inherited(arguments);
-
-			//this._checkDomainToAddMessage();
-		},
-
-		_checkDomainToAddMessage: function() {
-
-			var appScope = redmicConfig.getAppScope();
-
-			if (appScope === 'dev') {
-				this._addMessage('.redmicLocal', this.i18n.messageRedmicLocal);
-			} else if (appScope === 'pre') {
-				this._addMessage('.appDev', this.i18n.messageAppDev);
-			}
-		},
-
-		_addMessage: function(typeClass, message) {
-
-			var loginNode = this.domNode.firstChild.children[0],
-				footerNode = this.domNode.firstChild.children[1];
-
-			put(footerNode, typeClass);
-			put(footerNode, 'span.fontExo2', message);
 		},
 
 		_showVersion: function(data) {

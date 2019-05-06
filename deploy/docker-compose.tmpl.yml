@@ -6,10 +6,12 @@ services:
     environment:
       - OAUTH_URL
       - OAUTH_CLIENT_SECRET
+      - API_URL
+      - PRODUCTION
     networks:
       - traefik-net
     healthcheck:
-      test: wget --spider -S -t 3 http://localhost:${PORT}
+      test: wget --spider -q http://localhost:${PORT}
       interval: 30s
       timeout: 10s
       retries: 3
@@ -35,11 +37,12 @@ services:
         window: 1m
       resources:
         limits:
-          cpus: '2'
+          cpus: '1'
           memory: 128M
         reservations:
-          memory: 103M
+          memory: 64M
 
 networks:
   traefik-net:
+    name: ${TRAEFIK_NET_NAME:-traefik-net}
     external: true

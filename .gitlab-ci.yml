@@ -1,20 +1,50 @@
+include:
+  - project: 'redmic-project/gitlab-ci-templates'
+    ref: master
+    file: '/license-listing.yml'
+  - project: 'redmic-project/gitlab-ci-templates'
+    ref: master
+    file: '/packaging.yml'
+  - project: 'redmic-project/gitlab-ci-templates'
+    ref: master
+    file: '/deployment.yml'
+
 stages:
   - pre-build
   - test-code
   - build
+  - license-list
   - package
   - test-package
   - deploy
   - test-deploy
 
-prepare-unbuilt-version:
-  stage: pre-build
-  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+variables:
+  STACK: client
+  WEB_BUILD_IMAGE: registry.gitlab.com/redmic-project/docker/web-build:latest
+
+.web-build:
+  image: ${WEB_BUILD_IMAGE}
+  cache:
+    paths:
+      - node_modules/
+      - public/javascript/redmic-widgets/node_modules/
+      - public/javascript/templates/node_modules/
+      - public/stylesheets/node_modules/
+    policy: pull
+
+.prepare-dependencies:
+  extends: .web-build
   variables:
     GIT_SUBMODULE_STRATEGY: normal
-  script:
+  before_script:
     - type yarn grunt java
     - yarn install || yarn install
+
+prepare-unbuilt-version:
+  stage: pre-build
+  extends: .prepare-dependencies
+  script:
     - grunt preBuild
   only:
     - branches
@@ -22,15 +52,10 @@ prepare-unbuilt-version:
     - master
     - schedules
   cache:
-    key: ${CI_COMMIT_REF_NAME}
-    paths:
-      - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
+    policy: pull-push
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
-    expire_in: 1 day
+    expire_in: 1 week
     paths:
       - node_modules/
       - public/javascript/proj4js/dist/proj4.js
@@ -42,29 +67,21 @@ prepare-unbuilt-version:
 
 run-unit-tests:
   stage: test-code
-  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  extends: .web-build
   script:
     - grunt test | tee test.out
-    - "coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')"
-    - 'echo "Coverage: ${coverage}%"'
+    - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
+    - echo "Coverage - ${coverage}%"
     - rm test.out
   only:
     - branches
   except:
     - master
     - schedules
-  cache:
-    key: ${CI_COMMIT_REF_NAME}
-    paths:
-      - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
-    policy: pull
 
 run-modules-functional-tests:
   stage: test-code
-  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  extends: .web-build
   script:
     - echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts
     - npm start -- -p 80 &
@@ -74,261 +91,58 @@ run-modules-functional-tests:
   except:
     - master
     - schedules
-  cache:
-    key: ${CI_COMMIT_REF_NAME}
-    paths:
-      - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
-    policy: pull
 
 prepare-built-version:
   stage: build
-  image: registry.gitlab.com/redmic-project/docker/web-build:latest
-  variables:
-    GIT_SUBMODULE_STRATEGY: normal
+  extends: .prepare-dependencies
   script:
-    - type yarn grunt java
-    - yarn install || yarn install
     - grunt
   only:
     - branches
   except:
     - schedules
-  cache:
-    key: ${CI_COMMIT_REF_NAME}
-    paths:
-      - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
-    policy: pull
+  dependencies: []
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
-    expire_in: 1 week
+    expire_in: 1 month
     paths:
       - dist*.tar.gz
 
-docker-build-commit-non-master-branches:
-  stage: package
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  services:
-    - docker:dind
-  only:
-    - branches
-  except:
-    - master
-    - schedules
-  script:
-    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}-latest .
-    - docker push ${CI_REGISTRY_IMAGE}
-
-docker-build-commit-master-branch:
-  stage: package
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  services:
-    - docker:dind
-  only:
-    - master
-  except:
-    - schedules
-  script:
-    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} -t ${CI_REGISTRY_IMAGE}:latest .
-    - docker push ${CI_REGISTRY_IMAGE}
-
-docker-tag-already-built-image:
-  stage: package
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  services:
-    - docker:dind
-  only:
-    - tags
-  except:
-    - schedules
-  script:
-    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker pull ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}
-    - docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
-    - docker push ${CI_REGISTRY_IMAGE}
-
-container-scanning:
-  stage: test-package
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  only:
-    - branches
-  except:
-    - schedules
-  script:
-    - docker run -d --name db arminc/clair-db:latest
-    - docker run -p 6060:6060 --link db:postgres -d --name clair arminc/clair-local-scan:v2.0.1
-    - apk add -U wget ca-certificates
-    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
-    - docker pull ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}
-    - wget https://github.com/arminc/clair-scanner/releases/download/v8/clair-scanner_linux_amd64
-    - mv clair-scanner_linux_amd64 clair-scanner
-    - chmod +x clair-scanner
-    - touch clair-whitelist.yml
-    - >
-      ./clair-scanner -c http://docker:6060 --ip $(hostname -i) -r gl-sast-container-report.json -l clair.log
-      -w clair-whitelist.yml ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} || true
-  artifacts:
-    paths: [gl-sast-container-report.json]
-
-deploy-supporting-branch-develop:
-  stage: deploy
-  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
-  variables:
-    DOCKER_DRIVER: overlay2
-    SSH_REMOTE: ${DEV_SSH_REMOTE}
-    STACK: client
-    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
-    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
-    IMAGE_TAG: ${CI_COMMIT_SHA}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
-    OAUTH_URL: ${DEV_OAUTH_URL}
-    OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
-  services:
-    - docker:dind
+.deploy:
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+      PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME} OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+      API_URL=${API_URL} PRODUCTION=${PRODUCTION}
   environment:
-    name: dev
-    url: https://${DEV_PUBLIC_HOSTNAME}
-  only:
-    - branches
-  except:
-    - master
-    - schedules
-  when: manual
+    url: https://${PUBLIC_HOSTNAME}
 
-deploy-stable-branch-develop:
-  stage: deploy
-  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+.deploy-development:
   variables:
-    DOCKER_DRIVER: overlay2
-    SSH_REMOTE: ${DEV_SSH_REMOTE}
-    STACK: client
-    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
-    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
-    IMAGE_TAG: ${CI_COMMIT_SHA}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
-    OAUTH_URL: ${DEV_OAUTH_URL}
-    OAUTH_CLIENT_SECRET: ${DEV_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
-  services:
-    - docker:dind
-  script:
-    - >
-      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
-  environment:
-    name: dev
-    url: https://${DEV_PUBLIC_HOSTNAME}
-  only:
-    - master
-  except:
-    - schedules
-  when: manual
+    PRODUCTION: 0
 
-deploy-supporting-branch-production:
-  stage: deploy
-  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+.deploy-production:
   variables:
-    DOCKER_DRIVER: overlay2
-    SSH_REMOTE: ${PRO_SSH_REMOTE}
-    STACK: client
-    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
-    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
-    IMAGE_TAG: ${CI_COMMIT_SHA}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
-    OAUTH_URL: ${PRO_OAUTH_URL}
-    OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
-  services:
-    - docker:dind
-  script:
-    - >
-      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
-  environment:
-    name: pro
-    url: https://${PRO_PUBLIC_HOSTNAME}
-  only:
-    - branches
-  except:
-    - master
-    - schedules
-  when: manual
-
-deploy-stable-branch-production:
-  stage: deploy
-  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
-  variables:
-    DOCKER_DRIVER: overlay2
-    SSH_REMOTE: ${PRO_SSH_REMOTE}
-    STACK: client
-    SERVICES_TO_CHECK: client_${CI_PROJECT_NAME}
-    IMAGE_NAME: ${CI_REGISTRY_IMAGE}
-    IMAGE_TAG: ${CI_COMMIT_SHA}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
-    OAUTH_URL: ${PRO_OAUTH_URL}
-    OAUTH_CLIENT_SECRET: ${PRO_OAUTH_CLIENT_SECRET}
-    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
-  services:
-    - docker:dind
-  script:
-    - >
-      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
-  environment:
-    name: pro
-    url: https://${PRO_PUBLIC_HOSTNAME}
-  only:
-    - master
-  except:
-    - schedules
-  when: manual
+    PRODUCTION: 1
 
 run-functional-tests:
   stage: test-deploy
-  image: registry.gitlab.com/redmic-project/docker/web-build:latest
+  extends: .prepare-dependencies
   tags:
     - functional-testing
-  variables:
-    GIT_SUBMODULE_STRATEGY: normal
   script:
-    - type yarn grunt java
-    - yarn install || yarn install
     - >
       grunt test-functional-local --server-url="https://${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
       --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups="${SUITES_GROUPS}" --headless
   only:
     - schedules
   cache:
-    key: ${CI_COMMIT_REF_NAME}
     paths:
       - node_modules/
-    policy: pull
+  dependencies: []
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
     expire_in: 1 month
     when: always
     paths:
-      - "test_reports/test-functional-local*"
+      - 'test_reports/test-functional-local*'

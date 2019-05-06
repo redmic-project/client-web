@@ -6,7 +6,10 @@ var express = require('express'),
 
 var logger, params, version,
 	oauthUrl = process.env.OAUTH_URL,
-	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET;
+	getTokenUrl = oauthUrl + '/token',
+	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
+	production = !!parseInt(process.env.PRODUCTION, 10),
+	apiUrl = process.env.API_URL;
 
 function getLang(req) {
 
@@ -26,16 +29,9 @@ function onEnvRequest(req, res) {
 	res.send({
 		version: version,
 		useBuilt: params.useBuilt,
-		debug: params.debug
-	});
-}
-
-function onResettingRequest(req, res) {
-
-	res.render('resetting', {
-		useBuilt: params.useBuilt,
-		lang: getLang(req),
-		token: req.param('token')
+		debug: params.debug,
+		apiUrl: apiUrl,
+		production: production
 	});
 }
 
@@ -44,7 +40,8 @@ function onActivateAccountRequest(req, res) {
 	res.render('activateAccount', {
 		useBuilt: params.useBuilt,
 		lang: getLang(req),
-		token: req.param('token')
+		apiUrl: apiUrl,
+		token: req.params.token
 	});
 }
 
@@ -100,12 +97,11 @@ function onOauthTokenRequest(req, res) {
 		clientCredentials = clientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
-		url = oauthUrl + '/api/oauth/token',
 		authorization = 'Basic ' + base64ClientCredentials,
-		bodyData = "grant_type=password&username=" + username + "&password=" + password + "&scope=write",
+		bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write',
 
 		options = {
-			url: url,
+			url: getTokenUrl,
 			method: 'POST',
 			body: bodyData,
 			headers: {
@@ -134,8 +130,6 @@ function exposeRoutes(app) {
 		onGeneralRequest)
 
 		.get('/env', onEnvRequest)
-
-		.get('/resetting/:token', onResettingRequest)
 
 		.get('/activateAccount/:token', onActivateAccountRequest)
 

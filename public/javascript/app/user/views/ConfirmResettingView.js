@@ -1,22 +1,21 @@
 define([
-	"app/user/views/_ExternalUserBaseView"
+	'alertify/alertify.min'
+	, "app/user/views/_ExternalUserBaseView"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/dom-class"
 	, "dojo/request"
-	, "dojo/aspect"
 	, "dojo/text!./templates/ConfirmResetting.html"
 ], function(
-	_ExternalUserBaseView
+	alertify
+	, _ExternalUserBaseView
 	, redmicConfig
 	, declare
 	, lang
-	, domClass
 	, request
-	, aspect
 	, template
 ){
+
 	return declare(_ExternalUserBaseView, {
 		//	summary:
 		//		Vista de confimación de resetting password
@@ -25,21 +24,17 @@ define([
 		//		Permite resetear la contraseña a partir de un enlace enviado al correo electrónico
 		//		asociado a la cuenta.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				templateProps:  {
 					templateString: template,
 					i18n: this.i18n,
-					token: this.param,
-					_onSubmitResetting: lang.hitch(this.template, this._onSubmitResetting, this),
-					_onCloseResetting: this._onCloseResetting,
-					_confirmValidator: lang.hitch(this, this._confirmValidator),
-					_handleResponse: this._handleResponse,
-					_handleError: this._handleError,
-					_resetForm: this._resetForm
+					_onSubmitResetting: lang.hitch(this, this._onSubmitResetting),
+					_onCloseResetting: lang.hitch(this, this._onCloseResetting),
+					_confirmValidator: lang.hitch(this, this._confirmValidator)
 				},
-				ownChannel: "posResetting"
+				ownChannel: "confirmResetting"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -49,17 +44,16 @@ define([
 
 			this.inherited(arguments);
 
-			// Si no llega token como parámetro -> 404
-			if (this.query.where && this.query.where.token) {
-				this.token = this.query.where.token;
-			} else {
-				window.location.href = "/404";
-			}
+			var token = this.queryParameters ? this.queryParameters.token : null;
 
-			aspect.after(this.template, "_handleError", lang.hitch(this, this._notifyError));
+			if (token) {
+				this.token = token;
+			} else {
+				this._onGetTokenError();
+			}
 		},
 
-		_onSubmitResetting: function(/*Obj*/ module, /*Event*/ evt) {
+		_onSubmitResetting: function(/*Event*/ evt) {
 			//	Summary:
 			//		Llamado cuando se pulsa el botón para enviar el formulario y resetear
 			//		la contraseña
@@ -68,13 +62,29 @@ define([
 			//		private callback
 			//
 
-			if (this.resettingFormNode.validate() && (values = this.resettingFormNode.get("value"))) {
-				var data = {
-					password: values.password,
-					token: module.token
+			var template = this.template,
+				form = template.resettingFormNode;
+
+			if (!form.validate()) {
+				return;
+			}
+
+			var value = form.get("value"),
+				data = {
+					password: value.password,
+					token: this.token
 				};
 
-				request(redmicConfig.services.resettingSetPassword, {
+			var envDfd = window.env;
+			if (!envDfd) {
+				return;
+			}
+
+			envDfd.then(lang.hitch(this, function(data, envData) {
+
+				var target = redmicConfig.getServiceUrl(redmicConfig.services.resettingSetPassword, envData);
+
+				request(target, {
 					handleAs: "json",
 					method: "POST",
 					data: JSON.stringify(data),
@@ -85,10 +95,10 @@ define([
 				}).then(
 					lang.hitch(this, this._handleResponse),
 					lang.hitch(this, this._handleError));
-			}
+			}, data));
 		},
 
-		_handleResponse: function(result){
+		_handleResponse: function(result) {
 			//	summary:
 			//		Función que maneja la respuesta del recovery,
 			//		manda a gestionar el error en caso de recibirlo.
@@ -97,9 +107,8 @@ define([
 			//		callback private
 			//
 
-			if(result.success) {
-				domClass.toggle(this.resettingManagerNode, "hidden");
-				domClass.toggle(this.successNode, "hidden");
+			if (result.success) {
+				alertify.alert(this.i18n.success, this.i18n.successResetting, this._goBack);
 			} else {
 				this._handleError(result.error);
 			}
@@ -112,10 +121,11 @@ define([
 			//	tags:
 			//		callback private
 
-			this._resetForm();
+			this._notifyError(error);
+			this._goBack();
 		},
 
-		_notifyError: function(method, error) {
+		_notifyError: function(error) {
 			//	summary:
 			//		Función que maneja el error fuera del ámbito del template (ámbito de la vista)
 			//
@@ -135,13 +145,21 @@ define([
 
 			this._emitEvt('TRACK', {
 				type: TRACK.type.exception,
-				info: {'exDescription': "_onSubmitRegister " + msg,'exFatal':false, 'appName':'API'}
+				info: {
+					'exDescription': "_onSubmitConfirmResetting " + msg,
+					'exFatal': false,
+					'appName': 'API'
+				}
 			});
 
-			this._emitEvt('COMMUNICATION', {type: "alert", level: "error", description: msg});
+			this._emitEvt('COMMUNICATION', {
+				type: "alert",
+				level: "error",
+				description: msg
+			});
 		},
 
-		_onCloseResetting: function(/**/ evt){
+		_onCloseResetting: function(/**/ evt) {
 			// summary:
 			//		Llamado cuando se pulsa el botón para cancelar el reseteo la password.
 			//		Llama a limpiar el formulario.
@@ -149,30 +167,34 @@ define([
 			//	tags:
 			//		private callback
 
-			this._resetForm();
+			this._goBack();
 		},
 
-		_resetForm: function() {
-			// summary:
-			//		Limpia el formulario.
-			//
-			//	tags:
-			//		private callback
+		_goBack: function() {
 
-			this.password.set("value", null);
-			this.confirm.set("value", null);
+			window.location.href = '/';
 		},
 
-		_confirmValidator: function(){
+		_onGetTokenError: function() {
+
+			this._emitEvt('TRACK', {
+				type: TRACK.type.exception,
+				info: {
+					'exDescription': "_onGetTokenError",
+					'exFatal': false,
+					'appName': 'WEB'
+				}
+			});
+
+			window.location.href = '/404';
+		},
+
+		_confirmValidator: function() {
 			//	summary:
 			//		Función que valida el campo confirm del formulario.
 			//		Es válido cuando el campo password coincide con el campo confirm
 
-			if (this.template.password.get("value") === this.template.confirm.get("value")) {
-				return true;
-			}
-
-			return false;
+			return this.template.password.get("value") === this.template.confirm.get("value");
 		}
 	});
 });

@@ -70,20 +70,29 @@ define([
 
 		_connect: function() {
 
-			console.log('STOMP: Connecting socket');
+			var envDfd = window.env;
+			if (!envDfd) {
+				return;
+			}
 
-			var url = this._socketTarget + "?access_token=" + Credentials.get("accessToken"),
-				reconnectCbk = lang.hitch(this, this._reconnect);
+			envDfd.then(lang.hitch(this, function(envData) {
 
-			this.socket = new SockJS(url);
-			this.socket.onclose = reconnectCbk;
+				console.log('STOMP: Connecting socket');
 
-			this.stompClient = Stomp.over(this.socket);
-			this.stompClient.debug = function() {};
+				var target = redmicConfig.getServiceUrl(this._socketTarget, envData),
+					url = target + "?access_token=" + Credentials.get("accessToken"),
+					reconnectCbk = lang.hitch(this, this._reconnect);
 
-			this.stompClient.connect({},
-				lang.hitch(this, this._postConnect),
-				reconnectCbk);
+				this.socket = new SockJS(url);
+				this.socket.onclose = reconnectCbk;
+
+				this.stompClient = Stomp.over(this.socket);
+				this.stompClient.debug = function() {};
+
+				this.stompClient.connect({},
+					lang.hitch(this, this._postConnect),
+					reconnectCbk);
+			}));
 		},
 
 		_reconnect: function(msg) {
@@ -94,6 +103,8 @@ define([
 		},
 
 		_postConnect: function(frame) {
+
+			console.log('STOMP: Socket connected');
 
 			if (this.stompClient.connected) {
 				for (var i = 0; i < this._bufferedMessages.length; i++) {

@@ -43,9 +43,9 @@ define([
 			var envDfd = window.env;
 
 			if (envDfd) {
-				envDfd.then(lang.hitch(this, function(env) {
+				envDfd.then(lang.hitch(this, function(envData) {
 
-					put(this.domNode, 'div.versionNumber', env.version);
+					put(this.domNode, 'div.versionNumber', envData.version);
 				}));
 			}
 

@@ -1,6 +1,5 @@
 define([
-	'app/redmicConfig'
-	, "dijit/form/Button"
+	"dijit/form/Button"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/dom-class"
@@ -11,8 +10,7 @@ define([
 	, "redmic/modules/base/_Show"
 ],
 function(
-	redmicConfig
-	, Button
+	Button
 	, declare
 	, lang
 	, domClass
@@ -132,12 +130,14 @@ function(
 
 		_checkDomainToAddMessage: function() {
 
-			var appScope = redmicConfig.getAppScope();
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
 
-			if (appScope === 'dev') {
-				this._addMessage('.redmicLocal', this.i18n.messageRedmicLocal);
-			} else if (appScope === 'pre') {
-				this._addMessage('.appDev', this.i18n.messageAppDev);
+					if (!envData.production) {
+						this._addMessage('.appDev', this.i18n.messageAppDev);
+					}
+				}));
 			}
 		},
 

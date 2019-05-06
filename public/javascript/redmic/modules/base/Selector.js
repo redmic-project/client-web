@@ -120,7 +120,7 @@ define([
 				items = [items];
 			}
 
-			if (target.includes('api/')) {
+			if (target.indexOf('{apiUrl}') !== -1) {
 				// Seleccionamos a la vuelta del server
 				this._emitSave(this._getDataToSave(this.actions.SELECT, items, target));
 			} else {
@@ -210,7 +210,7 @@ define([
 				items = [items];
 			}
 
-			if (target.includes('api/')) {
+			if (target.indexOf('{apiUrl}') !== -1) {
 				// Deseleccionamos a la vuelta del server
 				this._emitSave(this._getDataToSave(this.actions.DESELECT, items, target));
 			} else {

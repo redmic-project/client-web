@@ -274,7 +274,9 @@ define([
 
 		_onRouteChange: function() {
 
-			var moduleUrl = location.href.split('\/' + getGlobalContext().location.hostname + '\/')[1],
+			var locationObj = getGlobalContext().location,
+				locationPath = locationObj.pathname,
+				moduleUrl = locationPath.substr(1),
 				urlSplitted = moduleUrl.split('?'),
 				route = urlSplitted[0],
 				query = urlSplitted[1],

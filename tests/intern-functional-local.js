@@ -4,7 +4,7 @@ module.exports = function(args) {
 
 		_internFunctional = require('./_intern-functional')(args),
 
-		serverUrl = args.serverUrl || 'http://redmic.local',
+		serverUrl = args.serverUrl || 'http://localhost:3050',
 
 		config = {
 			serverUrl: serverUrl

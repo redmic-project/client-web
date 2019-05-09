@@ -83,8 +83,7 @@ run-modules-functional-tests:
   stage: test-code
   extends: .web-build
   script:
-    - echo $(head -1 /etc/hosts | cut -f1) redmic.local >> /etc/hosts
-    - npm start -- -p 80 &
+    - npm start &
     - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
   only:
     - branches
@@ -132,7 +131,7 @@ run-functional-tests:
     - functional-testing
   script:
     - >
-      grunt test-functional-local --server-url="https://${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
+      grunt test-functional-local --serverUrl="https://${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
       --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups="${SUITES_GROUPS}" --headless
   only:
     - schedules

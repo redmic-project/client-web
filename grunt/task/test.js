@@ -9,6 +9,11 @@ module.exports = function(grunt) {
 			, '"--suitesGroups=suitesFolderName" para indicar grupos de suites ejecutar desde la raíz correspondiente'
 		],
 
+		remoteOptionParameters = [
+			'"--remoteHost=host" para redefinir la dirección del servicio de testeo remoto'
+			, '"--remotePort=port" para redefinir el puerto del servicio de testeo remoto'
+		],
+
 		unitOptionParameters = [
 			'"--suites=suitesFilePath" para indicar que ficheros de suites ejecutar (inhabilita "suitesGroups")'
 			, '"--coverage=pathsToCover" para indicar que rutas incluir en la cobertura (por defecto, en todas)'
@@ -20,7 +25,7 @@ module.exports = function(grunt) {
 			, '"--user=userEmail" para definir el nombre de acceso del usuario'
 			, '"--pass=userPassword" para definir el password de acceso del usuario'
 			, '"--headless" para ejecutar sin interfaz'
-			, '"--server-url=url" para definir la dirección de la aplicación a testear'
+			, '"--serverUrl=url" para definir la dirección de la aplicación a testear'
 		];
 
 	grunt.registerTask('test-unit-local',
@@ -42,6 +47,7 @@ module.exports = function(grunt) {
 			, '"--ownServerHost=host" para redefinir dirección del servidor de intern, para indicarle al túnel remoto']
 			.concat(commonOptionParameters)
 			.concat(unitOptionParameters)
+			.concat(remoteOptionParameters)
 			.join('\n'),
 		commonTasks.concat(['intern:test-unit-remote']));
 
@@ -49,6 +55,7 @@ module.exports = function(grunt) {
 		['Ejecuta los tests funcionales en entorno remoto']
 			.concat(commonOptionParameters)
 			.concat(functionalOptionParameters)
+			.concat(remoteOptionParameters)
 			.join('\n'),
 		commonTasks.concat(['intern:test-functional-remote']));
 
@@ -61,11 +68,11 @@ module.exports = function(grunt) {
 		grunt.config('shell.test-functional-local-parallel', {
 			command: function() {
 
-				var serverUrlParam = grunt.option('server-url') || 'http://redmic.local',
+				var serverUrlParam = grunt.option('serverUrl'),
 					userParam = grunt.option('user'),
 					passParam = grunt.option('pass'),
 					serverPort = 9000,
-					gruntCommand = 'grunt test-functional-local --headless --server-url="' + serverUrlParam + '"',
+					gruntCommand = 'grunt test-functional-local --headless',
 
 					publicZoneGroups = 'catalog,catalogDetails,viewers,products',
 					administrativeZoneGroup = 'administrative,!administrative/taxonomy',
@@ -98,6 +105,10 @@ module.exports = function(grunt) {
 
 					cmds = [],
 					commandsGrunt = '';
+
+				if (serverUrlParam) {
+					gruntCommand += ' --serverUrl="' + serverUrlParam + '"';
+				}
 
 				for (var i = 0; i < userZoneGroupsList.length; i++) {
 					specificParamsList.push(userCommonTestsParams + userZoneGroupsList[i]);

@@ -19,10 +19,12 @@ module.exports = function(grunt) {
 			ownSocketPort = parseInt(grunt.option('ownSocketPort'), 10),
 			ownTunnelPort = parseInt(grunt.option('ownTunnelPort'), 10),
 			headless = grunt.option('headless') || false,
-			serverUrl = grunt.option('server-url'),
+			serverUrl = grunt.option('serverUrl'),
 			role = grunt.option('role'),
 			user = grunt.option('user'),
 			pass = grunt.option('pass'),
+			remoteHost = grunt.option('remoteHost'),
+			remotePort = grunt.option('remotePort'),
 			suitesGroups = grunt.option('suitesGroups'),
 			suites = grunt.option('suites'),
 			functionalSuites = grunt.option('functionalSuites'),
@@ -107,7 +109,9 @@ module.exports = function(grunt) {
 				functionalSuites: functionalSuites,
 				reportersOutputPath: reportersOutputPath,
 				dojoBaseUrl: '.' + dojoCommonBaseUrl,
-				userDataDir: userDataDir
+				userDataDir: userDataDir,
+				remoteHost: remoteHost,
+				remotePort: remotePort
 			}),
 
 			testUnitLocalOptions = require(testUnitLocalPath)(testUnitParams),

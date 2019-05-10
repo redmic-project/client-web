@@ -612,12 +612,13 @@ define([
 
 		_subConnect: function(req) {
 
-			var actions = req.actions;
+			var actions = req.actions,
+				forceResumeActions = req.forceResumeActions;
 
 			if (actions) {
 				this._connectActions(actions);
 			} else {
-				this._resume();
+				this._resume(forceResumeActions);
 
 				this._emitEvt('CONNECT', {
 					moduleChannel: this.getChannel()
@@ -650,11 +651,13 @@ define([
 			this.statusFlags.paused = value;
 		},
 
-		_resume: function() {
+		_resume: function(forceResumeActions) {
 
 			this._getPaused() && this._setPaused(false);
 
-			this.actionsPaused = {};
+			if (forceResumeActions) {
+				this.actionsPaused = {};
+			}
 		},
 
 		_subDisconnect: function(req) {

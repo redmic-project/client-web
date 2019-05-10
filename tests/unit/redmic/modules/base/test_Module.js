@@ -114,7 +114,36 @@ define([
 				});
 			},
 
-			Should_RestoreResponsePublication_When_ModuleWithDisconnectedActionIsReconnected: function() {
+			Should_NotRestoreResponsePublication_When_ModuleWithDisconnectedActionIsReconnected: function() {
+
+				var dfd = this.async(timeout),
+					cbk = function(obj) {
+
+						dfd.reject({
+							message: 'El módulo ha reconectado una acción desconectada tras una conexión genérica'
+						});
+					};
+
+				setTimeout(function() {
+
+					Mediator.remove(module.getChannel('GOT_PROPS'), cbk);
+					dfd.resolve();
+				}, timeout - 1);
+
+				Mediator.publish(module.getChannel('DISCONNECT'), {
+					actions: ['GET_PROPS']
+				});
+
+				Mediator.once(module.getChannel('GOT_PROPS'), cbk);
+
+				Mediator.publish(module.getChannel('CONNECT'));
+
+				Mediator.publish(module.getChannel('GET_PROPS'), {
+					rootChannel: true
+				});
+			},
+
+			Should_RestoreResponsePublication_When_ModuleWithDisconnectedActionIsReconnectedWithForceActions: function() {
 
 				var dfd = this.async(timeout);
 
@@ -124,7 +153,9 @@ define([
 
 				Mediator.once(module.getChannel('GOT_PROPS'), dfd.callback(function() {}));
 
-				Mediator.publish(module.getChannel('CONNECT'));
+				Mediator.publish(module.getChannel('CONNECT'), {
+					forceResumeActions: true
+				});
 
 				Mediator.publish(module.getChannel('GET_PROPS'), {
 					rootChannel: true
@@ -336,7 +367,36 @@ define([
 				});
 			},
 
-			Should_RestoreChildResponsePublication_When_ParentModuleWithDisconnectedActionIsReconnected: function() {
+			Should_NotRestoreChildResponsePublication_When_ParentModuleWithDisconnectedActionIsReconnected: function() {
+
+				var dfd = this.async(timeout),
+					cbk = function(obj) {
+
+						dfd.reject({
+							message: 'El módulo hijo ha reconectado una acción desconectada tras una conexión genérica del módulo padre'
+						});
+					};
+
+				setTimeout(function() {
+
+					Mediator.remove(module.getChannel('GOT_PROPS'), cbk);
+					dfd.resolve();
+				}, timeout - 1);
+
+				Mediator.publish(parentModule.getChannel('DISCONNECT'), {
+					actions: ['GET_PROPS']
+				});
+
+				Mediator.once(module.getChannel('GOT_PROPS'), cbk);
+
+				Mediator.publish(module.getChannel('CONNECT'));
+
+				Mediator.publish(module.getChannel('GET_PROPS'), {
+					rootChannel: true
+				});
+			},
+
+			Should_RestoreChildResponsePublication_When_ParentModuleWithDisconnectedActionIsReconnectedWithForceActions: function() {
 
 				var dfd = this.async(timeout);
 
@@ -346,7 +406,9 @@ define([
 
 				Mediator.once(module.getChannel('GOT_PROPS'), dfd.callback(function() {}));
 
-				Mediator.publish(parentModule.getChannel('CONNECT'));
+				Mediator.publish(parentModule.getChannel('CONNECT'), {
+					forceResumeActions: true
+				});
 
 				Mediator.publish(module.getChannel('GET_PROPS'), {
 					rootChannel: true

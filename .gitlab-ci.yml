@@ -21,10 +21,11 @@ stages:
 
 variables:
   STACK: client
-  WEB_BUILD_IMAGE: registry.gitlab.com/redmic-project/docker/web-build:latest
+  WEB_BUILD_IMAGE_NAME: registry.gitlab.com/redmic-project/docker/web-build
+  WEB_BUILD_IMAGE_TAG: latest
 
 .web-build:
-  image: ${WEB_BUILD_IMAGE}
+  image: ${WEB_BUILD_IMAGE_NAME}:${WEB_BUILD_IMAGE_TAG}
   cache:
     paths:
       - node_modules/
@@ -127,8 +128,6 @@ prepare-built-version:
 run-functional-tests:
   stage: test-deploy
   extends: .prepare-dependencies
-  tags:
-    - functional-testing
   script:
     - >
       grunt test-functional-local --serverUrl="https://${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"

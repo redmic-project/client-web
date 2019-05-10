@@ -526,7 +526,7 @@ define([
 							queryable: item.queryable,
 							layerId: layerId,
 							layerLabel: layerLabel,
-							timeRefresh: item.timeRefresh
+							refresh: item.refresh
 						}
 					}
 				};

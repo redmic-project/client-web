@@ -4,16 +4,17 @@ services:
   web:
     image: ${IMAGE_NAME}:${IMAGE_TAG:-latest}
     environment:
-      - OAUTH_URL
-      - OAUTH_CLIENT_SECRET
-      - API_URL
-      - PRODUCTION
+      OAUTH_URL:
+      OAUTH_CLIENT_SECRET:
+      API_URL:
+      PRODUCTION:
     networks:
       - traefik-net
+      - metric-net
     healthcheck:
       test: wget --spider -q http://localhost:${PORT}
       interval: 30s
-      timeout: 10s
+      timeout: 30s
       retries: 3
       start_period: 1m
     deploy:
@@ -45,4 +46,8 @@ services:
 networks:
   traefik-net:
     name: ${TRAEFIK_NET_NAME:-traefik-net}
+    external: true
+
+  metric-net:
+    name: ${METRIC_NET_NAME:-metric-net}
     external: true

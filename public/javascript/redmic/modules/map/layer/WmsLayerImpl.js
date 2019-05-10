@@ -1,9 +1,9 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "leaflet/leaflet"
-	, "moment/moment.min"
-	, "./MapLayer"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'leaflet/leaflet'
+	, 'moment/moment.min'
+	, './MapLayer'
 ], function(
 	declare
 	, lang
@@ -20,60 +20,70 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "wmsLayer"
+				ownChannel: 'wmsLayer',
+				refresh: 0
 			};
 
 			lang.mixin(this, this.config, args);
-
-			if (this._isValidTimeRefresh()) {
-				this._refreshTimeInParams();
-			}
 		},
-
-		_addNewData: function(geoJsonData, moduleContext) {},
-
-		addData: function(data) {},
-
-		setStyle: function(geoJsonStyle) {},
-
-		clear: function() {},
 
 		_afterLayerAdded: function(data) {
 
-			if (this._isValidTimeRefresh()) {
+			this._setRefreshInterval();
+		},
 
-				this.idSetInterval = setInterval(lang.hitch(this, this._refreshTimeInParams), this.timeRefresh);
+		_afterLayerRemoved: function() {
+
+			this._stopRefreshInterval();
+		},
+
+		_setRefreshInterval: function() {
+
+			// TODO eliminar excepción para capa AIS cuando se defina refresh en el servicio
+			var isAisLayer = this.layer.wmsParams.layers.indexOf('last_position') !== -1;
+
+			if ((this._checkRefreshIsValid() || isAisLayer) && !this._refreshIntervalHandler) {
+				if (isAisLayer) {
+					this.refresh = 15;
+				}
+
+				var cbk = lang.hitch(this, this._redraw),
+					timeout = this.refresh * 1000;
+
+				this._refreshIntervalHandler = setInterval(cbk, timeout);
 			}
 		},
 
-		_isValidTimeRefresh: function(data) {
+		_checkRefreshIsValid: function() {
 
-			if (this.timeRefresh && Number.isInteger(this.timeRefresh)) {
-				return true;
-			}
-
-			return false;
+			return this.refresh && Number.isInteger(this.refresh);
 		},
 
-		_refreshTimeInParams: function() {
+		_redraw: function() {
 
 			if (!this.layer) {
 				return;
 			}
 
 			this.layer.setParams({
-				time: 'PT1H/' + moment().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+				timestamp: Date.now()
 			});
 		},
 
-		_afterLayerRemoved: function(data) {
+		_stopRefreshInterval: function() {
 
-			this.idSetInterval && clearInterval(this.idSetInterval);
+			if (!this._refreshIntervalHandler) {
+				return;
+			}
+
+			clearInterval(this._refreshIntervalHandler);
+			delete this._refreshIntervalHandler;
 		},
 
 		_getLayerLegend: function(layer) {
 
-			if (this.styleLayer) {
+			// TODO cuando se defina leyenda en el servicio de atlas, consultar la imagen correspondiente
+			if (0 && this.styleLayer) {
 				this._emitEvt('LAYER_LEGEND',
 					this._getLayerLegendToPublish(this._obtainLegendUrl(this.styleLayer.url)));
 			}
@@ -82,7 +92,7 @@ define([
 		_obtainLegendUrl: function(url) {
 
 			var params = {
-				legend_options: "fontAntiAliasing:true;dpi:100"
+				legend_options: 'fontAntiAliasing:true;dpi:100'
 			};
 
 			return this._chkUrlAndAddParams(url, L.Util.getParamString(params));
@@ -90,7 +100,7 @@ define([
 
 		_chkUrlAndAddParams: function(url, paramsStr) {
 
-			var index = url.indexOf("?"),
+			var index = url.indexOf('?'),
 				params = paramsStr;
 
 			if (index >= 0) {
@@ -113,9 +123,9 @@ define([
 			this._emitEvt('GET', {
 				target: this.infoTarget,
 				requesterId: this.getOwnChannel(),
-				id: "",
+				id: '',
 				options: {
-					"X-Requested-With": ""
+					'X-Requested-With': ''
 				}
 			});
 		},
@@ -132,9 +142,9 @@ define([
 		_obtainGetParams: function(data) {
 
 			var params = {
-				request: "GetFeatureInfo",
-				srs: "EPSG:4326",
-				info_format: "application/json",
+				request: 'GetFeatureInfo',
+				srs: 'EPSG:4326',
+				info_format: 'application/json',
 				service: this.layer.wmsParams.service,
 				version: this.layer.wmsParams.version,
 				layers: this.layer.wmsParams.layers,
@@ -158,6 +168,16 @@ define([
 			var layerAddedId = response.layer._leaflet_id;
 
 			return layerAddedId === this.layerId;
+		},
+
+		_onMapShown: function(response) {
+
+			this._setRefreshInterval();
+		},
+
+		_onMapHidden: function(response) {
+
+			this._stopRefreshInterval();
 		}
 	});
 });

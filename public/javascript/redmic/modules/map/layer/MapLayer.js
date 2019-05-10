@@ -57,7 +57,9 @@ define([
 					DELETE_INSTANCE: "deleteInstance",
 					ANIMATE_MARKER: "animateMarker",
 					FIT_BOUNDS: "fitBounds",
-					SET_CENTER: "setCenter"
+					SET_CENTER: "setCenter",
+					MAP_SHOWN: "mapShown",
+					MAP_HIDDEN: "mapHidden"
 				}
 			};
 
@@ -100,6 +102,12 @@ define([
 			},{
 				channel : this.getChannel("SET_CENTER"),
 				callback: "_subSetCenter"
+			},{
+				channel : this._buildChannel(this.mapChannel, this.actions.MAP_SHOWN),
+				callback: "_subMapShown"
+			},{
+				channel : this._buildChannel(this.mapChannel, this.actions.MAP_HIDDEN),
+				callback: "_subMapHidden"
 			});
 		},
 
@@ -176,8 +184,17 @@ define([
 
 		_subLayerAdded: function(response) {
 
+			// TODO quizá sea mejor retrasar la carga de la leyenda, bajo petición
 			this._getLayerLegend(response.layer);
 			this._mapInstance = response.mapInstance;
+
+			this._publish(this.getChannel('CONNECT'), {
+				actions: ['LAYER_REMOVED', 'MAP_SHOWN', 'MAP_HIDDEN']
+			});
+			this._publish(this.getChannel('DISCONNECT'), {
+				actions: ['LAYER_ADDED']
+			});
+
 			this._afterLayerAdded(response);
 			this._emitEvt('LAYER_ADDED', this._getLayerInfoToPublish(response));
 		},
@@ -185,6 +202,14 @@ define([
 		_subLayerRemoved: function(response) {
 
 			this._mapInstance = null;
+
+			this._publish(this.getChannel('DISCONNECT'), {
+				actions: ['LAYER_REMOVED', 'MAP_SHOWN', 'MAP_HIDDEN']
+			});
+			this._publish(this.getChannel('CONNECT'), {
+				actions: ['LAYER_ADDED']
+			});
+
 			this._afterLayerRemoved(response);
 			this._emitEvt('LAYER_REMOVED', this._getLayerInfoToPublish(response));
 		},
@@ -248,6 +273,16 @@ define([
 		_subDeleteInstance: function(response) {
 
 			this._emitEvt('REMOVE_LAYER', {layer: this.layer});
+		},
+
+		_subMapShown: function(response) {
+
+			this._onMapShown(response);
+		},
+
+		_subMapHidden: function(response) {
+
+			this._onMapHidden(response);
 		}
 	});
 });

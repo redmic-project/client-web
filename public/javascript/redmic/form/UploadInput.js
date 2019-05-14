@@ -5,6 +5,7 @@ define([
 	, 'dijit/_WidgetBase'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'dojo/Evented'
 	, 'dojo/i18n!./nls/UploadInput'
 	, 'dojo/text!./templates/UploadInput.html'
@@ -19,6 +20,7 @@ define([
 	, _WidgetBase
 	, declare
 	, lang
+	, Deferred
 	, Evented
 	, i18n
 	, template
@@ -38,6 +40,7 @@ define([
 				minFiles: 0,
 				_updateStatusTimeout: 100,
 				_ignoreStatusName: 'ignore',
+				_dropzoneDfd: new Deferred(),
 
 				url: null,
 				paramName: 'file',
@@ -85,6 +88,7 @@ define([
 
 				this._dropzone = this._getNewInstance();
 				this._listenInstanceEvents(this._dropzone);
+				this._dropzoneDfd.resolve(this._dropzone);
 			}));
 		},
 
@@ -164,6 +168,22 @@ define([
 			instance.on('addedfile', lang.hitch(this, this._onDropzoneAddedFile));
 			instance.on('removedfile', lang.hitch(this, this._onDropzoneRemovedFile));
 			instance.on('maxfilesreached', lang.hitch(this, this._onDropzoneMaxFilesReached));
+		},
+
+		_addFile: function(file) {
+
+			this._dropzoneDfd.then(lang.hitch(this, function(file, instance) {
+
+				instance.addFile(file);
+			}, file));
+		},
+
+		_removeFile: function(file) {
+
+			this._dropzoneDfd.then(lang.hitch(this, function(file, instance) {
+
+				instance.removeFile(file);
+			}, file));
 		},
 
 		_dropzoneConfirm: function(question, accepted, rejected) {

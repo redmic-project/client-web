@@ -276,10 +276,9 @@ define([
 
 			var locationObj = getGlobalContext().location,
 				locationPath = locationObj.pathname,
-				moduleUrl = locationPath.substr(1),
-				urlSplitted = moduleUrl.split('?'),
-				route = urlSplitted[0],
-				query = urlSplitted[1],
+				locationQuery = locationObj.search,
+				route = locationPath.substr(1),
+				query = locationQuery.substr(1),
 				routeIsEmpty = !route || route === '' || route === this.paths.ROOT,
 				loginWasSuccessful = route === this.paths.LOGIN && this._userFound;
 

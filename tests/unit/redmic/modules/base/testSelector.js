@@ -11,7 +11,7 @@ define([
 	, Selector
 ){
 	var timeout = 100,
-		target = 'api/data',
+		target = '{apiUrl}/data',
 		selector;
 
 	var registerSuite = intern.getInterface('object').registerSuite,

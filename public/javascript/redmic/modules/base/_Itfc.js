@@ -14,9 +14,7 @@ define([
 
 		constructor: function(args) {
 
-			this.config = {
-				debug: window.env ? window.env.debug : false
-			};
+			this.config = {};
 
 			lang.mixin(this, this.config, args);
 
@@ -41,7 +39,16 @@ define([
 
 		_onNotImplementedMethod: function(method, props) {
 
-			this.debug && this._showNotImplementedMethodWarning(method, props);
+			var envDfd = window.env;
+
+			if (!envDfd) {
+				return;
+			}
+
+			envDfd.then(lang.hitch(this, function(method, props, env) {
+
+				env.debug && this._showNotImplementedMethodWarning(method, props);
+			}, method, props));
 		},
 
 		_showNotImplementedMethodWarning: function(method, props) {

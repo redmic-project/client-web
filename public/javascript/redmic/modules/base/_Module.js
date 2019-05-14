@@ -96,7 +96,6 @@ define([
 			QUERY_STORE: "queryStore",
 			TASK: "task",
 			NOTIFICATION: "notification",
-			USER_AREA: "userArea",
 			SOCKET: "socket",
 			META_TAGS: "metaTags",
 			LOADING: "loading",
@@ -195,7 +194,6 @@ define([
 				socketChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.SOCKET),
 				metaTagsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.META_TAGS),
 				notificationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.NOTIFICATION),
-				userAreaChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.USER_AREA),
 				loadingChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.LOADING),
 				alertChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT),
 				communicationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION)
@@ -614,12 +612,13 @@ define([
 
 		_subConnect: function(req) {
 
-			var actions = req.actions;
+			var actions = req.actions,
+				forceResumeActions = req.forceResumeActions;
 
 			if (actions) {
 				this._connectActions(actions);
 			} else {
-				this._resume();
+				this._resume(forceResumeActions);
 
 				this._emitEvt('CONNECT', {
 					moduleChannel: this.getChannel()
@@ -652,11 +651,13 @@ define([
 			this.statusFlags.paused = value;
 		},
 
-		_resume: function() {
+		_resume: function(forceResumeActions) {
 
 			this._getPaused() && this._setPaused(false);
 
-			this.actionsPaused = {};
+			if (forceResumeActions) {
+				this.actionsPaused = {};
+			}
 		},
 
 		_subDisconnect: function(req) {

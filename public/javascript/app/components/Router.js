@@ -6,6 +6,7 @@ define([
 	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'dojo/dom'
 	, 'dojo/dom-attr'
 	, 'dojo/has'
@@ -31,6 +32,7 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, Deferred
 	, dom
 	, domAttr
 	, has
@@ -71,6 +73,8 @@ define([
 				nativeLoadingNode = undefined;
 			}
 		};
+
+	getGlobalContext().env = new Deferred();
 
 	if (!CheckBrowser.isSupported()) {
 		hideNativeLoadingNode();
@@ -270,19 +274,17 @@ define([
 
 		_onRouteChange: function() {
 
-			var moduleUrl = location.href.split('\/' + getGlobalContext().location.hostname + '\/')[1],
-				urlSplitted = moduleUrl.split('?'),
-				route = urlSplitted[0],
-				query = urlSplitted[1];
+			var locationObj = getGlobalContext().location,
+				locationPath = locationObj.pathname,
+				locationQuery = locationObj.search,
+				route = locationPath.substr(1),
+				query = locationQuery.substr(1),
+				routeIsEmpty = !route || route === '' || route === this.paths.ROOT,
+				loginWasSuccessful = route === this.paths.LOGIN && this._userFound;
 
-			if ((!route || (route === '') || (route === this.paths.ROOT)) && !this._userFound) {
-				this._addHistory(this.paths.LOGIN);
-				route = this.paths.LOGIN;
-			} else if (!route || (route === '')  || (route === this.paths.ROOT) ||
-				(route === this.paths.LOGIN && this._userFound)) {
-
-				this._addHistory(this.paths.HOME);
+			if (routeIsEmpty || loginWasSuccessful) {
 				route = this.paths.HOME;
+				this._addHistory(route);
 			}
 
 			this._changeModule(route, query);
@@ -290,12 +292,19 @@ define([
 
 		_getEnv: function() {
 
-			!getGlobalContext().env && request('/env', {
-				handleAs: 'json'
-			}).then(lang.hitch(this, function(data) {
+			var envDfd = getGlobalContext().env;
 
-				getGlobalContext().env = data;
-			}));
+			if (envDfd && !envDfd.isFulfilled()) {
+				request('/env', {
+					handleAs: 'json'
+				}).then(lang.hitch(envDfd, function(data) {
+
+					this.resolve(data);
+				}),lang.hitch(envDfd, function(error) {
+
+					this.reject(error);
+				}));
+			}
 		},
 
 		_subCredentialsRemoved: function() {

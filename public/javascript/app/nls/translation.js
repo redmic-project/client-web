@@ -1110,8 +1110,7 @@ define({
 		, "radiusInMeters": "Precision (m)"
 		, "depthInMeters": "Depth (m)"
 
-		, "messageRedmicLocal": "You are in a local version"
-		, "messageAppDev": "You are in a trial version"
+		, "messageAppDev": "This is a testing environment"
 
 		, "infrastructure": "Infrastructure"
 		, "infrastructures": "Infrastructures"
@@ -1169,6 +1168,10 @@ define({
 		, "windrose": "Wind rose"
 		, "sliderSelector": "Slider selector"
 		, "dateFilter": "Date filter"
+
+		, "followUs": "Follow us"
+
+		, "load": "Load"
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

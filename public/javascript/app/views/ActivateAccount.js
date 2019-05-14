@@ -1,20 +1,17 @@
 define([
-	"app/redmicConfig"
+	'app/redmicConfig'
 	, 'dojo/_base/declare'
-	, "dojo/_base/lang"
-	, "dojo/dom"
-	, "dojo/request"
-	, "redmic/base/RedmicLocalStorage"
-
-	, "dojo/domReady!"
+	, 'dojo/_base/lang'
+	, 'dojo/request'
+	, 'redmic/base/RedmicLocalStorage'
 ], function(
 	redmicConfig
 	, declare
 	, lang
-	, dom
 	, request
 	, RedmicLocalStorage
 ){
+
 	return declare(null, {
 
 		constructor: function(args) {
@@ -25,26 +22,51 @@ define([
 				token: this.token
 			};
 
-			request(redmicConfig.services.activateAccount, {
-				handleAs: "json",
-				method: "POST",
+			this._activateAccount(data);
+		},
+
+		_activateAccount: function(data) {
+
+			var target = redmicConfig.getServiceUrl(redmicConfig.services.activateAccount, {
+				apiUrl: this.apiUrl
+			});
+
+			request(target, {
+				handleAs: 'json',
+				method: 'POST',
 				data: JSON.stringify(data),
 				headers: {
-					"Content-Type": "application/json",
-					"Accept": "application/javascript, application/json"
+					'Content-Type': 'application/json',
+					'Accept': 'application/javascript, application/json'
 				}
-			}).then(function(result) {
+			}).then(
+				lang.hitch(this, this._handleResponse),
+				lang.hitch(this, this._handleError));
+		},
 
-				if (result.success) {
-					RedmicLocalStorage.setItem("accountActivated", "true");
-					window.location = "/";
-				} else {
-					window.location = "/404";
-				}
-			}, function(err) {
+		_handleResponse: function(result) {
 
-				window.location = "/404";
-			});
+			if (result.success) {
+				RedmicLocalStorage.setItem('accountActivated', 'true');
+				this._goBack();
+			} else {
+				this._goError();
+			}
+		},
+
+		_handleError: function(error) {
+
+			this._goError();
+		},
+
+		_goBack: function() {
+
+			window.location = '/';
+		},
+
+		_goError: function() {
+
+			window.location = '/404';
 		}
 	});
 });

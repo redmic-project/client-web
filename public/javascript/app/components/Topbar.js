@@ -40,6 +40,15 @@ define([
 					"'><img class='logo' src='/resources/images/logos/redmicSimple.png'></a>"
 			});
 
+			var envDfd = window.env;
+
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
+
+					put(this.domNode, 'div.versionNumber', envData.version);
+				}));
+			}
+
 			if (this.show.left) {
 				this.leftNode = put(this.domNode, "div.manager");
 			}

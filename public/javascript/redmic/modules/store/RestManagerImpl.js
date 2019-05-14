@@ -1,12 +1,14 @@
 define([
-	'dojo/_base/declare'
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/io-query'
 	, 'dojo/request'
 	, 'dojo/Deferred'
 	, './RestManager'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, ioQuery
 	, request
@@ -152,11 +154,13 @@ define([
 
 		_getSafeTarget: function(target) {
 
-			if (target.indexOf('?') === -1) {
-				return target + '/';
+			var resolvedTarget = redmicConfig.getServiceUrl(target, this._evt);
+
+			if (resolvedTarget.indexOf('?') === -1) {
+				return resolvedTarget + '/';
 			}
 
-			return target;
+			return resolvedTarget;
 		},
 
 		_getHeaders: function(type, options) {

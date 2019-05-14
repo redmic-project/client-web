@@ -28,7 +28,9 @@ define([
 				"_afterLayerRemoved": {},
 				"_redraw": {},
 				"_animateMarker": {},
-				"_setCenter": {}
+				"_setCenter": {},
+				"_onMapShown": {},
+				"_onMapHidden": {}
 			});
 		}
 	});

@@ -85,7 +85,9 @@ define([
 					LAYER_ADDED_CONFIRMED: "layerAddedConfirmed",
 					LAYER_REMOVED_FORWARDED: "layerRemovedForwarded",
 					LAYER_REMOVED_CONFIRMED: "layerRemovedConfirmed",
-					SET_QUERYABLE_CURSOR: "setQueryableCursor"
+					SET_QUERYABLE_CURSOR: "setQueryableCursor",
+					MAP_SHOWN: "mapShown",
+					MAP_HIDDEN: "mapHidden"
 				},
 
 				ownChannel: "map",
@@ -220,6 +222,12 @@ define([
 			},{
 				event: 'LAYER_INFO_FORWARDED',
 				channel: this.getChannel("LAYER_INFO")
+			},{
+				event: 'ME_OR_ANCESTOR_SHOWN',
+				channel: this.getChannel('MAP_SHOWN')
+			},{
+				event: 'ME_OR_ANCESTOR_HIDDEN',
+				channel: this.getChannel('MAP_HIDDEN')
 			});
 		},
 

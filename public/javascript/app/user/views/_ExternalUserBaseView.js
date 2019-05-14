@@ -1,6 +1,5 @@
 define([
 	"app/base/views/_View"
-	, 'app/redmicConfig'
 	, "dijit/_TemplatedMixin"
 	, "dijit/_WidgetBase"
 	, "dijit/_WidgetsInTemplateMixin"
@@ -8,7 +7,6 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/_base/kernel"
-	, "dojo/request"
 	, "put-selector/put"
 
 	, "dijit/form/Form"
@@ -16,7 +14,6 @@ define([
 	, "dijit/form/Button"
 ], function(
 	_View
-	, redmicConfig
 	, _TemplatedMixin
 	, _WidgetBase
 	, _WidgetsInTemplateMixin
@@ -24,7 +21,6 @@ define([
 	, declare
 	, lang
 	, kernel
-	, request
 	, put
 ){
 	return declare(_View, {
@@ -64,47 +60,18 @@ define([
 
 			var template = { template : this.templateProps.templateString };
 
-			this.templateProps.templateString =
-				lang.replace(baseTemplate, template, this.replaceReg);
+			this.templateProps.templateString = lang.replace(baseTemplate, template, this.replaceReg);
 
-			this.template = new declare(
-				[_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin],
-				this.templateProps
-			)();
+			this.template = new declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], this.templateProps)();
 
 			this.addChild(this.template);
 
-			if (window.env) {
-				this._showVersion(window.env);
-			} else {
-				request("/env", {
-					handleAs: "json"
-				}).then(lang.hitch(this, this._showVersion));
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, this._showVersion));
 			}
 
 			this.inherited(arguments);
-
-			//this._checkDomainToAddMessage();
-		},
-
-		_checkDomainToAddMessage: function() {
-
-			var appScope = redmicConfig.getAppScope();
-
-			if (appScope === 'dev') {
-				this._addMessage('.redmicLocal', this.i18n.messageRedmicLocal);
-			} else if (appScope === 'pre') {
-				this._addMessage('.appDev', this.i18n.messageAppDev);
-			}
-		},
-
-		_addMessage: function(typeClass, message) {
-
-			var loginNode = this.domNode.firstChild.children[0],
-				footerNode = this.domNode.firstChild.children[1];
-
-			put(footerNode, typeClass);
-			put(footerNode, 'span.fontExo2', message);
 		},
 
 		_showVersion: function(data) {

@@ -43,14 +43,19 @@ define([
 
 			_onLoadReCaptcha = null;
 
-			var appScope = redmicConfig.getAppScope(),
-				siteKey = appScope === 'pro' ? this._siteKey : this._siteKeyForDebug;
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
 
-			this._instanceId = grecaptcha.render(this.node, {
-				'sitekey': siteKey,
-				'theme': this._theme,
-				'callback': this.callback
-			});
+					var siteKey = envData.production ? this._siteKey : this._siteKeyForDebug;
+
+					this._instanceId = grecaptcha.render(this.node, {
+						'sitekey': siteKey,
+						'theme': this._theme,
+						'callback': this.callback
+					});
+				}));
+			}
 		},
 
 		_instanceWasCreated: function() {

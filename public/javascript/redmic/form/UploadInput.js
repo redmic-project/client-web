@@ -1,5 +1,6 @@
 define([
 	'alertify/alertify.min'
+	, 'app/redmicConfig'
 	, 'dijit/_TemplatedMixin'
 	, 'dijit/_WidgetBase'
 	, 'dojo/_base/declare'
@@ -13,6 +14,7 @@ define([
 	, 'dropzone/dropzone.min'
 ], function(
 	alertify
+	, redmicConfig
 	, _TemplatedMixin
 	, _WidgetBase
 	, declare
@@ -68,14 +70,22 @@ define([
 
 		postCreate: function() {
 
-			if (!this.url) {
+			var envDfd = window.env;
+
+			if (!this.url || !envDfd) {
 				console.error('URL not specified for file upload input');
+				return;
 			}
 
 			this._setPreviousProperties();
 
-			this._dropzone = this._getNewInstance();
-			this._listenInstanceEvents(this._dropzone);
+			envDfd.then(lang.hitch(this, function(envData) {
+
+				this.url = redmicConfig.getServiceUrl(this.url, envData);
+
+				this._dropzone = this._getNewInstance();
+				this._listenInstanceEvents(this._dropzone);
+			}));
 		},
 
 		_setPreviousProperties: function() {

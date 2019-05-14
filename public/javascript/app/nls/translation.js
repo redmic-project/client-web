@@ -1171,6 +1171,8 @@ define({
 
 		, "followUs": "Follow us"
 
+		, "load": "Load"
+
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"
 		, "descriptio": "Description"

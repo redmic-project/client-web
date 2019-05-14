@@ -1,14 +1,16 @@
 define([
 	'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'dojo/on'
 	, 'redmic/form/UploadInput'
 ], function(
 	lang
+	, Deferred
 	, on
 	, UploadInput
 ){
 	var timeout = 100,
-		saveUrl = '/api/save',
+		saveUrl = '/{apiUrl}/save',
 		fileUrlParams = '?token=1234',
 		files, prevFileUrl, input;
 
@@ -17,6 +19,11 @@ define([
 
 	registerSuite('UploadInput tests', {
 		before: function() {
+
+			env = new Deferred();
+			env.resolve({
+				apiUrl: '/api'
+			});
 
 			input = new UploadInput({
 				url: saveUrl,
@@ -60,7 +67,7 @@ define([
 					dfd.resolve();
 				});
 
-				input._dropzone.addFile(file);
+				input._addFile(file);
 			},
 
 			Should_EmitFileRemoved_When_RemoveFile: function() {
@@ -75,8 +82,8 @@ define([
 					dfd.resolve();
 				});
 
-				input._dropzone.addFile(file);
-				input._dropzone.removeFile(file);
+				input._addFile(file);
+				input._removeFile(file);
 			},
 
 			Should_EmitStatusUpdatedWithError_When_AddTooManyFiles: function() {
@@ -95,8 +102,8 @@ define([
 					dfd.resolve();
 				});
 
-				input._dropzone.addFile(file);
-				input._dropzone.addFile(altFile);
+				input._addFile(file);
+				input._addFile(altFile);
 			},
 
 			Should_EmitStatusUpdatedWithoutError_When_AddTooManyFilesAndThenRemoveRemainingFiles: function() {
@@ -105,8 +112,8 @@ define([
 					file = lang.clone(files[0]),
 					altFile = lang.clone(files[1]);
 
-				input._dropzone.addFile(file);
-				input._dropzone.addFile(altFile);
+				input._addFile(file);
+				input._addFile(altFile);
 
 				on.once(input, 'statusUpdated', function(evt) {
 
@@ -116,7 +123,7 @@ define([
 					dfd.resolve();
 				});
 
-				input._dropzone.removeFile(altFile);
+				input._removeFile(altFile);
 			},
 
 			Should_EmitMaxFilesReached_When_AddEnoughFilesToReachMaxFiles: function() {
@@ -132,7 +139,7 @@ define([
 					dfd.resolve();
 				});
 
-				input._dropzone.addFile(file);
+				input._addFile(file);
 			},
 
 			Should_EmitPreviousFileAddedAndLoadPreviousFile_When_LoadPreviouslySavedFile: function() {
@@ -165,7 +172,7 @@ define([
 				on.once(input, 'previousFileAdded', function(evt) {
 
 					prevFile = evt;
-					input._dropzone.removeFile(prevFile);
+					input._removeFile(prevFile);
 				});
 
 				input.loadPreviouslySavedFiles([prevFileUrl], fileUrlParams);
@@ -200,7 +207,7 @@ define([
 					dfd.resolve();
 				});
 
-				input._dropzone.addFile(wrongFile);
+				input._addFile(wrongFile);
 			}
 		}
 	});

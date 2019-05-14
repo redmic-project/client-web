@@ -10,7 +10,7 @@ define([
 	, UploadInput
 ){
 	var timeout = 100,
-		saveUrl = '/{apiUrl}/save',
+		saveUrl = '{apiUrl}/save',
 		fileUrlParams = '?token=1234',
 		files, prevFileUrl, input;
 

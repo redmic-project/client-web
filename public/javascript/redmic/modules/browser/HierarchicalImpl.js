@@ -59,7 +59,8 @@ define([
 			aspect.before(this, "_configRow", lang.hitch(this, this._configHierarchicalRow));
 
 			aspect.before(this, "_addData", lang.hitch(this, this._addBeforeData));
-			aspect.after(this, "_addData", lang.hitch(this, this._addAfterData));
+			aspect.after(this, "_addData", lang.hitch(this, this._showPendingParents));
+			aspect.after(this, "_addItem", lang.hitch(this, this._showPendingParents));
 
 			aspect.before(this, "_removeRow", lang.hitch(this, this._removeHierarchicalRow));
 		},
@@ -185,11 +186,6 @@ define([
 			this._clearData();
 
 			this._proccesNewData(response);
-		},
-
-		_addAfterData: function(response) {
-
-			this._showPendingParents();
 		},
 
 		_parserIndexData: function(response) {

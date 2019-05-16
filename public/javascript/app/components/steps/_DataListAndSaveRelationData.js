@@ -19,31 +19,10 @@ define([
 
 		constructor: function (args) {
 			this.config = {
+				previewDataIdProperty: 'idPreviewList',
 				tableConfig: {
 					columns: []
 				},
-
-				/*_relationDataDefault: {
-					"date": {
-						"columns": ["date"],
-						"format": "YYYY-MM-DD HH:mm:ss"
-					},
-					"vFlag": {
-						"columns": ["vFlag"]
-					},
-					"qFlag": {
-						"columns": ["qFlag"]
-					},
-					"remark": {
-						"columns": ["remark"]
-					},
-					"parameters": {
-						"matching": [{
-							"columns": ["value"],
-							"dataDefinitionId": 63
-						}]
-					}
-				},*/
 
 				_defaultColumns: {
 					width: '14',
@@ -60,37 +39,17 @@ define([
 
 			this.inherited(arguments);
 
-			/*this.browserConfig = this._merge([{
-				buttonsInTopZone: true,
-				buttons: {
-					"loadRelationData": {
-						className: "fa-plus",
-						title: this.i18n.loadRelationData
-					}
-				}
-			}, this.browserConfig || {}]);*/
-
 			this.previewDataBrowserConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				title: this.i18n.previewData,
 				target: "viewPrevData",
 				noDataMessage: null,
 				tableConfig: {},
-				pathSeparator: "//",
+				idProperty: this.previewDataIdProperty,
 				width: 8,
 				height: "lg"
 			}, this.previewDataBrowserConfig || {}]);
 		},
-
-		/*_defineSubscriptions: function() {
-
-			this.inherited(arguments);
-
-			this.subscriptionsConfig.push({
-				channel: this.browser.getChildChannel("iconKeypad", "KEYPAD_INPUT"),
-				callback: "_subBrowserKeypadInput"
-			});
-		},*/
 
 		postCreate: function() {
 
@@ -103,37 +62,6 @@ define([
 				onClick: lang.hitch(this, this._showPreviewData)
 			}).placeAt(this.topLeftNode);
 		},
-
-		/*_subBrowserKeypadInput: function(res) {
-
-			if (res.inputKey === "loadRelationData") {
-				this._loadRelationData(this._relationDataDefault);
-			}
-		},*/
-
-		/*_loadRelationData: function(relationData) {
-
-			this._cleanData();
-
-			this._blockLoadFormTypesInSelector = true;
-
-			for (var key in relationData)
-				this._loadItemRelationData(relationData[key], key);
-
-			this._blockLoadFormTypesInSelector = false;
-			this._currentValueSelect = null;
-			this._loadFormTypesInSelector(true);
-		},
-
-		_loadItemRelationData: function(item, key) {
-
-			if (this.formTypeOptions[key]) {
-				this._currentValueSelect = key;
-				this._formSubmitted({
-					data: item
-				});
-			}
-		},*/
 
 		_processLoadedData: function(data) {
 
@@ -169,12 +97,37 @@ define([
 				});
 
 				this._emitEvt("INJECT_DATA", {
-					data: this.data.data,
+					data: this._buildPreviewData(this.data.data),
 					target: "viewPrevData"
 				});
 			}
 
 			this._publish(this.previewDataBrowser.getChannel("SHOW"));
+		},
+
+		_buildPreviewData: function(data) {
+
+			var items = [];
+
+			for (var i = 0; i < data.length; i++) {
+				var item = data[i],
+					itemKeys = Object.keys(item),
+					itemValues = Object.values(item),
+					itemObj = {};
+
+				itemObj[this.previewDataIdProperty] = i;
+
+				for (var j = 0; j < itemKeys.length; j++) {
+					var itemKey = itemKeys[j],
+						itemValue = itemValues[j];
+
+					itemObj[itemKey] = itemValue;
+				}
+
+				items.push(itemObj);
+			}
+
+			return items;
 		}
 	});
 });

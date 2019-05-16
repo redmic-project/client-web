@@ -289,11 +289,15 @@ define([
 			instance && this._publish(instance.getChannel('SHOW'), obj);
 		},
 
-		_showPendingParents: function(item) {
+		_showPendingParents: function() {
 
-			var count = (this._pendingParentsToShow.length - 1);
+			if (!this._pendingParentsToShow) {
+				return;
+			}
 
-			for (var i = count; i >= 0; i--) {
+			var pendingParents = this._pendingParentsToShow.length - 1;
+
+			for (var i = pendingParents; i >= 0; i--) {
 				this._showPendingParent(this._pendingParentsToShow[i]);
 			}
 		},

@@ -327,7 +327,7 @@ define([
 
 			var headerConfig = this.tableConfig.header;
 
-			if (headerConfig.notMenuColumns || !this._headersData.length) {
+			if ((headerConfig && headerConfig.notMenuColumns) || !this._headersData.length) {
 				return;
 			}
 

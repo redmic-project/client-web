@@ -6,7 +6,6 @@ define([
 	, "redmic/modules/base/_ShowOnEvt"
 	, "redmic/modules/layout/listMenu/ListMenu"
 	, "put-selector/put"
-	, "./Browser"
 	, "./row/_Table"
 ], function(
 	declare
@@ -16,10 +15,9 @@ define([
 	, _ShowOnEvt
 	, ListMenu
 	, put
-	, Browser
 	, _Table
 ){
-	return declare([Browser], {
+	return declare(null, {
 		//	summary:
 		//		Implementación de listado en formato de tabla.
 		//	description:
@@ -329,7 +327,7 @@ define([
 
 			var headerConfig = this.tableConfig.header;
 
-			if (headerConfig.notMenuColumns || !this._headersData.length) {
+			if ((headerConfig && headerConfig.notMenuColumns) || !this._headersData.length) {
 				return;
 			}
 

@@ -42,7 +42,7 @@ define([
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixNoDataTemplateEventsAndActions));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineNoDataTemplateSubscriptions));
 			aspect.after(this, "_definePublications", lang.hitch(this, this._defineNoDataTemplatePublications));
-			aspect.after(this, "_createContainer", lang.hitch(this, this._createNoDataTemplateContainer));
+			aspect.after(this, "_createBrowserContainer", lang.hitch(this, this._createNoDataTemplateBrowserContainer));
 
 			aspect.before(this, "_dataAvailable", lang.hitch(this, this._clearNoDataFound));
 			aspect.before(this, "_itemAvailable", lang.hitch(this, this._clearNoDataFound));
@@ -78,7 +78,7 @@ define([
 			});
 		},
 
-		_createNoDataTemplateContainer: function() {
+		_createNoDataTemplateBrowserContainer: function() {
 
 			this._checkNoDataFound();
 		},

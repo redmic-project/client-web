@@ -162,12 +162,12 @@ define([
 
 		postCreate: function() {
 
-			this._createContainer();
+			this._createBrowserContainer();
 
 			this.inherited(arguments);
 		},
 
-		_createContainer: function() {
+		_createBrowserContainer: function() {
 
 			this.contentListNode = put(this._getNodeBaseList(), "div." + this.listContentClass);
 			this.rowsContainerNode = put(this.contentListNode, "div." + this.rowsContainerClass);

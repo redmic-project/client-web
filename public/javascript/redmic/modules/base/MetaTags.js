@@ -37,7 +37,7 @@ define([
 				baseMetaTags: {
 					"og:type": "website",
 					"og:url": window.location.href,
-					"og:image": "https://redmic.es/public/resources/images/logos/redmic-logo-1200x1200.jpg",
+					"og:image": "https://redmic.es/resources/images/logos/redmic-logo-1200x1200.jpg",
 					"og:image:type": "image/jpeg",
 					"og:image:width": "1200",
 					"og:image:height": "1200",

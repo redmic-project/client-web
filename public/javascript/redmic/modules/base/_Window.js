@@ -1,22 +1,17 @@
 define([
 	"dojo/_base/lang"
-	, "dojo/Deferred"
 	, "dojo/dom-attr"
 	, "dojo/dom-class"
 	, "dojo/dom-style"
-	, "dojo/promise/all"
 	, "put-selector/put"
-	, "templates/LoadingArrows"
 ], function(
 	lang
-	, Deferred
 	, domAttr
 	, domClass
 	, domStyle
-	, all
 	, put
-	, LoadingTemplate
-){
+) {
+
 	return {
 		//	summary:
 		//		Extensión para asignar una ventana a los módulos con visualización.
@@ -26,13 +21,6 @@ define([
 		titleHeight: 30,
 
 		minWidth: 200,
-
-		loadingClass: "loadingWrapper",
-		loadingAttr: "loading",
-
-		windowActions: {
-			SHOW_WINDOW: "showWindow"
-		},
 
 		postCreate: function() {
 
@@ -45,41 +33,14 @@ define([
 			this.inherited(arguments);
 		},
 
-		_mixEventsAndActions: function () {
-
-			this.inherited(arguments);
-
-			lang.mixin(this.actions, this.windowActions);
-			delete this.windowActions;
-		},
-
-		_defineSubscriptions: function () {
-
-			this.inherited(arguments);
-
-			this.subscriptionsConfig.push({
-				channel : this.getChannel("SHOW_WINDOW"),
-				callback: "_subShowWindow",
-				options: {
-					predicate: lang.hitch(this, this._chkShowWindow)
-				}
-			});
-		},
-
 		_beforeShow: function(req) {
 
-			var originalRet = this.inherited(arguments),
-				dfdWindow = new Deferred();
-
-			this._dfdWindow = dfdWindow;
-
-			req && req.node && this._createWindow(req.node.domNode || req.node);
-
-			if (originalRet && originalRet.resolve && !originalRet.isFulfilled()) {
-				return all([originalRet, dfdWindow]);
+			if (req && req.node) {
+				var node = req.node.domNode || req.node;
+				this._createWindow(node);
 			}
 
-			return dfdWindow;
+			return this.inherited(arguments);
 		},
 
 		_createWindow: function(node) {
@@ -93,7 +54,7 @@ define([
 			this._createWindowTitle();
 			this._createWindowContent();
 
-			this._loadWindowContent();
+			this._emitEvt('LOADING');
 
 			this._decorateTitleNode();
 			this._decorateContentNode();
@@ -123,22 +84,6 @@ define([
 			domStyle.set(this._windowContentNode, "height", "calc(100% - " + this.titleHeight + "px)");
 		},
 
-		_chkShowWindow: function(req) {
-
-			return !!(this._dfdWindow && this._dfdWindow.resolve);
-		},
-
-		_subShowWindow: function(req) {
-
-			this._loadedWindowContent();
-
-			if (this._dfdWindow.isFulfilled()) {
-				console.error("Deferred is already fulfilled at module '%s'", this.getChannel());
-			} else {
-				this._dfdWindow.resolve();
-			}
-		},
-
 		_show: function(req) {
 
 			if (req && req.node) {
@@ -152,18 +97,25 @@ define([
 
 			var originalRet = this.inherited(arguments);
 
-			if (originalRet && originalRet.resolve && !originalRet.isFulfilled()) {
-				originalRet.then(lang.hitch(this, this._emitResize));
+			if (originalRet && originalRet.then) {
+				originalRet.then(lang.hitch(this, this._onWindowShown));
 			} else {
-				this._emitResize();
+				this._onWindowShown();
 			}
 
 			return originalRet;
 		},
 
+		_onWindowShown: function() {
+
+			this._emitEvt('LOADED');
+			this._emitResize();
+		},
+
 		_decorateTitleNode: function() {
 
-			var titleTextNode = put(this._windowTitleNode, "div.title", this.title || this.ownChannel);
+			var titleTextValue = this.title || this.getOwnChannel(),
+				titleTextNode = put(this._windowTitleNode, "div.title", titleTextValue);
 
 			if (this.noButtonsWindow) {
 				return;
@@ -255,49 +207,13 @@ define([
 
 				// TODO esto debería ser responsabilidad de _Show, y emitirlo siempre cuando acabe
 				// de hacer el _resize (quizá con un dfd de retorno??). Pensar
-				this._emitEvt('RESIZE', {
-					width: this.node.offsetWidth,
-					height: this.node.offsetHeight
-				});
+				if (this.node) {
+					this._emitEvt('RESIZE', {
+						width: this.node.offsetWidth,
+						height: this.node.offsetHeight
+					});
+				}
 			}), 300);
-		},
-
-		// TODO estos métodos son copias de Loading. Cambiarlo para que se encargue Loading de hacerlo, o bien abstraerlo en
-		// una zona común a ambos!!!!!
-		_loadWindowContent: function() {
-
-			var node = this._windowContentNode;
-
-			this._loadingWindowContentNode = this._getLoadingElement(this.loadingClass);
-
-			put(node, this._loadingWindowContentNode);
-			put(node, "[" + this.loadingAttr + "=true]");
-
-			domStyle.set(this._loadingWindowContentNode, "position", "relative");
-		},
-
-		// TODO estos métodos son copias de Loading. Cambiarlo para que se encargue Loading de hacerlo, o bien abstraerlo en
-		// una zona común a ambos!!!!!
-		_getLoadingElement: function(nodeClass) {
-
-			var node = put("div." + nodeClass);
-			node.innerHTML = LoadingTemplate();
-
-			return node;
-		},
-
-		// TODO estos métodos son copias de Loading. Cambiarlo para que se encargue Loading de hacerlo, o bien abstraerlo en
-		// una zona común a ambos!!!!!
-		_loadedWindowContent: function() {
-
-			if (!this._loadingWindowContentNode) {
-				console.error("Loading node not found when tried to hide it, at module '%s'", this.getChannel());
-				return;
-			}
-
-			put(this._windowContentNode, "[!" + this.loadingAttr + "]");
-			put(this._loadingWindowContentNode, "!");
-			this._loadingWindowContentNode = null;
 		},
 
 		_hide: function(req) {

@@ -4,6 +4,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, "dojo/Deferred"
+	, "dojo/promise/all"
 	, 'draggabilly/draggabilly.pkgd.min'
 	, 'packery/packery.pkgd.min'
 	, "put-selector/put"
@@ -16,6 +18,8 @@ define([
 	, declare
 	, lang
 	, aspect
+	, Deferred
+	, all
 	, draggabilly
 	, packery
 	, put
@@ -106,7 +110,7 @@ define([
 
 			if (!this._widgetsAlreadyGenerated) {
 				this._generateWidgets();
-				this._buildVisualization();
+				this._buildVisualization().then(lang.hitch(this, this._updateInteractive));
 			}
 		},
 
@@ -124,12 +128,12 @@ define([
 
 			this._rowsParameterName = this.noScroll ? this._relativeRowsParameterName : this._fixedRowsParameterName;
 
+			var dfds = [];
 			for (var key in this.widgetConfigs) {
-				this._buildWidgetVisualization(key);
+				dfds.push(this._buildWidgetVisualization(key));
 			}
 
-			// TODO: hacer esto cuando todos los widgets hayan informado de que están listos (array de dfd)
-			this._updateInteractive();
+			return all(dfds);
 		},
 
 		_buildWidgetVisualization: function(key) {
@@ -142,7 +146,7 @@ define([
 
 			this._createWidgetNode(key, config);
 
-			this._showWidget(key);
+			return this._showWidget(key);
 		},
 
 		_onControllerResize: function() {
@@ -171,7 +175,7 @@ define([
 			}
 		},
 
-		_onControllerMeOrAncestorShown: function() {
+		_onControllerMeOrAncestorShown: function(res) {
 
 			this._updateInteractive();
 		},
@@ -248,15 +252,24 @@ define([
 				return;
 			}
 
-			this._once(instance.getChannel("SHOWN"), lang.hitch(this, function(key, node) {
+			var dfd = new Deferred();
 
-				put(node, "!" + this.hiddenClass);
-				this._addWidgetInteractivity(key);
-			}, key, node));
+			this._once(instance.getChannel("SHOWN"), lang.hitch(this, function(args) {
+
+				put(args.node, "!" + this.hiddenClass);
+				this._addWidgetInteractivity(args.key);
+				args.dfd.resolve();
+			}, {
+				key: key,
+				node: node,
+				dfd: dfd
+			}));
 
 			this._publish(instance.getChannel("SHOW"), {
 				node: node
 			});
+
+			return dfd;
 		},
 
 		_hideWidget: function(key) {

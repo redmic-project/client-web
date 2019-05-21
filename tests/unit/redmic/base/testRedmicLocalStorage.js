@@ -81,20 +81,22 @@ define([
 				assert.strictEqual(2, RedmicLocalStorage.length(), "Existen dos propiedades pero se encuentra un número distinto de ellas.");
 			},
 
-			"check key": function() {
-				assert.strictEqual(null, RedmicLocalStorage.key(0), "Existe una clave de un elemento inexistente.");
+			"Should_ReturnItemKeyWithoutPrefix_When_GetItemKeyByIndex": function() {
+
+				assert.strictEqual(null, RedmicLocalStorage.key(0), "Ya existe un elemento en la posición 0");
+
 				localStorage.setItem(prefix + key1, value1);
-				localStorage.setItem(prefix + key2, value2);
-				// Cada vez que añadimos un elemento, se ordenan por orden alfabético (por eso buscamos al revés en este caso)
-				assert.strictEqual(key2, RedmicLocalStorage.key(0), "El elemento indexado no tiene la clave esperada.");
-				assert.strictEqual(key1, RedmicLocalStorage.key(1), "El elemento indexado no tiene la clave esperada.");
+				assert.strictEqual(key1, RedmicLocalStorage.key(0), "El elemento indexado no tiene la clave esperada");
 			},
 
-			"check keys": function() {
+			"Should_ReturnItemKeysWithoutPrefix_When_GetAllItemKeys": function() {
+
+				assert.isEmpty(RedmicLocalStorage.keys(), "Ya existen elementos antes de comenzar");
+
 				localStorage.setItem(prefix + key1, value1);
 				localStorage.setItem(prefix + key2, value2);
-				// Se devuelven las claves en orden alfabético
-				assert.deepEqual([key2,key1], RedmicLocalStorage.keys(), "Las claves almacenadas no se corresponden con las que espera el usuario.");
+
+				assert.sameMembers([key1, key2], RedmicLocalStorage.keys(), "Los elementos indexados no tienen las claves esperadas");
 			},
 
 			"check has": function() {

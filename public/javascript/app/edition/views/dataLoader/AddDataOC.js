@@ -31,7 +31,13 @@ define([
 
 			this.config = {
 				idPropertySave: "uuid",
-				replaceTarget: redmicConfig.services.activityObjectCollectingSeriesStations
+				replaceTarget: redmicConfig.services.activityObjectCollectingSeriesStations,
+				propsToClean: [
+					"id", "uuid", "geometry.coordinates", "properties.site.name", "properties.site.code",
+					"properties.site.description", "properties.site.dashboard",
+					"properties.measurements.{i}.dataDefinition.id", "properties.measurements.{i}.dataDefinition.path",
+					"properties.measurements.{i}.parameter.path"
+				]
 			};
 
 			lang.mixin(this, this.config, args);

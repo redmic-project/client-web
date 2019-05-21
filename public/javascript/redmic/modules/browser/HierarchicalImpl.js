@@ -59,7 +59,8 @@ define([
 			aspect.before(this, "_configRow", lang.hitch(this, this._configHierarchicalRow));
 
 			aspect.before(this, "_addData", lang.hitch(this, this._addBeforeData));
-			aspect.after(this, "_addData", lang.hitch(this, this._addAfterData));
+			aspect.after(this, "_addData", lang.hitch(this, this._showPendingParents));
+			aspect.after(this, "_addItem", lang.hitch(this, this._showPendingParents));
 
 			aspect.before(this, "_removeRow", lang.hitch(this, this._removeHierarchicalRow));
 		},
@@ -187,11 +188,6 @@ define([
 			this._proccesNewData(response);
 		},
 
-		_addAfterData: function(response) {
-
-			this._showPendingParents();
-		},
-
 		_parserIndexData: function(response) {
 
 			var data = response.data;
@@ -293,11 +289,15 @@ define([
 			instance && this._publish(instance.getChannel('SHOW'), obj);
 		},
 
-		_showPendingParents: function(item) {
+		_showPendingParents: function() {
 
-			var count = (this._pendingParentsToShow.length - 1);
+			if (!this._pendingParentsToShow) {
+				return;
+			}
 
-			for (var i = count; i >= 0; i--) {
+			var pendingParents = this._pendingParentsToShow.length - 1;
+
+			for (var i = pendingParents; i >= 0; i--) {
 				this._showPendingParent(this._pendingParentsToShow[i]);
 			}
 		},

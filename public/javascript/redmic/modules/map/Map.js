@@ -92,7 +92,13 @@ define([
 
 				ownChannel: "map",
 
-				defaultBaseLayer: "ortofoto"
+				baseLayers: [
+					['eoc-map', 'eoc-overlay'],
+					'topografico',
+					'ortofoto'
+				],
+				defaultBaseLayer: 0,
+				_relatedBaseLayers: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -231,87 +237,100 @@ define([
 			});
 		},
 
-		_changeBaseLayer: function(layer) {
+		_changeBaseLayer: function(layer, layerGroup) {
 
-			var layerId,
+			var layerInstance,
 				layerLabel;
 
-			if (typeof layer !== "object") {
+			if (typeof layer === "object" && layer instanceof Array) {
+				for (var i = 0; i < layer.length; i++) {
+					this._changeBaseLayer(layer[i], layer);
+				}
+			} else {
 				if (!(layer && layer.length)) {
 					this._emitEvt('BASE_LAYER_CHANGE_FAIL', layer);
 					return;
 				}
 
-				layerId = layer;
-				layerObj = OpenLayers.get(layer);
-				layer = layerObj.instance;
-				layerLabel = layerObj.label;
+				var layerIsGroupLeader = layerGroup && layerGroup.indexOf(layer) === 0;
+
+				if (layerIsGroupLeader) {
+					this._relatedBaseLayers[layer] = layerGroup;
+				}
+
+				var layerObj = OpenLayers.get(layer);
+				layerInstance = layerObj.instance;
+				if (layerGroup && !layerIsGroupLeader) {
+					layerLabel = '';
+				} else {
+					layerLabel = layerObj.label;
+				}
 			}
 
-			if (!layer) {
-				this._emitEvt('BASE_LAYER_CHANGE_FAIL', layerId);
+			if (!layerInstance) {
+				this._emitEvt('BASE_LAYER_CHANGE_FAIL', layer);
 				return;
 			}
 
-			this._cleanBaseLayers(layer);
-			this._addBaseLayer(layer, layerId, layerLabel);
+			this._cleanBaseLayers(layerInstance, layerGroup);
+			this._addBaseLayer(layerInstance, layer, layerLabel);
 		},
 
-		_cleanBaseLayers: function(layer) {
+		_cleanBaseLayers: function(layer, layerGroup) {
 			// Limpiamos del mapa todas las capas base que no sean la nueva (si estuviera)
 
 			for (var key in this.layers) {
+				if (layerGroup && layerGroup.indexOf(key) !== -1) {
+					continue;
+				}
+
 				var layerObj = this.layers[key];
 
-				if (this._isBaseLayer(layerObj)) {
-					var baseLayer = layerObj.layer;
-					if (this.hasLayer(baseLayer) && baseLayer != layer) {
-						this.removeLayer(baseLayer);
-					}
+				if (!layerObj || !this._isBaseLayer(layerObj)) {
+					continue;
+				}
+
+				var mapLayer = layerObj.layer;
+				if (this.hasLayer(mapLayer) && mapLayer !== layer) {
+					this.removeLayer(mapLayer);
 				}
 			}
 		},
 
 		_isBaseLayer: function(layerObj) {
 
-			if (layerObj.type === this.layerTypes.base) {
-				return true;
-			}
-
-			return false;
+			return layerObj.type === this.layerTypes.base;
 		},
 
 		_isForcedLayer: function(layerObj) {
 
-			if (layerObj.type === this.layerTypes.forced) {
-				return true;
-			}
-
-			return false;
+			return layerObj.type === this.layerTypes.forced;
 		},
 
 		_isOptionalLayer: function(layerObj) {
 
-			if (layerObj.type === this.layerTypes.optional) {
-				return true;
-			}
-
-			return false;
+			return layerObj.type === this.layerTypes.optional;
 		},
 
-		_addBaseLayer: function(layer, layerId, layerLabel) {
+		_addBaseLayer: function(layerInstance, layerId, layerLabel) {
 
 			if (!this._existsBaseLayer(layerId)) {
 				this.layers[layerId] = {
-					layer: layer,
+					layer: layerInstance,
 					type: this.layerTypes.base,
 					order: 1
 				};
-				this.addLayer(layer, layerId);
-				this.controlLayers.addBaseLayer(layer, layerLabel);
+				this.addLayer(layerInstance, layerId);
+				this.controlLayers.addBaseLayer(layerInstance, layerLabel);
 			} else {
-				this.addLayer(this._getExistingBaseLayer(layerId, layer));
-				this._emitEvt('BASE_LAYER_CHANGE', layer);
+				var previousBaseLayer = this._getExistingBaseLayer(layerId);
+				if (previousBaseLayer) {
+					this.addLayer(previousBaseLayer);
+				} else {
+					// Se buscaba una baselayer que no existia anteriormente
+					// TODO esto no debería publicar un BASE_LAYER_CHANGE_FAIL??
+					this._emitEvt('BASE_LAYER_CHANGE', layerInstance);
+				}
 			}
 		},
 
@@ -324,7 +343,11 @@ define([
 			return false;
 		},
 
-		_getExistingBaseLayer: function(layerId, layer) {
+		_getExistingBaseLayer: function(layerId) {
+
+			if (!this.controlLayers) {
+				return;
+			}
 
 			var previousBaseLayers = this.controlLayers._layers;
 
@@ -335,9 +358,6 @@ define([
 					return baseLayer;
 				}
 			}
-
-			// Se buscaba una baselayer que no existia anteriormente
-			this._emitEvt('BASE_LAYER_CHANGE', layer);
 		},
 
 		_subAddLayer: function(obj) {
@@ -656,7 +676,15 @@ define([
 
 		_pubBaseLayerChanged: function(channel, baseLayer) {
 
-			this.bringLayerToBack(baseLayer.layer ? baseLayer.layer : baseLayer);
+			var layerInstance = baseLayer.layer || baseLayer,
+				layerId = layerInstance._leaflet_id,
+				relatedLayerIds = this._relatedBaseLayers[layerId];
+
+			if (relatedLayerIds) {
+				this._changeBaseLayer(relatedLayerIds);
+			}
+
+			this.bringLayerToBack(layerInstance);
 
 			this._publish(channel, {
 				success: true,
@@ -724,18 +752,18 @@ define([
 
 		_afterMapLoaded: function() {
 
-			// TODO revisar las capas base
-			//this._changeBaseLayer(this.defaultBaseLayer);
-			this._changeBaseLayer("topografico");
-			this._changeBaseLayer("ortofoto");
-			//this._changeBaseLayer(this.defaultBaseLayer);
+			for (var i = 0; i < this.baseLayers.length; i++) {
+				var baseLayer = this.baseLayers[i];
+				this._changeBaseLayer(baseLayer);
+			}
+			this._changeBaseLayer(this.baseLayers[this.defaultBaseLayer]);
 			this._addContainerListeners();
 		},
 
 		clear: function() {
 
 			this._clearLayers();
-			this._changeBaseLayer(this.defaultBaseLayer);
+			this._changeBaseLayer(this.baseLayers[this.defaultBaseLayer]);
 			this._resetMapPosition();
 		},
 

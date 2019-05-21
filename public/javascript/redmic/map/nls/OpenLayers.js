@@ -3,6 +3,7 @@ define({
 		redmic: "REDMIC",
 		topografico: "Topographic",
 		ortofoto: "Orthophoto",
+		"eoc-map": "World",
 
 		zec: "ZEC",
 		batimetrias: "Bathymetry",

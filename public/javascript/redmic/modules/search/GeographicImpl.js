@@ -29,7 +29,12 @@ define([
 
 		_initialize: function() {
 
-			this.mapSearch = new Map({});
+			// TODO este redmic-widget de mapa es contraproducente, debería usarse el módulo mapa en su lugar
+			this.mapSearch = new Map({
+				urlMapBasemap: "https://idecan3.grafcan.es/ServicioWMS/MTI",
+				layersBasemap: 'WMS_MTI',
+				formatBasemap: 'image/png'
+			});
 
 			this.mapSearch.on("queryMap", lang.hitch(this, this._onNewSearch));
 			this.mapSearch.placeAt(this.domNode);

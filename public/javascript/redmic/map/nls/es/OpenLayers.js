@@ -2,6 +2,7 @@ define({
 	redmic: "REDMIC",
 	topografico: "Topográfico",
 	ortofoto: "Ortofoto",
+	"eoc-map": "Mundial",
 
 	zec: "ZEC",
 	batimetrias: "Batimetrías",

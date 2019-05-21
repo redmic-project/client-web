@@ -88,7 +88,7 @@ define([
 				doubleClickZoom: false,
 				minZoom: this.minZoom,
 				maxZoom: this.maxZoom,
-				attributionControl: false,
+				attributionControl: true,
 				worldCopyJump: true
 			});
 			this.map.once("load", lang.hitch(this, this._afterMapLoaded));
@@ -251,7 +251,13 @@ define([
 				return;
 			}
 
-			var baseMap = OpenLayers.get(this.defaultBaseLayer).instance,
+			var defaultLayerName = this.baseLayers[this.defaultBaseLayer];
+
+			if (defaultLayerName instanceof Array) {
+				defaultLayerName = defaultLayerName[0];
+			}
+
+			var baseMap = OpenLayers.get(defaultLayerName).instance,
 				miniMapConfig = {
 					position: "topright",
 					collapsedWidth: 36,
@@ -267,7 +273,7 @@ define([
 
 			miniMap.addTo(this.map);
 
-			// Workaround for https://github.com/Norkart/Leaflet-MiniMap/issues/114
+			// TODO workaround for https://github.com/Norkart/Leaflet-MiniMap/issues/114
 			on(miniMap._miniMap._container, "click", function(evt) { evt.stopPropagation(); });
 		},
 

@@ -5,7 +5,6 @@ define([
 	, "dojo/dom-geometry"
 	, "dojo/dom-style"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "put-selector/put"
 	, "RWidgets/Utilities"
@@ -19,7 +18,6 @@ define([
 	, domGeom
 	, style
 	, lang
-	, aspect
 	, Deferred
 	, put
 	, Utilities
@@ -110,12 +108,11 @@ define([
 				_subscriptionsForLayers: {},
 				_publicationsForLayers: {},
 				_hiddenLayers: {},
-				_layersLimits: {}
+				_layersLimits: {},
+				_nodeEvaluationIntervalTimeout: 100
 			};
 
 			lang.mixin(this, this.config, args);
-
-			aspect.after(this, "_resize", lang.hitch(this, this._afterResize));
 		},
 
 		_defineSubscriptions: function() {
@@ -242,25 +239,20 @@ define([
 
 			this._dfdAfterShow = dfd;
 
-			if (node.clientHeight && node.clientWidth){
-				dfd.resolve();
-			} else {
-				var observer = new MutationObserver(
-					lang.partial(function(dfd, self, mutations) {
-
-						if (mutations[0].target.clientHeight !== 0 && mutations[0].target.clientWidth !== 0) {
-							this.disconnect();
-							dfd.resolve();
-						}
-					}, dfd, this));
-
-				observer.observe(node, {
-					attributes: true,
-					attributeFilter: ['style']
-				});
-			}
+			this._evaluateNodeDimensions(node);
 
 			return dfd;
+		},
+
+		_evaluateNodeDimensions: function(node) {
+
+			if (node.clientHeight && node.clientWidth) {
+				clearInterval(this._nodeEvaluationIntervalHandler);
+				this._dfdAfterShow.resolve();
+			} else if (!this._nodeEvaluationIntervalHandler) {
+				var cbk = lang.hitch(this, this._evaluateNodeDimensions, node);
+				this._nodeEvaluationIntervalHandler = setInterval(cbk, this._nodeEvaluationIntervalTimeout);
+			}
 		},
 
 		_startup: function() {
@@ -726,9 +718,6 @@ define([
 			this.svg
 				.attr("width", this._width > 0 ? this._width : 0)
 				.attr("height", this._height > 0 ? this._height : 0);
-		},
-
-		_afterResize: function() {
 
 			this._prepareUpdateLayers();
 		},

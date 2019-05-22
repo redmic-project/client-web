@@ -71,7 +71,7 @@ define([
 				idProperty: 'id',
 				_rows: {},
 
-				definitionRow: [Row],
+				_rowDefinitionComponents: [Row],
 
 				initialDataSave: false
 			};
@@ -163,6 +163,7 @@ define([
 		postCreate: function() {
 
 			this._createBrowserContainer();
+			this._definitionRow();
 
 			this.inherited(arguments);
 		},
@@ -287,13 +288,9 @@ define([
 
 		_addRow: function(idProperty, item) {
 
-			var rowInstance;
-
-			this._definitionRow();
-
 			this._configRow(item);
 
-			rowInstance = new declare(this._defRow)(this.rowConfig);
+			var rowInstance = new declare(this._defRow)(this.rowConfig);
 
 			this._setRow(idProperty, {
 				instance: rowInstance,
@@ -303,17 +300,11 @@ define([
 
 		_definitionRow: function() {
 
-			this._defRow = [];
+			this._defRow = this._rowDefinitionComponents;
 
-			this._defRow = lang.clone(this.definitionRow);
-
-			if (this._defRow instanceof Array) {
-				return this._defRow;
+			if (!(this._defRow instanceof Array)) {
+				this._defRow = [this._defRow];
 			}
-
-			this._defRow = [this._defRow];
-
-			return this._defRow;
 		},
 
 		_configRow: function(item) {
@@ -475,6 +466,26 @@ define([
 			}
 
 			return true;
+		},
+
+		_parserIndexData: function(response) {
+
+			var data = response.data;
+
+			if (data.data) {
+				data = data.data;
+			}
+
+			return data;
+		},
+
+		_processNewData: function(response) {
+
+			var data = this._parserIndexData(response);
+
+			for (var i = 0; i < data.length; i++) {
+				this._addItem(data[i]);
+			}
 		}
 	});
 });

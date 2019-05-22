@@ -26,7 +26,7 @@ define([
 
 			this._clearRowsData();
 
-			this._proccesNewData(response);
+			this._processNewData(response);
 
 			this._clearOldRowsData();
 		},
@@ -46,28 +46,11 @@ define([
 			delete this._rowsOld;
 		},
 
-		_parserIndexData: function(response) {
-
-			var data = response.data;
-
-			if (data.data) {
-				data = data.data;
-			}
-
-			return data;
-		},
-
-		_proccesNewData: function(response) {
-
-			var data = this._parserIndexData(response);
-
-			for (var i = 0; i < data.length; i++) {
-				this._rescueOldInstance(data[i]);
-				this._addItem(data[i]);
-			}
-		},
-
 		_rescueOldInstance: function(item) {
+
+			if (!this._rowsOld) {
+				return;
+			}
 
 			var idProperty = item[this.idProperty],
 				row = this._rowsOld[idProperty],
@@ -86,6 +69,8 @@ define([
 		},
 
 		_addItem: function(item) {
+
+			this._rescueOldInstance(item);
 
 			var idProperty = item[this.idProperty],
 				rowInstance = this._addOrUpdateRow(item),

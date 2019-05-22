@@ -48,6 +48,10 @@ define([
 
 		_rescueOldInstance: function(item) {
 
+			if (!this._rowsOld) {
+				return;
+			}
+
 			var idProperty = item[this.idProperty],
 				row = this._rowsOld[idProperty],
 				rowInstance = row && row.instance;

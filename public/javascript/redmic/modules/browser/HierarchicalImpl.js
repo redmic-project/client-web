@@ -58,9 +58,10 @@ define([
 			aspect.after(this, "_definitionRow", lang.hitch(this, this._definitionHierarchicalRow));
 			aspect.before(this, "_configRow", lang.hitch(this, this._configHierarchicalRow));
 
-			aspect.before(this, "_addData", lang.hitch(this, this._addBeforeData));
-			aspect.after(this, "_addData", lang.hitch(this, this._showPendingParents));
-			aspect.after(this, "_addItem", lang.hitch(this, this._showPendingParents));
+			aspect.before(this, "_dataAvailable", lang.hitch(this, this._beforeDataOrItemAvailable));
+			aspect.before(this, "_itemAvailable", lang.hitch(this, this._beforeDataOrItemAvailable));
+			aspect.after(this, "_dataAvailable", lang.hitch(this, this._afterDataOrItemAvailable));
+			aspect.after(this, "_itemAvailable", lang.hitch(this, this._afterDataOrItemAvailable));
 
 			aspect.before(this, "_removeRow", lang.hitch(this, this._removeHierarchicalRow));
 		},
@@ -176,38 +177,21 @@ define([
 			this._emitEvt('COLLAPSE_ROW', req);
 		},
 
-		_addBeforeData: function(response) {
+		_beforeDataOrItemAvailable: function(response) {
 
 			this._pendingParentsToShow = [];
+		},
+
+		_afterDataOrItemAvailable: function(response) {
+
+			this._showPendingParents();
 		},
 
 		_addData: function(response) {
 
 			this._clearData();
 
-			this._proccesNewData(response);
-		},
-
-		_parserIndexData: function(response) {
-
-			var data = response.data;
-
-			if (data.data) {
-				data = data.data;
-			}
-
-			return data;
-		},
-
-		_proccesNewData: function(response) {
-
-			var data = this._parserIndexData(response);
-
-			for (var i = 0; i < data.length; i++) {
-				var item = data[i];
-
-				this._addItem(item);
-			}
+			this._processNewData(response);
 		},
 
 		_addItem: function(item) {
@@ -215,7 +199,7 @@ define([
 			var idProperty = item[this.idProperty],
 				rowInstance = this._getRowInstance(idProperty);
 
-			if (!this._getRowInstance(idProperty)) {
+			if (!rowInstance) {
 				this._addRowItem(item);
 			} else {
 				this._updateRow(rowInstance, item);
@@ -230,7 +214,7 @@ define([
 
 			this._checkParentAndAddChild(item);
 
-			if (this._evaluateItem(item)) {
+			if (this._checkItemBelongRootLevel(item)) {
 				this._addRow(idProperty, item);
 			} else {
 				this._addItemWithoutInstance(idProperty, item);
@@ -249,7 +233,7 @@ define([
 				template: this._getTemplate(item)
 			});
 
-			if (!this._evaluateItem(item)) {
+			if (!this._checkItemBelongRootLevel(item)) {
 				this._publish(rowInstance.getChannel('UPDATE_DATA'), {
 					data: item
 				});
@@ -261,14 +245,12 @@ define([
 			var idProperty = item[this.idProperty],
 				rowInstance = this._getRowInstance(idProperty);
 
-			if (!rowInstance || !this._evaluateItem(item)) {
+			if (!rowInstance || !this._checkItemBelongRootLevel(item)) {
 				return;
-			} else if (item[this.leavesProperty]) {
-				if (!this._pendingParentsToShow) {
-					this._pendingParentsToShow = [];
-				}
-				this._pendingParentsToShow.push(idProperty);
+			}
 
+			if (item[this.leavesProperty]) {
+				this._pendingParentsToShow.push(idProperty);
 				return;
 			}
 
@@ -315,17 +297,13 @@ define([
 			this._showInstanceRow(instance, item, this.rowsContainerNode, true);
 		},
 
-		_evaluateItem: function(item) {
+		_checkItemBelongRootLevel: function(item) {
 
 			var idProperty = item[this.idProperty],
 				path = item[this.pathProperty],
 				pathLength = path ? path.split(this.pathSeparator).length : null;
 
-			if ((pathLength > this.pathLengthMinChildren || pathLength < this.pathLengthMinParent)) {
-				return false;
-			}
-
-			return true;
+			return !(pathLength > this.pathLengthMinChildren || pathLength < this.pathLengthMinParent);
 		},
 
 		_addItemWithoutInstance: function(idProperty, item) {
@@ -383,7 +361,7 @@ define([
 			if (!rowParent) {
 				this._addPendingParent(idProperty, idPropertyParent);
 			} else {
-				if (this._evaluateItem(item)) {
+				if (this._checkItemBelongRootLevel(item)) {
 					rowParent.pendingChildren = true;
 				}
 

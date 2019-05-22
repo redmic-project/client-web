@@ -73,6 +73,10 @@ define([
 			var row = this._getRow(idProperty),
 				rowPending = this._rowsPending[idProperty] || {};
 
+			if (!row) {
+				return;
+			}
+
 			row.selected = rowPending.selected || {};
 			row.mixed = rowPending.mixed || {};
 

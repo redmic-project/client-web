@@ -98,12 +98,6 @@ define([
 							}
 						},
 
-						valueItemsDefault: {
-							parameter: 42,
-							unit: 19,
-							"dataDefinition/z": 0
-						},
-
 						formConfig: {
 							template: "components/viewCustomization/parameter/views/templates/OC"
 						}

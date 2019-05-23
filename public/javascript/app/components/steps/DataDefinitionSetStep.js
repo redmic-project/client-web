@@ -33,6 +33,7 @@ define([
 				title: this.i18n.dataDefinitionsAssociated,
 				propertyName: "properties/measurements",
 				propToRead: "properties/measurements",
+				propsToClean: ['id', 'localId'],
 				// General params
 				target: redmicConfig.services.dataDefinition,
 

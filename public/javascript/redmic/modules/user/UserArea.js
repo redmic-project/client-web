@@ -92,7 +92,7 @@ define([
 
 		_initialize: function() {
 
-			if (this._conditionShownItemUser()) {
+			if (this._checkUserIsRegistered()) {
 				this._initializeUserArea();
 			} else {
 				this._initializeGuestArea();
@@ -115,17 +115,19 @@ define([
 
 			put(this.domNode, '.userAreaGuest');
 
-			this.whatIsRedmicNode = put(this.domNode, 'a[href="/inner-what-is-redmic"][d-state-url="true"]',
+			var singlePageParam = '[d-state-url="true"]';
+
+			this.whatIsRedmicNode = put(this.domNode, 'a[href="/inner-what-is-redmic"]' + singlePageParam,
 				this.i18n.whatIsRedmic);
 
-			this.registerNode = put(this.domNode, 'a[href="/register"][d-state-url="true"]', this.i18n.register);
+			this.registerNode = put(this.domNode, 'a[href="/register"]' + singlePageParam, this.i18n.register);
 
-			this.loginNode = put(this.domNode, 'a[href="/login"][d-state-url="true"]', this.i18n.login);
+			this.loginNode = put(this.domNode, 'a[href="/login"]' + singlePageParam, this.i18n.login);
 		},
 
 		_defineSubscriptions: function () {
 
-			if (this._conditionShownItemUser()) {
+			if (this._checkUserIsRegistered()) {
 				this.subscriptionsConfig.push({
 					channel : this.listMenu.getChannel('EVENT_ITEM'),
 					callback: '_subEventItem'
@@ -137,21 +139,50 @@ define([
 
 			this.inherited(arguments);
 
-			if (this._conditionShownItemUser()) {
-				this._showMenu();
-
-				this._once(this._buildChannel(this.credentialsChannel, this.actions.GOT_PROPS),
-					lang.hitch(this, this._subDataCredentialsGotProps));
-
-				this._publish(this._buildChannel(this.credentialsChannel, this.actions.GET_PROPS), {
-					dataCredentials: true
-				});
-
-				put(this.listMenu.domNode.firstChild, '-', this.topbarMenu.container);
+			if (this._checkUserIsRegistered()) {
+				this._prepareEnvironment();
 			}
 		},
 
+		_prepareEnvironment: function() {
+
+			var envDfd = window.env;
+			if (!envDfd) {
+				return;
+			}
+
+			envDfd.then(lang.hitch(this, function(envData) {
+
+				this._logoutTarget = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData);
+				// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
+				// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
+				this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
+
+				this._showAreaForRegisteredUser();
+			}));
+		},
+
+		_showAreaForRegisteredUser: function() {
+
+			this._showMenu();
+
+			this._once(this._buildChannel(this.credentialsChannel, this.actions.GOT_PROPS),
+				lang.hitch(this, this._subDataCredentialsGotProps));
+
+			this._publish(this._buildChannel(this.credentialsChannel, this.actions.GET_PROPS), {
+				dataCredentials: true
+			});
+
+			put(this.listMenu.domNode.firstChild, '-', this.topbarMenu.container);
+		},
+
 		_subDataCredentialsGotProps: function(req) {
+
+			var userImagePath = req.dataCredentials.image;
+
+			if (userImagePath) {
+				req.dataCredentials.image = this._userImageBaseTarget + userImagePath;
+			}
 
 			this._emitEvt('INJECT_DATA', {
 				data: req.dataCredentials,
@@ -178,51 +209,35 @@ define([
 			return this.domNode;
 		},
 
-		_conditionShownItemGuest: function() {
+		_checkUserIsRegistered: function() {
 
-			return !this._conditionShownItemUser();
-		},
-
-		_conditionShownItemUser: function() {
-
-			if (Credentials.get('userRole') !== 'ROLE_GUEST') {
-				return true;
-			}
-
-			return false;
+			return Credentials.get('userRole') !== 'ROLE_GUEST';
 		},
 
 		_logout: function () {
 
-			if (Credentials.get('accessToken')) {
-				var envDfd = window.env;
-				if (!envDfd) {
-					return;
-				}
-
-				envDfd.then(lang.hitch(this, function(envData) {
-
-					var target = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData),
-						headers = {
-							'Content-Type': 'application/json',
-							'Accept': 'application/javascript, application/json'
-						},
-						data = {
-							'token': Credentials.get('accessToken')
-						};
-
-					request(target, {
-						method: 'POST',
-						handleAs: 'json',
-						headers: headers,
-						data: JSON.stringify(data)
-					}).then(
-						lang.hitch(this, this._handleResponse),
-						lang.hitch(this, this._handleError));
-				}));
-			} else {
+			if (!Credentials.get('accessToken')) {
 				this._removeUserData();
+				return;
 			}
+
+			var target = this._logoutTarget,
+				headers = {
+					'Content-Type': 'application/json',
+					'Accept': 'application/javascript, application/json'
+				},
+				data = {
+					'token': Credentials.get('accessToken')
+				};
+
+			request(target, {
+				method: 'POST',
+				handleAs: 'json',
+				headers: headers,
+				data: JSON.stringify(data)
+			}).then(
+				lang.hitch(this, this._handleResponse),
+				lang.hitch(this, this._handleError));
 		},
 
 		_handleResponse: function(res) {
@@ -265,8 +280,10 @@ define([
 			this.containerNode.firstChild && put(this.containerNode.firstChild, '!');
 
 			if (data.image) {
-				this.iconNode = put(this.containerNode, 'img[src=' + data.image +
-					'?access_token=' + Credentials.get('accessToken') + ']');
+				var tokenParam = '?access_token=' + Credentials.get('accessToken'),
+					imageUrl = data.image + tokenParam;
+
+				this.iconNode = put(this.containerNode, 'img[src=' + imageUrl + ']');
 			} else {
 				this.iconNode = put(this.containerNode, 'i.fa.fa-user');
 			}

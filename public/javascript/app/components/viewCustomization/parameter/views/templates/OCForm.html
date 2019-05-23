@@ -1,24 +1,32 @@
 <div>
 	<form class="form-horizontal">
-		<div data-redmic-type="filter" data-redmic-model="dataDefinition/device" data-redmic-props="
-			required: true,
-			target: 'device'
+		<div data-redmic-type="filter" data-redmic-model="parameter">
+			<div class="embeddedButton" data-redmic-type="button" data-redmic-props="
+				propertyName: 'onNewParameter',
+				iconClass: 'fa-plus',
+				class: 'primary',
+				title: '${i18n.newParameter}'
+			" data-redmic-actions="
+				onClick: '_onNewParameter'
+			"></div>
+		</div>
+
+		<div data-redmic-type="select" data-redmic-model="unit" data-redmic-props="
+			propertyNameDependence: 'parameter',
+			dependenceType: 'hidden',
+			targetDependence: 'parameter',
+			propertyPath: 'units',
+			labelAttr: 'unit.name',
+			idProperty: 'unit.id'
 		"></div>
 
+		<div data-redmic-type="filter" data-redmic-model="dataDefinition/device"></div>
+
 		<div data-redmic-type="number" data-redmic-model="dataDefinition/z" data-redmic-props="
-			required: true,
-			noEditable: true,
 			label: 'zDepthAltitude'
 		"></div>
 
-		<div data-redmic-type="textarea" data-redmic-model="dataDefinition/description" data-redmic-props="
-			required: true
-		"></div>
-
-		<!--<div data-redmic-type="boolean" data-redmic-model="dataDefinition/isSerial" data-redmic-props="
-			noEditable: true,
-			disable: true
-		"></div>-->
+		<div data-redmic-type="textarea" data-redmic-model="dataDefinition/description"></div>
 
 		<div data-redmic-type="boolean" data-redmic-model="dataDefinition/isRegularity"></div>
 
@@ -29,31 +37,14 @@
 			optionDefault: 1
 		"></div>
 
-		<!--<div data-redmic-type="boolean" data-redmic-model="dataDefinition/isRegularity" data-redmic-props="
-			propertyNameDependence: 'dataDefinition/isSerial',
-			dependenceType: 'hidden'
-		"></div>
-
-		<div data-redmic-type="valueAndUnit" data-redmic-model="dataDefinition/timeInterval" data-redmic-props="
-			propertyNameDependence: 'dataDefinition/isSerial',
-			dependenceType: 'hidden',
-			optionDefault: 1,
-			difConvertToBase: 1000,
-			delta: 1,
-			requiredWithDependence: true,
-			minSlider: 1
-		"></div>-->
-
 		<div data-redmic-type="filter" data-redmic-model="dataDefinition/contact" data-redmic-props="
 			labelAttr: '{firstName} {surname}',
-			target: 'contact',
 			template: 'templates/ContactFilter'
 		"></div>
 
 		<div data-redmic-type="filter" data-redmic-model="dataDefinition/contactRole" data-redmic-props="
 			propertyNameDependence: 'dataDefinition/contact',
 			dependenceType: 'hidden',
-			target: 'contactRole',
 			terms: {'ids':'6,7'},
 			requiredWithDependence: true
 		"></div>

@@ -26,6 +26,12 @@ define([
 		windowTitleValueClass: 'title',
 		windowButtonContainerClass: 'buttons',
 
+		buttonPrefixClass: 'fa',
+		minimizeButtonClass: 'fa-window-minimize',
+		maximizeButtonClass: 'fa-window-maximize',
+		restoreButtonClass: 'fa-window-restore',
+		closeButtonClass: 'fa-close',
+
 		windowContentClass: 'windowContent',
 		windowWithoutTitleContentClass: 'windowWithoutTitleContent',
 
@@ -33,6 +39,9 @@ define([
 
 		titleHeight: 30,
 		minWidth: 200,
+
+		minWidthCols: 1,
+		maxWidthCols: 6,
 
 		// TODO renombrar estos flags aquí y donde se usen
 		noTitleWindow: false,
@@ -159,6 +168,21 @@ define([
 
 		_onWindowShown: function() {
 
+			var validSizeDfd = new Deferred();
+
+			validSizeDfd.then(lang.hitch(this, this._onWindowValidSize));
+
+			this._validSizeIntervalHandler = setInterval(lang.hitch(this, function(dfd) {
+
+				if (this.node.offsetWidth) {
+					clearInterval(this._validSizeIntervalHandler);
+					dfd.resolve();
+				}
+			}, validSizeDfd), 100);
+		},
+
+		_onWindowValidSize: function() {
+
 			this._emitEvt('LOADED');
 			this._emitResize();
 		},
@@ -175,16 +199,19 @@ define([
 
 		_createWindowButtons: function() {
 
-			var	buttonsNode = put(this._windowTitleNode, "div." + this.windowButtonContainerClass);
+			var	buttonsNode = put(this._windowTitleNode, "div." + this.windowButtonContainerClass),
+				minimizeButtonClass = '.' + this.buttonPrefixClass + '.' + this.minimizeButtonClass,
+				maximizeButtonClass = '.' + this.buttonPrefixClass + '.' + this.maximizeButtonClass,
+				closeButtonClass = '.' + this.buttonPrefixClass + '.' + this.closeButtonClass;
 
-			this._minimizeButton = put(buttonsNode, "i.fa.fa-minus");
+			this._minimizeButton = put(buttonsNode, "i" + minimizeButtonClass);
 			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
 
-			this._maximizeButton = put(buttonsNode, "i.fa.fa-square-o");
+			this._maximizeButton = put(buttonsNode, "i" + maximizeButtonClass);
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
 
 			if (!this.noCloseWindow) {
-				this._closeButton = put(buttonsNode, "i.fa.fa-close");
+				this._closeButton = put(buttonsNode, "i" + closeButtonClass);
 				this._closeButton.onclick = lang.hitch(this, this._closeModule);
 			}
 		},
@@ -216,7 +243,7 @@ define([
 			}
 
 			this._minimizeDfd = new Deferred();
-			this._minimizeDfd.then(lang.hitch(this, this._emitResize), function(){});
+			this._minimizeDfd.then(lang.hitch(this, this._emitResize), function() {});
 		},
 
 		_maximizeModule: function() {
@@ -224,9 +251,10 @@ define([
 			this._resizeAfterMaximizeToggle();
 
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModuleReturn);
+			this._updateMaximizeButtonIcon();
 
 			this._previousWidth = domAttr.get(this._windowNode.parentNode, "data-cols");
-			domAttr.set(this._windowNode.parentNode, "data-cols", "6");
+			domAttr.set(this._windowNode.parentNode, "data-cols", this.maxWidthCols);
 
 			this._minimizeModuleReturn();
 		},
@@ -236,6 +264,7 @@ define([
 			this._resizeAfterMaximizeToggle();
 
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
+			this._updateMaximizeButtonIcon();
 
 			domAttr.set(this._windowNode.parentNode, "data-cols", this._previousWidth);
 		},
@@ -247,12 +276,23 @@ define([
 			}
 
 			this._maximizeDfd = new Deferred();
-			this._maximizeDfd.then(lang.hitch(this, this._emitResize), function(){});
+			this._maximizeDfd.then(lang.hitch(this, this._emitResize), function() {});
+		},
+
+		_updateMaximizeButtonIcon: function() {
+
+			domClass.toggle(this._maximizeButton, this.maximizeButtonClass);
+			domClass.toggle(this._maximizeButton, this.restoreButtonClass);
 		},
 
 		_disableMaximize: function() {
 
 			domClass.add(this._maximizeButton, this.hiddenClass);
+		},
+
+		_enableMaximize: function() {
+
+			domClass.remove(this._maximizeButton, this.hiddenClass);
 		},
 
 		_closeModule: function() {
@@ -268,11 +308,7 @@ define([
 				return;
 			}
 
-			//console.debug('resize de', this.getOwnChannel());
-			if (this.node.offsetWidth && this.node.offsetWidth < this.minWidth) {
-				this._maximizeModule();
-				this._disableMaximize();
-			}
+			this._autoMaximizeOnLowWidth();
 
 			// TODO esto debería ser responsabilidad de _Show, y emitirlo siempre cuando acabe
 			// de hacer el _resize (quizá con un dfd de retorno??). Pensar
@@ -280,6 +316,50 @@ define([
 				width: this.node.offsetWidth,
 				height: this.node.offsetHeight
 			});
+		},
+
+		_autoMaximizeOnLowWidth: function() {
+
+			if (!this.node.offsetWidth || this.node.offsetWidth >= this.minWidth) {
+				return;
+			}
+
+			this._updateMaximizeButtonIcon();
+			this._disableMaximize();
+
+			if (!this._getAutoMaximized()) {
+				this._setAutoMaximized(true);
+				this._maximizeModule();
+			}
+		},
+
+		_resize: function() {
+
+			this._autoMaximizeReturnOnEnoughWidth();
+			this._emitResize();
+
+			this.inherited(arguments);
+		},
+
+		_autoMaximizeReturnOnEnoughWidth: function() {
+
+			if (!this._getAutoMaximized() || this.node.offsetWidth < this.minWidth) {
+				return;
+			}
+
+			this._setAutoMaximized(false);
+			this._updateMaximizeButtonIcon();
+			this._enableMaximize();
+		},
+
+		_getAutoMaximized: function() {
+
+			return this.statusFlags.autoMaximized;
+		},
+
+		_setAutoMaximized: function(value) {
+
+			this.statusFlags.autoMaximized = value;
 		},
 
 		_hide: function(req) {

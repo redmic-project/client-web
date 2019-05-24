@@ -48,6 +48,18 @@ define([
 		noButtonsWindow: false,
 		noCloseWindow: false,
 
+		_setShowOwnCallbacksForEvents: function () {
+
+			this.inherited(arguments);
+
+			this._onEvt('ANCESTOR_SHOW', lang.hitch(this, this._onWindowAncestorShown));
+		},
+
+		_onWindowAncestorShown: function() {
+
+			this._emitResize();
+		},
+
 		_beforeShow: function(req) {
 
 			if (this._getPreviouslyShown()) {

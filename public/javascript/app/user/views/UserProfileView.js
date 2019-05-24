@@ -1,7 +1,6 @@
 define([
 	"app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
 	, "app/redmicConfig"
 	, "app/user/models/PasswordModel"
 	, "app/user/models/UserImageModel"
@@ -10,7 +9,6 @@ define([
 	, "app/user/models/UserSectorModel"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/query"
 	, "redmic/base/Credentials"
 	, "redmic/modules/base/_Window"
 	, "redmic/modules/browser/_ButtonsInRow"
@@ -31,7 +29,6 @@ define([
 ], function(
 	Controller
 	, Layout
-	, _AddTitle
 	, redmicConfig
 	, modelSchemaUserPassword
 	, modelSchemaUserImage
@@ -40,7 +37,6 @@ define([
 	, modelSchemaUserSector
 	, declare
 	, lang
-	, query
 	, Credentials
 	, _Window
 	, _ButtonsInRow
@@ -58,8 +54,9 @@ define([
 	, TemplateSector
 	, TemplatePassword
 	, TaskNotification
-){
-	return declare([Layout, Controller/*, _AddTitle*/], {
+) {
+
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista detalle de user.
 
@@ -367,7 +364,6 @@ define([
 
 			if (target === this.targetImage) {
 				label = "userImage";
-				this._subscriptionOnceChangeImage();
 			}
 
 			var instanceWidget = this._widgets[label];
@@ -379,24 +375,28 @@ define([
 			this._publish(instanceWidget.getChannel('SHOW_WINDOW'));
 		},
 
-		_subscriptionOnceChangeImage: function() {
+		_subscribeToWidgets: function() {
 
-			this._once(this._widgets.userImage.getChannel("SHOWN"), lang.hitch(this, this._createOnClickChangeImage));
+			this._once(this._widgets.userImage.getChannel("SHOWN"), lang.hitch(this, this._subUserImageShownOnce));
 		},
 
-		_createOnClickChangeImage: function() {
+		_subUserImageShownOnce: function(res) {
 
-			setTimeout(lang.hitch(this, function() {
-				this.changeImageNode = query("[data-redmic-id='changeImage']", this._nodes.userImage)[0];
-
-				if (this.changeImageNode) {
-					this.changeImageNode.onclick = lang.hitch(this, this._changeImageOnClick);
-					this.changeImageNode.parentNode.firstChild.onclick = lang.hitch(this, this._changeImageOnClick);
-				}
-			}), 250);
+			this._nodes.userImage.onclick = lang.hitch(this, this._tryToGoToEditImage);
 		},
 
-		_changeImageOnClick: function() {
+		_tryToGoToEditImage: function(evt) {
+
+			var node = evt.target || evt.srcElement,
+				nodeTagName = node.tagName,
+				nodeAttribute = node.getAttribute('data-redmic-id');
+
+			if (nodeTagName === 'IMG' || nodeAttribute === 'changeImage') {
+				this._goToEditImage();
+			}
+		},
+
+		_goToEditImage: function() {
 
 			var formConfig = this._merge([{
 				template: "user/views/templates/forms/UserImage",
@@ -495,8 +495,6 @@ define([
 				dataType: "password"
 			}, "userData");
 
-			//this._subscriptionOnceChangeImage();
-
 			var envDfd = window.env;
 			if (!envDfd) {
 				return;
@@ -517,11 +515,11 @@ define([
 			}, response.data));
 		},
 
-		_buildVisualization: function() {
-
-			this._subscriptionOnceChangeImage();
+		_generateWidgets: function() {
 
 			this.inherited(arguments);
+
+			this._subscribeToWidgets();
 		},
 
 		_injectItemList: function(data, widget) {

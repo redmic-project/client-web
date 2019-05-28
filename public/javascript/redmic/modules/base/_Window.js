@@ -98,18 +98,16 @@ define([
 
 			this._emitEvt('LOADING');
 
-			var containerClass = this.windowContainerClass,
-				resizeHandleNode;
+			var containerClass = this.windowContainerClass;
 
 			if (this.resizable) {
 				containerClass += '.' + this.windowResizableClass;
-				resizeHandleNode = put('i.' + this.resizeHandleClass);
 			}
 
 			this._windowNode = put(node, "div." + containerClass);
 
-			if (resizeHandleNode) {
-				put(this._windowNode, resizeHandleNode);
+			if (this.resizable) {
+				this._createWindowResizeComponents();
 			}
 
 			if (!this.noTitleWindow) {
@@ -119,6 +117,24 @@ define([
 
 			this._createWindowContent();
 			this._addNodeListeners();
+		},
+
+		_createWindowResizeComponents: function() {
+
+			this._limitMaxHeightToAvailableHeight();
+
+			var resizeHandleNode = put('i.' + this.resizeHandleClass);
+			put(this._windowNode, resizeHandleNode);
+		},
+
+		_limitMaxHeightToAvailableHeight: function() {
+
+			var currMaxHeight = window.innerHeight;
+
+			if (this._lastMaxHeight !== currMaxHeight) {
+				this._lastMaxHeight = currMaxHeight;
+				domStyle.set(this._windowNode, 'max-height', currMaxHeight + 'px');
+			}
 		},
 
 		_createWindowTitle: function() {
@@ -404,6 +420,7 @@ define([
 
 		_resize: function() {
 
+			this._limitMaxHeightToAvailableHeight();
 			this._prepareToEmitResize();
 
 			this.inherited(arguments);

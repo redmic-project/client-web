@@ -44,6 +44,7 @@ define([
 		titleHeight: 30,
 		minWidth: 200,
 
+		widthByColsAttr: 'data-cols',
 		minWidthCols: 1,
 		maxWidthCols: 6,
 
@@ -53,6 +54,7 @@ define([
 		noButtonsWindow: false,
 		noCloseWindow: false,
 
+		_resizableForcedMinWidth: 100,
 		_validSizeInterval: 100,
 		_userResizeTimeout: 100,
 
@@ -83,6 +85,7 @@ define([
 			}
 
 			if (node) {
+				this._originalWidthByCols = domAttr.get(node, this.widthByColsAttr);
 				this._createWindow(node);
 			}
 
@@ -190,8 +193,7 @@ define([
 		_onWindowResizeProgress: function(self, mutations) {
 
 			if (!self._resizeMutationHandler) {
-				// TODO sería mejor que esta clase la colocase el propio padre (details) cuando este lo pida
-				domClass.add(self._windowNode.parentNode, self.windowResizedParentClass);
+				lang.hitch(self, self._onWindowResizeProgressFirstUpdate)();
 				self._resizeMutationHandler = this;
 			}
 
@@ -199,10 +201,19 @@ define([
 			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._emitResize), self._userResizeTimeout);
 		},
 
+		_onWindowResizeProgressFirstUpdate: function() {
+
+			// TODO sería mejor que esta clase la colocase el propio padre (details) cuando este lo pida
+			domClass.add(this._windowNode.parentNode, this.windowResizedParentClass);
+
+			this._setResizedByUser(true);
+			this._prepareMaximizeForUndoUserResize();
+		},
+
 		_onWindowUserResizeEnd: function(evt) {
 
 			this._resizeMutationHandler && this._resizeMutationHandler.disconnect();
-			delete self._resizeMutationHandler;
+			delete this._resizeMutationHandler;
 		},
 
 		_show: function(req) {
@@ -313,10 +324,9 @@ define([
 			this._resizeAfterMaximizeToggle();
 
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModuleReturn);
-			this._updateMaximizeButtonIcon();
+			this._updateMaximizeButtonIcon(true);
 
-			this._previousWidth = domAttr.get(this._windowNode.parentNode, "data-cols");
-			domAttr.set(this._windowNode.parentNode, "data-cols", this.maxWidthCols);
+			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this.maxWidthCols);
 
 			this._minimizeModuleReturn();
 		},
@@ -326,9 +336,28 @@ define([
 			this._resizeAfterMaximizeToggle();
 
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
-			this._updateMaximizeButtonIcon();
+			this._updateMaximizeButtonIcon(false);
 
-			domAttr.set(this._windowNode.parentNode, "data-cols", this._previousWidth);
+			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this._originalWidthByCols);
+		},
+
+		_prepareMaximizeForUndoUserResize: function() {
+
+			this._maximizeButton.onclick = lang.hitch(this, this._undoUserResize);
+			this._updateMaximizeButtonIcon(true);
+		},
+
+		_undoUserResize: function() {
+
+			domStyle.set(this._windowNode, 'width', null);
+			domStyle.set(this._windowNode, 'height', null);
+			// TODO sería mejor que esta clase la colocase el propio padre (details) cuando este lo pida
+			domClass.remove(this._windowNode.parentNode, this.windowResizedParentClass);
+
+			this._setResizedByUser(false);
+			this._emitResize();
+
+			this._maximizeModuleReturn();
 		},
 
 		_resizeAfterMaximizeToggle: function() {
@@ -341,20 +370,20 @@ define([
 			this._maximizeDfd.then(lang.hitch(this, this._emitResize), function() {});
 		},
 
-		_updateMaximizeButtonIcon: function() {
+		_updateMaximizeButtonIcon: function(/*Boolean*/ altIcon) {
 
-			domClass.toggle(this._maximizeButton, this.maximizeButtonClass);
-			domClass.toggle(this._maximizeButton, this.restoreButtonClass);
-		},
+			var classToAdd, classToRemove;
 
-		_disableMaximize: function() {
+			if (altIcon) {
+				classToAdd = this.restoreButtonClass;
+				classToRemove = this.maximizeButtonClass;
+			} else {
+				classToAdd = this.maximizeButtonClass;
+				classToRemove = this.restoreButtonClass;
+			}
 
-			domClass.add(this._maximizeButton, this.hiddenClass);
-		},
-
-		_enableMaximize: function() {
-
-			domClass.remove(this._maximizeButton, this.hiddenClass);
+			domClass.add(this._maximizeButton, classToAdd);
+			domClass.remove(this._maximizeButton, classToRemove);
 		},
 
 		_closeModule: function() {
@@ -364,13 +393,22 @@ define([
 			this._emitResize();
 		},
 
+		_resize: function() {
+
+			this._emitResize();
+
+			this.inherited(arguments);
+		},
+
 		_emitResize: function() {
 
 			if (!this.node) {
 				return;
 			}
 
-			this._autoMaximizeOnLowWidth();
+			if (!this._getResizedByUser()) {
+				this._autoMaximizeOnLowWidth();
+			}
 
 			// TODO esto debería ser responsabilidad de _Show, y emitirlo siempre cuando acabe
 			// de hacer el _resize (quizá con un dfd de retorno??). Pensar
@@ -382,37 +420,16 @@ define([
 
 		_autoMaximizeOnLowWidth: function() {
 
-			if (!this.node.offsetWidth || this.node.offsetWidth >= this.minWidth) {
-				this._enableMaximize();
+			if (!this.node.offsetWidth || (this.resizable && this.node.offsetWidth === this._resizableForcedMinWidth)) {
 				return;
 			}
 
-			this._updateMaximizeButtonIcon();
-			this._disableMaximize();
-
-			if (!this._getAutoMaximized()) {
+			if (this.node.offsetWidth < this.minWidth) {
 				this._setAutoMaximized(true);
 				this._maximizeModule();
+			} else if (this._getAutoMaximized()) {
+				this._setAutoMaximized(false);
 			}
-		},
-
-		_resize: function() {
-
-			this._autoMaximizeReturnOnEnoughWidth();
-			this._emitResize();
-
-			this.inherited(arguments);
-		},
-
-		_autoMaximizeReturnOnEnoughWidth: function() {
-
-			if (!this._getAutoMaximized() || this.node.offsetWidth < this.minWidth) {
-				return;
-			}
-
-			this._setAutoMaximized(false);
-			this._updateMaximizeButtonIcon();
-			this._enableMaximize();
 		},
 
 		_getAutoMaximized: function() {
@@ -423,6 +440,16 @@ define([
 		_setAutoMaximized: function(value) {
 
 			this.statusFlags.autoMaximized = value;
+		},
+
+		_getResizedByUser: function() {
+
+			return this.statusFlags.resizedByUser;
+		},
+
+		_setResizedByUser: function(value) {
+
+			this.statusFlags.resizedByUser = value;
 		},
 
 		_hide: function(req) {

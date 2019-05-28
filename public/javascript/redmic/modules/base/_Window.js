@@ -57,6 +57,7 @@ define([
 		_resizableForcedMinWidth: 100,
 		_validSizeInterval: 100,
 		_userResizeTimeout: 100,
+		_emitResizeTimeout: 100,
 
 		_setShowOwnCallbacksForEvents: function () {
 
@@ -67,7 +68,7 @@ define([
 
 		_onWindowAncestorShown: function() {
 
-			this._emitResize();
+			this._prepareToEmitResize();
 		},
 
 		_beforeShow: function(req) {
@@ -198,7 +199,8 @@ define([
 			}
 
 			clearTimeout(self._userResizeTimeoutHandler);
-			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._emitResize), self._userResizeTimeout);
+			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._prepareToEmitResize),
+				self._userResizeTimeout);
 		},
 
 		_onWindowResizeProgressFirstUpdate: function() {
@@ -257,7 +259,7 @@ define([
 		_onWindowValidSize: function() {
 
 			this._emitEvt('LOADED');
-			this._emitResize();
+			this._prepareToEmitResize();
 		},
 
 		_decorateTitleNode: function() {
@@ -316,7 +318,7 @@ define([
 			}
 
 			this._minimizeDfd = new Deferred();
-			this._minimizeDfd.then(lang.hitch(this, this._emitResize), function() {});
+			this._minimizeDfd.then(lang.hitch(this, this._prepareToEmitResize), function() {});
 		},
 
 		_maximizeModule: function() {
@@ -355,7 +357,7 @@ define([
 			domClass.remove(this._windowNode.parentNode, this.windowResizedParentClass);
 
 			this._setResizedByUser(false);
-			this._emitResize();
+			this._prepareToEmitResize();
 
 			this._maximizeModuleReturn();
 		},
@@ -367,7 +369,7 @@ define([
 			}
 
 			this._maximizeDfd = new Deferred();
-			this._maximizeDfd.then(lang.hitch(this, this._emitResize), function() {});
+			this._maximizeDfd.then(lang.hitch(this, this._prepareToEmitResize), function() {});
 		},
 
 		_updateMaximizeButtonIcon: function(/*Boolean*/ altIcon) {
@@ -390,14 +392,20 @@ define([
 
 			domStyle.set(this._windowNode.parentNode, "display", "none");
 
-			this._emitResize();
+			this._prepareToEmitResize();
 		},
 
 		_resize: function() {
 
-			this._emitResize();
+			this._prepareToEmitResize();
 
 			this.inherited(arguments);
+		},
+
+		_prepareToEmitResize: function() {
+
+			clearTimeout(this._emitResizeTimeoutHandler);
+			this._emitResizeTimeoutHandler = setTimeout(lang.hitch(this, this._emitResize), this._emitResizeTimeout);
 		},
 
 		_emitResize: function() {

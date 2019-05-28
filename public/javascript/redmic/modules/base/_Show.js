@@ -172,6 +172,7 @@ define([
 			this._onEvt('HIDE', lang.hitch(this, this._onModuleHide));
 			this._onEvt('ANCESTOR_SHOW', lang.hitch(this, this._prepareOnMeOrAncestorShown));
 			this._onEvt('ANCESTOR_HIDE', lang.hitch(this, this._restoreOnMeOrAncestorShown));
+			this._onEvt('RESIZE', lang.hitch(this, this._onModuleResize));
 		},
 
 		_showBeforePostCreate: function() {
@@ -772,6 +773,13 @@ define([
 
 			this._restoreOnMeOrAncestorShown(response);
 			this._propagateActionToChildren('ANCESTOR_HIDDEN', response);
+		},
+
+		_onModuleResize: function(evt) {
+
+			if (this.layout) {
+				this.layout();
+			}
 		},
 
 		_getStartupStatus: function() {

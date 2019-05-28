@@ -25,6 +25,7 @@ define([
 		windowResizedParentClass: 'resizedByUser',
 		windowResizableClass: 'resizable',
 		windowContainerClass: 'moduleWindow',
+		resizeHandleClass: 'resizeHandle',
 
 		windowTitleClass: 'windowTitle',
 		windowTitleValueClass: 'title',
@@ -97,13 +98,19 @@ define([
 
 			this._emitEvt('LOADING');
 
-			var containerClass = this.windowContainerClass;
+			var containerClass = this.windowContainerClass,
+				resizeHandleNode;
 
 			if (this.resizable) {
 				containerClass += '.' + this.windowResizableClass;
+				resizeHandleNode = put('i.' + this.resizeHandleClass);
 			}
 
 			this._windowNode = put(node, "div." + containerClass);
+
+			if (resizeHandleNode) {
+				put(this._windowNode, resizeHandleNode);
+			}
 
 			if (!this.noTitleWindow) {
 				this._createWindowTitle();

@@ -4,6 +4,7 @@ define([
 	, "dojo/dom-attr"
 	, "dojo/dom-class"
 	, "dojo/dom-style"
+	, "dojo/on"
 	, "put-selector/put"
 ], function(
 	lang
@@ -11,6 +12,7 @@ define([
 	, domAttr
 	, domClass
 	, domStyle
+	, on
 	, put
 ) {
 
@@ -20,6 +22,8 @@ define([
 		//	description:
 		//		Añade al módulo una barra de título con controles.
 
+		windowResizedParentClass: 'resizedByUser',
+		windowResizableClass: 'resizable',
 		windowContainerClass: 'moduleWindow',
 
 		windowTitleClass: 'windowTitle',
@@ -43,10 +47,14 @@ define([
 		minWidthCols: 1,
 		maxWidthCols: 6,
 
+		resizable: true,
 		// TODO renombrar estos flags aquí y donde se usen
 		noTitleWindow: false,
 		noButtonsWindow: false,
 		noCloseWindow: false,
+
+		_validSizeInterval: 100,
+		_userResizeTimeout: 100,
 
 		_setShowOwnCallbacksForEvents: function () {
 
@@ -85,7 +93,13 @@ define([
 
 			this._emitEvt('LOADING');
 
-			this._windowNode = put(node, "div." + this.windowContainerClass);
+			var containerClass = this.windowContainerClass;
+
+			if (this.resizable) {
+				containerClass += '.' + this.windowResizableClass;
+			}
+
+			this._windowNode = put(node, "div." + containerClass);
 
 			if (!this.noTitleWindow) {
 				this._createWindowTitle();
@@ -131,6 +145,10 @@ define([
 
 			this._windowContentNode.addEventListener('transitionend', this._transitionEndCallback);
 			this._windowNode.parentNode.addEventListener('transitionend', this._transitionEndCallback);
+
+			if (this.resizable) {
+				this._windowNode.addEventListener('mousedown', lang.hitch(this, this._onWindowUserResizeStart));
+			}
 		},
 
 		_removeNodeListeners: function() {
@@ -153,6 +171,38 @@ define([
 			if (propName === 'width' && this._maximizeDfd) {
 				this._maximizeDfd.resolve();
 			}
+		},
+
+		_onWindowUserResizeStart: function(evt) {
+
+			on.once(window, 'mouseup', lang.hitch(this, this._onWindowUserResizeEnd));
+
+			if (!this._windowMutationObserver) {
+				this._windowMutationObserver = new MutationObserver(lang.partial(this._onWindowResizeProgress, this));
+			}
+
+			this._windowMutationObserver.observe(this._windowNode, {
+				attributes: true,
+				attributeFilter: ['style']
+			});
+		},
+
+		_onWindowResizeProgress: function(self, mutations) {
+
+			if (!self._resizeMutationHandler) {
+				// TODO sería mejor que esta clase la colocase el propio padre (details) cuando este lo pida
+				domClass.add(self._windowNode.parentNode, self.windowResizedParentClass);
+				self._resizeMutationHandler = this;
+			}
+
+			clearTimeout(self._userResizeTimeoutHandler);
+			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._emitResize), self._userResizeTimeout);
+		},
+
+		_onWindowUserResizeEnd: function(evt) {
+
+			this._resizeMutationHandler && this._resizeMutationHandler.disconnect();
+			delete self._resizeMutationHandler;
 		},
 
 		_show: function(req) {
@@ -190,7 +240,7 @@ define([
 					clearInterval(this._validSizeIntervalHandler);
 					dfd.resolve();
 				}
-			}, validSizeDfd), 100);
+			}, validSizeDfd), this._validSizeInterval);
 		},
 
 		_onWindowValidSize: function() {
@@ -333,6 +383,7 @@ define([
 		_autoMaximizeOnLowWidth: function() {
 
 			if (!this.node.offsetWidth || this.node.offsetWidth >= this.minWidth) {
+				this._enableMaximize();
 				return;
 			}
 

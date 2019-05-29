@@ -49,7 +49,12 @@ define([
 		minWidthCols: 1,
 		maxWidthCols: 6,
 
+		resizableBottomPadding: 15,
+
+		scrollMargin: 10,
+
 		resizable: true,
+		scrollSensitive: true,
 		// TODO renombrar estos flags aquí y donde se usen
 		noTitleWindow: false,
 		noButtonsWindow: false,
@@ -59,6 +64,7 @@ define([
 		_validSizeInterval: 100,
 		_userResizeTimeout: 100,
 		_emitResizeTimeout: 100,
+
 
 		_setShowOwnCallbacksForEvents: function () {
 
@@ -123,8 +129,8 @@ define([
 
 			this._limitMaxHeightToAvailableHeight();
 
-			var resizeHandleNode = put('i.' + this.resizeHandleClass);
-			put(this._windowNode, resizeHandleNode);
+			this._resizeHandleNode = put('i.' + this.resizeHandleClass);
+			put(this._windowNode, this._resizeHandleNode);
 		},
 
 		_limitMaxHeightToAvailableHeight: function() {
@@ -133,7 +139,7 @@ define([
 
 			if (this._lastMaxHeight !== currMaxHeight) {
 				this._lastMaxHeight = currMaxHeight;
-				domStyle.set(this._windowNode, 'max-height', currMaxHeight + 'px');
+				domStyle.set(this._windowNode, 'max-height', (currMaxHeight + this.resizableBottomPadding) + 'px');
 			}
 		},
 
@@ -173,6 +179,11 @@ define([
 			this._windowContentNode.addEventListener('transitionend', this._transitionEndCallback);
 			this._windowNode.parentNode.addEventListener('transitionend', this._transitionEndCallback);
 
+			if (this.scrollSensitive) {
+				this._windowNode.parentNode.parentNode.addEventListener('scroll', lang.hitch(this,
+					this._onGrandParentScroll));
+			}
+
 			if (this.resizable) {
 				this._windowNode.addEventListener('mousedown', lang.hitch(this, this._onWindowUserResizeStart));
 			}
@@ -197,6 +208,26 @@ define([
 
 			if (propName === 'width' && this._maximizeDfd) {
 				this._maximizeDfd.resolve();
+			}
+		},
+
+		_onGrandParentScroll: function(evt) {
+
+			var gParent = evt.target,
+				gParentVisibleTop = gParent.scrollTop - this.scrollMargin,
+				gParentVisibleBottom = gParent.scrollTop + gParent.offsetHeight + this.scrollMargin,
+
+				parent = this._windowNode.parentNode,
+				windowTop = domStyle.get(parent, 'top'),
+				windowBottom = windowTop + parent.offsetHeight,
+
+				windowTopAboveVisibleBottom = gParentVisibleBottom >= windowTop,
+				windowBottomUnderVisibleTop = gParentVisibleTop <= windowBottom;
+
+			if (windowBottomUnderVisibleTop && windowTopAboveVisibleBottom) {
+				this._setVisibleIntoParent(true);
+			} else {
+				this._setVisibleIntoParent(false);
 			}
 		},
 
@@ -232,7 +263,9 @@ define([
 			domClass.add(this._windowNode.parentNode, this.windowResizedParentClass);
 
 			this._setResizedByUser(true);
-			this._prepareMaximizeForUndoUserResize();
+			if (!this.noButtonsWindow) {
+				this._prepareMaximizeForUndoUserResize();
+			}
 		},
 
 		_onWindowUserResizeEnd: function(evt) {
@@ -287,8 +320,12 @@ define([
 
 		_decorateTitleNode: function() {
 
-			var titleTextValue = this.title || this.getOwnChannel(),
-				titleTextNode = put(this._windowTitleNode, "div." + this.windowTitleValueClass, titleTextValue);
+			var windowTitle = this.windowTitle || this.getOwnChannel(),
+				titleTextValue = this.i18n[windowTitle] || this.title || this.getOwnChannel();
+
+			put(this._windowTitleNode, '[id="' + windowTitle + '"]');
+
+			put(this._windowTitleNode, "div." + this.windowTitleValueClass, titleTextValue);
 
 			if (!this.noButtonsWindow) {
 				this._createWindowButtons();
@@ -320,6 +357,10 @@ define([
 
 			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
 
+			if (this.resizable) {
+				domClass.add(this._resizeHandleNode, this.hiddenClass);
+			}
+
 			domStyle.set(this.node, "height", 0);
 			domStyle.set(this._windowNode.parentNode, "height", this.titleHeight + "px");
 		},
@@ -329,6 +370,10 @@ define([
 			this._resizeAfterMinimizeToggle();
 
 			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
+
+			if (this.resizable) {
+				domClass.remove(this._resizeHandleNode, this.hiddenClass);
+			}
 
 			domStyle.set(this.node, "height", "calc(100% - " + this.titleHeight + "px)");
 			domStyle.set(this._windowNode.parentNode, "height", "");
@@ -482,6 +527,16 @@ define([
 		_setResizedByUser: function(value) {
 
 			this.statusFlags.resizedByUser = value;
+		},
+
+		_getVisibleIntoParent: function() {
+
+			return this.statusFlags.visibleIntoParent;
+		},
+
+		_setVisibleIntoParent: function(value) {
+
+			this.statusFlags.visibleIntoParent = value;
 		},
 
 		_hide: function(req) {

@@ -5,10 +5,9 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/Deferred"
+	, "dojo/request"
 	, "put-selector/put"
 	, "templates/PlaceNamesList"
-	, "redmic/store/xml2json"
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
@@ -20,10 +19,9 @@ define([
 	, redmicConfig
 	, declare
 	, lang
-	, Deferred
+	, request
 	, put
 	, TemplateList
-	, xml2json
 	, Pagination
 	, Total
 	, GeoJsonLayerImpl
@@ -62,7 +60,16 @@ define([
 				idProperty: "id",
 				title: this.i18n.placeNames,
 
-				noFixedZoom: false
+				noFixedZoom: false,
+
+				// timeout: int
+				// 	Tiempo en milisegundos de espera por la respuesta antes de dar error.
+				timeout: 10000,
+
+				// overflow: Boolean
+				// 	Informa sobre si ha habido más resultados que el máximo por página.
+				overflow: false
+
 			};
 
 			lang.mixin(this, this.config, args);
@@ -144,11 +151,6 @@ define([
 
 			this._publish(this._buildChannel(this.mapChannel, this.actions.ADD_LAYER), this.geoJsonLayer);
 
-			// Instanciamos el conversor
-			this.conversor = new xml2json({
-				url: this.target
-			});
-
 			this.clearButton = new Button({
 				iconClass: "fa fa-eraser",
 				'class': "warning",
@@ -164,37 +166,19 @@ define([
 
 		_resetTarget: function() {
 
-			var envDfd = window.env;
+			var target = this.baseTarget;
 
-			if (!envDfd) {
-				var dfd = new Deferred();
-				dfd.resolve();
-
-				return dfd;
+			if (this.numPage !== 0) {
+				target += "/" + this.numPage;
 			}
 
-			envDfd.then(lang.hitch(this, function(envData) {
+			if (this.maxSize !== 0) {
+				target += "/" + this.maxSize;
+			}
 
-				var target = redmicConfig.getServiceUrl(this.baseTarget, envData);
+			target += '/';
 
-				if (this.numPage !== 0) {
-					target += "/" + this.numPage;
-				}
-
-				if (this.maxSize !== 0) {
-					target += "/" + this.maxSize;
-				}
-
-				target += '/';
-
-				this.target = target;
-
-				if (this.conversor) {
-					this.conversor.url = this.target;
-				}
-			}));
-
-			return envDfd;
+			this.target = target;
 		},
 
 		_beforeShow: function(request) {
@@ -226,8 +210,8 @@ define([
 
 		_drawPlaceName: function(placeName) {
 
-			var lat = parseFloat(placeName.y),
-				lng = parseFloat(placeName.x),
+			var lat = parseFloat(placeName.latitud),
+				lng = parseFloat(placeName.longitud),
 				geoJson = {
 					type: "Feature",
 					geometry: {
@@ -321,9 +305,8 @@ define([
 			this.numPage = (from / size) + 1,
 			this.maxSize = size;
 
-			var dfd = this._resetTarget();
-
-			dfd.then(lang.hitch(this, this._newSearch, this._lastSearch));
+			this._resetTarget();
+			this._newSearch(this._lastSearch);
 		},
 
 		_newSearch: function(obj) {
@@ -332,26 +315,47 @@ define([
 				return;
 			}
 
-			var value = obj.text,
-				dfd;
+			var value = obj.text;
 
 			if (!this._lastSearch || this._lastSearch.text !== value) {
 				this._lastSearch = obj;
-				dfd = this._resetPagination();
+				this._resetPagination();
 			}
 
-			if (!dfd) {
-				dfd = new Deferred();
-				dfd.resolve();
+			// Buscamos en el servicio
+			this._findByText(value).then(
+				lang.hitch(this, this._responseDataConversor),
+				lang.hitch(this, this._errorDataConversor));
+		},
+
+		_findByText: function(value) {
+
+			var params = {
+				texto: value
+			};
+
+			return request(this._generateUrl(params), {
+				handleAs: "json",
+				timeout: this.timeout
+			});
+		},
+
+		_generateUrl: function(/*Object*/ params) {
+			// summary:
+			//		Prepara la url con los parámetros de búsqueda.
+			// tags:
+			//		private
+			// params:
+			//		Parámetros de búsqueda.
+
+			var query = "";
+			for (var key in params) {
+				var hasSeveralQuestionMarks = this.target.indexOf("?") !== -1;
+				query += hasSeveralQuestionMarks ? "&" : "?";
+				query += key + "=" + params[key];
 			}
 
-			dfd.then(lang.hitch(this, function(value) {
-
-				// Buscamos en el servicio
-				this.conversor.find({
-					texto: value
-				}).then(lang.hitch(this, this._responseDataConversor), lang.hitch(this, this._errorDataConversor));
-			}, value));
+			return this.target + query;
 		},
 
 		_resetPagination: function() {
@@ -362,15 +366,17 @@ define([
 
 			this.numPage = 1;
 			this._publish(this.browser.getChannel("RESET_PAGINATION"));
-			return this._resetTarget();
+			this._resetTarget();
 		},
 
 		_responseDataConversor: function(res) {
 
 			var value = res.data,
 				total = res.total,
+				urlNext = res.urlnext,
 				data = [];
 
+			this.overflow = !!urlNext;
 			this.placeNames = value;
 
 			for (var key in value) {

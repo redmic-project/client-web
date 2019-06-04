@@ -93,7 +93,7 @@ define([
 				returnDfd = new Deferred(),
 				cbk = lang.hitch(this, afterOriginalDfd, returnDfd);
 
-			if (dfd && dfd.then && !dfd.isFulfilled()) {
+			if (dfd && dfd.then) {
 				dfd.then(cbk);
 			} else {
 				cbk();

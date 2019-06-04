@@ -23,7 +23,8 @@ define([
 	, declare
 	, lang
 ){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection, _ListenActivityDataAndAccessByActivityCategory], {
+	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection,
+		_ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
 		//		Vista detalle de Activity tracking.
 
@@ -33,8 +34,8 @@ define([
 				_titleRightButtonsList: [],
 				noScroll: true,
 				propsWidget: {
-					noButtonsWindow: true,
-					noTitleWindow: true
+					omitTitleBar: true,
+					resizable: false
 				},
 
 				baseTargetChildren: redmicConfig.services.elementsTrackingActivity,

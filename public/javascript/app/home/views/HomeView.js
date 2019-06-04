@@ -38,7 +38,7 @@ define([
 				centerTitle: true,
 				noScroll: true,
 				propsWidget: {
-					noButtonsWindow: true
+					omitTitleButtons: true
 				}
 			};
 

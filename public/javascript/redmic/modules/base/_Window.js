@@ -1,142 +1,276 @@
 define([
-	"dojo/_base/lang"
-	, "dojo/Deferred"
-	, "dojo/dom-attr"
-	, "dojo/dom-class"
-	, "dojo/dom-style"
-	, "dojo/promise/all"
-	, "put-selector/put"
-	, "templates/LoadingArrows"
+	'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'dojo/dom-attr'
+	, 'dojo/dom-class'
+	, 'dojo/dom-style'
+	, 'dojo/on'
+	, 'put-selector/put'
 ], function(
 	lang
 	, Deferred
 	, domAttr
 	, domClass
 	, domStyle
-	, all
+	, on
 	, put
-	, LoadingTemplate
-){
+) {
+
 	return {
 		//	summary:
 		//		Extensión para asignar una ventana a los módulos con visualización.
 		//	description:
 		//		Añade al módulo una barra de título con controles.
 
-		titleHeight: 30,
+		windowResizedParentClass: 'resizedByUser',
+		windowResizableClass: 'resizable',
+		windowContainerClass: 'moduleWindow',
+		resizeHandleClass: 'resizeHandle',
 
+		windowTitleClass: 'windowTitle',
+		windowTitleValueClass: 'title',
+		windowButtonContainerClass: 'buttons',
+
+		buttonPrefixClass: 'fa',
+		minimizeButtonClass: 'fa-window-minimize',
+		maximizeButtonClass: 'fa-window-maximize',
+		restoreButtonClass: 'fa-window-restore',
+		closeButtonClass: 'fa-close',
+
+		windowContentClass: 'windowContent',
+		windowWithoutTitleContentClass: 'windowWithoutTitleContent',
+
+		hiddenClass: 'hidden',
+
+		titleHeight: 30,
 		minWidth: 200,
 
-		loadingClass: "loadingWrapper",
-		loadingAttr: "loading",
+		widthByColsAttr: 'data-cols',
+		minWidthCols: 1,
+		maxWidthCols: 6,
 
-		windowActions: {
-			SHOW_WINDOW: "showWindow"
-		},
+		resizableBottomPadding: 15,
 
-		postCreate: function() {
+		scrollMargin: 10,
 
-			if (this.noTitleWindow) {
-				this.noTitleWindow = true;
-				this.noCloseWindow = true;
-				this.titleHeight = 0;
-			}
+		omitTitleBar: false,
+		omitTitleButtons: false,
+		omitTitleCloseButton: false,
+		resizable: true,
+		scrollSensitive: true,
 
-			this.inherited(arguments);
-		},
+		_resizableForcedMinWidth: 100,
+		_validSizeInterval: 100,
+		_userResizeTimeout: 100,
+		_emitResizeTimeout: 100,
 
-		_mixEventsAndActions: function () {
 
-			this.inherited(arguments);
-
-			lang.mixin(this.actions, this.windowActions);
-			delete this.windowActions;
-		},
-
-		_defineSubscriptions: function () {
+		_setShowOwnCallbacksForEvents: function () {
 
 			this.inherited(arguments);
 
-			this.subscriptionsConfig.push({
-				channel : this.getChannel("SHOW_WINDOW"),
-				callback: "_subShowWindow",
-				options: {
-					predicate: lang.hitch(this, this._chkShowWindow)
-				}
-			});
+			this._onEvt('ANCESTOR_SHOW', lang.hitch(this, this._onWindowAncestorShown));
+		},
+
+		_onWindowAncestorShown: function() {
+
+			this._prepareToEmitResize();
 		},
 
 		_beforeShow: function(req) {
 
-			var originalRet = this.inherited(arguments),
-				dfdWindow = new Deferred();
-
-			this._dfdWindow = dfdWindow;
-
-			req && req.node && this._createWindow(req.node.domNode || req.node);
-
-			if (originalRet && originalRet.resolve && !originalRet.isFulfilled()) {
-				return all([originalRet, dfdWindow]);
+			if (this._getPreviouslyShown()) {
+				this._removeNodeListeners();
 			}
 
-			return dfdWindow;
+			var node;
+
+			if (req && req.node) {
+				node = req.node.domNode || req.node;
+			} else {
+				node = this.currentNode;
+			}
+
+			if (node) {
+				this._originalWidthByCols = domAttr.get(node, this.widthByColsAttr);
+				this._createWindow(node);
+			}
+
+			return this.inherited(arguments);
 		},
 
 		_createWindow: function(node) {
 
-			this._windowNode = put(node, "div.moduleWindow");
+			this._emitEvt('LOADING');
 
-			if (this.classModule) {
-				put(this._windowNode, "." + this.classModule);
+			var containerClass = this.windowContainerClass;
+
+			if (this.resizable) {
+				containerClass += '.' + this.windowResizableClass;
 			}
 
-			this._createWindowTitle();
+			this._windowNode = put(node, 'div.' + containerClass);
+
+			if (this.resizable) {
+				this._createWindowResizeComponents();
+			}
+
+			if (!this.omitTitleBar) {
+				this._createWindowTitle();
+				this._decorateTitleNode();
+			}
+
 			this._createWindowContent();
+			this._addNodeListeners();
+		},
 
-			this._loadWindowContent();
+		_createWindowResizeComponents: function() {
 
-			this._decorateTitleNode();
-			this._decorateContentNode();
+			this._limitMaxHeightToAvailableHeight();
+
+			this._resizeHandleNode = put('i.' + this.resizeHandleClass);
+			put(this._windowNode, this._resizeHandleNode);
+		},
+
+		_limitMaxHeightToAvailableHeight: function() {
+
+			var currMaxHeight = window.innerHeight;
+
+			if (this._lastMaxHeight !== currMaxHeight) {
+				this._lastMaxHeight = currMaxHeight;
+				domStyle.set(this._windowNode, 'max-height', (currMaxHeight + this.resizableBottomPadding) + 'px');
+			}
 		},
 
 		_createWindowTitle: function() {
 
-			this._windowTitleNode = put(this._windowNode, "div.windowTitle");
+			this._windowTitleNode = put(this._windowNode, 'div.' + this.windowTitleClass);
 
-			domStyle.set(this._windowTitleNode, "height", this.titleHeight + "px");
+			domStyle.set(this._windowTitleNode, 'height', this.titleHeight + 'px');
 		},
 
 		_createWindowContent: function() {
 
-			var classWindowContent = '.windowContent';
+			var contentClass = this.windowContentClass,
+				titleHeight = this.titleHeight;
 
-			if (!this.titleHeight) {
-				classWindowContent += '.windowContenNoTitle';
+			if (this.omitTitleBar) {
+				contentClass += '.' + this.windowWithoutTitleContentClass;
+				titleHeight = 0;
 			}
-
-			this._windowContentNode = put(this._windowNode, "div" + classWindowContent);
 
 			if (this.classWindowContent) {
-				put(this._windowContentNode, "." + this.classWindowContent);
+				contentClass += '.' + this.classWindowContent;
 			}
 
-			domStyle.set(this._windowContentNode, "height", "calc(100% - " + this.titleHeight + "px)");
+			this._windowContentNode = put(this._windowNode, 'div.' + contentClass);
+
+			var contentHeight = 'calc(100% - ' + titleHeight + 'px)';
+			domStyle.set(this._windowContentNode, 'height', contentHeight);
 		},
 
-		_chkShowWindow: function(req) {
+		_addNodeListeners: function() {
 
-			return !!(this._dfdWindow && this._dfdWindow.resolve);
+			if (!this._transitionEndCallback) {
+				this._transitionEndCallback = lang.hitch(this, this._onWindowTransitionEnd);
+			}
+
+			this._windowContentNode.addEventListener('transitionend', this._transitionEndCallback);
+			this._windowNode.parentNode.addEventListener('transitionend', this._transitionEndCallback);
+
+			if (this.scrollSensitive) {
+				this._windowNode.parentNode.parentNode.addEventListener('scroll', lang.hitch(this,
+					this._onGrandParentScroll));
+			}
+
+			if (this.resizable) {
+				this._windowNode.addEventListener('mousedown', lang.hitch(this, this._onWindowUserResizeStart));
+			}
 		},
 
-		_subShowWindow: function(req) {
+		_removeNodeListeners: function() {
 
-			this._loadedWindowContent();
+			this._windowContentNode.removeEventListener('transitionend', this._transitionEndCallback);
 
-			if (this._dfdWindow.isFulfilled()) {
-				console.error("Deferred is already fulfilled at module '%s'", this.getChannel());
+			if (this._windowNode.parentNode) {
+				this._windowNode.parentNode.removeEventListener('transitionend', this._transitionEndCallback);
+			}
+		},
+
+		_onWindowTransitionEnd: function(evt) {
+
+			var propName = evt.propertyName;
+
+			if (propName === 'height' && this._minimizeDfd) {
+				this._minimizeDfd.resolve();
+			}
+
+			if (propName === 'width' && this._maximizeDfd) {
+				this._maximizeDfd.resolve();
+			}
+		},
+
+		_onGrandParentScroll: function(evt) {
+
+			var gParent = evt.target,
+				gParentVisibleTop = gParent.scrollTop - this.scrollMargin,
+				gParentVisibleBottom = gParent.scrollTop + gParent.offsetHeight + this.scrollMargin,
+
+				parent = this._windowNode.parentNode,
+				windowTop = domStyle.get(parent, 'top'),
+				windowBottom = windowTop + parent.offsetHeight,
+
+				windowTopAboveVisibleBottom = gParentVisibleBottom >= windowTop,
+				windowBottomUnderVisibleTop = gParentVisibleTop <= windowBottom;
+
+			if (windowBottomUnderVisibleTop && windowTopAboveVisibleBottom) {
+				this._setVisibleIntoParent(true);
 			} else {
-				this._dfdWindow.resolve();
+				this._setVisibleIntoParent(false);
 			}
+		},
+
+		_onWindowUserResizeStart: function(evt) {
+
+			on.once(window, 'mouseup', lang.hitch(this, this._onWindowUserResizeEnd));
+
+			if (!this._windowMutationObserver) {
+				this._windowMutationObserver = new MutationObserver(lang.partial(this._onWindowResizeProgress, this));
+			}
+
+			this._windowMutationObserver.observe(this._windowNode, {
+				attributes: true,
+				attributeFilter: ['style']
+			});
+		},
+
+		_onWindowResizeProgress: function(self, mutations) {
+
+			if (!self._resizeMutationHandler) {
+				lang.hitch(self, self._onWindowResizeProgressFirstUpdate)();
+				self._resizeMutationHandler = this;
+			}
+
+			clearTimeout(self._userResizeTimeoutHandler);
+			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._prepareToEmitResize),
+				self._userResizeTimeout);
+		},
+
+		_onWindowResizeProgressFirstUpdate: function() {
+
+			// TODO sería mejor que esta clase la colocase el propio padre (details) cuando este lo pida
+			domClass.add(this._windowNode.parentNode, this.windowResizedParentClass);
+
+			this._setResizedByUser(true);
+			if (!this.omitTitleBar && !this.omitTitleButtons) {
+				this._prepareMaximizeForUndoUserResize();
+			}
+		},
+
+		_onWindowUserResizeEnd: function(evt) {
+
+			this._resizeMutationHandler && this._resizeMutationHandler.disconnect();
+			delete this._resizeMutationHandler;
 		},
 
 		_show: function(req) {
@@ -150,159 +284,264 @@ define([
 
 		_afterShow: function() {
 
-			var originalRet = this.inherited(arguments);
+			var originalRet = this.inherited(arguments),
+				afterCbk = lang.hitch(this, this._onWindowShown);
 
-			if (originalRet && originalRet.resolve && !originalRet.isFulfilled()) {
-				originalRet.then(lang.hitch(this, this._emitResize));
+			if (originalRet && originalRet.then) {
+				originalRet.then(afterCbk);
 			} else {
-				this._emitResize();
+				afterCbk();
 			}
 
 			return originalRet;
 		},
 
+		_onWindowShown: function() {
+
+			var validSizeDfd = new Deferred();
+
+			validSizeDfd.then(lang.hitch(this, this._onWindowValidSize));
+
+			this._validSizeIntervalHandler = setInterval(lang.hitch(this, function(dfd) {
+
+				if (this.node.offsetWidth) {
+					clearInterval(this._validSizeIntervalHandler);
+					dfd.resolve();
+				}
+			}, validSizeDfd), this._validSizeInterval);
+		},
+
+		_onWindowValidSize: function() {
+
+			this._emitEvt('LOADED');
+			this._prepareToEmitResize();
+		},
+
 		_decorateTitleNode: function() {
 
-			var titleTextNode = put(this._windowTitleNode, "div.title", this.title || this.ownChannel);
+			var windowTitle = this.windowTitle || this.getOwnChannel(),
+				titleTextValue = this.i18n[windowTitle] || this.title || this.getOwnChannel();
 
-			if (this.noButtonsWindow) {
-				return;
+			put(this._windowTitleNode, '[id="' + windowTitle + '"]');
+
+			put(this._windowTitleNode, 'div.' + this.windowTitleValueClass, titleTextValue);
+
+			if (!this.omitTitleButtons) {
+				this._createWindowButtons();
 			}
+		},
 
-			var	buttonsNode = put(this._windowTitleNode, "div.buttons");
+		_createWindowButtons: function() {
 
-			this._minimizeButton = put(buttonsNode, "i.fa.fa-minus");
-			this._maximizeButton = put(buttonsNode, "i.fa.fa-square-o");
+			var	buttonsNode = put(this._windowTitleNode, 'div.' + this.windowButtonContainerClass),
+				minimizeButtonClass = '.' + this.buttonPrefixClass + '.' + this.minimizeButtonClass,
+				maximizeButtonClass = '.' + this.buttonPrefixClass + '.' + this.maximizeButtonClass,
+				closeButtonClass = '.' + this.buttonPrefixClass + '.' + this.closeButtonClass;
 
-			if (!this.noCloseWindow) {
-				this._closeButton = put(buttonsNode, "i.fa.fa-close");
-			}
-
+			this._minimizeButton = put(buttonsNode, 'i' + minimizeButtonClass);
 			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
+
+			this._maximizeButton = put(buttonsNode, 'i' + maximizeButtonClass);
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
 
-			if (!this.noCloseWindow) {
+			if (!this.omitTitleCloseButton) {
+				this._closeButton = put(buttonsNode, 'i' + closeButtonClass);
 				this._closeButton.onclick = lang.hitch(this, this._closeModule);
 			}
 		},
 
-		_decorateContentNode: function() {
-
-			domStyle.set(this._windowContentNode, "border-top-left-radius", 0);
-			domStyle.set(this._windowContentNode, "border-top-right-radius", 0);
-			domStyle.set(this._windowContentNode, "border-bottom-left-radius", "5px");
-			domStyle.set(this._windowContentNode, "border-bottom-right-radius", "5px");
-		},
-
 		_minimizeModule: function() {
 
-			domStyle.set(this.node, "height", 0);
-			domStyle.set(this._windowNode.parentNode, "height", this.titleHeight + "px");
+			this._resizeAfterMinimizeToggle();
 
 			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
 
-			this._emitResize();
+			if (this.resizable) {
+				domClass.add(this._resizeHandleNode, this.hiddenClass);
+			}
+
+			domStyle.set(this.node, 'height', 0);
+			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'px');
 		},
 
 		_minimizeModuleReturn: function() {
 
-			domStyle.set(this.node, "height", "calc(100% - " + this.titleHeight + "px)");
-			domStyle.set(this._windowNode.parentNode, "height", "");
+			this._resizeAfterMinimizeToggle();
 
 			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
 
-			this._emitResize();
+			if (this.resizable) {
+				domClass.remove(this._resizeHandleNode, this.hiddenClass);
+			}
+
+			domStyle.set(this.node, 'height', 'calc(100% - ' + this.titleHeight + 'px)');
+			domStyle.set(this._windowNode.parentNode, 'height', '');
+		},
+
+		_resizeAfterMinimizeToggle: function() {
+
+			if (this._minimizeDfd) {
+				this._minimizeDfd.reject();
+			}
+
+			this._minimizeDfd = new Deferred();
+			this._minimizeDfd.then(lang.hitch(this, this._prepareToEmitResize), function() {});
 		},
 
 		_maximizeModule: function() {
 
-			this._previousWidth = domAttr.get(this._windowNode.parentNode, "data-cols");
-			domAttr.set(this._windowNode.parentNode, "data-cols", "6");
+			this._resizeAfterMaximizeToggle();
 
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModuleReturn);
+			this._updateMaximizeButtonIcon(true);
+
+			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this.maxWidthCols);
 
 			this._minimizeModuleReturn();
 		},
 
 		_maximizeModuleReturn: function() {
 
-			domAttr.set(this._windowNode.parentNode, "data-cols", this._previousWidth);
+			this._resizeAfterMaximizeToggle();
 
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
+			this._updateMaximizeButtonIcon(false);
 
-			this._emitResize();
+			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this._originalWidthByCols);
 		},
 
-		_disableMaximize: function() {
+		_prepareMaximizeForUndoUserResize: function() {
 
-			domClass.add(this._maximizeButton, "hidden");
+			this._maximizeButton.onclick = lang.hitch(this, this._undoUserResize);
+			this._updateMaximizeButtonIcon(true);
+		},
+
+		_undoUserResize: function() {
+
+			domStyle.set(this._windowNode, 'width', null);
+			domStyle.set(this._windowNode, 'height', null);
+			// TODO sería mejor que esta clase la colocase el propio padre (details) cuando este lo pida
+			domClass.remove(this._windowNode.parentNode, this.windowResizedParentClass);
+
+			this._setResizedByUser(false);
+			this._prepareToEmitResize();
+
+			this._maximizeModuleReturn();
+		},
+
+		_resizeAfterMaximizeToggle: function() {
+
+			if (this._maximizeDfd) {
+				this._maximizeDfd.reject();
+			}
+
+			this._maximizeDfd = new Deferred();
+			this._maximizeDfd.then(lang.hitch(this, this._prepareToEmitResize), function() {});
+		},
+
+		_updateMaximizeButtonIcon: function(/*Boolean*/ altIcon) {
+
+			var classToAdd, classToRemove;
+
+			if (altIcon) {
+				classToAdd = this.restoreButtonClass;
+				classToRemove = this.maximizeButtonClass;
+			} else {
+				classToAdd = this.maximizeButtonClass;
+				classToRemove = this.restoreButtonClass;
+			}
+
+			domClass.add(this._maximizeButton, classToAdd);
+			domClass.remove(this._maximizeButton, classToRemove);
 		},
 
 		_closeModule: function() {
 
-			domStyle.set(this._windowNode.parentNode, "display", "none");
+			domStyle.set(this._windowNode.parentNode, 'display', 'none');
 
-			this._emitResize();
+			this._prepareToEmitResize();
+		},
+
+		_resize: function() {
+
+			this._limitMaxHeightToAvailableHeight();
+			this._prepareToEmitResize();
+
+			this.inherited(arguments);
+		},
+
+		_prepareToEmitResize: function() {
+
+			clearTimeout(this._emitResizeTimeoutHandler);
+			this._emitResizeTimeoutHandler = setTimeout(lang.hitch(this, this._emitResize), this._emitResizeTimeout);
 		},
 
 		_emitResize: function() {
 
-			setTimeout(lang.hitch(this, function() {
-				if (this.node && this.node.offsetWidth && this.node.offsetWidth < this.minWidth) {
-					this._maximizeModule();
-					this._disableMaximize();
-				}
-
-				// TODO esto debería ser responsabilidad de _Show, y emitirlo siempre cuando acabe
-				// de hacer el _resize (quizá con un dfd de retorno??). Pensar
-				this._emitEvt('RESIZE', {
-					width: this.node.offsetWidth,
-					height: this.node.offsetHeight
-				});
-			}), 300);
-		},
-
-		// TODO estos métodos son copias de Loading. Cambiarlo para que se encargue Loading de hacerlo, o bien abstraerlo en
-		// una zona común a ambos!!!!!
-		_loadWindowContent: function() {
-
-			var node = this._windowContentNode;
-
-			this._loadingWindowContentNode = this._getLoadingElement(this.loadingClass);
-
-			put(node, this._loadingWindowContentNode);
-			put(node, "[" + this.loadingAttr + "=true]");
-
-			domStyle.set(this._loadingWindowContentNode, "position", "relative");
-		},
-
-		// TODO estos métodos son copias de Loading. Cambiarlo para que se encargue Loading de hacerlo, o bien abstraerlo en
-		// una zona común a ambos!!!!!
-		_getLoadingElement: function(nodeClass) {
-
-			var node = put("div." + nodeClass);
-			node.innerHTML = LoadingTemplate();
-
-			return node;
-		},
-
-		// TODO estos métodos son copias de Loading. Cambiarlo para que se encargue Loading de hacerlo, o bien abstraerlo en
-		// una zona común a ambos!!!!!
-		_loadedWindowContent: function() {
-
-			if (!this._loadingWindowContentNode) {
-				console.error("Loading node not found when tried to hide it, at module '%s'", this.getChannel());
+			if (!this.node) {
 				return;
 			}
 
-			put(this._windowContentNode, "[!" + this.loadingAttr + "]");
-			put(this._loadingWindowContentNode, "!");
-			this._loadingWindowContentNode = null;
+			if (!this._getResizedByUser()) {
+				this._autoMaximizeOnLowWidth();
+			}
+
+			// TODO esto debería ser responsabilidad de _Show, y emitirlo siempre cuando acabe
+			// de hacer el _resize (quizá con un dfd de retorno??). Pensar
+			this._emitEvt('RESIZE', {
+				width: this.node.offsetWidth,
+				height: this.node.offsetHeight
+			});
+		},
+
+		_autoMaximizeOnLowWidth: function() {
+
+			if (!this.node.offsetWidth || (this.resizable && this.node.offsetWidth === this._resizableForcedMinWidth)) {
+				return;
+			}
+
+			if (this.node.offsetWidth < this.minWidth) {
+				this._setAutoMaximized(true);
+				this._maximizeModule();
+			} else if (this._getAutoMaximized()) {
+				this._setAutoMaximized(false);
+			}
+		},
+
+		_getAutoMaximized: function() {
+
+			return this.statusFlags.autoMaximized;
+		},
+
+		_setAutoMaximized: function(value) {
+
+			this.statusFlags.autoMaximized = value;
+		},
+
+		_getResizedByUser: function() {
+
+			return this.statusFlags.resizedByUser;
+		},
+
+		_setResizedByUser: function(value) {
+
+			this.statusFlags.resizedByUser = value;
+		},
+
+		_getVisibleIntoParent: function() {
+
+			return this.statusFlags.visibleIntoParent;
+		},
+
+		_setVisibleIntoParent: function(value) {
+
+			this.statusFlags.visibleIntoParent = value;
 		},
 
 		_hide: function(req) {
 
-			put(this._windowNode, "!");
+			this._removeNodeListeners();
+			put(this._windowNode, '!');
 
 			this.inherited(arguments);
 		}

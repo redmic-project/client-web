@@ -189,6 +189,10 @@ define([
 
 			this._chartInstance = this._createChartLayer();
 
+			if (!this.chartsData) {
+				return;
+			}
+
 			var label = this.chartsData[this._currentDataSelectorValue].timeInterval;
 			this._publish(this._chartInstance.getChannel("SET_PROPS"), {
 				label: Utilities.formatDate(label, "dateTime")
@@ -198,9 +202,7 @@ define([
 				layerInstance: this._chartInstance
 			});
 
-			if (this.chartsData) {
-				this._addDataToChart();
-			}
+			this._addDataToChart();
 		},
 
 		_createChartLayer: function(layerConfig) {

@@ -173,12 +173,13 @@ define([
 
 		_needToHideOrShowWidgets: function(data) {
 
-			var i;
+			var i, widgetKey;
 
 			if (this._lastDataLength && this._lastDataLength > data.length) {
-				//this._hideAndDisconnectWidget("linearChartsContainer");
 				for (i = data.length; i < this._lastDataLength; i++) {
-					this._hideAndDisconnectWidget("multiPieChartContainer" + i);
+					widgetKey = "multiPieChartContainer" + i;
+					this._hideWidget(widgetKey);
+					this._disconnectWidget(widgetKey);
 				}
 
 				this._lastWidgetsShow = {
@@ -186,16 +187,17 @@ define([
 					size: this._lastDataLength - data.length
 				};
 
-				this._updateInteractive();
+				//this._updateInteractive();
 			} else if (this._lastWidgetsShow) {
-				//this._connectAndShowWidgetAndWindow("linearChartsContainer");
 				for (i = this._lastWidgetsShow.i; i <= this._lastWidgetsShow.size; i++) {
-					this._connectAndShowWidgetAndWindow("multiPieChartContainer" + i);
+					widgetKey = "multiPieChartContainer" + i;
+					this._connectWidget(widgetKey);
+					this._showWidget(widgetKey);
 				}
 
 				this._lastWidgetsShow = null;
 
-				this._updateInteractive();
+				//this._updateInteractive();
 			}
 		},
 

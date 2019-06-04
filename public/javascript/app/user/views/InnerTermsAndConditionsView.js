@@ -24,9 +24,8 @@ define([
 			this.config = {
 				noScroll: true,
 				propsWidget: {
-					noCloseWindow: true,
-					noButtonsWindow: true,
-					noTitleWindow: true
+					omitTitleBar: true,
+					resizable: false
 				},
 				title: this.i18n.termCondition
 			};

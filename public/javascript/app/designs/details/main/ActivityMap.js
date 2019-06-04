@@ -23,7 +23,8 @@ define([
 	, _RadiusOnClick
 	, Geographic
 ){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection, _ListenActivityDataAndAccessByActivityCategory], {
+	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection,
+		_ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
 		//		Vista detalle de ActivityMap.
 
@@ -34,8 +35,8 @@ define([
 				_activeRadius: true,
 				noScroll: true,
 				propsWidget: {
-					noButtonsWindow: true,
-					noTitleWindow: true
+					omitTitleBar: true,
+					resizable: false
 				}
 			};
 

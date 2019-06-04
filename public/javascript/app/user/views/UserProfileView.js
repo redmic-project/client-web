@@ -72,7 +72,7 @@ define([
 				idProperty: "id",
 				noScroll: true,
 				propsWidget: {
-					noCloseWindow: true
+					omitTitleCloseButton: true
 				},
 				events: {
 					SAVED_FORM: "savedForm",
@@ -354,8 +354,6 @@ define([
 				toInitValues: true,
 				node: this._nodes[label]
 			});
-
-			this._publish(form.getChannel('SHOW_WINDOW'));
 		},
 
 		_showBoxUser: function(target) {
@@ -371,8 +369,6 @@ define([
 			this._publish(instanceWidget.getChannel("SHOW"), {
 				node: this._nodes[label]
 			});
-
-			this._publish(instanceWidget.getChannel('SHOW_WINDOW'));
 		},
 
 		_subscribeToWidgets: function() {

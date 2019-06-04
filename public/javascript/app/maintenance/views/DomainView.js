@@ -22,7 +22,7 @@ define([
 			this.config = {
 				noScroll: true,
 				propsWidget: {
-					noCloseWindow: true
+					omitTitleCloseButton: true
 				}
 			};
 

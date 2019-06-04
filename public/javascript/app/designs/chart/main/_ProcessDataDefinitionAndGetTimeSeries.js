@@ -312,6 +312,10 @@ define([
 
 			this.inherited(arguments);
 
+			if (!this.chartsData) {
+				return;
+			}
+
 			for (var cat in this.chartsData.definitionIndex) {
 
 				var dataDefinitionIds = [],

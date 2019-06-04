@@ -29,8 +29,8 @@ define([
 			this.config = {
 				noScroll: true,
 				propsWidget: {
-					noButtonsWindow: true,
-					noTitleWindow: true
+					omitTitleBar: true,
+					resizable: false
 				}
 			};
 

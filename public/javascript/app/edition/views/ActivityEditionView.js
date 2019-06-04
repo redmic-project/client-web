@@ -40,7 +40,9 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.activity,
-				propsToClean: ["code", "id"]
+				propsToClean: [
+					'code', 'id', 'contacts.{i}.id', 'organisations.{i}.id', 'documents.{i}.id', 'platforms.{i}.id'
+				]
 			};
 
 			lang.mixin(this, this.config, args);

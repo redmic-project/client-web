@@ -1,11 +1,11 @@
 define([
-	"dojo/_base/lang"
-	, "dojo/Deferred"
-	, "dojo/dom-attr"
-	, "dojo/dom-class"
-	, "dojo/dom-style"
-	, "dojo/on"
-	, "put-selector/put"
+	'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'dojo/dom-attr'
+	, 'dojo/dom-class'
+	, 'dojo/dom-style'
+	, 'dojo/on'
+	, 'put-selector/put'
 ], function(
 	lang
 	, Deferred
@@ -53,12 +53,11 @@ define([
 
 		scrollMargin: 10,
 
+		omitTitleBar: false,
+		omitTitleButtons: false,
+		omitTitleCloseButton: false,
 		resizable: true,
 		scrollSensitive: true,
-		// TODO renombrar estos flags aquí y donde se usen
-		noTitleWindow: false,
-		noButtonsWindow: false,
-		noCloseWindow: false,
 
 		_resizableForcedMinWidth: 100,
 		_validSizeInterval: 100,
@@ -110,13 +109,13 @@ define([
 				containerClass += '.' + this.windowResizableClass;
 			}
 
-			this._windowNode = put(node, "div." + containerClass);
+			this._windowNode = put(node, 'div.' + containerClass);
 
 			if (this.resizable) {
 				this._createWindowResizeComponents();
 			}
 
-			if (!this.noTitleWindow) {
+			if (!this.omitTitleBar) {
 				this._createWindowTitle();
 				this._decorateTitleNode();
 			}
@@ -145,9 +144,9 @@ define([
 
 		_createWindowTitle: function() {
 
-			this._windowTitleNode = put(this._windowNode, "div." + this.windowTitleClass);
+			this._windowTitleNode = put(this._windowNode, 'div.' + this.windowTitleClass);
 
-			domStyle.set(this._windowTitleNode, "height", this.titleHeight + "px");
+			domStyle.set(this._windowTitleNode, 'height', this.titleHeight + 'px');
 		},
 
 		_createWindowContent: function() {
@@ -155,7 +154,7 @@ define([
 			var contentClass = this.windowContentClass,
 				titleHeight = this.titleHeight;
 
-			if (this.noTitleWindow) {
+			if (this.omitTitleBar) {
 				contentClass += '.' + this.windowWithoutTitleContentClass;
 				titleHeight = 0;
 			}
@@ -164,10 +163,10 @@ define([
 				contentClass += '.' + this.classWindowContent;
 			}
 
-			this._windowContentNode = put(this._windowNode, "div." + contentClass);
+			this._windowContentNode = put(this._windowNode, 'div.' + contentClass);
 
-			var contentHeight = "calc(100% - " + titleHeight + "px)";
-			domStyle.set(this._windowContentNode, "height", contentHeight);
+			var contentHeight = 'calc(100% - ' + titleHeight + 'px)';
+			domStyle.set(this._windowContentNode, 'height', contentHeight);
 		},
 
 		_addNodeListeners: function() {
@@ -263,7 +262,7 @@ define([
 			domClass.add(this._windowNode.parentNode, this.windowResizedParentClass);
 
 			this._setResizedByUser(true);
-			if (!this.noButtonsWindow) {
+			if (!this.omitTitleBar && !this.omitTitleButtons) {
 				this._prepareMaximizeForUndoUserResize();
 			}
 		},
@@ -325,28 +324,28 @@ define([
 
 			put(this._windowTitleNode, '[id="' + windowTitle + '"]');
 
-			put(this._windowTitleNode, "div." + this.windowTitleValueClass, titleTextValue);
+			put(this._windowTitleNode, 'div.' + this.windowTitleValueClass, titleTextValue);
 
-			if (!this.noButtonsWindow) {
+			if (!this.omitTitleButtons) {
 				this._createWindowButtons();
 			}
 		},
 
 		_createWindowButtons: function() {
 
-			var	buttonsNode = put(this._windowTitleNode, "div." + this.windowButtonContainerClass),
+			var	buttonsNode = put(this._windowTitleNode, 'div.' + this.windowButtonContainerClass),
 				minimizeButtonClass = '.' + this.buttonPrefixClass + '.' + this.minimizeButtonClass,
 				maximizeButtonClass = '.' + this.buttonPrefixClass + '.' + this.maximizeButtonClass,
 				closeButtonClass = '.' + this.buttonPrefixClass + '.' + this.closeButtonClass;
 
-			this._minimizeButton = put(buttonsNode, "i" + minimizeButtonClass);
+			this._minimizeButton = put(buttonsNode, 'i' + minimizeButtonClass);
 			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
 
-			this._maximizeButton = put(buttonsNode, "i" + maximizeButtonClass);
+			this._maximizeButton = put(buttonsNode, 'i' + maximizeButtonClass);
 			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
 
-			if (!this.noCloseWindow) {
-				this._closeButton = put(buttonsNode, "i" + closeButtonClass);
+			if (!this.omitTitleCloseButton) {
+				this._closeButton = put(buttonsNode, 'i' + closeButtonClass);
 				this._closeButton.onclick = lang.hitch(this, this._closeModule);
 			}
 		},
@@ -361,8 +360,8 @@ define([
 				domClass.add(this._resizeHandleNode, this.hiddenClass);
 			}
 
-			domStyle.set(this.node, "height", 0);
-			domStyle.set(this._windowNode.parentNode, "height", this.titleHeight + "px");
+			domStyle.set(this.node, 'height', 0);
+			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'px');
 		},
 
 		_minimizeModuleReturn: function() {
@@ -375,8 +374,8 @@ define([
 				domClass.remove(this._resizeHandleNode, this.hiddenClass);
 			}
 
-			domStyle.set(this.node, "height", "calc(100% - " + this.titleHeight + "px)");
-			domStyle.set(this._windowNode.parentNode, "height", "");
+			domStyle.set(this.node, 'height', 'calc(100% - ' + this.titleHeight + 'px)');
+			domStyle.set(this._windowNode.parentNode, 'height', '');
 		},
 
 		_resizeAfterMinimizeToggle: function() {
@@ -458,7 +457,7 @@ define([
 
 		_closeModule: function() {
 
-			domStyle.set(this._windowNode.parentNode, "display", "none");
+			domStyle.set(this._windowNode.parentNode, 'display', 'none');
 
 			this._prepareToEmitResize();
 		},
@@ -542,7 +541,7 @@ define([
 		_hide: function(req) {
 
 			this._removeNodeListeners();
-			put(this._windowNode, "!");
+			put(this._windowNode, '!');
 
 			this.inherited(arguments);
 		}

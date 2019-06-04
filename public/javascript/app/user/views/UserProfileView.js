@@ -75,7 +75,7 @@ define([
 				idProperty: "id",
 				noScroll: true,
 				propsWidget: {
-					noCloseWindow: true
+					omitTitleCloseButton: true
 				},
 				events: {
 					SAVED_FORM: "savedForm",

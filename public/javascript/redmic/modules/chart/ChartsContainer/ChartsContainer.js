@@ -713,13 +713,17 @@ define([
 			}
 
 			this._prepareUpdateLayersPromises();
+			this._resizeChartsContainer();
+			this._prepareUpdateLayers();
+		},
+
+		_resizeChartsContainer: function() {
+
 			this._updateSize();
 
 			this.svg
 				.attr("width", this._width > 0 ? this._width : 0)
 				.attr("height", this._height > 0 ? this._height : 0);
-
-			this._prepareUpdateLayers();
 		},
 
 		_prepareUpdateLayers: function() {

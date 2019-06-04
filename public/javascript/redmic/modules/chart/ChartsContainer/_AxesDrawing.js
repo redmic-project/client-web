@@ -164,7 +164,7 @@ define([
 			this._publish(axisInstance.getChannel("CLEAR"));
 		},
 
-		_resize: function() {
+		_resizeChartsContainer: function() {
 
 			this.inherited(arguments);
 

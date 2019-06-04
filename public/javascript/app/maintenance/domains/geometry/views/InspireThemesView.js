@@ -19,7 +19,8 @@ define([
 
 			this.config = {
 				title: this.i18n.themeInspire,
-				target: this.services.themeInspire
+				target: this.services.themeInspire,
+				editionTarget: this.services.themeInspireEdition
 			};
 
 			lang.mixin(this, this.config, args);

@@ -136,7 +136,8 @@ define([], function() {
 		'affiliation': baseUri + 'organisations',
 		'animal': baseUri + 'animals',
 		'areaType': baseUri + 'areatypes',
-		'themeInspire': baseUri + 'servicesogc/themeinspire',
+		'themeInspire': baseUri + 'atlas/view/themeinspire',
+		'themeInspireEdition': baseUri + 'atlas/commands/themeinspire',
 		'toponymType': baseUri + 'toponymtypes',
 		'attributeType': baseUri + 'attributetypes',
 		'canaryProtection': baseUri + 'canaryprotections',
@@ -278,6 +279,7 @@ define([], function() {
 		'serviceOGC': baseUri + 'servicesogc/layers',
 		'serviceOGCCategory': baseUri + 'servicesogc/layers/category',
 		'serviceOGCRefresh': baseUri + 'servicesogc/layers/refresh',
+
 		'statistics': baseUri + 'statistics',
 		'administrativeStatistics': baseUri + 'statistics/administrative',
 		'qFlag': baseUri + 'qflags',

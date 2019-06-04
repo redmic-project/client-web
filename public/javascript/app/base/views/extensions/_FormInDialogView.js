@@ -28,7 +28,7 @@ define([
 		_setFormInDialogViewConfigurations: function() {
 
 			this.formConfig = this._merge([{
-				modelTarget: this.target,
+				modelTarget: this.editionTarget || this.target,
 				modelSchema: this.modelSchema,
 				idProperty: this.idProperty,
 				lockBackground: true,

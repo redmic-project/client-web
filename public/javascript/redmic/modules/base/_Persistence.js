@@ -78,7 +78,7 @@ define([
 
 		_pubSave: function(channel, obj) {
 
-			var target = this._getTarget(obj.target);
+			var target = this._getPersistenceTarget(obj.target);
 
 			this._publish(channel, {
 				idInTarget: obj.idInTarget,
@@ -88,7 +88,7 @@ define([
 			});
 		},
 
-		_getTarget: function(target) {
+		_getPersistenceTarget: function(target) {
 
 			if (target) {
 				return target;
@@ -98,11 +98,15 @@ define([
 				return this.baseTarget;
 			}
 
+			if (this.editionTarget instanceof Array) {
+				return this.editionTarget[0];
+			}
+
 			if (this.target instanceof Array) {
 				return this.target[0];
 			}
 
-			return this.target;
+			return this.editionTarget || this.target;
 		},
 
 		_subSaved: function(result) {

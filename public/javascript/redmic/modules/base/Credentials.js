@@ -57,16 +57,14 @@ define([
 
 				_filteredUrls: [
 					'token',
-					'env',
 					'reCaptcha',
 					'register',
 					'resettingRequest',
 					'resettingSetPassword',
-					'activateAccount',
-					'wms'
+					'activateAccount'
 				],
 				_loginPath: '/login',
-				_serverUrlPrefix: 'api'
+				_apiUrl: 'api'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -212,8 +210,9 @@ define([
 			if (envDfd) {
 				envDfd.then(lang.hitch(this, function(envData) {
 
-					var target = redmicConfig.getServiceUrl(redmicConfig.services.profile, envData) + '/';
+					this._apiUrl = envData.apiUrl;
 
+					var target = redmicConfig.getServiceUrl(redmicConfig.services.profile, envData) + '/';
 					request(target, {
 						method: 'GET',
 						handleAs: 'json',
@@ -302,9 +301,8 @@ define([
 
 			var lastUrlItemWithoutParams = lastUrlItem.split('?')[0],
 				isFilteredUrlItem = this._filteredUrls.indexOf(lastUrlItemWithoutParams) !== -1,
-				isSecureUrl = url.indexOf('https') !== -1,
-				isUrlToServer = url.indexOf(this._serverUrlPrefix) !== -1,
-				urlNeedsAuth = (isSecureUrl || isUrlToServer) && !isFilteredUrlItem;
+				isUrlToServer = url.indexOf(this._apiUrl) !== -1,
+				urlNeedsAuth = isUrlToServer && !isFilteredUrlItem;
 
 			if (urlNeedsAuth) {
 				if (!options.headers) {

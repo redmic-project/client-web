@@ -18,7 +18,7 @@ define([
 			this.config = {
 				ownChannel: "addItemGateway",
 				target: null,
-				ouputTarget: null,
+				outputTarget: null,
 				btnToListen: "addItem"
 			};
 

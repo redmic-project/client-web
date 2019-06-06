@@ -193,12 +193,11 @@ define([
 
 		_updateHierarchicalExpandCollapse: function(leaves) {
 
-			put(this.expandCollapseIconNode, "!hidden");
-			put(this.domNode, "!category");
-
 			if (leaves) {
+				put(this.expandCollapseIconNode, "!hidden");
 				put(this.domNode, ".category");
 			} else {
+				put(this.domNode, "!category");
 				put(this.expandCollapseIconNode, ".hidden");
 			}
 		}

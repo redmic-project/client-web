@@ -243,13 +243,14 @@ define([
 		_showRow: function(item) {
 
 			var idProperty = item[this.idProperty],
-				rowInstance = this._getRowInstance(idProperty);
+				rowInstance = this._getRowInstance(idProperty),
+				itemDoesNotBelongToRootLevel = !this._checkItemBelongRootLevel(item);
 
-			if (!rowInstance || !this._checkItemBelongRootLevel(item)) {
+			if (!rowInstance || itemDoesNotBelongToRootLevel) {
 				return;
 			}
 
-			if (item[this.leavesProperty]) {
+			if (itemDoesNotBelongToRootLevel) {
 				this._pendingParentsToShow.push(idProperty);
 				return;
 			}
@@ -303,7 +304,7 @@ define([
 				path = item[this.pathProperty],
 				pathLength = path ? path.split(this.pathSeparator).length : null;
 
-			return !(pathLength > this.pathLengthMinChildren || pathLength < this.pathLengthMinParent);
+			return pathLength <= this.pathLengthMinChildren && pathLength >= this.pathLengthMinParent;
 		},
 
 		_addItemWithoutInstance: function(idProperty, item) {

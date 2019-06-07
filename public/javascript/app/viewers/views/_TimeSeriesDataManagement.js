@@ -28,8 +28,18 @@ define([
 			this.config = {
 				dataViewEvents: {},
 				dataViewActions: {},
-				_listDataReturnFields: ["id", "properties", "uuid"],
-				_mapReturnFields: ["geometry", "properties", "uuid"],
+				_listDataReturnFields: [
+					"uuid", "properties.activityId", "properties.site.path", "properties.site.name",
+					"properties.site.code", "properties.measurements.parameter.id",
+					"properties.measurements.parameter.name", "properties.measurements.unit.id",
+					"properties.measurements.unit.name", "properties.measurements.dataDefinition.id",
+					"properties.measurements.dataDefinition.z"
+				],
+				_mapReturnFields: ["uuid", "geometry", "properties.activityId", "properties.site.path",
+					"properties.site.name", "properties.site.code", "properties.measurements.parameter.id",
+					"properties.measurements.parameter.name", "properties.measurements.unit.id",
+					"properties.measurements.unit.name", "properties.measurements.dataDefinition.id"
+				],
 				_dataList: [],
 				_indexDataList: {},
 				_getListDataDfd: null

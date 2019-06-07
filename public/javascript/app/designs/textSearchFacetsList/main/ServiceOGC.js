@@ -1,8 +1,10 @@
 define([
 	"app/designs/base/_Main"
+	, "app/designs/base/_ServiceOGC"
 	, "app/designs/textSearchFacetsList/_AddComposite"
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
+	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/HierarchicalImpl"
@@ -10,16 +12,18 @@ define([
 	, "templates/ServiceOGCList"
 ], function(
 	_Main
+	, _ServiceOGC
 	, _AddComposite
 	, Controller
 	, Layout
+	, redmicConfig
 	, declare
 	, lang
 	, HierarchicalImpl
 	, Order
 	, templateList
 ){
-	return declare([Layout, Controller, _Main, _AddComposite], {
+	return declare([Layout, Controller, _Main, _ServiceOGC, _AddComposite], {
 		//	summary:
 		//		Extensión para establecer la configuración de las vistas de .
 		//	description:
@@ -28,7 +32,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				title: this.i18n["service-ogc"]
+				title: this.i18n["service-ogc"],
+				target: redmicConfig.services.atlasLayer
 			};
 
 			lang.mixin(this, this.config, args);
@@ -42,6 +47,12 @@ define([
 
 			this.browserConfig = this._merge([{
 				template: templateList,
+				target: this._atlasDataTarget,
+				rowConfig: {
+					selectionIdProperty: this.pathProperty
+				},
+				idProperty: this.pathProperty,
+				pathSeparator: this.pathSeparator,
 				bars: [{
 					instance: Order,
 					config: 'orderConfig'

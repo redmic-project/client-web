@@ -2,14 +2,12 @@ define([
 	"app/designs/textSearchFacetsList/main/ServiceOGC"
 	, "app/base/views/extensions/_EditionLayerElementView"
 	, "app/base/views/extensions/_EditionLayerView"
-	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function (
 	ServiceOGCMain
 	, _EditionLayerElementView
 	, _EditionLayerView
-	, redmicConfig
 	, declare
 	, lang
 ){
@@ -23,7 +21,6 @@ define([
 		constructor: function (args) {
 
 			this.config = {
-				target: redmicConfig.services.serviceOGC,
 				ownChannel: "serviceOGC"
 			};
 
@@ -49,13 +46,13 @@ define([
 
 			this.filterConfig = this._merge([{
 				initQuery: {
-						size: null,
-						from: null,
-						sorts: [{
-							field: "alias",
-							order: "ASC"
-						}]
-					}
+					size: null,
+					from: null/*,
+					sorts: [{
+						field: "alias",
+						order: "ASC"
+					}]*/
+				}
 			}, this.filterConfig || {}]);
 		}
 	});

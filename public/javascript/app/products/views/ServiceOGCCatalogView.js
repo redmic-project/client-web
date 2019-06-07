@@ -1,12 +1,10 @@
 define([
 	"app/designs/textSearchFacetsList/main/ServiceOGC"
-	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 ], function (
 	ServiceOGCMain
-	, redmicConfig
 	, declare
 	, lang
 	, aspect
@@ -19,7 +17,6 @@ define([
 
 			this.config = {
 				title: this.i18n.serviceOGCCatalogView,
-				target: redmicConfig.services.serviceOGC,
 				ownChannel: "serviceOGCCatalog"
 			};
 
@@ -45,13 +42,13 @@ define([
 
 			this.filterConfig = this._merge([{
 				initQuery: {
-						size: null,
-						from: null,
-						sorts: [{
-							field: "alias",
-							order: "ASC"
-						}]
-					}
+					size: null,
+					from: null/*,
+					sorts: [{
+						field: "alias",
+						order: "ASC"
+					}]*/
+				}
 			}, this.filterConfig || {}]);
 		}
 	});

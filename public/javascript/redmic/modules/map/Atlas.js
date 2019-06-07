@@ -83,7 +83,8 @@ define([
 
 				_itemsSelected: {},
 				localTarget: "local",
-				target: redmicConfig.services.atlas,
+				// TODO este target no hace falta, pero si uno de selección común a categorias y capas
+				//target: [redmicConfig.services.atlasLayer, redmicConfig.services.atlasCategory],
 				pathSeparator: ".",
 				pathProperty: "path",
 				layerIdSeparator: "_",
@@ -163,7 +164,7 @@ define([
 			this.catalogConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				browserExts: [_HierarchicalSelect],
-				target: this.target,
+				//target: this.target,
 				perms: this.perms,
 				buttonsInTopZone: true,
 				buttons: {
@@ -175,7 +176,7 @@ define([
 				classByList: '.borderList',
 				browserConfig: {
 					template: serviceOGCList,
-					noSelectParent: false,
+					//noSelectParent: true,
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
@@ -202,11 +203,7 @@ define([
 				filterConfig: {
 					initQuery: {
 						size: null,
-						from: null,
-						sorts: [{
-							field: "alias",
-							order: "ASC"
-						}]
+						from: null
 					}
 				}
 			}, this.catalogConfig || {}]);

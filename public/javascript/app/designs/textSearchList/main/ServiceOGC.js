@@ -1,6 +1,7 @@
 define([
 	"app/base/views/extensions/_OnShownAndRefresh"
 	, "app/designs/base/_Main"
+	, "app/designs/base/_ServiceOGC"
 	, "app/designs/textSearchList/Controller"
 	, "app/designs/textSearchList/layout/BasicAndButtonsAndKeypadTopZone"
 	, "dojo/_base/declare"
@@ -10,6 +11,7 @@ define([
 ], function(
 	_OnShownAndRefresh
 	, _Main
+	, _ServiceOGC
 	, Controller
 	, Layout
 	, declare
@@ -17,7 +19,7 @@ define([
 	, HierarchicalImpl
 	, templateList
 ){
-	return declare([Layout, Controller, _Main, _OnShownAndRefresh], {
+	return declare([Layout, Controller, _Main, _ServiceOGC, _OnShownAndRefresh], {
 		//	summary:
 		//		Vista principal de ServiceOGC bajo este diseño.
 
@@ -26,10 +28,7 @@ define([
 			this.config = {
 				ownChannel: "catalogOGC",
 				perms: null,
-				title: this.i18n.availableThemes,
-
-				// TODO esto es por un posible fallo de dojox (_startAtWatchHandles is called twice)
-				_startAtWatchHandles: function(){}
+				title: this.i18n.availableThemes
 			};
 
 			lang.mixin(this, this.config, args);
@@ -40,21 +39,16 @@ define([
 			this.browserConfig = this._merge([{
 				template: templateList,
 				rowConfig: {
-					selectionIdProperty: "path"
+					selectionIdProperty: this.pathProperty
 				},
-				idProperty: "path"
+				idProperty: this.pathProperty,
+				pathSeparator: this.pathSeparator,
+				target: this._atlasDataTarget
 			}, this.browserConfig || {}]);
 
 			this.browserBase.shift();
 
 			this.browserBase.unshift(HierarchicalImpl);
-		},
-
-		postCreate: function() {
-
-			this.inherited(arguments);
-
-			this._emitEvt('REFRESH');
 		}
 	});
 });

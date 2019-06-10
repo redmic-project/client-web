@@ -85,10 +85,10 @@ define([
 							"size": 10
 						}
 					},
-					"keyword": {
+					"keywords": {
 						'open': true,
 						"terms": {
-							"field": "keyword",
+							"field": "keywords",
 							"size": 10
 						}
 					}

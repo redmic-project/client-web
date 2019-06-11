@@ -40,7 +40,7 @@ define([
 
 		_initializeController: function() {
 
-			this.textSearch = new declare([TextImpl])(this.textSearchConfig);
+			this.textSearch = new TextImpl(this.textSearchConfig);
 		},
 
 		postCreate: function() {

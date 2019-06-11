@@ -28,6 +28,17 @@ define([
 			this._onEvt('REFRESH', lang.hitch(this, this._requestAtlasDataOnRefresh));
 		},
 
+		_setMainConfigurations: function() {
+
+			var atlasFields = ['title', 'alias', 'keywords'];
+
+			this.textSearchConfig = this._merge([{
+				highlightField: atlasFields,
+				suggestFields: atlasFields,
+				searchFields: atlasFields
+			}, this.textSearchConfig || {}]);
+		},
+
 		_initializeMain: function() {
 
 			this._atlasData = new AtlasDataImpl({

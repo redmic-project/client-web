@@ -36,6 +36,8 @@ define([
 
 		_setMainConfigurations: function() {
 
+			this.inherited(arguments);
+
 			this.browserConfig = this._merge([{
 				template: templateList,
 				rowConfig: {

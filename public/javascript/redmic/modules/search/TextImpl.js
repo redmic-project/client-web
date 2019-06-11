@@ -119,7 +119,7 @@ define([
 		_requestSuggestions: function(/*Object*/ evt) {
 
 			this._emitEvt('SEARCH', {
-				suggest: evt,
+				suggest: this._createSuggest(evt),
 				query: this.initialQuery,
 				omitRefresh: true
 			});
@@ -197,6 +197,15 @@ define([
 			this.textSearch.emit("refresh");
 		},
 
+		_createSuggest: function(query) {
+
+			if (this.suggestFields) {
+				query.searchFields = this.suggestFields;
+			}
+
+			return query;
+		},
+
 		_createQuery: function(value) {
 
 			var query = {
@@ -237,12 +246,13 @@ define([
 
 		_subUpdateTextSeachParams: function(evt) {
 
-			this._updateTextSearchParams(evt);
+			var fields = evt.suggestFields;
+			fields && this._updateTextSearchParams(fields);
 		},
 
-		_updateTextSearchParams: function(/*Object*/ params) {
+		_updateTextSearchParams: function(fields) {
 
-			params.suggestFields && this.textSearch.set("suggestFields", params.suggestFields);
+			this.textSearch.set("suggestFields", fields);
 		},
 
 		_onReConnect: function() {

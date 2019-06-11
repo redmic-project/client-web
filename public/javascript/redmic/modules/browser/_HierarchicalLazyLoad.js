@@ -185,7 +185,7 @@ define([
 			var idProperty = item[this.idProperty],
 				rowInstance = this._getRowInstance(idProperty);
 
-			if (!rowInstance || !this._evaluateItem(item)) {
+			if (!rowInstance || !this._checkItemBelongRootLevel(item)) {
 				return;
 			}
 

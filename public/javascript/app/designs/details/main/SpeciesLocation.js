@@ -56,8 +56,8 @@ define([
 				noScroll: true,
 				idProperty: "uuid",
 				propsWidget: {
-					noButtonsWindow: true,
-					noTitleWindow: true
+					omitTitleBar: true,
+					resizable: false
 				}
 			};
 
@@ -79,7 +79,7 @@ define([
 					type: declare([LeafletImpl, Map, _PlaceNamesButton]),
 					props: {
 						title: this.i18n.map,
-						noCloseWindow: true
+						omitTitleCloseButton: true
 					}
 				}
 			}, this.widgetConfigs || {}]);

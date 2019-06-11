@@ -4,6 +4,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, "dojo/Deferred"
+	, "dojo/promise/all"
 	, 'draggabilly/draggabilly.pkgd.min'
 	, 'packery/packery.pkgd.min'
 	, "put-selector/put"
@@ -16,6 +18,8 @@ define([
 	, declare
 	, lang
 	, aspect
+	, Deferred
+	, all
 	, draggabilly
 	, packery
 	, put
@@ -43,18 +47,21 @@ define([
 				hiddenClass: "hidden",
 				noScroll: false,
 
-				_relativeRowsClass: "data-percentage-rows",
-				_fixedRowsClass: "data-rows",
+				_relativeRowsParameterName: "data-percentage-rows",
+				_fixedRowsParameterName: "data-rows",
+				_colsParameterName: "data-cols",
 				_updateInteractiveTimeout: 100,
 
 				_widgets: {},
 				_widgetsShowWindows: {},
-				_nodes: {}
+				_nodes: {},
+				_nodesHandlers: {}
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
+		// TODO: este método es más propio de vista que de diseño, el diseño puede usarse a nivel más bajo que una vista
 		_putMetaTags: function() {
 			//	summary:
 			//		Manda a publicar la información necesaria para que se generen las meta-tags
@@ -94,47 +101,42 @@ define([
 		_setControllerOwnCallbacksForEvents: function() {
 
 			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onControllerMeOrAncestorShown));
-			this._onEvt('RESIZE', lang.hitch(this, this._subParentResized));
+			this._onEvt('RESIZE', lang.hitch(this, this._onControllerResize));
 			this._onEvt('LAYOUT_COMPLETE', lang.hitch(this, this._onLayoutComplete));
 			this._onEvt('BUTTON_EVENT', lang.hitch(this, this._onButtonEvent));
-		},
-
-		_afterShow: function(request) {
-
-			this.startup();
 		},
 
 		_afterControllerShow: function() {
 
 			if (!this._widgetsAlreadyGenerated) {
 				this._generateWidgets();
-				this._buildVisualization();
+				this._buildVisualization().then(lang.hitch(this, this._updateInteractive));
 			}
 		},
 
 		_generateWidgets: function() {
 
 			for (var key in this.widgetConfigs) {
-				this._widgetsAlreadyGenerated = true;
-				var config = this.widgetConfigs[key];
+				var config = this.widgetConfigs[key] || {};
 				this._createWidget(key, config);
 			}
+
+			this._widgetsAlreadyGenerated = true;
 		},
 
 		_buildVisualization: function() {
 
-			this._windowContainersAlreadyShown = null;
+			this._rowsParameterName = this.noScroll ? this._relativeRowsParameterName : this._fixedRowsParameterName;
 
-			this._classRow = this.noScroll ? this._relativeRowsClass : this._fixedRowsClass;
-
+			var dfds = [];
 			for (var key in this.widgetConfigs) {
-				this._widgetVisualization(key);
+				dfds.push(this._buildWidgetVisualization(key));
 			}
 
-			this._updateInteractive();
+			return all(dfds);
 		},
 
-		_widgetVisualization: function(key) {
+		_buildWidgetVisualization: function(key) {
 
 			var config = this.widgetConfigs[key];
 
@@ -142,19 +144,18 @@ define([
 				return;
 			}
 
-			this._createBox(key, config);
+			this._createWidgetNode(key, config);
 
-			this._showWidget(key, config);
-
-			this._makeNodeInteractive(this._nodes[key]);
+			return this._showWidget(key);
 		},
 
-		_subParentResized: function() {
+		_onControllerResize: function() {
 
 			this._getShown() && this._updateInteractive();
 		},
 
 		_onButtonEvent: function(evt) {
+			// TODO: eso es para casos concretos, debería separarse
 
 			var methodName = "_" + evt + "Clicked";
 			this[methodName] && this[methodName](evt);
@@ -167,15 +168,15 @@ define([
 		},
 
 		_checkPathVariableId: function() {
+			// TODO: este método es más propio de vista que de diseño, el diseño puede usarse a nivel más bajo que una vista
 
 			if (!this.pathVariableId) {
 				this._goTo404();
 			}
 		},
 
-		_onControllerMeOrAncestorShown: function() {
+		_onControllerMeOrAncestorShown: function(res) {
 
-			this._emitEvt("RESIZE");
 			this._updateInteractive();
 		},
 
@@ -198,126 +199,139 @@ define([
 			return condition && !!this.data[condition];
 		},
 
+		_getWidgetInstance: function(key) {
+
+			return this._widgets[key];
+		},
+
 		_createWidget: function(key, config) {
 
-			if (this._widgets[key]) {
+			if (this._getWidgetInstance(key)) {
 				return;
 			}
 
-			if (!config.props) {
-				config.props = {};
-			}
+			var moduleProps = this._merge([this.propsWidget || {}, config.props || {}]);
+			moduleProps.ownChannel = key;
+			moduleProps.parentChannel = this.getChannel();
 
-			config.props = this._merge([this.propsWidget || {}, config.props]);
-			config.props.ownChannel = key;
-			config.props.parentChannel = this.getChannel();
+			var moduleType = config.type,
+				moduleDefinition = declare(moduleType).extend(_Window),
+				moduleInstance = new moduleDefinition(moduleProps);
 
-			var module = this._widgets[key] = new declare(config.type).extend(_Window)(config.props);
-
-			this._listenModule(module);
+			this._widgets[key] = moduleInstance;
+			this._listenModule(moduleInstance);
 		},
 
-		_listenModule: function(module) {
+		_listenModule: function(moduleInstance) {
 
 			this._setSubscription({
-				channel: module.getChannel("RESIZED"),
+				channel: moduleInstance.getChannel("RESIZED"),
 				callback: "_subModuleResized"
 			});
 		},
 
-		_createBox: function(key, config) {
+		_createWidgetNode: function(key, config) {
 
-			var node = this._nodes[key] = put("div." + this.hiddenClass + "[" + this._classRow + "=" +
-				config.height + "][data-cols=" + config.width + "]");
+			var rows = config.height || 1,
+				cols = config.width || 1,
+				nodeParams = "[" + this._rowsParameterName + "=" + rows + "][" + this._colsParameterName + "=" + cols +
+					"]",
+				node = put("div." + this.hiddenClass + nodeParams);
+
+			this._nodes[key] = node;
 
 			put(this.centerNode, node);
 		},
 
-		_showWidget: function(key, config) {
+		_showWidget: function(key) {
 
-			var module = this._widgets[key],
+			var instance = this._getWidgetInstance(key),
 				node = this._nodes[key];
 
-			this._publish(module.getChannel("SHOW"), {
+			if (!instance || !node) {
+				return;
+			}
+
+			var dfd = new Deferred();
+
+			this._once(instance.getChannel("SHOWN"), lang.hitch(this, function(args) {
+
+				put(args.node, "!" + this.hiddenClass);
+				this._addWidgetInteractivity(args.key);
+				args.dfd.resolve();
+			}, {
+				key: key,
+				node: node,
+				dfd: dfd
+			}));
+
+			this._publish(instance.getChannel("SHOW"), {
 				node: node
 			});
 
-			put(node, "!hidden");
-		},
-
-		_showWidgets: function() {
-
-			for (var key in this._widgets) {
-				this._showWidget(key);
-			}
-		},
-
-		_connectAndShowWidgetAndWindow: function(key) {
-
-			this._connectWidget(key);
-			this._showWidget(key);
-			this._showWindow(key);
+			return dfd;
 		},
 
 		_hideWidget: function(key) {
 
-			var module = this._widgets[key],
+			var instance = this._getWidgetInstance(key),
 				node = this._nodes[key];
 
-			this._publish(module.getChannel("HIDE"), {
+			if (!instance || !node) {
+				return;
+			}
+
+			this._once(instance.getChannel("HIDDEN"), lang.hitch(this, function(node) {
+
+				put(node, "." + this.hiddenClass);
+			}, node));
+
+			this._publish(instance.getChannel("HIDE"), {
 				node: node
 			});
-
-			put(node, ".hidden");
-		},
-
-		_hideWidgets: function() {
-
-			for (var key in this._widgets) {
-				this._hideWidget(key);
-			}
-		},
-
-		_hideAndDisconnectWidget: function(key) {
-
-			this._hideWidget(key);
-			this._disconnectWidget(key);
 		},
 
 		_connectWidget: function(key) {
 
-			var module = this._widgets[key];
+			var instance = this._getWidgetInstance(key);
 
-			this._publish(module.getChannel("CONNECT"));
+			this._publish(instance.getChannel("CONNECT"));
 		},
 
 		_disconnectWidget: function(key) {
 
-			var module = this._widgets[key];
+			var instance = this._getWidgetInstance(key);
 
-			this._publish(module.getChannel("DISCONNECT"));
+			this._publish(instance.getChannel("DISCONNECT"));
 		},
 
-		_makeNodeInteractive: function(node) {
+		_addWidgetInteractivity: function(key) {
 
-			put(node, '!' + this.hiddenClass);
+			if (this._nodesHandlers[key]) {
+				return;
+			}
+
+			var widgetNode = this._nodes[key];
+			if (widgetNode) {
+				this._nodesHandlers[key] = this._addNodeInteractivity(widgetNode);
+			}
+		},
+
+		_addNodeInteractivity: function(node) {
 
 			this.packery.addItems(node);
 
-			var widthStep = this.centerNode.offsetWidth * (1 / 6) - 2.555,
+			var widthStep = this.centerNode.offsetWidth * (1 / 6),// - 2.555,
 				draggie = new draggabilly(node, {
 					handle: ".windowTitle",
 					grid: [ widthStep, 100 ]
 				});
 
-			draggie.on("dragStart", lang.hitch(this, function() {
-
-				this._dragStart = true;
-			}));
-
 			draggie.on("dragEnd", lang.hitch(this, this._updateInteractive));
 
 			this.packery.bindDraggabillyEvents(draggie);
+
+			return draggie;
 		},
 
 		_subModuleResized: function() {
@@ -334,16 +348,11 @@ define([
 
 		_onLayoutComplete: function(laidOutItems) {
 
-			if (!this._windowContainersAlreadyShown) {
-				this._showWindowContainers();
-			}
-
 			var totalHeight = this.centerNode.scrollHeight,
-				totalWidth = this.centerNode.scrollWidth;
+				totalWidth = this.centerNode.scrollWidth,
+				sizeHasChanged = this._oldTotalHeight !== totalHeight || this._oldTotalWidth !== totalWidth;
 
-			if (this._dragStart || this._oldTotalHeight !== totalHeight || this._oldTotalWidth !== totalWidth) {
-				this._dragStart = false;
-				this._updateInteractive();
+			if (sizeHasChanged) {
 				this._emitEvt("RESIZE");
 			}
 
@@ -353,40 +362,8 @@ define([
 			this._emitEvt("LOADED");
 		},
 
-		_showWindowContainers: function() {
-
-			this._windowContainersAlreadyShown = true;
-
-			for (var key in this._widgets) {
-				if (!this._widgetsShowWindows[key]) {
-					this._widgetsShowWindows[key] = true;
-					this._showWindow(key);
-				}
-			}
-		},
-
-		_showWindow: function(key) {
-
-			var module = this._widgets[key];
-
-			this._publish(module.getChannel('SHOW_WINDOW'));
-		},
-
-		_resizeWindowContainers: function() {
-
-			for (var key in this._widgets) {
-				this._resizeWindowContainer(key);
-			}
-		},
-
-		_resizeWindowContainer: function(key) {
-
-			var module = this._widgets[key];
-
-			this._publish(module.getChannel('RESIZE'));
-		},
-
 		_reportClicked: function() {
+			// TODO: eso es para casos concretos, debería separarse
 
 			this._publish(this._buildChannel(this.taskChannel, this.actions.GET_REPORT), {
 				target: this.selectionTarget ? this.selectionTarget : this.target,

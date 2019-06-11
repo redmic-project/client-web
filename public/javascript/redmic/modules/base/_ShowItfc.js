@@ -21,6 +21,8 @@ define([
 				"_getNodeToShowLoading": {},
 				"_beforeShow": {},
 				"_afterShow": {},
+				"_beforeHide": {},
+				"_afterHide": {},
 				"_reset": {},
 				"_getShownOrHiddenResponseObject": {},
 				"_resize": {},

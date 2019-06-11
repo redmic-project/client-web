@@ -85,8 +85,6 @@ define([
 
 			"Should_HaveRowsStructureCreated_When_ReceiveData": function() {
 
-				console.error(browser._rows);
-
 				assert.isOk(getRow('1').instance, "No se ha añadido correctamente");
 				assert.strictEqual(getRow('1').children.length, 2, "No se ha añadido correctamente");
 				assert.strictEqual(getRow('1').leaves, 2, "No se ha añadido correctamente");

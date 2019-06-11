@@ -173,7 +173,6 @@ define([
 		_setOwnCallbacksForEvents: function() {
 
 			this._onEvt('SHOW', lang.hitch(this, this._loadInitialEmbeddedContent));
-			this._onEvt('HIDE', lang.hitch(this, this._hideEmbeddedContent));
 			this._onEvt('CHANGE_EMBEDDED_CONTENT', lang.hitch(this, this._changeEmbeddedContent));
 		},
 
@@ -252,7 +251,7 @@ define([
 			}
 		},
 
-		_hideEmbeddedContent: function() {
+		_beforeHide: function(req) {
 
 			var buttonKeys = Object.keys(this.embeddedButtons),
 				embeddedInfoKey = buttonKeys[0];

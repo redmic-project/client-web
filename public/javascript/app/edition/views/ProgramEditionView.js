@@ -36,7 +36,7 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.program,
-				propsToClean: ["code", "id"]
+				propsToClean: ['code', 'id', 'contacts.{i}.id', 'organisations.{i}.id', 'documents.{i}.id']
 			};
 
 			lang.mixin(this, this.config, args);

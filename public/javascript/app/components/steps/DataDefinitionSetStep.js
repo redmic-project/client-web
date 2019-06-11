@@ -33,6 +33,7 @@ define([
 				title: this.i18n.dataDefinitionsAssociated,
 				propertyName: "properties/measurements",
 				propToRead: "properties/measurements",
+				propsToClean: ['id', 'localId'],
 				// General params
 				target: redmicConfig.services.dataDefinition,
 
@@ -80,26 +81,12 @@ define([
 
 			this._once(this.form.getChannel('SHOWN'), lang.hitch(this, function() {
 
-				setTimeout(lang.hitch(this, this._setValueItemsDefault));
-
 				this._publish(this.form.getChannel("SET_METHOD"), {
 					"_onNewParameter": lang.hitch(this, this._onNewParameter)
 				});
 			}));
 
 			this.inherited(arguments);
-		},
-
-		_setValueItemsDefault: function() {
-
-			if (this.valueItemsDefault) {
-				for (var key in this.valueItemsDefault) {
-					this._publish(this.form.getChannel("SET_PROPERTY_VALUE"), {
-						propertyName: key,
-						value: this.valueItemsDefault[key]
-					});
-				}
-			}
 		},
 
 		_onNewParameter: function() {
@@ -121,20 +108,6 @@ define([
 				propertyName: "parameter",
 				value: res.body
 			});
-		},
-
-		_clearStep: function() {
-
-			this.inherited(arguments);
-
-			this._setValueItemsDefault();
-		},
-
-		_resetStep: function() {
-
-			this.inherited(arguments);
-
-			this._setValueItemsDefault();
 		}
 	});
 });

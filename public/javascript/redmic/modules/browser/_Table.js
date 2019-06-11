@@ -155,7 +155,7 @@ define([
 
 			this._clear();
 
-			this._proccesNewData(res);
+			this._processNewData(res);
 
 			this._addOthers();
 		},
@@ -164,15 +164,6 @@ define([
 
 			this._clearHeaders();
 			this._setStyleInNodes(0);
-		},
-
-		_proccesNewData: function(res) {
-
-			var data = this._parserIndexData(res);
-
-			for (var i= 0; i < data.length; i++) {
-				this._addItem(data[i]);
-			}
 		},
 
 		_parserIndexData: function(res) {

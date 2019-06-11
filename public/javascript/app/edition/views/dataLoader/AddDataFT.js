@@ -98,7 +98,7 @@ define([
 							}
 						},
 						formConfig: {
-							template: "components/viewCustomization/parameter/views/templates/FC"
+							template: "components/viewCustomization/parameter/views/templates/FT"
 						}
 					}
 				}]

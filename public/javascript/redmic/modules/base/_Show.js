@@ -172,6 +172,7 @@ define([
 			this._onEvt('HIDE', lang.hitch(this, this._onModuleHide));
 			this._onEvt('ANCESTOR_SHOW', lang.hitch(this, this._prepareOnMeOrAncestorShown));
 			this._onEvt('ANCESTOR_HIDE', lang.hitch(this, this._restoreOnMeOrAncestorShown));
+			this._onEvt('RESIZE', lang.hitch(this, this._onModuleResize));
 		},
 
 		_showBeforePostCreate: function() {
@@ -252,25 +253,27 @@ define([
 
 		_prepareOnMeOrAncestorShown: function(response) {
 
-			if (this._onMeOrAncestorShownIsDisabled) {
+			if (this._meOrAncestorShownAlreadyFired) {
 				return;
 			}
 
-			this._onMeOrAncestorShownIsDisabled = true;
+			this._meOrAncestorShownAlreadyFired = true;
 
-			this._emitEvt('ME_OR_ANCESTOR_SHOWN');
+			this._emitEvt('ME_OR_ANCESTOR_SHOWN', response);
 		},
 
 		_restoreOnMeOrAncestorShown: function(response) {
 
-			this._activeLoadingsPendding();
+			//this._activeLoadingsPendding();
 
-			this._onMeOrAncestorShownIsDisabled = false;
+			this._meOrAncestorShownAlreadyFired = false;
 
 			this._emitEvt('ME_OR_ANCESTOR_HIDDEN');
 		},
 
-		_activeLoadingsPendding: function() {
+		// TODO este método se salta a la torera la acumulación de cargas, no es una solución sino una chapuza
+		// TODO si se detecta alguna carga no resuelta, el problema lo tiene el módulo concreto y habrá que solucionarlo
+		/*_activeLoadingsPendding: function() {
 
 			if (this._activeLoadings) {
 				var counts = this._activeLoadings;
@@ -278,7 +281,7 @@ define([
 					this._emitEvt('LOADED');
 				}
 			}
-		},
+		},*/
 
 		_addClass: function(className) {
 
@@ -305,12 +308,13 @@ define([
 
 		_showWrapper: function(req) {
 
-			var beforeShowDfd = this._beforeShow(req);
+			var beforeShowDfd = this._beforeShow(req),
+				continueShow = lang.hitch(this, this._continueShow, req);
 
 			if (beforeShowDfd && beforeShowDfd.then) {
-				beforeShowDfd.then(lang.hitch(this, this._continueShow, req));
+				beforeShowDfd.then(continueShow);
 			} else {
-				this._continueShow(req);
+				continueShow();
 			}
 		},
 
@@ -480,6 +484,18 @@ define([
 
 		_hideWrapper: function(req) {
 
+			var beforeHideDfd = this._beforeHide(req),
+				continueHide = lang.hitch(this, this._continueHide, req);
+
+			if (beforeHideDfd && beforeHideDfd.then) {
+				beforeHideDfd.then(continueHide);
+			} else {
+				continueHide();
+			}
+		},
+
+		_continueHide: function(req) {
+
 			if (!this.node) {
 				return;
 			}
@@ -517,7 +533,19 @@ define([
 			}
 
 			this._destroyNode();
-			this._emitEvt('HIDE', this._getShownOrHiddenResponseObject());
+			this._emitHideEventWhenAfterHideIsDone(req);
+		},
+
+		_emitHideEventWhenAfterHideIsDone: function(req) {
+
+			var emitHide = lang.hitch(this, this._emitEvt, 'HIDE', this._getShownOrHiddenResponseObject()),
+				dfdAfterHide = this._afterHide(req);
+
+			if (dfdAfterHide && dfdAfterHide.then) {
+				dfdAfterHide.then(emitHide);
+			} else {
+				emitHide();
+			}
 		},
 
 		_destroyNode: function() {
@@ -725,22 +753,33 @@ define([
 			this._setShown(true);
 			!this._getPreviouslyShown() && this._setPreviouslyShown(true);
 
-			this._prepareOnMeOrAncestorShown();
-			this._propagateActionToChildren('ANCESTOR_SHOWN', {
+			var response = {
 				moduleChannel: this.getChannel()
-			});
+			};
+
+			this._prepareOnMeOrAncestorShown(response);
+			this._propagateActionToChildren('ANCESTOR_SHOWN', response);
 		},
 
 		_onModuleHide: function() {
 
-			this._activeLoadingsPendding();
+			//this._activeLoadingsPendding();
 
 			this._setShown(false);
 
-			this._restoreOnMeOrAncestorShown();
-			this._propagateActionToChildren('ANCESTOR_HIDDEN', {
+			var response = {
 				moduleChannel: this.getChannel()
-			});
+			};
+
+			this._restoreOnMeOrAncestorShown(response);
+			this._propagateActionToChildren('ANCESTOR_HIDDEN', response);
+		},
+
+		_onModuleResize: function(evt) {
+
+			if (this.layout) {
+				this.layout();
+			}
 		},
 
 		_getStartupStatus: function() {

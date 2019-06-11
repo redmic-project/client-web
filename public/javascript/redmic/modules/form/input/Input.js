@@ -393,7 +393,13 @@ define([
 
 			var schema = instance.get("schema");
 			if (schema && schema.url && !this._inputProps.target) {
-				this._inputProps.target = schema.url;
+				var url = schema.url,
+					apiPrefix = '/api/';
+
+				if (url.indexOf(apiPrefix) === 0) {
+					url = url.replace(apiPrefix, '{apiUrl}/');
+				}
+				this._inputProps.target = url;
 			}
 		},
 

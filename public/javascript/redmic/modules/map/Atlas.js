@@ -528,6 +528,15 @@ define([
 					}
 				};
 
+			this._emitEvt('TRACK', {
+				type: TRACK.type.event,
+				info: {
+					category: TRACK.category.layer,
+					action: TRACK.action.click,
+					label: 'Layer loaded: ' + item.name
+				}
+			});
+
 			this._emitEvt('INJECT_ITEM', {
 				data: data,
 				target: this.localTarget

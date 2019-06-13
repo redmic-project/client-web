@@ -100,6 +100,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.textSearchConfig = this._merge([{
+				target: this.target,
 				itemLabel: this.itemLabel
 			}, this.textSearchConfig || {}]);
 

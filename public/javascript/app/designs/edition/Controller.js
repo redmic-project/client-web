@@ -119,19 +119,24 @@ define([
 
 			this._lastPathVariableId = this.pathVariableId;
 
-			if (this.pathVariableId && Number.isInteger(parseInt(this.pathVariableId, 10))) {
-				this._emitGet(this.pathVariableId);
-			} else if(this.pathVariableId && (this.pathVariableId === "new")) {
-				var copySource = this.queryParameters ? this.queryParameters['copy-source'] : null;
-				if (copySource != null) {
-					this._emitGet(copySource);
-				} else {
-					this._emitShowForm();
-				}
-			} else if (this.pathVariableId && Object.keys(this.pathVariableId).length) {
+			if (!this.pathVariableId) {
+				this._goTo404();
+				return;
+			}
+
+			if (typeof this.pathVariableId === 'object') {
 				this._pathVariableIdIsObject();
 			} else {
-				this._goTo404();
+				if (this.pathVariableId === 'new') {
+					var copySource = this.queryParameters ? this.queryParameters['copy-source'] : null;
+					if (copySource != null) {
+						this._emitGet(copySource);
+					} else {
+						this._emitShowForm();
+					}
+				} else {
+					this._emitGet(this.pathVariableId);
+				}
 			}
 		},
 

@@ -30,12 +30,14 @@ define([
 
 		_setMainConfigurations: function() {
 
-			var atlasFields = ['title', 'alias', 'keywords'];
+			var atlasSearchFields = ['title.suggest', 'alias.suggest', 'keywords.suggest'],
+				atlasSuggestFields = ['title', 'alias', 'keywords'];
 
 			this.textSearchConfig = this._merge([{
-				highlightField: atlasFields,
-				suggestFields: atlasFields,
-				searchFields: atlasFields
+				target: this._atlasDataTarget,
+				highlightField: atlasSearchFields,
+				suggestFields: atlasSuggestFields,
+				searchFields: atlasSearchFields
 			}, this.textSearchConfig || {}]);
 		},
 

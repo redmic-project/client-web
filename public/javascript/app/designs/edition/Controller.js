@@ -211,7 +211,7 @@ define([
 
 			var item = response.data;
 
-			if (this.getOwnChannel().indexOf("/add/") > -1) {
+			if (this.getOwnChannel().indexOf('add/') !== -1) {
 				this._cleanNotDesiredProps(item);
 			}
 

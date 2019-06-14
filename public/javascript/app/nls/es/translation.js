@@ -525,6 +525,7 @@ define({
 	, "note": "Nota"
 	, "startDate": "F. inicio"
 	, "endDate": "F. fin"
+	, "update": "Actualizar"
 	, "updated": "Actualizado"
 	, "id": "ID"
 	, "open": "Abierto"

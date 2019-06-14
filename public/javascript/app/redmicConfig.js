@@ -105,6 +105,7 @@ define([], function() {
 
 		'serviceOGCCatalog': '/service-ogc-catalog',
 		'serviceOGCCatalogDetails': '/service-ogc-catalog/service-ogc-info/{id}',
+		'serviceOGCAdd': '/maintenance/service-ogc-add/{id}',
 		'serviceOGCEdit': '/maintenance/service-ogc-edit/{id}',
 		'serviceOGCDetails': '/maintenance/service-ogc-info/{id}',
 		'serviceOGC': '/maintenance/service-ogc',
@@ -276,13 +277,12 @@ define([], function() {
 		'activityContacts': baseUri + 'contacts/{id}/activities',
 
 		'atlasLayer': baseUri + 'atlas/view/layer',
-		'atlasLayerEdition': baseUri + 'atlas/commands/layer',
+		'atlasLayerEdition': baseUri + 'atlas/commands/layer/{id}',
+		'atlasLayerRefresh': baseUri + 'atlas/commands/layer/refresh/{id}',
 		'atlasCategory': baseUri + 'atlas/view/category',
-		'atlasCategoryEdition': baseUri + 'atlas/commands/category',
+		'atlasCategoryEdition': baseUri + 'atlas/commands/category/{id}',
 		//'atlas': baseUri + 'atlas',
 		'serviceOGC': baseUri + 'servicesogc/layers',
-		'serviceOGCCategory': baseUri + 'servicesogc/layers/category',
-		'serviceOGCRefresh': baseUri + 'servicesogc/layers/refresh',
 
 		'statistics': baseUri + 'statistics',
 		'administrativeStatistics': baseUri + 'statistics/administrative',

@@ -1,17 +1,15 @@
 define([
 	"app/designs/textSearchFacetsList/main/ServiceOGC"
-	, "app/base/views/extensions/_EditionLayerElementView"
 	, "app/base/views/extensions/_EditionLayerView"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function (
 	ServiceOGCMain
-	, _EditionLayerElementView
 	, _EditionLayerView
 	, declare
 	, lang
 ){
-	return declare([ServiceOGCMain, _EditionLayerView, _EditionLayerElementView], {
+	return declare([ServiceOGCMain, _EditionLayerView], {
 		//	summary:
 		//		Vista de ServiceOGC.
 
@@ -21,7 +19,8 @@ define([
 		constructor: function (args) {
 
 			this.config = {
-				ownChannel: "serviceOGC"
+				ownChannel: "serviceOGC",
+				addPath: this.viewPaths.serviceOGCAdd
 			};
 
 			lang.mixin(this, this.config, args);

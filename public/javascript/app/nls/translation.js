@@ -527,6 +527,7 @@ define({
 		, "note": "Note"
 		, "startDate": "Start date"
 		, "endDate": "End date"
+		, "update": "Update"
 		, "updated": "Updated"
 		, "id": "ID"
 		, "open": "Open"

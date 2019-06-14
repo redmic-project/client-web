@@ -1,23 +1,21 @@
 define([
-	"app/base/views/extensions/_Edition"
+	"app/base/views/extensions/_EditionWizardView"
 	, "app/base/views/extensions/_FormInDialogView"
 	, "app/maintenance/models/CategoryLayerModel"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/store/Persistence"
 ], function(
-	_Edition
+	_EditionWizardView
 	, _FormInDialogView
 	, CategoryLayerModel
 	, redmicConfig
 	, declare
 	, lang
 	, aspect
-	, Persistence
 ){
-	return declare([_Edition, _FormInDialogView], {
+	return declare([_EditionWizardView, _FormInDialogView], {
 		//	summary:
 		//		Extensión para las vistas de edición de datos relativos a capas.
 		//	description:
@@ -38,7 +36,6 @@ define([
 
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixEditionLayerEventsAndActions));
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setEditionLayerConfigurations));
-			aspect.after(this, "_beforeInitialize", lang.hitch(this, this._initializeEditionView));
 		},
 
 		_setEditionLayerConfigurations: function() {
@@ -47,6 +44,36 @@ define([
 				template: "maintenance/views/templates/forms/CategoryLayer",
 				modelSchema: CategoryLayerModel
 			}, this.formConfig || {}]);
+
+			this.listButtonsEdition = [{
+				groupId: "edition",
+				icons:[{
+					icon: "fa-refresh",
+					btnId: "update",
+					title: "update",
+					returnItem: true,
+					option: "default",
+					condition: "urlSource"
+				},{
+					icon: "fa-edit",
+					btnId: "edit",
+					title: "edit",
+					href: this.viewPaths.serviceOGCEdit,
+					option: "default",
+					condition: "urlSource"
+				},{
+					icon: "fa-edit",
+					btnId: "categoryEdit",
+					title: "edit",
+					returnItem: true,
+					option: "default",
+					condition: this._checkItemIsCategory
+				},{
+					icon: "fa-trash-o",
+					btnId: "remove",
+					title: "remove"
+				}]
+			}];
 		},
 
 		_mixEditionLayerEventsAndActions: function() {
@@ -58,30 +85,9 @@ define([
 			delete this.editionLayerActions;
 		},
 
-		_initializeEditionView: function() {
-
-			this.persistence = new Persistence({
-				parentChannel: this.getChannel()
-			});
-		},
-
 		_defineEditionSubscriptions: function () {
 
 			this.inherited(arguments);
-
-			this.subscriptionsConfig.push({
-				channel: this.persistence.getChannel("REMOVED"),
-				callback: "_subRemoved",
-				options: {
-					predicate: lang.hitch(this, this._chkSuccessful)
-				}
-			},{
-				channel: this.persistence.getChannel("SAVED"),
-				callback: "_subSaved",
-				options: {
-					predicate: lang.hitch(this, this._chkSuccessful)
-				}
-			});
 
 			if (this.editor) {
 				this.subscriptionsConfig.push({
@@ -94,11 +100,6 @@ define([
 		_defineEditionPublications: function() {
 
 			this.inherited(arguments);
-
-			this.publicationsConfig.push({
-				event: 'SAVE',
-				channel: this.persistence.getChannel("SAVE")
-			});
 
 			if (this.editor) {
 				this.publicationsConfig.push({
@@ -118,16 +119,21 @@ define([
 			this._onEvt('UPDATE', lang.hitch(this, this._updateElement));
 		},
 
-		_updateElement: function(id) {
+		_updateElement: function(layer) {
 
-			var request = {
-				'id': id
+			var layerName = layer.name,
+				layerSource = layer.urlSource,
+				target = lang.replace(redmicConfig.services.atlasLayerRefresh, layer);
+
+			var data = {
+				urlSource: layerSource,
+				name: layerName
 			};
 
 			this._emitEvt('SAVE', {
-				target: redmicConfig.services.serviceOGCRefresh,
-				item: request,
-				idProperty: this.idProperty
+				target: target,
+				data: data,
+				idInTarget: true
 			});
 		},
 
@@ -148,13 +154,16 @@ define([
 
 		_updateCallback: function(evt) {
 
-			this._emitEvt('UPDATE', evt.id);
+			var layer = evt.item;
+			this._emitEvt('UPDATE', layer);
 		},
 
 		_categoryEditCallback: function(res) {
 
+			var category = res.item;
+
 			this._emitEvt('SHOW_FORM', {
-				data: res.item,
+				data: category,
 				node: this._getNodeForForm()
 			});
 		},
@@ -170,16 +179,19 @@ define([
 				return;
 			}
 
-			var data = res.data;
+			var data = res.data,
+				target = lang.replace(redmicConfig.services.atlasCategoryEdition, data);
+
+			delete data[this.idProperty];
 
 			this._emitEvt('LOADING', {
 				global: true
 			});
 
 			this._emitEvt('SAVE', {
-				target: redmicConfig.services.serviceOGCCategory,
-				item: data,
-				idProperty: this.idProperty
+				target: target,
+				data: data,
+				idInTarget: true
 			});
 		},
 

@@ -1,7 +1,6 @@
 define([
 	"app/base/views/extensions/_EditionWizardView"
 	, "app/base/views/extensions/_FormInDialogView"
-	, "app/maintenance/models/CategoryLayerModel"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -9,7 +8,6 @@ define([
 ], function(
 	_EditionWizardView
 	, _FormInDialogView
-	, CategoryLayerModel
 	, redmicConfig
 	, declare
 	, lang
@@ -42,7 +40,7 @@ define([
 
 			this.formConfig = this._merge([{
 				template: "maintenance/views/templates/forms/CategoryLayer",
-				modelSchema: CategoryLayerModel
+				modelTarget: redmicConfig.services.atlasCategoryEdition
 			}, this.formConfig || {}]);
 
 			this.listButtonsEdition = [{
@@ -71,7 +69,8 @@ define([
 				},{
 					icon: "fa-trash-o",
 					btnId: "remove",
-					title: "remove"
+					title: "remove",
+					returnItem: true
 				}]
 			}];
 		},
@@ -149,7 +148,11 @@ define([
 
 		_removeCallback: function(evt) {
 
-			this._emitEvt('REMOVE', evt.id);
+			var category = evt.item;
+			this._emitEvt('REMOVE', {
+				target: redmicConfig.services.atlasCategoryEdition,
+				id: category.id
+			});
 		},
 
 		_updateCallback: function(evt) {
@@ -180,7 +183,8 @@ define([
 			}
 
 			var data = res.data,
-				target = lang.replace(redmicConfig.services.atlasCategoryEdition, data);
+				itemId = data[this.idProperty],
+				target = redmicConfig.services.atlasCategoryEdition + '/' + itemId;
 
 			delete data[this.idProperty];
 

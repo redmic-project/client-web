@@ -277,10 +277,11 @@ define([], function() {
 		'activityContacts': baseUri + 'contacts/{id}/activities',
 
 		'atlasLayer': baseUri + 'atlas/view/layer',
-		'atlasLayerEdition': baseUri + 'atlas/commands/layer/{id}',
+		'atlasLayerEdition': baseUri + 'atlas/commands/layer',
 		'atlasLayerRefresh': baseUri + 'atlas/commands/layer/refresh/{id}',
+		'atlasLayerDiscovery': baseUri + 'atlas/commands/discover-layers',
 		'atlasCategory': baseUri + 'atlas/view/category',
-		'atlasCategoryEdition': baseUri + 'atlas/commands/category/{id}',
+		'atlasCategoryEdition': baseUri + 'atlas/commands/category',
 		//'atlas': baseUri + 'atlas',
 		'serviceOGC': baseUri + 'servicesogc/layers',
 

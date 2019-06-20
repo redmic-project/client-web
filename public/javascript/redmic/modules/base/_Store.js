@@ -143,7 +143,7 @@ define([
 				error = data.error,
 				status = data.status;
 
-			this._errorAvailable(error, status);
+			this._errorAvailable(error, status, data);
 
 			this._tryToEmitEvt('LOADED');
 		},

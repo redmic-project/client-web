@@ -184,9 +184,17 @@ define([
 
 		_pubRemove: function(channel, idProperty) {
 
+			var id = idProperty,
+				target = this._getTarget();
+
+			if (idProperty && typeof idProperty === 'object') {
+				target = idProperty.target || this._getTarget();
+				id = idProperty[this.idProperty];
+			}
+
 			this._publish(channel, {
-				target: this._getTarget(),
-				id: idProperty
+				target: target,
+				id: id
 			});
 		},
 
@@ -204,16 +212,18 @@ define([
 
 			alertify.confirm(this.i18n.deleteConfirmationTitle, this.i18n.deleteConfirmationMessage,
 				lang.hitch(this, function(idProperty) {
-					this._emitEvt('REMOVE_ITEM', idProperty);
-				}, idProperty),
-				lang.hitch(this, function(idProperty) {
-					this._emitEvt('COMMUNICATION', {
-						description: this.i18n.cancelledAlert
-					});
-				}, idProperty)).set("labels", {
-					ok: this.i18n.ok,
-					cancel: this.i18n.cancel
+
+				this._emitEvt('REMOVE_ITEM', idProperty);
+			}, idProperty),
+			lang.hitch(this, function() {
+
+				this._emitEvt('COMMUNICATION', {
+					description: this.i18n.cancelledAlert
 				});
+			})).set("labels", {
+				ok: this.i18n.ok,
+				cancel: this.i18n.cancel
+			});
 		},
 
 		_getTarget: function(target) {

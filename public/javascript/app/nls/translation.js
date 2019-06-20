@@ -1213,6 +1213,10 @@ define({
 		, "activityId": "Activity ID"
 		, "webcamUrl": "Webcam URL"
 
+		, "selectLayer": "Select layer"
+		, "searchLayerByUrlSource": "Get layers"
+		, "urlSource": "Origin URL"
+
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"
 		, "descriptio": "Description"

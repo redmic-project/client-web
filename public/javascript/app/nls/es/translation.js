@@ -1208,6 +1208,10 @@ define({
 	, "activityId": "ID actividad"
 	, "webcamUrl": "URL webcam"
 
+	, "selectLayer": "Seleccionar capa"
+	, "searchLayerByUrlSource": "Obtener capas"
+	, "urlSource": "URL de origen"
+
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"

@@ -67,7 +67,6 @@ define([
 		_onValidationErrorsChanged: function(errors) {
 
 			this._lastValidationErrors = errors;
-			//console.log(errors, this.modelInstance);
 			this._emitEvt('VALIDATION_ERRORS_CHANGED', {
 				errors: errors,
 				isValid: this.modelInstance.get("isValid")

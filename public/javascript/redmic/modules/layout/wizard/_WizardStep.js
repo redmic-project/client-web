@@ -188,6 +188,7 @@ define([
 
 		_setModel: function(res) {
 
+			// TODO revisar esto, puede ser el origen de problema de ciclado al cancelar?? quizá desconectar primero
 			if (this.modelInstance)
 				delete this.modelInstance;
 
@@ -432,6 +433,7 @@ define([
 
 		_evaluateValidationErrors: function(obj) {
 
+			// TODO aquí parece entrar más veces de las necesarias, quizá cause ciclo, revisar
 			var errors = obj.errors || {},
 				isValidProperty = this._isValidProperty;
 
@@ -586,6 +588,7 @@ define([
 
 		_subClearModel: function(res) {
 
+			// TODO aqui se puede ciclar, si el step hace clear y el modelo responde y vuelta a empezar, revisar
 			var properties = res && res.properties;
 
 			if (this.propertyName &&

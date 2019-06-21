@@ -35,7 +35,7 @@ define([
 			this.config = {
 				title: this.i18n.map,
 				region: "center",
-				selectionTarget: redmicConfig.services.serviceOGC
+				selectionTarget: redmicConfig.services.atlasLayer
 			};
 
 			lang.mixin(this, this.config, args);

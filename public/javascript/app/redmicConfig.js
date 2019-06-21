@@ -282,8 +282,6 @@ define([], function() {
 		'atlasLayerDiscovery': baseUri + 'atlas/commands/discover-layers',
 		'atlasCategory': baseUri + 'atlas/view/category',
 		'atlasCategoryEdition': baseUri + 'atlas/commands/category',
-		//'atlas': baseUri + 'atlas',
-		'serviceOGC': baseUri + 'servicesogc/layers',
 
 		'statistics': baseUri + 'statistics',
 		'administrativeStatistics': baseUri + 'statistics/administrative',

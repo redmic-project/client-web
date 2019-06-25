@@ -1,6 +1,5 @@
 define([
-	"dijit/layout/ContentPane"
-	, "dijit/Menu"
+	"dijit/Menu"
 	, "dijit/MenuItem"
 	, "dijit/registry"
 	, "dojo/_base/declare"
@@ -11,11 +10,11 @@ define([
 	, "put-selector/put"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
+
 	, "dojo/NodeList-dom"
 	, "dojo/NodeList-traverse"
 ], function(
-	ContentPane
-	, Menu
+	Menu
 	, MenuItem
 	, registry
 	, declare
@@ -26,8 +25,9 @@ define([
 	, put
 	, _Module
 	, _Show
-){
-	return declare([_Module, _Show, ContentPane], {
+) {
+
+	return declare([_Module, _Show], {
 		//	summary:
 		//		Módulo para la creación del Sidebar de la aplicación.
 		//	description:
@@ -36,30 +36,26 @@ define([
 		//		Si se hace click sobre algún módulo, la aplicación lo cargará.
 		//		Si se accede con una ruta previa, se detectará para informar del módulo y categoría activos.
 
-		//	primaryNav: Object
-		//		Propiedades de la barra principal. Debe de tener "class" para asignarle estilos y
-		//		"active" para especificar que categoría está activa (con un módulo en uso).
-
 		constructor: function(args) {
 
 			this.config = {
-				primaryNav: {
-					"class": "primary.main-nav",
-					active: null
+				ownChannel: "sidebar",
+				events: {
+					ITEM_CLICK: "itemClick",
+					GET_ALLOWED_MODULES: "getAllowedModules"
 				},
-				// own actions
 				actions: {
 					ADD_ITEMS: "addItems",
 					UPDATE_ACTIVE: "updateActive",
-					ITEM_CLICKED: "itemClicked"
+					ITEM_CLICKED: "itemClicked",
+					GET_ALLOWED_MODULES: "getAllowedModules",
+					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules"
 				},
-				events: {
-					ITEM_CLICK: "itemClick"
-				},
+
+				primaryClass: "primary.main-nav",
+				primaryActiveItem: null,
 				suffixI18n: '',
-				items: null,
-				// mediator params
-				ownChannel: "sidebar"
+				items: null
 			};
 
 			lang.mixin(this, this.config, args);
@@ -73,6 +69,12 @@ define([
 			},{
 				channel : this.getChannel("UPDATE_ACTIVE"),
 				callback: "_subUpdateActive"
+			},{
+				channel : this._buildChannel(this.credentialsChannel, this.actions.AVAILABLE_ALLOWED_MODULES),
+				callback: "_subAllowedModules",
+				options: {
+					predicate: lang.hitch(this, this._chkPublicationIsForMe)
+				}
 			});
 		},
 
@@ -81,21 +83,10 @@ define([
 			this.publicationsConfig.push({
 				event: 'ITEM_CLICK',
 				channel: this.getChannel('ITEM_CLICKED')
+			},{
+				event: 'GET_ALLOWED_MODULES',
+				channel: this._buildChannel(this.credentialsChannel, this.actions.GET_ALLOWED_MODULES)
 			});
-		},
-
-		_initialize: function() {
-
-			this._createPrimaryNavMenu();
-		},
-
-		postCreate: function() {
-
-			this.inherited(arguments);
-
-			if (this.items) {
-				this._addItems(this.items);
-			}
 		},
 
 		startup: function() {
@@ -103,6 +94,32 @@ define([
 			this.inherited(arguments);
 
 			this._createMenuSidebar();
+
+			if (this._getLowWidth()) {
+				this._collapseSidebar();
+			}
+		},
+
+		_afterShow: function() {
+
+			this._createPrimaryNavMenu();
+
+			if (this.items) {
+				this._addItems(this.items);
+			}
+
+			this._emitEvt('GET_ALLOWED_MODULES', {
+				id: this.getOwnChannel()
+			});
+		},
+
+		_resize: function() {
+
+			if (this._getLowWidth()) {
+				this._collapseSidebar();
+			} else {
+				this._uncollapseSidebar();
+			}
 		},
 
 		_subAddItems: function(/*Object*/ res) {
@@ -122,9 +139,16 @@ define([
 			this._updateActive(res);
 		},
 
-		_updateActive: function(res) {
+		_subAllowedModules: function(/*Object*/ res) {
+			//	summary:
+			//		Se ejecuta este callback cuando recibe los módulos permitidos al usuario
+			//		mandando a crear la estructura y añadiendo los items con los módulos recibidos
+			//	tags:
+			//		private
+			//	response: Object
+			//		Respuesta de la petición que contiene los módulos permitidos.
 
-			this._updateItemsActive(res.label);
+			this._addItems(res.data);
 		},
 
 		_createPrimaryNavMenu: function() {
@@ -133,21 +157,13 @@ define([
 			//	tags:
 			//		private
 
-			var primaryNav = "nav";
+			var primaryNav = "nav." + this.primaryClass;
 
-			if (this.primaryNav["class"]) {
-				primaryNav += "." + this.primaryNav["class"];
-			}
+			/*if (this.domNode.children.length) {
+				put(this.domNode.firstChild, "!");
+			}*/
 
-			if (this.primaryNav.id) {
-				primaryNav += "#" + this.primaryNav.id;
-			}
-
-			if (this.containerNode.children.length !== 0) {
-				put(this.containerNode.firstChild, "!");
-			}
-
-			this.primaryNavNode = put(this.containerNode, primaryNav);
+			this.primaryNavNode = put(this.domNode, primaryNav);
 			this.primaryNavMenuNode = put(this.primaryNavNode, "ul");
 		},
 
@@ -167,6 +183,51 @@ define([
 				disabled: false,
 				onClick: lang.hitch(this, this._onClickSidebarMenu)
 			}));
+		},
+
+		_onClickSidebarMenu: function(/*Object*/ evt) {
+			//	Summary:
+			//		Evento click del menú secundario del sidebar, Se usa para expandir/reducir
+			//		el sidebar añadiendo/suprimiendo el label
+			//	tags:
+			//		private
+			//	evt
+			//		Evento del click
+
+			var sidebarMenuItem = this.sidebarMenu.getChildren()[0];
+
+			if (sidebarMenuItem.label === this.i18n.menuTextReduce) {
+				this._collapseSidebar();
+			} else {
+				this._uncollapseSidebar();
+			}
+		},
+
+		_collapseSidebar: function() {
+
+			var classAction = 'add',
+				newLabel = this.i18n.menuTextExpand;
+
+			this._updateSidebarCollapseStatus(classAction, newLabel);
+		},
+
+		_uncollapseSidebar: function() {
+
+			var classAction = 'remove',
+				newLabel = this.i18n.menuTextReduce;
+
+			this._updateSidebarCollapseStatus(classAction, newLabel);
+		},
+
+		_updateSidebarCollapseStatus: function(classAction, newLabel) {
+
+			var sidebarMenuItem = this.sidebarMenu.getChildren()[0],
+				globalContainerId = query('#rootContainer')[0].children[0].id,
+				globalContainer = registry.byId(globalContainerId);
+
+			domClass[classAction](this.ownerDocumentBody, 'reducedMenu');
+			globalContainer && globalContainer.resize();
+			sidebarMenuItem.attr('label', newLabel);
 		},
 
 		_addItems: function(/*Array*/ items) {
@@ -201,20 +262,18 @@ define([
 			//	returns:
 			//		Devuelve el node del elemento creado
 
-			var itemDom = null,
-				label = item.name || item.label,
+			var label = item.name || item.label,
 				prelabel = "li." + label,
 				iconPrefix = item.icon.split("-")[0],
 				icon = iconPrefix + "." + item.icon,
-				labelI18n = this.i18n[label + this.suffixI18n] || this.i18n[label];
-
-			itemDom = put(prelabel + "[title=" + labelI18n + "]");
+				labelI18n = this.i18n[label + this.suffixI18n] || this.i18n[label],
+				itemDom = put(prelabel + "[title=" + labelI18n + "]");
 
 			if (item.active) {
-				this.primaryNav.active = label;
+				this.primaryActiveItem = label;
 			}
 
-			if (label === this.primaryNav.active) {
+			if (label === this.primaryActiveItem) {
 				put(itemDom, ".active");
 			}
 
@@ -252,47 +311,35 @@ define([
 
 		_isValidClick: function(obj) {
 
-			if (this.primaryNav.active === obj.label) {
-				return false;
-			}
-
-			return true;
+			return this.primaryActiveItem !== obj.label;
 		},
 
-		_updateItemsActive: function(/*String*/ primary) {
+		_updateItemsActive: function(/*String*/ currentLabel) {
 			//	Summary:
-			//		Actualiza los elementos de las barras
+			//		Actualiza el estado de los elementos de la barra principal
 			//	Description:
-			//		Se pone a activo los elemntos que se hayan especificado por parámetros.
-			//		El elemento de la primera barra (especificado en primary)
+			//		Se marca como activo el elemento especificado en currentLabel
 			//	Tags:
 			//		private
 
-			//Actualización de la barra de navegación primaria
+			var currentIsNotActiveItem = this.primaryActiveItem !== currentLabel;
 
-			// Si ya hay un elemento activo y no coincide con el padre del elemento pulsado
-			if ((this.primaryNav.active) && (this.primaryNav.active !== primary)) {
-				// buscamos el elemnto activo
-				var itemactive = query("li.active", this.primaryNavMenuNode);
-				if (itemactive.length > 0) {
-					// le borramos la clase activo
-					domClass.remove(itemactive[0], "active");
+			if (this.primaryActiveItem && currentIsNotActiveItem) {
+				var activeItems = query("li.active", this.primaryNavMenuNode);
+				if (activeItems.length) {
+					domClass.remove(activeItems[0], "active");
 				}
 			}
 
-			// Si el primaryNav.active es nulo y no es igual al padre se actualiza su valor y se añade la clase
-			if ((!this.primaryNav.active) || (this.primaryNav.active !== primary)) {
-				this.primaryNav.active = primary;
+			if (!this.primaryActiveItem || currentIsNotActiveItem) {
+				this.primaryActiveItem = currentLabel;
 
-				var itemaddclass = query("li." + primary, this.primaryNavMenuNode);
+				var currentItems = query("li." + currentLabel, this.primaryNavMenuNode);
 
-				if (itemaddclass.length > 0) {
-					// Si se ha hecho click con anterioridad, hay que quitarle la clase click antes
-					if (domClass.contains(itemaddclass[0], "click")) {
-						domClass.remove(itemaddclass[0], "click");
-					}
-
-					domClass.add(itemaddclass[0], "active");
+				if (currentItems.length) {
+					var currentItem = currentItems[0];
+					domClass.remove(currentItem, "click");
+					domClass.add(currentItem, "active");
 				}
 			}
 		},

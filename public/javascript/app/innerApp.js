@@ -2,6 +2,7 @@ define([
 	'app/_app'
 	, 'app/components/Topbar'
 	, 'dijit/layout/BorderContainer'
+	, 'dijit/layout/ContentPane'
 	, 'dijit/layout/LayoutContainer'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
@@ -23,6 +24,7 @@ define([
 	App
 	, Topbar
 	, BorderContainer
+	, ContentPane
 	, LayoutContainer
 	, declare
 	, lang
@@ -99,8 +101,12 @@ define([
 		postCreate: function() {
 
 			this.addChild(this.bc);
-			this.addChild(this.sidebar);
+			this.addChild(this.sidebarNode);
 			this.addChild(this.topbar);
+
+			this._publish(this.sidebar.getChannel('SHOW'), {
+				node: this.sidebarNode
+			});
 
 			this.inherited(arguments);
 
@@ -140,6 +146,10 @@ define([
 			//		de la aplicación.
 			//	tags:
 			//		private
+
+			this.sidebar = new MainSidebarImpl({
+				parentChannel: this.ownChannel
+			});
 
 			new QueryStore({
 				parentChannel: this.ownChannel
@@ -189,8 +199,9 @@ define([
 			//	tags:
 			//		private
 
-			this.sidebar = new MainSidebarImpl({
-				parentChannel: this.ownChannel
+			this.sidebarNode = new ContentPane({
+				region: 'left',
+				'class': 'mainSidebar'
 			});
 
 			this.topbar = new Topbar({

@@ -354,7 +354,9 @@ define([
 
 			this._resizeAfterMinimizeToggle();
 
-			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
+			if (this._minimizeButton) {
+				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
+			}
 
 			if (this.resizable) {
 				domClass.add(this._resizeHandleNode, this.hiddenClass);
@@ -368,7 +370,9 @@ define([
 
 			this._resizeAfterMinimizeToggle();
 
-			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
+			if (this._minimizeButton) {
+				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
+			}
 
 			if (this.resizable) {
 				domClass.remove(this._resizeHandleNode, this.hiddenClass);
@@ -392,8 +396,10 @@ define([
 
 			this._resizeAfterMaximizeToggle();
 
-			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModuleReturn);
-			this._updateMaximizeButtonIcon(true);
+			if (this._maximizeButton) {
+				this._maximizeButton.onclick = lang.hitch(this, this._maximizeModuleReturn);
+				this._updateMaximizeButtonIcon(true);
+			}
 
 			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this.maxWidthCols);
 
@@ -404,13 +410,19 @@ define([
 
 			this._resizeAfterMaximizeToggle();
 
-			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
-			this._updateMaximizeButtonIcon(false);
+			if (this._maximizeButton) {
+				this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
+				this._updateMaximizeButtonIcon(false);
+			}
 
 			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this._originalWidthByCols);
 		},
 
 		_prepareMaximizeForUndoUserResize: function() {
+
+			if (!this._maximizeButton) {
+				return;
+			}
 
 			this._maximizeButton.onclick = lang.hitch(this, this._undoUserResize);
 			this._updateMaximizeButtonIcon(true);

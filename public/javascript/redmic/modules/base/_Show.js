@@ -59,6 +59,7 @@ define([
 
 		animationSafetyTimeout: 2000,
 		additionalResizeTimeout: 500,
+		lowWidthValue: 800,
 
 
 		constructor: function(args) {
@@ -66,6 +67,7 @@ define([
 			this._setShown(false);
 			this._setPreviouslyShown(false);
 			this._setStartupStatus(false);
+			this._setLowWidth(window.innerWidth < this.lowWidthValue);
 
 			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixShowEventsAndActions));
 			aspect.before(this, "_setOwnCallbacksForEvents", lang.hitch(this, this._setShowOwnCallbacksForEvents));
@@ -657,11 +659,18 @@ define([
 		_prepareResize: function(res) {
 
 			clearTimeout(this._additionalResizeHandler);
-			this._additionalResizeHandler = setTimeout(
-				lang.hitch(this, this._resize, res), this.additionalResizeTimeout);
+			this._additionalResizeHandler = setTimeout(lang.hitch(this, this._doShowResize, res),
+				this.additionalResizeTimeout);
 
 			// TODO en _Window hay una funcionalidad de emitir el evento RESIZE, que debería usarse
 			// aqui para todos. Generalizar lo que se encuentra en _Window y compatibilizar
+		},
+
+		_doShowResize: function(res) {
+
+			this._setLowWidth(window.innerWidth < this.lowWidthValue);
+
+			this._resize(res);
 		},
 
 		_getShownOrHiddenResponseObject: function() {
@@ -800,6 +809,16 @@ define([
 		_setLoadingStatus: function(value) {
 
 			this.statusFlags.loading = value;
+		},
+
+		_getLowWidth: function() {
+
+			return this.statusFlags.lowWidth;
+		},
+
+		_setLowWidth: function(value) {
+
+			this.statusFlags.lowWidth = value;
 		}
 	});
 });

@@ -34,8 +34,9 @@ define([
 				events: {
 					UPDATE: "update"
 				},
+				ownChannel: "templateDisplayer",
 				data: {},
-				ownChannel: "templateDisplayer"
+				containerClass: 'templateDisplayer'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -77,7 +78,7 @@ define([
 
 			this.inherited(arguments);
 
-			this.container = put("div");
+			this.container = put('div.' + this.containerClass);
 
 			if (this['class']) {
 				put(this.container, "." + this['class']);
@@ -123,7 +124,6 @@ define([
 			var data = request.data;
 
 			if (data && this.template) {
-
 				this.data = data;
 				this._loadedTemplate = this._loadTemplate(this.template, this.data);
 				this._setContent(this._loadedTemplate);

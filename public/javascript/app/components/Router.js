@@ -514,6 +514,16 @@ define([
 			//	tags:
 			//		private
 
+			// TODO utilizar destroy de módulos cuando la jerarquía de canales sea correcta
+			this._onLayoutDestroyed();
+			/*
+			this._once(this._currLayoutInstance.getChannel('DESTROYED'), lang.hitch(this, this._onLayoutDestroyed));
+			this._publish(this._currLayoutInstance.getChannel('DESTROY'));
+			*/
+		},
+
+		_onLayoutDestroyed: function() {
+
 			this._currLayoutInstance.destroy();
 			delete this._currLayoutInstance;
 		},

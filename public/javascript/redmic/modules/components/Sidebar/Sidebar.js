@@ -102,15 +102,20 @@ define([
 
 		_afterShow: function() {
 
+			// TODO eliminar cuando las instancias viejas de sidebar se destruyan (ahora todas escuchan show a la vez)
+			if (!this.domNode) {
+				return;
+			}
+
 			this._createPrimaryNavMenu();
 
 			if (this.items) {
 				this._addItems(this.items);
+			} else {
+				this._emitEvt('GET_ALLOWED_MODULES', {
+					id: this.getOwnChannel()
+				});
 			}
-
-			this._emitEvt('GET_ALLOWED_MODULES', {
-				id: this.getOwnChannel()
-			});
 		},
 
 		_resize: function() {
@@ -157,11 +162,7 @@ define([
 			//	tags:
 			//		private
 
-			var primaryNav = "nav." + this.primaryClass;
-
-			/*if (this.domNode.children.length) {
-				put(this.domNode.firstChild, "!");
-			}*/
+			var primaryNav = 'nav.' + this.primaryClass;
 
 			this.primaryNavNode = put(this.domNode, primaryNav);
 			this.primaryNavMenuNode = put(this.primaryNavNode, "ul");

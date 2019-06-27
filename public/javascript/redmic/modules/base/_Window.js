@@ -42,7 +42,7 @@ define([
 
 		hiddenClass: 'hidden',
 
-		titleHeight: 30,
+		titleHeight: 2,
 		minWidth: 200,
 
 		widthByColsAttr: 'data-cols',
@@ -146,7 +146,7 @@ define([
 
 			this._windowTitleNode = put(this._windowNode, 'div.' + this.windowTitleClass);
 
-			domStyle.set(this._windowTitleNode, 'height', this.titleHeight + 'px');
+			domStyle.set(this._windowTitleNode, 'height', this.titleHeight + 'rem');
 		},
 
 		_createWindowContent: function() {
@@ -165,7 +165,7 @@ define([
 
 			this._windowContentNode = put(this._windowNode, 'div.' + contentClass);
 
-			var contentHeight = 'calc(100% - ' + titleHeight + 'px)';
+			var contentHeight = 'calc(100% - ' + titleHeight + 'rem)';
 			domStyle.set(this._windowContentNode, 'height', contentHeight);
 		},
 
@@ -363,7 +363,7 @@ define([
 			}
 
 			domStyle.set(this.node, 'height', 0);
-			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'px');
+			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'rem');
 		},
 
 		_minimizeModuleReturn: function() {
@@ -378,7 +378,7 @@ define([
 				domClass.remove(this._resizeHandleNode, this.hiddenClass);
 			}
 
-			domStyle.set(this.node, 'height', 'calc(100% - ' + this.titleHeight + 'px)');
+			domStyle.set(this.node, 'height', 'calc(100% - ' + this.titleHeight + 'rem)');
 			domStyle.set(this._windowNode.parentNode, 'height', '');
 		},
 

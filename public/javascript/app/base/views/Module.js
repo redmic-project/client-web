@@ -46,7 +46,7 @@ define([
 					"' d-state-url=true>" + "<div class='name mediumTexturedContainer colorWhite'>" + this.name + "</div></a>";
 			} else {
 				this.templateString = "<a title='" + this.name +
-					"' class='col-xs-12 col-sm-6 col-md-6 col-lg-3 module' href='" + this.url + "' d-state-url=true>" +
+					"' class='module' href='" + this.url + "' d-state-url=true>" +
 					"<div class='button mediumTexturedContainer colorWhite'>" +
 					"<i class='" + this.icon + " iconModule'></i><div class='name'>" + this.name + "</div></div></a>";
 			}

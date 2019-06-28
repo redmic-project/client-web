@@ -33,17 +33,14 @@ define([
 		// 	Url del módulo
 		url: null,
 
-		// cols: String
-		// 	Clases correspondientes al griding por columnas
-		cols: "col-xs-12 col-sm-6 col-md-4 col-lg-4",
-
 		constructor: function(args){
 
 			lang.mixin(this, args);
 
 			if(this.domain) {
-				this.templateString = "<a class='" + this.cols + " boxButton' href='" + this.url +
-					"' d-state-url=true>" + "<div class='name mediumTexturedContainer colorWhite'>" + this.name + "</div></a>";
+				this.templateString = "<a class='boxButton' href='" + this.url +
+					"' d-state-url=true>" + "<div class='name mediumTexturedContainer colorWhite'><span>" +
+					this.name + "</span></div></a>";
 			} else {
 				this.templateString = "<a title='" + this.name +
 					"' class='module' href='" + this.url + "' d-state-url=true>" +

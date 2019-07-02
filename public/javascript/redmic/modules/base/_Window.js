@@ -50,6 +50,7 @@ define([
 		maxWidthCols: 6,
 
 		resizableBottomPadding: 15,
+		resizableBottomMargin: 0.2,
 
 		scrollMargin: 10,
 
@@ -152,11 +153,15 @@ define([
 		_createWindowContent: function() {
 
 			var contentClass = this.windowContentClass,
-				titleHeight = this.titleHeight;
+				contentHeightReduction = this.titleHeight;
+
+			if (this.resizable) {
+				contentHeightReduction += this.resizableBottomMargin;
+			}
 
 			if (this.omitTitleBar) {
 				contentClass += '.' + this.windowWithoutTitleContentClass;
-				titleHeight = 0;
+				contentHeightReduction = 0;
 			}
 
 			if (this.classWindowContent) {
@@ -165,7 +170,7 @@ define([
 
 			this._windowContentNode = put(this._windowNode, 'div.' + contentClass);
 
-			var contentHeight = 'calc(100% - ' + titleHeight + 'rem)';
+			var contentHeight = 'calc(100% - ' + contentHeightReduction + 'rem)';
 			domStyle.set(this._windowContentNode, 'height', contentHeight);
 		},
 
@@ -374,11 +379,14 @@ define([
 				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
 			}
 
+			var contentHeightReduction = this.titleHeight;
+
 			if (this.resizable) {
 				domClass.remove(this._resizeHandleNode, this.hiddenClass);
+				contentHeightReduction += this.resizableBottomMargin;
 			}
 
-			domStyle.set(this.node, 'height', 'calc(100% - ' + this.titleHeight + 'rem)');
+			domStyle.set(this.node, 'height', 'calc(100% - ' + contentHeightReduction + 'rem)');
 			domStyle.set(this._windowNode.parentNode, 'height', '');
 		},
 

@@ -227,8 +227,11 @@ define([
 				globalContainer = registry.byId(globalContainerId);
 
 			domClass[classAction](this.ownerDocumentBody, 'reducedMenu');
-			globalContainer && globalContainer.resize();
 			sidebarMenuItem.attr('label', newLabel);
+
+			if (globalContainer && typeof globalContainer.resize === 'function') {
+				globalContainer.resize();
+			}
 		},
 
 		_addItems: function(/*Array*/ items) {

@@ -30,8 +30,7 @@ define([
 				},
 				actions: {
 					SHOW_MODULE: 'showModule',
-					MODULE_SHOWN: 'moduleShown',
-					WINDOW_RESIZE: 'windowResize'
+					MODULE_SHOWN: 'moduleShown'
 				}
 			};
 
@@ -43,9 +42,9 @@ define([
 			this.subscriptionsConfig.push({
 				channel: this.getChannel('SHOW_MODULE'),
 				callback: '_subShowModule'
-			},{
+			/*},{
 				channel: this.getChannel('RESIZE_VIEW'),
-				callback: '_subResizeView'
+				callback: '_subResizeView'*/
 			});
 		},
 
@@ -62,7 +61,10 @@ define([
 
 		_doEvtFacade: function() {
 
-			this._getGlobalContext().onresize = lang.hitch(this, this._groupEventArgs, 'WINDOW_RESIZE');
+			// TODO puede que no sea necesario, se puede eliminar de aquí y de '_Show' si no se va a usar,
+			// o bien implementarse directamente en _Show sin necesidad de publicar (todos los módulos pueden acceder
+			// al elemento window)
+			//this._getGlobalContext().onresize = lang.hitch(this, this._groupEventArgs, 'WINDOW_RESIZE');
 		},
 
 		_setOwnCallbacksForEvents: function() {
@@ -86,10 +88,10 @@ define([
 			}
 		},
 
-		_subResizeView: function(req) {
+		/*_subResizeView: function(req) {
 
 			this._doResize();
-		},
+		},*/
 
 		_subShowModule: function(req) {
 
@@ -106,7 +108,8 @@ define([
 
 		_onModuleShown: function(moduleKey, res) {
 
-			this._doResize();
+			// TODO cuando no sea contenedor dijit, no hará falta
+			//this._doResize();
 
 			this._emitEvt('MODULE_SHOWN', {
 				key: moduleKey

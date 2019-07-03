@@ -29,7 +29,7 @@ define([
 			LOADING: "loading",
 			LOADED: "loaded",
 			RESIZE: "resize",
-			RESIZE_VIEW: "resizeView",
+			//RESIZE_VIEW: "resizeView",
 			ME_OR_ANCESTOR_SHOWN: "meOrAncestorShown",
 			ME_OR_ANCESTOR_HIDDEN: "meOrAncestorHidden",
 			STARTED_UP: "startedUp"
@@ -51,7 +51,7 @@ define([
 			UNLOCK: "unlock",
 			TOGGLE_LOCK: "toggleLock",
 			WINDOW_RESIZE: "windowResize",
-			RESIZE_VIEW: "resizeView",
+			//RESIZE_VIEW: "resizeView",
 			STARTED_UP: "startedUp"
 		},
 
@@ -157,9 +157,9 @@ define([
 			},{
 				event: 'RESIZE',
 				channel: this.getChannel("RESIZED")
-			},{
+			/*},{
 				event: 'RESIZE_VIEW',
-				channel: this._buildChannel(this.rootChannel, this.actions.RESIZE_VIEW)
+				channel: this._buildChannel(this.rootChannel, this.actions.RESIZE_VIEW)*/
 			},{
 				event: 'STARTED_UP',
 				channel: this.getChannel("STARTED_UP")
@@ -379,11 +379,11 @@ define([
 			}
 
 			if (node.domNode) {
-				var parentNodeGetter = function() { return node.domNode; },
+				/*var parentNodeGetter = function() { return node.domNode; },
 					childNodeGetter = function() { return nodeToShow; },
 					callback = lang.hitch(this, this._emitEvt, 'RESIZE_VIEW');
 
-				this._listenChildrenPlacing(parentNodeGetter, childNodeGetter, callback);
+				this._listenChildrenPlacing(parentNodeGetter, childNodeGetter, callback);*/
 
 				this._addToNode(node.domNode, nodeToShow, inFront);
 			} else {

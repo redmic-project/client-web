@@ -319,6 +319,7 @@ define([
 			var dfd = new Deferred();
 
 			require(["app" + moduleItem.internPath + "View"], lang.hitch(this, function(ModuleView) {
+
 				// Creamos el módulo
 				var moduleInstance = new ModuleView({
 					perms: moduleItem.perms,

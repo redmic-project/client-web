@@ -17,7 +17,7 @@ define([
 	, _ListenRequestError
 	, _ViewHandle	// QUITAR
 ){
-	return declare([_ListenRequestError, _ViewHandle, ContentPane, _Module, _Show], {
+	return declare([_ListenRequestError, _ViewHandle/*, ContentPane*/, _Module, _Show], {
 		//	summary:
 		//		Base común para todas los módulos usados como vistas.
 

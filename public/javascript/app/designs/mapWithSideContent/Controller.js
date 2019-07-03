@@ -17,7 +17,7 @@ define([
 	, Map
 	, _PlaceNamesButton
 ){
-	return declare([_View, _Controller], {
+	return declare(_Controller, {
 		//	summary:
 		//		Controlador para diseño de vistas que contienen un mapa y un contenido a la derecha.
 
@@ -64,7 +64,7 @@ define([
 			this.inherited(arguments);
 
 			this._publish(this.map.getChannel("SHOW"), {
-				node: this.mapNode.domNode
+				node: this.mapNode
 			});
 
 			aspect.after(this.mapNode, "resize", lang.hitch(this, function() {

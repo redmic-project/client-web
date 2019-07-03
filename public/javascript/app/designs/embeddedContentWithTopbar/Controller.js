@@ -84,7 +84,7 @@ define([
 
 			if (this._getCurrentContentKey() !== inputKey) {
 				this._emitEvt("CHANGE_EMBEDDED_CONTENT", evt);
-				this._emitEvt("RESIZE_VIEW");
+				//this._emitEvt("RESIZE_VIEW");
 			}
 		},
 

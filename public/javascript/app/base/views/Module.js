@@ -1,14 +1,14 @@
 define([
 	"dojo/_base/declare"
-	, "dijit/_WidgetBase"
-	, "dijit/_TemplatedMixin"
 	, "dojo/_base/lang"
+	, 'put-selector/put'
 ], function(
 	declare
-	, _WidgetBase
-	, _TemplatedMixin
 	, lang
-) {		return declare([_WidgetBase, _TemplatedMixin], {
+	, put
+) {
+
+	return declare(null, {
 		//	summary:
 		//		Widget para la creación de un elemento boton
 		//
@@ -33,20 +33,28 @@ define([
 		// 	Url del módulo
 		url: null,
 
-		constructor: function(args){
+
+		constructor: function(args) {
 
 			lang.mixin(this, args);
 
-			if(this.domain) {
-				this.templateString = "<a class='boxButton' href='" + this.url +
-					"' d-state-url=true>" + "<div class='name mediumTexturedContainer colorWhite'><span>" +
-					this.name + "</span></div></a>";
+			var item;
+			if (this.domain) {
+				this.moduleNode = put('a.boxButton[href="' + this.url + '"][d-state-url=true]');
+				item = put(this.moduleNode, 'div.name.mediumSolidContainer.colorWhite');
+				put(item, 'span', this.name);
 			} else {
-				this.templateString = "<a title='" + this.name +
-					"' class='module' href='" + this.url + "' d-state-url=true>" +
-					"<div class='button mediumTexturedContainer colorWhite'>" +
-					"<i class='" + this.icon + " iconModule'></i><div class='name'>" + this.name + "</div></div></a>";
+				this.moduleNode = put('a.module[title="' + this.name + '"][href="' + this.url + '"][d-state-url=true]');
+				item = put(this.moduleNode, 'div.button.mediumSolidContainer.colorWhite');
+				put(item, 'i.iconModule.' + this.icon.replace(/\ /g, '.'));
+				put(item, 'div.name', this.name);
 			}
+		},
+
+		// TODO reemplazo de método de Dijit, eliminar si deja de usarse
+		placeAt: function(node) {
+
+			put(node, this.moduleNode);
 		}
 	});
 });

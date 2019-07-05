@@ -1,22 +1,23 @@
 define([
-	"dijit/layout/ContentPane"
+	'app/designs/base/_Layout'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
 ], function (
-	ContentPane
+	_Layout
 	, declare
 	, lang
 	, put
 ){
 
-	return declare(ContentPane, {
+	return declare(_Layout, {
 		//	summary:
 		//		Layout para vistas que contienen un buscador de texto y un listado.
 
 		constructor: function(args) {
 
 			this.config = {
+				layoutAdditionalClasses: 'layoutListDesign',
 				classByList: '.noBorderList'
 			};
 
@@ -27,19 +28,22 @@ define([
 
 			this.inherited(arguments);
 
-			this.topNode = put(this.containerNode, "div.topZone");
+			this.topNode = put("div.topZone");
 
-			this._titleNode = put(this.topNode, "div.titleZone.col-xs-8.col-sm-8.col-md-8.col-lg-8.col-xl-8");
+			this._titleNode = put(this.topNode, "div.titleZone");
 
 			this._setTitle(this.title);
 
-			this.keypadZoneNode = put(this.topNode, "div.keypadZone.col-xs-4.col-sm-4.col-md-4.col-lg-4.col-xl-4");
+			this.keypadZoneNode = put(this.topNode, "div.keypadZone");
 
 			put(this.titleSpanNode, "a[href]");
 
-			this.centerNode = put(this.containerNode, "div.centerZone");
+			this.centerNode = put("div.centerZone");
 
 			this.listNode = put(this.centerNode, "div.listZone" + this.classByList);
+
+			this.addChild(this.topNode);
+			this.addChild(this.centerNode);
 		}
 	});
 });

@@ -238,6 +238,11 @@ define([
 			delete this.commonActions;
 		},
 
+		_cleanDijitProblematicFeatures: function() {
+
+			this.domNode.removeAttribute('widgetId');
+		},
+
 		_minimalInitialize: function() {
 
 			this._defineInitialSubscriptions();
@@ -342,6 +347,7 @@ define([
 				return;
 			}
 
+			this._cleanDijitProblematicFeatures();
 			this._minimalInitialize();
 			this._beforeInitialize();
 			this._initialize();

@@ -98,7 +98,7 @@ define([
 				put(this.titleNode, ".centerTitle");
 			}
 
-			put(this.containerNode.firstChild, "-", this.topNode);
+			put(this._layoutContainer.firstChild, "-", this.topNode);
 		},
 
 		_addDataInTitle: function() {

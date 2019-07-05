@@ -33,9 +33,7 @@ define([
 		_createAndAddContent: function() {
 
 			this.mapNode = put('div.mediumSolidContainer.borderRadius');
-
-			this.contentNode = put('div.mediumTexturedContainer.mapSideContainer.borderRadius');
-			//'class': "col-xs-6 col-sm-6 col-md-5 col-lg-4 mediumTexturedContainer mapSideContainer borderRadius"
+			this.contentNode = put('div.mediumSolidContainer.mapSideContainer.borderRadius');
 
 			this.addChild(this.mapNode);
 			this.addChild(this.contentNode);

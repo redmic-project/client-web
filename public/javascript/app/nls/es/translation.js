@@ -720,7 +720,7 @@ define({
 	, "product": "Product"
 	, "products": "Productos"
 	, "admin": "Metadatos"
-	, "maintenance": "Manten."
+	, "maintenance": "Mantenimiento"
 	, "data-loader": "Carga de datos"
 	, "user": "Rincón del usuario"
 	, "menuTextReduce": "Reducir menú"

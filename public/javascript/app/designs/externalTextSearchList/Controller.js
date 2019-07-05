@@ -1,21 +1,19 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/base/_Browser"
+	"app/designs/base/_Browser"
 	, "app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/search/TextImpl"
 ], function (
-	_View
-	, _Browser
+	_Browser
 	, _Controller
 	, declare
 	, lang
 	, _Store
 	, TextImpl
 ){
-	return declare([_View, _Controller, _Browser, _Store], {
+	return declare([_Controller, _Browser, _Store], {
 		//	summary:
 		//		Controller para vistas que contienen un buscador de texto, por facets y un listado.
 

@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/components/steps/ContactSetStep"
+	"app/components/steps/ContactSetStep"
 	, "app/components/steps/MainDataStep"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
@@ -8,8 +7,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	_View
-	, ContactSetStep
+	ContactSetStep
 	, PlatformMainDataStep
 	, Controller
 	, Layout
@@ -17,7 +15,7 @@ define([
 	, declare
 	, lang
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de Platform.
 		//	description:

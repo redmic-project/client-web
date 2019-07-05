@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "dijit/_TemplatedMixin"
+	"dijit/_TemplatedMixin"
 	, "dijit/_WidgetBase"
 	, "dijit/_WidgetsInTemplateMixin"
 	, "dojo/text!./templates/ExternalUserBase.html"
@@ -13,8 +12,7 @@ define([
 	, "dijit/form/ValidationTextBox"
 	, "dijit/form/Button"
 ], function(
-	_View
-	, _TemplatedMixin
+	_TemplatedMixin
 	, _WidgetBase
 	, _WidgetsInTemplateMixin
 	, baseTemplate
@@ -23,7 +21,7 @@ define([
 	, kernel
 	, put
 ){
-	return declare(_View, {
+	return declare(null, {
 		//	Summary:
 		//		Vista base de aplicación externa
 		//

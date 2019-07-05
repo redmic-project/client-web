@@ -1,17 +1,15 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/base/_Controller"
+	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/chart/ChartsContainer/InfoChartsContainerImpl"
 ], function (
-	_View
-	, _Controller
+	_Controller
 	, declare
 	, lang
 	, InfoChartsContainerImpl
 ){
-	return declare([_View, _Controller], {
+	return declare(_Controller, {
 		//	summary:
 		//		Controlador para diseño de componentes que constan de un contenedor de gráficas y elementos añadidos
 		//		al mismo.

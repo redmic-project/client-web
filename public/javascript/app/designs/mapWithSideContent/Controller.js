@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/base/_Controller"
+	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -8,8 +7,7 @@ define([
 	, "redmic/modules/map/Map"
 	, "redmic/modules/map/_PlaceNamesButton"
 ], function (
-	_View
-	, _Controller
+	_Controller
 	, declare
 	, lang
 	, aspect

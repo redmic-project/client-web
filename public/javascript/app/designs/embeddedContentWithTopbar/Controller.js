@@ -1,19 +1,17 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/base/_Controller"
+	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "redmic/modules/components/Keypad/IconKeypadImpl"
 ], function (
-	_View
-	, _Controller
+	_Controller
 	, declare
 	, lang
 	, Deferred
 	, IconKeypadImpl
 ){
-	return declare([_View, _Controller], {
+	return declare(_Controller, {
 		//	summary:
 		//		Controlador para diseño de componentes con contenido incrustado y topbar.
 

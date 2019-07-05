@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/components/steps/SelectActivityCategoryStep"
+	"app/components/steps/SelectActivityCategoryStep"
 	, "app/edition/views/dataLoader/AddDataIF"
 	, "app/edition/views/dataLoader/AddDataFT"
 	, "app/edition/views/dataLoader/AddDataOC"
@@ -17,8 +16,7 @@ define([
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/ActivityCategoriesNoExist"
 ], function(
-	_View
-	, SelectActivityCategoryStep
+	SelectActivityCategoryStep
 	, AddDataIF
 	, AddDataFT
 	, AddDataOC
@@ -35,7 +33,7 @@ define([
 	, TemplateDisplayer
 	, TemplateNoExist
 ){
-	return declare([_View, _Store], {
+	return declare(_Store, {
 		//	summary:
 		//		Vista de edición base para la carga de datos.
 		//	description:

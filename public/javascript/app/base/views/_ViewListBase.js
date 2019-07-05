@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "redmic/modules/base/_Module"
+	"redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 	, "app/base/views/Module"
 	, "dojo/_base/declare"
@@ -9,8 +8,7 @@ define([
 	, "put-selector/put"
 	, "redmic/base/Credentials"
 ], function (
-	_View
-	, _Module
+	_Module
 	, _Show
 	, Module
 	, declare
@@ -19,7 +17,7 @@ define([
 	, put
 	, Credentials
 ){
-	return declare([_View, _Module, _Show], {
+	return declare([_Module, _Show], {
 		//	Summary:
 		//		Vista base de listado de acceso a vistas de tercer nivel (Taxonomy, domains).
 		//	Description:

@@ -1,15 +1,13 @@
 define([
-	"app/base/views/_View"
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
 ], function(
-	_View
-	, declare
+	declare
 	, lang
 	, put
 ){
-	return declare(_View, {
+	return declare(null, {
 		//	summary:
 		//		Placeholder para vistas pendientes por hacer.
 

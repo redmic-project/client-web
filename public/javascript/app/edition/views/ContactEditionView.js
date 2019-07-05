@@ -1,21 +1,19 @@
 define([
-	"app/base/views/_View"
-	, "app/components/steps/MainDataStep"
+	"app/components/steps/MainDataStep"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	_View
-	, ContactMainDataStep
+	ContactMainDataStep
 	, Controller
 	, Layout
 	, redmicConfig
 	, declare
 	, lang
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de Contact.
 		//	description:

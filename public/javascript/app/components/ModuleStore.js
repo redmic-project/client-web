@@ -1,5 +1,6 @@
 define([
-	"app/redmicConfig"
+	"app/base/views/_View"
+	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
@@ -7,7 +8,8 @@ define([
 	, "dojo/store/Memory"
 	, "redmic/modules/base/_Module"
 ], function(
-	redmicConfig
+	_View
+	, redmicConfig
 	, declare
 	, lang
 	, Deferred
@@ -321,7 +323,7 @@ define([
 			require(["app" + moduleItem.internPath + "View"], lang.hitch(this, function(ModuleView) {
 
 				// Creamos el módulo
-				var moduleInstance = new ModuleView({
+				var moduleInstance = new declare([_View, ModuleView])({
 					perms: moduleItem.perms,
 					parentChannel: this.parentChannel,
 					ownChannel: this.viewSeparator + moduleItem.id,

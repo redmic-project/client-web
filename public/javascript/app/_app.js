@@ -61,6 +61,8 @@ define([
 
 		_doEvtFacade: function() {
 
+			this._onEvt('HIDE', lang.hitch(this, this._onAppHide));
+
 			// TODO puede que no sea necesario, se puede eliminar de aquí y de '_Show' si no se va a usar,
 			// o bien implementarse directamente en _Show sin necesidad de publicar (todos los módulos pueden acceder
 			// al elemento window)

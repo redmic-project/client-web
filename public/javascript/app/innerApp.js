@@ -231,6 +231,26 @@ define([
 			if (this._getNodeToShow()) {
 				this.resize(arguments);
 			}
+		},
+
+		_onAppHide: function() {
+
+			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
+			this._publish(this.sidebar.getChannel('DESTROY'));
+			this._publish(this.languageSelector.getChannel('DESTROY'));
+			this._publish(this.userArea.getChannel('DESTROY'));
+
+			this._publish(this._buildChannel(this.storeChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.managerChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.queryStoreChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.taskChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.socketChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.notificationChannel, this.actions.DESTROY));
+
+			this.sidebarNode.destroy();
+			this.topbar.destroy();
+			this.bc.destroy();
 		}
 	});
 });

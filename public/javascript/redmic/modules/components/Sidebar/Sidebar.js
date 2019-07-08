@@ -153,6 +153,7 @@ define([
 			//	response: Object
 			//		Respuesta de la petición que contiene los módulos permitidos.
 
+			this._createPrimaryNavMenu();
 			this._addItems(res.data);
 		},
 
@@ -161,6 +162,10 @@ define([
 			//		Función para la creación de la primera barra creando los tags html correspondientes
 			//	tags:
 			//		private
+
+			if (this.primaryNavMenuNode) {
+				return;
+			}
 
 			var primaryNav = 'nav.' + this.primaryClass;
 

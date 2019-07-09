@@ -258,8 +258,8 @@ define([
 			var baseMap = OpenLayers.get(defaultLayerName).instance,
 				miniMapConfig = {
 					position: "topright",
-					collapsedWidth: 36,
-					collapsedHeight: 36,
+					collapsedWidth: 28,
+					collapsedHeight: 28,
 					toggleDisplay: true,
 					minimized: true,
 					strings: {

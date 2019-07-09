@@ -482,7 +482,7 @@ define([
 			this.tabs = new TabContainer({
 				tabPosition: "top",
 				region: "center",
-				'class': "mediumTexturedContainer sideTabContainer borderRadiusTabContainer"
+				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
 			});
 
 			this.tabs.addChild(browserAndSearchContainer);

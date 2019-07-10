@@ -39,7 +39,7 @@ define([
 			}
 
 			classNames = classNames.replace(/\ /g, '.');
-			this._layoutContainer = put('div.' + classNames);
+			put(this.domNode, '.' + classNames);
 		},
 
 		_addNodeToLayout: function(child) {
@@ -51,7 +51,7 @@ define([
 
 			var childNode = child.domNode || child;
 
-			put(this._layoutContainer, childNode);
+			put(this.domNode, childNode);
 		},
 
 		// TODO sustituto de método de dijit, cuando se resuelvan todas las dependencias, eliminar y usar el interno
@@ -62,7 +62,7 @@ define([
 
 		_getNodeToShow: function() {
 
-			return this._layoutContainer;
+			return this.domNode;
 		}
 	});
 });

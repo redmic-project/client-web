@@ -17,7 +17,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				layoutAdditionalClasses: 'mapAndContentLayoutMapDesign'
+				layoutAdditionalClasses: 'mapAndContentLayoutMapWithSideContentDesign'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -32,11 +32,8 @@ define([
 
 		_createAndAddContent: function() {
 
-			this.mapNode = put('div.mediumSolidContainer.borderRadius');
-			this.contentNode = put('div.mediumSolidContainer.mapSideContainer.borderRadius');
-
-			this.addChild(this.mapNode);
-			this.addChild(this.contentNode);
+			this.mapNode = put(this.domNode, 'div.mediumSolidContainer.mapContainer.borderRadius');
+			this.contentNode = put(this.domNode, 'div.mediumSolidContainer.mapSideContainer.borderRadius');
 		}
 	});
 });

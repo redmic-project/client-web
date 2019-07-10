@@ -56,7 +56,6 @@ define([
 			aspect.before(this, "_initialize", lang.hitch(this, this._initializeBeforeCompositeView));
 			aspect.before(this, "_defineSubscriptions", lang.hitch(this, this._initializeAfterCompositeView));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineCompositeSubcriptions));
-			aspect.after(this, "postCreate", lang.hitch(this, this._postCompositeCreate));
 		},
 
 		_mixCompositeEventsAndActions: function () {
@@ -103,7 +102,9 @@ define([
 			}
 		},
 
-		_postCompositeCreate: function() {
+		postCreate: function() {
+
+			this.inherited(arguments);
 
 			if (this.iconKeypadComposite) {
 

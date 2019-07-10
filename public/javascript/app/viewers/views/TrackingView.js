@@ -3,7 +3,7 @@ define([
 	, "app/designs/mapWithSideContent/main/_TrackingByFilter"
 	, "app/designs/mapWithSideContent/main/_TrackingWithList"
 	, "app/redmicConfig"
-	, "dijit/layout/BorderContainer"
+	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -28,7 +28,7 @@ define([
 	, _TrackingByFilter
 	, _TrackingWithList
 	, redmicConfig
-	, BorderContainer
+	, LayoutContainer
 	, ContentPane
 	, declare
 	, lang
@@ -152,7 +152,7 @@ define([
 
 		_createBrowserAndSearch: function() {
 
-			var browserAndSearchContainer = new BorderContainer({
+			var browserAndSearchContainer = new LayoutContainer({
 				title: this.i18n.activities,
 				'class': "marginedContainer noScrolledContainer"
 			});

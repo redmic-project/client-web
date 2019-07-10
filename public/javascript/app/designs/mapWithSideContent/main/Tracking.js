@@ -7,7 +7,6 @@ define([
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
 	, "app/redmicConfig"
 	, 'd3/d3.min'
-	, "dijit/layout/BorderContainer"
 	, "dijit/layout/ContentPane"
 	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
@@ -33,7 +32,6 @@ define([
 	, Layout
 	, redmicConfig
 	, d3
-	, BorderContainer
 	, ContentPane
 	, TabContainer
 	, declare
@@ -104,10 +102,7 @@ define([
 				_trackingTransitionRate: 900,
 				_layerIdPrefix: "tracking",
 				layerIdSeparator: "_",
-				sideContentRegion: "right",
-				_deltaProgress: 3600000,
-
-				widthTabContainer: "col-xs-6 col-sm-6 col-md-5 col-lg-4"
+				_deltaProgress: 3600000
 			};
 
 			lang.mixin(this, this.config, args);
@@ -138,6 +133,7 @@ define([
 		_setMainOwnCallbacksForEvents: function() {
 
 			this.on([this.events.HIDE, this.events.ANCESTOR_HIDE], lang.hitch(this, this._onHide));
+			this._onEvt('SHOW', lang.hitch(this, this._onTrackingMainShown));
 		},
 
 		_initializeMain: function() {
@@ -207,24 +203,24 @@ define([
 		_fillTopContent: function() {
 
 			this._publish(this.progressSlider.getChannel("SHOW"), {
-				node: this.topbarNode.domNode
+				node: this.topbarNode
 			});
 
-			put(this.topbarNode.domNode, ".barSliderContainer");
+			put(this.topbarNode, ".barSliderContainer");
 		},
 
 		_fillSideContent: function() {
 
 			this.tabContainer = new TabContainer({
-				splitter: true,
-				region: this.sideContentRegion,
-				'class': this.widthTabContainer + " mediumTexturedContainer sideTabContainer borderRadiusTabContainer"
+				region: 'center',
+				'class': "mediumTexturedContainer sideTabContainer borderRadiusTabContainer"
 			});
 
 			this.tabContainer.addChild(this._createSettings());
 			this.tabContainer.addChild(this._createAtlas());
 
-			this.contentNode.addChild(this.tabContainer);
+			this.tabContainer.placeAt(this.contentNode);
+			this.tabContainer.startup();
 		},
 
 		_createSettings: function() {
@@ -271,7 +267,7 @@ define([
 
 			var cp = new ContentPane({
 				title: this.i18n.themes,
-				region:"center"
+				region: "center"
 			});
 
 			this._publish(this.atlas.getChannel("SHOW"), {
@@ -655,6 +651,11 @@ define([
 			this._emitEvt('PRESS_PROGRESS_BUTTON', {
 				key: "PAUSE"
 			});
+		},
+
+		_onTrackingMainShown: function() {
+
+			this.tabContainer.resize();
 		}
 	});
 });

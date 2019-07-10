@@ -1,5 +1,6 @@
 define([
 	'app/designs/base/_Layout'
+	, "dijit/layout/ContentPane"
 	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -7,6 +8,7 @@ define([
 	, "put-selector/put"
 ], function(
 	_Layout
+	, ContentPane
 	, TabContainer
 	, declare
 	, lang
@@ -48,16 +50,19 @@ define([
 			if (this.filtersInTabs) {
 				this.filterColumn = new TabContainer({
 					'class': "facetsZone",
+					region: "center",
 					tabPosition: "bottom"
 				});
 				this.filter1 = new ContentPane();
 				this.filter2 = new ContentPane();
 
 				this.facetsNode = this.filter1.domNode;
+
 				this.filterColumn.addChild(this.filter1);
 				this.filterColumn.addChild(this.filter2);
-				put(this.centerNode, this.filterColumn.domNode);
+				this.filterColumn.placeAt(this.centerNode);
 				this.filterColumn.startup();
+
 			} else {
 				this.facetsNode = put(this.centerNode, "div.facetsZone");
 			}

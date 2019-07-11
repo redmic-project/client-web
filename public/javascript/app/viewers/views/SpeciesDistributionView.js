@@ -424,7 +424,7 @@ define([
 			});
 		},
 
-		_doEvtFacade: function() {
+		_setOwnCallbacksForEvents: function() {
 
 			this._onEvt('SHOW', lang.hitch(this, this._onShown));
 		},

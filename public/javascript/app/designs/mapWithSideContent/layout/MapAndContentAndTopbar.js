@@ -32,7 +32,7 @@ define([
 
 		_createAndAddContent: function() {
 
-			this.topbarNode = put(this.domNode, 'div.mediumSolidContainer.rounded.titleContainer');
+			this.topbarNode = put(this.domNode, 'div.mediumSolidContainer.rounded');
 			this.centerNode = put(this.domNode, 'div.mapCenterContainer');
 			this.mapNode = put(this.centerNode, 'div.mediumSolidContainer.mapContainer.borderRadius');
 			this.contentNode = put(this.centerNode, 'div.mediumSolidContainer.mapSideContainer.borderRadius');

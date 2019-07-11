@@ -56,6 +56,7 @@ define([
 			this.config = {
 				design: 'sidebar',
 				'class': 'mainContainer',
+				collapsedSidebarClass: 'collapsedSidebar',
 				isLayoutContainer: true,
 				innerAppActions: {
 					UPDATE_ACTIVE: 'updateActive'
@@ -100,6 +101,8 @@ define([
 
 		postCreate: function() {
 
+			this.inherited(arguments);
+
 			this.addChild(this.bc);
 			this.addChild(this.sidebarNode);
 			this.addChild(this.topbar);
@@ -107,8 +110,6 @@ define([
 			this._publish(this.sidebar.getChannel('SHOW'), {
 				node: this.sidebarNode
 			});
-
-			this.inherited(arguments);
 
 			// TODO esto es un abuso, no deberíamos acceder a los nodos de un módulo desde fuera. Crear canal para
 			// añadir hijos al topbar
@@ -148,7 +149,8 @@ define([
 			//		private
 
 			this.sidebar = new MainSidebarImpl({
-				parentChannel: this.ownChannel
+				parentChannel: this.ownChannel,
+				collapsedSidebarClass: this.collapsedSidebarClass
 			});
 
 			new QueryStore({
@@ -206,7 +208,8 @@ define([
 
 			this.topbar = new Topbar({
 				parentChannel: this.ownChannel,
-				i18n: this.i18n
+				i18n: this.i18n,
+				collapsedSidebarClass: this.collapsedSidebarClass
 			});
 
 			this.bc = new BorderContainer({

@@ -1,33 +1,31 @@
 define([
-	"dijit/Menu"
-	, "dijit/MenuItem"
-	, "dijit/registry"
+	"dijit/registry"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/dom-class"
 	, "dojo/on"
 	, "dojo/query"
 	, "put-selector/put"
+	, "redmic/modules/base/_ListenWindowResize"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 
 	, "dojo/NodeList-dom"
 	, "dojo/NodeList-traverse"
 ], function(
-	Menu
-	, MenuItem
-	, registry
+	registry
 	, declare
 	, lang
 	, domClass
 	, on
 	, query
 	, put
+	, _ListenWindowResize
 	, _Module
 	, _Show
 ) {
 
-	return declare([_Module, _Show], {
+	return declare([_Module, _Show, _ListenWindowResize], {
 		//	summary:
 		//		Módulo para la creación del Sidebar de la aplicación.
 		//	description:
@@ -52,6 +50,8 @@ define([
 					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules"
 				},
 
+				enableCollapseSidebarClass: 'enableCollapseSidebar',
+				collapsedSidebarClass: 'collapsedSidebar',
 				primaryClass: "primary.main-nav",
 				primaryActiveItem: null,
 				suffixI18n: '',
@@ -89,11 +89,9 @@ define([
 			});
 		},
 
-		startup: function() {
+		postCreate: function() {
 
 			this.inherited(arguments);
-
-			this._createMenuSidebar();
 
 			if (this._getLowWidth()) {
 				this._collapseSidebar();
@@ -101,11 +99,6 @@ define([
 		},
 
 		_afterShow: function() {
-
-			// TODO eliminar cuando las instancias viejas de sidebar se destruyan (ahora todas escuchan show a la vez)
-			if (!this.domNode) {
-				return;
-			}
 
 			this._createPrimaryNavMenu();
 
@@ -173,42 +166,6 @@ define([
 			this.primaryNavMenuNode = put(this.primaryNavNode, "ul");
 		},
 
-		_createMenuSidebar: function(){
-			//	Summary:
-			//		Función para la creación del menú que se expande en la barra pincipal,
-			//		al hacer click derecho
-			//	tags:
-			//		private
-
-			this.sidebarMenu = new Menu({
-				targetNodeIds: [this.id]
-			});
-
-			this.sidebarMenu.addChild(new MenuItem({
-				label: this.i18n.menuTextReduce,
-				disabled: false,
-				onClick: lang.hitch(this, this._onClickSidebarMenu)
-			}));
-		},
-
-		_onClickSidebarMenu: function(/*Object*/ evt) {
-			//	Summary:
-			//		Evento click del menú secundario del sidebar, Se usa para expandir/reducir
-			//		el sidebar añadiendo/suprimiendo el label
-			//	tags:
-			//		private
-			//	evt
-			//		Evento del click
-
-			var sidebarMenuItem = this.sidebarMenu.getChildren()[0];
-
-			if (sidebarMenuItem.label === this.i18n.menuTextReduce) {
-				this._collapseSidebar();
-			} else {
-				this._uncollapseSidebar();
-			}
-		},
-
 		_collapseSidebar: function() {
 
 			var classAction = 'add',
@@ -227,12 +184,12 @@ define([
 
 		_updateSidebarCollapseStatus: function(classAction, newLabel) {
 
-			var sidebarMenuItem = this.sidebarMenu.getChildren()[0],
-				globalContainerId = query('#rootContainer')[0].children[0].id,
-				globalContainer = registry.byId(globalContainerId);
+			var globalContainerId = query('#rootContainer')[0].children[0].id,
+				globalContainer = registry.byId(globalContainerId),
+				updateMethod = domClass[classAction];
 
-			domClass[classAction](this.ownerDocumentBody, 'reducedMenu');
-			sidebarMenuItem.attr('label', newLabel);
+			updateMethod(this.ownerDocumentBody, this.enableCollapseSidebarClass);
+			updateMethod(this.ownerDocumentBody, this.collapsedSidebarClass);
 
 			if (globalContainer && typeof globalContainer.resize === 'function') {
 				globalContainer.resize();

@@ -29,7 +29,6 @@ define([
 			LOADING: "loading",
 			LOADED: "loaded",
 			RESIZE: "resize",
-			//RESIZE_VIEW: "resizeView",
 			ME_OR_ANCESTOR_SHOWN: "meOrAncestorShown",
 			ME_OR_ANCESTOR_HIDDEN: "meOrAncestorHidden",
 			STARTED_UP: "startedUp"
@@ -50,8 +49,6 @@ define([
 			LOCK: "lock",
 			UNLOCK: "unlock",
 			TOGGLE_LOCK: "toggleLock",
-			WINDOW_RESIZE: "windowResize",
-			//RESIZE_VIEW: "resizeView",
 			STARTED_UP: "startedUp"
 		},
 
@@ -77,7 +74,7 @@ define([
 			aspect.after(this, "postCreate", lang.hitch(this, this._showAfterPostCreate));
 		},
 
-		_mixShowEventsAndActions: function () {
+		_mixShowEventsAndActions: function() {
 
 			lang.mixin(this.events, this.showEvents);
 			lang.mixin(this.actions, this.showActions);
@@ -85,7 +82,7 @@ define([
 			delete this.showActions;
 		},
 
-		_defineShowSubscriptions: function () {
+		_defineShowSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel: this.getChannel("SHOW"),
@@ -130,15 +127,12 @@ define([
 			},{
 				channel: this.getChannel("TOGGLE_LOCK"),
 				callback: "_subToggleLock"
-			},{
-				channel: this._buildChannel(this.rootChannel, this.actions.WINDOW_RESIZE),
-				callback: "_subWindowResize"
 			});
 
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
 		},
 
-		_defineShowPublications: function () {
+		_defineShowPublications: function() {
 
 			this.publicationsConfig.push({
 				event: 'SHOW',
@@ -157,9 +151,6 @@ define([
 			},{
 				event: 'RESIZE',
 				channel: this.getChannel("RESIZED")
-			/*},{
-				event: 'RESIZE_VIEW',
-				channel: this._buildChannel(this.rootChannel, this.actions.RESIZE_VIEW)*/
 			},{
 				event: 'STARTED_UP',
 				channel: this.getChannel("STARTED_UP")
@@ -168,7 +159,7 @@ define([
 			this._deleteDuplicatedChannels(this.publicationsConfig);
 		},
 
-		_setShowOwnCallbacksForEvents: function () {
+		_setShowOwnCallbacksForEvents: function() {
 
 			this._onEvt('SHOW', lang.hitch(this, this._onModuleShow));
 			this._onEvt('HIDE', lang.hitch(this, this._onModuleHide));
@@ -379,12 +370,6 @@ define([
 			}
 
 			if (node.domNode) {
-				/*var parentNodeGetter = function() { return node.domNode; },
-					childNodeGetter = function() { return nodeToShow; },
-					callback = lang.hitch(this, this._emitEvt, 'RESIZE_VIEW');
-
-				this._listenChildrenPlacing(parentNodeGetter, childNodeGetter, callback);*/
-
 				this._addToNode(node.domNode, nodeToShow, inFront);
 			} else {
 				this._addToNode(node, nodeToShow, inFront);
@@ -649,11 +634,6 @@ define([
 			} else {
 				this._lock();
 			}
-		},
-
-		_subWindowResize: function(res) {
-
-			this._prepareResize(res);
 		},
 
 		_prepareResize: function(res) {

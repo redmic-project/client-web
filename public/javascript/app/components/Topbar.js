@@ -1,13 +1,19 @@
 define([
 	"dijit/layout/ContentPane"
+	, "dijit/registry"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "dojo/dom"
+	, "dojo/dom-class"
 	, "put-selector/put"
 	, "redmic/modules/base/Manager"
 ], function(
 	ContentPane
+	, registry
 	, declare
 	, lang
+	, dom
+	, domClass
 	, put
 	, Manager
 ){
@@ -20,8 +26,9 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				"class": "topbar",
 				region: "top",
+				"class": "topbar",
+				collapsedSidebarClass: 'collapsedSidebar',
 				doLayout: false,
 				show: {
 					left: true,
@@ -35,6 +42,9 @@ define([
 		postCreate: function() {
 
 			// Se crean los nodos
+			this._collapseNode = put(this.domNode, "div.collapseSidebarButton");
+			this._collapseNode.onclick = lang.hitch(this, this._onCollapseClicked);
+
 			this.logoNode = put(this.domNode, "div.topbarLogo", {
 				innerHTML: "<a href='/home' d-state-url=true title='" + this.i18n.home +
 					"'><img class='logo' src='/resources/images/logos/redmicSimple.png'></a>"
@@ -56,6 +66,28 @@ define([
 			this.manager = new Manager({
 				parentChannel: this.parentChannel
 			}, this.leftNode);
+		},
+
+		_getGlobalContainer: function() {
+
+			if (this._globalContainer) {
+				return this._globalContainer;
+			}
+
+			var rootNode = dom.byId('rootContainer'),
+				globalContainerId = rootNode.firstChild.id,
+				globalContainer = registry.byId(globalContainerId);
+
+			this._globalContainer = globalContainer;
+			return globalContainer;
+		},
+
+		_onCollapseClicked: function() {
+
+			domClass.toggle(this.ownerDocumentBody, this.collapsedSidebarClass);
+
+			var globalContainer = this._getGlobalContainer();
+			globalContainer && globalContainer.resize();
 		}
 	});
 });

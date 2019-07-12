@@ -1,7 +1,6 @@
 define([
 	'app/_app'
 	, 'app/components/Topbar'
-	, 'dijit/layout/BorderContainer'
 	, 'dijit/layout/ContentPane'
 	, 'dijit/layout/LayoutContainer'
 	, 'dojo/_base/declare'
@@ -23,7 +22,6 @@ define([
 ], function(
 	App
 	, Topbar
-	, BorderContainer
 	, ContentPane
 	, LayoutContainer
 	, declare
@@ -212,7 +210,7 @@ define([
 				collapsedSidebarClass: this.collapsedSidebarClass
 			});
 
-			this.bc = new BorderContainer({
+			this.bc = new ContentPane({
 				region: 'center',
 				'class': 'contentContainer'
 			});

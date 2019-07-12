@@ -1,31 +1,27 @@
 define([
-	"dijit/registry"
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/dom-class"
 	, "dojo/on"
 	, "dojo/query"
 	, "put-selector/put"
-	, "redmic/modules/base/_ListenWindowResize"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 
 	, "dojo/NodeList-dom"
 	, "dojo/NodeList-traverse"
 ], function(
-	registry
-	, declare
+	declare
 	, lang
 	, domClass
 	, on
 	, query
 	, put
-	, _ListenWindowResize
 	, _Module
 	, _Show
 ) {
 
-	return declare([_Module, _Show, _ListenWindowResize], {
+	return declare([_Module, _Show], {
 		//	summary:
 		//		Módulo para la creación del Sidebar de la aplicación.
 		//	description:
@@ -50,7 +46,6 @@ define([
 					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules"
 				},
 
-				enableCollapseSidebarClass: 'enableCollapseSidebar',
 				collapsedSidebarClass: 'collapsedSidebar',
 				primaryClass: "primary.main-nav",
 				primaryActiveItem: null,
@@ -184,16 +179,9 @@ define([
 
 		_updateSidebarCollapseStatus: function(classAction, newLabel) {
 
-			var globalContainerId = query('#rootContainer')[0].children[0].id,
-				globalContainer = registry.byId(globalContainerId),
-				updateMethod = domClass[classAction];
+			domClass[classAction](this.ownerDocumentBody, this.collapsedSidebarClass);
 
-			updateMethod(this.ownerDocumentBody, this.enableCollapseSidebarClass);
-			updateMethod(this.ownerDocumentBody, this.collapsedSidebarClass);
-
-			if (globalContainer && typeof globalContainer.resize === 'function') {
-				globalContainer.resize();
-			}
+			this._publish(this._buildChannel(this.rootChannel, this.actions.RESIZE));
 		},
 
 		_addItems: function(/*Array*/ items) {

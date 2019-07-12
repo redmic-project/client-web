@@ -1,6 +1,5 @@
 define([
 	"dijit/layout/ContentPane"
-	, "dijit/registry"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/dom"
@@ -9,7 +8,6 @@ define([
 	, "redmic/modules/base/Manager"
 ], function(
 	ContentPane
-	, registry
 	, declare
 	, lang
 	, dom
@@ -68,26 +66,12 @@ define([
 			}, this.leftNode);
 		},
 
-		_getGlobalContainer: function() {
-
-			if (this._globalContainer) {
-				return this._globalContainer;
-			}
-
-			var rootNode = dom.byId('rootContainer'),
-				globalContainerId = rootNode.firstChild.id,
-				globalContainer = registry.byId(globalContainerId);
-
-			this._globalContainer = globalContainer;
-			return globalContainer;
-		},
-
 		_onCollapseClicked: function() {
 
 			domClass.toggle(this.ownerDocumentBody, this.collapsedSidebarClass);
 
-			var globalContainer = this._getGlobalContainer();
-			globalContainer && globalContainer.resize();
+			// TODO hacerlo en this en lugar de this.module cuando topbar sea módulo
+			this.manager._publish(this.manager._buildChannel(this.manager.rootChannel, this.manager.actions.RESIZE));
 		}
 	});
 });

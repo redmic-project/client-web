@@ -5,6 +5,7 @@ define([
 	, "dojo/Deferred"
 	, "dojo/query"
 	, "put-selector/put"
+	, "redmic/modules/base/_ListenWindowResize"
 	, "redmic/modules/base/_ShowItfc"
 ], function(
 	declare
@@ -13,9 +14,11 @@ define([
 	, Deferred
 	, query
 	, put
+	, _ListenWindowResize
 	, _ShowItfc
-){
-	return declare(_ShowItfc, {
+) {
+
+	return declare([_ShowItfc, _ListenWindowResize], {
 		//	summary:
 		//		Base común para todos los módulos con visualización.
 		//	description:
@@ -55,8 +58,6 @@ define([
 		lockedClass: "lockedWrapper",
 
 		animationSafetyTimeout: 2000,
-		additionalResizeTimeout: 500,
-		lowWidthValue: 800,
 
 
 		constructor: function(args) {
@@ -64,7 +65,6 @@ define([
 			this._setShown(false);
 			this._setPreviouslyShown(false);
 			this._setStartupStatus(false);
-			this._setLowWidth(window.innerWidth < this.lowWidthValue);
 
 			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixShowEventsAndActions));
 			aspect.before(this, "_setOwnCallbacksForEvents", lang.hitch(this, this._setShowOwnCallbacksForEvents));
@@ -569,8 +569,33 @@ define([
 
 		_subResize: function(req) {
 
-			this._emitEvt('RESIZE', req);
+			this._resizeWrapper(req);
+
 			this._propagateActionToChildren('RESIZE', req);
+		},
+
+		_resizeWrapper: function(req) {
+
+			var resizeDfd = this._resize(req),
+				emitResize = lang.hitch(this, this._emitResize);
+
+			if (resizeDfd && resizeDfd.then) {
+				resizeDfd.then(emitResize);
+			} else {
+				emitResize();
+			}
+		},
+
+		_emitResize: function() {
+
+			var evt = {};
+
+			if (this.node) {
+				evt.width = this.node.offsetWidth;
+				evt.height = this.node.offsetHeight;
+			}
+
+			this._emitEvt('RESIZE', evt);
 		},
 
 		_subLock: function() {
@@ -634,23 +659,6 @@ define([
 			} else {
 				this._lock();
 			}
-		},
-
-		_prepareResize: function(res) {
-
-			clearTimeout(this._additionalResizeHandler);
-			this._additionalResizeHandler = setTimeout(lang.hitch(this, this._doShowResize, res),
-				this.additionalResizeTimeout);
-
-			// TODO en _Window hay una funcionalidad de emitir el evento RESIZE, que debería usarse
-			// aqui para todos. Generalizar lo que se encuentra en _Window y compatibilizar
-		},
-
-		_doShowResize: function(res) {
-
-			this._setLowWidth(window.innerWidth < this.lowWidthValue);
-
-			this._resize(res);
 		},
 
 		_getShownOrHiddenResponseObject: function() {
@@ -766,6 +774,7 @@ define([
 
 		_onModuleResize: function(evt) {
 
+			// TODO vestigio de dijit, desaparecerá
 			if (this.layout) {
 				this.layout();
 			}
@@ -789,16 +798,6 @@ define([
 		_setLoadingStatus: function(value) {
 
 			this.statusFlags.loading = value;
-		},
-
-		_getLowWidth: function() {
-
-			return this.statusFlags.lowWidth;
-		},
-
-		_setLowWidth: function(value) {
-
-			this.statusFlags.lowWidth = value;
 		}
 	});
 });

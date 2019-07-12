@@ -63,7 +63,7 @@ define([
 		_resizableForcedMinWidth: 100,
 		_validSizeInterval: 100,
 		_userResizeTimeout: 100,
-		_emitResizeTimeout: 100,
+		_moduleWindowResizeTimeout: 100,
 
 
 		_setShowOwnCallbacksForEvents: function () {
@@ -75,7 +75,7 @@ define([
 
 		_onWindowAncestorShown: function() {
 
-			this._prepareToEmitResize();
+			this._prepareToResizeModuleWindow();
 		},
 
 		_beforeShow: function(req) {
@@ -257,7 +257,7 @@ define([
 			}
 
 			clearTimeout(self._userResizeTimeoutHandler);
-			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._prepareToEmitResize),
+			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._prepareToResizeModuleWindow),
 				self._userResizeTimeout);
 		},
 
@@ -319,7 +319,7 @@ define([
 		_onWindowValidSize: function() {
 
 			this._emitEvt('LOADED');
-			this._prepareToEmitResize();
+			this._prepareToResizeModuleWindow();
 		},
 
 		_decorateTitleNode: function() {
@@ -397,7 +397,7 @@ define([
 			}
 
 			this._minimizeDfd = new Deferred();
-			this._minimizeDfd.then(lang.hitch(this, this._prepareToEmitResize), function() {});
+			this._minimizeDfd.then(lang.hitch(this, this._prepareToResizeModuleWindow), function() {});
 		},
 
 		_maximizeModule: function() {
@@ -444,7 +444,7 @@ define([
 			domClass.remove(this._windowNode.parentNode, this.windowResizedParentClass);
 
 			this._setResizedByUser(false);
-			this._prepareToEmitResize();
+			this._prepareToResizeModuleWindow();
 
 			this._maximizeModuleReturn();
 		},
@@ -456,7 +456,7 @@ define([
 			}
 
 			this._maximizeDfd = new Deferred();
-			this._maximizeDfd.then(lang.hitch(this, this._prepareToEmitResize), function() {});
+			this._maximizeDfd.then(lang.hitch(this, this._prepareToResizeModuleWindow), function() {});
 		},
 
 		_updateMaximizeButtonIcon: function(/*Boolean*/ altIcon) {
@@ -479,39 +479,31 @@ define([
 
 			domStyle.set(this._windowNode.parentNode, 'display', 'none');
 
-			this._prepareToEmitResize();
+			this._prepareToResizeModuleWindow();
 		},
 
 		_resize: function() {
 
-			this._limitMaxHeightToAvailableHeight();
-			this._prepareToEmitResize();
+			this._resizeModuleWindow();
 
 			this.inherited(arguments);
 		},
 
-		_prepareToEmitResize: function() {
+		_prepareToResizeModuleWindow: function() {
 
-			clearTimeout(this._emitResizeTimeoutHandler);
-			this._emitResizeTimeoutHandler = setTimeout(lang.hitch(this, this._emitResize), this._emitResizeTimeout);
+			clearTimeout(this._moduleWindowResizeTimeoutHandler);
+
+			this._moduleWindowResizeTimeoutHandler = setTimeout(lang.hitch(this, this._resizeWrapper),
+				this._moduleWindowResizeTimeout);
 		},
 
-		_emitResize: function() {
+		_resizeModuleWindow: function() {
 
-			if (!this.node) {
-				return;
-			}
+			this._limitMaxHeightToAvailableHeight();
 
-			if (!this._getResizedByUser()) {
+			if (this.node && !this._getResizedByUser()) {
 				this._autoMaximizeOnLowWidth();
 			}
-
-			// TODO esto debería ser responsabilidad de _Show, y emitirlo siempre cuando acabe
-			// de hacer el _resize (quizá con un dfd de retorno??). Pensar
-			this._emitEvt('RESIZE', {
-				width: this.node.offsetWidth,
-				height: this.node.offsetHeight
-			});
 		},
 
 		_autoMaximizeOnLowWidth: function() {

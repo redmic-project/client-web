@@ -87,6 +87,7 @@ define([
 		_setInnerAppOwnCallbacksForEvents: function() {
 
 			this._onEvt('MODULE_SHOWN', lang.hitch(this, this._updateActiveSidebarItem));
+			this._onEvt('RESIZE', lang.hitch(this, this._onAppResize));
 		},
 
 		_defineInnerAppPublications: function() {
@@ -227,10 +228,11 @@ define([
 			return this.bc.domNode;
 		},
 
-		_doResize: function() {
+		_onAppResize: function(evt) {
 
 			if (this._getNodeToShow()) {
-				this.resize(arguments);
+				// TODO vestigio de dijit, desaparecerá
+				this.layout();
 			}
 		},
 

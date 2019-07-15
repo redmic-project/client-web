@@ -723,8 +723,6 @@ define({
 	, "maintenance": "Mantenimiento"
 	, "data-loader": "Carga de datos"
 	, "user": "Rincón del usuario"
-	, "menuTextReduce": "Reducir menú"
-	, "menuTextExpand": "Expandir menú"
 	, "taxonomy": "Taxonomía"
 	, "bibliography": "Biblioteca"
 	, "species-distribution": "Distribución de especies"

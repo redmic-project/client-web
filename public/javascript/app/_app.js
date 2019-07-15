@@ -58,6 +58,7 @@ define([
 
 		_onAppFirstShow: function() {
 
+			// TODO vestigio de dijit, desaparecerá
 			this.startup();
 		},
 

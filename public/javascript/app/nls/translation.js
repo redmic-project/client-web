@@ -725,8 +725,6 @@ define({
 		, "admin": "Metadata"
 		, "data-loader": "Data loading"
 		, "user": "Users corner"
-		, "menuTextReduce": "Reduce menu"
-		, "menuTextExpand": "Expand menu"
 		, "taxonomy": "Taxonomy"
 		, "bibliography": "Library"
 		, "species-distribution": "Species distribution"

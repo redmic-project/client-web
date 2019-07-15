@@ -6,6 +6,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
+	, "dojo/dom-class"
 	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
@@ -27,6 +28,7 @@ define([
 	, declare
 	, lang
 	, aspect
+	, domClass
 	, Credentials
 	, Selector
 	, MainSidebarImpl
@@ -54,13 +56,15 @@ define([
 			this.config = {
 				design: 'sidebar',
 				'class': 'mainContainer',
-				collapsedSidebarClass: 'collapsedSidebar',
+				reducedWidthClass: 'reducedWidth',
+				uncollapsedSidebarClass: 'uncollapsedSidebar',
 				isLayoutContainer: true,
-				innerAppActions: {
-					UPDATE_ACTIVE: 'updateActive'
-				},
 				innerAppEvents: {
 					UPDATE_ACTIVE: 'updateActive'
+				},
+				innerAppActions: {
+					UPDATE_ACTIVE: 'updateActive',
+					TOGGLE_SIDEBAR: 'toggleSidebar'
 				}
 			};
 
@@ -70,10 +74,8 @@ define([
 			aspect.after(this, '_setOwnCallbacksForEvents', lang.hitch(this,
 				this._setInnerAppOwnCallbacksForEvents));
 
+			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineInnerAppSubscriptions));
 			aspect.before(this, '_definePublications', lang.hitch(this, this._defineInnerAppPublications));
-
-			this._createStructure();
-			this._createModules();
 		},
 
 		_mixEventsAndActionsInnerApp: function () {
@@ -90,12 +92,29 @@ define([
 			this._onEvt('RESIZE', lang.hitch(this, this._onAppResize));
 		},
 
+		_defineInnerAppSubscriptions: function() {
+
+			this.subscriptionsConfig.push({
+				channel: this.getChannel('TOGGLE_SIDEBAR'),
+				callback: '_subToggleSidebar',
+				options: {
+					predicate: lang.hitch(this, this._chkModuleCanResize)
+				}
+			});
+		},
+
 		_defineInnerAppPublications: function() {
 
 			this.publicationsConfig.push({
 				event: 'UPDATE_ACTIVE',
 				channel: this.sidebar.getChannel('UPDATE_ACTIVE')
 			});
+		},
+
+		_initialize: function() {
+
+			this._createStructure();
+			this._createModules();
 		},
 
 		postCreate: function() {
@@ -127,6 +146,18 @@ define([
 			this._publish(this.userArea.getChannel('SHOW'), {
 				node: topbarRightNode
 			});
+
+			this._evaluateAppSize();
+		},
+
+		_subToggleSidebar: function(req) {
+
+			domClass.toggle(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+
+			// TODO vestigio de dijit, desaparecerá
+			this.layout();
+
+			this._propagateActionToChildren('RESIZE', {});
 		},
 
 		_updateActiveSidebarItem: function(evt) {
@@ -148,8 +179,7 @@ define([
 			//		private
 
 			this.sidebar = new MainSidebarImpl({
-				parentChannel: this.ownChannel,
-				collapsedSidebarClass: this.collapsedSidebarClass
+				parentChannel: this.ownChannel
 			});
 
 			new QueryStore({
@@ -207,8 +237,7 @@ define([
 
 			this.topbar = new Topbar({
 				parentChannel: this.ownChannel,
-				i18n: this.i18n,
-				collapsedSidebarClass: this.collapsedSidebarClass
+				i18n: this.i18n
 			});
 
 			this.bc = new ContentPane({
@@ -230,10 +259,35 @@ define([
 
 		_onAppResize: function(evt) {
 
-			if (this._getNodeToShow()) {
-				// TODO vestigio de dijit, desaparecerá
-				this.layout();
+			if (!this._getNodeToShow()) {
+				return;
 			}
+
+			this._evaluateAppSize();
+
+			// TODO vestigio de dijit, desaparecerá
+			this.layout();
+		},
+
+		_evaluateAppSize: function() {
+
+			if (this._getLowWidth()) {
+				this._setReducedWidth();
+			} else {
+				this._unsetReducedWidth();
+			}
+		},
+
+		_setReducedWidth: function() {
+
+			domClass.add(this.ownerDocumentBody, this.reducedWidthClass);
+			domClass.remove(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+		},
+
+		_unsetReducedWidth: function() {
+
+			domClass.remove(this.ownerDocumentBody, this.reducedWidthClass);
+			domClass.add(this.ownerDocumentBody, this.uncollapsedSidebarClass);
 		},
 
 		_onAppHide: function() {

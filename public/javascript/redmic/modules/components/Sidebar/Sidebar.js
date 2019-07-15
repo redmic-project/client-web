@@ -46,7 +46,6 @@ define([
 					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules"
 				},
 
-				collapsedSidebarClass: 'collapsedSidebar',
 				primaryClass: "primary.main-nav",
 				primaryActiveItem: null,
 				suffixI18n: '',
@@ -84,15 +83,6 @@ define([
 			});
 		},
 
-		postCreate: function() {
-
-			this.inherited(arguments);
-
-			if (this._getLowWidth()) {
-				this._collapseSidebar();
-			}
-		},
-
 		_afterShow: function() {
 
 			this._createPrimaryNavMenu();
@@ -103,15 +93,6 @@ define([
 				this._emitEvt('GET_ALLOWED_MODULES', {
 					id: this.getOwnChannel()
 				});
-			}
-		},
-
-		_resize: function() {
-
-			if (this._getLowWidth()) {
-				this._collapseSidebar();
-			} else {
-				this._uncollapseSidebar();
 			}
 		},
 
@@ -159,29 +140,6 @@ define([
 
 			this.primaryNavNode = put(this.domNode, primaryNav);
 			this.primaryNavMenuNode = put(this.primaryNavNode, "ul");
-		},
-
-		_collapseSidebar: function() {
-
-			var classAction = 'add',
-				newLabel = this.i18n.menuTextExpand;
-
-			this._updateSidebarCollapseStatus(classAction, newLabel);
-		},
-
-		_uncollapseSidebar: function() {
-
-			var classAction = 'remove',
-				newLabel = this.i18n.menuTextReduce;
-
-			this._updateSidebarCollapseStatus(classAction, newLabel);
-		},
-
-		_updateSidebarCollapseStatus: function(classAction, newLabel) {
-
-			domClass[classAction](this.ownerDocumentBody, this.collapsedSidebarClass);
-
-			this._publish(this._buildChannel(this.rootChannel, this.actions.RESIZE));
 		},
 
 		_addItems: function(/*Array*/ items) {

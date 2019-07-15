@@ -3,7 +3,6 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/dom"
-	, "dojo/dom-class"
 	, "put-selector/put"
 	, "redmic/modules/base/Manager"
 ], function(
@@ -11,7 +10,6 @@ define([
 	, declare
 	, lang
 	, dom
-	, domClass
 	, put
 	, Manager
 ){
@@ -26,7 +24,6 @@ define([
 			this.config = {
 				region: "top",
 				"class": "topbar",
-				collapsedSidebarClass: 'collapsedSidebar',
 				doLayout: false,
 				show: {
 					left: true,
@@ -68,10 +65,8 @@ define([
 
 		_onCollapseClicked: function() {
 
-			domClass.toggle(this.ownerDocumentBody, this.collapsedSidebarClass);
-
-			// TODO hacerlo en this en lugar de this.module cuando topbar sea módulo
-			this.manager._publish(this.manager._buildChannel(this.manager.rootChannel, this.manager.actions.RESIZE));
+			// TODO hacerlo en this en lugar de this.manager cuando topbar sea módulo
+			this.manager._publish(this.manager._buildChannel(this.manager.rootChannel, 'toggleSidebar'));
 		}
 	});
 });

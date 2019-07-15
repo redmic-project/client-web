@@ -282,12 +282,20 @@ define([
 
 			domClass.add(this.ownerDocumentBody, this.reducedWidthClass);
 			domClass.remove(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+
+			this._publish(this.sidebar.getChannel('SHOW'), {
+				node: this.domNode
+			});
 		},
 
 		_unsetReducedWidth: function() {
 
 			domClass.remove(this.ownerDocumentBody, this.reducedWidthClass);
 			domClass.add(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+
+			this._publish(this.sidebar.getChannel('SHOW'), {
+				node: this.sidebarNode
+			});
 		},
 
 		_onAppHide: function() {

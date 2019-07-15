@@ -32,7 +32,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				secondaryClass: 'secondary.main-nav.retiring',
+				secondaryClass: 'main-nav.secondarySidebar.retiring',
 				secondaryActiveItem: null,
 				clickToCloseSecondaryListener: null,
 				subitems: 'modules'
@@ -97,7 +97,7 @@ define([
 
 			var secondaryNav = "nav." + this.secondaryClass;
 
-			this.secondaryNavNode = put(document.body, secondaryNav);
+			this.secondaryNavNode = put(this.ownerDocumentBody, secondaryNav);
 			this.secondaryNavMenuNode = put(this.secondaryNavNode, "ul");
 		},
 

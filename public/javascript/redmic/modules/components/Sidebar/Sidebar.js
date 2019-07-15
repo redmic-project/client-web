@@ -46,7 +46,7 @@ define([
 					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules"
 				},
 
-				primaryClass: "primary.main-nav",
+				'class': "main-nav primarySidebar",
 				primaryActiveItem: null,
 				suffixI18n: '',
 				items: null
@@ -84,6 +84,10 @@ define([
 		},
 
 		_afterShow: function() {
+
+			if (this._getPreviouslyShown()) {
+				return;
+			}
 
 			this._createPrimaryNavMenu();
 
@@ -136,9 +140,7 @@ define([
 				return;
 			}
 
-			var primaryNav = 'nav.' + this.primaryClass;
-
-			this.primaryNavNode = put(this.domNode, primaryNav);
+			this.primaryNavNode = put(this.domNode, 'nav');
 			this.primaryNavMenuNode = put(this.primaryNavNode, "ul");
 		},
 

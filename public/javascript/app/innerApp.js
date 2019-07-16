@@ -134,7 +134,7 @@ define([
 			this.addChild(this.topbar);
 
 			this._publish(this.sidebar.getChannel('SHOW'), {
-				node: this.sidebarNode
+				node: this.domNode
 			});
 
 			// TODO esto es un abuso, no deberíamos acceder a los nodos de un módulo desde fuera. Crear canal para
@@ -171,8 +171,6 @@ define([
 		},
 
 		_handleListenersOnToggleSidebar: function() {
-
-			var	appIsOnReducedWidth = domClass.contains(this.ownerDocumentBody, this.reducedWidthClass);
 
 			if (!this._getLowWidth()) {
 				return;
@@ -327,10 +325,6 @@ define([
 			domClass.add(this.ownerDocumentBody, this.reducedWidthClass);
 
 			this._collapseMainSidebar();
-
-			this._publish(this.sidebar.getChannel('SHOW'), {
-				node: this.domNode
-			});
 		},
 
 		_unsetReducedWidth: function() {
@@ -338,10 +332,6 @@ define([
 			domClass.remove(this.ownerDocumentBody, this.reducedWidthClass);
 
 			this._uncollapseMainSidebar();
-
-			this._publish(this.sidebar.getChannel('SHOW'), {
-				node: this.sidebarNode
-			});
 		},
 
 		_collapseMainSidebar: function() {

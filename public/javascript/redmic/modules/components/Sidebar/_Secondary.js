@@ -32,7 +32,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				secondaryClass: 'main-nav.secondarySidebar.retiring',
+				secondaryClass: 'secondarySidebar.retiring',
 				secondaryActiveItem: null,
 				clickToCloseSecondaryListener: null,
 				subitems: 'modules'
@@ -50,11 +50,11 @@ define([
 			this._createSecondaryNavMenu();
 		},
 
-		startup: function() {
+		postCreate: function() {
 
 			this.inherited(arguments);
 
-			this.clickToCloseSecondaryListener = on.pausable(document.body, 'click', lang.hitch(this,
+			this.clickToCloseSecondaryListener = on.pausable(this.ownerDocumentBody, 'click', lang.hitch(this,
 				this._onCloseSecNav));
 
 			this.clickToCloseSecondaryListener.pause();
@@ -97,7 +97,7 @@ define([
 
 			var secondaryNav = "nav." + this.secondaryClass;
 
-			this.secondaryNavNode = put(this.ownerDocumentBody, secondaryNav);
+			this.secondaryNavNode = put(this.domNode, secondaryNav);
 			this.secondaryNavMenuNode = put(this.secondaryNavNode, "ul");
 		},
 

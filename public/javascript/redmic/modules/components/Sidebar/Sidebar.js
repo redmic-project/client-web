@@ -46,7 +46,8 @@ define([
 					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules"
 				},
 
-				'class': "main-nav primarySidebar",
+				'class': 'main-nav',
+				primaryClass: 'primarySidebar',
 				primaryActiveItem: null,
 				suffixI18n: '',
 				items: null
@@ -140,7 +141,7 @@ define([
 				return;
 			}
 
-			this.primaryNavNode = put(this.domNode, 'nav');
+			this.primaryNavNode = put(this.domNode, 'nav.' + this.primaryClass);
 			this.primaryNavMenuNode = put(this.primaryNavNode, "ul");
 		},
 

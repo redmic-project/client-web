@@ -202,17 +202,19 @@ define([
 				return;
 			}
 
-			var mutationObserver = new MutationObserver(
-				lang.partial(function(self, expectedChildGetter, callback, mutations) {
-
-				var expectedChild = expectedChildGetter(),
-					beforeCallback = lang.hitch(this, this.disconnect);
-
-				expectedChild && mutations.forEach(lang.hitch(self,
-					self._evaluateMutation, expectedChild, callback, beforeCallback));
-			}, this, expectedChildGetter, callback));
+			var mutationCallback = lang.partial(this._onNodeMutation, this, expectedChildGetter, callback),
+				mutationObserver = new MutationObserver(mutationCallback);
 
 			mutationObserver.observe(containerToListen, { childList: true });
+		},
+
+		_onNodeMutation: function(self, expectedChildGetter, callback, mutations) {
+
+			var expectedChild = expectedChildGetter(),
+				beforeCallback = lang.hitch(this, this.disconnect),
+				onChildMutation = lang.hitch(self, self._evaluateMutation, expectedChild, callback, beforeCallback);
+
+			expectedChild && mutations.forEach(onChildMutation);
 		},
 
 		_evaluateMutation: function(expectedChild, callback, beforeCallback, mutation) {

@@ -7,6 +7,9 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, "dojo/dom-class"
+	, 'dojo/on'
+	, 'dojo/query'
+	, 'put-selector/put'
 	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
@@ -29,6 +32,9 @@ define([
 	, lang
 	, aspect
 	, domClass
+	, on
+	, query
+	, put
 	, Credentials
 	, Selector
 	, MainSidebarImpl
@@ -58,6 +64,7 @@ define([
 				'class': 'mainContainer',
 				reducedWidthClass: 'reducedWidth',
 				uncollapsedSidebarClass: 'uncollapsedSidebar',
+				overlaySidebarBackgroundClass: 'overlaySidebarBackground',
 				isLayoutContainer: true,
 				innerAppEvents: {
 					UPDATE_ACTIVE: 'updateActive'
@@ -115,6 +122,7 @@ define([
 
 			this._createStructure();
 			this._createModules();
+			this._createListeners();
 		},
 
 		postCreate: function() {
@@ -154,10 +162,30 @@ define([
 
 			domClass.toggle(this.ownerDocumentBody, this.uncollapsedSidebarClass);
 
+			this._handleListenersOnToggleSidebar();
+
 			// TODO vestigio de dijit, desaparecerá
 			this.layout();
 
 			this._propagateActionToChildren('RESIZE', {});
+		},
+
+		_handleListenersOnToggleSidebar: function() {
+
+			var	appIsOnReducedWidth = domClass.contains(this.ownerDocumentBody, this.reducedWidthClass);
+
+			if (!this._getLowWidth()) {
+				return;
+			}
+
+			var overlayMainSidebarIsOpen = domClass.contains(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+
+			if (overlayMainSidebarIsOpen) {
+				// TODO setTimeout permite click sobre botón de Topbar para mostrar Sidebar, puede haber mejor solución
+				setTimeout(lang.hitch(this._appClickHandler, this._appClickHandler.resume), 0);
+			} else {
+				this._appClickHandler.pause();
+			}
 		},
 
 		_updateActiveSidebarItem: function(evt) {
@@ -169,6 +197,11 @@ define([
 			this._emitEvt('UPDATE_ACTIVE', {
 				path: moduleKey
 			});
+
+			if (this._getLowWidth()) {
+				this._collapseMainSidebar();
+				this._appClickHandler.pause();
+			}
 		},
 
 		_createModules: function() {
@@ -230,6 +263,8 @@ define([
 			//	tags:
 			//		private
 
+			put(this.domNode, 'div.' + this.overlaySidebarBackgroundClass);
+
 			this.sidebarNode = new ContentPane({
 				region: 'left',
 				'class': 'mainSidebar'
@@ -244,6 +279,13 @@ define([
 				region: 'center',
 				'class': 'contentContainer'
 			});
+		},
+
+		_createListeners: function() {
+
+			this._appClickHandler = on.pausable(this.ownerDocumentBody, 'click', lang.hitch(this, this._onAppClicked));
+
+			this._appClickHandler.pause();
 		},
 
 		_getNode: function() {
@@ -263,6 +305,8 @@ define([
 				return;
 			}
 
+			this._appClickHandler.pause();
+
 			this._evaluateAppSize();
 
 			// TODO vestigio de dijit, desaparecerá
@@ -281,7 +325,8 @@ define([
 		_setReducedWidth: function() {
 
 			domClass.add(this.ownerDocumentBody, this.reducedWidthClass);
-			domClass.remove(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+
+			this._collapseMainSidebar();
 
 			this._publish(this.sidebar.getChannel('SHOW'), {
 				node: this.domNode
@@ -291,14 +336,27 @@ define([
 		_unsetReducedWidth: function() {
 
 			domClass.remove(this.ownerDocumentBody, this.reducedWidthClass);
-			domClass.add(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+
+			this._uncollapseMainSidebar();
 
 			this._publish(this.sidebar.getChannel('SHOW'), {
 				node: this.sidebarNode
 			});
 		},
 
+		_collapseMainSidebar: function() {
+
+			domClass.remove(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+		},
+
+		_uncollapseMainSidebar: function() {
+
+			domClass.add(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+		},
+
 		_onAppHide: function() {
+
+			this._appClickHandler.pause();
 
 			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
 			this._publish(this.sidebar.getChannel('DESTROY'));
@@ -316,6 +374,18 @@ define([
 			this.sidebarNode.destroy();
 			this.topbar.destroy();
 			this.bc.destroy();
+		},
+
+		_onAppClicked: function(evt) {
+
+			var clickedNode = evt.target,
+				nodeParents = query(clickedNode).parents(),
+				nodeDoesNotBelongToMainSidebar = nodeParents.indexOf(this.sidebar.domNode) === -1;
+
+			if (nodeDoesNotBelongToMainSidebar) {
+				this._appClickHandler.pause();
+				this._collapseMainSidebar();
+			}
 		}
 	});
 });

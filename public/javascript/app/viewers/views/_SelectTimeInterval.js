@@ -32,6 +32,7 @@ define([
 
 			aspect.before(this, "_afterSetConfigurations",
 				lang.hitch(this, this._setSelectAndProcessTimeIntervalConfigurations));
+
 			aspect.after(this, "_beforeInitialize", lang.hitch(this, this._initializeSelectAndProcessTimeInterval));
 			aspect.after(this, "_defineSubscriptions",
 				lang.hitch(this, this._defineSelectAndProcessTimeIntervalSubscriptions));

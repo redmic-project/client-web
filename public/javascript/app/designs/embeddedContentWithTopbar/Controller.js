@@ -82,7 +82,6 @@ define([
 
 			if (this._getCurrentContentKey() !== inputKey) {
 				this._emitEvt("CHANGE_EMBEDDED_CONTENT", evt);
-				//this._emitEvt("RESIZE_VIEW");
 			}
 		},
 
@@ -117,7 +116,7 @@ define([
 				pubObj = {};
 			}
 
-			pubObj.node = this.centerContent;
+			pubObj.node = this.centerContainer;
 
 			for (var key in this.embeddedButtons) {
 				this._emitForPublishToKeypad("DISABLE_BUTTON", key);
@@ -129,7 +128,6 @@ define([
 		_onModuleEmbedded: function(buttonKey) {
 
 			this._emitEvt("LOADED");
-			this.centerContent.resize();
 
 			for (var key in this.embeddedButtons) {
 				// TODO solo si no estaba disabled previamente

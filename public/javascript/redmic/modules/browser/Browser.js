@@ -337,7 +337,7 @@ define([
 			return this.domNode;
 		},
 
-		_beforeShow: function(req) {
+		/*_beforeShow: function(req) {
 
 			if (req && req.node) {
 				put(req.node.domNode || req.node, ".flex");
@@ -351,7 +351,7 @@ define([
 				put(this.currentNode.domNode || this.currentNode, "!flex");
 				this._addFlexInNode = false;
 			}
-		},
+		},*/
 
 		_getData: function() {
 

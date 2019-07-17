@@ -1,22 +1,24 @@
 define([
-	"dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-], function (
-	BorderContainer
-	, ContentPane
+	'app/designs/base/_Layout'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+], function(
+	_Layout
 	, declare
 	, lang
-){
-	return declare(ContentPane, {
+	, put
+) {
+
+	return declare(_Layout, {
 		//	summary:
 		//		Layout con dos contenedores (primario y secundario) para contenido dinámico.
 
 		constructor: function(args) {
 
 			this.config = {
-				primaryContentRegion: "center"
+				primaryContentClass: 'primaryContent',
+				secondaryContentClass: 'secondaryContent'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -26,35 +28,18 @@ define([
 
 			this.inherited(arguments);
 
-			var contentNode = new BorderContainer();
-
-			this._createPrimaryNode(contentNode);
-			this._createSecondaryNode(contentNode);
-
-			this.addChild(contentNode);
-
-			contentNode.startup();
+			this._createSecondaryNode();
+			this._createPrimaryNode();
 		},
 
-		_createSecondaryNode: function(container) {
+		_createPrimaryNode: function() {
 
-			var secondaryContent = new ContentPane({
-				region: this.secondaryContentRegion,
-				splitter: this.secondaryContentSplitter
-			});
-
-			container.addChild(secondaryContent);
-			this.secondaryNode = secondaryContent.domNode;
+			this.primaryNode = put(this.domNode, 'div.' + this.primaryContentClass);
 		},
 
-		_createPrimaryNode: function(container) {
+		_createSecondaryNode: function() {
 
-			var primaryContent = new ContentPane({
-				region: this.primaryContentRegion
-			});
-
-			container.addChild(primaryContent);
-			this.primaryNode = primaryContent.domNode;
+			this.secondaryNode = put(this.domNode, 'div.' + this.secondaryContentClass);
 		}
 	});
 });

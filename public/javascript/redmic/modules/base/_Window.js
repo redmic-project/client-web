@@ -309,7 +309,7 @@ define([
 
 			this._validSizeIntervalHandler = setInterval(lang.hitch(this, function(dfd) {
 
-				if (this.node.offsetWidth) {
+				if (this.node && this.node.offsetWidth) {
 					clearInterval(this._validSizeIntervalHandler);
 					dfd.resolve();
 				}
@@ -493,7 +493,7 @@ define([
 
 			clearTimeout(this._moduleWindowResizeTimeoutHandler);
 
-			this._moduleWindowResizeTimeoutHandler = setTimeout(lang.hitch(this, this._resizeWrapper),
+			this._moduleWindowResizeTimeoutHandler = setTimeout(lang.hitch(this, this._moduleShowResize),
 				this._moduleWindowResizeTimeout);
 		},
 

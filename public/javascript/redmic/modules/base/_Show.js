@@ -580,6 +580,11 @@ define([
 
 		_subResize: function(req) {
 
+			this._moduleShowResize(req);
+		},
+
+		_moduleShowResize: function(req) {
+
 			this._resizeWrapper(req);
 			this._propagateActionToChildren('RESIZE', req);
 		},

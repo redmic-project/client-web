@@ -1,17 +1,16 @@
 define([
-	"dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "put-selector/put"
-], function (
-	BorderContainer
-	, ContentPane
+	'app/designs/base/_Layout'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+], function(
+	_Layout
 	, declare
 	, lang
 	, put
-){
-	return declare(ContentPane, {
+) {
+
+	return declare(_Layout, {
 		//	summary:
 		//		Layout para diseño de vistas que contienen gráficas y añadidos a la misma.
 

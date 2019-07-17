@@ -26,11 +26,6 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		postCreate: function() {
-
-			this.container = put("div");
-		},
-
 		_beforeShow: function(req) {
 
 			var data = req.data || this.data;
@@ -40,15 +35,15 @@ define([
 			}
 
 			if (typeof data === "object") {
-				put(this.container, data);
+				put(this.domNode, data);
 			} else {
-				this.container.innerHTML = data;
+				this.domNode.innerHTML = data;
 			}
 		},
 
 		_getNodeToShow: function() {
 
-			return this.container;
+			return this.domNode;
 		}
 	});
 });

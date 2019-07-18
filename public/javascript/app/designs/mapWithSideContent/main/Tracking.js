@@ -213,7 +213,7 @@ define([
 
 			this.tabContainer = new TabContainer({
 				region: 'center',
-				'class': "mediumTexturedContainer sideTabContainer borderRadiusTabContainer"
+				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
 			});
 
 			this.tabContainer.addChild(this._createSettings());

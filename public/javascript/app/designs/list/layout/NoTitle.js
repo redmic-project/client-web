@@ -27,13 +27,7 @@ define([
 
 			this.inherited(arguments);
 
-			this.keypadZoneNode = put("div.keypadZone");
-
-			this.centerNode = put("div.fHeight");
-
-			this.listNode = put(this.centerNode, "div.listZone" + this.classByList);
-
-			this.addChild(this.centerNode);
+			this.listNode = put(this.domNode, "div.listZone" + this.classByList);
 		}
 	});
 });

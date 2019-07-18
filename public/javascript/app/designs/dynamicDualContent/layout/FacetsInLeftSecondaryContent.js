@@ -1,34 +1,27 @@
 define([
-	"dijit/layout/ContentPane"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "./_Layout"
-], function (
-	ContentPane
-	, declare
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+	, './_Layout'
+], function(
+	declare
 	, lang
+	, put
 	, _Layout
-){
+) {
+
 	return declare(_Layout, {
 		//	summary:
 		//		Layout para zona de filtrado en el contenido secundario por la izquierda.
 
 		constructor: function(args) {
 
-			this.config = {};
+			this.config = {
+				layoutAdditionalClasses: 'facetsInLeftSecondaryContentLayoutDynamicDualContentDesign',
+				secondaryContentClass: 'isolatedFacetsZone'
+			};
 
 			lang.mixin(this, this.config, args);
-		},
-
-		_createSecondaryNode: function(container) {
-
-			var secondaryContent = new ContentPane({
-				'class': "isolatedFacetsZone",
-				region: "left"
-			});
-
-			container.addChild(secondaryContent);
-			this.secondaryNode = secondaryContent.domNode;
 		}
 	});
 });

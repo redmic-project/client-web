@@ -2,7 +2,7 @@ define([
 	'app/designs/mapWithSideContent/Controller'
 	, 'app/designs/mapWithSideContent/layout/MapAndContent'
 	, 'app/redmicConfig'
-	, 'dijit/layout/BorderContainer'
+	, 'dijit/layout/LayoutContainer'
 	, 'dijit/layout/ContentPane'
 	, 'dijit/layout/TabContainer'
 	, 'dojo/_base/declare'
@@ -23,7 +23,7 @@ define([
 	Controller
 	, Layout
 	, redmicConfig
-	, BorderContainer
+	, LayoutContainer
 	, ContentPane
 	, TabContainer
 	, declare
@@ -119,6 +119,11 @@ define([
 			}, this.browserConfig || {}]);
 		},
 
+		_setOwnCallbacksForEvents: function() {
+
+			this._onEvt('SHOW', lang.hitch(this, this._onShown));
+		},
+
 		_initialize: function() {
 
 			this.searchConfig.queryChannel = this.queryChannel;
@@ -152,7 +157,7 @@ define([
 
 			this.inherited(arguments);
 
-			var browserAndSearchContainer = new BorderContainer({
+			var browserAndSearchContainer = new LayoutContainer({
 				title: this.i18n.list,
 				'class': 'marginedContainer noScrolledContainer'
 			});
@@ -182,12 +187,13 @@ define([
 				tabPosition: 'top',
 				splitter: true,
 				region: 'right',
-				'class': 'col-xs-6 col-sm-6 col-md-6 col-lg-5 col-xl-4 mediumTexturedContainer sideTabContainer'
+				'class': 'mediumTexturedContainer sideTabContainer'
 			});
+
 			this.tabs.addChild(browserAndSearchContainer);
 			this.tabs.addChild(this._createAtlas());
-
-			this.contentNode.addChild(this.tabs);
+			this.tabs.placeAt(this.contentNode);
+			this.tabs.startup();
 
 			this._emitEvt('ADD_LAYER', {layer: this._layerInstance});
 
@@ -207,6 +213,11 @@ define([
 		_beforeShow: function() {
 
 			this._emitEvt('REFRESH');
+		},
+
+		_onShown: function() {
+
+			this.tabs.resize();
 		},
 
 		_getPopupContent: function(data) {

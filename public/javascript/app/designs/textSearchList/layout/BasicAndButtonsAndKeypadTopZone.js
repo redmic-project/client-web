@@ -28,7 +28,7 @@ define([
 
 			this.inherited(arguments);
 
-			this.topNode = put("div.topZone");
+			this.topNode = put(this.domNode, "div.topZone");
 
 			this._titleNode = put(this.topNode, "div.titleZone");
 
@@ -42,12 +42,9 @@ define([
 
 			this.keypadZoneNode = put(this.topNode, "div.keypadZone");
 
-			this.centerNode = put("div.centerZone");
+			this.centerNode = put(this.domNode, "div.centerZone");
 
 			this.listNode = put(this.centerNode, "div.listZone" + this.classByList);
-
-			this.addChild(this.topNode);
-			this.addChild(this.centerNode);
 		}
 	});
 });

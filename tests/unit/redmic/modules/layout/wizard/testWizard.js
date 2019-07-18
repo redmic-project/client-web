@@ -181,7 +181,7 @@ define([
 				Mediator.once(wizard.getChannel("SHOWN"), dfd.callback(function(obj) {
 					assert.ok(obj.success, "No se mostró correctamente");
 					assert.strictEqual(wizard.stepLabelNode.innerText, label1, "El label del Wizard no se ha seteado correctamente");
-					assert.strictEqual(wizard.contentNode.containerNode.innerText, textContent1, "El contenido del Wizard no se ha seteado correctamente");
+					assert.strictEqual(wizard.contentNode.innerText, textContent1, "El contenido del Wizard no se ha seteado correctamente");
 				}));
 
 				Mediator.publish(wizard.getChannel("SHOW"), {
@@ -206,7 +206,7 @@ define([
 
 				assert.isDefined(wizard._stepInstances[1], "El siguiente Step no se ha creado correctamente");
 				assert.strictEqual(wizard.stepLabelNode.innerText, label2, "El label del Wizard no se ha seteado correctamente");
-				assert.strictEqual(wizard.contentNode.containerNode.innerText, textContent2, "El contenido del Wizard no se ha seteado correctamente");
+				assert.strictEqual(wizard.contentNode.innerText, textContent2, "El contenido del Wizard no se ha seteado correctamente");
 			},
 
 			"Previous step": function() {
@@ -216,7 +216,7 @@ define([
 					Mediator.publish(wizard.getChannel("PREVSTEP"));
 
 					assert.strictEqual(wizard.stepLabelNode.innerText, label1, "El label del Wizard no se ha seteado correctamente");
-					assert.strictEqual(wizard.contentNode.containerNode.innerText, textContent1, "El contenido del Wizard no se ha seteado correctamente");
+					assert.strictEqual(wizard.contentNode.innerText, textContent1, "El contenido del Wizard no se ha seteado correctamente");
 				}));
 
 				Mediator.publish(wizard.getChannel("NEXT_STEP"));
@@ -232,7 +232,7 @@ define([
 
 					assert.isDefined(wizard._stepInstances[2], "El Step al que vamos no se ha creado correctamente");
 					assert.strictEqual(wizard.stepLabelNode.innerText, label3, "El label del Wizard no se ha seteado correctamente");
-					assert.strictEqual(wizard.contentNode.containerNode.innerText, textContent3, "El contenido del Wizard no se ha seteado correctamente");
+					assert.strictEqual(wizard.contentNode.innerText, textContent3, "El contenido del Wizard no se ha seteado correctamente");
 				}));
 			},
 
@@ -252,7 +252,7 @@ define([
 						"El Step al que íbamos a saltar no se ha creado correctamente");
 					assert.strictEqual(wizard.stepLabelNode.innerText, label5,
 						"El label del Wizard no se ha seteado correctamente");
-					assert.strictEqual(wizard.contentNode.containerNode.innerText, textContent5,
+					assert.strictEqual(wizard.contentNode.innerText, textContent5,
 						"El contenido del Wizard no se ha seteado correctamente");
 				}));
 			},
@@ -275,7 +275,7 @@ define([
 
 					assert.strictEqual(wizard.stepLabelNode.innerText, label1,
 						"El label del Wizard no se ha seteado correctamente");
-					assert.strictEqual(wizard.contentNode.containerNode.innerText, textContent1,
+					assert.strictEqual(wizard.contentNode.innerText, textContent1,
 						"El contenido del Wizard no se ha seteado correctamente");
 				}));
 			},
@@ -425,7 +425,7 @@ define([
 
 				assert.isDefined(wizard._stepInstances[1], "El siguiente Step no se ha creado correctamente");
 				assert.strictEqual(wizard.stepLabelNode.innerText, label2, "El label del Wizard no se ha seteado correctamente");
-				assert.strictEqual(wizard.contentNode.containerNode.innerText, textContent2, "El contenido del Wizard no se ha seteado correctamente");
+				assert.strictEqual(wizard.contentNode.innerText, textContent2, "El contenido del Wizard no se ha seteado correctamente");
 			},
 
 			"Previous step triggered by keypad": function() {
@@ -445,7 +445,7 @@ define([
 						"El Step anterior no se ha creado correctamente");
 					assert.strictEqual(wizard.stepLabelNode.innerText, label1,
 						"El label del Wizard no se ha seteado correctamente");
-					assert.strictEqual(wizard.contentNode.containerNode.innerText, textContent1,
+					assert.strictEqual(wizard.contentNode.innerText, textContent1,
 						"El contenido del Wizard no se ha seteado correctamente");
 				}));
 			},

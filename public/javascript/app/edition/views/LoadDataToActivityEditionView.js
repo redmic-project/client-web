@@ -1,5 +1,7 @@
 define([
 	"app/components/steps/SelectActivityCategoryStep"
+	, "app/designs/edition/Controller"
+	, "app/designs/edition/Layout"
 	, "app/edition/views/dataLoader/AddDataIF"
 	, "app/edition/views/dataLoader/AddDataFT"
 	, "app/edition/views/dataLoader/AddDataOC"
@@ -10,13 +12,14 @@ define([
 	, "app/edition/views/dataLoader/LoadDataTR"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
-	, "dojo/Deferred"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Store"
+	, "dojo/Deferred"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/ActivityCategoriesNoExist"
 ], function(
 	SelectActivityCategoryStep
+	, Controller
+	, Layout
 	, AddDataIF
 	, AddDataFT
 	, AddDataOC
@@ -27,13 +30,13 @@ define([
 	, LoadDataTR
 	, redmicConfig
 	, declare
-	, Deferred
 	, lang
-	, _Store
+	, Deferred
 	, TemplateDisplayer
 	, TemplateNoExist
-){
-	return declare(_Store, {
+) {
+
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición base para la carga de datos.
 		//	description:
@@ -53,6 +56,7 @@ define([
 				addMode: 'add',
 				editMode: 'edit',
 				loadMode: 'load',
+				idProperty: "activityid",
 
 				activityCategories: {
 					"ft": {

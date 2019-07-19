@@ -8,7 +8,7 @@ define([
 	, declare
 	, lang
 	, put
-){
+) {
 
 	return declare(_Layout, {
 		//	summary:

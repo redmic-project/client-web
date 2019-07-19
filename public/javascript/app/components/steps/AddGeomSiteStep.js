@@ -82,12 +82,11 @@ define([
 			});
 
 			this.leftNode = new declare(StackContainer)({
-				splitter: true,
 				region: "left",
-				'class': "col-xs-6 col-sm-5 col-md-4 col-lg-4 hardTexturedContainer sideStackContainer"
+				'class': "hardTexturedContainer sideStackContainer"
 			});
 
-			this.contentNode.addChild(this.leftNode);
+			this.addChild(this.leftNode);
 
 			this.leftNode.addChild(this.leftContainer);
 

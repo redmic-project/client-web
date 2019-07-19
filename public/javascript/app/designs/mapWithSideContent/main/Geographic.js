@@ -3,7 +3,7 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
-	, "dijit/layout/BorderContainer"
+	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
 	, "dijit/layout/StackContainer"
 	, "dojo/_base/declare"
@@ -25,7 +25,7 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, BorderContainer
+	, LayoutContainer
 	, ContentPane
 	, StackContainer
 	, declare
@@ -160,7 +160,7 @@ define([
 
 			this.inherited(arguments);
 
-			this.browserAndSearchContainer = new BorderContainer({
+			this.browserAndSearchContainer = new LayoutContainer({
 				title: "<i class='fa fa-table'></i>",
 				'class': "marginedContainer noScrolledContainer"
 			});
@@ -199,7 +199,7 @@ define([
 			});
 			this.leftNode.addChild(this.browserAndSearchContainer);
 
-			this.contentNode.addChild(this.leftNode);
+			this.leftNode.placeAt(this.contentNode);
 		},
 
 		_beforeShowMain: function() {

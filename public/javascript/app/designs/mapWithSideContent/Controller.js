@@ -64,15 +64,11 @@ define([
 			this._publish(this.map.getChannel("SHOW"), {
 				node: this.mapNode
 			});
-
-			aspect.after(this.mapNode, "resize", lang.hitch(this, function() {
-				this._emitEvt('RESIZE');
-			}));
 		},
 
 		_getNodeToShowLoading: function() {
 
-			return this.mapNode && this.mapNode.domNode;
+			return this.mapNode;
 		}
 	});
 });

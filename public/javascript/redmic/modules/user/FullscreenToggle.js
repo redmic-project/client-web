@@ -33,8 +33,7 @@ define([
 			this.inherited(arguments);
 
 			put(this.domNode, '[title=$]', this.i18n.fullscreen);
-
-			this.iconNode = put(this.domNode, 'i');
+			put(this.domNode, 'i');
 
 			this.domNode.onclick = lang.hitch(this, this._fullscreenOnClick);
 		},

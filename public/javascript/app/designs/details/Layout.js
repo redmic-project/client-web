@@ -2,13 +2,11 @@ define([
 	'app/designs/base/_Layout'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'put-selector/put'
 ], function (
 	_Layout
 	, declare
 	, lang
-	, aspect
 	, put
 ){
 	return declare(_Layout, {
@@ -30,7 +28,7 @@ define([
 
 			this.inherited(arguments);
 
-			this.addChild(this.centerNode);
+			put(this.domNode, this.centerNode);
 		}
 	});
 });

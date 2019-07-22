@@ -43,10 +43,8 @@ define([
 
 				idProperty: "id",
 				hiddenClass: "hidden",
-				noScroll: false,
 
-				_relativeRowsParameterName: "data-percentage-rows",
-				_fixedRowsParameterName: "data-rows",
+				_rowsParameterName: "data-rows",
 				_colsParameterName: "data-cols",
 				_updateInteractiveTimeout: 100,
 
@@ -123,8 +121,6 @@ define([
 		},
 
 		_buildVisualization: function() {
-
-			this._rowsParameterName = this.noScroll ? this._relativeRowsParameterName : this._fixedRowsParameterName;
 
 			var dfds = [];
 			for (var key in this.widgetConfigs) {

@@ -50,7 +50,6 @@ define([
 		maxWidthCols: 6,
 
 		resizableBottomPadding: 15,
-		resizableBottomMargin: 0.2,
 
 		scrollMargin: 10,
 
@@ -113,7 +112,7 @@ define([
 			this._windowNode = put(node, 'div.' + containerClass);
 
 			if (this.resizable) {
-				this._createWindowResizeComponents();
+				this._limitMaxHeightToAvailableHeight();
 			}
 
 			if (!this.omitTitleBar) {
@@ -123,14 +122,6 @@ define([
 
 			this._createWindowContent();
 			this._addNodeListeners();
-		},
-
-		_createWindowResizeComponents: function() {
-
-			this._limitMaxHeightToAvailableHeight();
-
-			this._resizeHandleNode = put('i.' + this.resizeHandleClass);
-			put(this._windowNode, this._resizeHandleNode);
 		},
 
 		_limitMaxHeightToAvailableHeight: function() {
@@ -154,10 +145,6 @@ define([
 
 			var contentClass = this.windowContentClass,
 				contentHeightReduction = this.titleHeight;
-
-			if (this.resizable) {
-				contentHeightReduction += this.resizableBottomMargin;
-			}
 
 			if (this.omitTitleBar) {
 				contentClass += '.' + this.windowWithoutTitleContentClass;
@@ -210,7 +197,7 @@ define([
 				this._minimizeDfd.resolve();
 			}
 
-			if (propName === 'width' && this._maximizeDfd) {
+			if ((propName === 'width' || propName === 'transform') && this._maximizeDfd) {
 				this._maximizeDfd.resolve();
 			}
 		},
@@ -325,11 +312,12 @@ define([
 		_decorateTitleNode: function() {
 
 			var windowTitle = this.windowTitle || this.getOwnChannel(),
-				titleTextValue = this.i18n[windowTitle] || this.title || this.getOwnChannel();
+				titleTextValue = this.i18n[windowTitle] || this.title || this.getOwnChannel(),
+				titleAttr = '[title="' + titleTextValue + '"]';
 
 			put(this._windowTitleNode, '[id="' + windowTitle + '"]');
 
-			put(this._windowTitleNode, 'div.' + this.windowTitleValueClass, titleTextValue);
+			put(this._windowTitleNode, 'div.' + this.windowTitleValueClass + titleAttr, titleTextValue);
 
 			if (!this.omitTitleButtons) {
 				this._createWindowButtons();
@@ -363,10 +351,6 @@ define([
 				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
 			}
 
-			if (this.resizable) {
-				domClass.add(this._resizeHandleNode, this.hiddenClass);
-			}
-
 			domStyle.set(this.node, 'height', 0);
 			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'rem');
 		},
@@ -380,11 +364,6 @@ define([
 			}
 
 			var contentHeightReduction = this.titleHeight;
-
-			if (this.resizable) {
-				domClass.remove(this._resizeHandleNode, this.hiddenClass);
-				contentHeightReduction += this.resizableBottomMargin;
-			}
 
 			domStyle.set(this.node, 'height', 'calc(100% - ' + contentHeightReduction + 'rem)');
 			domStyle.set(this._windowNode.parentNode, 'height', '');

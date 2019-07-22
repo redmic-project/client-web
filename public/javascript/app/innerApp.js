@@ -21,6 +21,7 @@ define([
 	, 'redmic/modules/socket/_Worms'
 	, 'redmic/modules/socket/Socket'
 	, 'redmic/modules/socket/Task'
+	, 'redmic/modules/user/FullscreenToggle'
 	, 'redmic/modules/user/LanguageSelector'
 	, 'redmic/modules/user/UserArea'
 ], function(
@@ -46,6 +47,7 @@ define([
 	, _Worms
 	, Socket
 	, Task
+	, FullscreenToggle
 	, LanguageSelector
 	, UserArea
 ) {
@@ -144,6 +146,10 @@ define([
 			var topbarRightNode = this.topbar.domNode.lastChild;
 
 			this._publish(this._buildChannel(this.notificationChannel, this.actions.SHOW), {
+				node: topbarRightNode
+			});
+
+			this._publish(this.fullscreenToggle.getChannel('SHOW'), {
 				node: topbarRightNode
 			});
 
@@ -253,6 +259,10 @@ define([
 			this.languageSelector = new LanguageSelector({
 				parentChannel: this.ownChannel
 			});
+
+			this.fullscreenToggle = new FullscreenToggle({
+				parentChannel: this.ownChannel
+			});
 		},
 
 		_createStructure: function() {
@@ -350,6 +360,7 @@ define([
 
 			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
 			this._publish(this.sidebar.getChannel('DESTROY'));
+			this._publish(this.fullscreenToggle.getChannel('DESTROY'));
 			this._publish(this.languageSelector.getChannel('DESTROY'));
 			this._publish(this.userArea.getChannel('DESTROY'));
 

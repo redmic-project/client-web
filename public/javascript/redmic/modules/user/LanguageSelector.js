@@ -74,7 +74,9 @@ define([
 			this.inherited(arguments);
 
 			put(this.domNode, '[title=$]', this.i18n.language);
-			put(this.domNode, 'i.fa.fa-language');
+
+			var languageIcon = this._getLanguageIcon(window.lang);
+			put(this.domNode, 'i.' + languageIcon);
 
 			this._publish(this.listMenu.getChannel('ADD_EVT'), {
 				sourceNode: this.domNode
@@ -97,6 +99,21 @@ define([
 				hostnameWithoutLang = hostname.replace(kernel.locale + '.', '');
 
 			window.location.href = protocol + '//' + language + '.' + hostnameWithoutLang;
+		},
+
+		_getLanguageIcon: function(currentLanguage) {
+
+			var iconClasses;
+
+			if (currentLanguage === 'es') {
+				iconClasses = 'flag.flag-icon-background.flag-icon-es';
+			} else if (currentLanguage === 'en') {
+				iconClasses = 'flag.flag-icon-background.flag-icon-gb';
+			} else {
+				iconClasses = 'fa.fa-language';
+			}
+
+			return iconClasses;
 		},
 
 		_getNodeToShow: function() {

@@ -1,6 +1,5 @@
 define([
-	'alertify/alertify.min'
-	, 'app/redmicConfig'
+	'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/request'
@@ -16,8 +15,7 @@ define([
 	, 'redmic/base/Credentials'
 	, 'templates/UserTopbarMenu'
 ], function(
-	alertify
-	, redmicConfig
+	redmicConfig
 	, declare
 	, lang
 	, request
@@ -45,22 +43,43 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				omitLoading: true,
-				// mediator params
 				ownChannel: 'userArea',
-				idProperty: 'id',
 				actions: {
 					REQUEST: 'request'
 				},
+
+				omitLoading: true,
+				'class': 'userArea',
+				idProperty: 'id',
 				target: redmicConfig.services.profile
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_setConfigurations: function() {
+		_initialize: function() {
 
-			this.listMenuConfig = this._merge([{
+			put(this.domNode, '[title=$]', this.i18n.user);
+			this.iconNode = put(this.domNode, 'i.fa.fa-user');
+
+			if (this._checkUserIsRegistered()) {
+				this._initializeRegisteredUserArea();
+			} else {
+				this._initializeGuestUserArea();
+			}
+		},
+
+		_initializeRegisteredUserArea: function() {
+
+			this.topbarMenu = new TemplateDisplayer({
+				parentChannel: this.getChannel(),
+				omitLoading: true,
+				template: TemplateTopbarMenu,
+				'class': 'tooltipUser',
+				target: this.target
+			});
+
+			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
 				parentChannel: this.getChannel(),
 				items: [{
 					icon: 'fa-eye',
@@ -79,60 +98,37 @@ define([
 					label: 'logout',
 					callback: '_logout'
 				}]
-			}, this.listMenuConfig || {}]);
+			});
+		},
 
-			this.topbarMenuConfig = this._merge([{
-				omitLoading: true,
+		_initializeGuestUserArea: function() {
+
+			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
 				parentChannel: this.getChannel(),
-				template: TemplateTopbarMenu,
-				'class': 'tooltipUser',
-				target: this.target
-			}, this.topbarMenuConfig || {}]);
-		},
+				items: [{
+					icon: 'fa-question-circle-o',
+					label: 'whatIsRedmic',
+					href: '/inner-what-is-redmic'
+				},{
+					icon: 'fa-user-plus',
+					label: 'register',
+					href: '/register'
+				},{
+					icon: 'fa-sign-in',
+					label: 'login',
+					href: '/login'
+				}]
+			});
 
-		_initialize: function() {
-
-			if (this._checkUserIsRegistered()) {
-				this._initializeUserArea();
-			} else {
-				this._initializeGuestArea();
-			}
-		},
-
-		_initializeUserArea: function() {
-
-			this.topbarMenu = new TemplateDisplayer(this.topbarMenuConfig);
-
-			put(this.domNode, '.userArea');
-			this.containerNode = put(this.domNode, 'div[title=$]', this.i18n.user);
-
-			this.iconNode = put(this.containerNode, 'i.fa.fa-user');
-
-			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)(this.listMenuConfig);
-		},
-
-		_initializeGuestArea: function() {
-
-			put(this.domNode, '.userAreaGuest');
-
-			var singlePageParam = '[d-state-url="true"]';
-
-			this.whatIsRedmicNode = put(this.domNode, 'a[href="/inner-what-is-redmic"]' + singlePageParam,
-				this.i18n.whatIsRedmic);
-
-			this.registerNode = put(this.domNode, 'a[href="/register"]' + singlePageParam, this.i18n.register);
-
-			this.loginNode = put(this.domNode, 'a[href="/login"]' + singlePageParam, this.i18n.login);
+			this._showMenu();
 		},
 
 		_defineSubscriptions: function () {
 
-			if (this._checkUserIsRegistered()) {
-				this.subscriptionsConfig.push({
-					channel : this.listMenu.getChannel('EVENT_ITEM'),
-					callback: '_subEventItem'
-				});
-			}
+			this.subscriptionsConfig.push({
+				channel : this.listMenu.getChannel('EVENT_ITEM'),
+				callback: '_subEventItem'
+			});
 		},
 
 		postCreate: function() {
@@ -164,8 +160,6 @@ define([
 
 		_showAreaForRegisteredUser: function() {
 
-			this._showMenu();
-
 			this._once(this._buildChannel(this.credentialsChannel, this.actions.GOT_PROPS),
 				lang.hitch(this, this._subDataCredentialsGotProps));
 
@@ -193,7 +187,7 @@ define([
 		_showMenu: function() {
 
 			this._publish(this.listMenu.getChannel('ADD_EVT'), {
-				sourceNode: this.iconNode
+				sourceNode: this.domNode
 			});
 		},
 
@@ -273,22 +267,27 @@ define([
 				data = data[0];
 			}
 
-			if (!this.containerNode) {
+			// TODO impide a instancias antiguas romper la ejecución, revisar
+			if (!this.domNode) {
 				return;
 			}
 
-			this.containerNode.firstChild && put(this.containerNode.firstChild, '!');
+			this._updateUserAreaButton(data);
+			this._showMenu();
+		},
+
+		_updateUserAreaButton: function(data) {
+
+			put('!', this.iconNode);
 
 			if (data.image) {
 				var tokenParam = '?access_token=' + Credentials.get('accessToken'),
 					imageUrl = data.image + tokenParam;
 
-				this.iconNode = put(this.containerNode, 'img[src=' + imageUrl + ']');
+				this.iconNode = put(this.domNode, 'img[src=' + imageUrl + ']');
 			} else {
-				this.iconNode = put(this.containerNode, 'i.fa.fa-user');
+				this.iconNode = put(this.domNode, 'i.fa.fa-user');
 			}
-
-			this._showMenu();
 		}
 	});
 });

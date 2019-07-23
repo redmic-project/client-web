@@ -50,15 +50,15 @@ define([
 		_fullscreenOnClick: function(evt) {
 
 			if (this._fullscreenStatus) {
-				this._disableFullscreen();
-
 				put(this.buttonNode, '.' + this.enableClass);
 				put(this.buttonNode, '!' + this.disableClass);
-			} else {
-				this._enableFullscreen();
 
+				this._disableFullscreen();
+			} else {
 				put(this.buttonNode, '!' + this.enableClass);
 				put(this.buttonNode, '.' + this.disableClass);
+
+				this._enableFullscreen();
 			}
 		},
 

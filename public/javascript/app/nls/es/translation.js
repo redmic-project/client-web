@@ -1205,6 +1205,8 @@ define({
 	, "activityId": "ID actividad"
 	, "webcamUrl": "URL webcam"
 
+	, "fullscreen": "Pantalla completa"
+
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"

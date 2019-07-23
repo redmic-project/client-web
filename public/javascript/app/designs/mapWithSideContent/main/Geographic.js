@@ -5,7 +5,7 @@ define([
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
-	, "dijit/layout/StackContainer"
+	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -18,6 +18,7 @@ define([
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_GeoJsonParser"
 	, "redmic/modules/browser/ListImpl"
+	, "redmic/modules/map/Atlas"
 	, "redmic/modules/search/TextImpl"
 	, "templates/CitationList"
 ], function(
@@ -27,7 +28,7 @@ define([
 	, Layout
 	, LayoutContainer
 	, ContentPane
-	, StackContainer
+	, TabContainer
 	, declare
 	, lang
 	, aspect
@@ -40,6 +41,7 @@ define([
 	, _Framework
 	, _GeoJsonParser
 	, ListImpl
+	, Atlas
 	, TextImpl
 	, TemplateList
 ){
@@ -67,10 +69,7 @@ define([
 				mainActions: {
 					CLEAR: "clear",
 					REFRESH: "refresh"
-				},
-
-				leftNodeClass: 'col-xs-6 col-sm-5 col-md-4 col-lg-4 hardTexturedContainer sideStackContainer',
-				splitterLeftNode: true
+				}
 			};
 
 			aspect.before(this, "_beforeShow", lang.hitch(this, this._beforeShowMain));
@@ -104,7 +103,7 @@ define([
 
 			if (!this.notTextSearch) {
 				this.searchConfig.queryChannel = this.queryChannel;
-				this.textSearch = new declare([TextImpl])(this.searchConfig);
+				this.textSearch = new TextImpl(this.searchConfig);
 			}
 
 			var exts = this.browserExts;
@@ -156,9 +155,42 @@ define([
 			}
 		},
 
+		_setMainOwnCallbacksForEvents: function() {
+
+			this._onEvt('SHOW', lang.hitch(this, this._onGeographicMainShown));
+			this._onEvt('RESIZE', lang.hitch(this, this._onGeographicMainResized));
+		},
+
 		postCreate: function() {
 
 			this.inherited(arguments);
+
+			this._createBrowserNode();
+
+			if (!this.notTextSearch) {
+				this._createTextSearchNode();
+			}
+
+			this._createTabContainers();
+		},
+
+		_createTextSearchNode: function() {
+
+			this.textSearchNode = new ContentPane({
+				'class': "topZone topZoneCitation",
+				region: "top"
+			});
+
+			this._publish(this.textSearch.getChannel("SHOW"), {
+				node: this.textSearchNode.domNode
+			});
+
+			this.buttonsNode = this.textSearchNode;
+
+			this.browserAndSearchContainer.addChild(this.textSearchNode);
+		},
+
+		_createBrowserNode: function() {
 
 			this.browserAndSearchContainer = new LayoutContainer({
 				title: "<i class='fa fa-table'></i>",
@@ -174,32 +206,42 @@ define([
 				node: this.gridNode.domNode
 			});
 
-			if (!this.notTextSearch) {
-
-				this.textSearchNode = new ContentPane({
-					'class': "topZone topZoneCitation",
-					region: "top"
-				});
-				this._publish(this.textSearch.getChannel("SHOW"), {
-					node: this.textSearchNode.domNode
-				});
-
-				this.buttonsNode = this.textSearchNode;
-
-				this.browserAndSearchContainer.addChild(this.textSearchNode);
-			}
-
 			this.browserAndSearchContainer.addChild(this.gridNode);
+		},
 
-			this.leftNode = new StackContainer({
-				title: this.i18n.list,
-				splitter: this.splitterLeftNode,
-				region: "left",
-				'class': this.leftNodeClass
+		_createTabContainers: function() {
+
+			this.tabs = new TabContainer({
+				tabPosition: "top",
+				region: "center",
+				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
 			});
-			this.leftNode.addChild(this.browserAndSearchContainer);
 
-			this.leftNode.placeAt(this.contentNode);
+			this.tabs.addChild(this.browserAndSearchContainer);
+			this.tabs.addChild(this._createAtlas());
+
+			this.tabs.placeAt(this.contentNode);
+			this.tabs.startup();
+		},
+
+		_createAtlas: function() {
+
+			this.atlas = new Atlas({
+				parentChannel: this.getChannel(),
+				perms: this.perms,
+				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+			});
+
+			var cp = new ContentPane({
+				title: this.i18n.themes,
+				region:"center"
+			});
+
+			this._publish(this.atlas.getChannel("SHOW"), {
+				node: cp.domNode
+			});
+
+			return cp;
 		},
 
 		_beforeShowMain: function() {
@@ -262,6 +304,21 @@ define([
 			this._publish(channel, {
 				selectionTarget: this._getTarget()
 			});
+		},
+
+		_onGeographicMainShown: function() {
+
+			this._resizeTabs();
+		},
+
+		_onGeographicMainResized: function() {
+
+			this._resizeTabs();
+		},
+
+		_resizeTabs: function() {
+
+			this.tabs.resize();
 		}
 	});
 });

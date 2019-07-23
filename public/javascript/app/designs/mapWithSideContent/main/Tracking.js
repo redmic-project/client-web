@@ -134,6 +134,7 @@ define([
 
 			this.on([this.events.HIDE, this.events.ANCESTOR_HIDE], lang.hitch(this, this._onHide));
 			this._onEvt('SHOW', lang.hitch(this, this._onTrackingMainShown));
+			this._onEvt('RESIZE', lang.hitch(this, this._onTrackingMainResized));
 		},
 
 		_initializeMain: function() {
@@ -654,6 +655,16 @@ define([
 		},
 
 		_onTrackingMainShown: function() {
+
+			this._resizeTabs();
+		},
+
+		_onTrackingMainResized: function() {
+
+			this._resizeTabs();
+		},
+
+		_resizeTabs: function() {
 
 			this.tabContainer.resize();
 		}

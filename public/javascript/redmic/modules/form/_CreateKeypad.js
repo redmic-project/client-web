@@ -1,20 +1,19 @@
 define([
-	"dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, 'put-selector/put'
 	, "redmic/modules/components/Keypad/TrizoneKeypadImpl"
 	, "redmic/modules/form/_BaseCreateKeypad"
 ], function(
-	BorderContainer
-	, ContentPane
-	, declare
+	declare
 	, lang
 	, aspect
+	, put
 	, TrizoneKeypadImpl
 	, _BaseCreateKeypad
-){
+) {
+
 	return declare(_BaseCreateKeypad, {
 		//	summary:
 		//		Extensión del módulo Form para que adjunte un Keypad.
@@ -24,6 +23,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				containerClass: 'formContainerWithKeypad',
 				buttons: {
 					cancel: {
 						zone: "right",
@@ -61,7 +61,6 @@ define([
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineCreateKeypadSubscriptions));
 			aspect.after(this, "_definePublications", lang.hitch(this, this._defineCreateKeypadPublications));
 			aspect.after(this, "postCreate", lang.hitch(this, this._postCreateCreateKeypad));
-			aspect.before(this, "_getNodeToShow", lang.hitch(this, this._getNodeToShowCreateKeypadBefore));
 			aspect.after(this, "_getNodeToShow", lang.hitch(this, this._getNodeToShowCreateKeypadAfter));
 
 			lang.mixin(this, this.config, args);
@@ -109,31 +108,23 @@ define([
 
 		_placeKeypad: function() {
 
-			this.formAndKeypadContainer = new BorderContainer({
-				'class': this['class']
-			});
+			if (this.containerClass) {
+				this.containerClass = this.containerClass.replace(/\ /g, '.');
+			}
 
-			this.keypadNode = new ContentPane({
-				region: "bottom"
-			});
-
-			this.formAndKeypadContainer.addChild(this.keypadNode);
-		},
-
-		_getNodeToShowCreateKeypadBefore: function() {
-
-			this.form && this.formAndKeypadContainer.removeChild(this.form);
+			this.formAndKeypadContainer = put('div.' + this.containerClass);
+			this.keypadNode = put(this.formAndKeypadContainer, 'div');
 		},
 
 		_getNodeToShowCreateKeypadAfter: function() {
 
-			this.formAndKeypadContainer.addChild(this.form);
+			put(this.formAndKeypadContainer, this.domNode);
 
 			this._publish(this.keypad.getChannel("SHOW"), {
-				node: this.keypadNode.domNode
+				node: this.keypadNode
 			});
 
-			return this.formAndKeypadContainer.domNode;
+			return this.formAndKeypadContainer;
 		},
 
 		_subKeypadInput: function(req) {

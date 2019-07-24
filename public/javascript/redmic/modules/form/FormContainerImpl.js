@@ -64,6 +64,7 @@ define([
 
 			if (!this.form) {
 				this.form = new FormContainer(this.formContainerConfig);
+				this.form.placeAt(this.domNode);
 
 				this.form.startup();
 
@@ -251,7 +252,7 @@ define([
 
 		_getNodeToShow: function() {
 
-			return this.form.domNode;
+			return this.domNode;
 		},
 
 		_submit: function() {

@@ -41,8 +41,8 @@ define([
 			this._collapseNode.onclick = lang.hitch(this, this._onCollapseClicked);
 
 			this.logoNode = put(this.domNode, "div.topbarLogo", {
-				innerHTML: "<a href='/home' d-state-url=true title='" + this.i18n.home +
-					"'><img class='logo' src='/resources/images/logos/redmicSimple.png'></a>"
+				innerHTML: '<a href="/home" d-state-url="true" title="' + this.i18n.home +
+					'"><img class="logo" src="/resources/images/logos/logo.svg"></a>'
 			});
 
 			var envDfd = window.env;

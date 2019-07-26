@@ -273,6 +273,8 @@ define([
 
 			// TODO workaround for https://github.com/Norkart/Leaflet-MiniMap/issues/114
 			on(miniMap._miniMap._container, "click", function(evt) { evt.stopPropagation(); });
+
+			this.miniMapInstance = miniMap;
 		},
 
 		_addMeasureTools: function() {
@@ -339,7 +341,15 @@ define([
 
 		invalidateSize: function() {
 
-			this.map && this.map.invalidateSize();
+			if (!this.map) {
+				return;
+			}
+
+			this.map.invalidateSize();
+
+			if (this.miniMap && this.miniMapInstance) {
+				this.miniMapInstance.addTo(this.map);
+			}
 		},
 
 		hasLayer: function(layer) {

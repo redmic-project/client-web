@@ -122,13 +122,12 @@ define([
 			this.inherited(arguments);
 
 			put(this.domNode, ".notification");
-			this.containerNode = put(this.domNode, "div");
-			this.iconNode = put(this.containerNode, "i.fa.fa-bell-o");
-			this.spanNode = put(this.containerNode, "span.hidden", 0);
+			this.iconNode = put(this.domNode, "i.fa.fa-bell");
+			this.spanNode = put(this.domNode, "span.hidden", 0);
 
 			this.iconNode.addEventListener('animationend', lang.hitch(this, this._removeAnimated));
 
-			this.containerNode.onclick = lang.hitch(this, this._clickNotification);
+			this.domNode.onclick = lang.hitch(this, this._clickNotification);
 
 			this.closeNotificationSidebarHandler = on.pausable(this.ownerDocumentBody, "click",
 				lang.hitch(this, this._onCloseNotificationSidebar));

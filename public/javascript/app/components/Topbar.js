@@ -23,7 +23,11 @@ define([
 
 			this.config = {
 				region: "top",
-				"class": "topbar",
+				'class': "topbar",
+				logoClass: 'topbarLogo',
+				logoHref: '/home',
+				logoImgSrc: '/resources/images/logos/logo.svg',
+				logoTextContent: 'REDMIC',
 				doLayout: false,
 				show: {
 					left: true,
@@ -40,10 +44,7 @@ define([
 			this._collapseNode = put(this.domNode, "div.collapseSidebarButton");
 			this._collapseNode.onclick = lang.hitch(this, this._onCollapseClicked);
 
-			this.logoNode = put(this.domNode, "div.topbarLogo", {
-				innerHTML: '<a href="/home" d-state-url="true" title="' + this.i18n.home +
-					'"><img class="logo" src="/resources/images/logos/logo.svg"></a>'
-			});
+			this._createLogoNode();
 
 			var envDfd = window.env;
 
@@ -61,6 +62,18 @@ define([
 			this.manager = new Manager({
 				parentChannel: this.parentChannel
 			}, this.leftNode);
+		},
+
+		_createLogoNode: function() {
+
+			var classAttr = '.' + this.logoClass,
+				hrefAttr = '[href="' + this.logoHref + '"]',
+				singlePageAttr = '[d-state-url="true"]',
+				titleAttr = '[title="' + this.i18n.home + '"]',
+				logoNode = put(this.domNode, 'a' + classAttr + hrefAttr + singlePageAttr + titleAttr);
+
+			put(logoNode, 'img[src="' + this.logoImgSrc + '"]');
+			put(logoNode, 'span', this.logoTextContent);
 		},
 
 		_onCollapseClicked: function() {

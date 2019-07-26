@@ -406,7 +406,7 @@ define([
 		_updateTitle: function(title) {
 
 			this._publish(this.dataDisplayer.getChannel("SHOW"), {
-				node: this.topbarNode.domNode,
+				node: this.topbarNode,
 				data: title
 			});
 		},

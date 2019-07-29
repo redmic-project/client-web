@@ -184,7 +184,7 @@ define([
 			this.tabs = new TabContainer({
 				tabPosition: "top",
 				region: "center",
-				'class': "mediumTexturedContainer sideTabContainer"
+				'class': "softSolidContainer sideTabContainer"
 			});
 			this.tabs.addChild(browserAndSearchContainer);
 			this.tabs.addChild(this._createAtlas());

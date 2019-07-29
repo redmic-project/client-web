@@ -212,7 +212,7 @@ define([
 			if (!this.noExistsActivityCategoryInstance) {
 				this.noExistsActivityCategoryInstance = new TemplateDisplayer({
 					parentChannel: this.getChannel(),
-					"class": "hardTexturedContainer.viewerPDFAuthFailed.borderRadius",
+					"class": "mediumSolidContainer.viewerPDFAuthFailed.borderRadius",
 					template: TemplateNoExist
 				});
 			}

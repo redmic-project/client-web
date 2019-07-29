@@ -72,7 +72,7 @@ define([
 			if (this.container) {
 				value.set('region', 'center');
 				if (!this._checkTabbed(value)) {
-					var className = 'hardTexturedContainer';
+					var className = 'mediumSolidContainer';
 					if (!this.preventScroll) {
 						className += ' detailsContainer';
 					}

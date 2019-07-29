@@ -92,7 +92,7 @@ define([
 
 		_createStructure: function() {
 
-			this.containerNode = put(this.domNode, "div.domains.hardTexturedContainer");
+			this.containerNode = put(this.domNode, "div.domains.mediumSolidContainer");
 			this.contentNode = put(this.containerNode, "div.domainsBox");
 
 			for (var i = 0; i < this.items.modules.length; i++) {

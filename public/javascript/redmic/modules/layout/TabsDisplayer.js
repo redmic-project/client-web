@@ -31,7 +31,7 @@ define([
 		_initialize: function() {
 
 			this._container = new TabContainer({
-				'class': "mediumTexturedContainer borderRadiusBottomTabContainer"
+				'class': "softSolidContainer borderRadiusBottomTabContainer"
 			});
 
 			for (var i = 0; i < this.childTabs.length; i++) {

@@ -83,7 +83,7 @@ define([
 
 			this.leftNode = new declare(StackContainer)({
 				region: "left",
-				'class': "hardTexturedContainer sideStackContainer"
+				'class': "mediumSolidContainer sideStackContainer"
 			});
 
 			this.addChild(this.leftNode);

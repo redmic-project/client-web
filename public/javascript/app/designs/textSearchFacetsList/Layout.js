@@ -45,7 +45,7 @@ define([
 
 			this.textSearchNode = put(this.topNode, "div.textSearchZone");
 
-			this.centerNode = put("div.centerZone.mediumTexturedContainer");
+			this.centerNode = put("div.centerZone.softSolidContainer");
 
 			if (this.filtersInTabs) {
 				this.filterColumn = new TabContainer({

@@ -187,7 +187,7 @@ define([
 				tabPosition: 'top',
 				splitter: true,
 				region: 'right',
-				'class': 'mediumTexturedContainer sideTabContainer'
+				'class': 'softSolidContainer sideTabContainer'
 			});
 
 			this.tabs.addChild(browserAndSearchContainer);

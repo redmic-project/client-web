@@ -2,14 +2,12 @@ define([
 	"dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/dom"
 	, "put-selector/put"
 	, "redmic/modules/base/Manager"
 ], function(
 	ContentPane
 	, declare
 	, lang
-	, dom
 	, put
 	, Manager
 ){
@@ -45,15 +43,6 @@ define([
 			this._collapseNode.onclick = lang.hitch(this, this._onCollapseClicked);
 
 			this._createLogoNode();
-
-			var envDfd = window.env;
-
-			if (envDfd) {
-				envDfd.then(lang.hitch(this, function(envData) {
-
-					put(this.domNode, 'div.versionNumber', envData.version);
-				}));
-			}
 
 			if (this.show.left) {
 				this.leftNode = put(this.domNode, "div.manager");

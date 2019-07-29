@@ -1211,6 +1211,7 @@ define({
 		, "webcamUrl": "Webcam URL"
 
 		, "fullscreen": "Fullscreen"
+		, "version": "Version"
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

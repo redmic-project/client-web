@@ -30,7 +30,8 @@ define([
 	, TemplateDisplayer
 	, Credentials
 	, TemplateTopbarMenu
-){
+) {
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Modulo para el menu de usuarios.
@@ -51,7 +52,8 @@ define([
 				omitLoading: true,
 				'class': 'userArea',
 				idProperty: 'id',
-				target: redmicConfig.services.profile
+				target: redmicConfig.services.profile,
+				repositoryUrl: 'https://gitlab.com/redmic-project/client/web'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -62,14 +64,40 @@ define([
 			put(this.domNode, '[title=$]', this.i18n.user);
 			this.iconNode = put(this.domNode, 'i.fa.fa-user');
 
-			if (this._checkUserIsRegistered()) {
-				this._initializeRegisteredUserArea();
-			} else {
-				this._initializeGuestUserArea();
+			var envDfd = window.env;
+			if (!envDfd) {
+				return;
 			}
+
+			envDfd.then(lang.hitch(this, function(envData) {
+
+				var infoItem = {
+					icon: 'fa-question-circle-o',
+					label: 'whatIsRedmic',
+					href: '/inner-what-is-redmic'
+				};
+
+				var versionItem = {
+					icon: 'fa-code-fork',
+					label: this.i18n.version + ': ' + envData.version,
+					href: this.repositoryUrl,
+					newPage: true
+				};
+
+				if (this._checkUserIsRegistered()) {
+					this._initializeRegisteredUserArea(infoItem, versionItem);
+
+					this._logoutTarget = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData);
+					// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
+					// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
+					this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
+				} else {
+					this._initializeGuestUserArea(infoItem, versionItem);
+				}
+			}));
 		},
 
-		_initializeRegisteredUserArea: function() {
+		_initializeRegisteredUserArea: function(infoItem, versionItem) {
 
 			this.topbarMenu = new TemplateDisplayer({
 				parentChannel: this.getChannel(),
@@ -81,43 +109,46 @@ define([
 
 			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
 				parentChannel: this.getChannel(),
-				items: [{
-					icon: 'fa-eye',
-					label: 'myProfile',
-					href: '/user'
-				},{
-					icon: 'fa-question-circle-o',
-					label: 'whatIsRedmic',
-					href: '/inner-what-is-redmic'
-				},{
-					icon: 'fa-file-text-o',
-					label: 'termCondition',
-					href: '/inner-terms-and-conditions'
-				},{
-					icon: 'fa-power-off',
-					label: 'logout',
-					callback: '_logout'
-				}]
+				items: [
+					{
+						icon: 'fa-eye',
+						label: 'myProfile',
+						href: '/user'
+					},
+					infoItem,
+					{
+						icon: 'fa-file-text-o',
+						label: 'termCondition',
+						href: '/inner-terms-and-conditions'
+					},
+					versionItem,
+					{
+						icon: 'fa-power-off',
+						label: 'logout',
+						callback: '_logout'
+					}
+				]
 			});
 		},
 
-		_initializeGuestUserArea: function() {
+		_initializeGuestUserArea: function(infoItem, versionItem) {
 
 			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
 				parentChannel: this.getChannel(),
-				items: [{
-					icon: 'fa-question-circle-o',
-					label: 'whatIsRedmic',
-					href: '/inner-what-is-redmic'
-				},{
-					icon: 'fa-user-plus',
-					label: 'register',
-					href: '/register'
-				},{
-					icon: 'fa-sign-in',
-					label: 'login',
-					href: '/login'
-				}]
+				items: [
+					infoItem,
+					{
+						icon: 'fa-user-plus',
+						label: 'register',
+						href: '/register'
+					},
+					versionItem,
+					{
+						icon: 'fa-sign-in',
+						label: 'login',
+						href: '/login'
+					}
+				]
 			});
 
 			this._showMenu();
@@ -136,26 +167,8 @@ define([
 			this.inherited(arguments);
 
 			if (this._checkUserIsRegistered()) {
-				this._prepareEnvironment();
-			}
-		},
-
-		_prepareEnvironment: function() {
-
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
-			}
-
-			envDfd.then(lang.hitch(this, function(envData) {
-
-				this._logoutTarget = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData);
-				// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
-				// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
-				this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
-
 				this._showAreaForRegisteredUser();
-			}));
+			}
 		},
 
 		_showAreaForRegisteredUser: function() {

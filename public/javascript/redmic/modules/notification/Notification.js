@@ -1,7 +1,6 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/on"
-	, "dojo/query"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
@@ -9,12 +8,9 @@ define([
 	, "redmic/modules/notification/NotificationSidebar"
 	, "redmic/modules/notification/TaskNotification"
 	, "put-selector/put"
-	, "dojo/NodeList-dom"
-	, "dojo/NodeList-traverse"
 ], function(
 	declare
 	, on
-	, query
 	, lang
 	, _Module
 	, _Show
@@ -22,7 +18,8 @@ define([
 	, NotificationSidebar
 	, TaskNotification
 	, put
-){
+) {
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Módulo encargado de procesar las notificaciones de los demás.
@@ -137,9 +134,11 @@ define([
 		_onCloseNotificationSidebar: function(evt) {
 
 			var clickedNode = evt.target,
-				nodeParents = query(clickedNode).parents(),
-				nodeDoesNotBelongToNotificationButton = nodeParents.indexOf(this.domNode) === -1,
-				nodeDoesNotBelongToNotificationSidebar = nodeParents.indexOf(this.notificationSidebarNode) === -1;
+				targets = this._getClickTargets(evt),
+				nodeDoesNotBelongToNotificationButton = targets.indexOf(this.domNode) === -1 &&
+					clickedNode !== this.domNode,
+
+				nodeDoesNotBelongToNotificationSidebar = targets.indexOf(this.notificationSidebarNode) === -1;
 
 			if (nodeDoesNotBelongToNotificationButton && nodeDoesNotBelongToNotificationSidebar) {
 				this._clickNotification(evt);

@@ -13,6 +13,7 @@ define([
 	, "redmic/base/Mediator"
 	, "./_ChkCollection"
 	, "./_CommunicationCenter"
+	, "./_ManageClickEvent"
 	, "./_ModuleItfc"
 ], function(
 	deepmerge
@@ -29,9 +30,11 @@ define([
 	, Mediator
 	, _ChkCollection
 	, _CommunicationCenter
+	, _ManageClickEvent
 	, _ModuleItfc
-){
-	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter], {
+) {
+
+	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter, _ManageClickEvent], {
 		//	summary:
 		//		Base común para todos los módulos.
 		//	description:

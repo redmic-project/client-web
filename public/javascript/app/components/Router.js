@@ -262,23 +262,6 @@ define([
 			}
 		},
 
-		_getClickTargets: function(event) {
-
-			var targetPath = event.path || (event.composedPath && event.composedPath()) || [],
-				targets = [
-					event.currentTarget.activeElement
-				];
-
-			if (!targetPath.length) {
-				var eventTarget = event.target || event.srcElement,
-					eventTargetParent = eventTarget.parentElement;
-
-				targetPath.push(eventTarget, eventTargetParent);
-			}
-
-			return targets.concat(targetPath);
-		},
-
 		_handleAppHref: function(event, target) {
 
 			var url = target.pathname + target.search;

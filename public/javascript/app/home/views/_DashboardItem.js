@@ -45,7 +45,7 @@ define([
 
 		_createStructure: function() {
 
-			this.containerNode = put(this.domNode, "div.boxContainer.boxContainerBorder.hardTexturedContainer");
+			this.containerNode = put(this.domNode, "div.boxContainer.boxContainerBorder.mediumSolidContainer");
 
 			this.contentNode = put(this.containerNode, "div.boxItems.fHeight");
 		},

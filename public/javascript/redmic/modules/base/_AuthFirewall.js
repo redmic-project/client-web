@@ -25,10 +25,14 @@ define([
 
 		_setSubscriptionChecker: function(subscription) {
 
-			if ((Credentials.get("userRole") === "ROLE_GUEST") &&
-				(subscription.channel.indexOf(this.ownChannel) > -1)) {
+			// TODO esta manera de bloquear acciones a los invitados es un poco chapucera, por ahora se permite
+			// pasar a 'destroy', pero habrá que replantearlo para hacerlo bien
+			if (Credentials.get("userRole") === "ROLE_GUEST" &&
+				subscription.channel.indexOf(this.ownChannel) !== -1 &&
+				subscription.channel.indexOf('destroy') === -1) {
+
 				subscription.callback = "_subAuthFailed";
-		}
+			}
 
 			return [subscription];
 		},

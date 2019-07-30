@@ -34,7 +34,7 @@ define([
 
 				classCols: '.col-xs-12.col-sm-6.col-md-6.col-lg-4',
 
-				classBox: ".boxContainer.borderRadius.hardTexturedContainer",
+				classBox: ".boxContainer.borderRadius.mediumSolidContainer",
 
 				_activeBoxKey: null,
 				oneBoxClickAutomatic: true,
@@ -97,7 +97,7 @@ define([
 			var config = this.boxes[key];
 
 			var boxNode = put(this._containerItemsNode, 'div.module' + this.classCols),
-				contentBoxNode = put(boxNode, 'div.button.box.mediumTexturedContainer.colorWhite');
+				contentBoxNode = put(boxNode, 'div.button.box.softSolidContainer.colorWhite');
 
 			if (config.icon) {
 				put(contentBoxNode, 'i.iconModule.' + config.icon.split('-')[0] + '.' + config.icon);

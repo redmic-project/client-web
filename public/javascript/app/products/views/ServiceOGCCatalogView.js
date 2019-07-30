@@ -2,14 +2,13 @@ define([
 	"app/designs/textSearchFacetsList/main/ServiceOGC"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
-], function (
+], function(
 	ServiceOGCMain
 	, declare
 	, lang
-	, aspect
-){
-	return declare([ServiceOGCMain], {
+) {
+
+	return declare(ServiceOGCMain, {
 		//	summary:
 		//		Vista de ServiceOGC Catalog.
 

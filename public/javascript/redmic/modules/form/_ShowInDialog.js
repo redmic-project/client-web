@@ -3,19 +3,20 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, 'put-selector/put'
 	, "redmic/layout/DialogComplex"
-	//, "redmic/modules/components/Keypad/TrizoneKeypadImpl"
 	, "redmic/modules/form/_CreateKeypad"
 ], function(
 	ContentPane
 	, declare
 	, lang
 	, aspect
+	, put
 	, DialogComplex
-	//, TrizoneKeypadImpl
 	, _CreateKeypad
-){
-	return declare([_CreateKeypad], {
+) {
+
+	return declare(_CreateKeypad, {
 		//	summary:
 		//		Extensión del módulo Form para que se muestre en un Dialog.
 
@@ -41,14 +42,15 @@ define([
 			this.dialog = new DialogComplex(this.dialogConfig);
 		},
 
-		_getNodeToShowCreateKeypadBefore: function() {
-
-		},
-
 		_getNodeToShowCreateKeypadAfter: function() {
 
 			this.dialog.show().then(lang.hitch(this, function() {
-				this.dialog.set("centerContent", this.form);
+
+				var formNode = new ContentPane();
+
+				put(formNode.domNode, this.domNode);
+
+				this.dialog.set("centerContent", formNode);
 
 				var keypadNode = new ContentPane();
 

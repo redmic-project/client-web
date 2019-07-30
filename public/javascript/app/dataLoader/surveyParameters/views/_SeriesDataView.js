@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
+	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
 	, "app/base/views/extensions/_LocalSelectionView"
 	, "app/designs/chart/main/_ProcessDataDefinitionAndGetTimeSeries"
 	, "app/designs/chart/main/ChartsWithToolbarsAndSlider"
@@ -25,8 +24,7 @@ define([
 	, "templates/DataDefinitionList"
 	, "templates/LoadingEmpty"
 ], function(
-	_View
-	, _CompositeInTooltipFromIconKeypad
+	_CompositeInTooltipFromIconKeypad
 	, _LocalSelectionView
 	, _ProcessDataDefinitionAndGetTimeSeries
 	, ChartsWithToolbarsAndSlider
@@ -51,7 +49,7 @@ define([
 	, DataDefinitionListTemplate
 	, NoDataTemplate
 ){
-	return declare([EmbeddedContentSelectionInTopbar, _Store, _View, _Filter, _CompositeInTooltipFromIconKeypad,
+	return declare([EmbeddedContentSelectionInTopbar, _Store, _Filter, _CompositeInTooltipFromIconKeypad,
 		_LocalSelectionView, _SeriesSelectionManagement], {
 		//	summary:
 		//		Base común para vistas de SeriesData.

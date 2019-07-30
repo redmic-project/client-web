@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/base/views/extensions/_OnShownAndRefresh"
+	"app/base/views/extensions/_OnShownAndRefresh"
 	, "app/designs/base/_Browser"
 	, "app/designs/base/_Controller"
 	, "app/redmicConfig"
@@ -11,8 +10,7 @@ define([
 	, "redmic/modules/search/TextImpl"
 	, "./_AddFilter"
 ], function (
-	_View
-	, _OnShownAndRefresh
+	_OnShownAndRefresh
 	, _Browser
 	, _Controller
 	, redmicConfig
@@ -23,7 +21,7 @@ define([
 	, TextImpl
 	, _AddFilter
 ){
-	return declare([_View, _Controller, _Browser, _Store, _AddFilter, _OnShownAndRefresh], {
+	return declare([_Controller, _Browser, _Store, _AddFilter, _OnShownAndRefresh], {
 		//	summary:
 		//		Controlador para vistas que contienen un buscador de texto, por facets y un listado.
 
@@ -57,9 +55,9 @@ define([
 
 		_initializeController: function() {
 
-			this.textSearch = new declare([TextImpl])(this.textSearchConfig);
+			this.textSearch = new TextImpl(this.textSearchConfig);
 
-			this.facets = new declare([FacetsImpl])(this.facetsConfig);
+			this.facets = new FacetsImpl(this.facetsConfig);
 		},
 
 		_defineControllerSubscriptions: function() {

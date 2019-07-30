@@ -1,17 +1,15 @@
 define([
-	"dijit/layout/BorderContainer"
+	"dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/dom-style"
 	, "dojo/aspect"
 	, "redmic/modules/components/Keypad/TrizoneKeypadImpl"
 ], function(
-	BorderContainer
+	LayoutContainer
 	, ContentPane
 	, declare
 	, lang
-	, domStyle
 	, aspect
 	, TrizoneKeypadImpl
 ){
@@ -100,13 +98,12 @@ define([
 
 		postCreate: function() {
 
-			var border = new BorderContainer();
+			var border = new LayoutContainer();
 
 			this.buttonContentPane = new ContentPane({
 				region: "bottom"
 			});
 
-			domStyle.set(this.containerNode, "margin", "5px");
 			border.addChild(this);
 			border.addChild(this.buttonContentPane);
 

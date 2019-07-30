@@ -21,12 +21,12 @@ define({
 
 	'ortofoto': {
 		type: 'wmts',
-		url: 'https://{s}.grafcan.es/ServicioWMS/OrtoUrb_bat',
+		url: 'https://{s}.grafcan.es/ServicioWMS/OrtoExpress_bat',
 		props: {
-			layers: 'WMS_OrtoExpressUrb',
+			layers: 'WMS_OrtoExpress',
 			format: 'image/jpeg',
 			uppercase: true,
-			subdomains: ['idecan3'],
+			subdomains: ['idecan1', 'idecan3'],
 			attribution: '<a href="https://www.grafcan.es" target="_blank" title="GRAFCAN">GRAFCAN</a>',
 			minZoom: 5,
 			maxZoom: 21,

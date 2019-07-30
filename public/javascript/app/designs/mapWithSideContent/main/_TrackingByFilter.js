@@ -116,7 +116,7 @@ define([
 
 		_getIconKeypadNode: function() {
 
-			return this.topbarNode.domNode;
+			return this.topbarNode;
 		}
 	});
 });

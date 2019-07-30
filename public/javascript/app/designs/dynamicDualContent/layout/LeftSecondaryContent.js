@@ -15,8 +15,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				secondaryContentRegion: "left",
-				secondaryContentSplitter: true
+				layoutAdditionalClasses: 'leftSecondaryContentLayoutDynamicDualContentDesign'
 			};
 
 			lang.mixin(this, this.config, args);

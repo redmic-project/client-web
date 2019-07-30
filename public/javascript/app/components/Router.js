@@ -138,9 +138,7 @@ define([
 
 			new CookieLoader();
 
-			var eventListener = getGlobalContext().addEventListener ? ['addEventListener', ''] : ['attachEvent', 'on'];
-
-			this._routerRegister(eventListener);
+			this._setRouterListeners();
 
 			this._getEnv();
 		},
@@ -219,53 +217,75 @@ define([
 			this.inherited(arguments);
 		},
 
-		_routerRegister: function(eventInfo) {
+		_setRouterListeners: function() {
 			//	summary:
-			//		Se ejecuta al inicio de la aplicación para añadir un evento a cada
-			//		href del dom para cambiar de módulo cuando se ejecuta
+			//		Prepara la escucha en toda la aplicación de los eventos requeridos para controlar la navegación en
+			//		una sola página
 			//	tags:
 			//		private
-			//	eventInfo:
-			//		Información del evento (addEventListener | attachEvent:on)
 
-			var globalContext = getGlobalContext(),
-				location = globalContext.history.location || globalContext.location;
+			var gCtx = getGlobalContext(),
+				dCtx = gCtx.document,
+				listenMethod, eventPrefix;
 
-			// hang on the event, all references in this document
-			document[eventInfo[0]](eventInfo[1] + 'click', lang.hitch(this, function(evt) {
+			if (gCtx.addEventListener) {
+				listenMethod = dCtx.addEventListener;
+				eventPrefix = '';
+			} else {
+				listenMethod = dCtx.attachEvent;
+				eventPrefix = 'on';
+			}
 
-				var event = evt || globalContext.event,
-					target = event.currentTarget.activeElement || event.srcElement;
+			listenMethod.call(dCtx, eventPrefix + 'click', lang.hitch(this, this._evaluateClickEvt));
+			listenMethod.call(gCtx, eventPrefix + 'popstate', lang.hitch(this, this._evaluatePopStateEvt));
+		},
 
-				// looking for all the links with 'ajax' class found
-				if (target && target.nodeName === 'A' && domAttr.get(target, 'd-state-url')) {
-					var url = target.pathname + target.search;
-					if (mouse.isMiddle(event)) {
-						globalContext.open(globalContext.location.protocol + '//' + globalContext.location.hostname +
-							url, '_blank');
-					} else {
-						// keep the link in the browser history
-						this._addHistory(url);
-						this._onRouteChange();
-					}
-					if (event.preventDefault) {
-						event.preventDefault();
-					} else {
-						event.returnValue = false;
-					}
+		_evaluateClickEvt: function(evt) {
+			//	summary:
+			//		Recibe eventos de click y, en caso de detectar un enlace de navegación interno, lo captura
+			//	tags:
+			//		private
+
+			var event = evt || getGlobalContext().event,
+				targets = this._getClickTargets(event);
+
+			for (var i = 0; i < targets.length; i++) {
+				var target = targets[i],
+					targetIsNotAppHref = !target || target.nodeName !== 'A' || !domAttr.get(target, 'd-state-url');
+
+				if (targetIsNotAppHref) {
+					continue;
 				}
-			}), false);
 
-			// hang on popstate event triggered by pressing back/forward in browser
-			globalContext[eventInfo[0]](eventInfo[1] + 'popstate', lang.hitch(this, function(evt) {
+				this._handleAppHref(event, target);
+				break;
+			}
+		},
 
+		_handleAppHref: function(event, target) {
+
+			var url = target.pathname + target.search;
+
+			if (mouse.isMiddle(event)) {
+				var gCtx = getGlobalContext(),
+					newPageUrl = gCtx.location.protocol + '//' + gCtx.location.hostname + url;
+
+				gCtx.open(newPageUrl, '_blank');
+			} else {
+				this._addHistory(url);
 				this._onRouteChange();
-			}), false);
+			}
+
+			if (event.preventDefault) {
+				event.preventDefault();
+			} else {
+				event.returnValue = false;
+			}
 		},
 
 		_addHistory: function(value) {
 
-			history.pushState(null, null, value);
+			getGlobalContext().history.pushState(null, null, value);
 
 			/*this._emitEvt('ADD_NAV_HISTORY', {
 				url: value
@@ -288,6 +308,15 @@ define([
 			}
 
 			this._changeModule(route, query);
+		},
+
+		_evaluatePopStateEvt: function(evt) {
+			//	summary:
+			//		Recibe eventos de popstate para navegar por la aplicación usando los botones de retroceder/avanzar
+			//	tags:
+			//		private
+
+			this._onRouteChange();
 		},
 
 		_getEnv: function() {
@@ -513,6 +542,16 @@ define([
 			//		layout.
 			//	tags:
 			//		private
+
+			// TODO utilizar destroy de módulos cuando la jerarquía de canales sea correcta
+			this._onLayoutDestroyed();
+			/*
+			this._once(this._currLayoutInstance.getChannel('DESTROYED'), lang.hitch(this, this._onLayoutDestroyed));
+			this._publish(this._currLayoutInstance.getChannel('DESTROY'));
+			*/
+		},
+
+		_onLayoutDestroyed: function() {
 
 			this._currLayoutInstance.destroy();
 			delete this._currLayoutInstance;

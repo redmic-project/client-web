@@ -42,7 +42,7 @@ define([
 
 		hiddenClass: 'hidden',
 
-		titleHeight: 30,
+		titleHeight: 2,
 		minWidth: 200,
 
 		widthByColsAttr: 'data-cols',
@@ -62,7 +62,7 @@ define([
 		_resizableForcedMinWidth: 100,
 		_validSizeInterval: 100,
 		_userResizeTimeout: 100,
-		_emitResizeTimeout: 100,
+		_moduleWindowResizeTimeout: 100,
 
 
 		_setShowOwnCallbacksForEvents: function () {
@@ -74,7 +74,7 @@ define([
 
 		_onWindowAncestorShown: function() {
 
-			this._prepareToEmitResize();
+			this._prepareToResizeModuleWindow();
 		},
 
 		_beforeShow: function(req) {
@@ -112,7 +112,7 @@ define([
 			this._windowNode = put(node, 'div.' + containerClass);
 
 			if (this.resizable) {
-				this._createWindowResizeComponents();
+				this._limitMaxHeightToAvailableHeight();
 			}
 
 			if (!this.omitTitleBar) {
@@ -122,14 +122,6 @@ define([
 
 			this._createWindowContent();
 			this._addNodeListeners();
-		},
-
-		_createWindowResizeComponents: function() {
-
-			this._limitMaxHeightToAvailableHeight();
-
-			this._resizeHandleNode = put('i.' + this.resizeHandleClass);
-			put(this._windowNode, this._resizeHandleNode);
 		},
 
 		_limitMaxHeightToAvailableHeight: function() {
@@ -146,17 +138,17 @@ define([
 
 			this._windowTitleNode = put(this._windowNode, 'div.' + this.windowTitleClass);
 
-			domStyle.set(this._windowTitleNode, 'height', this.titleHeight + 'px');
+			domStyle.set(this._windowTitleNode, 'height', this.titleHeight + 'rem');
 		},
 
 		_createWindowContent: function() {
 
 			var contentClass = this.windowContentClass,
-				titleHeight = this.titleHeight;
+				contentHeightReduction = this.titleHeight;
 
 			if (this.omitTitleBar) {
 				contentClass += '.' + this.windowWithoutTitleContentClass;
-				titleHeight = 0;
+				contentHeightReduction = 0;
 			}
 
 			if (this.classWindowContent) {
@@ -165,7 +157,7 @@ define([
 
 			this._windowContentNode = put(this._windowNode, 'div.' + contentClass);
 
-			var contentHeight = 'calc(100% - ' + titleHeight + 'px)';
+			var contentHeight = 'calc(100% - ' + contentHeightReduction + 'rem)';
 			domStyle.set(this._windowContentNode, 'height', contentHeight);
 		},
 
@@ -205,7 +197,7 @@ define([
 				this._minimizeDfd.resolve();
 			}
 
-			if (propName === 'width' && this._maximizeDfd) {
+			if ((propName === 'width' || propName === 'transform') && this._maximizeDfd) {
 				this._maximizeDfd.resolve();
 			}
 		},
@@ -252,7 +244,7 @@ define([
 			}
 
 			clearTimeout(self._userResizeTimeoutHandler);
-			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._prepareToEmitResize),
+			self._userResizeTimeoutHandler = setTimeout(lang.hitch(self, self._prepareToResizeModuleWindow),
 				self._userResizeTimeout);
 		},
 
@@ -304,7 +296,7 @@ define([
 
 			this._validSizeIntervalHandler = setInterval(lang.hitch(this, function(dfd) {
 
-				if (this.node.offsetWidth) {
+				if (this.node && this.node.offsetWidth) {
 					clearInterval(this._validSizeIntervalHandler);
 					dfd.resolve();
 				}
@@ -314,17 +306,18 @@ define([
 		_onWindowValidSize: function() {
 
 			this._emitEvt('LOADED');
-			this._prepareToEmitResize();
+			this._prepareToResizeModuleWindow();
 		},
 
 		_decorateTitleNode: function() {
 
 			var windowTitle = this.windowTitle || this.getOwnChannel(),
-				titleTextValue = this.i18n[windowTitle] || this.title || this.getOwnChannel();
+				titleTextValue = this.i18n[windowTitle] || this.title || this.getOwnChannel(),
+				titleAttr = '[title="' + titleTextValue + '"]';
 
 			put(this._windowTitleNode, '[id="' + windowTitle + '"]');
 
-			put(this._windowTitleNode, 'div.' + this.windowTitleValueClass, titleTextValue);
+			put(this._windowTitleNode, 'div.' + this.windowTitleValueClass + titleAttr, titleTextValue);
 
 			if (!this.omitTitleButtons) {
 				this._createWindowButtons();
@@ -354,27 +347,25 @@ define([
 
 			this._resizeAfterMinimizeToggle();
 
-			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
-
-			if (this.resizable) {
-				domClass.add(this._resizeHandleNode, this.hiddenClass);
+			if (this._minimizeButton) {
+				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
 			}
 
 			domStyle.set(this.node, 'height', 0);
-			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'px');
+			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'rem');
 		},
 
 		_minimizeModuleReturn: function() {
 
 			this._resizeAfterMinimizeToggle();
 
-			this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
-
-			if (this.resizable) {
-				domClass.remove(this._resizeHandleNode, this.hiddenClass);
+			if (this._minimizeButton) {
+				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
 			}
 
-			domStyle.set(this.node, 'height', 'calc(100% - ' + this.titleHeight + 'px)');
+			var contentHeightReduction = this.titleHeight;
+
+			domStyle.set(this.node, 'height', 'calc(100% - ' + contentHeightReduction + 'rem)');
 			domStyle.set(this._windowNode.parentNode, 'height', '');
 		},
 
@@ -385,15 +376,17 @@ define([
 			}
 
 			this._minimizeDfd = new Deferred();
-			this._minimizeDfd.then(lang.hitch(this, this._prepareToEmitResize), function() {});
+			this._minimizeDfd.then(lang.hitch(this, this._prepareToResizeModuleWindow), function() {});
 		},
 
 		_maximizeModule: function() {
 
 			this._resizeAfterMaximizeToggle();
 
-			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModuleReturn);
-			this._updateMaximizeButtonIcon(true);
+			if (this._maximizeButton) {
+				this._maximizeButton.onclick = lang.hitch(this, this._maximizeModuleReturn);
+				this._updateMaximizeButtonIcon(true);
+			}
 
 			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this.maxWidthCols);
 
@@ -404,13 +397,19 @@ define([
 
 			this._resizeAfterMaximizeToggle();
 
-			this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
-			this._updateMaximizeButtonIcon(false);
+			if (this._maximizeButton) {
+				this._maximizeButton.onclick = lang.hitch(this, this._maximizeModule);
+				this._updateMaximizeButtonIcon(false);
+			}
 
 			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this._originalWidthByCols);
 		},
 
 		_prepareMaximizeForUndoUserResize: function() {
+
+			if (!this._maximizeButton) {
+				return;
+			}
 
 			this._maximizeButton.onclick = lang.hitch(this, this._undoUserResize);
 			this._updateMaximizeButtonIcon(true);
@@ -424,7 +423,7 @@ define([
 			domClass.remove(this._windowNode.parentNode, this.windowResizedParentClass);
 
 			this._setResizedByUser(false);
-			this._prepareToEmitResize();
+			this._prepareToResizeModuleWindow();
 
 			this._maximizeModuleReturn();
 		},
@@ -436,7 +435,7 @@ define([
 			}
 
 			this._maximizeDfd = new Deferred();
-			this._maximizeDfd.then(lang.hitch(this, this._prepareToEmitResize), function() {});
+			this._maximizeDfd.then(lang.hitch(this, this._prepareToResizeModuleWindow), function() {});
 		},
 
 		_updateMaximizeButtonIcon: function(/*Boolean*/ altIcon) {
@@ -459,39 +458,31 @@ define([
 
 			domStyle.set(this._windowNode.parentNode, 'display', 'none');
 
-			this._prepareToEmitResize();
+			this._prepareToResizeModuleWindow();
 		},
 
 		_resize: function() {
 
-			this._limitMaxHeightToAvailableHeight();
-			this._prepareToEmitResize();
+			this._resizeModuleWindow();
 
 			this.inherited(arguments);
 		},
 
-		_prepareToEmitResize: function() {
+		_prepareToResizeModuleWindow: function() {
 
-			clearTimeout(this._emitResizeTimeoutHandler);
-			this._emitResizeTimeoutHandler = setTimeout(lang.hitch(this, this._emitResize), this._emitResizeTimeout);
+			clearTimeout(this._moduleWindowResizeTimeoutHandler);
+
+			this._moduleWindowResizeTimeoutHandler = setTimeout(lang.hitch(this, this._moduleShowResize),
+				this._moduleWindowResizeTimeout);
 		},
 
-		_emitResize: function() {
+		_resizeModuleWindow: function() {
 
-			if (!this.node) {
-				return;
-			}
+			this._limitMaxHeightToAvailableHeight();
 
-			if (!this._getResizedByUser()) {
+			if (this.node && !this._getResizedByUser()) {
 				this._autoMaximizeOnLowWidth();
 			}
-
-			// TODO esto debería ser responsabilidad de _Show, y emitirlo siempre cuando acabe
-			// de hacer el _resize (quizá con un dfd de retorno??). Pensar
-			this._emitEvt('RESIZE', {
-				width: this.node.offsetWidth,
-				height: this.node.offsetHeight
-			});
 		},
 
 		_autoMaximizeOnLowWidth: function() {

@@ -173,8 +173,16 @@ define([
 
 		_prepareTargetEdition: function() {
 
+			var alternativeEditionTarget;
+
+			if (this.target instanceof Array) {
+				alternativeEditionTarget = this.target[0];
+			} else {
+				alternativeEditionTarget = this.target;
+			}
+
 			if (this.pathVariableId && Object.keys(this.pathVariableId).length > 1) {
-				return lang.replace(this.editionTarget || this.target, this.pathVariableId);
+				return lang.replace(this.editionTarget || alternativeEditionTarget, this.pathVariableId);
 			}
 
 			return this.editionTarget;

@@ -3,7 +3,7 @@ define([
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
-	, "dijit/layout/BorderContainer"
+	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
 	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
@@ -29,7 +29,7 @@ define([
 	, Controller
 	, Layout
 	, redmicConfig
-	, BorderContainer
+	, LayoutContainer
 	, ContentPane
 	, TabContainer
 	, declare
@@ -148,13 +148,23 @@ define([
 		_setOwnCallbacksForEvents: function() {
 
 			this._onEvt('HIDE', lang.hitch(this, this._onHide));
+			this._onEvt('SHOW', lang.hitch(this, this._onShown));
 		},
 
 		postCreate: function() {
 
+			this.textSearchNode = new ContentPane({
+				'class': "topZone",
+				region: "top"
+			});
+
+			this._publish(this.textSearch.getChannel("SHOW"), {
+				node: this.textSearchNode.domNode
+			});
+
 			this.inherited(arguments);
 
-			var browserAndSearchContainer = new BorderContainer({
+			var browserAndSearchContainer = new LayoutContainer({
 				title: this.i18n.list,
 				'class': "marginedContainer noScrolledContainer"
 			});
@@ -168,28 +178,18 @@ define([
 				node: this.gridNode.domNode
 			});
 
-			this.textSearchNode = new ContentPane({
-				'class': "topZone",
-				region: "top"
-			});
-
-			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.textSearchNode.domNode
-			});
-
 			browserAndSearchContainer.addChild(this.textSearchNode);
 			browserAndSearchContainer.addChild(this.gridNode);
 
 			this.tabs = new TabContainer({
 				tabPosition: "top",
-				splitter: true,
-				region: "right",
-				'class': "col-xs-6 col-sm-6 col-md-6 col-lg-5 col-xl-4 mediumTexturedContainer sideTabContainer"
+				region: "center",
+				'class': "softSolidContainer sideTabContainer"
 			});
 			this.tabs.addChild(browserAndSearchContainer);
 			this.tabs.addChild(this._createAtlas());
-
-			this.contentNode.addChild(this.tabs);
+			this.tabs.placeAt(this.contentNode);
+			this.tabs.startup();
 		},
 
 		_subChangedModelFilter: function(obj) {
@@ -300,6 +300,11 @@ define([
 			});
 
 			return cp;
+		},
+
+		_onShown: function() {
+
+			this.tabs.resize();
 		},
 
 		_onHide: function() {

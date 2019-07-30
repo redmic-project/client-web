@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/base/views/extensions/_AddAtlasCategory"
+	"app/base/views/extensions/_AddAtlasCategory"
 	, "app/components/steps/MainDataStep"
 	//, "app/components/steps/MapSelectAreaStep"
 	, "app/components/steps/ProtocolsSetStep"
@@ -11,8 +10,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	_View
-	, _AddAtlasCategory
+	_AddAtlasCategory
 	, MainDataStep
 	//, MapSelectAreaStep
 	, ProtocolsSetStep
@@ -23,7 +21,7 @@ define([
 	, declare
 	, lang
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de.
 		//	description:

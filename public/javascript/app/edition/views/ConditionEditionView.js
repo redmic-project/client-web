@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/maintenance/domains/observations/views/AttributeTypesView"
+	"app/maintenance/domains/observations/views/AttributeTypesView"
 	, "app/components/steps/MainDataStep"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
@@ -9,8 +8,7 @@ define([
 	, "dojo/_base/lang"
 	, "redmic/modules/layout/wizard/_CompleteBySelection"
 ], function(
-	_View
-	, AttributeType
+	AttributeType
 	, MainDataStep
 	, Controller
 	, Layout
@@ -19,7 +17,7 @@ define([
 	, lang
 	, _CompleteBySelection
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de condition.
 		//	description:

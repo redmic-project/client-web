@@ -1,7 +1,7 @@
 define([
 	'app/redmicConfig'
 	, 'dijit/_TemplatedMixin'
-	, 'dijit/layout/ContentPane'
+	, 'dijit/_WidgetBase'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
@@ -61,7 +61,7 @@ define([
 ], function(
 	redmicConfig
 	, _TemplatedMixin
-	, ContentPane
+	, _WidgetBase
 	, declare
 	, lang
 	, Deferred
@@ -120,7 +120,7 @@ define([
 	, DomainList
 ) {
 
-	return declare([ContentPane, Evented, _TemplatedMixin], {
+	return declare([_WidgetBase, Evented, _TemplatedMixin], {
 		//	summary:
 		//		Contenedor de formularios de Redmic.
 		//	description:
@@ -141,7 +141,7 @@ define([
 
 			this.config = {
 				region: 'center',
-				'class': '',
+				'class': 'formContainer',
 				template: null,
 				i18n: null,
 				inputsProps: {},

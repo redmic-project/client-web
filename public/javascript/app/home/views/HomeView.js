@@ -74,7 +74,7 @@ define([
 					props: {
 						title: this.i18n.info,
 						template: TemplateInfo,
-						"class": "hardTexturedContainer.borderRadiusBottom",
+						"class": "mediumSolidContainer.borderRadiusBottom",
 						target: "initial_info"
 					}
 				},

@@ -10,7 +10,8 @@ define([
 	, aspect
 	, put
 	, _CreateKeypad
-){
+) {
+
 	return declare(_CreateKeypad, {
 		//	summary:
 		//		Extensión del módulo Form para que cree un Keypad en el interior de su nodo.
@@ -18,7 +19,6 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				classContainer: ".hardTexturedContainer.rounded"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -41,30 +41,15 @@ define([
 			}]);
 		},
 
-		_postCreateCreateKeypad: function() {
-
-		},
-
-		_getNodeToShowCreateKeypadBefore: function() {
-
-		},
-
 		_getNodeToShowCreateKeypadAfter: function() {
 
-			var keypadNode = put(this.form.domNode, "div"),
-				classStyle = ".containerFormAndKeypad";
-
-			if (this.classContainer) {
-				classStyle += this.classContainer;
-			}
-
-			put(this.form.domNode, classStyle);
+			var keypadNode = put(this.domNode, "div");
 
 			this._publish(this.keypad.getChannel("SHOW"), {
 				node: keypadNode
 			});
 
-			return this.form.domNode;
+			return this.domNode;
 		}
 	});
 });

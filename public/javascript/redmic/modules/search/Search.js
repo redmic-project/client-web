@@ -71,12 +71,6 @@ define([
 			this._onEvt('SEARCH', lang.hitch(this, this._search));
 		},
 
-		_subConnect: function() {
-
-			this.inherited(arguments);
-			this._onReConnect();
-		},
-
 		_subReset: function() {
 
 			this._reset();

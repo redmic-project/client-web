@@ -92,13 +92,13 @@ define([
 			this.inherited(arguments);
 
 			this._publish(this.browserLeft.getChannel("SHOW"), {
-				node: this.leftNode.domNode
+				node: this.leftNode
 			});
 
 			this._publish(this.browserLeft.getChildChannel("browser", "CLEAR"));
 
 			this._publish(this.browserRight.getChannel("SHOW"), {
-				node: this.rightNode.domNode
+				node: this.rightNode
 			});
 
 			this._publish(this.browserRight.getChildChannel("browser", "CLEAR"));
@@ -108,11 +108,6 @@ define([
 
 			var callback = "_" + evt.btnId + "Callback";
 			this[callback] && this[callback](evt);
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
 		},
 
 		_updateCompletedStatus: function() {

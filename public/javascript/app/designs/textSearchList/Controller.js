@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/base/_Browser"
+	"app/designs/base/_Browser"
 	, "app/designs/base/_Controller"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
@@ -8,8 +7,7 @@ define([
 	, "redmic/modules/search/TextImpl"
 	, "./_AddFilter"
 ], function (
-	_View
-	, _Browser
+	_Browser
 	, _Controller
 	, redmicConfig
 	, declare
@@ -17,7 +15,7 @@ define([
 	, TextImpl
 	, _AddFilter
 ){
-	return declare([_View, _Controller, _Browser, _AddFilter], {
+	return declare([_Controller, _Browser, _AddFilter], {
 		//	summary:
 		//		Layout para vistas que contienen un buscador de texto y un listado.
 

@@ -141,7 +141,7 @@ define([
 				this.templateDisplayerPdfError = new TemplateDisplayer({
 					parentChannel: this.getChannel(),
 					template: TemplateNoAvailable,
-					"class": "hardTexturedContainer.viewerPDFAuthFailed.borderRadius",
+					"class": "mediumSolidContainer.viewerPDFAuthFailed.borderRadius",
 					target: this.targetAuthFailed
 				});
 			}

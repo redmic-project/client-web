@@ -1,26 +1,23 @@
 define([
-	"dijit/layout/LayoutContainer"
-	, "dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "put-selector/put"
-], function (
-	LayoutContainer
-	, BorderContainer
-	, ContentPane
+	'app/designs/base/_Layout'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+], function(
+	_Layout
 	, declare
 	, lang
 	, put
-){
-	return declare(BorderContainer, {
+) {
+
+	return declare(_Layout, {
 		//	summary:
 		//		Layout para diseño de vistas que contienen gráficas y añadidos a la misma.
 
 		constructor: function(args) {
 
 			this.config = {
-				'class': "chartTopAndBottomContent"
+				layoutAdditionalClasses: 'chartTopAndBottomContent'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -30,44 +27,28 @@ define([
 
 			this.inherited(arguments);
 
-			this._createChartsTopNode(this);
-			this._createChartsNode(this);
-			this._createChartsBottomNode(this);
+			this._createChartsTopNode();
+			this._createChartsNode();
+			this._createChartsBottomNode();
 		},
 
-		_createChartsTopNode: function(container) {
+		_createChartsTopNode: function() {
 
-			this.chartsTopNode = new ContentPane({
-				region: "top",
-				'class': "aboveChartContent"
-			});
+			this.chartsTopNode = put(this.domNode, 'div.aboveChartContent');
 
-			container.addChild(this.chartsTopNode);
+			this.toolbarContainerChartsTopNode = put(this.chartsTopNode, 'div');
 
-			this.toolbarContainerChartsTopNode = put(this.chartsTopNode.domNode, 'div');
-
-			this.buttonsContainerChartsTopNode = put(this.chartsTopNode.domNode,
-				"div.flexAndAlignCenter");
+			this.buttonsContainerChartsTopNode = put(this.chartsTopNode, "div.flexAndAlignCenter");
 		},
 
-		_createChartsNode: function(container) {
+		_createChartsNode: function() {
 
-			this.chartsNode = new LayoutContainer({
-				region: "center",
-				'class': "centerChartContent"
-			});
-
-			container.addChild(this.chartsNode);
+			this.chartsNode = put(this.domNode, 'div.centerChartContent');
 		},
 
-		_createChartsBottomNode: function(container) {
+		_createChartsBottomNode: function() {
 
-			this.chartsBottomNode = new ContentPane({
-				region: "bottom",
-				'class': "underChartContent"
-			});
-
-			container.addChild(this.chartsBottomNode);
+			this.chartsBottomNode = put(this.domNode, 'div.underChartContent');
 		}
 	});
 });

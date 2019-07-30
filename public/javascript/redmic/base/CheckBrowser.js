@@ -5,23 +5,33 @@ define([
 ) {
 
 	return {
-		_supportedBrowsersAndMinimumVersion: {
-			'chrome': 31,
-			'ff': 28,
-			'opera': 17,
-			'safari': 8,
-			'edge': 12
-		},
+		_supportedBrowsersAndMinVersion: [{
+			name: 'chrome',
+			version: 31
+		},{
+			name: 'ff',
+			version: 28
+		},{
+			name: 'edge',
+			version: 12
+		},{
+			name: 'safari',
+			version: 8
+		},{
+			name: 'webkit',
+			version: 537.36
+		}],
 
 		isSupported: function() {
 
-			for (var key in this._supportedBrowsersAndMinimumVersion) {
-				var version = this._supportedBrowsersAndMinimumVersion[key];
+			for (var i = 0; i < this._supportedBrowsersAndMinVersion.length; i++) {
+				var item = this._supportedBrowsersAndMinVersion[i],
+					name = item.name,
+					version = item.version;
 
-				if (has(key) >= version) {
+				if (has(name) >= version) {
 					return true;
 				}
-
 			}
 
 			return false;

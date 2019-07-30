@@ -726,8 +726,6 @@ define({
 		, "admin": "Metadata"
 		, "data-loader": "Data loading"
 		, "user": "Users corner"
-		, "menuTextReduce": "Reduce menu"
-		, "menuTextExpand": "Expand menu"
 		, "taxonomy": "Taxonomy"
 		, "bibliography": "Library"
 		, "species-distribution": "Species distribution"
@@ -1216,6 +1214,8 @@ define({
 		, "selectLayer": "Select layer"
 		, "searchLayerByUrlSource": "Get layers"
 		, "urlSource": "Origin URL"
+		, "fullscreen": "Fullscreen"
+		, "version": "Version"
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

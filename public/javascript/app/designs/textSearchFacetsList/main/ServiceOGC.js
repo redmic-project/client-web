@@ -44,7 +44,6 @@ define([
 			this.inherited(arguments);
 
 			this.browserBase.shift();
-
 			this.browserBase.unshift(HierarchicalImpl);
 
 			this.browserConfig = this._merge([{

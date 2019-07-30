@@ -39,11 +39,12 @@ define([
 
 		_setRefreshInterval: function() {
 
-			// TODO eliminar excepción para capa AIS cuando se defina refresh en el servicio
-			var isAisLayer = this.layer.wmsParams.layers.indexOf('last_position') !== -1;
+			// TODO eliminar excepción cuando se defina refresh en el servicio
+			var isAutoRefreshLayer = this.layer.wmsParams.layers.indexOf('last_position') !== -1 ||
+				this.layer.wmsParams.layers.indexOf('earthquake') !== -1;
 
-			if ((this._checkRefreshIsValid() || isAisLayer) && !this._refreshIntervalHandler) {
-				if (isAisLayer) {
+			if ((this._checkRefreshIsValid() || isAutoRefreshLayer) && !this._refreshIntervalHandler) {
+				if (isAutoRefreshLayer) {
 					this.refresh = 15;
 				}
 

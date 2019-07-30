@@ -205,11 +205,7 @@ define([
 
 			this.stepLabelNode = put(this.wizardContentNode, "div." + this.stepLabelClass);
 
-			this.contentNode = new BorderContainer({
-				'class': this.contentClass
-			});
-
-			put(this.wizardContentNode, this.contentNode.domNode);
+			this.contentNode = put(this.wizardContentNode, "div." + this.contentClass);
 
 			//this.container.onkeyup = lang.hitch(this, this._eventKeyCode);
 		},
@@ -596,7 +592,6 @@ define([
 
 			this._setVisitedStep(stepId);
 			this._setLabel(stepLabel, stepId);
-			this.contentNode.resize();
 		},
 
 		_setVisitedStep: function(id) {

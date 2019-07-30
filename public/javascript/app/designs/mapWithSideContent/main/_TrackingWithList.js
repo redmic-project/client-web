@@ -181,7 +181,8 @@ define([
 			});
 
 			this.browserWorkNode = new ContentPane({
-				region: "center"
+				region: "center",
+				'class': 'flexContainer'
 			});
 
 			this._publish(this.browserWork.getChannel("SHOW"), {

@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/components/steps/MainDataStep"
+	"app/components/steps/MainDataStep"
 	, "app/components/steps/RecoverySetStep"
 	, "app/components/steps/SpecimenTagSetStep"
 	, "app/designs/edition/Controller"
@@ -9,8 +8,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	_View
-	, AnimalMainDataStep
+	AnimalMainDataStep
 	, RecoverySetStep
 	, SpecimenTagSetStep
 	, Controller
@@ -19,7 +17,7 @@ define([
 	, declare
 	, lang
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de Animal.
 		//	description:

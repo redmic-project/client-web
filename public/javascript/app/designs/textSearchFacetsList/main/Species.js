@@ -39,7 +39,8 @@ define([
 
 			this.config = {
 				browserExts: [_Select],
-				title: this.i18n.species
+				title: this.i18n.species,
+				layoutAdditionalClasses: 'layoutTextSearchFacetsListDesign speciesMainTextSearchFacetsListDesign'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -167,6 +168,11 @@ define([
 
 		},
 
+		_setMainOwnCallbacksForEvents: function() {
+
+			this._onEvt('SHOW', lang.hitch(this, this._onSpeciesMainShown));
+		},
+
 		postCreate: function() {
 
 			this.inherited(arguments);
@@ -177,6 +183,11 @@ define([
 
 			this.filter1.set("title", this.i18n.attributes);
 			this.filter2.set("title", this.i18n.taxonTree);
+		},
+
+		_onSpeciesMainShown: function() {
+
+			this.filterColumn.resize();
 		}
 	});
 });

@@ -61,17 +61,9 @@ define([
 
 			this.inherited(arguments);
 
-			var cp = new ContentPane({
-				splitter: true,
-				region: "right",
-				'class': "col-xs-6 col-sm-6 col-md-5 col-lg-4 mediumTexturedContainer mapSideContainer borderRadius"
-			});
-
 			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
+				node: this.contentNode
 			});
-
-			this.contentNode.addChild(cp);
 		},
 
 		_getNodeToShowLoading: function() {

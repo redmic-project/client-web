@@ -1,62 +1,36 @@
 define([
-	"dijit/layout/ContentPane"
-	, "dijit/layout/BorderContainer"
-	, "dojo/_base/declare"
-	, "put-selector/put"
-], function (
-	ContentPane
-	, BorderContainer
+	'app/designs/base/_Layout'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+], function(
+	_Layout
 	, declare
+	, lang
 	, put
-){
+) {
 
-	return declare(ContentPane, {
+	return declare(_Layout, {
 		//	summary:
 		//		Layout para vistas que contienen un formulario y un listado.
+
+		constructor: function(args) {
+
+			this.config = {
+				layoutAdditionalClasses: 'layoutFormListDesign twoColumnsLayout'
+			};
+
+			lang.mixin(this, this.config, args);
+		},
 
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			put(this.containerNode, ".twoColumnsLayout.row");
-
-			var leftNode = new BorderContainer({
-				'class': "leftZone col-md-6 col-lg-6",
-				style: "width: 50%"
-			});
-
-			put(this.containerNode, leftNode.domNode);
-
-			this.topLeftNode = new ContentPane({
-				region: "top",
-				'class': "titleContainer"
-			});
-
-			leftNode.addChild(this.topLeftNode);
-
-			this.formNode = new ContentPane({
-				region: "center",
-				'class': "stretchZone"
-			});
-			leftNode.addChild(this.formNode);
-
-
-			var rightNode = new BorderContainer({
-				'class': "rightZone col-md-6 col-lg-6",
-				style: "width: 50%"
-			});
-
-			put(this.containerNode, rightNode.domNode);
-
-			this.centerRightNode = new ContentPane({
-				region: "center"
-			});
-			rightNode.addChild(this.centerRightNode);
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
+			this.leftNode = put(this.domNode, 'div.leftZone');
+			this.topLeftNode = put(this.leftNode, 'div.titleContainer');
+			this.formNode = put(this.leftNode, 'div.stretchZone');
+			this.centerRightNode = put(this.domNode, 'div.rightZone');
 		}
 	});
 });

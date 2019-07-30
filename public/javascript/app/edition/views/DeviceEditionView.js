@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/maintenance/domains/admin/views/DeviceTypesView"
+	"app/maintenance/domains/admin/views/DeviceTypesView"
 	, "app/components/steps/CalibrationSetStep"
 	, "app/components/steps/MainDataStep"
 	, "app/designs/edition/Controller"
@@ -10,8 +9,7 @@ define([
 	, "dojo/_base/lang"
 	, "redmic/modules/layout/wizard/_CompleteBySelection"
 ], function(
-	_View
-	, DeviceType
+	DeviceType
 	, CalibrationSetStep
 	, MainDataStep
 	, Controller
@@ -21,7 +19,7 @@ define([
 	, lang
 	, _CompleteBySelection
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de device.
 		//	description:

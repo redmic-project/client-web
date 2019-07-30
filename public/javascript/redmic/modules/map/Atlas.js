@@ -4,8 +4,6 @@ define([
 	, "app/designs/list/layout/Layout"
 	, "app/designs/textSearchList/main/ServiceOGC"
 	, "app/redmicConfig"
-	, "dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
@@ -35,8 +33,6 @@ define([
 	, Layout
 	, ServiceOGC
 	, redmicConfig
-	, BorderContainer
-	, ContentPane
 	, declare
 	, lang
 	, Deferred
@@ -299,7 +295,11 @@ define([
 
 			this.inherited(arguments);
 
-			this.atlasNode = new ContentPane({
+			this._atlasContainer = put('div.atlasContainer');
+
+			this._showBrowser(this.catalogView, this._atlasContainer, null, this.hideBrowserAnimationClass);
+
+			/*this.atlasNode = new ContentPane({
 				region: "center",
 				'class': 'noScrolledContainer'
 			});
@@ -311,25 +311,25 @@ define([
 			this.themesBrowserNode = new ContentPane({
 				region: "center",
 				'class': 'noScrolledContainer marginedSizeContainer'
-			});
+			});*/
 
 			/*this.container.addChild(this.themesBrowserNode);
 
 			this._showBrowser(this.themesBrowser, this.themesBrowserNode.domNode,
 				null, this.hideBrowserAnimationClass);*/
 
-			this.catalogViewNode = new ContentPane({
+			/*this.catalogViewNode = new ContentPane({
 				region: "center",
 				'class': 'noScrolledContainer marginedSizeContainer'
 			});
 
 			this._showBrowser(this.catalogView, this.catalogViewNode.domNode, null, this.hideBrowserAnimationClass);
-			this.container.addChild(this.catalogViewNode);
+			this.container.addChild(this.catalogViewNode);*/
 		},
 
 		_getNodeToShow: function() {
 
-			return this.atlasNode.domNode;
+			return this._atlasContainer;
 		},
 
 		_showBrowser: function(instance, node, showAnimationClass, hideAnimationClass) {
@@ -610,17 +610,14 @@ define([
 
 			this._once(this.themesBrowser.getChannel("HIDDEN"),
 				lang.hitch(this, function() {
-					this.container.removeChild(this.themesBrowserNode);
+
+				this._showBrowser(this.catalogView, this._atlasContainer,
+					this.showBrowserAnimationClass, this.hideBrowserAnimationClass);
 				}));
 
 			this._publish(this.themesBrowser.getChannel("HIDE"));
 
 			this._once(this.catalogView.getChannel("SHOWN"), lang.hitch(this, this._enableButtons));
-
-			this._showBrowser(this.catalogView, this.catalogViewNode.domNode,
-				this.showBrowserAnimationClass, this.hideBrowserAnimationClass);
-
-			this.container.addChild(this.catalogViewNode);
 		},
 
 		_disableButtons: function() {
@@ -674,18 +671,15 @@ define([
 
 			this._once(this.catalogView.getChannel("HIDDEN"),
 				lang.hitch(this, function() {
-					this.container.removeChild(this.catalogViewNode);
+
+				this._showBrowser(this.themesBrowser, this._atlasContainer,
+					this.showBrowserAnimationClass, this.hideBrowserAnimationClass);
 				}));
 
 			this._publish(this.catalogView.getChannel("HIDE"));
 
 			this._once(this.themesBrowser.getChannel("SHOWN"),
 				lang.hitch(this, this._enableButtons));
-
-			this._showBrowser(this.themesBrowser, this.themesBrowserNode.domNode,
-				this.showBrowserAnimationClass, this.hideBrowserAnimationClass);
-
-			this.container.addChild(this.themesBrowserNode);
 		},
 
 		_activateLayer: function(/*Object*/ item, order) {

@@ -5,7 +5,7 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
-	, "dijit/layout/BorderContainer"
+	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
 	, "dijit/layout/StackContainer"
 	, "dijit/layout/TabContainer"
@@ -44,7 +44,7 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, BorderContainer
+	, LayoutContainer
 	, ContentPane
 	, StackContainer
 	, TabContainer
@@ -194,6 +194,7 @@ define([
 		_setMainOwnCallbacksForEvents: function () {
 
 			this._onEvt('HIDE', lang.hitch(this, this._onHide));
+			this._onEvt('SHOW', lang.hitch(this, this._onGeographicEditorMainShown));
 		},
 
 		_defineMainSubscriptions: function () {
@@ -275,7 +276,7 @@ define([
 				region:"center"
 			});
 
-			this.browserAndSearchContainer = new BorderContainer({
+			this.browserAndSearchContainer = new LayoutContainer({
 				'class': "noScrolledContainer"
 			});
 
@@ -286,15 +287,15 @@ define([
 
 			this.tabs = new TabContainer({
 				tabPosition: "top",
-				splitter: true,
-				region: "left",
-				'class': "col-xs-6 col-sm-6 col-md-6 col-lg-5 col-xl-4 mediumTexturedContainer sideTabContainer borderRadiusTabContainer"
+				region: "center",
+				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
 			});
 
 			this.tabs.addChild(this.browserAndEditorNode);
 			this.tabs.addChild(this._createAtlas());
 
-			this.contentNode.addChild(this.tabs);
+			this.tabs.placeAt(this.contentNode);
+			this.tabs.startup();
 		},
 
 		_createTextSearchNode: function() {
@@ -405,7 +406,7 @@ define([
 		_updateTitle: function(title) {
 
 			this._publish(this.dataDisplayer.getChannel("SHOW"), {
-				node: this.topbarNode.domNode,
+				node: this.topbarNode,
 				data: title
 			});
 		},
@@ -640,6 +641,11 @@ define([
 		_getIconKeypadNode: function() {
 
 			return this.textSearchNode.domNode;
+		},
+
+		_onGeographicEditorMainShown: function() {
+
+			this.tabs.resize();
 		}
 	});
 });

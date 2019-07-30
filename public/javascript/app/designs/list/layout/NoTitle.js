@@ -1,16 +1,16 @@
 define([
-	"dijit/layout/ContentPane"
+	'app/designs/base/_Layout'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
 ], function (
-	ContentPane
+	_Layout
 	, declare
 	, lang
 	, put
 ){
 
-	return declare(ContentPane, {
+	return declare(_Layout, {
 		//	summary:
 		//		Layout para vistas que contienen un buscador de texto y un listado.
 
@@ -27,11 +27,7 @@ define([
 
 			this.inherited(arguments);
 
-			this.keypadZoneNode = put("div.keypadZone");
-
-			this.centerNode = put(this.containerNode, "div.fHeight");
-
-			this.listNode = put(this.centerNode, "div.listZone" + this.classByList);
+			this.listNode = put(this.domNode, "div.listZone" + this.classByList);
 		}
 	});
 });

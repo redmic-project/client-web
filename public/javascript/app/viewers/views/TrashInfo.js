@@ -1,7 +1,6 @@
 define([
 	"app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/_MultiTemplate"
@@ -14,7 +13,6 @@ define([
 ], function(
 	DetailsController
 	, DetailsLayout
-	, redmicConfig
 	, declare
 	, lang
 	, _MultiTemplate

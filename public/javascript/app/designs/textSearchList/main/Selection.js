@@ -142,11 +142,6 @@ define([
 			this._emitEvt('UPDATE_DATA', response);
 		},
 
-		_getNodeToShow: function() {
-
-			return this.containerNode;
-		},
-
 		_pubRemove: function(channel, id) {
 
 			this._publish(channel, {

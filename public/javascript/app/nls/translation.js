@@ -725,8 +725,6 @@ define({
 		, "admin": "Metadata"
 		, "data-loader": "Data loading"
 		, "user": "Users corner"
-		, "menuTextReduce": "Reduce menu"
-		, "menuTextExpand": "Expand menu"
 		, "taxonomy": "Taxonomy"
 		, "bibliography": "Library"
 		, "species-distribution": "Species distribution"
@@ -1211,6 +1209,9 @@ define({
 		, "nameByRedmic": "Name (REDMIC)"
 		, "activityId": "Activity ID"
 		, "webcamUrl": "Webcam URL"
+
+		, "fullscreen": "Fullscreen"
+		, "version": "Version"
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

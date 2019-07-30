@@ -65,6 +65,8 @@ define([
 				measureTools: true,
 				queryableClass: "leaflet-queryable",
 
+				_mapNodeValidSizeInterval: 100,
+
 				layerTypes: {
 					base: "base",
 					forced: "forced",
@@ -174,32 +176,28 @@ define([
 
 		_afterShow: function() {
 
-			var containerNode = this.mapParentNode.parentNode,
-				containerId = containerNode.id,
-				containerWidget = containerId ? registry.byId(containerId) : null,
-				dfd = new Deferred();
+			var dfd = new Deferred();
 
-			if (!this._getPreviouslyShown()) {
-				dfd.then(lang.hitch(this, this._addMapWidgets));
-			}
+			dfd.then(lang.hitch(this, this._onMapNodeValidSize));
 
-			if (containerWidget) {
-				if (!this._getPreviouslyShown()) {
+			this._mapNodeValidSizeIntervalHandler = setInterval(lang.hitch(this, function(dfd) {
 
-					aspect.after(containerWidget, "resize", lang.hitch(this, function(dfd) {
-
-						this.invalidateSize();
-						dfd.resolve();
-					}, dfd));
-				} else {
+				if (this.mapParentNode.clientHeight) {
+					clearInterval(this._mapNodeValidSizeIntervalHandler);
 					dfd.resolve();
 				}
-			} else {
-				this.invalidateSize();
-				dfd.resolve();
-			}
+			}, dfd), this._mapNodeValidSizeInterval);
 
 			return dfd;
+		},
+
+		_onMapNodeValidSize: function() {
+
+			if (!this._getPreviouslyShown()) {
+				this._addMapWidgets();
+			}
+
+			this.invalidateSize();
 		},
 
 		_addMapWidgets: function() {
@@ -260,8 +258,8 @@ define([
 			var baseMap = OpenLayers.get(defaultLayerName).instance,
 				miniMapConfig = {
 					position: "topright",
-					collapsedWidth: 36,
-					collapsedHeight: 36,
+					collapsedWidth: 28,
+					collapsedHeight: 28,
 					toggleDisplay: true,
 					minimized: true,
 					strings: {
@@ -275,6 +273,8 @@ define([
 
 			// TODO workaround for https://github.com/Norkart/Leaflet-MiniMap/issues/114
 			on(miniMap._miniMap._container, "click", function(evt) { evt.stopPropagation(); });
+
+			this.miniMapInstance = miniMap;
 		},
 
 		_addMeasureTools: function() {
@@ -341,7 +341,15 @@ define([
 
 		invalidateSize: function() {
 
-			this.map && this.map.invalidateSize();
+			if (!this.map) {
+				return;
+			}
+
+			this.map.invalidateSize();
+
+			if (this.miniMap && this.miniMapInstance) {
+				this.miniMapInstance.addTo(this.map);
+			}
 		},
 
 		hasLayer: function(layer) {

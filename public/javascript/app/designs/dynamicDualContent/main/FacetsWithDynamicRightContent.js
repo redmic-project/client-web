@@ -1,16 +1,17 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/dynamicDualContent/Controller"
-	, "app/designs/dynamicDualContent/layout/FacetsInLeftSecondaryContent"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-], function (
+	'app/designs/base/_Main'
+	, 'app/designs/dynamicDualContent/Controller'
+	, 'app/designs/dynamicDualContent/layout/FacetsInLeftSecondaryContent'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+], function(
 	_Main
 	, Controller
 	, Layout
 	, declare
 	, lang
-){
+) {
+
 	return declare([Layout, Controller, _Main], {
 		//	summary:
 		//		Main FacetsWithDynamicRightContent.
@@ -18,7 +19,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "facetsWithDynamicRightContent"
+				ownChannel: 'facetsWithDynamicRightContent'
 			};
 
 			lang.mixin(this, this.config, args);

@@ -262,6 +262,7 @@ function(
 						if (showBtn[key2] && (!btn.node)) {
 							btn.props.onClick = lang.hitch(this, this[btn.props.action]);
 							btn.node = new Button(btn.props).placeAt(zone.node);
+							btn.node.domNode.removeAttribute('widgetId');
 							btn.shared += 1;
 						} else if (showBtn[key2] && (btn.node)) { // Hay más de un widget usando este botón
 							btn.shared += 1;

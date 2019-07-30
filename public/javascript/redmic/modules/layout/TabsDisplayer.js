@@ -31,7 +31,7 @@ define([
 		_initialize: function() {
 
 			this._container = new TabContainer({
-				'class': "mediumTexturedContainer borderRadiusBottomTabContainer"
+				'class': "softSolidContainer borderRadiusBottomTabContainer"
 			});
 
 			for (var i = 0; i < this.childTabs.length; i++) {
@@ -80,10 +80,15 @@ define([
 
 		_onMeOrAncestorResized: function(req) {
 
-			this._container.resize();
+			this._resizeTabs();
 		},
 
 		_afterShow: function() {
+
+			this._resizeTabs();
+		},
+
+		_resizeTabs: function() {
 
 			this._container.resize();
 		},

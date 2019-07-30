@@ -60,7 +60,7 @@ define([
 			this.inherited(arguments);
 
 			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.centerNode.domNode
+				node: this.centerNode
 			});
 
 			this._publish(this.browser.getChildChannel("browser", "CLEAR"));
@@ -70,11 +70,6 @@ define([
 
 			var callback = "_" + evt.btnId + "Callback";
 			this[callback] && this[callback](evt);
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
 		},
 
 		_updateCompletedStatus: function() {

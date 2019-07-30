@@ -1,29 +1,33 @@
 define([
-	"app/base/views/_View"
-	, "dijit/_TemplatedMixin"
+	"dijit/_TemplatedMixin"
 	, "dijit/_WidgetBase"
 	, "dijit/_WidgetsInTemplateMixin"
+	, 'dijit/layout/ContentPane'
 	, "dojo/text!./templates/ExternalUserBase.html"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/_base/kernel"
 	, "put-selector/put"
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
 
 	, "dijit/form/Form"
 	, "dijit/form/ValidationTextBox"
 	, "dijit/form/Button"
 ], function(
-	_View
-	, _TemplatedMixin
+	_TemplatedMixin
 	, _WidgetBase
 	, _WidgetsInTemplateMixin
+	, ContentPane
 	, baseTemplate
 	, declare
 	, lang
 	, kernel
 	, put
+	, _Module
+	, _Show
 ){
-	return declare(_View, {
+	return declare([_Module, _Show, ContentPane], {
 		//	Summary:
 		//		Vista base de aplicación externa
 		//

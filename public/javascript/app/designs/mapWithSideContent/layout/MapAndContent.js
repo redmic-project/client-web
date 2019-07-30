@@ -1,49 +1,39 @@
 define([
-	"dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-], function (
-	BorderContainer
-	, ContentPane
+	'app/designs/base/_Layout'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+], function(
+	_Layout
 	, declare
 	, lang
-){
+	, put
+) {
 
-	return declare(ContentPane, {
+	return declare(_Layout, {
 		//	summary:
-		//		Layout para diseño de vistas que contienen un mapa y un contenido a la derecha.
+		//		Distribución que contiene un mapa y un contenido adicional.
 
 		constructor: function(args) {
 
-			lang.mixin(this, args);
+			this.config = {
+				layoutAdditionalClasses: 'mapAndContentLayoutMapWithSideContentDesign'
+			};
+
+			lang.mixin(this, this.config, args);
 		},
 
 		postCreate: function() {
 
-			this._createAndAddContent();
-
 			this.inherited(arguments);
+
+			this._createAndAddContent();
 		},
 
 		_createAndAddContent: function() {
 
-			if (this.mapNode) {
-				return this.mapNode;
-			}
-
-			this.mapNode = new ContentPane({
-				region: "center",
-				'class': "mediumSolidContainer borderRadius"
-			});
-
-			this.contentNode = new BorderContainer({
-				region: "center"
-			});
-
-			this.contentNode.addChild(this.mapNode);
-			this.addChild(this.contentNode);
-			this.contentNode.startup();
+			this.mapNode = put(this.domNode, 'div.mediumSolidContainer.mapContainer.borderRadius');
+			this.contentNode = put(this.domNode, 'div.mediumSolidContainer.mapSideContainer.borderRadius');
 		}
 	});
 });

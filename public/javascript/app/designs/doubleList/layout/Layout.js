@@ -27,23 +27,8 @@ define([
 
 			this.inherited(arguments);
 
-			this._leftZone();
-			this._rightZone();
-		},
-
-		_leftZone: function() {
-
-			var leftNode = put(this.domNode, 'div.leftZone');
-
-			this.topLeftNode = put(leftNode, 'div.notFormZone');
-			this.leftNode = put(leftNode, 'div.stretchZone');
-		},
-
-		_rightZone: function() {
-
-			var rightNode = put(this.domNode, 'div.rightZone');
-
-			this.rightNode = put(rightNode, 'div.stretchZone');
+			this.leftNode = put(this.domNode, 'div.leftZone');
+			this.rightNode = put(this.domNode, 'div.rightZone');
 		}
 	});
 });

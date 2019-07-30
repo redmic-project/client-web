@@ -97,7 +97,7 @@ define([
 
 		_fillTopContent: function() {
 
-			this.buttonsNode = put(this.topbarNode.domNode, 'div');
+			this.buttonsNode = put(this.topbarNode, 'div');
 
 			this.inherited(arguments);
 		},

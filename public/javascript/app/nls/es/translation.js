@@ -244,6 +244,7 @@ define({
 	, "destiny": "Destino (animales)"
 	, "inspire-themes": "Temas Inspire"
 	, "toponym-types": "Tipos de toponimia"
+	, "toponymType": "Tipos de toponimia"
 
 	, "recording-types": "Tipos de grabación"
 
@@ -720,11 +721,9 @@ define({
 	, "product": "Product"
 	, "products": "Productos"
 	, "admin": "Metadatos"
-	, "maintenance": "Manten."
+	, "maintenance": "Mantenimiento"
 	, "data-loader": "Carga de datos"
 	, "user": "Rincón del usuario"
-	, "menuTextReduce": "Reducir menú"
-	, "menuTextExpand": "Expandir menú"
 	, "taxonomy": "Taxonomía"
 	, "bibliography": "Biblioteca"
 	, "species-distribution": "Distribución de especies"
@@ -1206,6 +1205,9 @@ define({
 	, "nameByRedmic": "Nombre (REDMIC)"
 	, "activityId": "ID actividad"
 	, "webcamUrl": "URL webcam"
+
+	, "fullscreen": "Pantalla completa"
+	, "version": "Versión"
 
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"

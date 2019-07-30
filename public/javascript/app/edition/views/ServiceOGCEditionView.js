@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/components/steps/MainDataStep"
+	"app/components/steps/MainDataStep"
 	, "app/components/steps/MapSelectAreaStep"
 	, "app/components/steps/ProtocolsSetStep"
 	, "app/components/steps/ReorderLayerStep"
@@ -10,8 +9,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	_View
-	, MainDataStep
+	MainDataStep
 	, MapSelectAreaStep
 	, ProtocolsSetStep
 	, ReorderLayerStep
@@ -21,7 +19,7 @@ define([
 	, declare
 	, lang
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de.
 		//	description:

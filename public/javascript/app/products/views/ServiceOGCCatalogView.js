@@ -3,15 +3,14 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
-], function (
+], function(
 	ServiceOGCMain
 	, redmicConfig
 	, declare
 	, lang
-	, aspect
-){
-	return declare([ServiceOGCMain], {
+) {
+
+	return declare(ServiceOGCMain, {
 		//	summary:
 		//		Vista de ServiceOGC Catalog.
 

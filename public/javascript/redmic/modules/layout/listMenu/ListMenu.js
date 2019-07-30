@@ -331,6 +331,7 @@ define([
 			this._addLabel(item, node);
 			this._addTitle(item.title, node);
 			this._addHref(item.href, node);
+			this._addNewPage(item.newPage, node);
 
 			return node;
 		},
@@ -400,7 +401,18 @@ define([
 			}
 
 			node.setAttribute('href', href);
-			node.setAttribute('d-state-url', true);
+			if (href[0] === '/') {
+				node.setAttribute('d-state-url', true);
+			}
+		},
+
+		_addNewPage: function(newPage, node) {
+
+			if (!newPage) {
+				return;
+			}
+
+			node.setAttribute('target', '_blank');
 		},
 
 		_isSelectedItemAndProcessSelect: function(node, i) {

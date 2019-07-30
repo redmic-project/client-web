@@ -1,5 +1,5 @@
 define([
-	"dijit/layout/BorderContainer"
+	"dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -7,7 +7,7 @@ define([
 	, "redmic/modules/base/SelectionBox"
 	, "put-selector/put"
 ], function(
-	BorderContainer
+	LayoutContainer
 	, ContentPane
 	, declare
 	, lang
@@ -46,7 +46,7 @@ define([
 				'class': "frameworkTree containerSelectionBox"
 			});
 
-			this.contentNode = new BorderContainer({
+			this.contentNode = new LayoutContainer({
 				region: "center"
 			});
 

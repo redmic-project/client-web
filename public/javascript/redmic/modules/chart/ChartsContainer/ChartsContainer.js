@@ -223,13 +223,7 @@ define([
 
 			this.inherited(arguments);
 
-			this.chartsContainerContainer = new ContentPane({
-				region: "center",
-				'class': this.className,
-				resize: lang.hitch(this, this._prepareResize)
-			});
-
-			this.chartsContainerNode = this.chartsContainerContainer.domNode;
+			this.chartsContainerNode = put('div.' + this.className);
 		},
 
 		_afterShow: function(req) {
@@ -363,7 +357,7 @@ define([
 
 		_getNodeToShow: function() {
 
-			return this.chartsContainerContainer.domNode;
+			return this.chartsContainerNode;
 		},
 
 		_getModuleRootNode: function() {
@@ -373,7 +367,7 @@ define([
 
 		_getModuleMainNode: function() {
 
-			return this.chartsContainerContainer.domNode;
+			return this.chartsContainerNode;
 		},
 
 		_subAncestorShown: function(res) {

@@ -1,14 +1,11 @@
 define([
 	'app/_app'
 	, 'app/components/Topbar'
-	, 'dijit/layout/ContentPane'
-	, 'dijit/layout/LayoutContainer'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, "dojo/dom-class"
 	, 'dojo/on'
-	, 'dojo/query'
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/Selector'
@@ -21,20 +18,14 @@ define([
 	, 'redmic/modules/socket/_Worms'
 	, 'redmic/modules/socket/Socket'
 	, 'redmic/modules/socket/Task'
-	, 'redmic/modules/user/FullscreenToggle'
-	, 'redmic/modules/user/LanguageSelector'
-	, 'redmic/modules/user/UserArea'
 ], function(
 	App
 	, Topbar
-	, ContentPane
-	, LayoutContainer
 	, declare
 	, lang
 	, aspect
 	, domClass
 	, on
-	, query
 	, put
 	, Credentials
 	, Selector
@@ -47,11 +38,9 @@ define([
 	, _Worms
 	, Socket
 	, Task
-	, FullscreenToggle
-	, LanguageSelector
-	, UserArea
 ) {
-	return declare([LayoutContainer, App], {
+
+	return declare(App, {
 		//	Summary:
 		//		Implementación del módulo App, encargada de mostrar las vistas de la parte interna de la aplicación
 		//
@@ -62,12 +51,13 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				design: 'sidebar',
 				'class': 'mainContainer',
 				reducedWidthClass: 'reducedWidth',
+				contentContainerClass: 'contentContainer',
+				collapseButtonClass: 'collapseSidebarButton',
 				uncollapsedSidebarClass: 'uncollapsedSidebar',
 				overlaySidebarBackgroundClass: 'overlaySidebarBackground',
-				isLayoutContainer: true,
+
 				innerAppEvents: {
 					UPDATE_ACTIVE: 'updateActive'
 				},
@@ -131,34 +121,12 @@ define([
 
 			this.inherited(arguments);
 
-			this.addChild(this.bc);
-			this.addChild(this.sidebarNode);
-			this.addChild(this.topbar);
-
-			this._publish(this.sidebar.getChannel('SHOW'), {
+			this._publish(this.topbar.getChannel('SHOW'), {
 				node: this.domNode
 			});
 
-			// TODO esto es un abuso, no deberíamos acceder a los nodos de un módulo desde fuera. Crear canal para
-			// añadir hijos al topbar
-			//
-			// TODO realmente, Topbar habría que replantearlo, ya que no es un módulo sino un ContentPane decorado.
-			var topbarRightNode = this.topbar.domNode.lastChild;
-
-			this._publish(this._buildChannel(this.notificationChannel, this.actions.SHOW), {
-				node: topbarRightNode
-			});
-
-			this._publish(this.fullscreenToggle.getChannel('SHOW'), {
-				node: topbarRightNode
-			});
-
-			this._publish(this.languageSelector.getChannel('SHOW'), {
-				node: topbarRightNode
-			});
-
-			this._publish(this.userArea.getChannel('SHOW'), {
-				node: topbarRightNode
+			this._publish(this.sidebar.getChannel('SHOW'), {
+				node: this.domNode
 			});
 
 			this._evaluateAppSize();
@@ -169,9 +137,6 @@ define([
 			domClass.toggle(this.ownerDocumentBody, this.uncollapsedSidebarClass);
 
 			this._handleListenersOnToggleSidebar();
-
-			// TODO vestigio de dijit, desaparecerá
-			this.layout();
 
 			this._propagateActionToChildren('RESIZE', {});
 		},
@@ -185,8 +150,7 @@ define([
 			var overlayMainSidebarIsOpen = domClass.contains(this.ownerDocumentBody, this.uncollapsedSidebarClass);
 
 			if (overlayMainSidebarIsOpen) {
-				// TODO setTimeout permite click sobre botón de Topbar para mostrar Sidebar, puede haber mejor solución
-				setTimeout(lang.hitch(this._appClickHandler, this._appClickHandler.resume), 0);
+				this._appClickHandler.resume();
 			} else {
 				this._appClickHandler.pause();
 			}
@@ -214,10 +178,6 @@ define([
 			//		de la aplicación.
 			//	tags:
 			//		private
-
-			this.sidebar = new MainSidebarImpl({
-				parentChannel: this.ownChannel
-			});
 
 			new QueryStore({
 				parentChannel: this.ownChannel
@@ -252,15 +212,12 @@ define([
 				parentChannel: this.ownChannel
 			});
 
-			this.userArea = new UserArea({
-				parentChannel: this.ownChannel
+			this.topbar = new Topbar({
+				parentChannel: this.ownChannel,
+				collapseButtonClass: this.collapseButtonClass
 			});
 
-			this.languageSelector = new LanguageSelector({
-				parentChannel: this.ownChannel
-			});
-
-			this.fullscreenToggle = new FullscreenToggle({
+			this.sidebar = new MainSidebarImpl({
 				parentChannel: this.ownChannel
 			});
 		},
@@ -271,22 +228,9 @@ define([
 			//	tags:
 			//		private
 
+			this._contentContainer = put(this.domNode, 'div.' + this.contentContainerClass);
+
 			put(this.domNode, 'div.' + this.overlaySidebarBackgroundClass);
-
-			this.sidebarNode = new ContentPane({
-				region: 'left',
-				'class': 'mainSidebar'
-			});
-
-			this.topbar = new Topbar({
-				parentChannel: this.ownChannel,
-				i18n: this.i18n
-			});
-
-			this.bc = new ContentPane({
-				region: 'center',
-				'class': 'contentContainer'
-			});
 		},
 
 		_createListeners: function() {
@@ -304,21 +248,19 @@ define([
 			//	returns: Object
 			//		Nodo central del layout
 
-			return this.bc.domNode;
+			return this._contentContainer;
 		},
 
 		_onAppResize: function(evt) {
 
-			if (!this._getNodeToShow()) {
+			// TODO evita que entren instancias viejas (login, logout, login), cuando se destruya bien app, eliminar
+			if (!this.domNode) {
 				return;
 			}
 
 			this._appClickHandler.pause();
 
 			this._evaluateAppSize();
-
-			// TODO vestigio de dijit, desaparecerá
-			this.layout();
 		},
 
 		_evaluateAppSize: function() {
@@ -359,11 +301,8 @@ define([
 			this._appClickHandler.pause();
 
 			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
+			this._publish(this.topbar.getChannel('DESTROY'));
 			this._publish(this.sidebar.getChannel('DESTROY'));
-			this._publish(this.fullscreenToggle.getChannel('DESTROY'));
-			this._publish(this.languageSelector.getChannel('DESTROY'));
-			this._publish(this.userArea.getChannel('DESTROY'));
-
 			this._publish(this._buildChannel(this.storeChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.managerChannel, this.actions.DESTROY));
@@ -371,22 +310,27 @@ define([
 			this._publish(this._buildChannel(this.taskChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.socketChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.notificationChannel, this.actions.DESTROY));
-
-			this.sidebarNode.destroy();
-			this.topbar.destroy();
-			this.bc.destroy();
 		},
 
 		_onAppClicked: function(evt) {
 
 			var clickedNode = evt.target,
-				nodeParents = query(clickedNode).parents(),
-				nodeDoesNotBelongToMainSidebar = nodeParents.indexOf(this.sidebar.domNode) === -1;
+				targets = this._getClickTargets(evt),
+				nodeDoesNotBelongToMainSidebar = targets.indexOf(this.sidebar.domNode) === -1,
+				nodeDoesNotBelongToToggleButton = !this._findCollapseButtonNode(targets).length;
 
-			if (nodeDoesNotBelongToMainSidebar) {
+			if (nodeDoesNotBelongToMainSidebar && nodeDoesNotBelongToToggleButton) {
 				this._appClickHandler.pause();
 				this._collapseMainSidebar();
 			}
+		},
+
+		_findCollapseButtonNode: function(nodes) {
+
+			return nodes.filter(lang.hitch(this, function(target) {
+
+				return target && target.classList && target.classList.contains(this.collapseButtonClass);
+			}));
 		}
 	});
 });

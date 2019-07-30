@@ -1,17 +1,26 @@
 define([
-	"dijit/layout/ContentPane"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "put-selector/put"
-	, "redmic/modules/base/Manager"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
+	, 'redmic/modules/base/Manager'
+	, 'redmic/modules/user/FullscreenToggle'
+	, 'redmic/modules/user/LanguageSelector'
+	, 'redmic/modules/user/UserArea'
 ], function(
-	ContentPane
-	, declare
+	declare
 	, lang
 	, put
+	, _Module
+	, _Show
 	, Manager
-){
-	return declare(ContentPane, {
+	, FullscreenToggle
+	, LanguageSelector
+	, UserArea
+) {
+
+	return declare([_Module, _Show], {
 		//	summary:
 		//		Widget que controla la barra superior, siempre visible y compartida.
 		//	description:
@@ -20,37 +29,48 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				region: "top",
-				'class': "topbar",
+				'class': 'topbar',
+
+				collapseButtonClass: 'collapseSidebarButton',
+
 				logoClass: 'topbarLogo',
 				logoHref: '/home',
 				logoImgSrc: '/resources/images/logos/logo.svg',
-				logoTextContent: 'REDMIC',
-				doLayout: false,
-				show: {
-					left: true,
-					right: true
-				}
+				logoTextContent: 'REDMIC'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
+		_initialize: function() {
+
+			this.userArea = new UserArea({
+				parentChannel: this.getChannel()
+			});
+
+			this.languageSelector = new LanguageSelector({
+				parentChannel: this.getChannel()
+			});
+
+			this.fullscreenToggle = new FullscreenToggle({
+				parentChannel: this.getChannel()
+			});
+		},
+
 		postCreate: function() {
 
-			// Se crean los nodos
-			this._collapseNode = put(this.domNode, "div.collapseSidebarButton");
-			this._collapseNode.onclick = lang.hitch(this, this._onCollapseClicked);
+			this.inherited(arguments);
 
+			this._createCollapseNode();
 			this._createLogoNode();
+			this._createContentNode();
+		},
 
-			if (this.show.left) {
-				this.leftNode = put(this.domNode, "div.manager");
-			}
+		_createCollapseNode: function() {
 
-			this.manager = new Manager({
-				parentChannel: this.parentChannel
-			}, this.leftNode);
+			var collapseNode = put(this.domNode, 'div.' + this.collapseButtonClass);
+
+			collapseNode.onclick = lang.hitch(this, this._onCollapseClicked);
 		},
 
 		_createLogoNode: function() {
@@ -65,10 +85,48 @@ define([
 			put(logoNode, 'span', this.logoTextContent);
 		},
 
+		_createContentNode: function() {
+
+			var contentNode = put(this.domNode, 'div.topbarContent'),
+				managerNode = put(contentNode, 'div.manager'),
+				buttonsNode = put(contentNode, 'div.buttons');
+
+			this._createManagerNode(managerNode);
+			this._showModules(buttonsNode);
+		},
+
+		_createManagerNode: function(containerNode) {
+
+			// TODO integrar manager con topbar, manager está desfasado casi por completo
+			this._manager = new Manager({
+				//parentChannel: this.getChannel()
+				parentChannel: this.parentChannel
+			}, containerNode);
+		},
+
+		_showModules: function(containerNode) {
+
+			// TODO notification es global, pero se podría separar su botón como módulo independiente y crearlo aquí
+			this._publish(this._buildChannel(this.notificationChannel, this.actions.SHOW), {
+				node: containerNode
+			});
+
+			this._publish(this.fullscreenToggle.getChannel('SHOW'), {
+				node: containerNode
+			});
+
+			this._publish(this.languageSelector.getChannel('SHOW'), {
+				node: containerNode
+			});
+
+			this._publish(this.userArea.getChannel('SHOW'), {
+				node: containerNode
+			});
+		},
+
 		_onCollapseClicked: function() {
 
-			// TODO hacerlo en this en lugar de this.manager cuando topbar sea módulo
-			this.manager._publish(this.manager._buildChannel(this.manager.rootChannel, 'toggleSidebar'));
+			this._publish(this._buildChannel(this.rootChannel, 'toggleSidebar'));
 		}
 	});
 });

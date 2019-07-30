@@ -80,11 +80,6 @@ define([
 			this._emitEvt('MODULE_SHOWN', {
 				key: moduleKey
 			});
-		},
-
-		_getNodeToShow: function() {
-
-			return this.domNode;
 		}
 	});
 });

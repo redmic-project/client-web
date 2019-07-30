@@ -52,14 +52,7 @@ define([
 
 		_setOwnCallbacksForEvents: function() {
 
-			this._onceEvt('SHOW', lang.hitch(this, this._onAppFirstShow));
 			this._onEvt('HIDE', lang.hitch(this, this._onAppHide));
-		},
-
-		_onAppFirstShow: function() {
-
-			// TODO vestigio de dijit, desaparecerá
-			this.startup();
 		},
 
 		_subShowModule: function(req) {

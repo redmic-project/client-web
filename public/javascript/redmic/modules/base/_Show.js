@@ -406,8 +406,9 @@ define([
 				this.currentData = null;
 			}
 
-			var nodeToShow = this._getNodeToShow();
+			var nodeToShow = this._getNodeToShow() || this.domNode;
 			if (!nodeToShow) {
+				console.error('Node to show not found at module "%s"', this.getChannel());
 				return;
 			}
 
@@ -621,7 +622,7 @@ define([
 		_lock: function() {
 
 			if (!this._lockedContainer) {
-				this._lockedContainer = this._getNodeToShow();
+				this._lockedContainer = this._getNodeToShow() || this.domNode;
 			}
 
 			this._setLockStatus(true);
@@ -699,7 +700,7 @@ define([
 				this._activeLoadings = 1;
 
 				if (!this._loadingContainer) {
-					this._loadingContainer = this._getNodeToShowLoading() || this._getNodeToShow();
+					this._loadingContainer = this._getNodeToShowLoading() || this._getNodeToShow() || this.domNode;
 				}
 
 				objToPub.node = this._loadingContainer;

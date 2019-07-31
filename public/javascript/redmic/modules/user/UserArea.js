@@ -1,6 +1,5 @@
 define([
-	'alertify/alertify.min'
-	, 'app/redmicConfig'
+	'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/request'
@@ -16,8 +15,7 @@ define([
 	, 'redmic/base/Credentials'
 	, 'templates/UserTopbarMenu'
 ], function(
-	alertify
-	, redmicConfig
+	redmicConfig
 	, declare
 	, lang
 	, request
@@ -32,7 +30,8 @@ define([
 	, TemplateDisplayer
 	, Credentials
 	, TemplateTopbarMenu
-){
+) {
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Modulo para el menu de usuarios.
@@ -45,106 +44,25 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				omitLoading: true,
-				// mediator params
 				ownChannel: 'userArea',
-				idProperty: 'id',
 				actions: {
 					REQUEST: 'request'
 				},
-				target: redmicConfig.services.profile
+
+				omitLoading: true,
+				'class': 'userArea',
+				idProperty: 'id',
+				target: redmicConfig.services.profile,
+				repositoryUrl: 'https://gitlab.com/redmic-project/client/web'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_setConfigurations: function() {
-
-			this.listMenuConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				items: [{
-					icon: 'fa-eye',
-					label: 'myProfile',
-					href: '/user'
-				},{
-					icon: 'fa-question-circle-o',
-					label: 'whatIsRedmic',
-					href: '/inner-what-is-redmic'
-				},{
-					icon: 'fa-file-text-o',
-					label: 'termCondition',
-					href: '/inner-terms-and-conditions'
-				},{
-					icon: 'fa-power-off',
-					label: 'logout',
-					callback: '_logout'
-				}]
-			}, this.listMenuConfig || {}]);
-
-			this.topbarMenuConfig = this._merge([{
-				omitLoading: true,
-				parentChannel: this.getChannel(),
-				template: TemplateTopbarMenu,
-				'class': 'tooltipUser',
-				target: this.target
-			}, this.topbarMenuConfig || {}]);
-		},
-
 		_initialize: function() {
 
-			if (this._checkUserIsRegistered()) {
-				this._initializeUserArea();
-			} else {
-				this._initializeGuestArea();
-			}
-		},
-
-		_initializeUserArea: function() {
-
-			this.topbarMenu = new TemplateDisplayer(this.topbarMenuConfig);
-
-			put(this.domNode, '.userArea');
-			this.containerNode = put(this.domNode, 'div[title=$]', this.i18n.user);
-
-			this.iconNode = put(this.containerNode, 'i.fa.fa-user');
-
-			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)(this.listMenuConfig);
-		},
-
-		_initializeGuestArea: function() {
-
-			put(this.domNode, '.userAreaGuest');
-
-			var singlePageParam = '[d-state-url="true"]';
-
-			this.whatIsRedmicNode = put(this.domNode, 'a[href="/inner-what-is-redmic"]' + singlePageParam,
-				this.i18n.whatIsRedmic);
-
-			this.registerNode = put(this.domNode, 'a[href="/register"]' + singlePageParam, this.i18n.register);
-
-			this.loginNode = put(this.domNode, 'a[href="/login"]' + singlePageParam, this.i18n.login);
-		},
-
-		_defineSubscriptions: function () {
-
-			if (this._checkUserIsRegistered()) {
-				this.subscriptionsConfig.push({
-					channel : this.listMenu.getChannel('EVENT_ITEM'),
-					callback: '_subEventItem'
-				});
-			}
-		},
-
-		postCreate: function() {
-
-			this.inherited(arguments);
-
-			if (this._checkUserIsRegistered()) {
-				this._prepareEnvironment();
-			}
-		},
-
-		_prepareEnvironment: function() {
+			put(this.domNode, '[title=$]', this.i18n.user);
+			this.iconNode = put(this.domNode, 'i.fa.fa-user');
 
 			var envDfd = window.env;
 			if (!envDfd) {
@@ -153,18 +71,107 @@ define([
 
 			envDfd.then(lang.hitch(this, function(envData) {
 
-				this._logoutTarget = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData);
-				// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
-				// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
-				this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
+				var infoItem = {
+					icon: 'fa-question-circle-o',
+					label: 'whatIsRedmic',
+					href: '/inner-what-is-redmic'
+				};
 
-				this._showAreaForRegisteredUser();
+				var versionItem = {
+					icon: 'fa-code-fork',
+					label: this.i18n.version + ': ' + envData.version,
+					href: this.repositoryUrl,
+					newPage: true
+				};
+
+				if (this._checkUserIsRegistered()) {
+					this._initializeRegisteredUserArea(infoItem, versionItem);
+
+					this._logoutTarget = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData);
+					// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
+					// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
+					this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
+				} else {
+					this._initializeGuestUserArea(infoItem, versionItem);
+				}
 			}));
 		},
 
-		_showAreaForRegisteredUser: function() {
+		_initializeRegisteredUserArea: function(infoItem, versionItem) {
+
+			this.topbarMenu = new TemplateDisplayer({
+				parentChannel: this.getChannel(),
+				omitLoading: true,
+				template: TemplateTopbarMenu,
+				'class': 'tooltipUser',
+				target: this.target
+			});
+
+			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
+				parentChannel: this.getChannel(),
+				items: [
+					{
+						icon: 'fa-eye',
+						label: 'myProfile',
+						href: '/user'
+					},
+					infoItem,
+					{
+						icon: 'fa-file-text-o',
+						label: 'termCondition',
+						href: '/inner-terms-and-conditions'
+					},
+					versionItem,
+					{
+						icon: 'fa-power-off',
+						label: 'logout',
+						callback: '_logout'
+					}
+				]
+			});
+		},
+
+		_initializeGuestUserArea: function(infoItem, versionItem) {
+
+			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
+				parentChannel: this.getChannel(),
+				items: [
+					infoItem,
+					{
+						icon: 'fa-user-plus',
+						label: 'register',
+						href: '/register'
+					},
+					versionItem,
+					{
+						icon: 'fa-sign-in',
+						label: 'login',
+						href: '/login'
+					}
+				]
+			});
 
 			this._showMenu();
+		},
+
+		_defineSubscriptions: function () {
+
+			this.subscriptionsConfig.push({
+				channel : this.listMenu.getChannel('EVENT_ITEM'),
+				callback: '_subEventItem'
+			});
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
+			if (this._checkUserIsRegistered()) {
+				this._showAreaForRegisteredUser();
+			}
+		},
+
+		_showAreaForRegisteredUser: function() {
 
 			this._once(this._buildChannel(this.credentialsChannel, this.actions.GOT_PROPS),
 				lang.hitch(this, this._subDataCredentialsGotProps));
@@ -193,7 +200,7 @@ define([
 		_showMenu: function() {
 
 			this._publish(this.listMenu.getChannel('ADD_EVT'), {
-				sourceNode: this.iconNode
+				sourceNode: this.domNode
 			});
 		},
 
@@ -273,22 +280,27 @@ define([
 				data = data[0];
 			}
 
-			if (!this.containerNode) {
+			// TODO impide a instancias antiguas romper la ejecución, revisar
+			if (!this.domNode) {
 				return;
 			}
 
-			this.containerNode.firstChild && put(this.containerNode.firstChild, '!');
+			this._updateUserAreaButton(data);
+			this._showMenu();
+		},
+
+		_updateUserAreaButton: function(data) {
+
+			put('!', this.iconNode);
 
 			if (data.image) {
 				var tokenParam = '?access_token=' + Credentials.get('accessToken'),
 					imageUrl = data.image + tokenParam;
 
-				this.iconNode = put(this.containerNode, 'img[src=' + imageUrl + ']');
+				this.iconNode = put(this.domNode, 'img[src=' + imageUrl + ']');
 			} else {
-				this.iconNode = put(this.containerNode, 'i.fa.fa-user');
+				this.iconNode = put(this.domNode, 'i.fa.fa-user');
 			}
-
-			this._showMenu();
 		}
 	});
 });

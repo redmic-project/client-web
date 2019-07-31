@@ -1,6 +1,7 @@
 define([
-	"app/base/views/_View"
-	, "app/components/steps/SelectActivityCategoryStep"
+	"app/components/steps/SelectActivityCategoryStep"
+	, "app/designs/edition/Controller"
+	, "app/designs/edition/Layout"
 	, "app/edition/views/dataLoader/AddDataIF"
 	, "app/edition/views/dataLoader/AddDataFT"
 	, "app/edition/views/dataLoader/AddDataOC"
@@ -11,14 +12,14 @@ define([
 	, "app/edition/views/dataLoader/LoadDataTR"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
-	, "dojo/Deferred"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Store"
+	, "dojo/Deferred"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/ActivityCategoriesNoExist"
 ], function(
-	_View
-	, SelectActivityCategoryStep
+	SelectActivityCategoryStep
+	, Controller
+	, Layout
 	, AddDataIF
 	, AddDataFT
 	, AddDataOC
@@ -29,13 +30,13 @@ define([
 	, LoadDataTR
 	, redmicConfig
 	, declare
-	, Deferred
 	, lang
-	, _Store
+	, Deferred
 	, TemplateDisplayer
 	, TemplateNoExist
-){
-	return declare([_View, _Store], {
+) {
+
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición base para la carga de datos.
 		//	description:
@@ -55,6 +56,7 @@ define([
 				addMode: 'add',
 				editMode: 'edit',
 				loadMode: 'load',
+				idProperty: "activityid",
 
 				activityCategories: {
 					"ft": {
@@ -210,7 +212,7 @@ define([
 			if (!this.noExistsActivityCategoryInstance) {
 				this.noExistsActivityCategoryInstance = new TemplateDisplayer({
 					parentChannel: this.getChannel(),
-					"class": "hardTexturedContainer.viewerPDFAuthFailed.borderRadius",
+					"class": "mediumSolidContainer.viewerPDFAuthFailed.borderRadius",
 					template: TemplateNoExist
 				});
 			}

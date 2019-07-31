@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/base/_Controller"
+	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -8,8 +7,7 @@ define([
 	, "redmic/modules/map/Map"
 	, "redmic/modules/map/_PlaceNamesButton"
 ], function (
-	_View
-	, _Controller
+	_Controller
 	, declare
 	, lang
 	, aspect
@@ -17,7 +15,7 @@ define([
 	, Map
 	, _PlaceNamesButton
 ){
-	return declare([_View, _Controller], {
+	return declare(_Controller, {
 		//	summary:
 		//		Controlador para diseño de vistas que contienen un mapa y un contenido a la derecha.
 
@@ -64,17 +62,13 @@ define([
 			this.inherited(arguments);
 
 			this._publish(this.map.getChannel("SHOW"), {
-				node: this.mapNode.domNode
+				node: this.mapNode
 			});
-
-			aspect.after(this.mapNode, "resize", lang.hitch(this, function() {
-				this._emitEvt('RESIZE');
-			}));
 		},
 
 		_getNodeToShowLoading: function() {
 
-			return this.mapNode && this.mapNode.domNode;
+			return this.mapNode;
 		}
 	});
 });

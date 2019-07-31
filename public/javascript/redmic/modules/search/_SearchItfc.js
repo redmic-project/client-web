@@ -18,7 +18,6 @@ define([
 
 			return lang.mixin(this.inherited(arguments), {
 				"_reset": {},
-				"_onReConnect": {},
 				"_setDefault": {},
 				"_refresh": {}
 			});

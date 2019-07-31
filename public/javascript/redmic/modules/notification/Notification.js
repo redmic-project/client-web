@@ -1,7 +1,6 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/on"
-	, "dojo/query"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
@@ -9,12 +8,9 @@ define([
 	, "redmic/modules/notification/NotificationSidebar"
 	, "redmic/modules/notification/TaskNotification"
 	, "put-selector/put"
-	, "dojo/NodeList-dom"
-	, "dojo/NodeList-traverse"
 ], function(
 	declare
 	, on
-	, query
 	, lang
 	, _Module
 	, _Show
@@ -22,7 +18,8 @@ define([
 	, NotificationSidebar
 	, TaskNotification
 	, put
-){
+) {
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Módulo encargado de procesar las notificaciones de los demás.
@@ -54,7 +51,6 @@ define([
 				targetNotificationSidebar: "notificationSidebar",
 				_countNotification: 0,
 				statusNotificationSidebarShown: false,
-				closeNotificationSidebarHandler: null,
 				alertWithId: {},
 				items: [{
 						target: "task",
@@ -75,10 +71,6 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-
-			this.closeNotificationSidebarHandler = on.pausable(document.body, "click",
-				lang.hitch(this, this._onCloseNotificationSidebar));
-			this.closeNotificationSidebarHandler.pause();
 		},
 
 		_initialize: function() {
@@ -124,29 +116,31 @@ define([
 
 		postCreate: function() {
 
+			this.inherited(arguments);
+
 			put(this.domNode, ".notification");
-			this.containerNode = put(this.domNode, "div");
-			this.iconNode = put(this.containerNode, "i.fa.fa-bell-o");
-			this.spanNode = put(this.containerNode, "span.hidden", 0);
+			this.iconNode = put(this.domNode, "i.fa.fa-bell");
+			this.spanNode = put(this.domNode, "span.hidden", 0);
 
 			this.iconNode.addEventListener('animationend', lang.hitch(this, this._removeAnimated));
 
-			this.containerNode.onclick = lang.hitch(this, this._clickNotification);
+			this.domNode.onclick = lang.hitch(this, this._clickNotification);
 
-			this.inherited(arguments);
+			this.closeNotificationSidebarHandler = on.pausable(this.ownerDocumentBody, "click",
+				lang.hitch(this, this._onCloseNotificationSidebar));
+			this.closeNotificationSidebarHandler.pause();
 		},
 
 		_onCloseNotificationSidebar: function(evt) {
 
-			var isNodeNotificationSidebar = query(evt.target).parents().some(lang.hitch(this, function(node) {
-				if (node === this.notificationSidebarNode) {
-					return true;
-				} else {
-					return false;
-				}
-			}));
+			var clickedNode = evt.target,
+				targets = this._getClickTargets(evt),
+				nodeDoesNotBelongToNotificationButton = targets.indexOf(this.domNode) === -1 &&
+					clickedNode !== this.domNode,
 
-			if (!(isNodeNotificationSidebar)) {
+				nodeDoesNotBelongToNotificationSidebar = targets.indexOf(this.notificationSidebarNode) === -1;
+
+			if (nodeDoesNotBelongToNotificationButton && nodeDoesNotBelongToNotificationSidebar) {
 				this._clickNotification(evt);
 			}
 		},
@@ -157,10 +151,10 @@ define([
 
 			if (this.statusNotificationSidebarShown) {
 				this.statusNotificationSidebarShown = false;
-				this.closeNotificationSidebarHandler && this.closeNotificationSidebarHandler.pause();
+				this.closeNotificationSidebarHandler.pause();
 				eventPublication = 'HIDE_NOTIFICATION_SIDEBAR';
 			} else {
-				this.closeNotificationSidebarHandler && this.closeNotificationSidebarHandler.resume();
+				this.closeNotificationSidebarHandler.resume();
 				this.statusNotificationSidebarShown = true;
 				eventPublication = 'SHOW_NOTIFICATION_SIDEBAR';
 
@@ -177,10 +171,6 @@ define([
 			this._emitEvt(eventPublication, {
 				node: this.notificationSidebarNode
 			});
-
-			if (evt) {
-				evt.stopPropagation();
-			}
 		},
 
 		_getNodeToShow: function() {

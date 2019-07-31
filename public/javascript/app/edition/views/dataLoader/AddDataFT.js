@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/components/steps/AddGeomSiteStep"
+	"app/components/steps/AddGeomSiteStep"
 	, "app/components/steps/DataDefinitionSetStep"
 	, "app/components/steps/DescribeSiteStep"
 	, "app/components/viewCustomization/addGeomSite/views/Point"
@@ -10,8 +9,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	_View
-	, AddGeomSiteStep
+	AddGeomSiteStep
 	, DataDefinitionSetStep
 	, DescribeSiteStep
 	, Point
@@ -21,7 +19,7 @@ define([
 	, declare
 	, lang
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Edición para actividades de categoría FT.
 		//	description:

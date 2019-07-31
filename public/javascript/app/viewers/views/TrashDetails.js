@@ -7,7 +7,6 @@ define([
 	, "app/viewers/views/TrashInfo"
 	, "app/viewers/views/_SelectTimeInterval"
 	, "app/redmicConfig"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
@@ -30,7 +29,6 @@ define([
 	, TrashInfo
 	, _SelectTimeInterval
 	, redmicConfig
-	, ContentPane
 	, declare
 	, lang
 	, Deferred

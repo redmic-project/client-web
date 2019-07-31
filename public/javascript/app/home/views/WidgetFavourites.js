@@ -12,7 +12,8 @@ define([
 	, lang
 	, put
 	, Credentials
-){
+) {
+
 	return declare(_DashboardItem, {
 		//	summary:
 		//		Widget para la creación de un elemento Favoritos del modulo Initial
@@ -134,8 +135,10 @@ define([
 
 		createStructure: function(/*Array*/ modules) {
 
+			this.favouritesContainerNode = put(this.contentNode, 'div.favouritesBoxItems');
+
 			for (var i = 0; i < modules.length; i++) {
-				modules[i].placeAt(this.contentNode);
+				modules[i].placeAt(this.favouritesContainerNode);
 			}
 		}
 	});

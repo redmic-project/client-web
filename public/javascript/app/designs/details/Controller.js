@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/base/_Controller"
+	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -13,8 +12,7 @@ define([
 	, "redmic/modules/base/_Window"
 	, "./_ControllerItfc"
 ], function (
-	_View
-	, _Controller
+	_Controller
 	, declare
 	, lang
 	, aspect
@@ -27,7 +25,7 @@ define([
 	, _Window
 	, _ControllerItfc
 ){
-	return declare([_View, _ControllerItfc, _Controller, _Store], {
+	return declare([_ControllerItfc, _Controller, _Store], {
 		//	summary:
 		//		Controller para vistas de detalle, que dividen la información a mostrar en cajitas independientes.
 		//		El usuario puede interactuar con ellas para adaptar la representación a su gusto.
@@ -45,10 +43,8 @@ define([
 
 				idProperty: "id",
 				hiddenClass: "hidden",
-				noScroll: false,
 
-				_relativeRowsParameterName: "data-percentage-rows",
-				_fixedRowsParameterName: "data-rows",
+				_rowsParameterName: "data-rows",
 				_colsParameterName: "data-cols",
 				_updateInteractiveTimeout: 100,
 
@@ -125,8 +121,6 @@ define([
 		},
 
 		_buildVisualization: function() {
-
-			this._rowsParameterName = this.noScroll ? this._relativeRowsParameterName : this._fixedRowsParameterName;
 
 			var dfds = [];
 			for (var key in this.widgetConfigs) {

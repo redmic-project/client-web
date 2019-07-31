@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/components/steps/ContactSetStep"
+	"app/components/steps/ContactSetStep"
 	, "app/components/steps/DocumentSetStep"
 	, "app/components/steps/MainDataStep"
 	, "app/components/steps/OrganisationSetStep"
@@ -11,8 +10,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	_View
-	, ContactSetStep
+	ContactSetStep
 	, DocumentSetStep
 	, ProjectMainDataStep
 	, OrganisationSetStep
@@ -23,7 +21,7 @@ define([
 	, declare
 	, lang
 ){
-	return declare([_View, Layout, Controller], {
+	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de Project.
 		//	description:

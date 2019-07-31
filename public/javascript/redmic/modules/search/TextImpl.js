@@ -245,11 +245,6 @@ define([
 			params.suggestFields && this.textSearch.set("suggestFields", params.suggestFields);
 		},
 
-		_onReConnect: function() {
-
-			this.textSearch.emit("focusInput");
-		},
-
 		_pubClosed: function(/*String*/ channel, /*Object*/ evt) {
 
 			this._publish(channel, {success: true});

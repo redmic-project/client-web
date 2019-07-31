@@ -1,19 +1,17 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/base/_Controller"
+	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "dojo/promise/all"
 ], function (
-	_View
-	, _Controller
+	_Controller
 	, declare
 	, lang
 	, Deferred
 	, all
 ){
-	return declare([_Controller, _View], {
+	return declare(_Controller, {
 		//	summary:
 		//		Controlador de diseño con contenido dual y dinámico.
 

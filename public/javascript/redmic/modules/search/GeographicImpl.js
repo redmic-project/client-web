@@ -33,7 +33,12 @@ define([
 			this.mapSearch = new Map({
 				urlMapBasemap: "https://idecan3.grafcan.es/ServicioWMS/MTI",
 				layersBasemap: 'WMS_MTI',
-				formatBasemap: 'image/png'
+				formatBasemap: 'image/png',
+				latCenter: 28.5,
+				lonCenter: -15.7,
+				zoom: 4,
+				widthAreaSelect: 140,
+				heightAreaSelect: 100
 			});
 
 			this.mapSearch.on("queryMap", lang.hitch(this, this._onNewSearch));

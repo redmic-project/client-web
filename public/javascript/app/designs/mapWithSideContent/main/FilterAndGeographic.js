@@ -2,7 +2,7 @@ define([
 	"app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
-	, "dijit/layout/BorderContainer"
+	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
 	, "dijit/layout/StackContainer"
 	, "dojo/_base/declare"
@@ -20,7 +20,7 @@ define([
 	_Main
 	, Controller
 	, Layout
-	, BorderContainer
+	, LayoutContainer
 	, ContentPane
 	, StackContainer
 	, declare
@@ -158,7 +158,7 @@ define([
 				node: this.gridNode.domNode
 			});
 
-			this.browserAndSearchContainer = new BorderContainer({
+			this.browserAndSearchContainer = new LayoutContainer({
 				title: "<i class='fa fa-table'></i>",
 				'class': "marginedContainer noScrolledContainer"
 			});
@@ -166,16 +166,15 @@ define([
 			this.browserAndSearchContainer.addChild(this.gridNode);
 
 			this.leftNode = new declare(StackContainer)({
-				splitter: true,
 				region: "left",
-				'class': "col-xs-6 col-sm-5 col-md-4 col-lg-4 hardTexturedContainer sideStackContainer"
+				'class': "hardSolidContainer sideStackContainer"
 			});
 			this.leftNode.addChild(this.browserAndSearchContainer);
 
-			this.contentNode.addChild(this.leftNode);
+			this.addChild(this.leftNode);
 
 			this._publish(this.filteringInput.getChannel("SHOW"), {
-				node: this.topbarNode.domNode
+				node: this.topbarNode
 			});
 
 			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});

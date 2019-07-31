@@ -46,7 +46,6 @@ define([
 			}, this.selectInputConfig || {}]);
 
 			this.formConfig = this._merge([{
-				classContainer: '.mediumTexturedContainer',
 				buttonsConfig: {
 					reset: {
 						noActive: false

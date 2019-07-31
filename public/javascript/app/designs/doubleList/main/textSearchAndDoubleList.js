@@ -85,7 +85,7 @@ define([
 
 		_initializeMain: function() {
 
-			this.textSearch = new declare([TextImpl])(this.textSearchConfig);
+			this.textSearch = new TextImpl(this.textSearchConfig);
 		},
 
 		_defineMainSubscriptions: function() {
@@ -109,7 +109,7 @@ define([
 			this.inherited(arguments);
 
 			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.topLeftNode.domNode
+				node: this.topLeftNode
 			});
 		},
 

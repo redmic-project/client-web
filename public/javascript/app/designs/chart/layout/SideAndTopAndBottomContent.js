@@ -1,27 +1,25 @@
 define([
-	"dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "put-selector/put"
-], function (
-	BorderContainer
-	, ContentPane
+	'app/designs/base/_Layout'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+], function(
+	_Layout
 	, declare
 	, lang
 	, put
-){
-	return declare(ContentPane, {
+) {
+
+	return declare(_Layout, {
 		//	summary:
 		//		Layout para diseño de vistas que contienen gráficas y añadidos a la misma.
 
 		constructor: function(args) {
 
 			this.config = {
-				sideContentClass:
-					"col-xs-5 col-sm-5 col-md-4 col-lg-3 mediumTexturedContainer mapSideContainer",
-				sideContentSplitter: true,
-				sideContentRegion: "right"
+				layoutAdditionalClasses: 'sideAndTopAndBottomContentLayoutChartDesign',
+				centerContentClass: "mediumSolidContainer.chartCenterContainer",
+				sideContentClass: "mediumSolidContainer.chartSideContainer"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -29,77 +27,39 @@ define([
 
 		postCreate: function() {
 
-			this.contentNode = new BorderContainer();
-
-			this._createExtendedChartsNode(this.contentNode);
-			this._createSideContentNode(this.contentNode);
-
-			this.addChild(this.contentNode);
-			this.contentNode.startup();
-
 			this.inherited(arguments);
+
+			this.centerNode = put(this.domNode, 'div.' + this.centerContentClass);
+
+			this._createChartsTopNode(this.centerNode);
+			this._createChartsNode(this.centerNode);
+			this._createChartsBottomNode(this.centerNode);
+
+			this._createSideContentNode(this.domNode);
 		},
 
-		_createExtendedChartsNode: function(container) {
+		_createChartsTopNode: function(parentNode) {
 
-			var extendedChartsNode = new ContentPane({
-					region: "center"
-				}),
-				bc = new BorderContainer();
+			this.chartsTopNode = put(parentNode, 'div.aboveChartContent');
 
-			this._createChartsTopNode(bc);
-			this._createChartsNode(bc);
-			this._createChartsBottomNode(bc);
+			this.toolbarContainerChartsTopNode = put(this.chartsTopNode, 'div');
 
-			extendedChartsNode.addChild(bc);
-			container.addChild(extendedChartsNode);
+			this.buttonsContainerChartsTopNode = put(this.chartsTopNode, "div.flexAndAlignCenter");
 		},
 
-		_createChartsTopNode: function(container) {
+		_createChartsNode: function(parentNode) {
 
-			this.chartsTopNode = new ContentPane({
-				region: "top",
-				'class': "aboveChartContent"
-			});
-
-			container.addChild(this.chartsTopNode);
-
-			this.toolbarContainerChartsTopNode = put(this.chartsTopNode.domNode, 'div');
-
-			this.optionsContainerChartsTopNode = put(this.chartsTopNode.domNode, 'div');
-
-			this.buttonsContainerChartsTopNode = put(this.chartsTopNode.domNode,
-				"div.flexAndAlignCenter");
+			this.chartsNode = put(parentNode, 'div.centerChartContent');
 		},
 
-		_createChartsNode: function(container) {
+		_createChartsBottomNode: function(parentNode) {
 
-			this.chartsNode = new ContentPane({
-				region: "center"
-			});
-
-			container.addChild(this.chartsNode);
+			this.chartsBottomNode = put(parentNode, 'div.underChartContent');
 		},
 
-		_createChartsBottomNode: function(container) {
+		_createSideContentNode: function(parentNode) {
 
-			this.chartsBottomNode = new ContentPane({
-				region: "bottom",
-				'class': "underChartContent"
-			});
-
-			container.addChild(this.chartsBottomNode);
-		},
-
-		_createSideContentNode: function(container) {
-
-			this.sideNode = new ContentPane({
-				region: this.sideContentRegion,
-				'class': this.sideContentClass,
-				splitter: this.sideContentSplitter
-			});
-
-			container.addChild(this.sideNode);
+			this.sideNode = put(parentNode, 'div.' + this.sideContentClass);
 		}
 	});
 });

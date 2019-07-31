@@ -5,6 +5,7 @@ define([
 	, "dojo/Deferred"
 	, "dojo/query"
 	, "put-selector/put"
+	, "redmic/modules/base/_ListenWindowResize"
 	, "redmic/modules/base/_ShowItfc"
 ], function(
 	declare
@@ -13,9 +14,11 @@ define([
 	, Deferred
 	, query
 	, put
+	, _ListenWindowResize
 	, _ShowItfc
-){
-	return declare(_ShowItfc, {
+) {
+
+	return declare([_ShowItfc, _ListenWindowResize], {
 		//	summary:
 		//		Base común para todos los módulos con visualización.
 		//	description:
@@ -29,7 +32,6 @@ define([
 			LOADING: "loading",
 			LOADED: "loaded",
 			RESIZE: "resize",
-			RESIZE_VIEW: "resizeView",
 			ME_OR_ANCESTOR_SHOWN: "meOrAncestorShown",
 			ME_OR_ANCESTOR_HIDDEN: "meOrAncestorHidden",
 			STARTED_UP: "startedUp"
@@ -50,15 +52,12 @@ define([
 			LOCK: "lock",
 			UNLOCK: "unlock",
 			TOGGLE_LOCK: "toggleLock",
-			WINDOW_RESIZE: "windowResize",
-			RESIZE_VIEW: "resizeView",
 			STARTED_UP: "startedUp"
 		},
 
 		lockedClass: "lockedWrapper",
 
 		animationSafetyTimeout: 2000,
-		additionalResizeTimeout: 500,
 
 
 		constructor: function(args) {
@@ -75,7 +74,7 @@ define([
 			aspect.after(this, "postCreate", lang.hitch(this, this._showAfterPostCreate));
 		},
 
-		_mixShowEventsAndActions: function () {
+		_mixShowEventsAndActions: function() {
 
 			lang.mixin(this.events, this.showEvents);
 			lang.mixin(this.actions, this.showActions);
@@ -83,7 +82,7 @@ define([
 			delete this.showActions;
 		},
 
-		_defineShowSubscriptions: function () {
+		_defineShowSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel: this.getChannel("SHOW"),
@@ -105,7 +104,10 @@ define([
 				callback: "_subAncestorHidden"
 			},{
 				channel: this.getChannel('RESIZE'),
-				callback: "_subResize"
+				callback: "_subResize",
+				options: {
+					predicate: lang.hitch(this, this._chkModuleCanResize)
+				}
 			},{
 				channel: this.getChannel("TOGGLE_SHOW"),
 				callback: "_subToggleShow"
@@ -128,15 +130,12 @@ define([
 			},{
 				channel: this.getChannel("TOGGLE_LOCK"),
 				callback: "_subToggleLock"
-			},{
-				channel: this._buildChannel(this.rootChannel, this.actions.WINDOW_RESIZE),
-				callback: "_subWindowResize"
 			});
 
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
 		},
 
-		_defineShowPublications: function () {
+		_defineShowPublications: function() {
 
 			this.publicationsConfig.push({
 				event: 'SHOW',
@@ -156,9 +155,6 @@ define([
 				event: 'RESIZE',
 				channel: this.getChannel("RESIZED")
 			},{
-				event: 'RESIZE_VIEW',
-				channel: this._buildChannel(this.rootChannel, this.actions.RESIZE_VIEW)
-			},{
 				event: 'STARTED_UP',
 				channel: this.getChannel("STARTED_UP")
 			});
@@ -166,13 +162,13 @@ define([
 			this._deleteDuplicatedChannels(this.publicationsConfig);
 		},
 
-		_setShowOwnCallbacksForEvents: function () {
+		_setShowOwnCallbacksForEvents: function() {
 
 			this._onEvt('SHOW', lang.hitch(this, this._onModuleShow));
 			this._onEvt('HIDE', lang.hitch(this, this._onModuleHide));
 			this._onEvt('ANCESTOR_SHOW', lang.hitch(this, this._prepareOnMeOrAncestorShown));
 			this._onEvt('ANCESTOR_HIDE', lang.hitch(this, this._restoreOnMeOrAncestorShown));
-			this._onEvt('RESIZE', lang.hitch(this, this._onModuleResize));
+			this._onEvt('DESTROY', lang.hitch(this, this._onModuleShowDestroy));
 		},
 
 		_showBeforePostCreate: function() {
@@ -206,17 +202,19 @@ define([
 				return;
 			}
 
-			var mutationObserver = new MutationObserver(
-				lang.partial(function(self, expectedChildGetter, callback, mutations) {
-
-				var expectedChild = expectedChildGetter(),
-					beforeCallback = lang.hitch(this, this.disconnect);
-
-				expectedChild && mutations.forEach(lang.hitch(self,
-					self._evaluateMutation, expectedChild, callback, beforeCallback));
-			}, this, expectedChildGetter, callback));
+			var mutationCallback = lang.partial(this._onNodeMutation, this, expectedChildGetter, callback),
+				mutationObserver = new MutationObserver(mutationCallback);
 
 			mutationObserver.observe(containerToListen, { childList: true });
+		},
+
+		_onNodeMutation: function(self, expectedChildGetter, callback, mutations) {
+
+			var expectedChild = expectedChildGetter(),
+				beforeCallback = lang.hitch(this, this.disconnect),
+				onChildMutation = lang.hitch(self, self._evaluateMutation, expectedChild, callback, beforeCallback);
+
+			expectedChild && mutations.forEach(onChildMutation);
 		},
 
 		_evaluateMutation: function(expectedChild, callback, beforeCallback, mutation) {
@@ -301,6 +299,43 @@ define([
 			}
 		},
 
+		_chkModuleCanShow: function(req) {
+
+			var node = req ? req.node : null,
+				data = req ? req.data : null;
+
+			var chkData = function(data) {
+				if (data) {
+					if (data !== this.currentData) {
+						return true;
+					}
+				}
+				return false;
+			};
+
+			if (node) {
+				if (node !== this.currentNode) {
+					return true;
+				} else {
+					if (!this._getShown()) {
+						return true;
+					} else {
+						return chkData(data);
+					}
+				}
+			} else {
+				if (this.currentNode) {
+					if (!this._getShown()) {
+						return true;
+					} else {
+						return chkData(data);
+					}
+				}
+			}
+
+			return false;
+		},
+
 		_subShow: function(req) {
 
 			this._showWrapper(req);
@@ -371,18 +406,13 @@ define([
 				this.currentData = null;
 			}
 
-			var nodeToShow = this._getNodeToShow();
+			var nodeToShow = this._getNodeToShow() || this.domNode;
 			if (!nodeToShow) {
+				console.error('Node to show not found at module "%s"', this.getChannel());
 				return;
 			}
 
 			if (node.domNode) {
-				var parentNodeGetter = function() { return node.domNode; },
-					childNodeGetter = function() { return nodeToShow; },
-					callback = lang.hitch(this, this._emitEvt, 'RESIZE_VIEW');
-
-				this._listenChildrenPlacing(parentNodeGetter, childNodeGetter, callback);
-
 				this._addToNode(node.domNode, nodeToShow, inFront);
 			} else {
 				this._addToNode(node, nodeToShow, inFront);
@@ -398,43 +428,6 @@ define([
 			}
 		},
 
-		_chkModuleCanShow: function(req) {
-
-			var node = req ? req.node : null,
-				data = req ? req.data : null;
-
-			var chkData = function(data) {
-				if (data) {
-					if (data !== this.currentData) {
-						return true;
-					}
-				}
-				return false;
-			};
-
-			if (node) {
-				if (node !== this.currentNode) {
-					return true;
-				} else {
-					if (!this._getShown()) {
-						return true;
-					} else {
-						return chkData(data);
-					}
-				}
-			} else {
-				if (this.currentNode) {
-					if (!this._getShown()) {
-						return true;
-					} else {
-						return chkData(data);
-					}
-				}
-			}
-
-			return false;
-		},
-
 		_animateNode: function(currentAnimationClass, previousAnimationClass) {
 			//TODO es posible que haya que separarlo en 2, uno para show y otro para hide
 			// para que cada uno tenga su this._afterAnimationCallback y demás. Pensar con calma.
@@ -448,12 +441,14 @@ define([
 					this._afterAnimationCallback);
 			}
 			this._afterAnimationCallback = lang.hitch(this, function(dfd) {
+
 				clearTimeout(this._animationSafetyHandler);
 				dfd.resolve();
 			}, dfd);
 
 			// Seguro para cuando la animación es nula
 			this._animationSafetyHandler = setTimeout(lang.hitch(this, function() {
+
 				console.error("Animation error at module '", this.getChannel(), "'");
 				dfd.resolve();
 			}), this.animationSafetyTimeout);
@@ -475,6 +470,11 @@ define([
 			} else {
 				emitShow();
 			}
+		},
+
+		_chkModuleCanHide: function(req) {
+
+			return this._getShown();
 		},
 
 		_subHide: function(req) {
@@ -550,13 +550,7 @@ define([
 
 		_destroyNode: function() {
 
-			//this.node.destroy && this.node.destroy();
 			this.node = null;
-		},
-
-		_chkModuleCanHide: function(req) {
-
-			return this._getShown();
 		},
 
 		_subToggleShow: function(req) {
@@ -580,10 +574,44 @@ define([
 			this._propagateActionToChildren('ANCESTOR_HIDDEN', req);
 		},
 
+		_chkModuleCanResize: function(req) {
+
+			return !!this.node;
+		},
+
 		_subResize: function(req) {
 
-			this._emitEvt('RESIZE', req);
+			this._moduleShowResize(req);
+		},
+
+		_moduleShowResize: function(req) {
+
+			this._resizeWrapper(req);
 			this._propagateActionToChildren('RESIZE', req);
+		},
+
+		_resizeWrapper: function(req) {
+
+			var resizeDfd = this._resize(req),
+				emitResize = lang.hitch(this, this._emitResize);
+
+			if (resizeDfd && resizeDfd.then) {
+				resizeDfd.then(emitResize);
+			} else {
+				emitResize();
+			}
+		},
+
+		_emitResize: function() {
+
+			var evt = {};
+
+			if (this.node) {
+				evt.width = this.node.offsetWidth;
+				evt.height = this.node.offsetHeight;
+			}
+
+			this._emitEvt('RESIZE', evt);
 		},
 
 		_subLock: function() {
@@ -594,7 +622,7 @@ define([
 		_lock: function() {
 
 			if (!this._lockedContainer) {
-				this._lockedContainer = this._getNodeToShow();
+				this._lockedContainer = this._getNodeToShow() || this.domNode;
 			}
 
 			this._setLockStatus(true);
@@ -649,21 +677,6 @@ define([
 			}
 		},
 
-		_subWindowResize: function(res) {
-
-			this._prepareResize(res);
-		},
-
-		_prepareResize: function(res) {
-
-			clearTimeout(this._additionalResizeHandler);
-			this._additionalResizeHandler = setTimeout(
-				lang.hitch(this, this._resize, res), this.additionalResizeTimeout);
-
-			// TODO en _Window hay una funcionalidad de emitir el evento RESIZE, que debería usarse
-			// aqui para todos. Generalizar lo que se encuentra en _Window y compatibilizar
-		},
-
 		_getShownOrHiddenResponseObject: function() {
 
 			return {
@@ -687,7 +700,7 @@ define([
 				this._activeLoadings = 1;
 
 				if (!this._loadingContainer) {
-					this._loadingContainer = this._getNodeToShowLoading() || this._getNodeToShow();
+					this._loadingContainer = this._getNodeToShowLoading() || this._getNodeToShow() || this.domNode;
 				}
 
 				objToPub.node = this._loadingContainer;
@@ -775,11 +788,10 @@ define([
 			this._propagateActionToChildren('ANCESTOR_HIDDEN', response);
 		},
 
-		_onModuleResize: function(evt) {
+		_onModuleShowDestroy: function() {
 
-			if (this.layout) {
-				this.layout();
-			}
+			this._destroyNode();
+			this._setShown(false);
 		},
 
 		_getStartupStatus: function() {

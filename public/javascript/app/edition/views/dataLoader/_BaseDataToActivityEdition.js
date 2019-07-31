@@ -1,6 +1,5 @@
 define([
-	"app/base/views/_View"
-	, "app/designs/edition/Controller"
+	"app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
@@ -8,8 +7,7 @@ define([
 	, "dojo/aspect"
 	, "./_BaseDataToActivityEditionItfc"
 ], function(
-	_View
-	, Controller
+	Controller
 	, Layout
 	, redmicConfig
 	, declare
@@ -17,7 +15,7 @@ define([
 	, aspect
 	, _BaseDataToActivityEditionItfc
 ){
-	return declare([_View, Layout, Controller, _BaseDataToActivityEditionItfc], {
+	return declare([Layout, Controller, _BaseDataToActivityEditionItfc], {
 		//	summary:
 		//		Vista de edición base para la carga de datos.
 		//	description:

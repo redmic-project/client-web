@@ -1,23 +1,17 @@
 define([
-	"dijit/layout/ContentPane"
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
 	, "app/base/views/_ListenRequestError"
 	, "app/base/views/_ViewHandle"	// QUITAR
 ], function(
-	ContentPane
-	, declare
+	declare
 	, lang
 	, aspect
-	, _Module
-	, _Show
 	, _ListenRequestError
 	, _ViewHandle	// QUITAR
 ){
-	return declare([_ListenRequestError, _ViewHandle, ContentPane, _Module, _Show], {
+	return declare([_ListenRequestError, _ViewHandle], {
 		//	summary:
 		//		Base común para todas los módulos usados como vistas.
 

@@ -18,7 +18,8 @@ define([
 	, on
 	, query
 	, put
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Módulo para la creación del Sidebar de la aplicación.
@@ -27,27 +28,20 @@ define([
 		//		Si se hace click sobre alguna categoría, se desplegará la barra secundaria.
 		//		Si se hace click sobre algún módulo, la aplicación lo cargará.
 		//		Si se accede con una ruta previa, se detectará para informar del módulo y categoría activos.
-		//	secondaryNav: Object
-		//		Propiedades de la barra secundaria. Debe de tener "class" para asignarle estilos y
-		//		"active" que especificar que módulo está activo.
-		//	closeSecNavHandler: Object
-		//		Handler del evento de cierre de la barra secundaria.
 
 		constructor: function(args) {
 
 			this.config = {
-				secondaryNav: {
-					'class': 'secondary.main-nav.retiring',
-					active: null
-				},
-				closeSecNavHandler: null,
-				subitems: 'subitems'
+				secondaryClass: 'secondarySidebar.retiring',
+				secondaryActiveItem: null,
+				clickToCloseSecondaryListener: null,
+				subitems: 'modules'
 			};
 
 			lang.mixin(this, this.config, args);
 
 			aspect.after(this, "_initialize", lang.hitch(this, this._initializeSecondary));
-			aspect.before(this, "_updateActive", lang.hitch(this, this._hidesecondaryNavNode));
+			aspect.before(this, "_updateActive", lang.hitch(this, this._hideSecondaryNavNode));
 			aspect.before(this, "_insertItemInPrimaryNav", lang.hitch(this, this._insertItemInSecondaryNav));
 		},
 
@@ -56,14 +50,14 @@ define([
 			this._createSecondaryNavMenu();
 		},
 
-		startup: function() {
+		postCreate: function() {
 
 			this.inherited(arguments);
 
-			this.closeSecNavHandler = on.pausable(document.body, 'click',
-				lang.hitch(this, this._onCloseSecNav));
+			this.clickToCloseSecondaryListener = on.pausable(this.ownerDocumentBody, 'click', lang.hitch(this,
+				this._onCloseSecNav));
 
-			this.closeSecNavHandler.pause();
+			this.clickToCloseSecondaryListener.pause();
 		},
 
 		_onCloseSecNav: function(/*Object*/ evt) {
@@ -76,35 +70,21 @@ define([
 			//	evt: Object
 			//		Evento del click
 
-			// Se busca si el elemento que se pulsó pertenece a la barra principal
-			var isPrimaryNav = query(evt.target).parents().some(
-				lang.hitch(this, function(node) {
+			var parents = query(evt.target).parents();
 
-				if (node === this.primaryNavNode) {
-					return true;
-				} else {
-					return false;
-				}
+			var isPrimaryNav = parents.some(lang.hitch(this, function(node) {
+
+				return node === this.primaryNavNode;
 			}));
-			// Se busca si el elemento que se pulsó pertenece a la barra secundaria
-			var isSecondaryNav = query(evt.target).parents().some(function(node) {
-				if (node === this.secondaryNavNode) {
-					return true;
-				} else {
-					return false;
-				}
+
+			var isSecondaryNav = parents.some(function(node) {
+
+				return node === this.secondaryNavNode;
 			});
-			// Si no se pulsó sobre ninguna de las dos barras, se oculta la barra secundaria
-			if (!(isSecondaryNav || isPrimaryNav)) {
-				this._hidesecondaryNavNode();
+
+			if (!isSecondaryNav && !isPrimaryNav) {
+				this._hideSecondaryNavNode();
 			}
-		},
-
-		_updateActive: function(res) {
-
-			this._updateItemsActive(res.parentLabel || res.label);
-
-			res.parentLabel && this._updateItemsActiveSecondary(res.label);
 		},
 
 		_createSecondaryNavMenu: function() {
@@ -115,47 +95,17 @@ define([
 			//	tags:
 			//		private
 
-			var secondaryNav = "nav";
+			var secondaryNav = "nav." + this.secondaryClass;
 
-			if (this.secondaryNav["class"]) {
-				secondaryNav += "." + this.secondaryNav["class"];
-			}
-
-			if (this.secondaryNav.id) {
-				secondaryNav += "#" + this.secondaryNav.id;
-			}
-
-			this.secondaryNavNode = put(document.body, secondaryNav);
+			this.secondaryNavNode = put(this.domNode, secondaryNav);
 			this.secondaryNavMenuNode = put(this.secondaryNavNode, "ul");
-		},
-
-		_onClickSidebarMenu: function(/*Object*/ evt) {
-			//	Summary:
-			//		Evento click del menú secundario del sidebar, Se usa para expandir/reducir
-			//		el sidebar añadiendo/suprimiendo el label
-			//	tags:
-			//		private
-			//	evt
-			//		Evento del click
-
-			if (this.sidebarMenu.getChildren()[0].label == this.i18n.menuTextReduce) {
-				domClass.add(this.ownerDocumentBody, "reducedMenu");
-				this.resize();
-				registry.byId(query("#rootContainer")[0].children[0].id).resize();
-				this.sidebarMenu.getChildren()[0].attr("label", this.i18n.menuTextExpand);
-			} else {
-				domClass.remove(this.ownerDocumentBody, "reducedMenu");
-				registry.byId(query("#rootContainer")[0].children[0].id).resize();
-				this.sidebarMenu.getChildren()[0].attr("label", this.i18n.menuTextReduce);
-			}
 		},
 
 		_insertItemInSecondaryNav: function(item) {
 
 			var subitems = item[this.subitems];
 			if (subitems) {
-				var division = put(this.secondaryNavMenuNode,
-					"div." + item.name + "[style='display:none']");
+				var division = put(this.secondaryNavMenuNode, "div." + item.name + "[style='display:none']");
 
 				for (var j = 0; j < subitems.length; j++) {
 					var subitem = subitems[j];
@@ -181,16 +131,14 @@ define([
 				return this.inherited(arguments);
 			}
 
-			var itemDom = null,
-				label = item.name || item.label,
+			var label = item.name || item.label,
 				prelabel = "li." + label,
 				iconPrefix = item.icon.split("-")[0],
 				icon = iconPrefix + "." + item.icon,
-				labelI18n = this.i18n[label + this.suffixI18n] || this.i18n[label];
+				labelI18n = this.i18n[label + this.suffixI18n] || this.i18n[label],
+				itemDom = put(prelabel + "[title=" + labelI18n + "]");
 
-			itemDom = put(prelabel + "[title=" + labelI18n + "]");
-
-			if (label === this.primaryNav.active) {
+			if (label === this.primaryActiveItem) {
 				put(itemDom, ".active");
 			}
 
@@ -230,16 +178,17 @@ define([
 
 			// Si se pulsa en el item que ya está con clase activa se oculta el secundario
 			if (domClass.contains(itemDom, "click")) {
-				this._hidesecondaryNavNode();
+				this._hideSecondaryNavNode();
 				domClass.remove(itemDom, "click");
 			} else {
 				// si lo hay se elimina
 				query("li.click", this.primaryNavMenuNode).forEach(function(node) {
+
 					domClass.remove(node, "click");
 				});
 
 				domClass.add(itemDom, "click");
-				this._showsecondaryNavNode(label);
+				this._showSecondaryNavNode(label);
 			}
 		},
 
@@ -248,7 +197,7 @@ define([
 			//		Agrega un módulo a la barra secundaria.
 			//	Tags:
 			//		private
-			//	module:
+			//	item:
 			//		Objeto que representa al módulo actual
 			//	returns:
 			//		Devuelve el DomNode del elemento creado
@@ -256,17 +205,17 @@ define([
 			var itemDom = null,
 				label = item.name || item.label,
 				preLabel = "li." + label,
-				parentLabel = item.parent ? item.parent.name : module.name,
+				parentLabel = item.parent ? item.parent.name : item.name,
 				iconPrefix = item.icon.split("-")[0],
 				icon = iconPrefix + "." + item.icon,
 				labelI18n = this.i18n[label + this.suffixI18n] || this.i18n[label],
 				href = item.href;
 
 			if (item.active) {
-				this.secondaryNav.active = label;
+				this.secondaryActiveItem = label;
 			}
 
-			if (label === this.secondaryNav.active) {
+			if (label === this.secondaryActiveItem) {
 				itemDom = put(preLabel + ".active");
 			} else {
 				itemDom = put(preLabel);
@@ -291,17 +240,13 @@ define([
 		_isValidClick: function(obj) {
 
 			if (obj.parentLabel) {
-				if (this.secondaryNav.active === obj.label) {
-					return false;
-				}
-
-				return true;
+				return this.secondaryActiveItem !== obj.label;
 			}
 
 			return this.inherited;
 		},
 
-		_showsecondaryNavNode: function(/*String*/ mainlabel) {
+		_showSecondaryNavNode: function(/*String*/ mainlabel) {
 			// summary:
 			//		Muestra la barra secundaria y se muestra el bloque cuya clase corresponda
 			//		por la que se pase por parámetros
@@ -322,61 +267,55 @@ define([
 			domClass.remove(this.secondaryNavNode, "retiring");
 			domClass.add(this.secondaryNavNode, "overall");
 
-			this.closeSecNavHandler && this.closeSecNavHandler.resume();
+			this.clickToCloseSecondaryListener && this.clickToCloseSecondaryListener.resume();
 		},
 
-		_hidesecondaryNavNode: function() {
+		_hideSecondaryNavNode: function() {
 			// summary:
 			//		Oculta la barra secundaria
 			// description:
-			//		Se elimina la clase click si existe en algún elemento de la barra principal. Se ejecuta la animación y se borra el Listener del body
+			//		Se elimina la clase click si existe en algún elemento de la barra principal.
+			//		Se ejecuta la animación y se borra el Listener del body
 			// tags:
 			//		private
 
 			query("li.click", this.primaryNavMenuNode).forEach(function(node) {
-				// Borramos los activos
+
 				domClass.remove(node, "click");
 			});
 
 			domClass.remove(this.secondaryNavNode, "overall");
 			domClass.add(this.secondaryNavNode, "retiring");
 
-			this.closeSecNavHandler && this.closeSecNavHandler.pause();
+			this.clickToCloseSecondaryListener && this.clickToCloseSecondaryListener.pause();
 		},
 
-		_updateItemsActiveSecondary: function(/*String*/ secondary) {
+		_updateItemsActiveSecondary: function(/*String*/ currentLabel) {
 			//	Summary:
-			//		Actualiza los elementos de las barras
+			//		Actualiza el estado de los elementos de la barra secundaria
 			//	Description:
-			//		Se pone a activo los elemntos que se hayan especificado por parámetros.
-			//		El elemento de la secundaria (especificado en secondary)
+			//		Se marca como activo el elemento especificado en currentLabel
 			//	Tags:
 			//		private
 
-			// Actualizamos la barra de navegación secundaria
+			if (this.secondaryActiveItem) {
+				var activeItems = query("li.active", this.secondaryNavMenuNode);
 
-			// Si hay algun elemento activo lo actualizamos quitandole la clase activo
-
-			if(this.secondaryNav.active) {
-				var itemactive = query("li.active", this.secondaryNavMenuNode);
-
-				if (itemactive.length > 0) {
-					domClass.remove(itemactive[0], "active");
+				if (activeItems.length) {
+					domClass.remove(activeItems[0], "active");
 				}
 			}
 
-			if (!secondary) {
+			if (!currentLabel) {
 				return;
 			}
 
-			// Actualizamos el campo activo de secondaryNav
-			this.secondaryNav.active = secondary;
+			this.secondaryActiveItem = currentLabel;
 
-			var itemaddclass = query("li." + secondary, this.secondaryNavMenuNode);
+			var currentItems = query("li." + currentLabel, this.secondaryNavMenuNode);
 
-			if (itemaddclass.length > 0) {
-				// Añadimos la clase active al nodo que se ha pulsado
-				domClass.add(itemaddclass[0], "active");
+			if (currentItems.length) {
+				domClass.add(currentItems[0], "active");
 			}
 		}
 	});

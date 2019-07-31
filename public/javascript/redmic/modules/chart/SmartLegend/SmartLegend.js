@@ -5,6 +5,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/query"
+	, 'put-selector/put'
 	, "RWidgets/Utilities"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
@@ -23,6 +24,7 @@ define([
 	, declare
 	, lang
 	, query
+	, put
 	, Utilities
 	, _Module
 	, _Show
@@ -214,19 +216,16 @@ define([
 
 		postCreate: function() {
 
-			this.legendNode = new ContentPane({
-				region: "center",
-				'class': 'noScrolledContainer'
-			});
+			this.legendNode = put('div.chartSmartLegend');
 
 			this._publish(this.chartsList.getChannel("SHOW"), {
-				node: this.legendNode.domNode
+				node: this.legendNode
 			});
 		},
 
 		_getNodeToShow: function() {
 
-			return this.legendNode.domNode;
+			return this.legendNode;
 		},
 
 		_subLayerAdded: function(res) {

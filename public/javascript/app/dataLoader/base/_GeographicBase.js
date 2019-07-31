@@ -5,9 +5,7 @@ define([
 	, "app/base/views/extensions/_ListenActivityDataAndAccessByActivityCategory"
 	, "app/base/views/extensions/_LocalSelectionView"
 	, "app/base/views/extensions/_OnShownAndRefresh"
-	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
 	, "app/designs/mapWithSideContent/main/Geographic"
-	, "app/redmicConfig"
 	, "dijit/layout/ContentPane"
 	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
@@ -29,9 +27,7 @@ define([
 	, _ListenActivityDataAndAccessByActivityCategory
 	, _LocalSelectionView
 	, _OnShownAndRefresh
-	, MapAndContentAndTopbar
 	, Geographic
-	, redmicConfig
 	, ContentPane
 	, TabContainer
 	, declare
@@ -47,7 +43,7 @@ define([
 	, GeoJsonLayerImpl
 	, Utilities
 ){
-	return declare([Geographic, MapAndContentAndTopbar, _EditionWizardView, _CompositeInTooltipFromIconKeypad,
+	return declare([Geographic, _EditionWizardView, _CompositeInTooltipFromIconKeypad,
 		_LocalSelectionView, _OnShownAndRefresh, _GetActivityData, _ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
 		//		Base de vistas de gestión de datos cargados con listado y mapa.
@@ -68,11 +64,14 @@ define([
 			aspect.before(this, "_setConfigurations", lang.hitch(this, this._setGeographicBaseConfigurations));
 			aspect.before(this, "_initialize", lang.hitch(this, this._initializeGeographicBase));
 			aspect.before(this, "_definePublications", lang.hitch(this, this._defineGeographicBasePublications));
+			aspect.before(this, "_setOwnCallbacksForEvents", lang.hitch(this,
+				this._setGeographicBaseOwnCallbacksForEvents));
+
 			aspect.before(this, "_beforeShow", lang.hitch(this, this._beforeShowGeographicBase));
 
-			if (!Utilities.isValidNumber(this.pathVariableId)) {
+			/*if (!Utilities.isValidNumber(this.pathVariableId)) {
 				this._goTo404();
-			}
+			}*/
 		},
 
 		_setGeographicBaseConfigurations: function() {
@@ -106,6 +105,11 @@ define([
 			}, this.compositeConfig || {}]);
 		},
 
+		_setGeographicBaseOwnCallbacksForEvents: function() {
+
+			this._onEvt('SHOW', lang.hitch(this, this._onGeographicBaseShown));
+		},
+
 		_beforeShowGeographicBase: function() {
 
 			if (!this.pathVariableId) {
@@ -117,6 +121,11 @@ define([
 			};
 
 			this.dataAddPath[this.idProperty] = 'new';
+		},
+
+		_onGeographicBaseShown: function() {
+
+			this.tabs.resize();
 		},
 
 		_createAtlas: function() {
@@ -197,13 +206,14 @@ define([
 				tabPosition: "top",
 				splitter: true,
 				region: "left",
-				'class': "col-xs-6 col-sm-6 col-md-6 col-lg-5 col-xl-4 mediumTexturedContainer sideTabContainer borderRadiusTabContainer"
+				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
 			});
 
 			this.tabs.addChild(this.leftNode);
 			this.tabs.addChild(this._createAtlas());
 
-			this.contentNode.addChild(this.tabs);
+			this.tabs.placeAt(this.contentNode);
+			this.tabs.startup();
 
 			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});
 		},
@@ -244,7 +254,7 @@ define([
 		_updateTitle: function(title) {
 
 			this._publish(this.dataDisplayer.getChannel("SHOW"), {
-				node: this.topbarNode.domNode,
+				node: this.topbarNode,
 				data: title
 			});
 		}

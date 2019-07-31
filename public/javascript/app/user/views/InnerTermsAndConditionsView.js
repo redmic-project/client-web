@@ -43,7 +43,7 @@ define([
 					props: {
 						title: ' ',
 						template: Template,
-						"class": "hardTexturedContainer.borderRadiusBottom"
+						"class": "mediumSolidContainer.borderRadiusBottom"
 					}
 				}
 			}, this.widgetConfigs || {}]);

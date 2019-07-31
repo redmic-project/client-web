@@ -399,11 +399,6 @@ define([
 				level: "error",
 				description: this.i18n.timeoutMessage
 			});
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
 		}
 	});
 });

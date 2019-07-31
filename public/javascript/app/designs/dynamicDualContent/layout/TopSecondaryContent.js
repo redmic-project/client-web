@@ -14,8 +14,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				secondaryContentRegion: "top",
-				secondaryContentSplitter: false
+				layoutAdditionalClasses: 'topSecondaryContentLayoutDynamicDualContentDesign'
 			};
 
 			lang.mixin(this, this.config, args);

@@ -205,7 +205,8 @@ define([
 		_createMenu: function() {
 
 			this.loadSelectionNode = new ContentPane({
-				region: "center"
+				region: "center",
+				'class': 'flexContainer'
 			});
 
 			this.loadSelectionDialog = new DialogSimple({
@@ -218,7 +219,7 @@ define([
 				onHide: lang.hitch(this, this._hideLoadSelection)
 			});
 
-			this.loadSelectionDialog.own(this.domNode);
+			//this.loadSelectionDialog.own(this.domNode);
 		},
 
 		_subLoadSelectionListEventItem: function(response) {

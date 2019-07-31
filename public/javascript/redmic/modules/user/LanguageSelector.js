@@ -20,7 +20,8 @@ define([
 	, _ShowInTooltip
 	, _ShowOnEvt
 	, ListMenu
-){
+) {
+
 	return declare([_Module, _Show], {
 		//	summary:
 		//		Módulo selector de idioma.
@@ -30,7 +31,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: 'languageSelector'
+				ownChannel: 'languageSelector',
+				'class': 'languageSelector'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -56,12 +58,6 @@ define([
 
 		_initialize: function() {
 
-			put(this.domNode, '.languageSelector');
-
-			this.containerNode = put(this.domNode, 'div[title=$]', this.i18n.language);
-
-			this.iconNode = put(this.containerNode, 'i.fa.fa-language');
-
 			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)(this.listMenuConfig);
 		},
 
@@ -75,18 +71,23 @@ define([
 
 		postCreate: function() {
 
-			this._publish(this.listMenu.getChannel('ADD_EVT'), {
-				sourceNode: this.iconNode
-			});
-
 			this.inherited(arguments);
+
+			put(this.domNode, '[title=$]', this.i18n.language);
+
+			var languageIcon = this._getLanguageIcon(window.lang);
+			put(this.domNode, 'i.' + languageIcon);
+
+			this._publish(this.listMenu.getChannel('ADD_EVT'), {
+				sourceNode: this.domNode
+			});
 		},
 
-		_subEventItem: function(response) {
+		_subEventItem: function(res) {
 
-			var cbk = response.callback;
+			var cbk = res.callback;
 
-			cbk && this[cbk](response);
+			cbk && this[cbk](res);
 		},
 
 		_changeLanguage: function(itemObj) {
@@ -98,6 +99,21 @@ define([
 				hostnameWithoutLang = hostname.replace(kernel.locale + '.', '');
 
 			window.location.href = protocol + '//' + language + '.' + hostnameWithoutLang;
+		},
+
+		_getLanguageIcon: function(currentLanguage) {
+
+			var iconClasses;
+
+			if (currentLanguage === 'es') {
+				iconClasses = 'flag.flag-icon-background.flag-icon-es';
+			} else if (currentLanguage === 'en') {
+				iconClasses = 'flag.flag-icon-background.flag-icon-gb';
+			} else {
+				iconClasses = 'fa.fa-language';
+			}
+
+			return iconClasses;
 		},
 
 		_getNodeToShow: function() {

@@ -1,11 +1,12 @@
 define([
 	'app/_app'
 	, 'app/components/Topbar'
-	, 'dijit/layout/BorderContainer'
-	, 'dijit/layout/LayoutContainer'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
+	, "dojo/dom-class"
+	, 'dojo/on'
+	, 'put-selector/put'
 	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
@@ -17,16 +18,15 @@ define([
 	, 'redmic/modules/socket/_Worms'
 	, 'redmic/modules/socket/Socket'
 	, 'redmic/modules/socket/Task'
-	, 'redmic/modules/user/LanguageSelector'
-	, 'redmic/modules/user/UserArea'
 ], function(
 	App
 	, Topbar
-	, BorderContainer
-	, LayoutContainer
 	, declare
 	, lang
 	, aspect
+	, domClass
+	, on
+	, put
 	, Credentials
 	, Selector
 	, MainSidebarImpl
@@ -38,10 +38,9 @@ define([
 	, _Worms
 	, Socket
 	, Task
-	, LanguageSelector
-	, UserArea
 ) {
-	return declare([LayoutContainer, App], {
+
+	return declare(App, {
 		//	Summary:
 		//		Implementación del módulo App, encargada de mostrar las vistas de la parte interna de la aplicación
 		//
@@ -52,14 +51,19 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				design: 'sidebar',
 				'class': 'mainContainer',
-				isLayoutContainer: true,
-				innerAppActions: {
-					UPDATE_ACTIVE: 'updateActive'
-				},
+				reducedWidthClass: 'reducedWidth',
+				contentContainerClass: 'contentContainer',
+				collapseButtonClass: 'collapseSidebarButton',
+				uncollapsedSidebarClass: 'uncollapsedSidebar',
+				overlaySidebarBackgroundClass: 'overlaySidebarBackground',
+
 				innerAppEvents: {
 					UPDATE_ACTIVE: 'updateActive'
+				},
+				innerAppActions: {
+					UPDATE_ACTIVE: 'updateActive',
+					TOGGLE_SIDEBAR: 'toggleSidebar'
 				}
 			};
 
@@ -69,10 +73,8 @@ define([
 			aspect.after(this, '_setOwnCallbacksForEvents', lang.hitch(this,
 				this._setInnerAppOwnCallbacksForEvents));
 
+			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineInnerAppSubscriptions));
 			aspect.before(this, '_definePublications', lang.hitch(this, this._defineInnerAppPublications));
-
-			this._createStructure();
-			this._createModules();
 		},
 
 		_mixEventsAndActionsInnerApp: function () {
@@ -86,6 +88,18 @@ define([
 		_setInnerAppOwnCallbacksForEvents: function() {
 
 			this._onEvt('MODULE_SHOWN', lang.hitch(this, this._updateActiveSidebarItem));
+			this._onEvt('RESIZE', lang.hitch(this, this._onAppResize));
+		},
+
+		_defineInnerAppSubscriptions: function() {
+
+			this.subscriptionsConfig.push({
+				channel: this.getChannel('TOGGLE_SIDEBAR'),
+				callback: '_subToggleSidebar',
+				options: {
+					predicate: lang.hitch(this, this._chkModuleCanResize)
+				}
+			});
 		},
 
 		_defineInnerAppPublications: function() {
@@ -96,31 +110,50 @@ define([
 			});
 		},
 
-		postCreate: function() {
+		_initialize: function() {
 
-			this.addChild(this.bc);
-			this.addChild(this.sidebar);
-			this.addChild(this.topbar);
+			this._createStructure();
+			this._createModules();
+			this._createListeners();
+		},
+
+		postCreate: function() {
 
 			this.inherited(arguments);
 
-			// TODO esto es un abuso, no deberíamos acceder a los nodos de un módulo desde fuera. Crear canal para
-			// añadir hijos al topbar
-			//
-			// TODO realmente, Topbar habría que replantearlo, ya que no es un módulo sino un ContentPane decorado.
-			var topbarRightNode = this.topbar.domNode.lastChild;
-
-			this._publish(this._buildChannel(this.notificationChannel, this.actions.SHOW), {
-				node: topbarRightNode
+			this._publish(this.topbar.getChannel('SHOW'), {
+				node: this.domNode
 			});
 
-			this._publish(this.languageSelector.getChannel('SHOW'), {
-				node: topbarRightNode
+			this._publish(this.sidebar.getChannel('SHOW'), {
+				node: this.domNode
 			});
 
-			this._publish(this.userArea.getChannel('SHOW'), {
-				node: topbarRightNode
-			});
+			this._evaluateAppSize();
+		},
+
+		_subToggleSidebar: function(req) {
+
+			domClass.toggle(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+
+			this._handleListenersOnToggleSidebar();
+
+			this._propagateActionToChildren('RESIZE', {});
+		},
+
+		_handleListenersOnToggleSidebar: function() {
+
+			if (!this._getLowWidth()) {
+				return;
+			}
+
+			var overlayMainSidebarIsOpen = domClass.contains(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+
+			if (overlayMainSidebarIsOpen) {
+				this._appClickHandler.resume();
+			} else {
+				this._appClickHandler.pause();
+			}
 		},
 
 		_updateActiveSidebarItem: function(evt) {
@@ -132,6 +165,11 @@ define([
 			this._emitEvt('UPDATE_ACTIVE', {
 				path: moduleKey
 			});
+
+			if (this._getLowWidth()) {
+				this._collapseMainSidebar();
+				this._appClickHandler.pause();
+			}
 		},
 
 		_createModules: function() {
@@ -174,11 +212,12 @@ define([
 				parentChannel: this.ownChannel
 			});
 
-			this.userArea = new UserArea({
-				parentChannel: this.ownChannel
+			this.topbar = new Topbar({
+				parentChannel: this.ownChannel,
+				collapseButtonClass: this.collapseButtonClass
 			});
 
-			this.languageSelector = new LanguageSelector({
+			this.sidebar = new MainSidebarImpl({
 				parentChannel: this.ownChannel
 			});
 		},
@@ -189,19 +228,16 @@ define([
 			//	tags:
 			//		private
 
-			this.sidebar = new MainSidebarImpl({
-				parentChannel: this.ownChannel
-			});
+			this._contentContainer = put(this.domNode, 'div.' + this.contentContainerClass);
 
-			this.topbar = new Topbar({
-				parentChannel: this.ownChannel,
-				i18n: this.i18n
-			});
+			put(this.domNode, 'div.' + this.overlaySidebarBackgroundClass);
+		},
 
-			this.bc = new BorderContainer({
-				region: 'center',
-				'class': 'contentContainer'
-			});
+		_createListeners: function() {
+
+			this._appClickHandler = on.pausable(this.ownerDocumentBody, 'click', lang.hitch(this, this._onAppClicked));
+
+			this._appClickHandler.pause();
 		},
 
 		_getNode: function() {
@@ -212,14 +248,89 @@ define([
 			//	returns: Object
 			//		Nodo central del layout
 
-			return this.bc.domNode;
+			return this._contentContainer;
 		},
 
-		_doResize: function() {
+		_onAppResize: function(evt) {
 
-			if (this._getNodeToShow()) {
-				this.resize(arguments);
+			// TODO evita que entren instancias viejas (login, logout, login), cuando se destruya bien app, eliminar
+			if (!this.domNode) {
+				return;
 			}
+
+			this._appClickHandler.pause();
+
+			this._evaluateAppSize();
+		},
+
+		_evaluateAppSize: function() {
+
+			if (this._getLowWidth()) {
+				this._setReducedWidth();
+			} else {
+				this._unsetReducedWidth();
+			}
+		},
+
+		_setReducedWidth: function() {
+
+			domClass.add(this.ownerDocumentBody, this.reducedWidthClass);
+
+			this._collapseMainSidebar();
+		},
+
+		_unsetReducedWidth: function() {
+
+			domClass.remove(this.ownerDocumentBody, this.reducedWidthClass);
+
+			this._uncollapseMainSidebar();
+		},
+
+		_collapseMainSidebar: function() {
+
+			domClass.remove(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+		},
+
+		_uncollapseMainSidebar: function() {
+
+			domClass.add(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+		},
+
+		_onAppHide: function() {
+
+			this._appClickHandler.pause();
+
+			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
+			this._publish(this.topbar.getChannel('DESTROY'));
+			this._publish(this.sidebar.getChannel('DESTROY'));
+			this._publish(this._buildChannel(this.storeChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.managerChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.queryStoreChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.taskChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.socketChannel, this.actions.DESTROY));
+			this._publish(this._buildChannel(this.notificationChannel, this.actions.DESTROY));
+		},
+
+		_onAppClicked: function(evt) {
+
+			var clickedNode = evt.target,
+				targets = this._getClickTargets(evt),
+				nodeDoesNotBelongToMainSidebar = targets.indexOf(this.sidebar.domNode) === -1,
+				nodeDoesNotBelongToToggleButton = !this._findCollapseButtonNode(targets).length;
+
+			if (nodeDoesNotBelongToMainSidebar && nodeDoesNotBelongToToggleButton) {
+				this._appClickHandler.pause();
+				this._collapseMainSidebar();
+			}
+		},
+
+		_findCollapseButtonNode: function(nodes) {
+
+			return nodes.filter(lang.hitch(this, function(target) {
+
+				return target && target.classList && target.classList.contains(this.collapseButtonClass);
+			}));
 		}
 	});
 });

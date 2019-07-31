@@ -149,10 +149,9 @@ define([
 		_removeCallback: function(evt) {
 
 			var item = evt.item,
-				itemId = item.id,
 				target;
 
-			if (itemId.indexOf('category') !== -1) {
+			if (this._itemIsACategory(item)) {
 				target = redmicConfig.services.atlasCategoryEdition;
 			} else {
 				target = redmicConfig.services.atlasLayerEdition;
@@ -160,7 +159,7 @@ define([
 
 			this._emitEvt('REMOVE', {
 				target: target,
-				id: itemId
+				id: item.id
 			});
 		},
 
@@ -211,11 +210,25 @@ define([
 		_subSaved: function(result) {
 
 			this._emitEvt('LOADED');
- 			this._emitEvt('REFRESH');
+			this._emitEvt('REFRESH');
 
- 			var savedObj = this._getSavedObjToPublish ? this._getSavedObjToPublish(result) : result;
+			var item = result.body || result;
 
- 			this._emitEvt('SAVED', savedObj);
+			if (this._itemIsACategory(item)) {
+				var savedObj = this._getSavedObjToPublish ? this._getSavedObjToPublish(result) : result;
+				this._emitEvt('SAVED', savedObj);
+			}
+		},
+
+		_itemIsACategory: function(item) {
+
+			if (!item) {
+				return;
+			}
+
+			var itemId = item.id;
+
+			return itemId.indexOf('category') !== -1;
 		}
 	});
 });

@@ -148,10 +148,19 @@ define([
 
 		_removeCallback: function(evt) {
 
-			var category = evt.item;
+			var item = evt.item,
+				itemId = item.id,
+				target;
+
+			if (itemId.indexOf('category') !== -1) {
+				target = redmicConfig.services.atlasCategoryEdition;
+			} else {
+				target = redmicConfig.services.atlasLayerEdition;
+			}
+
 			this._emitEvt('REMOVE', {
-				target: redmicConfig.services.atlasCategoryEdition,
-				id: category.id
+				target: target,
+				id: itemId
 			});
 		},
 

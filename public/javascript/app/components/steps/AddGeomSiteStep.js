@@ -1,26 +1,17 @@
 define([
 	"app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
-	, "dijit/layout/ContentPane"
-	, "dijit/layout/StackContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "redmic/map/OpenLayers"
 	, "redmic/modules/map/_LeafletDraw"
-	, "redmic/modules/map/layer/WmsLayerImpl"
 ], function(
 	Controller
 	, Layout
-	, ContentPane
-	, StackContainer
 	, declare
 	, lang
-	, aspect
-	, OpenLayers
 	, _LeafletDraw
-	, WmsLayerImpl
-){
+) {
+
 	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista base para añadir geometría.
@@ -34,71 +25,14 @@ define([
 				mapExts: [_LeafletDraw]
 			};
 
-			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setMainConfigurations));
-			aspect.after(this, "_beforeInitialize", lang.hitch(this, this._initializeMain));
-			aspect.before(this, "_beforeShow", lang.hitch(this, this._beforeShowStep));
-
 			lang.mixin(this, this.config, args);
-		},
-
-		_setMainConfigurations: function() {
-
-			this.batimetriasLayerConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: "https://atlas.redmic.es/geoserver/el/wms",
-					props: {
-						layers: ["batimetriaGlobal"],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
-			}, this.batimetriasLayerConfig || {}]);
-		},
-
-		_initializeMain: function() {
-
-			this.batimetriasLayerConfig.mapChannel = this.map.getChannel();
-
-			this.batimetriasLayer = new WmsLayerImpl(this.batimetriasLayerConfig);
 		},
 
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			this._publish(this.map.getChannel("ADD_LAYER"), {
-				layer: this.batimetriasLayer,
-				layerId: "batimetrias",
-				layerLabel: this.i18n.bathymetry,
-				optional: true
-			});
-
-			this.leftContainer = new ContentPane({
-				'class': 'rightZone',
-				region: "center"
-			});
-
-			this.leftNode = new declare(StackContainer)({
-				region: "left",
-				'class': "mediumSolidContainer sideStackContainer"
-			});
-
-			this.addChild(this.leftNode);
-
-			this.leftNode.addChild(this.leftContainer);
-
 			this._loadForm();
-		},
-
-		_beforeShowStep: function() {
-
-			this._publish(this.map.getChannel("SET_CENTER_AND_ZOOM"), {
-				center: [28.5, -16.0],
-				zoom: 7
-			});
 		},
 
 		_instanceDataToResult: function(data) {
@@ -106,11 +40,6 @@ define([
 			this._publish(this.viewForm.getChannel("DATA_TO_RESULT"), {
 				data: data
 			});
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
 		},
 
 		_doFlush: function() {
@@ -152,7 +81,7 @@ define([
 			this._once(this.viewForm.getChannel("SHOWN"), lang.hitch(this, this._onceFormShown));
 
 			this._publish(this.viewForm.getChannel("SHOW"), {
-				node: this.leftContainer
+				node: this.contentNode
 			});
 		},
 

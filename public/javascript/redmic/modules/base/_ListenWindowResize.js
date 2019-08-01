@@ -19,7 +19,7 @@ define([
 		},
 
 		windowResizeTimeout: 500,
-		lowWidthValue: 800,
+		lowWidthValue: 840,
 
 
 		constructor: function(args) {

@@ -6,20 +6,16 @@ define([
 	, "app/base/views/extensions/_LocalSelectionView"
 	, "app/base/views/extensions/_OnShownAndRefresh"
 	, "app/designs/mapWithSideContent/main/Geographic"
-	, "dijit/layout/ContentPane"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/gateway/MapCenteringGatewayImpl"
 	, "redmic/modules/browser/_Select"
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
-	, "redmic/modules/map/Atlas"
 	, "redmic/modules/map/layer/_Selectable"
 	, "redmic/modules/map/layer/_SelectOnClick"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
-	, "RWidgets/Utilities"
+	//, "RWidgets/Utilities"
 ], function(
 	_CompositeInTooltipFromIconKeypad
 	, _EditionWizardView
@@ -28,21 +24,18 @@ define([
 	, _LocalSelectionView
 	, _OnShownAndRefresh
 	, Geographic
-	, ContentPane
-	, TabContainer
 	, declare
 	, lang
 	, aspect
-	, MapCenteringGatewayImpl
 	, _Select
 	, Pagination
 	, DataDisplayer
-	, Atlas
 	, _Selectable
 	, _SelectOnClick
 	, GeoJsonLayerImpl
-	, Utilities
-){
+	//, Utilities
+) {
+
 	return declare([Geographic, _EditionWizardView, _CompositeInTooltipFromIconKeypad,
 		_LocalSelectionView, _OnShownAndRefresh, _GetActivityData, _ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
@@ -128,26 +121,6 @@ define([
 			this.tabs.resize();
 		},
 
-		_createAtlas: function() {
-
-			this.atlas = new Atlas({
-				parentChannel: this.getChannel(),
-				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
-			});
-
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:"center"
-			});
-
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
-			});
-
-			return cp;
-		},
-
 		_replaceVariablesInTargetAndPaths: function() {
 
 			this.addPath = this._replaceVariablesInStringWithItem(this.addPath);
@@ -201,19 +174,6 @@ define([
 		postCreate: function() {
 
 			this.inherited(arguments);
-
-			this.tabs = new TabContainer({
-				tabPosition: "top",
-				splitter: true,
-				region: "left",
-				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
-			});
-
-			this.tabs.addChild(this.leftNode);
-			this.tabs.addChild(this._createAtlas());
-
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
 
 			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});
 		},

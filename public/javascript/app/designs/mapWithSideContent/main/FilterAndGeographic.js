@@ -2,9 +2,6 @@ define([
 	"app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
-	, "dijit/layout/LayoutContainer"
-	, "dijit/layout/ContentPane"
-	, "dijit/layout/StackContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Filter"
@@ -20,9 +17,6 @@ define([
 	_Main
 	, Controller
 	, Layout
-	, LayoutContainer
-	, ContentPane
-	, StackContainer
 	, declare
 	, lang
 	, _Filter
@@ -34,7 +28,8 @@ define([
 	, GeoJsonLayerImpl
 	, _Selectable
 	, _SelectOnClick
-){
+) {
+
 	return declare([Layout, Controller, _Main, _Filter], {
 		//	summary:.
 		//
@@ -149,40 +144,15 @@ define([
 
 			this.inherited(arguments);
 
-			this.gridNode = new ContentPane({
-				'class': 'rightZone',
-				region: "center"
-			});
-
 			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.gridNode.domNode
+				node: this.contentNode
 			});
-
-			this.browserAndSearchContainer = new LayoutContainer({
-				title: "<i class='fa fa-table'></i>",
-				'class': "marginedContainer noScrolledContainer"
-			});
-
-			this.browserAndSearchContainer.addChild(this.gridNode);
-
-			this.leftNode = new declare(StackContainer)({
-				region: "left",
-				'class': "hardSolidContainer sideStackContainer"
-			});
-			this.leftNode.addChild(this.browserAndSearchContainer);
-
-			this.addChild(this.leftNode);
 
 			this._publish(this.filteringInput.getChannel("SHOW"), {
 				node: this.topbarNode
 			});
 
 			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});
-
-			this._publish(this.map.getChannel("SET_CENTER_AND_ZOOM"), {
-				center: [28.5, -16.0],
-				zoom: 6
-			});
 
 			this.browserConfig.noDataMessage = this.browserCopyNoDataMessage;
 		},

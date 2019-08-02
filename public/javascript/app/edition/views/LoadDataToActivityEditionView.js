@@ -316,6 +316,13 @@ define([
 
 			this._emitGetActivity();
 
+			// TODO esto es un apaño, a falta de rediseñar esta vista, que en lugar de reutilizar recursos, sigue una
+			// implementación propia que rompe con todo lo demás (tan solo por el hecho de necesitar pedir los datos
+			// de la actividad previamente)
+			if (this.editor) {
+				this._publish(this.editor.getChannel('DESTROY'));
+			}
+
 			return this._dfdEditor;
 		},
 

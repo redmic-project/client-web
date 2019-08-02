@@ -35,7 +35,6 @@ define([
 
 			this.config = {
 				label: this.i18n.info,
-				copy: SelectStationByActivity,
 
 				ownChannel: "describeSite"
 			};
@@ -146,7 +145,7 @@ define([
 				}
 			}, this.copyConfig || {}]);
 
-			this.popupView = new declare([this.copy, _AddSelectionHandlerKeypad,
+			this.popupView = new declare([SelectStationByActivity, _AddSelectionHandlerKeypad,
 				_AdditionalKeyGetter]).extend(_ShowInPopup)(config);
 
 			this._popupViewSubscription = this._setSubscription({

@@ -157,6 +157,11 @@ define([
 
 		_onControllerShown: function() {
 
+			if (this._getShown()) {
+				this.packery.reloadItems();
+				this._updateInteractive();
+			}
+
 			this._clearModules();
 			this._refreshModules();
 		},

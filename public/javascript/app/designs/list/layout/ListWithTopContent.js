@@ -1,60 +1,47 @@
 define([
-	"dijit/layout/ContentPane"
-	, "dijit/layout/BorderContainer"
-	, "dojo/_base/declare"
-	, "put-selector/put"
+	'app/designs/base/_Layout'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
 ], function(
-	ContentPane
-	, BorderContainer
+	_Layout
 	, declare
+	, lang
 	, put
 ) {
 
-	return declare(ContentPane, {
+	return declare(_Layout, {
 		//	summary:
 		//		Layout para vistas que contienen un formulario y un listado.
+
+		constructor: function(args) {
+
+			this.config = {
+				layoutAdditionalClasses: 'layoutListDesign'
+			};
+
+			lang.mixin(this, this.config, args);
+		},
 
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			var parentNode = new BorderContainer({
-				'class': "col-lg-12"
-			});
+			this.parentTopNode = put(this.domNode, "div");
 
-			put(this.containerNode, parentNode.domNode);
+			this.topNode = put(this.domNode, "div.topZone");
 
-			this.parentTopNode = new ContentPane({
-				region: "top",
-				style: 'height: 70px'
-			});
-
-			parentNode.addChild(this.parentTopNode);
-
-			this.parentCenterNode = new ContentPane({
-				region: "center"
-			});
-
-			parentNode.addChild(this.parentCenterNode);
-
-			this.topNode = put(this.parentCenterNode.domNode, "div.topZone");
-
-			this._titleNode = put(this.topNode, "div.titleZone.col-xs-8.col-sm-8.col-md-8.col-lg-8.col-xl-8");
+			this._titleNode = put(this.topNode, "div.titleZone");
 
 			this._setTitle(this.title);
 
-			this.keypadZoneNode = put(this.topNode, "div.keypadZone.col-xs-4.col-sm-4.col-md-4.col-lg-4.col-xl-4");
+			this.keypadZoneNode = put(this.topNode, "div.keypadZone");
 
 			put(this.titleSpanNode, "a[href]");
 
-			this.centerNode = put(this.parentCenterNode.domNode, "div.centerZone");
+			this.centerNode = put(this.domNode, "div.centerZone");
 
 			this.listNode = put(this.centerNode, "div.listZone");
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
 		}
 	});
 });

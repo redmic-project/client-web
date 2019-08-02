@@ -1,37 +1,20 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/when"
-	, "dojo/aspect"
 	, "redmic/modules/base/_Persistence"
 	, "redmic/modules/base/_Store"
 	, "redmic/base/Credentials"
 ], function(
 	declare
 	, lang
-	, when
-	, aspect
 	, _Persistence
 	, _Store
 	, Credentials
-){
+) {
+
 	return declare([_Store, _Persistence], {
 		//	summary:
-		//		Todo lo necesario para hacer persistente en el servidor los seleccionados.
-		//	description:
-		//		Proporciona métodos manejar seleccionar / deseleccionar los items de la base de datos
-
-		//	config: Object
-		//		Opciones por defecto.
-
-		selectorPersistenceEvents: {
-			REQUEST_QUERY: "requestQuery"
-		},
-		// own actions
-		selectorPersistenceActions: {
-			REQUEST_QUERY: "requestQuery",
-			AVAILABLE_QUERY: "availableQuery"
-		},
+		//		Lógica necesaria para hacer persistente la selección de elementos (usando un servicio remoto).
 
 		currentAction: {},
 		currentItems: {},
@@ -41,38 +24,7 @@ define([
 
 		constructor: function(args) {
 
-			aspect.after(this, "_mixEventsAndActions",
-				lang.hitch(this, this._mixSelectorPersistenceEventsAndActions));
-			aspect.before(this, "_defineSubscriptions",
-				lang.hitch(this, this._defineSelectorPersistenceSubscriptions));
-			aspect.before(this, "_definePublications",
-				lang.hitch(this, this._defineSelectorPersistencePublications));
-
 			this.notificationSuccess = false;
-		},
-
-		_mixSelectorPersistenceEventsAndActions: function () {
-
-			lang.mixin(this.events, this.selectorPersistenceEvents);
-			lang.mixin(this.actions, this.selectorPersistenceActions);
-			delete this.selectorPersistenceEvents;
-			delete this.selectorPersistenceActions;
-		},
-
-		_defineSelectorPersistenceSubscriptions: function () {
-
-			this.subscriptionsConfig.push({
-				channel : this._buildChannel(this.queryStoreChannel, this.actions.AVAILABLE_QUERY),
-				callback: "_subAvailableQuery"
-			});
-		},
-
-		_defineSelectorPersistencePublications: function() {
-
-			this.publicationsConfig.push({
-				event: 'REQUEST_QUERY',
-				channel: this._buildChannel(this.queryStoreChannel, this.actions.REQUEST_QUERY)
-			});
 		},
 
 		_groupSelected: function(req) {
@@ -223,7 +175,10 @@ define([
 		_getTarget: function(target) {
 
 			var currentTarget = target + this.selectionTargetSuffix;
-			this.target.push(currentTarget);
+			if (this.target.indexOf(currentTarget) === -1) {
+				this.target.push(currentTarget);
+			}
+
 			return currentTarget;
 		},
 

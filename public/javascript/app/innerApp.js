@@ -11,7 +11,6 @@ define([
 	, 'redmic/modules/base/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
 	, 'redmic/modules/store/RestManagerImpl'
-	, 'redmic/modules/store/QueryStore'
 	, 'redmic/modules/notification/Notification'
 	, 'redmic/modules/socket/_IngestData'
 	, 'redmic/modules/socket/_Report'
@@ -31,7 +30,6 @@ define([
 	, Selector
 	, MainSidebarImpl
 	, RestManagerImpl
-	, QueryStore
 	, Notification
 	, _IngestData
 	, _Report
@@ -179,10 +177,6 @@ define([
 			//	tags:
 			//		private
 
-			new QueryStore({
-				parentChannel: this.ownChannel
-			});
-
 			new RestManagerImpl({
 				parentChannel: this.ownChannel
 			});
@@ -306,7 +300,6 @@ define([
 			this._publish(this._buildChannel(this.storeChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.managerChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.queryStoreChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.taskChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.socketChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.notificationChannel, this.actions.DESTROY));

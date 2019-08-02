@@ -40,6 +40,14 @@ define([
 					]
 				}
 			}, this.browserConfig || {}]);
+		},
+
+		_removeCallback: function(item) {
+
+			this._emitEvt('REMOVE', {
+				target: this.editionTarget,
+				id: item.id
+			});
 		}
 	});
 });

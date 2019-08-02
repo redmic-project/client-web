@@ -1,9 +1,6 @@
 define([
 	'd3/d3.min'
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
-	, "dojo/dom-geometry"
-	, "dojo/dom-style"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "put-selector/put"
@@ -13,10 +10,7 @@ define([
 	, "./_ChartsContainerItfc"
 ], function(
 	d3
-	, ContentPane
 	, declare
-	, domGeom
-	, style
 	, lang
 	, Deferred
 	, put
@@ -24,7 +18,8 @@ define([
 	, _Module
 	, _Show
 	, _ChartsContainerItfc
-){
+) {
+
 	return declare([_Module, _Show, _ChartsContainerItfc], {
 		//	summary:
 		//		Módulo para visualizar gráficas por capas.

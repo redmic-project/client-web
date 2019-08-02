@@ -4,7 +4,6 @@ define([
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/map/Atlas"
@@ -14,11 +13,11 @@ define([
 	, Controller
 	, Layout
 	, redmicConfig
-	, ContentPane
 	, declare
 	, lang
 	, Atlas
-){
+) {
+
 	return declare([Layout, Controller], {
 		//	summary:
 		//		Proporciona un contenedor para los mapas de Leaflet.

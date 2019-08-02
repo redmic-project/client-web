@@ -58,12 +58,6 @@ define([
 				channel : this.getChannel("CLEAR_SELECTION"),
 				callback: "_subClearSelection"
 			},{
-				channel : this.getChannel("SELECT_ALL"),
-				callback: "_subSelectAll"
-			},{
-				channel : this.getChannel("REVERSE"),
-				callback: "_subReverse"
-			},{
 				channel : this.getChannel("TOTAL"),
 				callback: "_subTotal"
 			});
@@ -87,14 +81,6 @@ define([
 				event: 'CLEAR_SELECTION',
 				channel: this.getChannel("SELECTION_CLEARED"),
 				callback: "_pubSelectionCleared"
-			},{
-				event: 'SELECT_ALL',
-				channel: this.getChannel("SELECTED_ALL"),
-				callback: "_pubSelectedAll"
-			},{
-				event: 'REVERSED',
-				channel: this.getChannel("REVERSED"),
-				callback: "_pubReversed"
 			},{
 				event: 'TOTAL',
 				channel: this.getChannel("TOTAL_AVAILABLE"),
@@ -376,34 +362,6 @@ define([
 				this.selections[target].items[itemPath] = true;
 				this.selections[target].total++;
 			}
-		},
-
-		_subSelectAll: function(request) {
-
-			this._emitSelectionTargetLoading(request.selectionTarget);
-			this._selectAll(request);
-		},
-
-		_pubSelectedAll: function(channel, item) {
-
-			this._publish(channel, {
-				success: true,
-				body: item
-			});
-		},
-
-		_subReverse: function(request) {
-
-			this._emitSelectionTargetLoading(request.selectionTarget);
-			this._reverse(request);
-		},
-
-		_pubReversed: function(channel, item) {
-
-			this._publish(channel, {
-				success: true,
-				body: item
-			});
 		},
 
 		_subTotal: function(request) {

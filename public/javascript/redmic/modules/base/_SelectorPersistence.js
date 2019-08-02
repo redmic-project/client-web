@@ -57,38 +57,6 @@ define([
 			}
 		},
 
-		_selectAll: function(response) {
-
-			if (!response || !response.selectionTarget) {
-				return;
-			}
-
-			this.currentAction[response.selectionTarget] = this.actions.SELECT_ALL;
-			this._emitEvt('REQUEST_QUERY', {target: response.selectionTarget});
-		},
-
-		_reverse: function(response) {
-
-			if (!response || !response.selectionTarget) {
-				return;
-			}
-
-			this.currentAction[response.selectionTarget] = this.actions.REVERSE;
-			this.currentItems[response.selectionTarget] = this.selections[response.selectionTarget] ?
-				Object.keys(this.selections[response.selectionTarget].items) : {};
-
-			this._emitEvt('REQUEST_QUERY', {target: response.selectionTarget});
-		},
-
-		_subAvailableQuery: function(response) {
-
-			if (this.currentAction[response.target]) {
-				var select = this._getDataToSave(this.currentAction[response.target], null, response.target);
-				select.data.query = response.query;
-				this._emitSave(select);
-			}
-		},
-
 		_emitSave: function(obj) {
 
 			this._emitEvt('SAVE', obj);
@@ -145,31 +113,6 @@ define([
 				this._clearSelection(this._getTargetBase(resp.target));
 				return;
 			}
-
-			if (resp.action === this.actions.SELECT_ALL) {
-				this._selectAllAction(resp.ids, resp.target);
-				return;
-			}
-
-			if (resp.action === this.actions.REVERSE) {
-				this._reverseAction(resp.ids, resp.target);
-				return;
-			}
-		},
-
-		_selectAllAction: function(ids, target) {
-
-			var baseTarget = this._getTargetBase(target);
-			this._selectedAll(ids, baseTarget);
-			this._emitEvt('SELECT_ALL');
-		},
-
-		_reverseAction: function(ids, target) {
-
-			var baseTarget = this._getTargetBase(target);
-			this._clearSelection(baseTarget);
-			this._selectedAll(ids, baseTarget);
-			this._emitEvt('REVERSED');
 		},
 
 		_getTarget: function(target) {

@@ -153,14 +153,6 @@ define([
 				channel: this._buildChannel(selectorChannel, this.actions.CLEAR_SELECTION),
 				callback: "_pubClearSelection"
 			},{
-				event: 'SELECT_ALL',
-				channel: this._buildChannel(selectorChannel, this.actions.SELECT_ALL),
-				callback: "_pubSelectAll"
-			},{
-				event: 'REVERSE',
-				channel: this._buildChannel(selectorChannel, this.actions.REVERSE),
-				callback: "_pubReverse"
-			},{
 				event: 'TOTAL',
 				channel: this._buildChannel(selectorChannel, this.actions.TOTAL),
 				callback: "_pubGetTotal"
@@ -291,20 +283,6 @@ define([
 		_subClearSelection: function(req) {
 
 			this._emitEvt("CLEAR_SELECTION");
-		},
-
-		_pubSelectAll: function(channel) {
-
-			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget()
-			});
-		},
-
-		_pubReverse: function(channel) {
-
-			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget()
-			});
 		},
 
 		_getSelectionTarget: function() {

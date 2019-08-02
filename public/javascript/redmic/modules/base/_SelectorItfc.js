@@ -18,9 +18,7 @@ define([
 
 			return lang.mixin(this.inherited(arguments), {
 				"_emitSave": {},
-				"_groupSelected": {},
-				"_selectAll": {},
-				"_reverse": {}
+				"_groupSelected": {}
 			});
 		}
 	});

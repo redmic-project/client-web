@@ -16,8 +16,6 @@ define([
 		//	summary:
 		//		Lógica necesaria para hacer persistente la selección de elementos (usando un servicio remoto).
 
-		currentAction: {},
-		currentItems: {},
 		target: [],
 
 		selectionTargetSuffix: "/_selection",

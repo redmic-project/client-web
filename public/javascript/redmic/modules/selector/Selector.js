@@ -5,9 +5,9 @@ define([
 	, "dojo/promise/all"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_SelectionBase"
-	, "redmic/modules/base/_SelectorItfc"
-	, "redmic/modules/base/_SelectorPersistence"
 	, "RWidgets/Utilities"
+	, "./_SelectorItfc"
+	, "./_SelectorPersistence"
 ], function(
 	declare
 	, lang
@@ -15,11 +15,12 @@ define([
 	, all
 	, _Module
 	, _SelectionBase
+	, Utilities
 	, _SelectorItfc
 	, _SelectorPersistence
-	, Utilities
-){
-	return declare([_Module, _SelectionBase, _SelectorItfc, _SelectorPersistence], {
+) {
+
+	return declare([_Module, _SelectionBase, _SelectorPersistence, _SelectorItfc], {
 		//	summary:
 		//		Módulo de selección global y persistente.
 		//	description:

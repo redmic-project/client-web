@@ -10,7 +10,8 @@ define([
 	, aspect
 	, _Selection
 	, put
-){
+) {
+
 	return declare(_Selection, {
 		//	summary:
 		//		Extensión para añadir selection al la vista de detalles
@@ -87,20 +88,6 @@ define([
 
 			this._selectItem = false;
 			this._checkBoxNode.setAttribute("class", this._classDefaultSelection + "square-o");
-		},
-
-		_getItemToSelect: function(ids) {
-
-			return {
-				items: ids
-			};
-		},
-
-		_getItemToDeselect: function(ids) {
-
-			return {
-				items: ids
-			};
 		}
 	});
 });

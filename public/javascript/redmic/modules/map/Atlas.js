@@ -56,7 +56,8 @@ define([
 	, LoadingCustom
 	, serviceOGCList
 	, templateDetails
-){
+) {
+
 	return declare([_Module, _Show, _Store, _Selection], {
 		//	summary:
 		//		Módulo de Atlas.
@@ -835,13 +836,6 @@ define([
 					description: this.i18n.noLegendAvailable
 				});
 			}
-		},
-
-		_getItemToDeselect: function(ids) {
-
-			return {
-				items: ids
-			};
 		}
 	});
 });

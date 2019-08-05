@@ -296,18 +296,22 @@ define([
 
 		_pubSelect: function(channel, ids) {
 
-			when(this._getItemToSelect(ids), lang.hitch(this, function(obj) {
-				obj.selectionTarget = this._getSelectionTarget();
-				this._publish(channel, obj);
-			}));
+			var obj = {
+				items: ids,
+				selectionTarget: this._getSelectionTarget()
+			};
+
+			this._publish(channel, obj);
 		},
 
 		_pubDeselect: function(channel, ids) {
 
-			when(this._getItemToDeselect(ids), lang.hitch(this, function(obj) {
-				obj.selectionTarget = this._getSelectionTarget();
-				this._publish(channel, obj);
-			}));
+			var obj = {
+				items: ids,
+				selectionTarget: this._getSelectionTarget()
+			};
+
+			this._publish(channel, obj);
 		},
 
 		_pubGroupSelected: function(channel) {

@@ -89,11 +89,7 @@ define([
 
 		_chkRequestHasTarget: function(request) {
 
-			if (!request || !request.target) {
-				return false;
-			}
-
-			return true;
+			return request && request.target;
 		},
 
 		_subRequest: function(req) {

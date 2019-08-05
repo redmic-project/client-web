@@ -96,18 +96,6 @@ define([
 						'callback': '_clearSelectionButtonCallback',
 						'condition': lang.hitch(this, this._isShowItem)
 					},{
-						'label': this.i18n.selectAll,
-						'value': 'selectAll',
-						'icon': 'fa-check',
-						'callback': '_selectAllButtonCallback',
-						'condition': lang.hitch(this, this._isShowItem)
-					},{
-						'label': this.i18n.reverseSelection,
-						'value': 'reverseSelection',
-						'icon': 'fa-exchange',
-						'callback': '_reverseSelectionButtonCallback',
-						'condition': lang.hitch(this, this._isShowItem)
-					},{
 						'label': this.i18n.restoreSelection,
 						'value': 'restoreSelection',
 						'icon': 'fa-cloud-download',
@@ -240,11 +228,6 @@ define([
 			this._publish(this.loadSelection.getChannel("HIDE"));
 		},
 
-		_getNodeToShow: function() {
-
-			return this.domNode;
-		},
-
 		_subRefresh: function(request) {
 			//	summary:
 			//		Se ejecuta cada vez que se cambia la vista principal para refescar
@@ -276,20 +259,12 @@ define([
 
 		_isShowItem: function(item) {
 
-			if (!this.itemsShow || (this.itemsShow && this.itemsShow[item.value])) {
-				return true;
-			}
-
-			return false;
+			return !this.itemsShow || (this.itemsShow && this.itemsShow[item.value]);
 		},
 
 		_exitsPermsCorrect: function(item) {
 
-			if (this.perms > 1 && this._isShowItem(item)) {
-				return true;
-			}
-
-			return false;
+			return this.perms > 1 && this._isShowItem(item);
 		},
 
 		_select: function(item, total) {
@@ -502,34 +477,6 @@ define([
 					category: TRACK.category.button,
 					action: TRACK.action.click,
 					label: "clearSelection"
-				}
-			});
-		},
-
-		_selectAllButtonCallback: function() {
-
-			this._emitEvt('SELECT_ALL');
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "selectAll"
-				}
-			});
-		},
-
-		_reverseSelectionButtonCallback: function() {
-
-			this._emitEvt('REVERSE');
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "reverseSelection"
 				}
 			});
 		}

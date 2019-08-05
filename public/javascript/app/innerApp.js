@@ -8,7 +8,7 @@ define([
 	, 'dojo/on'
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
-	, 'redmic/modules/base/Selector'
+	, 'redmic/modules/selector/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
 	, 'redmic/modules/store/RestManagerImpl'
 	, 'redmic/modules/notification/Notification'

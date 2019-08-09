@@ -56,18 +56,18 @@ define([
 
 		_defineSubscriptions: function () {
 
-			var options = {
-				predicate: lang.hitch(this, this._chkTargetAndRequester)
-			};
-
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("SAVE"),
 				callback: "_subSave",
-				options: options
+				options: {
+					predicate: lang.hitch(this, this._chkValidSaveRequest)
+				}
 			},{
 				channel : this.getChannel("REMOVE"),
 				callback: "_subRemove",
-				options: options
+				options: {
+					predicate: lang.hitch(this, this._chkValidRemoveRequest)
+				}
 			});
 		},
 
@@ -82,12 +82,18 @@ define([
 			});
 		},
 
-		_subSave: function(/*Object*/ req) {
+		_chkValidSaveRequest: function(req) {
 
-			if (!req || !req.target || !req.item || (!req.idProperty && !req.idInTarget)) {
-				console.warn("Faltan parámetros");
-				return;
+			var condition = req && req.target && req.data;
+
+			if (!condition) {
+				console.error('Invalid save request at module "%s": %O', this.getChannel(), req);
 			}
+
+			return condition;
+		},
+
+		_subSave: function(/*Object*/ req) {
 
 			this._save(req);
 		},
@@ -101,7 +107,7 @@ define([
 
 			envDfd.then(lang.hitch(this, function(req, envData) {
 
-				var data = req.item,
+				var data = req.data,
 					id = data[req.idProperty],
 					idInTarget = req.idInTarget,
 					target = redmicConfig.getServiceUrl(req.target, envData) + "/";
@@ -119,12 +125,18 @@ define([
 			}, req));
 		},
 
-		_subRemove: function(/*Object*/ req) {
+		_chkValidRemoveRequest: function(req) {
 
-			if (!req || !req.target || !req.id) {
-				console.warn("Faltan parámetros");
-				return;
+			var condition = req && req.target && req.id;
+
+			if (!condition) {
+				console.error('Invalid remove request at module "%s": %O', this.getChannel(), req);
 			}
+
+			return condition;
+		},
+
+		_subRemove: function(/*Object*/ req) {
 
 			this._remove(req);
 		},

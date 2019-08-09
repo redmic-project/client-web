@@ -71,10 +71,10 @@ define([
 
 			this._emitEvt('REQUEST', {
 				target: this.target,
-				type: "API",
-				options: {
-					sort: [{ attribute: "id", descending: true }]
-				}
+				sort: [{
+					attribute: "id",
+					descending: true
+				}]
 			});
 		}
 	});

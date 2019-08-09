@@ -34,11 +34,12 @@ module.exports = function(args) {
 				// Módulos
 				, suitesPrefix + 'redmic/base/testMediator'
 				, suitesPrefix + 'redmic/modules/base/test_Module'
+				, suitesPrefix + 'redmic/modules/store/testRestManager'
 				, suitesPrefix + 'redmic/modules/store/testPersistence'
 				, suitesPrefix + 'redmic/modules/layout/wizard/testWizard'
 				, suitesPrefix + 'redmic/modules/model/testModelImpl'
 				, suitesPrefix + 'redmic/modules/tree/testTree'
-				, suitesPrefix + 'redmic/modules/base/testSelector'
+				, suitesPrefix + 'redmic/modules/selector/testSelector'
 				, suitesPrefix + 'redmic/modules/gateway/testGateway'
 				, suitesPrefix + 'redmic/modules/chart/ChartsContainer/testInfoChartsContainerImpl'
 				, suitesPrefix + 'redmic/modules/chart/layer/ChartLayer/testLinearChartImpl'
@@ -60,7 +61,6 @@ module.exports = function(args) {
 				suitesPrefix + 'redmic/store/testQueryStore'
 
 				// Módulos
-				, suitesPrefix + 'redmic/modules/store/testMasterStore'
 				, suitesPrefix + 'redmic/modules/layout/details/testDetails'
 				, suitesPrefix + 'redmic/modules/form/testForm'
 				, suitesPrefix + 'redmic/modules/search/testSearch'

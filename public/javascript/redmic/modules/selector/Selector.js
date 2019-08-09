@@ -68,24 +68,19 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'SELECT',
-				channel: this.getChannel("SELECTED"),
-				callback: "_pubSelected"
+				channel: this.getChannel("SELECTED")
 			},{
 				event: 'DESELECT',
-				channel: this.getChannel("DESELECTED"),
-				callback: "_pubDeselected"
+				channel: this.getChannel("DESELECTED")
 			},{
 				event: 'GROUP_SELECTED',
-				channel: this.getChannel("SELECTED_GROUP"),
-				callback: "_pubSelectedGroup"
+				channel: this.getChannel("SELECTED_GROUP")
 			},{
 				event: 'CLEAR_SELECTION',
-				channel: this.getChannel("SELECTION_CLEARED"),
-				callback: "_pubSelectionCleared"
+				channel: this.getChannel("SELECTION_CLEARED")
 			},{
 				event: 'TOTAL',
-				channel: this.getChannel("TOTAL_AVAILABLE"),
-				callback: "_pubTotal"
+				channel: this.getChannel("TOTAL_AVAILABLE")
 			},{
 				event: 'SELECTION_TARGET_LOADING',
 				channel: this.getChannel("SELECTION_TARGET_LOADING")
@@ -98,7 +93,7 @@ define([
 		_subSelect: function(request) {
 
 			var items = request.items,
-				target = request.selectionTarget;
+				target = request.target;
 
 			this._emitSelectionTargetLoading(target);
 			this._initializeSelection(target);
@@ -152,24 +147,17 @@ define([
 				this._emitEvt('SELECT', {
 					ids: actualResults,
 					total: this._getTotal(target),
-					selectionTarget: target
+					target: target
 				});
 			} else {
 				this._emitSelectionTargetLoaded(target);
 			}
 		},
 
-		_pubSelected: function(channel, item) {
-
-			this._publish(channel, {
-				success: true,
-				body: item
-			});
-		},
-
 		_selectedAll: function(ids, target) {
 
 			var obj = ids.reduce(function(o, v, i) {
+
 				o[v] = 't';
 				return o;
 			}, {});
@@ -181,14 +169,14 @@ define([
 			this._emitEvt('SELECT', {
 				ids: ids,
 				total: ids.length,
-				selectionTarget: target
+				target: target
 			});
 		},
 
 		_subDeselect: function(request) {
 
 			var items = request.items,
-				target = request.selectionTarget;
+				target = request.target;
 
 			this._emitSelectionTargetLoading(target);
 			this._initializeSelection(target);
@@ -241,7 +229,7 @@ define([
 				this._emitEvt('DESELECT', {
 					ids: deselectedIds,
 					total: this._getTotal(target),
-					selectionTarget: target
+					target: target
 				});
 			} else {
 				this._emitSelectionTargetLoaded(target);
@@ -263,38 +251,10 @@ define([
 			return this.selections && this.selections[target] ? this.selections[target] : {};
 		},
 
-		_pubDeselected: function(channel, item) {
-
-			this._publish(channel, {
-				success: true,
-				body: item
-			});
-		},
-
 		_subGroupSelected: function(request) {
 
-			this._emitSelectionTargetLoading(request.selectionTarget);
+			this._emitSelectionTargetLoading(request.target);
 			this._groupSelected(request);
-		},
-
-		_pubSelectedGroup: function(channel, evt) {
-
-			var items = evt[0],
-				target = evt[1],
-				requesterId = evt[2],
-				objToPublish = {
-					success: true,
-					body: {
-						selection: items,
-						selectionTarget: target
-					}
-				};
-
-			if (requesterId) {
-				objToPublish.body.requesterId = requesterId;
-			}
-
-			this._publish(channel, objToPublish);
 		},
 
 		_subClearSelection: function(request) {
@@ -304,14 +264,17 @@ define([
 
 		_clearSelectionSave: function(request) {
 
-			this._emitSelectionTargetLoading(request.selectionTarget);
-			this._emitSave(this._getDataToSave(this.actions.CLEAR_SELECTION, null, request.selectionTarget));
+			this._emitSelectionTargetLoading(request.target);
+			this._emitSave(this._getDataToSave(this.actions.CLEAR_SELECTION, null, request.target));
 		},
 
 		_clearSelection: function(target) {
 
 			this._resetSelection(target);
-			this._emitEvt('CLEAR_SELECTION', target);
+
+			this._emitEvt('CLEAR_SELECTION', {
+				target: target
+			});
 		},
 
 		_initializeSelection: function(target) {
@@ -323,26 +286,15 @@ define([
 
 		_resetSelection: function(target) {
 
-			this.selections[target] = {items: {}, total: 0};
-		},
-
-		_pubSelectionCleared: function(channel, target) {
-
-			this._publish(channel, {
-				success: true,
-				body: {
-					selectionTarget: target
-				}
-			});
+			this.selections[target] = {
+				items: {},
+				total: 0
+			};
 		},
 
 		_isSelected: function(itemPath, target) {
 
-			if (!this._getItems(target)[itemPath]) {
-				return false;
-			}
-
-			return true;
+			return this._getItems(target)[itemPath];
 		},
 
 		_deselectById: function(itemPath, target) {
@@ -365,40 +317,34 @@ define([
 			}
 		},
 
-		_subTotal: function(request) {
+		_subTotal: function(req) {
 
-			if (!request || !request.selectionTarget) {
+			if (!req || !req.target) {
 				return;
 			}
 
-			var target = request.selectionTarget;
+			var target = req.target,
+				selection = this.selections[target],
+				total = selection ? selection.total : null;
+
 			this._emitEvt('TOTAL', {
-				selectionTarget: target,
-				total: this.selections[target] ?
-					this.selections[target].total : 0,
-				requesterId: request.requesterId
-			});
-		},
-
-		_pubTotal: function(channel, item) {
-
-			this._publish(channel, {
-				success: true,
-				body: item
+				target: target,
+				total: total || 0,
+				requesterId: req.requesterId
 			});
 		},
 
 		_emitSelectionTargetLoading: function(selectionTarget) {
 
 			this._emitEvt('SELECTION_TARGET_LOADING', {
-				selectionTarget: selectionTarget
+				target: target
 			});
 		},
 
 		_emitSelectionTargetLoaded: function(selectionTarget) {
 
 			this._emitEvt('SELECTION_TARGET_LOADED', {
-				selectionTarget: selectionTarget
+				target: target
 			});
 		}
 	});

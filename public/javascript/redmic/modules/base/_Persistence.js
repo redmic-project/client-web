@@ -8,12 +8,11 @@ define([
 	, lang
 	, aspect
 	, Persistence
-){
+) {
+
 	return declare(null, {
 		//	summary:
-		//		Base común para todos los módulos con persistenicia de datos.
-		//	description:
-		//		Aporta la funcionalidad de pedir y obtener datos al módulo que extiende de él.
+		//		Permite a los módulos realizar persistencia de datos, comunicándose con RestManager.
 
 		persistenceEvents: {
 			SAVE: "save",
@@ -25,8 +24,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				idProperty: "id",
-				notificationSuccess: true
+				idProperty: "id"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -35,6 +33,7 @@ define([
 			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixEventsAndActionsPersistence));
 			aspect.after(this, "_defineSubscriptions",
 				lang.hitch(this, this._definePersistenceSubscriptions));
+
 			aspect.after(this, "_definePublications",
 				lang.hitch(this, this._definePersistencePublications));
 		},
@@ -61,8 +60,8 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'SAVE',
-				channel: this.persistence.getChannel("SAVE"),
-				callback: "_pubSave"
+				channel: this.persistence.getChannel("SAVE")/*,
+				callback: "_pubSave"*/
 			});
 
 			this._deleteDuplicatedChannels(this.publicationsConfig);
@@ -76,9 +75,10 @@ define([
 			});
 		},
 
-		_pubSave: function(channel, obj) {
+		/*_pubSave: function(channel, obj) {
 
-			var target = this._getPersistenceTarget(obj.target);
+			var target = this._getTarget(obj.target);
+			//var target = this._getPersistenceTarget(obj.target);
 
 			this._publish(channel, {
 				idInTarget: obj.idInTarget,
@@ -88,8 +88,10 @@ define([
 			});
 		},
 
-		_getPersistenceTarget: function(target) {
+		_getTarget: function(target) {
+		//_getPersistenceTarget: function(target) {
 
+			console.debug('JAMAS DE LOS JAMASES')
 			if (target) {
 				return target;
 			}
@@ -107,7 +109,7 @@ define([
 			}
 
 			return this.editionTarget || this.target;
-		},
+		},*/
 
 		_subSaved: function(result) {
 

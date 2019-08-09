@@ -17,41 +17,41 @@ define([
 		//		Lógica necesaria para hacer persistente la selección de elementos (usando un servicio remoto).
 
 		target: [],
-
-		selectionTargetSuffix: "/_selection",
-
-		constructor: function(args) {
-
-			this.notificationSuccess = false;
-		},
+		selectionTargetSuffix: '/_selection',
+		notificationSuccess: false,
 
 		_groupSelected: function(req) {
 
-			var target = req.selectionTarget,
-				selectIds = Credentials.get("selectIds");
+			var target = req.target,
+				selectIds = this._getSelectionIds(),
+				selectionId = target && selectIds && selectIds[target];
 
 			this._initializeSelection(target);
 
-			if (target && selectIds && selectIds[target]) {
+			if (selectionId) {
 				this._emitEvt('GET', {
 					target: this._getTarget(target),
-					id: selectIds[target],
+					id: selectionId,
 					options: {},
 					requesterId: this.getOwnChannel()
 				});
 			} else {
-				this._emitEvt('GROUP_SELECTED', [this.selections[target].items, target]);
+				var selection = this.selections[target],
+					selectionItems = selection && selection.items;
+
+				this._emitEvt('GROUP_SELECTED', {
+					selection: selectionItems,
+					target: target
+				});
 			}
 		},
 
-		_itemAvailable: function(response) {
+		_itemAvailable: function(res) {
 
-			if (response.target) {
-				var targetBase = this._getTargetBase(response.target);
+			var targetBase = this._getTargetBase(res.target);
 
-				if (this.selections[targetBase] && response.data && response.data.ids) {
-					this._selectedAll(response.data.ids, targetBase);
-				}
+			if (this.selections[targetBase] && response.data && response.data.ids) {
+				this._selectedAll(response.data.ids, targetBase);
 			}
 		},
 
@@ -71,7 +71,7 @@ define([
 				target: target
 			};
 
-			var selectIds = Credentials.get("selectIds");
+			var selectIds = this._getSelectionIds();
 
 			if (selectIds && selectIds[target]) {
 				obj.data.id = selectIds[target];
@@ -88,14 +88,14 @@ define([
 			}
 
 			var resp = result.body,
-				selectIds = Credentials.get("selectIds");
+				selectIds = this._getSelectionIds();
 
 			if (!selectIds) {
 				selectIds = {};
 			}
 
 			selectIds[this._getTargetBase(resp.target)] = resp.id;
-			Credentials.set("selectIds", selectIds);
+			this._setSelectionIds(selectIds);
 
 			if (resp.action === this.actions.SELECT) {
 				this._select(resp.ids, this._getTargetBase(resp.target));
@@ -137,7 +137,7 @@ define([
 
 		_errorSelectionTargetNotExits: function(res) {
 
-			var selectIds = Credentials.get("selectIds"),
+			var selectIds = this._getSelectionIds(),
 				target = this._getTargetBase(this._cleanTrailingSlash(res.error.target));
 
 			if (!selectIds) {
@@ -146,9 +146,19 @@ define([
 
 			delete selectIds[target];
 
-			Credentials.set("selectIds", selectIds);
+			this._setSelectionIds(selectIds);
 
 			this._emitSelectionTargetLoaded(target);
+		},
+
+		_getSelectionIds: function() {
+
+			return Credentials.get("selectIds");
+		},
+
+		_setSelectionIds: function(selectionIds) {
+
+			Credentials.set("selectIds", selectionIds);
 		}
 	});
 });

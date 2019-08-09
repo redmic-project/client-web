@@ -39,18 +39,18 @@ define([
 			return false;
 		},
 
-		_chkTargetIsMine: function(response) {
+		_chkTargetIsValid: function(obj) {
 
-			if (!this._chkSuccessful(response)) {
-				return false;
-			}
+			// TODO eliminar cuando el server no responda con envoltorio body
+			var data = obj.body || obj;
+			return data && data.target;
+		},
 
-			var body = response.body;
-			if (body && body.target && !this._targetIsMine(body.target)) {
-				return false;
-			}
+		_chkTargetIsMine: function(res) {
 
-			return true;
+			// TODO eliminar cuando el server no responda con envoltorio body
+			var response = res.body || res;
+			return this._chkTargetIsValid(res) && this._targetIsMine(response.target);
 		},
 
 		_chkErrorTargetIsMine: function(response) {
@@ -76,25 +76,20 @@ define([
 			}
 
 			if (this.target instanceof Array) {
-				return (this.target.indexOf(target) !== -1 || this.target.indexOf(cleanTarget) !== -1);
+				return this.target.indexOf(target) !== -1 || this.target.indexOf(cleanTarget) !== -1;
 			}
 
-			return (this.target === target || this.target === cleanTarget);
+			return this.target === target || this.target === cleanTarget;
 		},
 
-		_chkRequesterIsMe: function(response) {
+		_chkRequesterIsMe: function(res) {
 
-			if (!this._chkSuccessful(response)) {
-				return false;
-			}
+			// TODO eliminar cuando el server no responda con envoltorio body
+			var response = res.body || res;
+			var requesterId = response && response.requesterId;
 
-			var body = response.body;
-			if (body && body.requesterId && ((body.requesterId !== this.getOwnChannel()) &&
-				(this.associatedIds.indexOf(body.requesterId) < 0))) {
-				return false;
-			}
-
-			return true;
+			return !requesterId || (requesterId === this.getOwnChannel() ||
+				this.associatedIds.indexOf(requesterId) !== -1);
 		},
 
 		_chkErrorRequesterIsMe: function(response) {

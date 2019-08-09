@@ -1,25 +1,32 @@
 define([
-	'dojo/_base/declare'
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'redmic/modules/base/_Module'
+	, './_RestManagerItfc'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, _Module
-){
-	return declare(_Module, {
+	, _RestManagerItfc
+) {
+
+	return declare([_Module, _RestManagerItfc], {
 		//	summary:
 		//		Módulo encargado de la entrada/salida con respecto a servicios externos.
 		//	description:
-		//		Permite manejar las peticiones de datos y su respuesta.
+		//		Permite manejar las peticiones de datos y su respuesta, así como las operaciones de escritura y borrado.
 
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: 'data',
 				events: {
 					GET: 'get',
 					REQUEST: 'request',
-					REQUEST_QUERY: 'requestQuery',
+					SAVE: 'save',
+					REMOVE: 'remove',
 					TARGET_LOADING: 'targetLoading',
 					TARGET_LOADED: 'targetLoaded'
 				},
@@ -30,11 +37,15 @@ define([
 					ITEM_AVAILABLE: 'itemAvailable',
 					INJECT_DATA: 'injectData',
 					INJECT_ITEM: 'injectItem',
-					AVAILABLE_QUERY: 'availableQuery',
+					SAVE: 'save',
+					SAVED: 'saved',
+					REMOVE: 'remove',
+					REMOVED: 'removed',
 					TARGET_LOADING: 'targetLoading',
 					TARGET_LOADED: 'targetLoaded'
 				},
-				ownChannel: 'data',
+
+				// TODO esto quizá no debería ir aquí, sino en el comunicador de errores
 				defaultErrorDescription: 'Error',
 				defaultErrorCode: '0'
 			};
@@ -45,7 +56,7 @@ define([
 		_defineSubscriptions: function () {
 
 			var options = {
-				predicate: lang.hitch(this, this._chkRequestHasTarget)
+				predicate: lang.hitch(this, this._chkTargetIsValid)
 			};
 
 			this.subscriptionsConfig.push({
@@ -64,6 +75,24 @@ define([
 				channel : this.getChannel('INJECT_ITEM'),
 				callback: '_subInjectItem',
 				options: options
+			},{
+				channel : this.getChannel('SAVE'),
+				callback: '_subSave',
+				options: {
+					predicate: lang.hitch(this, function(req) {
+
+						return this._chkTargetIsValid(req) && this._chkValidSaveRequest(req);
+					})
+				}
+			},{
+				channel : this.getChannel('REMOVE'),
+				callback: '_subRemove',
+				options: {
+					predicate: lang.hitch(this, function(req) {
+
+						return this._chkTargetIsValid(req) && this._chkValidRemoveRequest(req);
+					})
+				}
 			});
 		},
 
@@ -76,174 +105,111 @@ define([
 				event: 'REQUEST',
 				channel: this.getChannel('AVAILABLE')
 			},{
+				event: 'SAVE',
+				channel: this.getChannel('SAVED')
+			},{
+				event: 'REMOVE',
+				channel: this.getChannel('REMOVED')
+			},{
 				event: 'TARGET_LOADING',
 				channel: this.getChannel('TARGET_LOADING')
 			},{
 				event: 'TARGET_LOADED',
 				channel: this.getChannel('TARGET_LOADED')
-			},{
-				event: 'REQUEST_QUERY',
-				channel: this.getChannel('AVAILABLE_QUERY')
-			});
-		},
-
-		_chkRequestHasTarget: function(request) {
-
-			return request && request.target;
-		},
-
-		_subRequest: function(req) {
-
-			this._emitTargetLoadingState('TARGET_LOADING', req.target, req.requesterId, 'request');
-
-			this._getEnvironmentData(lang.hitch(this, this._doRequest, req));
-		},
-
-		_emitTargetLoadingState: function(event, target, requesterId, type) {
-
-			this._emitEvt(event, {
-				target: target,
-				requesterId: requesterId,
-				type: type
-			});
-		},
-
-		_getEnvironmentData: function(callback) {
-
-			var envDfd = window.env;
-			if (envDfd) {
-				envDfd.then(lang.hitch(this, function(envData) {
-
-					if (!this._evt) {
-						this._evt = envData;
-					}
-					callback && callback();
-				}));
-			}
-		},
-
-		_doRequest: function(req) {
-
-			var target = this._getBuiltTarget(req),
-				method = req.method || 'GET',
-				query = req.query || {},
-				queryString = req.queryString || '',
-				options = req.options || {},
-				queryResult = (method === 'GET') ?
-					this.query(target, query, options) :
-					this.post(target, query, queryString, options);
-
-			queryResult.then(
-				lang.hitch(this, this._emitRequestResults, req),
-				lang.hitch(this, this._emitError, req));
-
-			this._emitEvt('REQUEST_QUERY', {
-				target: req.target,
-				query: query
-			});
-		},
-
-		_emitRequestResults: function(req, res, total) {
-
-			var handledResponse = this._handleResponse(res);
-
-			var responseObj = {
-				target: req.target,
-				requesterId: req.requesterId,
-				total: total
-			};
-
-			lang.mixin(responseObj, handledResponse);
-
-			// TODO suprimir envoltura de respuesta
-			this._emitEvt('REQUEST', {
-				success: true,
-				body: responseObj
-			});
-		},
-
-		_emitError: function(req, err) {
-
-			var target = req.target,
-				requesterId = req.requesterId,
-				handledError = this._handleError(err),
-				data = handledError.data,
-				status = handledError.status;
-
-			this._emitTargetLoadingState('TARGET_LOADED', target/*, requesterId, 'request'*/);
-
-			if (data) {
-				// TODO creo que estos valores por defecto deberían ponerse donde se escuchan, no aquí
-				if (!data.code) {
-					data.code = this.defaultErrorCode;
-				}
-				if (!data.description) {
-					data.description = this.defaultErrorDescription/* + ' ' + (data.code || '')*/;
-				}
-			}
-
-			this._emitEvt('COMMUNICATION', {
-				type: 'alert',
-				level: 'error',
-				description: data ? data.description : this.defaultErrorDescription
-			});
-
-			var responseObj = {
-				target: target,
-				requesterId: requesterId
-			};
-
-			lang.mixin(responseObj, {
-				error: data,
-				status: status
-			});
-
-			this._emitEvt('REQUEST', {
-				success: false,
-				error: responseObj
 			});
 		},
 
 		_subGet: function(req) {
-
-			this._emitTargetLoadingState('TARGET_LOADING', req.target, req.requesterId, 'get');
 
 			this._getEnvironmentData(lang.hitch(this, this._doGet, req));
 		},
 
 		_doGet: function(req) {
 
-			var target = this._getSafeTarget(req.target),
-				result = this.get(target, req.id, req.options);
+			this._emitLoading(req);
 
-			result.then(
-				lang.hitch(this, this._emitGetResults, req),
-				lang.hitch(this, this._emitError, req));
+			var target = this._getResolvedTarget(req.target);
+
+			this._getRequest(target, req).then(
+				lang.hitch(this, this._handleGetSuccess, req),
+				lang.hitch(this, this._handleGetError, req));
 		},
 
-		_emitGetResults: function(req, res) {
+		_handleGetSuccess: function(req, res) {
 
-			var handledResponse = this._handleResponse(res);
+			var response = this._parseResponse(res);
 
-			var responseObj = {
-				target: req.target,
-				requesterId: req.requesterId
-			};
+			this._emitResponse({
+				req: req,
+				res: response,
+				evtName: 'GET'
+			});
+		},
 
-			lang.mixin(responseObj, handledResponse);
+		_handleGetError: function(req, res) {
 
-			// TODO suprimir envoltura de respuesta
-			var getResponse = {
-				success: true,
-				body: responseObj
-			};
+			var response = this._parseError(res);
 
-			// TODO creo que mejor no hacer esto aquí de forma genérica, sino tratar la respuesta donde se desee
-			if (req.noSetTotal) {
-				getResponse.body.noSetTotal = true;
+			this._emitError(response);
+
+			this._emitResponse({
+				req: req,
+				res: response,
+				evtName: 'GET'
+			});
+		},
+
+		_subRequest: function(req) {
+
+			this._getEnvironmentData(lang.hitch(this, this._doRequest, req));
+		},
+
+		_doRequest: function(req) {
+
+			this._emitLoading(req);
+
+			var target = this._getResolvedTarget(req.target);
+
+			this._requestRequest(target, req).then(
+				lang.hitch(this, this._handleRequestSuccess, req),
+				lang.hitch(this, this._handleRequestError, req));
+		},
+
+		_handleRequestSuccess: function(req, res) {
+
+			var response = this._parseResponse(res);
+
+			this._emitResponse({
+				req: req,
+				res: response,
+				evtName: 'REQUEST'
+			});
+		},
+
+		_handleRequestError: function(req, res) {
+
+			var response = this._parseError(res);
+
+			this._emitError(response);
+
+			this._emitResponse({
+				req: req,
+				res: response,
+				evtName: 'REQUEST'
+			});
+		},
+
+		_subInjectItem: function(req) {
+
+			var data = req.data;
+
+			if (!data) {
+				data = [];
 			}
 
-			this._emitEvt('GET', getResponse);
+			this._emitGetResults(req, {
+				data: data
+			});
 		},
 
 		_subInjectData: function(req) {
@@ -261,16 +227,185 @@ define([
 			this._emitRequestResults(req, res, total);
 		},
 
-		_subInjectItem: function(req) {
+		_chkValidSaveRequest: function(req) {
 
-			var data = req.data;
+			var condition = !!req.data;
 
-			if (!data) {
-				data = [];
+			if (!condition) {
+				console.error('Invalid save request at module "%s": %O', this.getChannel(), req);
 			}
 
-			this._emitGetResults(req, {
-				data: data
+			return condition;
+		},
+
+		_subSave: function(req) {
+
+			this._getEnvironmentData(lang.hitch(this, this._doSave, req));
+		},
+
+		_doSave: function(req) {
+
+			this._emitLoading(req);
+
+			var target = this._getResolvedTarget(req.target);
+
+			this._saveRequest(target, req).then(
+				lang.hitch(this, this._handleSaveSuccess, req),
+				lang.hitch(this, this._handleSaveError, req));
+		},
+
+		_handleSaveSuccess: function(req, res) {
+
+			var response = this._parseResponse(res);
+
+			this._emitResponse({
+				target: target,
+				req: req,
+				res: response,
+				evtName: 'SAVE'
+			});
+		},
+
+		_handleSaveError: function(req, res) {
+
+			var response = this._parseError(res);
+
+			console.error(response.error);
+
+			this._emitError(response);
+
+			this._emitResponse({
+				req: req,
+				res: response,
+				evtName: 'SAVE'
+			});
+		},
+
+		_chkValidRemoveRequest: function(req) {
+
+			var condition = !!req.id;
+
+			if (!condition) {
+				console.error('Invalid remove request at module "%s": %O', this.getChannel(), req);
+			}
+
+			return condition;
+		},
+
+		_subRemove: function(req) {
+
+			this._getEnvironmentData(lang.hitch(this, this._doRemove, req));
+		},
+
+		_doRemove: function(req) {
+
+			this._emitLoading(req);
+
+			var target = this._getResolvedTarget(req.target);
+
+			this._removeRequest(target, req).then(
+				lang.hitch(this, this._handleRemoveSuccess, req),
+				lang.hitch(this, this._handleRemoveError, req));
+		},
+
+		_handleRemoveSuccess: function(req, res) {
+
+			var response = this._parseResponse(res);
+
+			this._emitResponse({
+				req: req,
+				res: response,
+				evtName: 'REMOVE'
+			});
+		},
+
+		_handleRemoveError: function(req, res) {
+
+			var response = this._parseError(res);
+
+			this._emitError(response);
+
+			this._emitResponse({
+				req: req,
+				res: response,
+				evtName: 'REMOVE'
+			});
+		},
+
+		_getEnvironmentData: function(callback) {
+
+			if (this._env) {
+				callback && callback();
+				return;
+			}
+
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
+
+					this._env = envData;
+					callback && callback();
+				}));
+			}
+		},
+
+		_getResolvedTarget: function(target) {
+
+			return redmicConfig.getServiceUrl(target, this._env);
+		},
+
+		_emitLoading: function(req) {
+
+			this._emitEvt('TARGET_LOADING', {
+				target: req.target,
+				requesterId: req.requesterId
+			});
+		},
+
+		_emitLoaded: function(req) {
+
+			this._emitEvt('TARGET_LOADED', {
+				target: req.target,
+				requesterId: req.requesterId
+			});
+		},
+
+		// TODO revisar los emit!!!!!!!!!!!
+		_emitResponse: function(params) {
+
+			var target = params.target,
+				req = params.req,
+				res = params.res,
+				evtName = params.evtName;
+
+			var response = lang.mixin({
+				target: req.target,
+				requesterId: req.requesterId
+			}, res);
+
+			this._emitLoaded(req);
+
+			this._emitEvt(evtName, response);
+		},
+
+		_emitError: function(res) {
+
+			var response = res.response,
+				data = errObj.data,
+				status = errObj.status;
+
+			// TODO creo que estos valores por defecto deberían ponerse donde se escuchan, no aquí
+			if (!response.code) {
+				response.code = this.defaultErrorCode;
+			}
+			if (!response.description) {
+				response.description = this.defaultErrorDescription/* + ' ' + (response.code || '')*/;
+			}
+
+			this._emitEvt('COMMUNICATION', {
+				type: 'alert',
+				level: 'error',
+				description: response ? response.description : this.defaultErrorDescription
 			});
 		}
 	});

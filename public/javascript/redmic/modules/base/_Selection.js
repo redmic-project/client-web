@@ -2,17 +2,16 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "dojo/when"
 	, "redmic/modules/base/_SelectionBase"
 	, "redmic/modules/base/_SelectionItfc"
 ], function(
 	declare
 	, lang
 	, aspect
-	, when
 	, _SelectionBase
 	, _SelectionItfc
-){
+) {
+
 	return declare([_SelectionBase, _SelectionItfc], {
 		//	summary:
 		//		Base común para todos los módulos con selección.
@@ -181,11 +180,7 @@ define([
 
 		_chkSelectionTargetAndRequester: function(res) {
 
-			if (this._chkSelectionTargetIsMine(res) && this._chkRequesterIsMe(res)) {
-				return true;
-			}
-
-			return false;
+			return this._chkSelectionTargetIsMine(res) && this._chkRequesterIsMe(res);
 		},
 
 		_subSelected: function(res) {
@@ -298,7 +293,7 @@ define([
 
 			var obj = {
 				items: ids,
-				selectionTarget: this._getSelectionTarget()
+				target: this._getSelectionTarget()
 			};
 
 			this._publish(channel, obj);
@@ -308,7 +303,7 @@ define([
 
 			var obj = {
 				items: ids,
-				selectionTarget: this._getSelectionTarget()
+				target: this._getSelectionTarget()
 			};
 
 			this._publish(channel, obj);
@@ -318,14 +313,13 @@ define([
 
 			this._publish(channel, {
 				selectionTarget: this._getSelectionTarget()
-				//requesterId: this.getOwnChannel()
 			});
 		},
 
 		_pubClearSelection: function(channel) {
 
 			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget()
+				target: this._getSelectionTarget()
 			});
 		},
 

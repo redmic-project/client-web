@@ -46,8 +46,7 @@ define([
 				},
 
 				// TODO esto quizá no debería ir aquí, sino en el comunicador de errores
-				defaultErrorDescription: 'Error',
-				defaultErrorCode: '0'
+				defaultErrorDescription: 'Error'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -259,7 +258,6 @@ define([
 			var response = this._parseResponse(res);
 
 			this._emitResponse({
-				target: target,
 				req: req,
 				res: response,
 				evtName: 'SAVE'
@@ -370,42 +368,38 @@ define([
 			});
 		},
 
-		// TODO revisar los emit!!!!!!!!!!!
 		_emitResponse: function(params) {
 
-			var target = params.target,
-				req = params.req,
+			var req = params.req,
 				res = params.res,
 				evtName = params.evtName;
 
-			var response = lang.mixin({
+			var response = {
 				target: req.target,
-				requesterId: req.requesterId
-			}, res);
+				requesterId: req.requesterId,
+				req: req,
+				res: res
+			};
 
 			this._emitLoaded(req);
 
 			this._emitEvt(evtName, response);
 		},
 
-		_emitError: function(res) {
+		_emitError: function(response) {
 
-			var response = res.response,
-				data = errObj.data,
-				status = errObj.status;
+			var status = response.status,
+				error = response.error,
+				description = error ? error : this.defaultErrorDescription;
 
-			// TODO creo que estos valores por defecto deberían ponerse donde se escuchan, no aquí
-			if (!response.code) {
-				response.code = this.defaultErrorCode;
-			}
-			if (!response.description) {
-				response.description = this.defaultErrorDescription/* + ' ' + (response.code || '')*/;
+			if (status) {
+				description += ' - ' + status;
 			}
 
 			this._emitEvt('COMMUNICATION', {
 				type: 'alert',
 				level: 'error',
-				description: response ? response.description : this.defaultErrorDescription
+				description: description
 			});
 		}
 	});

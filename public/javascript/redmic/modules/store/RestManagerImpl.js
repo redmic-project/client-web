@@ -192,47 +192,6 @@ define([
 			return query;
 		},
 
-		// TODO REVISAR LOS PARSEEEEEEEEEEEEEEEEEEEEEEEEE!!!
-
-		_parseResponse: function(res) {
-
-			// TODO usar res.data directamente cuando no se envuelva la respuesta con body
-			var data = res.data;
-			if (data && data.body) {
-				data = data.body;
-			}
-
-			return {
-				status: res.status,
-				data: data,
-				text: res.text,
-				url: res.url,
-				getHeader: res.getHeader,
-				options: res.options
-			};
-		},
-
-		_parseError: function(res) {
-
-			var response = res.response;
-
-			// TODO usar response.data directamente cuando no se envuelva la respuesta con error
-			var data = response.data;
-			if (data && data.error) {
-				data = data.error;
-			}
-
-			return {
-				status: response.status,
-				data: data,
-				text: response.text,
-				url: response.url,
-				getHeader: response.getHeader,
-				options: response.options,
-				error: res.message
-			};
-		},
-
 		_saveRequest: function(target, req) {
 
 			var url = this._getSaveRequestTarget(target, req),
@@ -313,6 +272,45 @@ define([
 				timeout: this.timeout,
 				handleAs: this.handleAs
 			}, options);
+		},
+
+		_parseResponse: function(res) {
+
+			// TODO usar res.data directamente cuando no se envuelva la respuesta con body
+			var data = res.data;
+			if (data && data.body) {
+				data = data.body;
+			}
+
+			return {
+				status: res.status,
+				data: data,
+				text: res.text,
+				url: res.url,
+				getHeader: res.getHeader,
+				options: res.options
+			};
+		},
+
+		_parseError: function(res) {
+
+			var response = res.response;
+
+			// TODO usar response.data directamente cuando no se envuelva la respuesta con error
+			var data = response.data;
+			if (data && data.error) {
+				data = data.error;
+			}
+
+			return {
+				status: response.status,
+				data: data,
+				text: response.text,
+				url: response.url,
+				getHeader: response.getHeader,
+				options: response.options,
+				error: res.message
+			};
 		}
 	});
 });

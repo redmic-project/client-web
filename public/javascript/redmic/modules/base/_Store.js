@@ -27,7 +27,6 @@ define([
 			AVAILABLE: "available",
 			GET: "get",
 			ITEM_AVAILABLE: "itemAvailable",
-			REMOVE: "remove",
 			INJECT_ITEM: "injectItem",
 			INJECT_DATA: "injectData",
 			UPDATE_TARGET: "updateTarget",
@@ -54,9 +53,6 @@ define([
 
 			var options = {
 					predicate: lang.hitch(this, this._chkTargetAndRequester)
-				},
-				errorOptions = {
-					predicate: lang.hitch(this, this._chkErrorTargetAndRequester)
 				};
 
 			this.subscriptionsConfig.push({
@@ -67,17 +63,6 @@ define([
 				channel : this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
 				callback: "_subItemAvailable",
 				options: options
-			},{
-				channel : this._buildChannel(this.storeChannel, this.actions.AVAILABLE),
-				callback: "_subDataError",
-				options: errorOptions
-			},{
-				channel : this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
-				callback: "_subDataError",
-				options: errorOptions
-			},{
-				channel : this.getChannel(this.actions.REMOVE),
-				callback: "_subRemove"
 			},{
 				channel : this.getChannel(this.actions.UPDATE_TARGET),
 				callback: "_subUpdateTarget"
@@ -104,58 +89,47 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'REQUEST',
-				channel: this._buildChannel(this.storeChannel, this.actions.REQUEST),
-				callback: "_pubToStore"
+				channel: this._buildChannel(this.storeChannel, this.actions.REQUEST)
 			},{
 				event: 'GET',
-				channel: this._buildChannel(this.storeChannel, this.actions.GET),
-				callback: "_pubToStore"
+				channel: this._buildChannel(this.storeChannel, this.actions.GET)
 			},{
 				event: 'INJECT_ITEM',
-				channel: this._buildChannel(this.storeChannel, this.actions.INJECT_ITEM),
-				callback: "_pubToStore"
+				channel: this._buildChannel(this.storeChannel, this.actions.INJECT_ITEM)
 			},{
 				event: 'INJECT_DATA',
-				channel: this._buildChannel(this.storeChannel, this.actions.INJECT_DATA),
-				callback: "_pubToStore"
+				channel: this._buildChannel(this.storeChannel, this.actions.INJECT_DATA)
 			});
 
 			this._deleteDuplicatedChannels(this.publicationsConfig);
 		},
 
-		_subAvailable: function(res) {
+		_subAvailable: function(resWrapper) {
 
-			this._dataAvailable(res.body);
+			var response = resWrapper.res,
+				status = response.status;
 
-			this._tryToEmitEvt('LOADED');
-		},
-
-		_subItemAvailable: function(res) {
-
-			this._itemAvailable(res.body);
-
-			this._tryToEmitEvt('LOADED');
-		},
-
-		_subDataError: function(res) {
-
-			var data = res.error,
-				error = data.error,
-				status = data.status;
-
-			this._errorAvailable(error, status, data);
+			if (status >= 200 && status < 400) {
+				this._dataAvailable(response, resWrapper);
+			} else {
+				this._errorAvailable(response.error, status, resWrapper);
+			}
 
 			this._tryToEmitEvt('LOADED');
 		},
 
-		_subRemove: function(req) {
+		_subItemAvailable: function(resWrapper) {
 
-			this._removeData(req.ids);
-		},
+			var response = resWrapper.res,
+				status = response.status;
 
-		_pubToStore: function(channel, req) {
+			if (status >= 200 && status < 400) {
+				this._itemAvailable(response, resWrapper);
+			} else {
+				this._errorAvailable(response.error, status, resWrapper);
+			}
 
-			req && this._publish(channel, req);
+			this._tryToEmitEvt('LOADED');
 		},
 
 		_subUpdateTarget: function(obj) {
@@ -175,21 +149,7 @@ define([
 				return false;
 			}
 
-			var target = res.target;
-				requesterId = res.requesterId,
-				type = res.type,
-
-				targetCondition = this._targetIsMine(target) || target === this.baseTarget,
-				arriveMethod = type === "request" ? "_dataAvailable" : (type === "get" ? "_itemAvailable" : null),
-				typeCondition = arriveMethod ? !!this[arriveMethod] : false;
-
-			if (targetCondition && typeCondition) {
-				if (!requesterId || requesterId === this.getOwnChannel()) {
-					return true;
-				}
-			}
-
-			return false;
+			return this._chkTargetAndRequester(res);
 		},
 
 		_subTargetLoading: function(res) {

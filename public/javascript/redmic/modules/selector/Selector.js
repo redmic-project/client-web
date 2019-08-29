@@ -334,14 +334,14 @@ define([
 			});
 		},
 
-		_emitSelectionTargetLoading: function(selectionTarget) {
+		_emitSelectionTargetLoading: function(target) {
 
 			this._emitEvt('SELECTION_TARGET_LOADING', {
 				target: target
 			});
 		},
 
-		_emitSelectionTargetLoaded: function(selectionTarget) {
+		_emitSelectionTargetLoaded: function(target) {
 
 			this._emitEvt('SELECTION_TARGET_LOADED', {
 				target: target

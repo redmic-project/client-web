@@ -35,7 +35,6 @@ module.exports = function(args) {
 				, suitesPrefix + 'redmic/base/testMediator'
 				, suitesPrefix + 'redmic/modules/base/test_Module'
 				, suitesPrefix + 'redmic/modules/store/testRestManager'
-				, suitesPrefix + 'redmic/modules/store/testPersistence'
 				, suitesPrefix + 'redmic/modules/layout/wizard/testWizard'
 				, suitesPrefix + 'redmic/modules/model/testModelImpl'
 				, suitesPrefix + 'redmic/modules/tree/testTree'
@@ -57,11 +56,8 @@ module.exports = function(args) {
 
 			// TODO irlos arreglando e incorporando a 'suites'. Borrar 'suitesFAIL' cuando se vacíe
 			suitesFAIL: [
-				// Otros
-				suitesPrefix + 'redmic/store/testQueryStore'
-
 				// Módulos
-				, suitesPrefix + 'redmic/modules/layout/details/testDetails'
+				suitesPrefix + 'redmic/modules/layout/details/testDetails'
 				, suitesPrefix + 'redmic/modules/form/testForm'
 				, suitesPrefix + 'redmic/modules/search/testSearch'
 				, suitesPrefix + 'redmic/modules/map/testLayersTree'

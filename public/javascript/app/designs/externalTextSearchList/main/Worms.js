@@ -171,21 +171,6 @@ define([
 			return false;
 		},
 
-		_chkErrorTargetIsMine: function(response) {
-
-			if (this._chkSuccessful(response)) {
-				return false;
-			}
-
-			var error = response.error;
-
-			if (error.target && error.target.indexOf && (error.target.indexOf(this.baseTarget) >= 0)) {
-				return true;
-			}
-
-			return false;
-		},
-
 		_errorAvailable: function(error) {
 
 		},

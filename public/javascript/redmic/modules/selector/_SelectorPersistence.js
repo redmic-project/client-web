@@ -19,6 +19,7 @@ define([
 		target: [],
 		selectionTargetSuffix: '/_selection',
 		notificationSuccess: false,
+		omitRefreshAfterSuccess: true,
 
 		_groupSelected: function(req) {
 
@@ -46,9 +47,9 @@ define([
 			}
 		},
 
-		_itemAvailable: function(res) {
+		_itemAvailable: function(res, resWrapper) {
 
-			var targetBase = this._getTargetBase(res.target);
+			var targetBase = this._getTargetBase(resWrapper.target);
 
 			if (this.selections[targetBase] && response.data && response.data.ids) {
 				this._selectedAll(response.data.ids, targetBase);
@@ -68,7 +69,8 @@ define([
 					action: action,
 					idUser: this.userSelectionId
 				},
-				target: target
+				target: target + this.selectionTargetSuffix,
+				omitSuccessNotification: true
 			};
 
 			var selectIds = this._getSelectionIds();
@@ -80,37 +82,34 @@ define([
 			return obj;
 		},
 
-		_subSaved: function(result) {
+		_afterSaved: function(response, resWrapper) {
 
-			if (result.error) {
-				//TODO: aqui sacar notification o algo
-				return;
+			var data = response.data,
+				action = data.action,
+				target = this._getTargetBase(resWrapper.target),
+				selectionId = data.id,
+				selectedIds = data.ids,
+				selectionIds = this._getSelectionIds();
+
+			if (!selectionIds) {
+				selectionIds = {};
 			}
 
-			var resp = result.body,
-				selectIds = this._getSelectionIds();
+			selectionIds[target] = selectionId;
+			this._setSelectionIds(selectionIds);
 
-			if (!selectIds) {
-				selectIds = {};
+			if (action === this.actions.SELECT) {
+				this._select(selectedIds, target);
+			} else if (action === this.actions.DESELECT) {
+				this._deselect(selectedIds, target);
+			} else if (action === this.actions.CLEAR_SELECTION) {
+				this._clearSelection(target);
 			}
+		},
 
-			selectIds[this._getTargetBase(resp.target)] = resp.id;
-			this._setSelectionIds(selectIds);
+		_afterSaveError: function(error, status, resWrapper) {
 
-			if (resp.action === this.actions.SELECT) {
-				this._select(resp.ids, this._getTargetBase(resp.target));
-				return;
-			}
-
-			if (resp.action === this.actions.DESELECT) {
-				this._deselect(resp.ids, this._getTargetBase(resp.target));
-				return;
-			}
-
-			if (resp.action === this.actions.CLEAR_SELECTION) {
-				this._clearSelection(this._getTargetBase(resp.target));
-				return;
-			}
+			console.error('Selection persistence error:', error);
 		},
 
 		_getTarget: function(target) {
@@ -128,17 +127,10 @@ define([
 			return target.replace(this.selectionTargetSuffix, "");
 		},
 
-		_subDataError: function(res) {
-
-			if (!res.success && res.error) {
-				this._errorSelectionTargetNotExits(res);
-			}
-		},
-
-		_errorSelectionTargetNotExits: function(res) {
+		_errorAvailable: function(error, status, resWrapper) {
 
 			var selectIds = this._getSelectionIds(),
-				target = this._getTargetBase(this._cleanTrailingSlash(res.error.target));
+				target = this._getTargetBase(this._cleanTrailingSlash(resWrapper.target));
 
 			if (!selectIds) {
 				selectIds = {};

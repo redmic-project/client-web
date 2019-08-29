@@ -358,7 +358,8 @@ define([
 			var obj = {
 				method: "POST",
 				query: query,
-				target: this._getTarget()
+				target: this._getTarget(),
+				action: '_search'
 			};
 
 			if (this.requesterId) {

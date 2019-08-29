@@ -176,15 +176,14 @@ define([
 				this._emitEvt("GET", {
 					target: this.target,
 					id: this.idForGet,
-					requesterId: this.getOwnChannel(),
-					type: "API"
+					requesterId: this.getOwnChannel()
 				});
 			}
 		},
 
-		_itemAvailable: function(res) {
+		_itemAvailable: function(res, resWrapper) {
 
-			if (res.requesterId !== this.getOwnChannel()) {
+			if (resWrapper.requesterId !== this.getOwnChannel()) {
 				return;
 			}
 

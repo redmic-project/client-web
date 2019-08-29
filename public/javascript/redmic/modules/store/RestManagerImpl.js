@@ -20,8 +20,6 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				action: '_search',
-
 				idProperty: 'id',
 				limitDefault: 100,
 				sortParamName: 'sort',
@@ -110,7 +108,7 @@ define([
 				requestQuery = this._getRequestRequestQuery(req),
 				query = lang.mixin({}, requestQuery, req.query || {}),
 				reqOptions = req.options || {},
-				method = req.method;
+				method = req.method || 'GET';
 
 			var options = {
 				method: method,
@@ -122,7 +120,7 @@ define([
 			};
 
 			if (method === 'POST') {
-				options.data = /*JSON.stringify(*/query/*)*/;
+				options.data = JSON.stringify(query);
 			} else {
 				options.query = query;
 			}
@@ -202,7 +200,9 @@ define([
 
 		_getSaveRequestTarget: function(target, req) {
 
-			var id = req.id;
+			var data = req.data;
+				idProperty = req.idProperty || this.idProperty,
+				id = data[idProperty];
 
 			if (!id) {
 				return target;
@@ -216,8 +216,9 @@ define([
 		_getSaveRequestOptions: function(req) {
 
 			var method = this._getSaveRequestMethod(req),
-				headers = lang.mixin({}, this.headers, req.headers || {}),
-				data = /*JSON.stringify(*/req.data/*)*/,
+				saveHeaders = this._getSaveRequestHeaders(req),
+				headers = lang.mixin({}, this.headers, saveHeaders, req.headers || {}),
+				data = JSON.stringify(req.data),
 				options = req.options || {};
 
 			return lang.mixin({
@@ -241,6 +242,17 @@ define([
 				idInTarget = req.idInTarget;
 
 			return (id || idInTarget) ? 'PUT' : 'POST';
+		},
+
+		_getSaveRequestHeaders: function(req) {
+			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
+			// reciban directamente las cabeceras listas para usar.
+
+			var headers = {
+				'Content-Type': 'application/json'
+			};
+
+			return headers;
 		},
 
 		_removeRequest: function(target, req) {

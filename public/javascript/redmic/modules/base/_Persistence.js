@@ -1,44 +1,51 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "redmic/modules/store/Persistence"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
+	, './_PersistenceItfc'
 ], function(
 	declare
 	, lang
 	, aspect
-	, Persistence
+	, _PersistenceItfc
 ) {
 
-	return declare(null, {
+	return declare(_PersistenceItfc, {
 		//	summary:
 		//		Permite a los módulos realizar persistencia de datos, comunicándose con RestManager.
 
 		persistenceEvents: {
-			SAVE: "save",
-			SAVED: "saved"
+			SAVE: 'save',
+			SAVED: 'saved',
+			REMOVE: 'remove',
+			REMOVED: 'removed'
 		},
 
-		persistenceActions: {},
+		persistenceActions: {
+			SAVE: 'save',
+			SAVED: 'saved',
+			REMOVE: 'remove',
+			REMOVED: 'removed'
+		},
 
 		constructor: function(args) {
 
 			this.config = {
-				idProperty: "id"
+				idProperty: 'id',
+				omitRefreshAfterSuccess: false
 			};
 
 			lang.mixin(this, this.config, args);
 
-			aspect.before(this, "_initialize", this._initializePersistence);
-			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixEventsAndActionsPersistence));
-			aspect.after(this, "_defineSubscriptions",
+			aspect.after(this, '_mixEventsAndActions', lang.hitch(this, this._mixPersistenceEventsAndActions));
+			aspect.after(this, '_defineSubscriptions',
 				lang.hitch(this, this._definePersistenceSubscriptions));
 
-			aspect.after(this, "_definePublications",
+			aspect.after(this, '_definePublications',
 				lang.hitch(this, this._definePersistencePublications));
 		},
 
-		_mixEventsAndActionsPersistence: function () {
+		_mixPersistenceEventsAndActions: function () {
 
 			lang.mixin(this.events, this.persistenceEvents);
 			lang.mixin(this.actions, this.persistenceActions);
@@ -49,8 +56,11 @@ define([
 		_definePersistenceSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel: this.persistence.getChannel("SAVED"),
-				callback: "_subSaved"
+				channel: this._buildChannel(this.storeChannel, this.actions.SAVED),
+				callback: '_subSaved'
+			},{
+				channel: this._buildChannel(this.storeChannel, this.actions.REMOVED),
+				callback: '_subRemoved'
 			});
 
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
@@ -60,19 +70,14 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'SAVE',
-				channel: this.persistence.getChannel("SAVE")/*,
-				callback: "_pubSave"*/
+				channel: this._buildChannel(this.storeChannel, this.actions.SAVE)/*,
+				callback: '_pubSave'*/
+			},{
+				event: 'REMOVE',
+				channel: this._buildChannel(this.storeChannel, this.actions.REMOVE)
 			});
 
 			this._deleteDuplicatedChannels(this.publicationsConfig);
-		},
-
-		_initializePersistence: function() {
-
-			this.persistence = new Persistence({
-				parentChannel: this.getChannel(),
-				notificationSuccess: this.notificationSuccess
-			});
 		},
 
 		/*_pubSave: function(channel, obj) {
@@ -111,14 +116,35 @@ define([
 			return this.editionTarget || this.target;
 		},*/
 
-		_subSaved: function(result) {
+		_subSaved: function(resWrapper) {
 
-			this._emitEvt('REFRESH');
+			var response = resWrapper.res,
+				status = response.status;
 
-			var savedObj = this._getSavedObjToPublish ? this._getSavedObjToPublish(result) : result;
-			this._emitEvt('SAVED', savedObj);
+			if (!this.omitRefreshAfterSuccess) {
+				this._emitEvt('REFRESH');
+			}
 
-			this._afterSaved && this._afterSaved(result);
+			if (status >= 200 && status < 400) {
+				var savedObj = this._getSavedObjToPublish(response) || response;
+				this._emitEvt('SAVED', response);
+
+				this._afterSaved(response, resWrapper);
+			} else {
+				this._afterSaveError(response.error, status, resWrapper);
+			}
+		},
+
+		_subRemoved: function(result) {
+
+			if (!this.omitRefreshAfterSuccess) {
+				this._emitEvt('REFRESH');
+			}
+
+			var removedObj = this._getRemovedObjToPublish(result) || result;
+			this._emitEvt('REMOVED', removedObj);
+
+			this._afterRemoved(result);
 		}
 	});
 });

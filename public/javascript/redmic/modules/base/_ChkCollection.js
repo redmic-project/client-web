@@ -4,7 +4,8 @@ define([
 ], function(
 	declare
 	, lang
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Extensión para definir los predicados por defecto.
@@ -53,20 +54,6 @@ define([
 			return this._chkTargetIsValid(res) && this._targetIsMine(response.target);
 		},
 
-		_chkErrorTargetIsMine: function(response) {
-
-			if (this._chkSuccessful(response)) {
-				return false;
-			}
-
-			var error = response.error;
-			if (error && error.target && !this._targetIsMine(error.target)) {
-				return false;
-			}
-
-			return true;
-		},
-
 		_targetIsMine: function(target) {
 
 			var cleanTarget = this._cleanTrailingSlash(target);
@@ -92,37 +79,9 @@ define([
 				this.associatedIds.indexOf(requesterId) !== -1);
 		},
 
-		_chkErrorRequesterIsMe: function(response) {
-
-			if (this._chkSuccessful(response)) {
-				return false;
-			}
-
-			var error = response.error;
-			if (error && error.requesterId && ((error.requesterId !== this.getOwnChannel()) &&
-				(this.associatedIds.indexOf(error.requesterId) < 0))) {
-				return false;
-			}
-
-			return true;
-		},
-
 		_chkTargetAndRequester: function(response) {
 
-			if (this._chkTargetIsMine(response) && this._chkRequesterIsMe(response)) {
-				return true;
-			}
-
-			return false;
-		},
-
-		_chkErrorTargetAndRequester: function(response) {
-
-			if (this._chkErrorTargetIsMine(response) && this._chkErrorRequesterIsMe(response)) {
-				return true;
-			}
-
-			return false;
+			return this._chkTargetIsMine(response) && this._chkRequesterIsMe(response);
 		},
 
 		_chkPublicationIsForMe: function(res) {

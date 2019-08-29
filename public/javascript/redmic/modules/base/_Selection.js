@@ -185,8 +185,8 @@ define([
 
 		_subSelected: function(res) {
 
-			var ids = res.body.ids,
-				total = res.body.total;
+			var ids = res.ids,
+				total = res.total;
 
 			this._setEmptySelection(!total);
 
@@ -207,8 +207,8 @@ define([
 
 		_subDeselected: function(res) {
 
-			var ids = res.body.ids,
-				total = res.body.total;
+			var ids = res.ids,
+				total = res.total;
 
 			this._setEmptySelection(!total);
 
@@ -233,7 +233,7 @@ define([
 
 		_subSelectedGroup: function(res) {
 
-			var selection = res.body.selection;
+			var selection = res.selection;
 			selection && this._selectedGroup(selection);
 
 			this._tryToEmitEvt('LOADED');

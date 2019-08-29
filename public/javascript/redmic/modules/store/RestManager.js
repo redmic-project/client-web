@@ -206,7 +206,8 @@ define([
 				data = [];
 			}
 
-			this._emitGetResults(req, {
+			this._handleGetSuccess(req, {
+				status: 200,
 				data: data
 			});
 		},
@@ -214,6 +215,7 @@ define([
 		_subInjectData: function(req) {
 
 			var res = {
+				status: 200,
 				data: req.data || []
 			};
 
@@ -223,7 +225,7 @@ define([
 				delete req.total;
 			}
 
-			this._emitRequestResults(req, res, total);
+			this._handleRequestSuccess(req, res);
 		},
 
 		_chkValidSaveRequest: function(req) {
@@ -256,6 +258,10 @@ define([
 		_handleSaveSuccess: function(req, res) {
 
 			var response = this._parseResponse(res);
+
+			if (!req.omitSuccessNotification) {
+				this._notifySuccess();
+			}
 
 			this._emitResponse({
 				req: req,
@@ -309,6 +315,10 @@ define([
 		_handleRemoveSuccess: function(req, res) {
 
 			var response = this._parseResponse(res);
+
+			if (!req.omitSuccessNotification) {
+				this._notifySuccess();
+			}
 
 			this._emitResponse({
 				req: req,
@@ -393,13 +403,24 @@ define([
 				description = error ? error : this.defaultErrorDescription;
 
 			if (status) {
-				description += ' - ' + status;
+				description += ' - ' + status + ' - <a href="/feedback/' + status + '" target="_blank">' +
+					this.i18n.contact + '</a>';
 			}
 
 			this._emitEvt('COMMUNICATION', {
 				type: 'alert',
 				level: 'error',
-				description: description
+				description: description,
+				timeout: 0
+			});
+		},
+
+		_notifySuccess: function() {
+
+			this._emitEvt('COMMUNICATION', {
+				type: 'alert',
+				level: 'success',
+				description: this.i18n.success
 			});
 		}
 	});

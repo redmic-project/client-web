@@ -65,7 +65,8 @@ define([
 					UPDATE_TEMPLATE_ROW: "updateTemplateRow",
 					UPDATE_TEMPLATE: "updateTemplate",
 					TEMPLATE_UPDATED: "templateUpdated",
-					REMOVE_ITEM: "removeItem"
+					REMOVE_ITEM: "removeItem",
+					REMOVE: "remove"
 				},
 
 				idProperty: 'id',
@@ -121,6 +122,9 @@ define([
 			},{
 				channel : this.getChannel("REMOVE_ITEM"),
 				callback: "_subRemoveItem"
+			},{
+				channel : this.getChannel('REMOVE'),
+				callback: '_subRemove'
 			},{
 				channel : this.getChannel("REFRESH"),
 				callback: "_subRefresh"
@@ -238,6 +242,11 @@ define([
 		_subRemoveItem: function(req) {
 
 			this._removeItem(req.idProperty);
+		},
+
+		_subRemove: function(req) {
+
+			this._removeData(req.ids);
 		},
 
 		_clearData: function() {

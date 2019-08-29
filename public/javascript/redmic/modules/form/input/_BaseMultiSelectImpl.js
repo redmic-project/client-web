@@ -190,7 +190,8 @@ define([
 			this._publish(this._buildChannel(this.storeChannel, this.actions.REQUEST), {
 				target: this.target,
 				method: 'POST',
-				requesterId: this.getOwnChannel()
+				requesterId: this.getOwnChannel(),
+				action: '_search'
 			});
 		},
 

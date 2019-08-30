@@ -51,8 +51,8 @@ define([
 
 			var targetBase = this._getTargetBase(resWrapper.target);
 
-			if (this.selections[targetBase] && response.data && response.data.ids) {
-				this._selectedAll(response.data.ids, targetBase);
+			if (this.selections[targetBase] && res.data && res.data.ids) {
+				this._selectedAll(res.data.ids, targetBase);
 			}
 		},
 

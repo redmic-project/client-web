@@ -10,12 +10,12 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "redmic/modules/base/_Module"
+	, "redmic/modules/base/_Persistence"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_Show"
 	, "redmic/modules/base/_ShowInTooltip"
 	, "redmic/modules/base/_ShowOnEvt"
 	, "redmic/modules/layout/listMenu/ListMenu"
-	, "redmic/modules/store/Persistence"
 	, "redmic/layout/DialogSimple"
 	, "redmic/base/Credentials"
 ], function(
@@ -30,16 +30,16 @@ define([
 	, lang
 	, put
 	, _Module
+	, _Persistence
 	, _Selection
 	, _Show
 	, _ShowInTooltip
 	, _ShowOnEvt
 	, ListMenu
-	, Persistence
 	, DialogSimple
 	, Credentials
 ){
-	return declare([_Module, _Show, _Selection], {
+	return declare([_Module, _Show, _Selection, _Persistence], {
 		//	summary:
 		//		Indicador del número de seleccionados con botones asociados.
 		//	description:
@@ -73,8 +73,7 @@ define([
 				// mediator params
 				ownChannel: "selectionBox",
 				idProperty: "id",
-				selectionToolsName: "selectionTools",
-				selectionTargetSuffix: "/_selections"
+				selectionTargetSuffix: "/_selections/"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -128,12 +127,6 @@ define([
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("REFRESH"),
 				callback: "_subRefresh"
-			},{
-				channel: this.persistence.getChannel("SAVED"),
-				callback: "_subSaved",
-				options: {
-					predicate: lang.hitch(this, this._chkSuccessful)
-				}
 			});
 
 			if (this.menuInTooltip) {
@@ -151,20 +144,12 @@ define([
 				channel: this.getChannel("REFRESHED"),
 				callback: "_pubRefreshed"
 			},{
-				event: 'SAVE',
-				channel: this.persistence.getChannel("SAVE"),
-				callback: "_pubSave"
-			},{
 				event: 'TOTAL_SELECTED',
 				channel: this.getChannel("TOTAL_SELECTED")
 			});
 		},
 
 		_initialize: function() {
-
-			this.persistence = new Persistence({
-				parentChannel: this.getChannel()
-			});
 
 			if (this.menuInTooltip) {
 				this.loadSelectionListMenu = new declare([ListMenu, _ShowOnEvt])
@@ -264,7 +249,7 @@ define([
 
 		_exitsPermsCorrect: function(item) {
 
-			return this.perms > 1 && this._isShowItem(item);
+			return this.perms >= 1 && this._isShowItem(item);
 		},
 
 		_select: function(item, total) {
@@ -350,32 +335,32 @@ define([
 
 			obj[this.idProperty] = this.idSelectionLoaded[this.idProperty];
 			obj.name = this.idSelectionLoaded.name;
-			this._emitEvt('SAVE', obj);
+			this._emitEvt('SAVE', this._getDataToSave(obj));
 		},
 
 		_saveSelection: function(obj) {
 
-			alertify.prompt(this.i18n.newNameMessage, "",
-				lang.hitch(this, function(evt, value ) {
-					obj.name = value;
-					delete this.idSelectionLoaded;
-					this._emitEvt('SAVE', obj);
-				})).setHeader(this.i18n.saveSelection);
+			alertify.prompt(this.i18n.newNameMessage, "", lang.hitch(this, function(evt, value ) {
+
+				obj.name = value;
+				delete this.idSelectionLoaded;
+				this._emitEvt('SAVE', this._getDataToSave(obj));
+			})).setHeader(this.i18n.saveSelection);
 		},
 
-		_pubSave: function(channel, item) {
+		_getDataToSave: function(item) {
 
-			this._publish(channel, {
+			return {
 				target: this.selectionTarget + this.selectionTargetSuffix,
-				item: item,
+				data: item,
 				idProperty: this.idProperty
-			});
+			};
 		},
 
-		_subSaved: function(response) {
+		_afterSaved: function(response) {
 
-			if (response.success && response.body.id) {
-				this.idSelectionLoaded = response.body;
+			if (response.data && response.data.id) {
+				this.idSelectionLoaded = response.data;
 			}
 		},
 
@@ -404,6 +389,7 @@ define([
 				alertify.confirm(this.i18n.saveSelection,
 					this.i18n.loseSelectionConfirmationMessage,
 					lang.hitch(this, function() {
+
 						delete this.idSelectionLoaded;
 						this._showSelectionList();
 					}),function(){})
@@ -459,12 +445,6 @@ define([
 			return {
 				items: ids
 			};
-		},
-
-		_chkTargetAndRequester: function (response) {
-
-			var result = this.inherited(arguments);
-			return (result && response.body.requesterId) ? true : false;
 		},
 
 		_clearSelectionButtonCallback: function() {

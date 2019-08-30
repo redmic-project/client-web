@@ -11,6 +11,7 @@ define([
 	, "dojo/_base/lang"
 	, "redmic/base/Credentials"
 	, "redmic/modules/base/_Window"
+	, "redmic/modules/base/_Persistence"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_MultiTemplate"
 	, "redmic/modules/browser/ListImpl"
@@ -18,7 +19,6 @@ define([
 	, "redmic/modules/form/_CreateKeypad"
 	, "redmic/modules/form/FormContainerImpl"
 	, "redmic/modules/form/_ListenModelHasChanged"
-	, "redmic/modules/store/Persistence"
 	, "templates/UserImage"
 	, "templates/UserTitle"
 	, "templates/UserEmail"
@@ -39,6 +39,7 @@ define([
 	, lang
 	, Credentials
 	, _Window
+	, _Persistence
 	, _ButtonsInRow
 	, _MultiTemplate
 	, ListImpl
@@ -46,7 +47,6 @@ define([
 	, _CreateKeypad
 	, FormContainerImpl
 	, _ListenModelHasChanged
-	, Persistence
 	, TemplateImage
 	, TemplateTitle
 	, TemplateEmail
@@ -56,7 +56,7 @@ define([
 	, TaskNotification
 ) {
 
-	return declare([Layout, Controller], {
+	return declare([Layout, Controller, _Persistence], {
 		//	summary:
 		//		Vista detalle de user.
 
@@ -75,7 +75,6 @@ define([
 					omitTitleCloseButton: true
 				},
 				events: {
-					SAVED_FORM: "savedForm",
 					ALL_TASK_SOCKET: "allTaskSocket"
 				},
 				actions: {
@@ -155,27 +154,9 @@ define([
 			}, this.formBaseConfig || {}]);
 		},
 
-		_initialize: function() {
-
-			this.persistence = new Persistence({
-				parentChannel: this.getChannel()
-			});
-		},
-
-		_defineSubscriptions: function() {
-
-			this.subscriptionsConfig.push({
-				channel: this.persistence.getChannel("SAVED"),
-				callback: "_subSaved"
-			});
-		},
-
 		_definePublications: function() {
 
 			this.publicationsConfig.push({
-				event: 'SAVED_FORM',
-				channel: this.persistence.getChannel("SAVE")
-			},{
 				event: 'ALL_TASK_SOCKET',
 				channel: this._buildChannel(this.taskChannel, this.actions.ALL_TASK)
 			});
@@ -186,13 +167,11 @@ define([
 			this[response.item.callback]();
 		},
 
-		_subSaved: function(result) {
+		_afterSaved: function(res) {
+
+			var result = res.data;
 
 			this._emitEvt('LOADED');
-
-			if (!result.success) {
-				return;
-			}
 
 			result.hide = true;
 			this._publish(this.formActive.getChannel("SAVED"), result);
@@ -200,11 +179,6 @@ define([
 			this._showBoxUser(result.target);
 
 			this._refreshModules();
-
-			this._publish(this._buildChannel(this.storeChannel, this.actions.REQUEST), {
-				target: redmicConfig.services.profile,
-				type: this.type
-			});
 		},
 
 		_nameEdit: function() {
@@ -280,16 +254,16 @@ define([
 
 			if (!obj.noData) {
 				this._once(this._buildChannel(this.storeChannel, this.actions.AVAILABLE),
-					lang.hitch(this, function(item) {
-						if (item && item.body && item.body.data) {
-							this._showFormAndHideBoxUser(this.formActive, obj.labelNode, item.body.data);
-						}
+					lang.hitch(this, function(resWrapper) {
+
+					if (resWrapper && resWrapper.res && resWrapper.res.data) {
+						this._showFormAndHideBoxUser(this.formActive, obj.labelNode, resWrapper.res.data);
+					}
 				}));
 
-				this._publish(this._buildChannel(this.storeChannel, this.actions.REQUEST), {
+				this._emitEvt('REQUEST', {
 					target: obj.formConfig.target,
-					requesterId: this.formActive.getOwnChannel(),
-					type: this.type
+					requesterId: this.formActive.getOwnChannel()
 				});
 			} else {
 				this._showFormAndHideBoxUser(this.formActive, obj.labelNode);
@@ -317,6 +291,7 @@ define([
 		_createSubscriptionsForm: function(instanceForm, obj) {
 
 			this._subscribe(instanceForm.getChannel("CANCELLED"), lang.hitch(this, function(res) {
+
 				this._showBoxUser(obj.formConfig.targetSave ? obj.formConfig.targetSave : obj.formConfig.target);
 			}));
 
@@ -330,8 +305,8 @@ define([
 					global: true
 				});
 
-				this._emitEvt('SAVED_FORM', {
-					item: res.data,
+				this._emitEvt('SAVE', {
+					data: res.data,
 					target: obj.formConfig.targetSave ? obj.formConfig.targetSave : obj.formConfig.target,
 					idProperty: this.idProperty
 				});
@@ -434,8 +409,6 @@ define([
 				typeGroup: "password",
 				template: TemplatePassword
 			});
-
-			this.startup();
 		},
 
 		_clearModules: function() {
@@ -454,10 +427,9 @@ define([
 
 			this._emitEvt('ALL_TASK_SOCKET', {});
 
-			this._publish(this._buildChannel(this.storeChannel, this.actions.REQUEST), {
+			this._emitEvt('REQUEST', {
 				target: this.target,
-				requesterId: this.getOwnChannel(),
-				type: this.type
+				requesterId: this.getOwnChannel()
 			});
 		},
 

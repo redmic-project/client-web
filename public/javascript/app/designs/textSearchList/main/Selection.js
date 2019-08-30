@@ -7,7 +7,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Store"
-	, "redmic/modules/store/Persistence"
+	, "redmic/modules/base/_Persistence"
 	, "templates/SelectionList"
 ], function(
 	alertify
@@ -18,10 +18,11 @@ define([
 	, declare
 	, lang
 	, _Store
-	, Persistence
+	, _Persistence
 	, TemplateList
-){
-	return declare([Layout, Controller, _Main, _Store, _OnShownAndRefresh], {
+) {
+
+	return declare([Layout, Controller, _Main, _Store, _Persistence, _OnShownAndRefresh], {
 		//	summary:
 		//		Extensión para establecer la vista de selección para cargar selecciones guardadas
 		//
@@ -34,7 +35,6 @@ define([
 					UPDATE_DATA: "updateData"
 				},
 				mainEvents: {
-					REMOVE_ITEM: "removeItem",
 					UPDATE_DATA: "updateData"
 				},
 
@@ -69,9 +69,6 @@ define([
 		_defineMainSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel: this.persistence.getChannel("REMOVED"),
-				callback: "_subRemoved"
-			},{
 				channel: this.getChannel("UPDATE_TARGET"),
 				callback: "_subUpdateTarget"
 			});
@@ -82,17 +79,6 @@ define([
 			this.publicationsConfig.push({
 				event: 'UPDATE_DATA',
 				channel: this.getChannel("UPDATE_DATA")
-			},{
-				event: 'REMOVE_ITEM',
-				channel: this.persistence.getChannel("REMOVE"),
-				callback: "_pubRemove"
-			});
-		},
-
-		_initializeMain: function() {
-
-			this.persistence = new Persistence({
-				parentChannel: this.getChannel()
 			});
 		},
 
@@ -123,11 +109,17 @@ define([
 				return;
 			}
 
-			alertify.confirm(this.i18n.deleteConfirmationTitle, this.i18n.deleteConfirmationMessage,
+			alertify.confirm(this.i18n.deleteConfirmationTitle,
+				this.i18n.deleteConfirmationMessage,
 				lang.hitch(this, function(id) {
-					this._emitEvt('REMOVE_ITEM', id);
+
+					this._emitEvt('REMOVE', {
+						target: this.target,
+						id: id
+					});
 				}, data.id),
 				lang.hitch(this, function(id) {
+
 					this._emitEvt('COMMUNICATION', {
 						description: this.i18n.cancelledAlert
 					});
@@ -140,26 +132,6 @@ define([
 		_itemAvailable: function(response) {
 
 			this._emitEvt('UPDATE_DATA', response);
-		},
-
-		_pubRemove: function(channel, id) {
-
-			this._publish(channel, {
-				target: this.target,
-				id: id
-			});
-		},
-
-		_subRemoved: function(result) {
-
-			if (result.success) {
-				this._refresh();
-			}
-		},
-
-		_refresh: function() {
-
-			this._emitEvt('REFRESH');
 		},
 
 		postCreate: function() {

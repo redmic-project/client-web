@@ -312,7 +312,7 @@ define([
 		_pubGroupSelected: function(channel) {
 
 			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget()
+				target: this._getSelectionTarget()
 			});
 		},
 
@@ -326,14 +326,14 @@ define([
 		_pubGetTotal: function(channel) {
 
 			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget(),
+				target: this._getSelectionTarget(),
 				requesterId: this.getOwnChannel()
 			});
 		},
 
 		_subTotalAvailable: function(res) {
 
-			res.success && this._totalAvailable(res.body);
+			this._totalAvailable(res);
 		},
 
 		_chkSelectionTargetLoadingIsMine: function(res) {

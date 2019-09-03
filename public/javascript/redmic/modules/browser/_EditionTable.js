@@ -3,10 +3,10 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, "redmic/modules/base/_Persistence"
 	, "redmic/modules/form/_ShowInTableList"
 	, "redmic/modules/form/FormContainerImpl"
 	, "redmic/modules/form/_ListenModelHasChanged"
-	, "redmic/modules/store/Persistence"
 	, "app/base/views/extensions/_Edition"
 	, "RWidgets/Button"
 	, "put-selector/put"
@@ -17,17 +17,18 @@ define([
 	, declare
 	, lang
 	, aspect
+	, _Persistence
 	, _ShowInTableList
 	, FormContainerImpl
 	, _ListenModelHasChanged
-	, Persistence
 	, _Edition
 	, Button
 	, put
 	, _ButtonsInRow
 	, _Table
-){
-	return declare([_Table, _ButtonsInRow, _Edition, _AddForm], {
+) {
+
+	return declare([_Table, _Persistence, _ButtonsInRow, _Edition, _AddForm], {
 		//	summary:
 		//		Extensión .
 
@@ -53,9 +54,7 @@ define([
 
 			lang.mixin(this, this.config);
 
-			aspect.after(this, "_beforeInitialize", lang.hitch(this, this._initializeEditionView));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineEditionViewSubscriptions));
-			aspect.after(this, "_definePublications", lang.hitch(this, this._defineEditionViewPublications));
 		},
 
 		_existListButton: function() {
@@ -86,13 +85,6 @@ define([
 			return declare([FormContainerImpl, _ListenModelHasChanged, _ShowInTableList]);
 		},
 
-		_initializeEditionView: function() {
-
-			this.persistence = new Persistence({
-				parentChannel: this.getChannel()
-			});
-		},
-
 		_defineEditionViewSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
@@ -101,21 +93,6 @@ define([
 			},{
 				channel : this.getChannel("BUTTON_EVENT"),
 				callback: "_subListBtnEvent"
-			},{
-				channel: this.persistence.getChannel("SAVED"),
-				callback: "_subSaved",
-				options: {
-					predicate: lang.hitch(this, this._chkSuccessful)
-				}
-			});
-		},
-
-		_defineEditionViewPublications: function() {
-
-			this.publicationsConfig.push({
-				event: 'SAVE',
-				channel: this.persistence.getChannel("SAVE"),
-				callback: "_pubSave"
 			});
 		},
 
@@ -147,35 +124,23 @@ define([
 			});
 
 			this._emitEvt('SAVE', {
-				data: res.data
+				target: this._getTarget(),
+				data: res.data,
+				idProperty: this.idProperty
 			});
 		},
 
-		_subSaved: function(result) {
+		_afterSaved: function(result) {
 
 			this._emitEvt('LOADED');
 
- 			var savedObj = this._getSavedObjToPublish ?
- 				this._getSavedObjToPublish(result) : result;
-
- 			this._emitEvt('SAVED', savedObj);
-
- 			this._updateData(result.body);
+ 			this._updateData(result.data);
 		},
 
 		_getSavedObjToPublish: function(results) {
 
 			results.hide = true;
 			return results;
-		},
-
-		_pubSave: function(channel, item) {
-
-			this._publish(channel, {
-				target: this._getTarget(),
-				item: item,
-				idProperty: this.idProperty
-			});
 		},
 
 		_subListBtnEvent: function(evt) {

@@ -99,7 +99,7 @@ define([
 
 		_dataAvailable: function(response) {
 
-			var data = response.data;
+			var data = response.data,
 				total = (data.total >= 0) ? data.total : response.total;
 
 			if (total === undefined || total === null) {

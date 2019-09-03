@@ -166,16 +166,9 @@ define([
 
 		_chkSelectionTargetIsMine: function(res) {
 
-			if (!this._chkSuccessful(res)) {
-				return false;
-			}
+			var target = res.target;
 
-			var body = res.body;
-			if (body && body.selectionTarget && (body.selectionTarget !== this._getSelectionTarget())) {
-				return false;
-			}
-
-			return true;
+			return !target || target === this._getSelectionTarget();
 		},
 
 		_chkSelectionTargetAndRequester: function(res) {

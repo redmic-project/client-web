@@ -24,11 +24,11 @@ define([
 		publishData = function() {
 
 			Mediator.publish(instance._buildChannel(instance.storeChannel, instance.actions.AVAILABLE), {
-				body: {
+				res: {
 					data: data,
-					target: target,
-					total: data.length // TODO parche, revisar método _dataAvailable de Pagination para corregirlo
-				}
+					status: 200
+				},
+				target: target
 			});
 		},
 

@@ -54,7 +54,7 @@ define([
 				});
 
 				Mediator.publish(selector.getChannel('SELECT'), {
-					selectionTarget: target,
+					target: target,
 					items: 1
 				});
 			},
@@ -92,7 +92,7 @@ define([
 				});
 
 				Mediator.publish(selector.getChannel('SELECT'), {
-					selectionTarget: target,
+					target: target,
 					items: [1, 2, 3]
 				});
 			},
@@ -102,7 +102,7 @@ define([
 				var dfd = this.async(timeout);
 
 				Mediator.publish(selector.getChannel('SELECT'), {
-					selectionTarget: target,
+					target: target,
 					items: 1
 				});
 
@@ -115,7 +115,7 @@ define([
 				});
 
 				Mediator.publish(selector.getChannel('DESELECT'), {
-					selectionTarget: target,
+					target: target,
 					items: 1
 				});
 			},
@@ -155,7 +155,7 @@ define([
 				});
 
 				Mediator.publish(selector.getChannel('DESELECT'), {
-					selectionTarget: target,
+					target: target,
 					items: [1, 2, 3]
 				});
 			},
@@ -169,12 +169,9 @@ define([
 
 				Mediator.once(selector.getChannel('SELECTED_GROUP'), function(res) {
 
-					var body = res.body,
-						selection = body.selection;
+					var selection = res.selection;
 
-					assert(res.success, 'No se ha recibido los seleccionados correctamente');
-					assert.strictEqual(body.selectionTarget, target,
-						'El target del servicio no corresponde con el enviado');
+					assert.strictEqual(res.target, target, 'El target del servicio no corresponde con el enviado');
 
 					assert.lengthOf(Object.keys(selection), 2, 'El total de seleccionados recibido no es el esperado');
 					assert(selection[1], 'El item con id 1 no está seleccionado');
@@ -184,7 +181,7 @@ define([
 				});
 
 				Mediator.publish(selector.getChannel('GROUP_SELECTED'), {
-					selectionTarget: target
+					target: target
 				});
 			},
 

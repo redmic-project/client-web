@@ -288,8 +288,9 @@ define([
 
 				Mediator.publish(restManager.getChannel('SAVE'), {
 					target: target,
-					id: exampleId,
-					data: {}
+					data: {
+						id: exampleId
+					}
 				});
 			},
 

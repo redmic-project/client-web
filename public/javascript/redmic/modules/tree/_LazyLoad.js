@@ -10,7 +10,8 @@ define([
 	, aspect
 	, _Filter
 	, _Store
-){
+) {
+
 	return declare([_Filter, _Store], {
 
 		constructor: function(args) {
@@ -48,19 +49,12 @@ define([
 			var item = params[0],
 				node = params[1];
 
-			if (item && this._allChildrenLoaded(item))
-				return true;
-			return false;
+			return item && this._allChildrenLoaded(item);
 		},
 
 		_dataAvailable: function(response) {
 
-			if (response.data && response.data.data)
-				this._insertDataIntoStore(response.data.data);
-			else if (response.data)
-				this._insertDataIntoStore(response.data);
-			else
-				console.warn("Datos en formato inesperado");
+			this._insertDataIntoStore(response.data.data || response.data);
 		},
 
 		_aroundGetConfig: function(_getConfig) {

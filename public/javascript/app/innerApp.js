@@ -130,6 +130,18 @@ define([
 			});
 
 			this._evaluateAppSize();
+
+			var url = 'https://redmicdev.wordpress.com/2019/09/04/cierre-del-proyecto-redmic/',
+				message = this.i18n.endOfProjectMessage + ' <a href="' + url + '" target="_blank">' + this.i18n.here +
+					'</a>.';
+
+			this._emitEvt('COMMUNICATION', {
+				type: 'alert',
+				level: 'warning',
+				description: message,
+				position: 'top-center',
+				timeout: 0
+			});
 		},
 
 		_subToggleSidebar: function(req) {

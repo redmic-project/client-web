@@ -2,7 +2,6 @@ define([
 	'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/request'
 	, 'dojo/json'
 	, 'put-selector/put'
 	, 'redmic/modules/base/_Module'
@@ -18,7 +17,6 @@ define([
 	redmicConfig
 	, declare
 	, lang
-	, request
 	, JSON
 	, put
 	, _Module
@@ -45,14 +43,11 @@ define([
 
 			this.config = {
 				ownChannel: 'userArea',
-				actions: {
-					REQUEST: 'request'
-				},
 
 				omitLoading: true,
 				'class': 'userArea',
 				idProperty: 'id',
-				target: redmicConfig.services.profile,
+				profileTarget: redmicConfig.services.profile,
 				repositoryUrl: 'https://gitlab.com/redmic-project/client/web'
 			};
 
@@ -84,10 +79,13 @@ define([
 					newPage: true
 				};
 
+				this.target = [this.profileTarget];
+
 				if (this._checkUserIsRegistered()) {
 					this._initializeRegisteredUserArea(infoItem, versionItem);
 
 					this._logoutTarget = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData);
+					this.target.push(this._logoutTarget);
 					// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
 					// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
 					this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
@@ -104,7 +102,7 @@ define([
 				omitLoading: true,
 				template: TemplateTopbarMenu,
 				'class': 'tooltipUser',
-				target: this.target
+				target: this.profileTarget
 			});
 
 			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
@@ -193,7 +191,7 @@ define([
 
 			this._emitEvt('INJECT_DATA', {
 				data: req.dataCredentials,
-				target: this.target
+				target: this.profileTarget
 			});
 		},
 
@@ -211,11 +209,6 @@ define([
 			}
 		},
 
-		_getNodeToShow: function() {
-
-			return this.domNode;
-		},
-
 		_checkUserIsRegistered: function() {
 
 			return Credentials.get('userRole') !== 'ROLE_GUEST';
@@ -228,31 +221,25 @@ define([
 				return;
 			}
 
-			var target = this._logoutTarget,
-				headers = {
-					'Content-Type': 'application/json',
-					'Accept': 'application/javascript, application/json'
-				},
-				data = {
-					'token': Credentials.get('accessToken')
-				};
+			var data = {
+				'token': Credentials.get('accessToken')
+			};
 
-			request(target, {
+			this._emitEvt('REQUEST', {
 				method: 'POST',
-				handleAs: 'json',
-				headers: headers,
-				data: JSON.stringify(data)
-			}).then(
-				lang.hitch(this, this._handleResponse),
-				lang.hitch(this, this._handleError));
+				target: this._logoutTarget,
+				query: data,
+				requesterId: this.getOwnChannel()
+			});
 		},
 
-		_handleResponse: function(res) {
+		_errorAvailable: function(err, status, resWrapper) {
 
-			this._removeUserData();
-		},
+			var target = resWrapper.target;
 
-		_handleError: function(err) {
+			if (target !== this._logoutTarget) {
+				return;
+			}
 
 			this._emitEvt('TRACK', {
 				type: TRACK.type.exception,
@@ -272,7 +259,14 @@ define([
 			Credentials.set('selectIds', {});
 		},
 
-		_dataAvailable: function(response) {
+		_dataAvailable: function(response, resWrapper) {
+
+			var target = resWrapper.target;
+
+			if (target === this._logoutTarget) {
+				this._removeUserData();
+				return;
+			}
 
 			var data = response.data;
 

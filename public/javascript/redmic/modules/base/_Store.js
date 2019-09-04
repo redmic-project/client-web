@@ -8,12 +8,11 @@ define([
 	, lang
 	, aspect
 	, _StoreItfc
-){
+) {
+
 	return declare(_StoreItfc, {
 		//	summary:
-		//		Base común para todos los módulos con carga de datos.
-		//	description:
-		//		Aporta la funcionalidad de pedir y obtener datos al módulo que extiende de él.
+		//		Permite a los módulos realizar peticiones de datos, comunicándose con RestManager.
 
 		storeEvents: {
 			REQUEST: "request",
@@ -109,7 +108,7 @@ define([
 			var response = resWrapper.res,
 				status = response.status;
 
-			if (status >= 200 && status < 400) {
+			if (this._chkSuccessfulStatus(status)) {
 				this._dataAvailable(response, resWrapper);
 			} else {
 				this._errorAvailable(response.error, status, resWrapper);
@@ -123,7 +122,7 @@ define([
 			var response = resWrapper.res,
 				status = response.status;
 
-			if (status >= 200 && status < 400) {
+			if (this._chkSuccessfulStatus(status)) {
 				this._itemAvailable(response, resWrapper);
 			} else {
 				this._errorAvailable(response.error, status, resWrapper);

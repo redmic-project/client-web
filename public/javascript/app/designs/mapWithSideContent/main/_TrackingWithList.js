@@ -150,16 +150,7 @@ define([
 
 		_chkSelectionTargetIsBrowserWork: function(res) {
 
-			if (!this._chkSuccessful(res)) {
-				return false;
-			}
-
-			var body = res.body;
-			if (body && body.selectionTarget && (body.selectionTarget !== this.targetBrowserWork)) {
-				return false;
-			}
-
-			return true;
+			return res.target === this.targetBrowserWork;
 		},
 
 		_fillSideContent: function() {

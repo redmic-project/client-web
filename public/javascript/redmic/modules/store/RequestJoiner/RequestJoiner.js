@@ -75,17 +75,18 @@ define([
 			return {
 				target: target,
 				method: 'POST',
+				action: '_search',
 				requesterId: this.getOwnChannel()
 			};
 		},
 
-		_dataAvailable: function(res) {
+		_dataAvailable: function(res, resWrapper) {
 
 			if (!this._responsePromises) {
 				return;
 			}
 
-			var target = res.target,
+			var target = resWrapper.target,
 				data = res.data.data,
 				parsedDataDfd = this._parseDataByTarget(data, target);
 

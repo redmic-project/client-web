@@ -70,8 +70,7 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'SAVE',
-				channel: this._buildChannel(this.storeChannel, this.actions.SAVE)/*,
-				callback: '_pubSave'*/
+				channel: this._buildChannel(this.storeChannel, this.actions.SAVE)
 			},{
 				event: 'REMOVE',
 				channel: this._buildChannel(this.storeChannel, this.actions.REMOVE)
@@ -80,54 +79,18 @@ define([
 			this._deleteDuplicatedChannels(this.publicationsConfig);
 		},
 
-		/*_pubSave: function(channel, obj) {
-
-			var target = this._getTarget(obj.target);
-			//var target = this._getPersistenceTarget(obj.target);
-
-			this._publish(channel, {
-				idInTarget: obj.idInTarget,
-				target: target,
-				item: obj.data || {},
-				idProperty: obj.idProperty || this.idPropertySave || this.idProperty
-			});
-		},
-
-		_getTarget: function(target) {
-		//_getPersistenceTarget: function(target) {
-
-			console.debug('JAMAS DE LOS JAMASES')
-			if (target) {
-				return target;
-			}
-
-			if (this.baseTarget) {
-				return this.baseTarget;
-			}
-
-			if (this.editionTarget instanceof Array) {
-				return this.editionTarget[0];
-			}
-
-			if (this.target instanceof Array) {
-				return this.target[0];
-			}
-
-			return this.editionTarget || this.target;
-		},*/
-
 		_subSaved: function(resWrapper) {
 
 			var response = resWrapper.res,
 				status = response.status;
 
 			if (!this.omitRefreshAfterSuccess) {
-				this._emitEvt('REFRESH');
+				this._tryToEmitEvt('REFRESH');
 			}
 
-			if (status >= 200 && status < 400) {
+			if (this._chkSuccessfulStatus(status)) {
 				var savedObj = this._getSavedObjToPublish(response) || response;
-				this._emitEvt('SAVED', response);
+				this._emitEvt('SAVED', savedObj);
 
 				this._afterSaved(response, resWrapper);
 			} else {
@@ -135,16 +98,23 @@ define([
 			}
 		},
 
-		_subRemoved: function(result) {
+		_subRemoved: function(resWrapper) {
+
+			var response = resWrapper.res,
+				status = response.status;
 
 			if (!this.omitRefreshAfterSuccess) {
-				this._emitEvt('REFRESH');
+				this._tryToEmitEvt('REFRESH');
 			}
 
-			var removedObj = this._getRemovedObjToPublish(result) || result;
-			this._emitEvt('REMOVED', removedObj);
+			if (this._chkSuccessfulStatus(status)) {
+				var removedObj = this._getRemovedObjToPublish(response) || response;
+				this._emitEvt('REMOVED', removedObj);
 
-			this._afterRemoved(result);
+				this._afterRemoved(response, resWrapper);
+			} else {
+				this._afterRemoveError(response.error, status, resWrapper);
+			}
 		}
 	});
 });

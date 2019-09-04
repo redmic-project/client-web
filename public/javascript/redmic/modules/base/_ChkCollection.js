@@ -31,15 +31,6 @@ define([
 			return !this.actionsPaused[action];
 		},
 
-		_chkSuccessful: function(response) {
-
-			if (response && (response.success === undefined || response.success)) {
-				return true;
-			}
-
-			return false;
-		},
-
 		_chkTargetIsValid: function(obj) {
 
 			// TODO eliminar cuando el server no responda con envoltorio body
@@ -122,6 +113,11 @@ define([
 				}));
 
 			return allowedActionsMapped.indexOf(triggeredAction) !== -1;
+		},
+
+		_chkSuccessfulStatus: function(status) {
+
+			return status >= 200 && status < 400;
 		}
 	});
 });

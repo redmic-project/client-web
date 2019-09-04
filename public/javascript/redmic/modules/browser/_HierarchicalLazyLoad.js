@@ -125,6 +125,7 @@ define([
 			objRequest = {
 				method: 'POST',
 				target: target,
+				action: '_search',
 				requesterId: this.getOwnChannel()
 			};
 

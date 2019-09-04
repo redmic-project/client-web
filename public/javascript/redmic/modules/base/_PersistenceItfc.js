@@ -6,7 +6,8 @@ define([
 	declare
 	, lang
 	, _Itfc
-){
+) {
+
 	return declare(_Itfc, {
 		//	summary:
 		//		Interfaz de _Persistence.
@@ -21,7 +22,8 @@ define([
 				'_afterSaved': {},
 				'_afterSaveError': {},
 				'_getRemovedObjToPublish': {},
-				'_afterRemoved': {}
+				'_afterRemoved': {},
+				'_afterRemoveError': {}
 			});
 		}
 	});

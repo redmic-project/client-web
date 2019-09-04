@@ -124,20 +124,11 @@ define([
 			return false;
 		},
 
-		_chkTargetIsMine: function(response) {
+		_chkTargetIsMine: function(res) {
 
-			if (!this._chkSuccessful(response)) {
-				return false;
-			}
+			var target = res.target;
 
-			var body = response.body,
-				target = body ? body.target : null;
-
-			if (target && ((this._isTargetAnyOfMine && this._isTargetAnyOfMine(target)) || this._targetIsMine(target))) {
-				return true;
-			}
-
-			return false;
+			return (this._isTargetAnyOfMine && this._isTargetAnyOfMine(target)) || this._targetIsMine(target);
 		},
 
 		_isTargetAnyOfMine: function(target) {

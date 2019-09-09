@@ -202,13 +202,12 @@ define([
 
 			var data = req.data;
 				idProperty = req.idProperty || this.idProperty,
-				id = data[idProperty];
+				id = data[idProperty],
+				targetWithSlash = this._getTargetWithEndingSlash(target);
 
 			if (!id) {
-				return target;
+				return targetWithSlash;
 			}
-
-			var targetWithSlash = this._getTargetWithEndingSlash(target);
 
 			return targetWithSlash + id;
 		},

@@ -35,7 +35,14 @@ define([
 
 			// TODO eliminar cuando el server no responda con envoltorio body
 			var data = obj.body || obj;
-			return data && data.target;
+
+			var targetIsValid = data && data.target;
+
+			if (!targetIsValid) {
+				console.error('Received publication with invalid target at module "%s":', this.getChannel(), data);
+			}
+
+			return targetIsValid;
 		},
 
 		_chkTargetIsMine: function(res) {

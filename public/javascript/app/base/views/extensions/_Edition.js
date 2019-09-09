@@ -24,16 +24,10 @@ define([
 				editionViewEvents: {
 					ADD: "add",
 					EDIT: "edit",
-					REMOVE: "remove",
-					REMOVE_ITEM: "removeItem",
 					COPY: "copy",
-					SHOW_FORM: "showForm",
-					SAVE: "save",
-					SAVED: "saved"
+					SHOW_FORM: "showForm"
 				},
 				editionViewActions: {
-					ITEM_AVAILABLE: "itemAvailable",
-					GET: "get",
 					UPDATE_TARGET_FORM: "updateTargetForm"
 				}
 			};
@@ -121,23 +115,10 @@ define([
 
 		_defineEditionSubscriptions: function () {
 
-			if (this.persistence) {
-				this.subscriptionsConfig.push({
-					channel: this.persistence.getChannel("REMOVED"),
-					callback: "_subRemoved"
-				});
-			}
 		},
 
 		_defineEditionPublications: function() {
 
-			if (this.persistence) {
-				this.publicationsConfig.push({
-					event: 'REMOVE_ITEM',
-					channel: this.persistence.getChannel("REMOVE"),
-					callback: "_pubRemove"
-				});
-			}
 		},
 
 		_setEditionOwnCallbacksForEvents: function() {
@@ -145,7 +126,6 @@ define([
 			this._onEvt('ADD', lang.hitch(this, this._addElement));
 			this._onEvt('EDIT', lang.hitch(this, this._editElement));
 			this._onEvt('COPY', lang.hitch(this, this._copyElement));
-			this._onEvt('REMOVE', lang.hitch(this, this._removeElement));
 		},
 
 		postCreate: function() {
@@ -167,54 +147,14 @@ define([
 
 		_removeCallback: function(evt) {
 
-			this._emitEvt('REMOVE', evt[this.idProperty]);
-		},
-
-		_copyCallback: function(evt) {
-
-			this._emitEvt('COPY', evt);
-		},
-
-		_subRemoved: function(result) {
-
-			if (result.success) {
-				this._emitEvt('REFRESH');
-			}
-		},
-
-		_pubRemove: function(channel, idProperty) {
-
-			var id = idProperty,
-				target = this._getTarget();
-
-			if (idProperty && typeof idProperty === 'object') {
-				target = idProperty.target || this._getTarget();
-				id = idProperty[this.idProperty];
-			}
-
-			this._publish(channel, {
-				target: target,
-				id: id
-			});
-		},
-
-		_editElement: function(evt) {
-
-			this._showEditForm("edit", evt[this.idProperty]);
-		},
-
-		_copyElement: function(evt) {
-
-			this._showEditForm("copy", evt[this.idProperty]);
-		},
-
-		_removeElement: function(idProperty) {
-
 			alertify.confirm(this.i18n.deleteConfirmationTitle, this.i18n.deleteConfirmationMessage,
 				lang.hitch(this, function(idProperty) {
 
-				this._emitEvt('REMOVE_ITEM', idProperty);
-			}, idProperty),
+				this._emitEvt('REMOVE', {
+					id: idProperty,
+					target: this.target
+				});
+			}, evt[this.idProperty]),
 			lang.hitch(this, function() {
 
 				this._emitEvt('COMMUNICATION', {
@@ -226,21 +166,26 @@ define([
 			});
 		},
 
-		_getTarget: function(target) {
+		_copyCallback: function(evt) {
 
-			if (target) {
-				return target;
-			}
+			this._emitEvt('COPY', evt);
+		},
 
-			if (this.baseTarget) {
-				return this.baseTarget;
-			}
+		_afterRemoved: function(res) {
 
-			if (this.target instanceof Array) {
-				return this.target[0];
-			}
+			this.inherited(arguments);
 
-			return this.target;
+			this._emitEvt('REFRESH');
+		},
+
+		_editElement: function(evt) {
+
+			this._showEditForm("edit", evt[this.idProperty]);
+		},
+
+		_copyElement: function(evt) {
+
+			this._showEditForm("copy", evt[this.idProperty]);
 		}
 	});
 });

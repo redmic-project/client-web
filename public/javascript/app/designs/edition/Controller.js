@@ -11,7 +11,7 @@ define([
 	, "redmic/modules/layout/wizard/Wizard"
 	, "redmic/modules/layout/wizard/_StepNavigation"
 	, "redmic/modules/layout/wizard/_StepBreadcrumbs"
-], function (
+], function(
 	_EditionCommons
 	, _Controller
 	, declare
@@ -24,7 +24,8 @@ define([
 	, Wizard
 	, _StepNavigation
 	, _StepBreadcrumbs
-){
+) {
+
 	return declare([_Controller, _Store, _Persistence, _EditionCommons], {
 		//	summary:
 		//		Controller para vistas de detalle.
@@ -290,13 +291,9 @@ define([
 			return this.domNode;
 		},
 
-		_subSaved: function(result) {
+		_afterSaved: function(result) {
 
 			this._emitEvt('LOADED');
-
-			if (result && result.success) {
-				this._emitEvt('SAVED', result);
-			}
 		}
 	});
 });

@@ -49,10 +49,10 @@ define([
 			this.editor = new formDef(this.formConfig);
 		},
 
-		_getSavedObjToPublish: function(results) {
+		_afterSaved: function(results) {
 
-			results.hide = true;
-			return results;
+			this.inherited(arguments);
+			this._publish(this.editor.getChannel('HIDE'));
 		}
 	});
 });

@@ -91,7 +91,8 @@ define([
 			});
 
 			this._emitEvt('SAVE', {
-				data: res.data
+				data: res.data,
+				target: this.target
 			});
 		},
 

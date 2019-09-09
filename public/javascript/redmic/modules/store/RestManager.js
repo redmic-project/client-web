@@ -400,7 +400,12 @@ define([
 
 			var status = response.status,
 				error = response.error,
+				data = response.data,
 				description = error ? error : this.defaultErrorDescription;
+
+			if (data && data.description) {
+				description += ' - ' + data.description;
+			}
 
 			if (status) {
 				description += ' - ' + status + ' - <a href="/feedback/' + status + '" target="_blank">' +

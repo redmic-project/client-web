@@ -254,7 +254,8 @@ define([
 			this._onEvt('SAVED', this._editionSuccessDfd.resolve);
 
 			this._emitEvt('SAVE', {
-				data: response.data
+				data: response.data,
+				target: this.target
 			});
 		},
 

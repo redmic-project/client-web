@@ -16,7 +16,8 @@ define([
 	, TemplateInfo
 	, TemplateInfoHelp
 	, _ActivityBase
-){
+) {
+
 	return declare([_ActivityBase], {
 		//	summary:
 		//		Vista detalle de Activity.
@@ -96,6 +97,7 @@ define([
 			this._emitEvt('REQUEST', {
 				method: "POST",
 				target: ancestorsTarget,
+				action: '_search',
 				query: {
 					returnFields: ['id', 'path', 'name']
 				}

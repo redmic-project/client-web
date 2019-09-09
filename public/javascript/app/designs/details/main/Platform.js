@@ -69,10 +69,10 @@ define([
 			this._publish(this._widgets.additionalInfo.getChildChannel("childInstances.1", "CLEAR"));
 		},
 
-		_itemAvailable: function(response) {
+		_itemAvailable: function(res, resWrapper) {
 
-			if (response.target === this.target[0]) {
-				this._dataToContacts(response);
+			if (resWrapper.target === this.target[0]) {
+				this._dataToContacts(res);
 				return;
 			}
 

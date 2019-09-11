@@ -236,6 +236,7 @@ define([], function() {
 		'platformType': baseUri + 'platformtypes',
 		'animalTracking': baseUri + 'animaltracking',
 		'pointTrackingActivities': baseUri + 'tracking/activities',
+		'trackingActivity': baseUri + 'activities/{id}/tracking',
 		'elementsTrackingActivity': baseUri + 'activities/{id}/tracking/elements',
 		'elementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}',
 		'trackElementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track',

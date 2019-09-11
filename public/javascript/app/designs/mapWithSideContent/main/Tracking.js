@@ -48,7 +48,8 @@ define([
 	, _AddFilter
 	, _PublishInfo
 	, TrackingLayerImpl
-){
+) {
+
 	return declare([Layout, Controller, _Main, _Store, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap], {
 		//	summary:
 		//		Vista de Tracking.
@@ -69,7 +70,7 @@ define([
 				layersTarget: redmicConfig.services.pointTrackingCluster,
 				// TODO cuando se pidan por actividad, definir este en redmicConfig
 				//layersTarget: "/api/activities/{id}/tracking/cluster",
-				infoTarget: "/api/activities/{id}/tracking",
+				infoTarget: redmicConfig.services.trackingActivity,
 
 				mainEvents: {
 					MOVE_TRACK_TO: "moveTrackTo",

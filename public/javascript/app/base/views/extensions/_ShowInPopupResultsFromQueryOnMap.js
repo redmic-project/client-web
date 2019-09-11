@@ -10,7 +10,8 @@ define([
 	, lang
 	, aspect
 	, _ShowInPopup
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Extensión para las vistas con mapa que hacen consultas sobre el mismo y quieren mostrar

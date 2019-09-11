@@ -167,7 +167,7 @@ define([
 			this[response.item.callback]();
 		},
 
-		_afterSaved: function(res) {
+		_afterSaved: function(res, resWrapper) {
 
 			var result = res.data;
 
@@ -176,7 +176,7 @@ define([
 			result.hide = true;
 			this._publish(this.formActive.getChannel("SAVED"), result);
 
-			this._showBoxUser(result.target);
+			this._showBoxUser(resWrapper.target);
 
 			this._refreshModules();
 		},
@@ -435,22 +435,24 @@ define([
 
 		_dataAvailable: function(response) {
 
+			var data = response.data;
+
 			this._injectItemList({
-				firstName: response.data.firstName,
-				lastName: response.data.lastName,
+				firstName: data.firstName,
+				lastName: data.lastName,
 				callback: "_nameEdit",
 				edit: true,
 				dataType: "name"
 			}, "userData");
 
 			this._injectItemList({
-				email: response.data.email,
+				email: data.email,
 				callback: "_emailEdit",
 				dataType: "email"
 			}, "userData");
 
 			this._injectItemList({
-				sector: response.data.sector,
+				sector: data.sector,
 				callback: "_sectorEdit",
 				edit: true,
 				dataType: "sector"
@@ -480,7 +482,7 @@ define([
 				}
 
 				this._injectItemList(resData, "userImage");
-			}, response.data));
+			}, data));
 		},
 
 		_generateWidgets: function() {

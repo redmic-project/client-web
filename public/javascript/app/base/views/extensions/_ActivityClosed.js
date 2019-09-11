@@ -69,11 +69,7 @@ define([
 			this._once(this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
 				lang.hitch(this, function (response) {
 
-				if (!response.body) {
-					return;
-				}
-
-				var data = response.body.data;
+				var data = response.res.data;
 
 				this._activityData = data;
 
@@ -83,7 +79,9 @@ define([
 			}), {
 				predicate: function(response) {
 
-					return !!response.body.data.activityType;
+					var data = response.res.data;
+
+					return data && data.activityType;
 				}
 			}, this);
 

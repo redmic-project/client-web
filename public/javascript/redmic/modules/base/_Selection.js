@@ -331,17 +331,9 @@ define([
 
 		_chkSelectionTargetLoadingIsMine: function(res) {
 
-			var target = res.selectionTarget;
+			var target = res.target;
 
-			if (target === this.selectionTarget) {
-				return true;
-			}
-
-			if (target === this.target) {
-				return true;
-			}
-
-			return false;
+			return target === (this.selectionTarget ? this.selectionTarget : this.target);
 		},
 
 		_subSelectionTargetLoading: function(res) {

@@ -11,7 +11,7 @@ define([
 ) {
 
 	var url = 'login',
-		urlAfterLogin = '/home',
+		urlAfterLogin = Config.url.home,
 		userLoginButtonSelector = 'span[widgetid="dijit_form_Button_0"]',
 		guestLoginButtonSelector = 'div.boxLabel a[href="/home"]',
 		usernameInputSelector = 'input[name="email"]',
@@ -70,16 +70,22 @@ define([
 		goToUrl: function() {
 
 			return this.remote
-				.get(url);
+				.get(url)
+				.then(Utils.checkLoadingIsGone());
 		},
 
 		login: function() {
 
+			var ctx;
+
 			if (Config.credentials.userRole === 'guest') {
-				return this.loginAsGuestUser();
+				ctx = this.loginAsGuestUser();
+			} else {
+				ctx = this.loginAsRegisteredUser();
 			}
 
-			return this.loginAsRegisteredUser();
+			return ctx.then(Utils.checkLoadingIsGone());
+
 		},
 
 		loginAsGuestUser: function() {

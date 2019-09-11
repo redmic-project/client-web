@@ -265,7 +265,7 @@ define([
 			return lang.partial(function(self) {
 
 				var primarySelector = 'li.' + primaryClassName,
-					secondarySelector = 'nav.secondary li a[href="' + secondaryUrl + '"]';
+					secondarySelector = 'nav.secondarySidebar li a[href="' + secondaryUrl + '"]';
 
 				return this.parent
 					.then(self.clickElement(primarySelector))
@@ -280,7 +280,7 @@ define([
 
 			return lang.partial(function(self) {
 
-				var primarySelector = 'nav.primary li a[href="' + primaryUrl + '"]';
+				var primarySelector = 'nav.primarySidebar li a[href="' + primaryUrl + '"]';
 
 				return this.parent
 					.then(self.clickDisplayedElementAndCheckUrl(primarySelector, primaryUrl));

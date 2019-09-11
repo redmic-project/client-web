@@ -16,7 +16,7 @@ define([
 		infoPageUrl = Config.url.innerRedmicInfo,
 		homePageUrl = Config.url.home,
 
-		_guestAreaSelector = 'div.manager > div.userAreaGuest > ',
+		_guestAreaSelector = 'div.listMenu > ',
 		loginLinkSelector = _guestAreaSelector + 'a[href="' + loginPageUrl + '"]',
 		registerLinkSelector = _guestAreaSelector + 'a[href="' + registerPageUrl + '"]',
 		infoLinkSelector = _guestAreaSelector + 'a[href="' + infoPageUrl + '"]',
@@ -25,12 +25,28 @@ define([
 		assert = intern.getPlugin('chai').assert;
 
 		tests = {
-
 			'Should_GoToHomeView_When_ClickOnRedmicLogo': function() {
 
 				return indexPage
 					.login()
+					.get('atlas')
+					.then(Utils.checkLoadingIsGone())
 					.then(Utils.clickElementAndCheckUrl(Config.selector.homeButton, homePageUrl));
+			},
+
+			'Should_FindUserArea_When_UserIsAtInnerApp': function() {
+
+				return indexPage
+					.login()
+					.findByCssSelector(Config.selector.userArea);
+			},
+
+			'Should_GoToInfoView_When_GuestUserClickOnInfoLink': function() {
+
+				return indexPage
+					.login()
+					.then(Utils.clickElement(Config.selector.userArea))
+					.then(Utils.clickElementAndCheckUrl(infoLinkSelector, infoPageUrl));
 			}
 		};
 
@@ -40,32 +56,20 @@ define([
 
 				return indexPage
 					.login()
-					.then(Utils.clickElementAndCheckUrl(loginLinkSelector, loginPageUrl));
+					.then(Utils.clickElement(Config.selector.userArea))
+					.then(Utils.clickElementAndCheckUrl(registerLinkSelector, registerPageUrl));
 			},
 
 			'Should_GoToRegisterView_When_GuestUserClickOnRegisterLink': function() {
 
 				return indexPage
 					.login()
+					.then(Utils.clickElement(Config.selector.userArea))
 					.then(Utils.clickElementAndCheckUrl(registerLinkSelector, registerPageUrl));
-			},
-
-			'Should_GoToInfoView_When_GuestUserClickOnInfoLink': function() {
-
-				return indexPage
-					.login()
-					.then(Utils.clickElementAndCheckUrl(infoLinkSelector, infoPageUrl));
 			}
 		});
 	} else {
 		lang.mixin(tests, {
-			'Should_FindUserArea_When_UserIsRegistered': function() {
-
-				return indexPage
-					.login()
-					.findByCssSelector(Config.selector.userArea);
-			},
-
 			'Should_FindNotificationArea_When_UserIsRegistered': function() {
 
 				return indexPage

@@ -65,7 +65,11 @@ define([
 			var targetWithSlash = this._getTargetWithEndingSlash(target),
 				id = req.id;
 
-			return targetWithSlash + id;
+			if (typeof id === 'string' || typeof id === 'number') {
+				return targetWithSlash + id;
+			}
+
+			return targetWithSlash;
 		},
 
 		_getGetRequestOptions: function(req) {

@@ -142,9 +142,9 @@ define([
 			return false;
 		},
 
-		_itemAvailable: function(response) {
+		_itemAvailable: function(response, resWrapper) {
 
-			var target = response.target,
+			var target = resWrapper.target,
 				data = response.data;
 
 			for (var key in this.items) {
@@ -156,7 +156,7 @@ define([
 
 		_dataAvailable: function(response) {
 
-			var target = response.target,
+			var target = resWrapper.target,
 				data = response.data;
 
 			if (this._activePost) {

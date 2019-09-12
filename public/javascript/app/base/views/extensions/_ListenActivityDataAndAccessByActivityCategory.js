@@ -26,9 +26,9 @@ define([
 			aspect.before(this, "_itemAvailable", lang.hitch(this, this._itemActivityAvailable));
 		},
 
-		_itemActivityAvailable: function(res) {
+		_itemActivityAvailable: function(res, resWrapper) {
 
-			var target = res.target,
+			var target = resWrapper.target,
 				data = res.data;
 
 			if (this.activityTarget === target) {

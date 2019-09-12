@@ -393,7 +393,7 @@ define([
 
 			/* Seteamos los documentos obtenidos a partir de la consulta en el grid de la derecha*/
 			if (response && response.data) {
-				var data = response.data.data;
+				var data = response.data.data || response.data;
 				for (var i = 0; i < data.length; i++) {
 					var item = data[i].documents[0].document;
 					if (item) {
@@ -405,13 +405,12 @@ define([
 			}
 		},
 
-		_itemAvailable: function(response) {
+		_itemAvailable: function(response, resWrapper) {
 
 			this.inherited(arguments);
 
-			if (response.target === this.target[1]){
+			if (resWrapper.target === this.target[1]) {
 				this._dataToDocuments(response);
-				return;
 			}
 		},
 

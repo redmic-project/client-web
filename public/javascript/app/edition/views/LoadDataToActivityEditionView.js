@@ -122,9 +122,9 @@ define([
 			delete this.activityCategoriesOptions;
 		},
 
-		_itemAvailable: function(res) {
+		_itemAvailable: function(res, resWrapper) {
 
-			var target = res.target,
+			var target = resWrapper.target,
 				data = res.data;
 
 			if (target === this.target[0]) {
@@ -135,14 +135,9 @@ define([
 					this.activityData = data;
 					this._processActivity();
 				}
-
-				return;
-			}
-
-			if (target === this.target[1]) {
+			} else if (target === this.target[1]) {
 				this.activityCategoriesOptions = data;
 				this._processActivityCategories();
-				return;
 			}
 		},
 

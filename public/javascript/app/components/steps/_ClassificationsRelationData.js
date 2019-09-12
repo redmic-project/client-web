@@ -257,9 +257,9 @@ define([
 			});
 		},
 
-		_dataAvailable: function(response) {
+		_dataAvailable: function(response, resWrapper) {
 
-			var target = response.target,
+			var target = resWrapper.target,
 				data = response.data;
 
 			if (target === this.classificationsTarget && !this._activePost && this._requestClassificationsMGet) {

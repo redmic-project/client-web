@@ -385,11 +385,12 @@ define([
 			}
 
 			this._emitEvt("SEND_DATA", {
-				body: {
+				res: {
 					data: data,
 					total: total,
-					target: this._browserTarget
-				}
+					status: 200
+				},
+				target: this._browserTarget
 			});
 		},
 

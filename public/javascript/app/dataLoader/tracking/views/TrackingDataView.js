@@ -190,15 +190,13 @@ define([
 			});
 		},
 
-		_itemAvailable: function(res) {
+		_itemAvailable: function(res, resWrapper) {
 
 			var data = res.data;
 
-			if (res.target === this.target[0]) {
-
+			if (resWrapper.target === this.target[0]) {
 				this._updateTargetForm(data);
 			} else if (data) {
-
 				this._setTitle(lang.replace(this.title, {
 					viewContent: this.i18n.pointsTrack,
 					elementName: data.name

@@ -18,7 +18,6 @@ define([
 
 		target: [],
 		selectionTargetSuffix: '/_selection',
-		notificationSuccess: false,
 		omitRefreshAfterSuccess: true,
 
 		_groupSelected: function(req) {

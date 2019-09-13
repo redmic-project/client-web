@@ -105,24 +105,26 @@ define([
 			//	summary:
 			//		Busca el elemento correspondiente al selector especificado y clickea sobre él.
 
-			return function() {
+			return lang.partial(function(self, elementSelector) {
 
 				return this.parent
+					.then(self.checkLoadingIsGone())
 					.findByCssSelector(elementSelector)
 						.click();
-			};
+			}, this, elementSelector);
 		},
 
 		clickDisplayedElement: function(elementSelector) {
 			//	summary:
 			//		Busca el elemento mostrado correspondiente al selector especificado y clickea sobre él.
 
-			return function() {
+			return lang.partial(function(self, elementSelector) {
 
 				return this.parent
+					.then(self.checkLoadingIsGone())
 					.findDisplayedByCssSelector(elementSelector)
 						.click();
-			};
+			}, this, elementSelector);
 		},
 
 		clickInToTab: function(index, selector) {

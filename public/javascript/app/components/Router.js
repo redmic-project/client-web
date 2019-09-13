@@ -23,6 +23,7 @@ define([
 	, 'redmic/modules/base/MetaTags'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/Loading'
+	, 'redmic/modules/store/RestManagerImpl'
 	, 'templates/LoadingCustom'
 ], function(
 	InnerApp
@@ -49,6 +50,7 @@ define([
 	, MetaTags
 	, _Module
 	, Loading
+	, RestManagerImpl
 	, LoadingCustomTemplate
 ) {
 
@@ -144,6 +146,10 @@ define([
 		},
 
 		_initialize: function() {
+
+			new RestManagerImpl({
+				parentChannel: this.ownChannel
+			});
 
 			new CommunicationCenter({
 				parentChannel: this.ownChannel

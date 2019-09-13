@@ -10,7 +10,6 @@ define([
 	, 'redmic/base/Credentials'
 	, 'redmic/modules/selector/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
-	, 'redmic/modules/store/RestManagerImpl'
 	, 'redmic/modules/notification/Notification'
 	, 'redmic/modules/socket/_IngestData'
 	, 'redmic/modules/socket/_Report'
@@ -29,7 +28,6 @@ define([
 	, Credentials
 	, Selector
 	, MainSidebarImpl
-	, RestManagerImpl
 	, Notification
 	, _IngestData
 	, _Report
@@ -177,10 +175,6 @@ define([
 			//	tags:
 			//		private
 
-			new RestManagerImpl({
-				parentChannel: this.ownChannel
-			});
-
 			new Selector({
 				parentChannel: this.ownChannel
 			});
@@ -297,7 +291,6 @@ define([
 			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
 			this._publish(this.topbar.getChannel('DESTROY'));
 			this._publish(this.sidebar.getChannel('DESTROY'));
-			this._publish(this._buildChannel(this.storeChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.managerChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.taskChannel, this.actions.DESTROY));

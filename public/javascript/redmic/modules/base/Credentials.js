@@ -2,35 +2,26 @@ define([
 	'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/request'
-	, 'dojo/request/notify'
-	, 'dojo/request/registry'
 	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Store'
 	, 'redmic/base/Credentials'
 ], function(
 	redmicConfig
 	, declare
 	, lang
-	, request
-	, notify
-	, registry
 	, _Module
+	, _Store
 	, Credentials
-){
-	return declare(_Module, {
+) {
+
+	return declare([_Module, _Store], {
 		//	Summary:
 		//		Módulo para manejar las credenciales de los usuarios.
 		//	Description:
-		//		Obtiene las credenciales del servidor y escucha las peticiones para obtener información de las mismas,
-		//		además de publicar cambios.
-		//		También maneja errores de permisos en peticiones y les añade cabeceras de autentificación.
+		//		Obtiene las credenciales del servidor y escucha cambios relativos a las mismas, publicando los cambios.
 
-		//	_filteredUrls: Array
-		//		Define las URLs a las que no hay que añadirle caberas de autentificación
 		//	_loginPath: String
 		//		Ruta correspondiente a la vista de acceso
-		//	_serverUrlPrefix: String
-		//		Prefijo de rutas hacia el servidor
 
 		constructor: function(args) {
 
@@ -55,29 +46,13 @@ define([
 					REQUEST_FAILED: 'requestFailed'
 				},
 
-				_filteredUrls: [
-					'token',
-					'reCaptcha',
-					'register',
-					'resettingRequest',
-					'resettingSetPassword',
-					'activateAccount'
-				],
-				_loginPath: '/login',
-				_apiUrl: 'api'
+				_loginPath: '/login'
 			};
 
 			lang.mixin(this, this.config, args);
 
-			this._prepareRequestHandlers();
 			this._initializeCredentials();
 			this._listenCredentials();
-		},
-
-		_prepareRequestHandlers: function() {
-
-			notify('error', lang.hitch(this, this._requestErrorHandler));
-			registry.register(lang.hitch(this, this._preRequestHandler), request);
 		},
 
 		_initializeCredentials: function() {
@@ -201,121 +176,44 @@ define([
 			//	tags:
 			//		private
 
-			var headers = {
-				'Content-Type': 'application/json',
-				'Accept': 'application/javascript, application/json'
-			};
-
 			var envDfd = window.env;
 			if (envDfd) {
 				envDfd.then(lang.hitch(this, function(envData) {
 
-					this._apiUrl = envData.apiUrl;
+					this.target = redmicConfig.getServiceUrl(redmicConfig.services.profile, envData) + '/';
 
-					var target = redmicConfig.getServiceUrl(redmicConfig.services.profile, envData) + '/';
-					request(target, {
-						method: 'GET',
-						handleAs: 'json',
-						headers: headers
-					}).then(
-						lang.hitch(this, this._onGetCredentialsSuccess),
-						lang.hitch(this, this._onGetCredentialsError));
+					this._emitEvt('GET', {
+						target: this.target
+					});
 				}));
 			}
 		},
 
-		_onGetCredentialsSuccess: function(res) {
+		_itemAvailable: function(res) {
 
-			var success = res.success,
-				data = res.body[0];
+			var data = res.data[0];
+
+			if (!data) {
+				Credentials.set('accessToken', null);
+				return;
+			}
 
 			this.dataCredentials = data;
 
-			if (!success) {
-				Credentials.set('accessToken', null);
-			} else {
-				Credentials.set('userId', data.id.toString());
-				Credentials.set('userName', data.firstName);
-				Credentials.set('userEmail', data.email);
-				Credentials.set('userRole', data.role.name);
-				Credentials.set('allowedModules', data.category);
+			Credentials.set('userId', data.id.toString());
+			Credentials.set('userName', data.firstName);
+			Credentials.set('userEmail', data.email);
+			Credentials.set('userRole', data.role.name);
+			Credentials.set('allowedModules', data.category);
 
-				this._emitEvt('GET_CREDENTIALS', {
-					found: !!Credentials.get('accessToken')
-				});
-			}
+			this._emitEvt('GET_CREDENTIALS', {
+				found: !!Credentials.get('accessToken')
+			});
 		},
 
-		_onGetCredentialsError: function(err) {
+		_errorAvailable: function(err) {
 
 			this._emitEvt('REQUEST_FAILED');
-		},
-
-		_requestErrorHandler: function(err) {
-			//	summary:
-			//		Se ejecuta cuando un request produce un error y permite manejarlo
-			//	tags:
-			//		private
-			//	err:
-			//		respuesta con el error del request
-
-			var res = err.response,
-				status = res.status;
-
-			if (status === 401) {
-				this._onRequestPermissionError(res);
-			} else if (status === 502) {
-				this._onRequestReachabilityError(res);
-			}
-		},
-
-		_onRequestPermissionError: function(res) {
-
-			// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
-			// privilegios insuficientes)
-			Credentials.set('accessToken', null);
-		},
-
-		_onRequestReachabilityError: function(res) {
-
-			// TODO notificar al usuario que hubo un error de conexión y ofrecerle recargar (para que pueda actuar
-			// sobre la página actual antes de recargar)
-		},
-
-		_preRequestHandler: function(url, options) {
-			//	summary:
-			//		Se ejecuta antes de hacer un request y nos permite añadir cabeceras
-			//	tags:
-			//		private
-			//	url:
-			//		url del servicio
-			//	options:
-			//		opciones del request (headers...)
-
-			var urlSplitted = url.split('/'),
-				lastUrlItem = urlSplitted.pop();
-
-			if (!lastUrlItem.length) {
-				lastUrlItem = urlSplitted.pop();
-			}
-
-			var lastUrlItemWithoutParams = lastUrlItem.split('?')[0],
-				isFilteredUrlItem = this._filteredUrls.indexOf(lastUrlItemWithoutParams) !== -1,
-				isUrlToServer = url.indexOf(this._apiUrl) !== -1,
-				urlNeedsAuth = isUrlToServer && !isFilteredUrlItem;
-
-			if (urlNeedsAuth) {
-				if (!options.headers) {
-					options.headers = {};
-				}
-
-				var accessToken = Credentials.get('accessToken');
-				if (accessToken) {
-					options.headers.Authorization = 'Bearer ' + accessToken;
-				}
-			}
-
-			return !!options.useXHR;
 		}
 	});
 });

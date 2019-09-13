@@ -2,11 +2,17 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/request'
+	, 'dojo/request/notify'
+	, 'dojo/request/registry'
+	, 'redmic/base/Credentials'
 	, './RestManager'
 ], function(
 	declare
 	, lang
 	, request
+	, notify
+	, registry
+	, Credentials
 	, RestManager
 ) {
 
@@ -14,8 +20,14 @@ define([
 		//	summary:
 		//		Implementación del módulo RestManager, que provee métodos de comunicación mediante dojo/request.
 		//	description:
+		//		También maneja errores de permisos en peticiones y les añade cabeceras de autentificación.
 		//		Importante: el campo 'options' recibido en las peticiones desde otros módulos, sobreescribe directamente
 		//		las opciones que se usarán a su vez para realizar la petición HTTP.
+
+		//	_apiUrl: String
+		//		Prefijo de rutas hacia el servidor
+		//	_filteredUrls: Array
+		//		Define las URLs a las que no hay que añadirle caberas de autentificación
 
 		constructor: function(args) {
 
@@ -32,10 +44,36 @@ define([
 				sync: false,
 				preventCache: false,
 				timeout: 45000,
-				handleAs: 'json'
+				handleAs: 'json',
+
+				_apiUrl: 'api',
+				_filteredUrls: [
+					'token',
+					'reCaptcha',
+					'register',
+					'resettingRequest',
+					'resettingSetPassword',
+					'activateAccount'
+				]
 			};
 
 			lang.mixin(this, this.config, args);
+
+			this._prepareRequestHandlers();
+		},
+
+		_prepareRequestHandlers: function() {
+
+			notify('error', lang.hitch(this, this._requestErrorHandler));
+			registry.register(lang.hitch(this, this._preRequestHandler), request);
+
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
+
+					this._apiUrl = envData.apiUrl;
+				}));
+			}
 		},
 
 		_getTargetWithEndingSlash: function(target) {
@@ -326,6 +364,73 @@ define([
 				options: response.options,
 				error: res.message
 			};
+		},
+
+		_requestErrorHandler: function(err) {
+			//	summary:
+			//		Se ejecuta cuando un request produce un error y permite manejarlo
+			//	tags:
+			//		private
+			//	err:
+			//		respuesta con el error del request
+
+			var res = err.response,
+				status = res.status;
+
+			if (status === 401) {
+				this._onRequestPermissionError(res);
+			} else if (status === 502) {
+				this._onRequestReachabilityError(res);
+			}
+		},
+
+		_onRequestPermissionError: function(res) {
+
+			// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
+			// privilegios insuficientes)
+			Credentials.set('accessToken', null);
+		},
+
+		_onRequestReachabilityError: function(res) {
+
+			// TODO notificar al usuario que hubo un error de conexión y ofrecerle recargar (para que pueda actuar
+			// sobre la página actual antes de recargar)
+		},
+
+		_preRequestHandler: function(url, options) {
+			//	summary:
+			//		Se ejecuta antes de hacer un request y nos permite añadir cabeceras
+			//	tags:
+			//		private
+			//	url:
+			//		url del servicio
+			//	options:
+			//		opciones del request (headers...)
+
+			var urlSplitted = url.split('/'),
+				lastUrlItem = urlSplitted.pop();
+
+			if (!lastUrlItem.length) {
+				lastUrlItem = urlSplitted.pop();
+			}
+
+			var lastUrlItemWithoutParams = lastUrlItem.split('?')[0],
+				isFilteredUrlItem = this._filteredUrls.indexOf(lastUrlItemWithoutParams) !== -1,
+				isUrlToServer = url.indexOf(this._apiUrl) !== -1,
+				urlNeedsAuth = isUrlToServer && !isFilteredUrlItem;
+
+			if (urlNeedsAuth) {
+				if (!options.headers) {
+					options.headers = {};
+				}
+
+				var accessToken = Credentials.get('accessToken');
+				if (accessToken) {
+					options.headers.Authorization = 'Bearer ' + accessToken;
+				}
+			}
+
+			return !!options.useXHR;
 		}
 	});
 });

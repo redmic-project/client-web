@@ -256,7 +256,7 @@ define([
 
 			this._emitEvt('SAVE', {
 				data: response.data,
-				target: this.target
+				target: this.editionTarget || this.target
 			});
 		},
 

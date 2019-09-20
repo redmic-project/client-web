@@ -81,7 +81,8 @@ define([
 				_itemsSelected: {},
 				localTarget: "local",
 				// TODO este target no hace falta, pero si uno de selección común a categorias y capas
-				//target: [redmicConfig.services.atlasLayer, redmicConfig.services.atlasCategory],
+				target: [redmicConfig.services.atlasLayer, redmicConfig.services.atlasCategory],
+				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: ".",
 				pathProperty: "path",
 				layerIdSeparator: "_",
@@ -161,7 +162,7 @@ define([
 			this.catalogConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				browserExts: [_HierarchicalSelect],
-				//target: this.target,
+				selectionTarget: this.selectionTarget,
 				perms: this.perms,
 				buttonsInTopZone: true,
 				buttons: {
@@ -360,7 +361,7 @@ define([
 			this._itemsSelected[id] = path;
 
 			this._emitEvt('GET', {
-				target: this.target,
+				target: this.target[0],
 				requesterId: this.getOwnChannel(),
 				id: id
 			});

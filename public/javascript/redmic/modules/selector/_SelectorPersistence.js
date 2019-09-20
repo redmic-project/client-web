@@ -16,23 +16,74 @@ define([
 		//	summary:
 		//		Lógica necesaria para hacer persistente la selección de elementos (usando un servicio remoto).
 
-		target: [],
 		selectionTargetSuffix: '/_selection',
+
+		selectionTargetSuffixesByAction: {
+			select: 'select',
+			deselect: 'deselect',
+			clearSelection: 'clearselection'
+		},
+
+		selectionEndpointsByAction: {
+			select: 'commands',
+			deselect: 'commands',
+			clearSelection: 'commands',
+			groupSelected: 'view'
+		},
+
+		endpointVariableName: '{endpoint}',
+
 		omitRefreshAfterSuccess: true,
+
+		target: [],
+
+
+		_getSelectionTarget: function(action, target) {
+
+			var selectionEndpoint = this.selectionEndpointsByAction[action];
+
+			if (!selectionEndpoint) {
+				console.error('Selection endpoint not found for action "%s"', action);
+				return target;
+			}
+
+			var targetWithEndpointReplaced = target.replace(this.endpointVariableName, selectionEndpoint),
+				selectionTarget;
+
+			if (this._isSettingsSelectionFormat(target)) {
+				selectionTarget = targetWithEndpointReplaced;
+			} else {
+				selectionTarget = targetWithEndpointReplaced + this.selectionTargetSuffix;
+			}
+
+			this._addSelectionTarget(selectionTarget);
+			return selectionTarget;
+		},
+
+		_recoverSelectionTarget: function(target) {
+
+			var replacement = '/' + this.endpointVariableName + '/';
+
+			return target.replace('/commands/', replacement).replace('/view/', replacement);
+		},
+
+		_isSettingsSelectionFormat: function(target) {
+
+			return target.indexOf(this.endpointVariableName) !== -1;
+		},
 
 		_groupSelected: function(req) {
 
 			var target = req.target,
-				selectIds = this._getSelectionIds(),
-				selectionId = target && selectIds && selectIds[target];
+				selectionIds = this._getSelectionIds(),
+				selectionId = selectionIds[target];
 
 			this._initializeSelection(target);
 
 			if (selectionId) {
 				this._emitEvt('GET', {
-					target: this._getTarget(target),
+					target: this._getSelectionTarget(this.actions.GROUP_SELECTED, target),
 					id: selectionId,
-					options: {},
 					requesterId: this.getOwnChannel()
 				});
 			} else {
@@ -48,10 +99,28 @@ define([
 
 		_itemAvailable: function(res, resWrapper) {
 
-			var targetBase = this._getTargetBase(resWrapper.target);
+			var receivedTarget = resWrapper.target,
+				data = res.data,
+				selectionTarget = this._recoverSelectionTarget(receivedTarget),
+				selectedIds;
 
-			if (this.selections[targetBase] && res.data && res.data.ids) {
-				this._selectedAll(res.data.ids, targetBase);
+			this._removeSelectionTarget(receivedTarget);
+
+			if (!data) {
+				return;
+			}
+
+			if (this._isSettingsSelectionFormat(selectionTarget)) {
+				selectedIds = data.selection;
+			} else {
+				selectionTarget = this._getTargetWithoutSelectionSuffix(selectionTarget);
+				selectedIds = data.ids;
+			}
+
+			var selection = this.selections[selectionTarget];
+
+			if (selection && selectedIds) {
+				this._selectedAll(selectedIds, selectionTarget);
 			}
 		},
 
@@ -60,39 +129,123 @@ define([
 			this._emitEvt('SAVE', obj);
 		},
 
-		_getDataToSave: function(action, ids, target) {
+		_getDataToSave: function(actionName, req) {
 
-			var obj = {
+			var action = this.actions[actionName],
+				selectionIds = this._getSelectionIds(),
+				selectionId = selectionIds[req.target],
+				dataToSave = this._getDataToSaveInRightFormat(action, req);
+
+			dataToSave.omitSuccessNotification = true;
+			if (selectionId) {
+				dataToSave.data.id = selectionId;
+			}
+
+			return dataToSave;
+		},
+
+		_getDataToSaveInRightFormat: function(action, req) {
+
+			if (this._isSettingsSelectionFormat(req.target)) {
+				return this._createDataToSaveInSettingsFormat(action, req);
+			}
+
+			return this._createDataToSaveInOldFormat(action, req);
+		},
+
+		_createDataToSaveInSettingsFormat: function(action, req) {
+
+			var targetWithSuffix = req.target + '/' + this._getTargetSuffix(action),
+				selectionTarget = this._getSelectionTarget(action, targetWithSuffix);
+
+			return {
 				data: {
-					ids: ids,
+					selection: req.items,
+					userId: this.userSelectionId
+				},
+				target: selectionTarget
+			};
+		},
+
+		_getTargetSuffix: function(action) {
+
+			var suffix = this.selectionTargetSuffixesByAction[action];
+
+			if (!suffix) {
+				console.error('Selection target suffix not found for action "%s"', action);
+			}
+
+			return suffix;
+		},
+
+		_createDataToSaveInOldFormat: function(action, req) {
+
+			var selectionTarget = req.target + this.selectionTargetSuffix;
+
+			return {
+				data: {
+					ids: req.items,
 					action: action,
 					idUser: this.userSelectionId
 				},
-				target: target + this.selectionTargetSuffix,
-				omitSuccessNotification: true
+				target: selectionTarget
 			};
-
-			var selectIds = this._getSelectionIds();
-
-			if (selectIds && selectIds[target]) {
-				obj.data.id = selectIds[target];
-			}
-
-			return obj;
 		},
 
-		_afterSaved: function(response, resWrapper) {
+		_afterSaved: function(res, resWrapper) {
 
-			var data = response.data,
+			var receivedTarget = resWrapper.target,
+				selectionTarget = this._recoverSelectionTarget(receivedTarget);
+
+			this._removeSelectionTarget(receivedTarget);
+			resWrapper.target = selectionTarget;
+
+			if (this._isSettingsSelectionFormat(receivedTarget)) {
+				this._afterSavedInSettingsFormat(res, resWrapper);
+			} else {
+				this._afterSavedInOldFormat(res, resWrapper);
+			}
+		},
+
+		_afterSavedInSettingsFormat: function(res, resWrapper) {
+
+			var data = res.data,
+				selectedIds = data.selection,
+				settingsId = data.id,
+				resTarget = resWrapper.target,
+				resTargetSplitted = resTarget.split('/'),
+				suffix = resTargetSplitted.pop(),
+				target = resTargetSplitted.join('/'),
+				selectionIds = this._getSelectionIds();
+
+			selectionIds[target] = settingsId;
+			this._setSelectionIds(selectionIds);
+
+			for (var action in this.selectionTargetSuffixesByAction) {
+				var suffixByAction = this.selectionTargetSuffixesByAction[action];
+				if (suffixByAction !== suffix) {
+					continue;
+				}
+
+				if (action === this.actions.SELECT) {
+					this._select(selectedIds, target);
+				} else if (action === this.actions.DESELECT) {
+					var deselectedIds = resWrapper.req.data.selection;
+					this._deselect(deselectedIds, target);
+				} else if (action === this.actions.CLEAR_SELECTION) {
+					this._clearSelection(target);
+				}
+			}
+		},
+
+		_afterSavedInOldFormat: function(res, resWrapper) {
+
+			var data = res.data,
 				action = data.action,
-				target = this._getTargetBase(resWrapper.target),
+				target = this._getTargetWithoutSelectionSuffix(resWrapper.target),
 				selectionId = data.id,
 				selectedIds = data.ids,
 				selectionIds = this._getSelectionIds();
-
-			if (!selectionIds) {
-				selectionIds = {};
-			}
 
 			selectionIds[target] = selectionId;
 			this._setSelectionIds(selectionIds);
@@ -111,40 +264,40 @@ define([
 			console.error('Selection persistence error:', error);
 		},
 
-		_getTarget: function(target) {
+		_addSelectionTarget: function(target) {
 
-			var currentTarget = target + this.selectionTargetSuffix;
-			if (this.target.indexOf(currentTarget) === -1) {
-				this.target.push(currentTarget);
+			if (this.target.indexOf(target) === -1) {
+				this.target.push(target);
 			}
-
-			return currentTarget;
 		},
 
-		_getTargetBase: function(target) {
+		_removeSelectionTarget: function(target) {
 
-			return target.replace(this.selectionTargetSuffix, "");
+			var index = this.target.indexOf(target);
+			if (index !== -1) {
+				this.target.splice(index, 1);
+			}
+		},
+
+		_getTargetWithoutSelectionSuffix: function(target) {
+
+			return this._cleanTrailingSlash(target).replace(this.selectionTargetSuffix, "");
 		},
 
 		_errorAvailable: function(error, status, resWrapper) {
 
-			var selectIds = this._getSelectionIds(),
-				target = this._getTargetBase(this._cleanTrailingSlash(resWrapper.target));
+			var selectionIds = this._getSelectionIds(),
+				target = this._getTargetWithoutSelectionSuffix(resWrapper.target);
 
-			if (!selectIds) {
-				selectIds = {};
-			}
-
-			delete selectIds[target];
-
-			this._setSelectionIds(selectIds);
+			delete selectionIds[target];
+			this._setSelectionIds(selectionIds);
 
 			this._emitSelectionTargetLoaded(target);
 		},
 
 		_getSelectionIds: function() {
 
-			return Credentials.get("selectIds");
+			return Credentials.get("selectIds") || {};
 		},
 
 		_setSelectionIds: function(selectionIds) {

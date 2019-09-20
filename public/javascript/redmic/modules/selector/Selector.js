@@ -24,27 +24,19 @@ define([
 		//	summary:
 		//		Módulo de selección global y persistente.
 		//	description:
-		//		Proporciona métodos manejar seleccionar / deseleccionar los items de la base de datos
+		//		Proporciona métodos para seleccionar/deseleccionar los items de cada servicio.
 
 		constructor: function(args) {
 
 			this.config = {
-				// own events
-				events: {},
-				// own actions
-				actions: {},
-
-				// mediator params
 				ownChannel: "selection",
-
-				// Items selected structure
 				selections: {}
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_defineSubscriptions: function () {
+		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("SELECT"),
@@ -90,10 +82,10 @@ define([
 			});
 		},
 
-		_subSelect: function(request) {
+		_subSelect: function(req) {
 
-			var items = request.items,
-				target = request.target;
+			var items = req.items,
+				target = req.target;
 
 			this._emitSelectionTargetLoading(target);
 			this._initializeSelection(target);
@@ -103,10 +95,8 @@ define([
 			}
 
 			if (target.indexOf('{apiUrl}') !== -1) {
-				// Seleccionamos a la vuelta del server
-				this._emitSave(this._getDataToSave(this.actions.SELECT, items, target));
+				this._emitSave(this._getDataToSave('SELECT', req));
 			} else {
-				//Selección local
 				this._select(items, target);
 			}
 		},
@@ -128,7 +118,6 @@ define([
 
 		_selectItem: function(id, target, selectionDfd) {
 
-			// Si seleccionamos un elemento ya englobado en la selección
 			if (this._isSelected(id, target)) {
 				selectionDfd.resolve();
 				return;
@@ -162,9 +151,10 @@ define([
 				return o;
 			}, {});
 
-			this._initializeSelection(target);
-			this.selections[target].items = obj;
-			this.selections[target].total = ids.length;
+			this.selections[target] = {
+				items: obj,
+				total: ids.length
+			};
 
 			this._emitEvt('SELECT', {
 				ids: ids,
@@ -173,10 +163,10 @@ define([
 			});
 		},
 
-		_subDeselect: function(request) {
+		_subDeselect: function(req) {
 
-			var items = request.items,
-				target = request.target;
+			var items = req.items,
+				target = req.target;
 
 			this._emitSelectionTargetLoading(target);
 			this._initializeSelection(target);
@@ -186,10 +176,8 @@ define([
 			}
 
 			if (target.indexOf('{apiUrl}') !== -1) {
-				// Deseleccionamos a la vuelta del server
-				this._emitSave(this._getDataToSave(this.actions.DESELECT, items, target));
+				this._emitSave(this._getDataToSave('DESELECT', req));
 			} else {
-				//Deselección local
 				this._deselect(items, target);
 			}
 		},
@@ -211,7 +199,6 @@ define([
 
 		_deselectItem: function(id, target, deselectionDfd) {
 
-			// Si deseleccionamos un elemento no seleccionado
 			if (!this._isSelected(id, target)) {
 				deselectionDfd.resolve();
 				return;
@@ -251,21 +238,21 @@ define([
 			return this.selections && this.selections[target] ? this.selections[target] : {};
 		},
 
-		_subGroupSelected: function(request) {
+		_subGroupSelected: function(req) {
 
-			this._emitSelectionTargetLoading(request.target);
-			this._groupSelected(request);
+			this._emitSelectionTargetLoading(req.target);
+			this._groupSelected(req);
 		},
 
-		_subClearSelection: function(request) {
+		_subClearSelection: function(req) {
 
-			this._clearSelectionSave(request);
+			this._clearSelectionSave(req);
 		},
 
-		_clearSelectionSave: function(request) {
+		_clearSelectionSave: function(req) {
 
-			this._emitSelectionTargetLoading(request.target);
-			this._emitSave(this._getDataToSave(this.actions.CLEAR_SELECTION, null, request.target));
+			this._emitSelectionTargetLoading(req.target);
+			this._emitSave(this._getDataToSave('CLEAR_SELECTION', req));
 		},
 
 		_clearSelection: function(target) {
@@ -308,8 +295,6 @@ define([
 		},
 
 		_selectById: function(itemPath, target) {
-
-			this._initializeSelection(target);
 
 			if (!this._getItems(target)[itemPath]) {
 				this.selections[target].items[itemPath] = true;

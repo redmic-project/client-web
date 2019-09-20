@@ -1,13 +1,13 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/Deferred"
-	, "dojo/promise/all"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_SelectionBase"
-	, "RWidgets/Utilities"
-	, "./_SelectorItfc"
-	, "./_SelectorPersistence"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'dojo/promise/all'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_SelectionBase'
+	, 'RWidgets/Utilities'
+	, './_SelectorItfc'
+	, './_SelectorPersistence'
 ], function(
 	declare
 	, lang
@@ -29,7 +29,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "selection",
+				ownChannel: 'selection',
 				selections: {}
 			};
 
@@ -39,20 +39,20 @@ define([
 		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel : this.getChannel("SELECT"),
-				callback: "_subSelect"
+				channel : this.getChannel('SELECT'),
+				callback: '_subSelect'
 			},{
-				channel : this.getChannel("DESELECT"),
-				callback: "_subDeselect"
+				channel : this.getChannel('DESELECT'),
+				callback: '_subDeselect'
 			},{
-				channel : this.getChannel("GROUP_SELECTED"),
-				callback: "_subGroupSelected"
+				channel : this.getChannel('GROUP_SELECTED'),
+				callback: '_subGroupSelected'
 			},{
-				channel : this.getChannel("CLEAR_SELECTION"),
-				callback: "_subClearSelection"
+				channel : this.getChannel('CLEAR_SELECTION'),
+				callback: '_subClearSelection'
 			},{
-				channel : this.getChannel("TOTAL"),
-				callback: "_subTotal"
+				channel : this.getChannel('TOTAL'),
+				callback: '_subTotal'
 			});
 		},
 
@@ -60,25 +60,25 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'SELECT',
-				channel: this.getChannel("SELECTED")
+				channel: this.getChannel('SELECTED')
 			},{
 				event: 'DESELECT',
-				channel: this.getChannel("DESELECTED")
+				channel: this.getChannel('DESELECTED')
 			},{
 				event: 'GROUP_SELECTED',
-				channel: this.getChannel("SELECTED_GROUP")
+				channel: this.getChannel('SELECTED_GROUP')
 			},{
 				event: 'CLEAR_SELECTION',
-				channel: this.getChannel("SELECTION_CLEARED")
+				channel: this.getChannel('SELECTION_CLEARED')
 			},{
 				event: 'TOTAL',
-				channel: this.getChannel("TOTAL_AVAILABLE")
+				channel: this.getChannel('TOTAL_AVAILABLE')
 			},{
 				event: 'SELECTION_TARGET_LOADING',
-				channel: this.getChannel("SELECTION_TARGET_LOADING")
+				channel: this.getChannel('SELECTION_TARGET_LOADING')
 			},{
 				event: 'SELECTION_TARGET_LOADED',
-				channel: this.getChannel("SELECTION_TARGET_LOADED")
+				channel: this.getChannel('SELECTION_TARGET_LOADED')
 			});
 		},
 
@@ -90,8 +90,9 @@ define([
 			this._emitSelectionTargetLoading(target);
 			this._initializeSelection(target);
 
-			if (typeof items !== "object") {
+			if (typeof items !== 'object') {
 				items = [items];
+				req.items = items;
 			}
 
 			if (target.indexOf('{apiUrl}') !== -1) {
@@ -171,8 +172,9 @@ define([
 			this._emitSelectionTargetLoading(target);
 			this._initializeSelection(target);
 
-			if (typeof items !== "object") {
+			if (typeof items !== 'object') {
 				items = [items];
+				req.items = items;
 			}
 
 			if (target.indexOf('{apiUrl}') !== -1) {
@@ -246,13 +248,14 @@ define([
 
 		_subClearSelection: function(req) {
 
-			this._clearSelectionSave(req);
-		},
+			var target = req.target;
 
-		_clearSelectionSave: function(req) {
-
-			this._emitSelectionTargetLoading(req.target);
-			this._emitSave(this._getDataToSave('CLEAR_SELECTION', req));
+			if (target.indexOf('{apiUrl}') !== -1) {
+				this._emitSelectionTargetLoading(target);
+				this._emitSave(this._getDataToSave('CLEAR_SELECTION', req));
+			} else {
+				this._clearSelection(target);
+			}
 		},
 
 		_clearSelection: function(target) {
@@ -295,6 +298,8 @@ define([
 		},
 
 		_selectById: function(itemPath, target) {
+
+			this._initializeSelection(target);
 
 			if (!this._getItems(target)[itemPath]) {
 				this.selections[target].items[itemPath] = true;

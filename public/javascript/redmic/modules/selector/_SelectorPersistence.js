@@ -1,9 +1,9 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/base/_Persistence"
-	, "redmic/modules/base/_Store"
-	, "redmic/base/Credentials"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/base/_Persistence'
+	, 'redmic/modules/base/_Store'
+	, 'redmic/base/Credentials'
 ], function(
 	declare
 	, lang
@@ -281,7 +281,7 @@ define([
 
 		_getTargetWithoutSelectionSuffix: function(target) {
 
-			return this._cleanTrailingSlash(target).replace(this.selectionTargetSuffix, "");
+			return this._cleanTrailingSlash(target).replace(this.selectionTargetSuffix, '');
 		},
 
 		_errorAvailable: function(error, status, resWrapper) {
@@ -297,12 +297,12 @@ define([
 
 		_getSelectionIds: function() {
 
-			return Credentials.get("selectIds") || {};
+			return Credentials.get('selectIds') || {};
 		},
 
 		_setSelectionIds: function(selectionIds) {
 
-			Credentials.set("selectIds", selectionIds);
+			Credentials.set('selectIds', selectionIds);
 		}
 	});
 });

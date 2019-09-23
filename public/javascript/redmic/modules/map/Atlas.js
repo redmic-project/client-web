@@ -84,7 +84,7 @@ define([
 				target: [redmicConfig.services.atlasLayer, redmicConfig.services.atlasCategory],
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: ".",
-				pathProperty: "path",
+				parentProperty: "parent",
 				layerIdSeparator: "_",
 				themeSeparator: "-",
 				showBrowserAnimationClass: "animated fadeIn",
@@ -771,7 +771,9 @@ define([
 			if (btnId === "addLayer") {
 				this._onAddLayerBrowserButtonClick(objReceived);
 			} else if (btnId === "remove") {
-				var path = objReceived.item.originalItem[this.pathProperty];
+				var parentItem = item.originalItem[this.parentProperty],
+					path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + item.id;
+
 				this._emitEvt('DESELECT', [path]);
 			} else if (btnId === "legend") {
 				this._showLayerLegend(this._createLayerId(item.originalItem));

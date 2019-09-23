@@ -104,7 +104,7 @@ define([
 				selectionTarget = this._recoverSelectionTarget(receivedTarget),
 				selectedIds;
 
-			this._removeSelectionTarget(receivedTarget);
+			this._removeSelectionTarget(selectionTarget);
 
 			if (!data) {
 				return;
@@ -197,10 +197,10 @@ define([
 			var receivedTarget = resWrapper.target,
 				selectionTarget = this._recoverSelectionTarget(receivedTarget);
 
-			this._removeSelectionTarget(receivedTarget);
+			this._removeSelectionTarget(selectionTarget);
 			resWrapper.target = selectionTarget;
 
-			if (this._isSettingsSelectionFormat(receivedTarget)) {
+			if (this._isSettingsSelectionFormat(selectionTarget)) {
 				this._afterSavedInSettingsFormat(res, resWrapper);
 			} else {
 				this._afterSavedInOldFormat(res, resWrapper);

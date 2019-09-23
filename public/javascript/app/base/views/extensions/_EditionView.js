@@ -92,7 +92,7 @@ define([
 
 			this._emitEvt('SAVE', {
 				data: res.data,
-				target: this.target
+				target: this.editionTarget || this.target
 			});
 		},
 

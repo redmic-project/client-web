@@ -377,6 +377,8 @@ define([
 			var res = err.response,
 				status = res.status;
 
+			this._emitEvt('ABORT_ALL_LOADING');
+
 			if (status === 401) {
 				this._onRequestPermissionError(res);
 			} else if (status === 502) {

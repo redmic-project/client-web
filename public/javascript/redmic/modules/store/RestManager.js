@@ -28,7 +28,8 @@ define([
 					SAVE: 'save',
 					REMOVE: 'remove',
 					TARGET_LOADING: 'targetLoading',
-					TARGET_LOADED: 'targetLoaded'
+					TARGET_LOADED: 'targetLoaded',
+					ABORT_ALL_LOADING: 'abortAllLoading'
 				},
 				actions: {
 					REQUEST: 'request',
@@ -42,7 +43,8 @@ define([
 					REMOVE: 'remove',
 					REMOVED: 'removed',
 					TARGET_LOADING: 'targetLoading',
-					TARGET_LOADED: 'targetLoaded'
+					TARGET_LOADED: 'targetLoaded',
+					ABORT_ALL_LOADING: 'abortAllLoading'
 				},
 
 				// TODO esto quizá no debería ir aquí, sino en el comunicador de errores
@@ -115,6 +117,9 @@ define([
 			},{
 				event: 'TARGET_LOADED',
 				channel: this.getChannel('TARGET_LOADED')
+			},{
+				event: 'ABORT_ALL_LOADING',
+				channel: this._buildChannel(this.loadingChannel, this.actions.ABORT_ALL_LOADING)
 			});
 		},
 

@@ -58,8 +58,13 @@ define([
 		_initializeCredentials: function() {
 
 			if (!Credentials.get('selectIds')) {
-				Credentials.set('selectIds', {});
+				this._setEmptySelectionIds();
 			}
+		},
+
+		_setEmptySelectionIds: function() {
+
+			Credentials.set('selectIds', {});
 		},
 
 		_listenCredentials: function() {
@@ -161,6 +166,8 @@ define([
 		},
 
 		_onAccessTokenRemoved: function() {
+
+			this._setEmptySelectionIds();
 
 			this._emitEvt('REMOVE');
 		},

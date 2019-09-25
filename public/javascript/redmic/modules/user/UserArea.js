@@ -256,7 +256,6 @@ define([
 		_removeUserData: function() {
 
 			Credentials.set('accessToken', null);
-			Credentials.set('selectIds', {});
 		},
 
 		_dataAvailable: function(response, resWrapper) {

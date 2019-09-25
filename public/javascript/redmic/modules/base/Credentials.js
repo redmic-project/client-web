@@ -149,16 +149,17 @@ define([
 
 		_onAccessTokenChanged: function(evt) {
 
-			var value = evt.value,
-				oldValue = evt.oldValue;
+			var value = evt.value;
 
 			if (!value) {
 				this._onAccessTokenRemoved();
 				return;
 			}
 
+			this._setEmptySelectionIds();
+
 			var location = window.location;
-			if (oldValue || location.pathname === this._loginPath) {
+			if (location.pathname === this._loginPath) {
 				this._getCredentials();
 			} else {
 				location.reload();

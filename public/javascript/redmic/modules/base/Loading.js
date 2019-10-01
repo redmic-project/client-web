@@ -251,7 +251,7 @@ define([
 				return;
 			}
 
-			var loadingParentNodes = query('[loading]');
+			var loadingParentNodes = query('[' + this.loadingAttr + ']');
 
 			for (var i = 0; i < loadingParentNodes.length; i++) {
 				var loadingParentNode = loadingParentNodes[i];

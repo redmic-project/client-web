@@ -1,45 +1,34 @@
 define([
 	'alertify/alertify.min'
 	, "app/designs/textSearchList/main/Selection"
-	, "dijit/DropDownMenu"
-	, "dijit/MenuItem"
-	, "dijit/TooltipDialog"
-	, "dijit/popup"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Persistence"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_Show"
+	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/base/_ShowInTooltip"
 	, "redmic/modules/base/_ShowOnEvt"
 	, "redmic/modules/layout/listMenu/ListMenu"
-	, "redmic/layout/DialogSimple"
 	, "redmic/base/Credentials"
 ], function(
 	alertify
 	, Selection
-	, DropDownMenu
-	, MenuItem
-	, TooltipDialog
-	, popup
-	, ContentPane
 	, declare
 	, lang
 	, put
 	, _Module
-	, _Persistence
 	, _Selection
 	, _Show
+	, _ShowInPopup
 	, _ShowInTooltip
 	, _ShowOnEvt
 	, ListMenu
-	, DialogSimple
 	, Credentials
-){
-	return declare([_Module, _Show, _Selection, _Persistence], {
+) {
+
+	return declare([_Module, _Show, _Selection], {
 		//	summary:
 		//		Indicador del número de seleccionados con botones asociados.
 		//	description:
@@ -52,35 +41,26 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				// own events
+				ownChannel: "selectionBox",
 				events: {
-					REFRESH: "refresh",
-					SAVE: "save",
-					TOTAL_SELECTED: "totalSelected",
-					CHANGE_ITEMS: "changeItems"
+					STORE_SELECTION: 'storeSelection',
+					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget'
 				},
-				menuInTooltip: true,
-				// own actions
 				actions: {
 					REFRESH: "refresh",
-					REFRESHED: "refreshed",
-					TOTAL_SELECTED: "totalSelected"
+					STORE_SELECTION: 'storeSelection',
+					SELECTION_STORED: 'selectionStored',
+					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget',
+					SELECTIONS_TARGET_RETRIEVED: 'selectionsTargetRetrieved'
 				},
 
-				itemsShow: null,
-
-				omitLoading: true,
-				// mediator params
-				ownChannel: "selectionBox",
 				idProperty: "id",
-				selectionTargetSuffix: "/_selections/"
+
+				menuInTooltip: true,
+				omitLoading: true
 			};
 
 			lang.mixin(this, this.config, args);
-
-			if (this.itemsShow && Object.keys(this.itemsShow).length === 0) {
-				this.menuInTooltip = false;
-			}
 		},
 
 		_setConfigurations: function() {
@@ -92,20 +72,19 @@ define([
 						'label': this.i18n.clearSelection,
 						'value': 'clearSelection',
 						'icon': 'fa-eraser',
-						'callback': '_clearSelectionButtonCallback',
-						'condition': lang.hitch(this, this._isShowItem)
+						'callback': '_clearSelectionButtonCallback'
 					},{
 						'label': this.i18n.restoreSelection,
 						'value': 'restoreSelection',
 						'icon': 'fa-cloud-download',
 						'callback': '_loadSavedSelectionsButtonCallback',
-						'condition': lang.hitch(this, this._exitsPermsCorrect)
+						'condition': lang.hitch(this, this._isRegisteredUser)
 					},{
 						'label': this.i18n.saveSelection,
 						'value': 'saveSelection',
 						'icon': 'fa-cloud-upload',
 						'callback': '_saveSelectionButtonCallback',
-						'condition': lang.hitch(this, this._exitsPermsCorrect)
+						'condition': lang.hitch(this, this._isRegisteredUser)
 					}],
 					indicatorLeft: true,
 					notIndicator: true,
@@ -114,24 +93,27 @@ define([
 			}
 
 			this.loadSelectionConfig = this._merge([{
-				parentChannel: this.getChannel()
+				parentChannel: this.getChannel(),
+				title: this.i18n.restoreSelection
 			}, this.loadSelectionConfig || {}]);
-
-			if (this.selectionTarget) {
-				this.loadSelectionConfig.target = this.selectionTarget + this.selectionTargetSuffix;
-			}
 		},
 
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this.getChannel("REFRESH"),
+				channel: this.getChannel("REFRESH"),
 				callback: "_subRefresh"
+			},{
+				channel: this._buildChannel(this.selectorChannel, this.actions.SELECTION_STORED),
+				callback: '_subSelectionStored'
+			},{
+				channel: this._buildChannel(this.selectorChannel, this.actions.SELECTIONS_TARGET_RETRIEVED),
+				callback: '_subSelectionsTargetRetrieved'
 			});
 
 			if (this.menuInTooltip) {
 				this.subscriptionsConfig.push({
-					channel : this.loadSelectionListMenu.getChannel("EVENT_ITEM"),
+					channel: this.loadSelectionListMenu.getChannel("EVENT_ITEM"),
 					callback: "_subLoadSelectionListEventItem"
 				});
 			}
@@ -140,12 +122,11 @@ define([
 		_definePublications: function() {
 
 			this.publicationsConfig.push({
-				event: 'REFRESH',
-				channel: this.getChannel("REFRESHED"),
-				callback: "_pubRefreshed"
+				event: 'STORE_SELECTION',
+				channel: this._buildChannel(this.selectorChannel, this.actions.STORE_SELECTION)
 			},{
-				event: 'TOTAL_SELECTED',
-				channel: this.getChannel("TOTAL_SELECTED")
+				event: 'RETRIEVE_SELECTIONS_TARGET',
+				channel: this._buildChannel(this.selectorChannel, this.actions.RETRIEVE_SELECTIONS_TARGET)
 			});
 		},
 
@@ -168,49 +149,18 @@ define([
 				this._publish(this.loadSelectionListMenu.getChannel("ADD_EVT"), {
 					sourceNode: this.domNode
 				});
-
-				this._createMenu();
 			}
 
 			this.inherited(arguments);
 		},
 
-		_createMenu: function() {
-
-			this.loadSelectionNode = new ContentPane({
-				region: "center",
-				'class': 'flexContainer'
-			});
-
-			this.loadSelectionDialog = new DialogSimple({
-				preventDark: false,
-				title: this.i18n.restoreSelection,
-				centerContent: this.loadSelectionNode,
-				width: 4,
-				height: "sm",
-				reposition: "e",
-				onHide: lang.hitch(this, this._hideLoadSelection)
-			});
-
-			//this.loadSelectionDialog.own(this.domNode);
-		},
-
 		_subLoadSelectionListEventItem: function(response) {
 
-			if (response.callback) {
-				this[response.callback](response);
+			var cbk = response.callback;
+
+			if (cbk && this[cbk]) {
+				this[cbk](response);
 			}
-		},
-
-		_hideLoadSelection: function() {
-			//	summary:
-			//		Emite hide al módulo y oculta el popup.
-			//	tags:
-			//		private
-
-			this.loadSelectionDialog.hide();
-
-			this._publish(this.loadSelection.getChannel("HIDE"));
 		},
 
 		_subRefresh: function(request) {
@@ -221,63 +171,37 @@ define([
 			//		private
 
 			this.selectionTarget = request.selectionTarget;
-			this.perms = request.perms;
-
-			if (this.menuInTooltip) {
-				this._emitEvt('CHANGE_ITEMS', {
-					items: this.listMenuSelectionConfig.items
-				});
-			}
 
 			this._clearSelection();
 			this._emitEvt('GROUP_SELECTED');
-			this._emitEvt('REFRESH');
 		},
 
-		_pubRefreshed: function(channel) {
+		_isRegisteredUser: function(item) {
 
-			this._publish(channel, {
-				success: true,
-				selectionTarget: this.selectionTarget
-			});
-		},
-
-		_isShowItem: function(item) {
-
-			return !this.itemsShow || (this.itemsShow && this.itemsShow[item.value]);
-		},
-
-		_exitsPermsCorrect: function(item) {
-
-			return this.perms >= 1 && this._isShowItem(item);
+			return Credentials.get('userRole') !== 'ROLE_GUEST';
 		},
 
 		_select: function(item, total) {
 
 			this._updateSelectionBox(total);
 
-			this._emitTotalSelected(total);
+			if (this._loadSelectionDfd) {
+				this._loadSelectionDfd.resolve();
+			}
 		},
 
 		_deselect: function(item, total) {
 
 			this._updateSelectionBox(total);
-
-			this._emitTotalSelected(total);
 		},
 
 		_clearSelection: function() {
 
 			this._updateSelectionBox(0);
 
-			this._emitTotalSelected(0);
-		},
-
-		_emitTotalSelected: function(total) {
-
-			this._emitEvt("TOTAL_SELECTED", {
-				total: total
-			});
+			if (this._loadSelectionDfd) {
+				this._loadSelectionDfd.resolve();
+			}
 		},
 
 		_updateSelectionBox: function(total) {
@@ -303,9 +227,12 @@ define([
 
 		_totalAvailable: function(response) {
 
-			var obj = {};
-			if (response.total > 0 && Credentials.get("selectIds")[this.selectionTarget]) {
-				obj.ids = [Credentials.get("selectIds")[this.selectionTarget]];
+			var selectionId = Credentials.get("selectIds")[this.selectionTarget],
+				obj = {
+					selectionId: selectionId
+				};
+
+			if (response.total > 0 && selectionId) {
 				this._requestNameAndSave(obj);
 			} else {
 				this._emitEvt('COMMUNICATION', {
@@ -317,7 +244,6 @@ define([
 		_requestNameAndSave: function(obj) {
 
 			if (this.idSelectionLoaded) {
-
 				alertify.confirm(this.i18n.saveSelection,
 					this.i18n.saveSelectionConfirmationMessage,
 					lang.hitch(this, this._updateSelection, obj),
@@ -335,43 +261,50 @@ define([
 
 			obj[this.idProperty] = this.idSelectionLoaded[this.idProperty];
 			obj.name = this.idSelectionLoaded.name;
-			this._emitEvt('SAVE', this._getDataToSave(obj));
+
+			this._storeSelection(obj);
 		},
 
 		_saveSelection: function(obj) {
 
-			alertify.prompt(this.i18n.newNameMessage, "", lang.hitch(this, function(evt, value ) {
+			var prompt = alertify.prompt(this.i18n.newNameMessage, "", lang.hitch(this, function(obj, evt, value) {
 
 				obj.name = value;
+				obj.shared = this._sharedCheckbox.checked;
+
 				delete this.idSelectionLoaded;
-				this._emitEvt('SAVE', this._getDataToSave(obj));
-			})).setHeader(this.i18n.saveSelection);
+				this._storeSelection(obj);
+			}, obj));
+
+			prompt.setHeader(this.i18n.saveSelection);
+
+			if (!this._sharedCheckbox) {
+				var promptContent = prompt.elements.content,
+					sharedCheckboxId = this.getOwnChannel() + '-sharedCheckbox';
+
+				this._sharedCheckbox = put(promptContent, 'input[type=checkbox]#' + sharedCheckboxId);
+				put(promptContent, 'label[for=' + sharedCheckboxId + ']', this.i18n.shareSelection);
+			}
 		},
 
-		_getDataToSave: function(item) {
+		_storeSelection: function(data) {
+
+			this._emitEvt('STORE_SELECTION', this._getDataToStore(data));
+		},
+
+		_getDataToStore: function(data) {
 
 			return {
-				target: this.selectionTarget + this.selectionTargetSuffix,
-				data: item,
-				idProperty: this.idProperty
+				target: this.selectionTarget,
+				data: data
 			};
 		},
 
-		_afterSaved: function(response) {
+		_subSelectionStored: function(res) {
 
-			if (response.data && response.data.id) {
-				this.idSelectionLoaded = response.data;
+			if (res.data) {
+				this.idSelectionLoaded = res.data;
 			}
-		},
-
-		_getIds: function(objectIds) {
-
-			var ids = [];
-			for (var id in objectIds) {
-				ids.push(objectIds[id]);
-			}
-
-			return ids;
 		},
 
 		_loadSavedSelectionsButtonCallback: function() {
@@ -404,47 +337,11 @@ define([
 
 		_showSelectionList: function() {
 
-			var target = this.selectionTarget + this.selectionTargetSuffix;
+			this._emitEvt('RETRIEVE_SELECTIONS_TARGET', {
+				target: this.selectionTarget
+			});
 
-			if (!this.loadSelection) {
-				this.loadSelectionConfig.target = target;
-				this.loadSelection = new Selection(this.loadSelectionConfig);
-
-				this._subscribe(this.loadSelection.getChannel("UPDATE_DATA"), lang.hitch(this, this._subSelectionLoad));
-			} else {
-				this._publish(this.loadSelection.getChannel("UPDATE_TARGET"), {
-					target: target
-				});
-			}
-
-			var showInfo = {
-				node: this.loadSelectionNode.domNode
-			};
-
-			this._publish(this.loadSelection.getChannel("SHOW"), showInfo);
-
-			this.loadSelectionDialog.show();
-		},
-
-		_subSelectionLoad: function(request) {
-
-			this._hideLoadSelection();
-			this._emitEvt('CLEAR_SELECTION');
-
-			if (request.data && request.data.ids && request.data.ids.length > 0) {
-				this._emitEvt('SELECT', request.data.ids);
-				this.idSelectionLoaded = request.data;
-			}
-
-			this._emitEvt('GROUP_SELECTED');
-			this._emitEvt('REFRESH');
-		},
-
-		_getItemToSelect: function(ids) {
-
-			return {
-				items: ids
-			};
+			this._publish(this.loadSelection.getChannel("SHOW"));
 		},
 
 		_clearSelectionButtonCallback: function() {
@@ -459,6 +356,58 @@ define([
 					label: "clearSelection"
 				}
 			});
+		},
+
+		_subSelectionsTargetRetrieved: function(res) {
+
+			var selectionTarget = res.target;
+
+			if (!this.loadSelection) {
+				this.loadSelectionConfig.target = selectionTarget;
+				this.loadSelection = new declare(Selection).extend(_ShowInPopup)(this.loadSelectionConfig);
+
+				this._subscribe(this.loadSelection.getChannel("UPDATE_DATA"), lang.hitch(this, this._subSelectionLoad));
+			} else {
+				this._publish(this.loadSelection.getChannel("UPDATE_TARGET"), {
+					target: selectionTarget
+				});
+			}
+		},
+
+		_subSelectionLoad: function(req) {
+
+			//TODO hay que hacer el clear, select y group escalonados, no todo a la vez
+			this._publish(this.loadSelection.getChannel("HIDE"));
+
+			if (this._loadSelectionDfd && !this._loadSelectionDfd.isFulfilled()) {
+				this._loadSelectionDfd.cancel();
+			}
+			this._loadSelectionDfd = new Deferred();
+
+			this._loadSelectionDfd.then(lang.hitch(this, this._continueSelectionLoadAfterClear, req));
+			this._emitEvt('CLEAR_SELECTION');
+		},
+
+		_continueSelectionLoadAfterClear: function(req) {
+
+			this._loadSelectionDfd = new Deferred();
+			this._loadSelectionDfd.then(lang.hitch(this, this._continueSelectionLoadAfterSelect, req));
+
+			var data = req.data,
+				selection = data && (data.selection || data.ids);
+
+			if (selection && selection.length) {
+				this._emitEvt('SELECT', selection);
+				this.idSelectionLoaded = data;
+			} else {
+				this._loadSelectionDfd.resolve();
+			}
+		},
+
+		_continueSelectionLoadAfterSelect: function(req) {
+
+			this._emitEvt('GROUP_SELECTED');
+			//this._emitEvt('REFRESH');
 		}
 	});
 });

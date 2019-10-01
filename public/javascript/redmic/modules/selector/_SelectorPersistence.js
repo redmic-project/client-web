@@ -17,6 +17,7 @@ define([
 		//		Lógica necesaria para hacer persistente la selección de elementos (usando un servicio remoto).
 
 		selectionTargetSuffix: '/_selection',
+		selectionStorageTargetSuffix: '/_selections',
 
 		selectionTargetSuffixesByAction: {
 			select: 'select',
@@ -28,7 +29,9 @@ define([
 			select: 'commands',
 			deselect: 'commands',
 			clearSelection: 'commands',
-			groupSelected: 'view'
+			groupSelected: 'view',
+			storeSelection: 'commands',
+			retrieveSelectionsTarget: 'view'
 		},
 
 		endpointVariableName: '{endpoint}',
@@ -53,11 +56,20 @@ define([
 			if (this._isSettingsSelectionFormat(target)) {
 				selectionTarget = targetWithEndpointReplaced;
 			} else {
-				selectionTarget = targetWithEndpointReplaced + this.selectionTargetSuffix;
+				var suffix = this._getSelectionTargetSuffixForOldFormat(action);
+				selectionTarget = targetWithEndpointReplaced + suffix;
 			}
 
 			this._addSelectionTarget(selectionTarget);
 			return selectionTarget;
+		},
+
+		_getSelectionTargetSuffixForOldFormat: function(action) {
+
+			if (action === 'retrieveSelectionsTarget' || action === 'storeSelection') {
+				return this.selectionStorageTargetSuffix;
+			}
+			return this.selectionTargetSuffix;
 		},
 
 		_recoverSelectionTarget: function(target) {
@@ -218,6 +230,15 @@ define([
 				target = resTargetSplitted.join('/'),
 				selectionIds = this._getSelectionIds();
 
+			if (suffix === 'settings') {
+				this._emitEvt('STORE_SELECTION', {
+					data: data,
+					target: resTarget
+				});
+
+				return;
+			}
+
 			selectionIds[target] = settingsId;
 			this._setSelectionIds(selectionIds);
 
@@ -301,8 +322,42 @@ define([
 		},
 
 		_setSelectionIds: function(selectionIds) {
+			// TODO revisar desde donde se llama este método, no debe pisar el id actual sino editar sus registros
 
 			Credentials.set('selectIds', selectionIds);
+		},
+
+		_storeSelection: function(req) {
+
+			var target = req.target,
+				data = req.data,
+				action = this.actions.STORE_SELECTION,
+				selectionTarget = this._getSelectionTarget(action, target),
+				dataToSave = {
+					target: selectionTarget
+				};
+
+			if (this._isSettingsSelectionFormat(target)) {
+				data.settingsId = data.selectionId;
+			} else {
+				data.ids = [data.selectionId];
+				delete data.shared;
+			}
+			delete data.selectionId;
+			dataToSave.data = data;
+
+			this._emitSave(dataToSave);
+		},
+
+		_retrieveSelectionsTarget: function(req) {
+
+			var target = req.target,
+				action = this.actions.RETRIEVE_SELECTIONS_TARGET,
+				selectionTarget = this._getSelectionTarget(action, target);
+
+			this._emitEvt('RETRIEVE_SELECTIONS_TARGET', {
+				target: selectionTarget
+			});
 		}
 	});
 });

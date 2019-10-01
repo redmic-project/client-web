@@ -30,6 +30,16 @@ define([
 
 			this.config = {
 				ownChannel: 'selection',
+				events: {
+					STORE_SELECTION: 'storeSelection',
+					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget'
+				},
+				actions: {
+					STORE_SELECTION: 'storeSelection',
+					SELECTION_STORED: 'selectionStored',
+					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget',
+					SELECTIONS_TARGET_RETRIEVED: 'selectionsTargetRetrieved'
+				},
 				selections: {}
 			};
 
@@ -53,6 +63,12 @@ define([
 			},{
 				channel : this.getChannel('TOTAL'),
 				callback: '_subTotal'
+			},{
+				channel : this.getChannel('STORE_SELECTION'),
+				callback: '_subStoreSelection'
+			},{
+				channel : this.getChannel('RETRIEVE_SELECTIONS_TARGET'),
+				callback: '_subRetrieveSelectionsTarget'
 			});
 		},
 
@@ -79,6 +95,12 @@ define([
 			},{
 				event: 'SELECTION_TARGET_LOADED',
 				channel: this.getChannel('SELECTION_TARGET_LOADED')
+			},{
+				event: 'STORE_SELECTION',
+				channel: this.getChannel('SELECTION_STORED')
+			},{
+				event: 'RETRIEVE_SELECTIONS_TARGET',
+				channel: this.getChannel('SELECTIONS_TARGET_RETRIEVED')
 			});
 		},
 
@@ -336,6 +358,28 @@ define([
 			this._emitEvt('SELECTION_TARGET_LOADED', {
 				target: target
 			});
+		},
+
+		_subStoreSelection: function(req) {
+
+			var target = req.target;
+
+			if (target.indexOf('{apiUrl}') !== -1) {
+				this._storeSelection(req);
+			} else {
+				console.error('Local selection cannot be stored for "%s"', target);
+			}
+		},
+
+		_subRetrieveSelectionsTarget: function(req) {
+
+			var target = req.target;
+
+			if (target.indexOf('{apiUrl}') !== -1) {
+				this._retrieveSelectionsTarget(req);
+			} else {
+				console.error('Local selection cannot be retrieved for "%s"', target);
+			}
 		}
 	});
 });

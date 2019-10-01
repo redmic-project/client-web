@@ -80,8 +80,7 @@ define([
 
 				_itemsSelected: {},
 				localTarget: "local",
-				// TODO este target no hace falta, pero si uno de selección común a categorias y capas
-				target: [redmicConfig.services.atlasLayer, redmicConfig.services.atlasCategory],
+				target: redmicConfig.services.atlasLayer,
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: ".",
 				parentProperty: "parent",
@@ -191,10 +190,7 @@ define([
 					bars: [{
 						instance: SelectionBox,
 						config: {
-							omitShowSelectedOnly: true,
-							itemsShow: {
-								clearSelection: true
-							}
+							omitShowSelectedOnly: true
 						}
 					}]
 				},
@@ -361,7 +357,7 @@ define([
 			this._itemsSelected[id] = path;
 
 			this._emitEvt('GET', {
-				target: this.target[0],
+				target: this.target,
 				requesterId: this.getOwnChannel(),
 				id: id
 			});

@@ -236,11 +236,6 @@ define([
 					instance: Pagination
 				}],
 				selectionBoxConfig: {
-					itemsShow: {
-						clearSelection: true,
-						restoreSelection: true,
-						saveSelection: true
-					}
 				}
 			}, this.browserConfig || {}]);
 

@@ -12,7 +12,6 @@ define([
 	, 'dojo/has'
 	, 'dojo/io-query'
 	, 'dojo/mouse'
-	, 'dojo/request'
 	, 'put-selector/put'
 	, 'redmic/base/CheckBrowser'
 	, 'redmic/modules/notification/CommunicationCenter'
@@ -22,6 +21,7 @@ define([
 	//, 'redmic/modules/base/NavegationHistory'
 	, 'redmic/modules/base/MetaTags'
 	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/base/Loading'
 	, 'redmic/modules/store/RestManagerImpl'
 	, 'templates/LoadingCustom'
@@ -39,7 +39,6 @@ define([
 	, has
 	, ioQuery
 	, mouse
-	, request
 	, put
 	, CheckBrowser
 	, CommunicationCenter
@@ -49,6 +48,7 @@ define([
 	//, NavegationHistory
 	, MetaTags
 	, _Module
+	, _Store
 	, Loading
 	, RestManagerImpl
 	, LoadingCustomTemplate
@@ -85,7 +85,7 @@ define([
 		return;
 	}
 
-	return declare(_Module, {
+	return declare([_Module, _Store], {
 		//	summary:
 		//		Módulo encargado de controlar el acceso a la aplicación.
 		//	description:
@@ -133,6 +133,7 @@ define([
 					HOME: 'home',
 					LOGIN: 'login'
 				},
+				target: '/env',
 				_reconnectTimeout: 10000
 			};
 
@@ -141,8 +142,6 @@ define([
 			new CookieLoader();
 
 			this._setRouterListeners();
-
-			this._getEnv();
 		},
 
 		_initialize: function() {
@@ -217,6 +216,8 @@ define([
 		},
 
 		postCreate: function() {
+
+			this._getEnv();
 
 			this._emitEvt('GET_CREDENTIALS');
 
@@ -330,16 +331,22 @@ define([
 			var envDfd = getGlobalContext().env;
 
 			if (envDfd && !envDfd.isFulfilled()) {
-				request('/env', {
-					handleAs: 'json'
-				}).then(lang.hitch(envDfd, function(data) {
-
-					this.resolve(data);
-				}),lang.hitch(envDfd, function(error) {
-
-					this.reject(error);
-				}));
+				this._emitEvt('GET', {
+					target: this.target
+				});
 			}
+		},
+
+		_itemAvailable: function(res) {
+
+			var envDfd = getGlobalContext().env;
+			envDfd.resolve(res.data);
+		},
+
+		_errorAvailable: function(error, status, resWrapper) {
+
+			var envDfd = getGlobalContext().env;
+			envDfd.reject(error);
 		},
 
 		_subCredentialsRemoved: function() {

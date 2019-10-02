@@ -1,5 +1,6 @@
 define([
-	"dojo/_base/declare"
+	'app/redmicConfig'
+	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/Deferred"
@@ -8,7 +9,8 @@ define([
 	, "./_NodesCreation"
 	, "./_InputItfc"
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, aspect
 	, Deferred
@@ -397,7 +399,7 @@ define([
 					apiPrefix = '/api/';
 
 				if (url.indexOf(apiPrefix) === 0) {
-					url = url.replace(apiPrefix, '{apiUrl}/');
+					url = url.replace(apiPrefix, redmicConfig.apiUrlVariable + '/');
 				}
 				this._inputProps.target = url;
 			}

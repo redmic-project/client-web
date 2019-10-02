@@ -125,7 +125,7 @@ define([
 
 		_subGet: function(req) {
 
-			this._getEnvironmentData(lang.hitch(this, this._doGet, req));
+			this._getEnvironmentData(lang.hitch(this, this._doGet), req);
 		},
 
 		_doGet: function(req) {
@@ -165,7 +165,7 @@ define([
 
 		_subRequest: function(req) {
 
-			this._getEnvironmentData(lang.hitch(this, this._doRequest, req));
+			this._getEnvironmentData(lang.hitch(this, this._doRequest), req);
 		},
 
 		_doRequest: function(req) {
@@ -246,7 +246,7 @@ define([
 
 		_subSave: function(req) {
 
-			this._getEnvironmentData(lang.hitch(this, this._doSave, req));
+			this._getEnvironmentData(lang.hitch(this, this._doSave), req);
 		},
 
 		_doSave: function(req) {
@@ -303,7 +303,7 @@ define([
 
 		_subRemove: function(req) {
 
-			this._getEnvironmentData(lang.hitch(this, this._doRemove, req));
+			this._getEnvironmentData(lang.hitch(this, this._doRemove), req);
 		},
 
 		_doRemove: function(req) {
@@ -345,10 +345,10 @@ define([
 			});
 		},
 
-		_getEnvironmentData: function(callback) {
+		_getEnvironmentData: function(callback, req) {
 
-			if (this._env) {
-				callback && callback();
+			if (this._env || !this._targetNeedRedmicPrefixReplacement(req.target)) {
+				callback(req);
 				return;
 			}
 
@@ -357,9 +357,14 @@ define([
 				envDfd.then(lang.hitch(this, function(envData) {
 
 					this._env = envData;
-					callback && callback();
+					callback(req);
 				}));
 			}
+		},
+
+		_targetNeedRedmicPrefixReplacement: function(target) {
+
+			return target.indexOf(redmicConfig.apiUrlVariable) !== -1;
 		},
 
 		_getResolvedTarget: function(target) {

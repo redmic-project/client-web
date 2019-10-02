@@ -124,6 +124,8 @@ define([], function() {
 	var baseUri = '{apiUrl}/',
 		baseMediastorageUploads = baseUri + 'mediastorage/uploads/';
 
+	retObj.apiUrlVariable = baseUri.slice(0, -1);
+
 	retObj.services = {
 		'grafcan': 'https://visor.grafcan.es/busquedas/toponimo',
 		'socket': baseUri + 'socket',

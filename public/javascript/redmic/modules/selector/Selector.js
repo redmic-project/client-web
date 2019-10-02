@@ -1,5 +1,6 @@
 define([
-	'dojo/_base/declare'
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
@@ -9,7 +10,8 @@ define([
 	, './_SelectorItfc'
 	, './_SelectorPersistence'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, Deferred
 	, all
@@ -104,6 +106,11 @@ define([
 			});
 		},
 
+		_targetHasRedmicPrefixForReplacement: function(target) {
+
+			return target.indexOf(redmicConfig.apiUrlVariable) !== -1;
+		},
+
 		_subSelect: function(req) {
 
 			var items = req.items,
@@ -117,7 +124,7 @@ define([
 				req.items = items;
 			}
 
-			if (target.indexOf('{apiUrl}') !== -1) {
+			if (this._targetHasRedmicPrefixForReplacement(target)) {
 				this._emitSave(this._getDataToSave('SELECT', req));
 			} else {
 				this._select(items, target);
@@ -199,7 +206,7 @@ define([
 				req.items = items;
 			}
 
-			if (target.indexOf('{apiUrl}') !== -1) {
+			if (this._targetHasRedmicPrefixForReplacement(target)) {
 				this._emitSave(this._getDataToSave('DESELECT', req));
 			} else {
 				this._deselect(items, target);
@@ -272,7 +279,7 @@ define([
 
 			var target = req.target;
 
-			if (target.indexOf('{apiUrl}') !== -1) {
+			if (this._targetHasRedmicPrefixForReplacement(target)) {
 				this._emitSelectionTargetLoading(target);
 				this._emitSave(this._getDataToSave('CLEAR_SELECTION', req));
 			} else {
@@ -364,7 +371,7 @@ define([
 
 			var target = req.target;
 
-			if (target.indexOf('{apiUrl}') !== -1) {
+			if (this._targetHasRedmicPrefixForReplacement(target)) {
 				this._storeSelection(req);
 			} else {
 				console.error('Local selection cannot be stored for "%s"', target);
@@ -375,7 +382,7 @@ define([
 
 			var target = req.target;
 
-			if (target.indexOf('{apiUrl}') !== -1) {
+			if (this._targetHasRedmicPrefixForReplacement(target)) {
 				this._retrieveSelectionsTarget(req);
 			} else {
 				console.error('Local selection cannot be retrieved for "%s"', target);

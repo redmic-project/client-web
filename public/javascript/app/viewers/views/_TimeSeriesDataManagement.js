@@ -30,7 +30,7 @@ define([
 				dataViewActions: {},
 				_listDataReturnFields: [
 					"uuid", "properties.activityId", "properties.site.path", "properties.site.name",
-					"properties.site.code", "properties.measurements.parameter.id",
+					"properties.site.code", "properties.site.id", "properties.measurements.parameter.id",
 					"properties.measurements.parameter.name", "properties.measurements.unit.id",
 					"properties.measurements.unit.name", "properties.measurements.dataDefinition.id",
 					"properties.measurements.dataDefinition.z"

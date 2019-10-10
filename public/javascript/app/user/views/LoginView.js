@@ -4,22 +4,21 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/request"
-	, "dojo/aspect"
 	, "dojo/text!./templates/Login.html"
 	, "redmic/base/Credentials"
+	, 'redmic/modules/base/_Store'
 ], function(
 	alertify
 	, _ExternalUserBaseView
 	, redmicConfig
 	, declare
 	, lang
-	, request
-	, aspect
 	, template
 	, Credentials
-){
-	return declare(_ExternalUserBaseView, {
+	, _Store
+) {
+
+	return declare([_ExternalUserBaseView, _Store], {
 		//	Summary:
 		//		Vista de login
 		//
@@ -30,17 +29,15 @@ define([
 		constructor: function (args) {
 
 			this.config = {
+				ownChannel: "login",
 				templateProps:  {
 					templateString: template,
 					i18n: this.i18n,
-					_onClickGuest: this._onClickGuest,
-					_onSignIn: this._onSignIn,
-					_getAccessToken: this._getAccessToken,
+					_onSignIn: lang.partial(this._onSignIn, this),
 					_onGuestAccess: lang.hitch(this, this._onGuestAccess),
-					_onKeyPress: this._onKeyPress,
-					_loginError: this._loginError
+					_onKeyPress: lang.partial(this._onKeyPress, this)
 				},
-				ownChannel: "login"
+				target: redmicConfig.services.getToken
 			};
 
 			lang.mixin(this, this.config, args);
@@ -49,10 +46,6 @@ define([
 		postCreate: function() {
 
 			this.inherited(arguments);
-
-			aspect.before(this.template, "_onSignIn", lang.hitch(this, this._trackLoginButton, 'login'));
-			aspect.before(this.template, "_getAccessToken", lang.hitch(this, this._emitEvt, 'LOADING'));
-			aspect.before(this.template, "_loginError", lang.hitch(this, this._emitEvt, 'LOADED'));
 
 			// Si hemos entrado anteriormente, pone el correo usado por última vez
 			if (Credentials.get("userRole") !== "ROLE_GUEST") {
@@ -83,7 +76,7 @@ define([
 			});
 		},
 
-		_onSignIn: function(/*Event*/ evt) {
+		_onSignIn: function(self, /*Event*/ evt) {
 			//	Summary:
 			//		Llamado cuando se pulsa el botón para acceder a la plataforma.
 			//      Se realiza una validación del formulario y luego se realiza
@@ -94,12 +87,11 @@ define([
 			//		private callback
 			//
 
-			if (this.loginFormNode.validate() && (values = this.loginFormNode.get("value"))) {
+			self._trackLoginButton('login');
 
+			if (this.loginFormNode.validate() && (values = this.loginFormNode.get("value"))) {
 				this.password.set("value", "");
-				this._getAccessToken(values).then(function(result) {
-					Credentials.set("accessToken", result.access_token);
-				}, lang.hitch(this, this._loginError));
+				self._getAccessToken(values);
 			}
 		},
 
@@ -108,21 +100,7 @@ define([
 			this._trackLoginButton('guest');
 		},
 
-		_loginError: function(err) {
-
-			var error = "Error",
-				res = err.response;
-
-			if (res && res.data && res.data.error_description) {
-				error = res.data.error_description;
-			} else if (err.message) {
-				error = err.message;
-			}
-
-			alertify.error(error);
-		},
-
-		_onKeyPress: function(/*Event*/ evt) {
+		_onKeyPress: function(self, /*Event*/ evt) {
 			//	Summary:
 			//		Llamado cuando se pulsa una tecla estando en los inputs.
 			//
@@ -132,7 +110,7 @@ define([
 
 			// Sólo escuchamos las pulsaciones del enter
 			if (evt.keyCode === 13) {
-				this._onSignIn();
+				self._onSignIn();
 			}
 		},
 
@@ -146,15 +124,42 @@ define([
 			//		values private: credenciales para obtener el token
 			//
 
-			var url = redmicConfig.services.getToken,
-				clientId = redmicConfig.oauthClientId,
-				bodyData = 'clientid=' + clientId + '&username=' + values.email + '&password=' + values.password;
+			var clientId = redmicConfig.oauthClientId,
+				username = values.email,
+				password = values.password,
+				data = 'clientid=' + clientId + '&username=' + username + '&password=' + password;
 
-			return request(url, {
+			this._emitEvt('REQUEST', {
 				method: 'POST',
-				handleAs: 'json',
-				data: bodyData
+				target: this.target,
+				options: {
+					data: data,
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				}
 			});
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			var accessToken = res.data.access_token;
+			Credentials.set('accessToken', accessToken);
+		},
+
+		_errorAvailable: function(error, status, resWrapper) {
+
+			var res = resWrapper.res,
+				errorRes = JSON.parse(res.text),
+				errorMsg;
+
+			if (errorRes && errorRes.error_description) {
+				errorMsg = errorRes.error_description;
+			} else {
+				errorMsg = error;
+			}
+
+			alertify.error(errorMsg);
 		}
 	});
 });

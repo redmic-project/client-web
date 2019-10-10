@@ -4,35 +4,32 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/request"
 	, "dojo/text!./templates/Resetting.html"
+	, 'redmic/modules/base/_Store'
 ], function(
 	alertify
 	, _ExternalUserBaseView
 	, redmicConfig
 	, declare
 	, lang
-	, request
 	, template
-){
+	, _Store
+) {
 
-	return declare(_ExternalUserBaseView, {
-		// summary:
-		// 	Vista de register
-		//
-		// description:
-		// 	Permite registrarse en la aplicación
+	return declare([_ExternalUserBaseView, _Store], {
+		//	summary:
+		//		Vista que permite solicitar el reseteo de la contraseña de usuario
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
+				ownChannel: "resetting",
 				templateProps:  {
 					templateString: template,
 					i18n: this.i18n,
 					_onCloseResettingPassword: lang.hitch(this, this._onCloseResettingPassword),
 					_onSubmitResettingPassword: lang.hitch(this, this._onSubmitResettingPassword)
-				},
-				ownChannel: "resetting"
+				}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -94,20 +91,24 @@ define([
 
 			envDfd.then(lang.hitch(this, function(value, envData) {
 
-				var target = redmicConfig.getServiceUrl(redmicConfig.services.resettingRequest, envData);
+				this.target = redmicConfig.getServiceUrl(redmicConfig.services.resettingRequest, envData);
 
-				request(target, {
-					handleAs: "json",
-					method: "POST",
-					data: JSON.stringify(value),
-					headers: {
-						"Content-Type": "application/json",
-						"Accept": "application/javascript, application/json"
-					}
-				}).then(
-					lang.hitch(this, this._handleResponse),
-					lang.hitch(this, this._handleError));
+				this._emitEvt('REQUEST', {
+					target: this.target,
+					method: 'POST',
+					query: value
+				});
 			}, value));
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			this._handleResponse(res.data);
+		},
+
+		_errorAvailable: function(error, status, resWrapper) {
+
+			this._handleError(resWrapper.res.data);
 		},
 
 		_handleResponse: function(result) {
@@ -119,11 +120,7 @@ define([
 			//		callback private
 			//
 
-			if (result.success) {
-				alertify.alert(this.i18n.success, this.i18n.resettingInfo, this._goBack);
-			} else {
-				this._handleError(result.error);
-			}
+			alertify.alert(this.i18n.success, this.i18n.resettingInfo, this._goBack);
 		},
 
 		_handleError: function(error) {
@@ -143,11 +140,6 @@ define([
 			//
 			//	tags:
 			//		callback private
-
-			// TODO: cambiar cuando esten unificados los errores de la api
-			if (error.response && error.response.data) {
-				error = error.response.data.error;
-			}
 
 			var msg = error.description;
 

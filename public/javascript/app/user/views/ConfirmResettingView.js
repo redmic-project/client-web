@@ -4,37 +4,34 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/request"
 	, "dojo/text!./templates/ConfirmResetting.html"
+	, 'redmic/modules/base/_Store'
 ], function(
 	alertify
 	, _ExternalUserBaseView
 	, redmicConfig
 	, declare
 	, lang
-	, request
 	, template
-){
+	, _Store
+) {
 
-	return declare(_ExternalUserBaseView, {
+	return declare([_ExternalUserBaseView, _Store], {
 		//	summary:
-		//		Vista de confimación de resetting password
-		//
-		//	description:
-		//		Permite resetear la contraseña a partir de un enlace enviado al correo electrónico
-		//		asociado a la cuenta.
+		//		Vista que permite resetear la contraseña de un usuario, a partir de un enlace enviado al correo
+		//		electrónico asociado a dicha cuenta.
 
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: "confirmResetting",
 				templateProps:  {
 					templateString: template,
 					i18n: this.i18n,
 					_onSubmitResetting: lang.hitch(this, this._onSubmitResetting),
 					_onCloseResetting: lang.hitch(this, this._onCloseResetting),
 					_confirmValidator: lang.hitch(this, this._confirmValidator)
-				},
-				ownChannel: "confirmResetting"
+				}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -82,20 +79,24 @@ define([
 
 			envDfd.then(lang.hitch(this, function(data, envData) {
 
-				var target = redmicConfig.getServiceUrl(redmicConfig.services.resettingSetPassword, envData);
+				this.target = redmicConfig.getServiceUrl(redmicConfig.services.resettingSetPassword, envData);
 
-				request(target, {
-					handleAs: "json",
-					method: "POST",
-					data: JSON.stringify(data),
-					headers: {
-						"Content-Type": "application/json",
-						"Accept": "application/javascript, application/json"
-					}
-				}).then(
-					lang.hitch(this, this._handleResponse),
-					lang.hitch(this, this._handleError));
+				this._emitEvt('REQUEST', {
+					target: this.target,
+					method: 'POST',
+					query: data
+				});
 			}, data));
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			this._handleResponse(res.data);
+		},
+
+		_errorAvailable: function(error, status, resWrapper) {
+
+			this._handleError(resWrapper.res.data);
 		},
 
 		_handleResponse: function(result) {
@@ -107,11 +108,7 @@ define([
 			//		callback private
 			//
 
-			if (result.success) {
-				alertify.alert(this.i18n.success, this.i18n.successResetting, this._goBack);
-			} else {
-				this._handleError(result.error);
-			}
+			alertify.alert(this.i18n.success, this.i18n.successResetting, this._goBack);
 		},
 
 		_handleError: function(error) {
@@ -135,10 +132,6 @@ define([
 			// TODO: cambiar cuando esten unificados los errores de la api
 			if (Array.isArray(error)) {
 				error = error[0];
-			}
-
-			if (error.response && error.response.data) {
-				error = error.response.data.error;
 			}
 
 			var msg = error.description;

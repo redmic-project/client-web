@@ -124,10 +124,6 @@ define([
 				id: idProperty
 			};
 
-			if (this.typeRequest) {
-				obj.type = this.typeRequest;
-			}
-
 			this._emitEvt('GET', obj);
 		},
 

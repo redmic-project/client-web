@@ -34,8 +34,6 @@ define([
 				documentDetailsPath: redmicConfig.viewPaths.documentDetails,
 
 				templateTarget: redmicConfig.services.citationByActivity,
-				//TODO pendiente de eliminar get de la BBDD
-				typeRequest: 'API',
 
 				ownChannel: "citation"
 			};
@@ -46,7 +44,7 @@ define([
 				this._goTo404();
 			}
 
-			this.target = lang.replace(this.templateTarget, {id: this.pathVariableId});
+			this.target = this.templateTarget.replace('{id}', this.pathVariableId);
 		},
 
 		_setConfigurations: function() {

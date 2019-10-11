@@ -2,16 +2,19 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Module"
+	, 'redmic/modules/base/_Persistence'
 	, "redmic/modules/base/_Store"
 	, "./_ModelItfc"
 ], function(
 	declare
 	, lang
 	, _Module
+	, _Persistence
 	, _Store
 	, _ModelItfc
-){
-	return declare([_Module, _Store, _ModelItfc], {
+) {
+
+	return declare([_Module, _Store, _Persistence, _ModelItfc], {
 		//	summary:
 		//		Módulo para trabajar con instancias de modelos.
 
@@ -34,7 +37,8 @@ define([
 					VALUE_REMOVED: "valueRemoved",
 					VALUE_REINDEXED: "valueReindexed",
 					MODEL_BUILD: "modelBuild",
-					GOT_MODEL_UUID: "gotModelUuid"
+					GOT_MODEL_UUID: "gotModelUuid",
+					SAVE_MODEL: 'saveModel'
 				},
 				actions: {
 					SET_PROPERTY_VALUE: "setPropertyValue",
@@ -119,6 +123,9 @@ define([
 			},{
 				channel: this.getChannel("GET_MODEL_UUID"),
 				callback: "_subGetModelUuid"
+			},{
+				channel: this.getChannel('SAVE'),
+				callback: '_subSave'
 			});
 		},
 
@@ -163,6 +170,9 @@ define([
 			},{
 				event: 'GOT_MODEL_UUID',
 				channel: this.getChannel("GOT_MODEL_UUID")
+			},{
+				event: 'SAVE_MODEL',
+				channel: this.getChannel('SAVED')
 			});
 		},
 
@@ -281,6 +291,11 @@ define([
 			this._emitEvt('GOT_MODEL_UUID', {
 				uuid: this._getModelUuid(req)
 			});
+		},
+
+		_subSave: function(req) {
+
+			this._saveModel(req);
 		}
 	});
 });

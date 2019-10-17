@@ -152,7 +152,7 @@ define([
 
 			dataToSave.omitSuccessNotification = true;
 			if (selectionId) {
-				dataToSave.data.id = selectionId;
+				dataToSave.id = selectionId;
 			}
 
 			return dataToSave;
@@ -401,9 +401,8 @@ define([
 			this._emitSave({
 				omitSuccessNotification: true,
 				target: selectionTarget,
-				data: {
-					id: settingsId
-				}
+				id: settingsId,
+				data: {}
 			});
 		}
 	});

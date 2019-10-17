@@ -282,7 +282,7 @@ define([], function() {
 		'atlasLayer': baseUri + 'atlas/view/layer',
 		'atlasLayerEdition': baseUri + 'atlas/commands/layer',
 		'atlasLayerSelection': baseUri + 'atlas/{endpoint}/layer/settings',
-		'atlasLayerRefresh': baseUri + 'atlas/commands/layer/refresh/{id}',
+		'atlasLayerRefresh': baseUri + 'atlas/commands/layer/refresh',
 		'atlasLayerDiscovery': baseUri + 'atlas/commands/discover-layers',
 		'atlasCategory': baseUri + 'atlas/view/category',
 		'atlasCategoryEdition': baseUri + 'atlas/commands/category',

@@ -242,9 +242,7 @@ define([
 
 		_getSaveRequestTarget: function(target, req) {
 
-			var data = req.data;
-				idProperty = req.idProperty || this.idProperty,
-				id = data[idProperty],
+			var id = this._getItemIdFromSaveRequest(req),
 				targetWithSlash = this._getTargetWithEndingSlash(target);
 
 			if (!id) {
@@ -252,6 +250,16 @@ define([
 			}
 
 			return targetWithSlash + id;
+		},
+
+		_getItemIdFromSaveRequest: function(req) {
+
+			var data = req.data,
+				idProperty = req.idProperty || this.idProperty,
+				idInReq = req[idProperty],
+				idInReqData = data[idProperty];
+
+			return idInReq || idInReqData;
 		},
 
 		_getSaveRequestOptions: function(req) {
@@ -277,12 +285,9 @@ define([
 			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
 			// reciba directamente el método de consulta listo para usar.
 
-			var data = req.data,
-				idProperty = req.idProperty || this.idProperty,
-				id = data[idProperty],
-				idInTarget = req.idInTarget;
+			var id = this._getItemIdFromSaveRequest(req);
 
-			return (id || idInTarget) ? 'PUT' : 'POST';
+			return id ? 'PUT' : 'POST';
 		},
 
 		_getSaveRequestHeaders: function(req) {

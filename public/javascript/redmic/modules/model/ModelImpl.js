@@ -359,20 +359,13 @@ define([
 			}
 
 			var id = this.modelInstance.getIdValue(),
-				data = this.modelInstance.serialize(),
-				target = this.target;
+				data = this.modelInstance.serialize();
 
-			if (id) {
-				target += '/' + id;
-			}
-
-			var saveObj = {
-				target: target,
-				data: data,
-				idInTarget: !!id
-			};
-
-			this._emitEvt('SAVE', saveObj);
+			this._emitEvt('SAVE', {
+				target: this.target,
+				id: id,
+				data: data
+			});
 		},
 
 		_afterSaved: function(res, resWrapper) {

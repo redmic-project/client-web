@@ -122,7 +122,7 @@ define([
 
 			var layerName = layer.name,
 				layerSource = layer.urlSource,
-				target = lang.replace(redmicConfig.services.atlasLayerRefresh, layer);
+				target = redmicConfig.services.atlasLayerRefresh;
 
 			var data = {
 				urlSource: layerSource,
@@ -132,7 +132,7 @@ define([
 			this._emitEvt('SAVE', {
 				target: target,
 				data: data,
-				idInTarget: true
+				id: layer.id
 			});
 		},
 
@@ -192,7 +192,7 @@ define([
 
 			var data = res.data,
 				itemId = data[this.idProperty],
-				target = redmicConfig.services.atlasCategoryEdition + '/' + itemId;
+				target = redmicConfig.services.atlasCategoryEdition;
 
 			delete data[this.idProperty];
 
@@ -203,7 +203,7 @@ define([
 			this._emitEvt('SAVE', {
 				target: target,
 				data: data,
-				idInTarget: true
+				id: itemId
 			});
 		},
 

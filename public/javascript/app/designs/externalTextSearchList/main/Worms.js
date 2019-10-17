@@ -180,8 +180,8 @@ define([
 			});
 
 			this._emitEvt('SAVE', {
-				idInTarget: this.editionMode,
-				target: this.toRedmicTarget + '/' + data.item.AphiaID,
+				target: this.toRedmicTarget,
+				id: data.item.AphiaID,
 				data: {}
 			});
 		},

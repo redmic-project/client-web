@@ -309,10 +309,13 @@ define([
 			});
 		},
 
-		_pubClearSelection: function(channel) {
+		_pubClearSelection: function(channel, req) {
+
+			var omitPersistence = req && req.omitPersistence;
 
 			this._publish(channel, {
-				target: this._getSelectionTarget()
+				target: this._getSelectionTarget(),
+				omitPersistence: omitPersistence
 			});
 		},
 

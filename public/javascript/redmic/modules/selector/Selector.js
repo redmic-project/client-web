@@ -34,13 +34,16 @@ define([
 				ownChannel: 'selection',
 				events: {
 					STORE_SELECTION: 'storeSelection',
-					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget'
+					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget',
+					CLONE_SELECTION: 'cloneSelection'
 				},
 				actions: {
 					STORE_SELECTION: 'storeSelection',
 					SELECTION_STORED: 'selectionStored',
 					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget',
-					SELECTIONS_TARGET_RETRIEVED: 'selectionsTargetRetrieved'
+					SELECTIONS_TARGET_RETRIEVED: 'selectionsTargetRetrieved',
+					CLONE_SELECTION: 'cloneSelection',
+					SELECTION_CLONED: 'selectionCloned'
 				},
 				selections: {}
 			};
@@ -71,6 +74,9 @@ define([
 			},{
 				channel : this.getChannel('RETRIEVE_SELECTIONS_TARGET'),
 				callback: '_subRetrieveSelectionsTarget'
+			},{
+				channel : this.getChannel('CLONE_SELECTION'),
+				callback: '_subCloneSelection'
 			});
 		},
 
@@ -103,6 +109,9 @@ define([
 			},{
 				event: 'RETRIEVE_SELECTIONS_TARGET',
 				channel: this.getChannel('SELECTIONS_TARGET_RETRIEVED')
+			},{
+				event: 'CLONE_SELECTION',
+				channel: this.getChannel('SELECTION_CLONED')
 			});
 		},
 
@@ -277,9 +286,10 @@ define([
 
 		_subClearSelection: function(req) {
 
-			var target = req.target;
+			var target = req.target,
+				omitPersistence = req.omitPersistence;
 
-			if (this._targetHasRedmicPrefixForReplacement(target)) {
+			if (!omitPersistence && this._targetHasRedmicPrefixForReplacement(target)) {
 				this._emitSelectionTargetLoading(target);
 				this._emitSave(this._getDataToSave('CLEAR_SELECTION', req));
 			} else {
@@ -387,6 +397,18 @@ define([
 			} else {
 				console.error('Local selection cannot be retrieved for "%s"', target);
 			}
+		},
+
+		_subCloneSelection: function(req) {
+
+			var target = req.target;
+
+			if (!this._targetHasRedmicPrefixForReplacement(target)) {
+				console.error('Local selection cannot be cloned for "%s"', target);
+				return;
+			}
+
+			this._cloneSelection(req);
 		}
 	});
 });

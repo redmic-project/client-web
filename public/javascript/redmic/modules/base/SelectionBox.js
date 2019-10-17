@@ -3,6 +3,7 @@ define([
 	, "app/designs/textSearchList/main/Selection"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, 'dojo/Deferred'
 	, "put-selector/put"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Selection"
@@ -17,6 +18,7 @@ define([
 	, Selection
 	, declare
 	, lang
+	, Deferred
 	, put
 	, _Module
 	, _Selection
@@ -44,14 +46,16 @@ define([
 				ownChannel: "selectionBox",
 				events: {
 					STORE_SELECTION: 'storeSelection',
-					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget'
+					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget',
+					CLONE_SELECTION: 'cloneSelection'
 				},
 				actions: {
 					REFRESH: "refresh",
 					STORE_SELECTION: 'storeSelection',
 					SELECTION_STORED: 'selectionStored',
 					RETRIEVE_SELECTIONS_TARGET: 'retrieveSelectionsTarget',
-					SELECTIONS_TARGET_RETRIEVED: 'selectionsTargetRetrieved'
+					SELECTIONS_TARGET_RETRIEVED: 'selectionsTargetRetrieved',
+					CLONE_SELECTION: 'cloneSelection'
 				},
 
 				idProperty: "id",
@@ -127,6 +131,9 @@ define([
 			},{
 				event: 'RETRIEVE_SELECTIONS_TARGET',
 				channel: this._buildChannel(this.selectorChannel, this.actions.RETRIEVE_SELECTIONS_TARGET)
+			},{
+				event: 'CLONE_SELECTION',
+				channel: this._buildChannel(this.selectorChannel, this.actions.CLONE_SELECTION)
 			});
 		},
 
@@ -374,9 +381,8 @@ define([
 			}
 		},
 
-		_subSelectionLoad: function(req) {
+		_subSelectionLoad: function(res) {
 
-			//TODO hay que hacer el clear, select y group escalonados, no todo a la vez
 			this._publish(this.loadSelection.getChannel("HIDE"));
 
 			if (this._loadSelectionDfd && !this._loadSelectionDfd.isFulfilled()) {
@@ -384,30 +390,29 @@ define([
 			}
 			this._loadSelectionDfd = new Deferred();
 
-			this._loadSelectionDfd.then(lang.hitch(this, this._continueSelectionLoadAfterClear, req));
-			this._emitEvt('CLEAR_SELECTION');
+			this._loadSelectionDfd.then(lang.hitch(this, this._continueSelectionLoadAfterClear, res));
+
+			var isOldFormat = res.data && res.data.ids;
+			this._emitEvt('CLEAR_SELECTION', {
+				omitPersistence: !isOldFormat
+			});
 		},
 
-		_continueSelectionLoadAfterClear: function(req) {
+		_continueSelectionLoadAfterClear: function(res) {
 
-			this._loadSelectionDfd = new Deferred();
-			this._loadSelectionDfd.then(lang.hitch(this, this._continueSelectionLoadAfterSelect, req));
+			var data = res.data,
+				settingsId = data.id,
+				selection = data && data.ids;
 
-			var data = req.data,
-				selection = data && (data.selection || data.ids);
-
-			if (selection && selection.length) {
+			if (selection) {
 				this._emitEvt('SELECT', selection);
 				this.idSelectionLoaded = data;
 			} else {
-				this._loadSelectionDfd.resolve();
+				this._emitEvt('CLONE_SELECTION', {
+					target: this.selectionTarget,
+					id: settingsId
+				});
 			}
-		},
-
-		_continueSelectionLoadAfterSelect: function(req) {
-
-			this._emitEvt('GROUP_SELECTED');
-			//this._emitEvt('REFRESH');
 		}
 	});
 });

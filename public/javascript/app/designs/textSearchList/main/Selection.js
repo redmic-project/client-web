@@ -95,11 +95,9 @@ define([
 				return;
 			}
 
-			this._emitEvt('GET', {
-				id: data.id,
-				options: {},
-				target: this.target,
-				requesterId: this.getOwnChannel()
+			this._emitEvt('UPDATE_DATA', {
+				data: data.item,
+				target: this.target
 			});
 		},
 
@@ -127,11 +125,6 @@ define([
 					ok: this.i18n.ok,
 					cancel: this.i18n.cancel
 				});
-		},
-
-		_itemAvailable: function(response) {
-
-			this._emitEvt('UPDATE_DATA', response);
 		},
 
 		postCreate: function() {

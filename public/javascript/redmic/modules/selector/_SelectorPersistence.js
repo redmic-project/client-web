@@ -22,7 +22,8 @@ define([
 		selectionTargetSuffixesByAction: {
 			select: 'select',
 			deselect: 'deselect',
-			clearSelection: 'clearselection'
+			clearSelection: 'clearselection',
+			cloneSelection: 'clone'
 		},
 
 		selectionEndpointsByAction: {
@@ -31,7 +32,8 @@ define([
 			clearSelection: 'commands',
 			groupSelected: 'view',
 			storeSelection: 'commands',
-			retrieveSelectionsTarget: 'view'
+			retrieveSelectionsTarget: 'view',
+			cloneSelection: 'commands'
 		},
 
 		endpointVariableName: '{endpoint}',
@@ -167,16 +169,21 @@ define([
 
 		_createDataToSaveInSettingsFormat: function(action, req) {
 
-			var targetWithSuffix = req.target + '/' + this._getTargetSuffix(action),
-				selectionTarget = this._getSelectionTarget(action, targetWithSuffix);
+			var selectionTarget = this._getSelectionTargetWithSuffixByAction(req.target, action);
 
 			return {
 				data: {
-					selection: req.items,
-					userId: this.userSelectionId
+					selection: req.items
 				},
 				target: selectionTarget
 			};
+		},
+
+		_getSelectionTargetWithSuffixByAction: function(target, action) {
+
+			var targetWithSuffix = target + '/' + this._getTargetSuffix(action);
+
+			return this._getSelectionTarget(action, targetWithSuffix);
 		},
 
 		_getTargetSuffix: function(action) {
@@ -197,8 +204,7 @@ define([
 			return {
 				data: {
 					ids: req.items,
-					action: action,
-					idUser: this.userSelectionId
+					action: action
 				},
 				target: selectionTarget
 			};
@@ -231,11 +237,7 @@ define([
 				selectionIds = this._getSelectionIds();
 
 			if (suffix === 'settings') {
-				this._emitEvt('STORE_SELECTION', {
-					data: data,
-					target: resTarget
-				});
-
+				this._afterSelectionStored(resTarget, data);
 				return;
 			}
 
@@ -255,8 +257,31 @@ define([
 					this._deselect(deselectedIds, target);
 				} else if (action === this.actions.CLEAR_SELECTION) {
 					this._clearSelection(target);
+				} else if (action === this.actions.CLONE_SELECTION) {
+					this._afterSelectionCloned({
+						target: target,
+						resTarget: resTarget,
+						selectedIds: selectedIds
+					});
 				}
 			}
+		},
+
+		_afterSelectionStored: function(target, data) {
+
+			this._emitEvt('STORE_SELECTION', {
+				data: data,
+				target: target
+			});
+		},
+
+		_afterSelectionCloned: function(obj) {
+
+			this._emitEvt('CLONE_SELECTION', {
+				target: obj.resTarget
+			});
+
+			this._select(obj.selectedIds, obj.target);
 		},
 
 		_afterSavedInOldFormat: function(res, resWrapper) {
@@ -357,6 +382,28 @@ define([
 
 			this._emitEvt('RETRIEVE_SELECTIONS_TARGET', {
 				target: selectionTarget
+			});
+		},
+
+		_cloneSelection: function(req) {
+
+			var target = req.target;
+
+			if (!this._isSettingsSelectionFormat(target)) {
+				console.error('Clone is only supported for settings format');
+				return;
+			}
+
+			var action = this.actions.CLONE_SELECTION,
+				selectionTarget = this._getSelectionTargetWithSuffixByAction(target, action),
+				settingsId = req.id;
+
+			this._emitSave({
+				omitSuccessNotification: true,
+				target: selectionTarget,
+				data: {
+					id: settingsId
+				}
 			});
 		}
 	});

@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/base/SelectionBox"
+	, "redmic/modules/selection/SelectionBox"
 	, "put-selector/put"
 ], function(
 	LayoutContainer

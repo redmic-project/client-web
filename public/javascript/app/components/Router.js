@@ -18,7 +18,6 @@ define([
 	, 'redmic/modules/notification/Alert'
 	, 'redmic/modules/base/Credentials'
 	, 'redmic/modules/base/Analytics'
-	//, 'redmic/modules/base/NavegationHistory'
 	, 'redmic/modules/base/MetaTags'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Store'
@@ -45,7 +44,6 @@ define([
 	, Alert
 	, Credentials
 	, Analytics
-	//, NavegationHistory
 	, MetaTags
 	, _Module
 	, _Store
@@ -123,16 +121,21 @@ define([
 				ownChannel: 'app',
 				events: {
 					GET_CREDENTIALS: 'getCredentials',
-					GET_MODULE: 'getModule'/*,
-					ADD_NAV_HISTORY: 'addNavHistory'*/
+					GET_MODULE: 'getModule',
+					GET_QUERY_PARAMS: 'getQueryParams'
 				},
-				query: '',
+				actions: {
+					GET_QUERY_PARAMS: 'getQueryParams',
+					GOT_QUERY_PARAMS: 'gotQueryParams'
+				},
+
 				paths: {
 					ERROR: '/404',
 					ROOT: '/',
 					HOME: 'home',
 					LOGIN: 'login'
 				},
+				query: '',
 				target: '/env',
 				_reconnectTimeout: 10000
 			};
@@ -166,10 +169,6 @@ define([
 				parentChannel: this.ownChannel
 			});
 
-			/*this.navegationHistory = new NavegationHistory({
-				parentChannel: this.ownChannel
-			});*/
-
 			this._credentials = new Credentials({
 				parentChannel: this.ownChannel
 			});
@@ -198,6 +197,9 @@ define([
 			},{
 				channel : this._moduleStore.getChannel('AVAILABLE_MODULE'),
 				callback: '_subAvailableModule'
+			},{
+				channel : this.getChannel('GET_QUERY_PARAMS'),
+				callback: '_subGetQueryParams'
 			});
 		},
 
@@ -209,10 +211,10 @@ define([
 			},{
 				event: 'GET_MODULE',
 				channel: this._moduleStore.getChannel('GET_MODULE')
-			}/*,{
-				event: 'ADD_NAV_HISTORY',
-				channel: this.navegationHistory.getChannel('ADD')
-			}*/);
+			},{
+				event: 'GET_QUERY_PARAMS',
+				channel: this.getChannel('GOT_QUERY_PARAMS')
+			});
 		},
 
 		postCreate: function() {
@@ -293,10 +295,6 @@ define([
 		_addHistory: function(value) {
 
 			getGlobalContext().history.pushState(null, null, value);
-
-			/*this._emitEvt('ADD_NAV_HISTORY', {
-				url: value
-			});*/
 		},
 
 		_onRouteChange: function() {
@@ -314,6 +312,7 @@ define([
 				this._addHistory(route);
 			}
 
+			this._handleQueryParameters(query);
 			this._changeModule(route, query);
 		},
 
@@ -383,6 +382,16 @@ define([
 			hideNativeLoadingNode();
 		},
 
+		_handleQueryParameters: function(queryString) {
+
+			this._currentQueryParams = this._getQueryParameters(queryString);
+		},
+
+		_getQueryParameters: function(queryString) {
+
+			return ioQuery.queryToObject(queryString);
+		},
+
 		_changeModule: function(route, query) {
 			//	summary:
 			//		Actualiza el módulo que se visualiza.
@@ -434,7 +443,7 @@ define([
 
 			this._emitEvt('GET_MODULE', {
 				key: this._currModuleKey,
-				query: ioQuery.queryToObject(this.query)
+				query: this._getQueryParameters(this.query)
 			});
 		},
 
@@ -466,6 +475,11 @@ define([
 				moduleKey: this._currModuleKey,
 				moduleInstance: instance
 			});
+		},
+
+		_subGetQueryParams: function(req) {
+
+			this._emitEvt('GET_QUERY_PARAMS', this._currentQueryParams || {});
 		},
 
 		_closeModule: function() {

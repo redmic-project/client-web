@@ -5,6 +5,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'put-selector/put'
+	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Selection'
 	, 'redmic/modules/base/_ShowInPopup'
@@ -15,6 +16,7 @@ define([
 	, lang
 	, Deferred
 	, put
+	, Credentials
 	, _Module
 	, _Selection
 	, _ShowInPopup
@@ -45,7 +47,9 @@ define([
 					CLONE_SELECTION: 'cloneSelection'
 				},
 
-				idProperty: 'id'
+				idProperty: 'id',
+				nameProperty: 'name',
+				sharedProperty: 'shared'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -92,11 +96,45 @@ define([
 
 		_subSaveSelection: function(req) {
 
-			var selectionId = req.selectionId,
-				saveCbk = lang.hitch(this, this._saveSelection, selectionId),
-				updateCbk = lang.hitch(this, this._updateSelection, selectionId);
+			if (this._saveSelectionDfd && !this._saveSelectionDfd.isFulfilled()) {
+				this._saveSelectionDfd.cancel();
+			}
+			this._saveSelectionDfd = new Deferred();
 
-			if (!this.idSelectionLoaded) {
+			this._saveSelectionDfd.then(
+				lang.hitch(this, this._saveSelection),
+				lang.hitch(this, this._emitEvt, 'COMMUNICATION', {
+					description: this.i18n.noItem
+				}));
+
+			this._emitEvt('TOTAL');
+		},
+
+		_totalAvailable: function(res) {
+
+			if (!this._saveSelectionDfd) {
+				return;
+			}
+
+			var selectionId = this._getCurrentSelectionId();
+
+			if (res.total && selectionId) {
+				this._saveSelectionDfd.resolve(selectionId);
+			} else {
+				this._saveSelectionDfd.reject();
+			}
+		},
+
+		_getCurrentSelectionId: function() {
+
+			return Credentials.get('selectIds')[this.selectionTarget];
+		},
+
+		_saveSelection: function(selectionId) {
+
+			var saveCbk = lang.hitch(this, this._saveNewSelection, selectionId);
+
+			if (!this._lastPersistentSelection) {
 				saveCbk();
 				return;
 			}
@@ -104,7 +142,7 @@ define([
 			alertify.confirm(
 				this.i18n.saveSelection,
 				this.i18n.saveSelectionConfirmationMessage,
-				updateCbk,
+				lang.hitch(this, this._updateExistingSelection),
 				saveCbk
 			).set('labels', {
 				ok: this.i18n.overwrite,
@@ -112,19 +150,21 @@ define([
 			});
 		},
 
-		_updateSelection: function(selectionId) {
+		_updateExistingSelection: function() {
 
-			var obj = {
-				selectionId: selectionId,
-				name: this.idSelectionLoaded.name
-			};
+			var selectionId = this._getCurrentSelectionId(),
+				objToSave = {
+					selectionId: selectionId
+				};
 
-			obj[this.idProperty] = this.idSelectionLoaded[this.idProperty];
+			objToSave[this.idProperty] = this._lastPersistentSelection[this.idProperty];
+			objToSave[this.nameProperty] = this._lastPersistentSelection[this.nameProperty];
+			objToSave[this.sharedProperty] = this._lastPersistentSelection[this.sharedProperty];
 
-			this._storeSelection(obj);
+			this._storeSelection(objToSave);
 		},
 
-		_saveSelection: function(selectionId) {
+		_saveNewSelection: function(selectionId) {
 
 			var promptCbk = lang.hitch(this, this._getSaveParametersAndStore, selectionId),
 				prompt = alertify.prompt(this.i18n.newNameMessage, '', promptCbk);
@@ -141,7 +181,7 @@ define([
 				shared: this._sharedCheckbox.checked
 			};
 
-			delete this.idSelectionLoaded;
+			delete this._lastPersistentSelection;
 			this._storeSelection(obj);
 		},
 
@@ -174,21 +214,17 @@ define([
 		_subSelectionStored: function(res) {
 
 			if (res.data) {
-				this.idSelectionLoaded = res.data;
+				this._lastPersistentSelection = res.data;
 			}
 		},
 
 		_subRestoreSelection: function() {
 
-			if (!this.idSelectionLoaded) {
-				this._showSelectionList();
-				return;
-			}
-
 			var overwriteCbk = lang.hitch(this, function() {
 
-				delete this.idSelectionLoaded;
-				this._showSelectionList();
+				this._emitEvt('RETRIEVE_SELECTIONS_TARGET', {
+					target: this.selectionTarget
+				});
 			});
 
 			alertify.confirm(
@@ -202,34 +238,30 @@ define([
 			});
 		},
 
-		_showSelectionList: function() {
-
-			this._emitEvt('RETRIEVE_SELECTIONS_TARGET', {
-				target: this.selectionTarget
-			});
-
-			this._publish(this.loadSelection.getChannel("SHOW"));
-		},
-
 		_subSelectionsTargetRetrieved: function(res) {
 
 			var selectionTarget = res.target;
 
-			if (!this.loadSelection) {
+			if (!this._loadSelection) {
 				this.loadSelectionConfig.target = selectionTarget;
-				this.loadSelection = new declare(Selection).extend(_ShowInPopup)(this.loadSelectionConfig);
 
-				this._subscribe(this.loadSelection.getChannel("UPDATE_DATA"), lang.hitch(this, this._subSelectionLoad));
+				var SelectionDefinition = declare(Selection).extend(_ShowInPopup);
+				this._loadSelection = new SelectionDefinition(this.loadSelectionConfig);
+
+				this._subscribe(this._loadSelection.getChannel('UPDATE_DATA'), lang.hitch(this,
+					this._subSelectionLoad));
 			} else {
-				this._publish(this.loadSelection.getChannel("UPDATE_TARGET"), {
+				this._publish(this._loadSelection.getChannel('UPDATE_TARGET'), {
 					target: selectionTarget
 				});
 			}
+
+			this._publish(this._loadSelection.getChannel('SHOW'));
 		},
 
 		_subSelectionLoad: function(res) {
 
-			this._publish(this.loadSelection.getChannel("HIDE"));
+			this._publish(this._loadSelection.getChannel('HIDE'));
 
 			if (this._loadSelectionDfd && !this._loadSelectionDfd.isFulfilled()) {
 				this._loadSelectionDfd.cancel();
@@ -246,9 +278,7 @@ define([
 
 		_clearSelection: function() {
 
-			if (this._loadSelectionDfd) {
-				this._loadSelectionDfd.resolve();
-			}
+			this._loadSelectionDfd && this._loadSelectionDfd.resolve();
 		},
 
 		_continueSelectionLoadAfterClear: function(res) {
@@ -257,9 +287,10 @@ define([
 				settingsId = data.id,
 				selection = data && data.ids;
 
+			this._lastPersistentSelection = data;
+
 			if (selection) {
 				this._emitEvt('SELECT', selection);
-				this.idSelectionLoaded = data;
 			} else {
 				this._emitEvt('CLONE_SELECTION', {
 					target: this.selectionTarget,

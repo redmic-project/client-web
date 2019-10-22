@@ -2,6 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
+	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
 	, 'redmic/modules/base/_Selection'
@@ -9,11 +10,11 @@ define([
 	, 'redmic/modules/base/_ShowOnEvt'
 	, 'redmic/modules/layout/listMenu/ListMenu'
 	, 'redmic/modules/selection/SelectionManager'
-	, 'redmic/base/Credentials'
 ], function(
 	declare
 	, lang
 	, put
+	, Credentials
 	, _Module
 	, _Show
 	, _Selection
@@ -21,7 +22,6 @@ define([
 	, _ShowOnEvt
 	, ListMenu
 	, SelectionManager
-	, Credentials
 ) {
 
 	return declare([_Module, _Show, _Selection], {
@@ -43,7 +43,7 @@ define([
 					REFRESH: 'refresh'
 				},
 
-				idProperty: 'id'
+				omitLoading: true
 			};
 
 			lang.mixin(this, this.config, args);
@@ -83,8 +83,7 @@ define([
 			this.loadSelectionListMenu = new ListMenuDefinition(this.listMenuSelectionConfig);
 
 			this._selectionManager = new SelectionManager({
-				parentChannel: this.getChannel(),
-				idProperty: this.idProperty
+				parentChannel: this.getChannel()
 			});
 		},
 
@@ -179,8 +178,6 @@ define([
 
 		_saveSelectionButtonCallback: function() {
 
-			this._emitEvt('TOTAL');
-
 			this._emitEvt('TRACK', {
 				type: TRACK.type.event,
 				info: {
@@ -189,21 +186,8 @@ define([
 					label: 'saveSelection'
 				}
 			});
-		},
 
-		_totalAvailable: function(res) {
-
-			var selectionId = Credentials.get('selectIds')[this.selectionTarget];
-
-			if (res.total && selectionId) {
-				this._emitEvt('SAVE_SELECTION', {
-					selectionId: selectionId
-				});
-			} else {
-				this._emitEvt('COMMUNICATION', {
-					description: this.i18n.noItem
-				});
-			}
+			this._emitEvt('SAVE_SELECTION');
 		},
 
 		_loadSavedSelectionsButtonCallback: function() {
@@ -222,8 +206,6 @@ define([
 
 		_clearSelectionButtonCallback: function() {
 
-			this._emitEvt('CLEAR_SELECTION');
-
 			this._emitEvt('TRACK', {
 				type: TRACK.type.event,
 				info: {
@@ -232,6 +214,8 @@ define([
 					label: 'clearSelection'
 				}
 			});
+
+			this._emitEvt('CLEAR_SELECTION');
 		}
 	});
 });

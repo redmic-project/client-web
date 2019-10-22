@@ -38,7 +38,7 @@ module.exports = function(args) {
 				, suitesPrefix + 'redmic/modules/layout/wizard/testWizard'
 				, suitesPrefix + 'redmic/modules/model/testModelImpl'
 				, suitesPrefix + 'redmic/modules/tree/testTree'
-				, suitesPrefix + 'redmic/modules/selector/testSelector'
+				, suitesPrefix + 'redmic/modules/selection/testSelector'
 				, suitesPrefix + 'redmic/modules/gateway/testGateway'
 				, suitesPrefix + 'redmic/modules/chart/ChartsContainer/testInfoChartsContainerImpl'
 				, suitesPrefix + 'redmic/modules/chart/layer/ChartLayer/testLinearChartImpl'

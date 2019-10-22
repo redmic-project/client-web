@@ -145,14 +145,19 @@ define([
 
 		_getDataToSave: function(actionName, req) {
 
-			var action = this.actions[actionName],
+			var target = req.target,
+				action = this.actions[actionName],
 				selectionIds = this._getSelectionIds(),
-				selectionId = selectionIds[req.target],
+				selectionId = selectionIds[target],
 				dataToSave = this._getDataToSaveInRightFormat(action, req);
 
 			dataToSave.omitSuccessNotification = true;
 			if (selectionId) {
-				dataToSave.id = selectionId;
+				if (this._isSettingsSelectionFormat(target)) {
+					dataToSave.id = selectionId;
+				} else {
+					dataToSave.data.id = selectionId;
+				}
 			}
 
 			return dataToSave;

@@ -5,6 +5,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/text!./templates/ConfirmResetting.html"
+	, 'redmic/modules/base/_ListenQueryParams'
 	, 'redmic/modules/base/_Store'
 ], function(
 	alertify
@@ -13,10 +14,11 @@ define([
 	, declare
 	, lang
 	, template
+	, _ListenQueryParams
 	, _Store
 ) {
 
-	return declare([_ExternalUserBaseView, _Store], {
+	return declare([_ExternalUserBaseView, _Store, _ListenQueryParams], {
 		//	summary:
 		//		Vista que permite resetear la contraseña de un usuario, a partir de un enlace enviado al correo
 		//		electrónico asociado a dicha cuenta.
@@ -41,7 +43,12 @@ define([
 
 			this.inherited(arguments);
 
-			var token = this.queryParameters ? this.queryParameters.token : null;
+			this._emitEvt('GET_QUERY_PARAMS');
+		},
+
+		_gotQueryParams: function(queryParams) {
+
+			var token = queryParams.token;
 
 			if (token) {
 				this.token = token;

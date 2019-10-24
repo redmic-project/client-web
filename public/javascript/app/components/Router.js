@@ -92,8 +92,6 @@ define([
 		//		usuario invitado). Maneja las instancias de layout de aplicación y de los módulos cargados dentro de
 		//		dichos layouts.
 
-		//	query: String
-		//		Filtros de consulta procedentes de Router.
 		//	paths: Object
 		//		Constantes de rutas base
 
@@ -135,7 +133,6 @@ define([
 					HOME: 'home',
 					LOGIN: 'login'
 				},
-				query: '',
 				target: '/env',
 				_reconnectTimeout: 10000
 			};
@@ -273,11 +270,11 @@ define([
 
 		_handleAppHref: function(event, target) {
 
-			var url = target.pathname + target.search;
+			var url = target.pathname + target.search + target.hash;
 
 			if (mouse.isMiddle(event)) {
 				var gCtx = getGlobalContext(),
-					newPageUrl = gCtx.location.protocol + '//' + gCtx.location.hostname + url;
+					newPageUrl = target.protocol + '//' + target.hostname + url;
 
 				gCtx.open(newPageUrl, '_blank');
 			} else {
@@ -301,9 +298,7 @@ define([
 
 			var locationObj = getGlobalContext().location,
 				locationPath = locationObj.pathname,
-				locationQuery = locationObj.search,
 				route = locationPath.substr(1),
-				query = locationQuery.substr(1),
 				routeIsEmpty = !route || route === '' || route === this.paths.ROOT,
 				loginWasSuccessful = route === this.paths.LOGIN && this._userFound;
 
@@ -312,8 +307,17 @@ define([
 				this._addHistory(route);
 			}
 
-			this._handleQueryParameters(query);
-			this._changeModule(route, query);
+			var locationQuery = locationObj.search;
+
+			this._handleQueryParameters(locationQuery.substr(1));
+
+			var routeChanged = this._changeModule(route);
+			if (routeChanged) {
+				this._emitEvt('TRACK', {
+					type: TRACK.type.page,
+					info: route + locationQuery
+				});
+			}
 		},
 
 		_evaluatePopStateEvt: function(evt) {
@@ -385,6 +389,8 @@ define([
 		_handleQueryParameters: function(queryString) {
 
 			this._currentQueryParams = this._getQueryParameters(queryString);
+
+			this._removeQueryParametersFromHref();
 		},
 
 		_getQueryParameters: function(queryString) {
@@ -392,36 +398,37 @@ define([
 			return ioQuery.queryToObject(queryString);
 		},
 
-		_changeModule: function(route, query) {
+		_removeQueryParametersFromHref: function() {
+
+			var locationObj = getGlobalContext().location,
+				href = locationObj.protocol + '//' + locationObj.hostname + locationObj.pathname + locationObj.hash;
+
+			getGlobalContext().history.replaceState(null, null, href);
+		},
+
+		_changeModule: function(route) {
 			//	summary:
 			//		Actualiza el módulo que se visualiza.
 			//	tags:
 			//		private
 			//	route:
 			//		ruta del nuevo módulo
-			//	query:
-			//		queryString [Opcional]
 
 			this._currModuleKey = route;
 
-			var newQuery = query ? query : '';
-
-			if (this._currModuleKey === this._prevModuleKey && this.query === newQuery) {
-				return;
+			if (this._currModuleKey === this._prevModuleKey) {
+				return false;
 			}
 
 			this._prevModuleKey = this._currModuleKey;
-			this.query = newQuery;
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.page,
-				info: query ? (route + '?' + query) : route
-			});
 
 			this._once(this._loading.getChannel('LOADING_DRAWN'), lang.hitch(this, this._onLoadingDrawn));
+
 			this._publish(this._loading.getChannel('LOADING'), {
 				instant: !this._currModuleInstance
 			});
+
+			return true;
 		},
 
 		_onLoadingDrawn: function() {
@@ -442,8 +449,7 @@ define([
 			this._prepareApplicationLayout();
 
 			this._emitEvt('GET_MODULE', {
-				key: this._currModuleKey,
-				query: this._getQueryParameters(this.query)
+				key: this._currModuleKey
 			});
 		},
 

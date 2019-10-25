@@ -149,10 +149,10 @@ define([
 			this.textSearch.setValue(text);
 		},
 
-		_dataAvailable: function(/*Object*/ response) {
+		_dataAvailable: function(res, resWrapper) {
 
-			if (response.requesterId === this.getOwnChannel()) {
-				this._setSuggestions(response.data);
+			if (resWrapper.requesterId === this.getOwnChannel()) {
+				this._setSuggestions(res.data);
 			}
 		},
 

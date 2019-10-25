@@ -64,6 +64,15 @@ define([
 					}
 				}
 			}, this.browserConfig || {}]);
+
+			var selectionSearchFields = ['name.suggest'],
+				selectionSuggestFields = ['name'];
+
+			this.textSearchConfig = this._merge([{
+				highlightField: selectionSearchFields,
+				suggestFields: selectionSuggestFields,
+				searchFields: selectionSearchFields
+			}, this.textSearchConfig || {}]);
 		},
 
 		_defineMainSubscriptions: function() {

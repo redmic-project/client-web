@@ -33,7 +33,8 @@ define([
 					_onSubmitResetting: lang.hitch(this, this._onSubmitResetting),
 					_onCloseResetting: lang.hitch(this, this._onCloseResetting),
 					_confirmValidator: lang.hitch(this, this._confirmValidator)
-				}
+				},
+				target: redmicConfig.services.resettingSetPassword
 			};
 
 			lang.mixin(this, this.config, args);
@@ -79,21 +80,11 @@ define([
 					token: this.token
 				};
 
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
-			}
-
-			envDfd.then(lang.hitch(this, function(data, envData) {
-
-				this.target = redmicConfig.getServiceUrl(redmicConfig.services.resettingSetPassword, envData);
-
-				this._emitEvt('REQUEST', {
-					target: this.target,
-					method: 'POST',
-					query: data
-				});
-			}, data));
+			this._emitEvt('REQUEST', {
+				target: this.target,
+				method: 'POST',
+				query: data
+			});
 		},
 
 		_dataAvailable: function(res, resWrapper) {

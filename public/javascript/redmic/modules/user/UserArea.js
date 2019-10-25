@@ -48,6 +48,7 @@ define([
 				'class': 'userArea',
 				idProperty: 'id',
 				profileTarget: redmicConfig.services.profile,
+				_logoutTarget: redmicConfig.services.logout,
 				repositoryUrl: 'https://gitlab.com/redmic-project/client/web'
 			};
 
@@ -84,7 +85,6 @@ define([
 				if (this._checkUserIsRegistered()) {
 					this._initializeRegisteredUserArea(infoItem, versionItem);
 
-					this._logoutTarget = redmicConfig.getServiceUrl(redmicConfig.services.logout, envData);
 					this.target.push(this._logoutTarget);
 					// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
 					// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo

@@ -46,6 +46,7 @@ define([
 					REQUEST_FAILED: 'requestFailed'
 				},
 
+				target: redmicConfig.services.profile,
 				_loginPath: '/login'
 			};
 
@@ -184,17 +185,9 @@ define([
 			//	tags:
 			//		private
 
-			var envDfd = window.env;
-			if (envDfd) {
-				envDfd.then(lang.hitch(this, function(envData) {
-
-					this.target = redmicConfig.getServiceUrl(redmicConfig.services.profile, envData) + '/';
-
-					this._emitEvt('GET', {
-						target: this.target
-					});
-				}));
-			}
+			this._emitEvt('GET', {
+				target: this.target
+			});
 		},
 
 		_itemAvailable: function(res) {

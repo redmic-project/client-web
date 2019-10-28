@@ -178,7 +178,7 @@ define([
 
 		_localSelected: function(item) {
 
-			var ids = item.body.ids instanceof Array ? item.body.ids : [item.body.ids],
+			var ids = item.ids instanceof Array ? item.ids : [item.ids],
 				changeResults = false;
 
 			for (var i = 0; i < ids.length; i++) {
@@ -198,7 +198,7 @@ define([
 
 		_localDeselected: function(item) {
 
-			var ids = item.body.ids instanceof Array ? item.body.ids : [item.body.ids],
+			var ids = item.ids instanceof Array ? item.ids : [item.ids],
 				changeResults = false;
 
 			for (var i = 0; i < ids.length; i++) {

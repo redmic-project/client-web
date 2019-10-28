@@ -792,9 +792,7 @@ define([
 
 			return {
 				success: true,
-				body: {
-					instance: this._getMapInstance()
-				}
+				instance: this._getMapInstance()
 			};
 		}
 

@@ -218,11 +218,11 @@ define([
 
 		_subBrowserWorkDeselected: function(res) {
 
-			if (!res || !res.body || !res.body.ids) {
+			if (!res || !res.ids) {
 				return;
 			}
 
-			var items = res.body.ids;
+			var items = res.ids;
 
 			for (var i = 0; i < items.length; i++) {
 

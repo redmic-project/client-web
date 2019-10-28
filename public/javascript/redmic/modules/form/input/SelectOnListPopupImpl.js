@@ -85,17 +85,14 @@ define([
 				initData: true
 			});
 
-			this._value && this._publish(this.instanceContentPopup.getChannel("SELECTED"), {
-				"success": true,
-				"body": {
-					"ids": [this._value],
-					"selectionTarget": this.target,
-					"total": 1
-				}
-			});
-
 			this._subscriptionOnceSelected = this._once(this.instanceContentPopup.getChannel("SELECTED"),
 				lang.hitch(this, this._subSelectedBrowser));
+
+			this._value && this._publish(this.instanceContentPopup.getChannel("SELECTED"), {
+				"ids": [this._value],
+				"selectionTarget": this.target,
+				"total": 1
+			});
 		},
 
 		_cleanInstancePopup: function() {
@@ -112,13 +109,13 @@ define([
 
 		_subSelectedBrowser: function(res) {
 
-			if (!res.body.ids) {
+			if (!res.ids) {
 				return;
 			}
 
 			this._publish(this.instanceContentPopup.getChannel("HIDE"));
 
-			this._setInput(res.body.ids[0]);
+			this._setInput(res.ids[0]);
 		},
 
 		_setInput: function(value) {

@@ -394,10 +394,10 @@ define([
 
 			var dataDefinitionId;
 
-			if (Number.isInteger(item.body.ids)) {
-				dataDefinitionId = item.body.ids;
+			if (Number.isInteger(item.ids)) {
+				dataDefinitionId = item.ids;
 			} else {
-				dataDefinitionId = item.body.ids[0];
+				dataDefinitionId = item.ids[0];
 			}
 
 			this._updateDataSeriesForm(dataDefinitionId);

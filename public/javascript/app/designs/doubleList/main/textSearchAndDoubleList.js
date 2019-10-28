@@ -246,13 +246,13 @@ define([
 			}
 		},
 
-		_itemAvailableOnce: function(generatedId, response) {
+		_itemAvailableOnce: function(generatedId, resWrapper) {
 
-			if (response.body.requesterId !== this.getOwnChannel()) {
+			if (resWrapper.req.requesterId !== this.getOwnChannel()) {
 				return;
 			}
 
-			var data = response.body.data;
+			var data = resWrapper.res.data;
 			data[this.idProperty] = generatedId;
 
 			this._addItemInListRight(data[this.idPropertySerialize], data, generatedId);

@@ -155,10 +155,10 @@ define([
 				key: "confirm"
 			});
 
-			if (item.body.ids instanceof Array) {
-				this._itemSelected = item.body.ids[0];
+			if (item.ids instanceof Array) {
+				this._itemSelected = item.ids[0];
 			} else {
-				this._itemSelected = item.body.ids;
+				this._itemSelected = item.ids;
 			}
 
 			this.inherited(arguments);

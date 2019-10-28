@@ -49,7 +49,7 @@ define([
 
 		_localSelected: function(item) {
 
-			var ids = item.body.ids instanceof Array ? item.body.ids : [item.body.ids],
+			var ids = item.ids instanceof Array ? item.ids : [item.ids],
 				_changeResults = false;
 
 			if (!this.simpleSelection) {
@@ -85,10 +85,9 @@ define([
 
 		_localDeselected: function(item) {
 
-			var id = item.body.ids instanceof Array ? item.body.ids[0]: item.body.ids;
+			var id = item.ids instanceof Array ? item.ids[0]: item.ids;
 
 			if (!this.simpleSelection) {
-
 				var posArrayItem = this._results.indexOf(id);
 
 				if (posArrayItem > -1) {

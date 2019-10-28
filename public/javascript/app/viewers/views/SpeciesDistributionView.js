@@ -538,7 +538,7 @@ define([
 
 		_subMapShown: function(response) {
 
-			this.mapInstance = response.body.instance;
+			this.mapInstance = response.instance;
 		},
 
 		_subMapZoomSet: function(response) {
@@ -587,8 +587,8 @@ define([
 				obj = {
 					i18n: this.i18n
 				},
-				parseData = function(response) {
-					obj.feature = response.body.data;
+				parseData = function(resWrapper) {
+					obj.feature = resWrapper.res.data;
 
 					if (obj.feature.properties.activityId) {
 						this._once(this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
@@ -603,9 +603,9 @@ define([
 						dfd.resolve(TemplatePopup(obj));
 					}
 				},
-				parseDataActivity = function(response) {
+				parseDataActivity = function(resWrapper) {
 
-					obj.feature.properties.activity = response.body.data;
+					obj.feature.properties.activity = resWrapper.res.data;
 
 					dfd.resolve(TemplatePopup(obj));
 				};

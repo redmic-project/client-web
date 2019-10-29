@@ -485,7 +485,10 @@ define([
 
 		_subGetQueryParams: function(req) {
 
-			this._emitEvt('GET_QUERY_PARAMS', this._currentQueryParams || {});
+			this._emitEvt('GET_QUERY_PARAMS', {
+				requesterId: req.requesterId,
+				queryParams: this._currentQueryParams || {}
+			});
 		},
 
 		_closeModule: function() {

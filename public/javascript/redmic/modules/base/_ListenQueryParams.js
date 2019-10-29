@@ -43,7 +43,10 @@ define([
 
 			this.subscriptionsConfig.push({
 				channel: this._buildChannel(this.rootChannel, this.actions.GOT_QUERY_PARAMS),
-				callback: '_subGotQueryParams'
+				callback: '_subGotQueryParams',
+				options: {
+					predicate: lang.hitch(this, this._chkRequesterIsMe)
+				}
 			});
 		},
 
@@ -51,16 +54,28 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'GET_QUERY_PARAMS',
-				channel: this._buildChannel(this.rootChannel, this.actions.GET_QUERY_PARAMS)
+				channel: this._buildChannel(this.rootChannel, this.actions.GET_QUERY_PARAMS),
+				callback: '_pubGetQueryParams'
 			});
+		},
+
+		_pubGetQueryParams: function(channel, evtObj) {
+
+			var pubObj = {
+				requesterId: this.getOwnChannel()
+			};
+
+			this._publish(channel, pubObj);
 		},
 
 		_subGotQueryParams: function(res) {
 
-			this._gotQueryParams(res);
+			var params = res.queryParams;
 
-			for (var param in res) {
-				this._gotQueryParam(param, res[param]);
+			this._gotQueryParams(params);
+
+			for (var param in params) {
+				this._gotQueryParam(param, params[param]);
 			}
 		}
 	});

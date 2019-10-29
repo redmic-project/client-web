@@ -1,8 +1,10 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
+	, 'redmic/modules/base/_ListenQueryParams'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
 	, 'redmic/modules/base/_Selection'
@@ -13,8 +15,10 @@ define([
 ], function(
 	declare
 	, lang
+	, Deferred
 	, put
 	, Credentials
+	, _ListenQueryParams
 	, _Module
 	, _Show
 	, _Selection
@@ -24,7 +28,7 @@ define([
 	, SelectionManager
 ) {
 
-	return declare([_Module, _Show, _Selection], {
+	return declare([_Module, _Show, _Selection, _ListenQueryParams], {
 		//	summary:
 		//		Indicador del número de seleccionados con botones asociados.
 		//	description:
@@ -47,6 +51,9 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			// TODO apaño temporal, hasta que se desvincule la petición de seleccionados de este módulo
+			this._settingsIdDfd = new Deferred();
 		},
 
 		_setConfigurations: function() {
@@ -123,6 +130,9 @@ define([
 				sourceNode: this.domNode
 			});
 
+			// TODO apaño temporal, hasta que se desvincule la petición de seleccionados de este módulo
+			this._emitEvt('GET_QUERY_PARAMS');
+
 			this.inherited(arguments);
 		},
 
@@ -132,6 +142,16 @@ define([
 
 			if (cbk && this[cbk]) {
 				this[cbk](res);
+			}
+		},
+
+		// TODO apaño temporal, hasta que se desvincule la petición de seleccionados de este módulo
+		_gotQueryParams: function(queryParams) {
+
+			if (queryParams['settings-id']) {
+				this._settingsIdDfd.cancel();
+			} else {
+				this._settingsIdDfd.resolve();
 			}
 		},
 
@@ -145,8 +165,13 @@ define([
 				selectionTarget: selectionTarget
 			});
 
-			this._clearSelection();
-			this._emitEvt('GROUP_SELECTED');
+			// TODO apaño temporal, hasta que se desvincule la petición de seleccionados de este módulo
+			this._settingsIdDfd.then(lang.hitch(this, function() {
+
+				// TODO esto no debería ser responsabilidad de SelectionBox, sería mejor que lo hiciera la vista, por ejemplo
+				this._clearSelection();
+				this._emitEvt('GROUP_SELECTED');
+			}));
 		},
 
 		_isRegisteredUser: function(item) {

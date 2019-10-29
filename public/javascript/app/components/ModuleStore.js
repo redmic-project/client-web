@@ -318,10 +318,10 @@ define([
 			require(["app" + moduleItem.internPath + "View"], lang.hitch(this, function(ModuleView) {
 
 				// Creamos el módulo
-				var moduleInstance = new declare([_View, ModuleView])({
-					perms: moduleItem.perms,
+				var moduleInstance = new declare([ModuleView, _View])({
 					parentChannel: this.parentChannel,
 					ownChannel: this.viewSeparator + moduleItem.id,
+					perms: moduleItem.perms,
 					pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null
 				});
 

@@ -16,25 +16,18 @@ define([
 
 	return declare([_ListenRequestError, _ViewHandle, _SettingsHandler], {
 		//	summary:
-		//		Base común para todas los módulos usados como vistas.
-
-		//	region: String
-		//		Región del ContentPane.
-		//	baseClass: String
-		//		Clase base del ContentPane.
+		//		Extensión común para todas los módulos usados como vistas. Se adjunta automáticamente cuando la
+		//		navegación a través de la app requiere un módulo como contenido principal a mostrar.
 
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "view",
 				viewActions: {
 					PUT_META_TAGS: "putMetaTags"
 				},
 				viewEvents: {
 					PUT_META_TAGS: "putMetaTags"
-				},
-
-				title: 'View'
+				}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -74,9 +67,6 @@ define([
 
 		_afterShowView: function(request) {
 
-			//this.startup();
-			//this.resize();
-			//this._publish(this._buildChannel(this.loadingChannel, this.actions.LOADED));
 			this._putMetaTags();
 		},
 
@@ -94,11 +84,6 @@ define([
 					view: this.ownChannel
 				});
 			}
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
 		},
 
 		_goTo404: function() {

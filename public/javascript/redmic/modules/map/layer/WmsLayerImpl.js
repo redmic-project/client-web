@@ -116,8 +116,7 @@ define([
 			this._emitEvt('GET', {
 				target: this.infoTarget,
 				requesterId: this.getOwnChannel(),
-				id: '',
-				options: {
+				headers: {
 					'X-Requested-With': ''
 				}
 			});

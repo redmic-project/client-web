@@ -84,8 +84,9 @@ define([
 
 			if (item) {
 				this._itemAvailable({
-					target: this.target,
 					data: item
+				},{
+					target: this.target
 				});
 			} else {
 				this._emitEvt('GET', {

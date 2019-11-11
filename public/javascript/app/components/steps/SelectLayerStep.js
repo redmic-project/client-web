@@ -9,7 +9,6 @@ define([
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/_Select"
-	, "RWidgets/Utilities"
 	, "templates/ServiceOGCAtlasList"
 ], function(
 	_AddTextSearchInput
@@ -22,7 +21,6 @@ define([
 	, _Store
 	, ListImpl
 	, _Select
-	, Utilities
 	, AtlasList
 ) {
 
@@ -79,6 +77,14 @@ define([
 			if (this._additionalData) {
 				this._newAdditionalData(this._additionalData);
 			}
+		},
+
+		_instanceDataToResult: function(data) {
+
+			if (!data || !data.name) {
+				return;
+			}
+			this._setLayerName(data.name);
 		},
 
 		_subBrowserRowSelected: function(res) {

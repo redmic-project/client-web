@@ -137,6 +137,7 @@ define([
 		_prepareItemEditionOrCreation: function(itemId, urlId) {
 
 			if (itemId === 'new') {
+				this._getCopyParams = true;
 				this._emitEvt('GET_QUERY_PARAMS');
 			} else {
 				this._emitGet(urlId || itemId);
@@ -144,6 +145,11 @@ define([
 		},
 
 		_gotQueryParams: function(queryParams) {
+
+			if (!this._getCopyParams) {
+				return;
+			}
+			delete this._getCopyParams;
 
 			var copySource = queryParams['copy-source'];
 

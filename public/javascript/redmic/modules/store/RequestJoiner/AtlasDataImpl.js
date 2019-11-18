@@ -113,6 +113,59 @@ define([
 
 				return category;
 			}));
+		},
+
+		_getRequestQuery: function(target, queryParams) {
+
+			if (queryParams && queryParams.ids) {
+				return {
+					ids: queryParams.ids
+				};
+			}
+
+			if (queryParams && queryParams.text) {
+				return queryParams;
+			}
+
+			return {};
+		},
+
+		_expandQueryWithPreviousResponse: function(target, queryParams, prevRes) {
+
+			if (target !== redmicConfig.services.atlasCategory || !prevRes) {
+				return queryParams;
+			}
+
+			var ids = [];
+			for (var i = 0; i < prevRes.length; i++) {
+				var layer = prevRes[i],
+					categoryId = layer[this.parentProperty][this.idProperty];
+
+				ids.push(categoryId);
+			}
+
+			return this._merge([{
+				queryParams: {
+					ids: ids
+				}
+			}, queryParams]);
+		},
+
+		_getRequestAction: function(target, queryObj) {
+
+			if (queryObj.queryParams && target === redmicConfig.services.atlasCategory) {
+				return '_mget';
+			}
+		},
+
+		_checkRequestsCanBeParallel: function(queryObj) {
+
+			return !Object.keys(queryObj).length;
+		},
+
+		_getQueryObjForParallelRequests: function(queryObj) {
+
+			return {};
 		}
 	});
 });

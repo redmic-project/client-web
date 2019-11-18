@@ -44,7 +44,7 @@ define([
 			});
 		},
 
-		_subRequestToTargets: function() {
+		_subRequestToTargets: function(queryObj) {
 
 			if (!this._responsePromises) {
 				this._responsePromises = {};
@@ -55,14 +55,10 @@ define([
 
 			this._onNewRequest();
 
-			for (var i = 0; i < this.target.length; i++) {
-				var target = this.target[i],
-					reqParams = this._getRequestParams(target),
-					dfd = new Deferred();
-
-				this._responsePromises[target] = dfd;
-
-				this._emitEvt('REQUEST', reqParams);
+			if (this._checkRequestsCanBeParallel(queryObj)) {
+				this._requestToTargetsParallelly(this._getQueryObjForParallelRequests(queryObj) || queryObj);
+			} else {
+				this._requestToTargetsSequentially(this._getQueryObjForSequentialRequests(queryObj) || queryObj);
 			}
 
 			all(this._responsePromises).then(
@@ -70,12 +66,63 @@ define([
 				lang.hitch(this, this._onRequestsFailed));
 		},
 
-		_getRequestParams: function(target) {
+		_requestToTargetsParallelly: function(queryObj) {
+
+			for (var i = 0; i < this.target.length; i++) {
+				var target = this.target[i],
+					reqParams = this._getRequestParams(target, queryObj),
+					dfd = new Deferred();
+
+				this._responsePromises[target] = dfd;
+
+				this._emitEvt('REQUEST', reqParams);
+			}
+		},
+
+		_requestToTargetsSequentially: function(queryObj) {
+
+			var dfds = [];
+
+			for (var i = 0; i < this.target.length; i++) {
+				var target = this.target[i],
+					dfd = new Deferred();
+
+				if (i !== this.target.length - 1) {
+					dfds.push(dfd);
+				}
+				this._responsePromises[target] = dfd;
+
+				if (i > 0) {
+					dfds[i - 1].then(lang.hitch(this, function(target, queryObj, prevRes) {
+
+						var expandedQueryObj = this._expandQueryWithPreviousResponse(target, queryObj, prevRes),
+							reqParams = this._getRequestParams(target, expandedQueryObj);
+
+						this._emitEvt('REQUEST', reqParams);
+					}, target, queryObj));
+				} else {
+					var reqParams = this._getRequestParams(target, queryObj);
+					this._emitEvt('REQUEST', reqParams);
+				}
+			}
+		},
+
+		_getRequestParams: function(target, queryObj) {
+
+			var queryParams;
+			if (queryObj) {
+				if (!queryObj.target) {
+					queryParams = queryObj.queryParams;
+				} else {// if (queryObj.target === target) {
+					queryParams = queryObj.queryParams;
+				}
+			}
 
 			return {
 				target: target,
+				query: this._getRequestQuery(target, queryParams),
 				method: 'POST',
-				action: '_search',
+				action: this._getRequestAction(target, queryObj) || '_search',
 				requesterId: this.getOwnChannel()
 			};
 		},

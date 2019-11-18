@@ -162,6 +162,7 @@ define([
 				parentChannel: this.getChannel(),
 				browserExts: [_HierarchicalSelect],
 				selectionTarget: this.selectionTarget,
+				target: this.target,
 				perms: this.perms,
 				buttonsInTopZone: true,
 				buttons: {

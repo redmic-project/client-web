@@ -34,11 +34,14 @@ define([
 				atlasSuggestFields = ['title', 'alias', 'keywords'];
 
 			this.textSearchConfig = this._merge([{
-				target: this._atlasDataTarget,
 				highlightField: atlasSearchFields,
 				suggestFields: atlasSuggestFields,
 				searchFields: atlasSearchFields
 			}, this.textSearchConfig || {}]);
+
+			this.filterConfig = this._merge([{
+				serializeOnQueryUpdate: false
+			}, this.filterConfig || {}]);
 		},
 
 		_initializeMain: function() {
@@ -53,7 +56,12 @@ define([
 
 		_requestAtlasDataOnRefresh: function() {
 
-			this._publish(this._atlasData.getChannel('REQUEST_TO_TARGETS'));
+			this._requestAtlasData();
+		},
+
+		_requestAtlasData: function(queryObj) {
+
+			this._publish(this._atlasData.getChannel('REQUEST_TO_TARGETS'), queryObj || {});
 		},
 
 		postCreate: function() {
@@ -61,6 +69,14 @@ define([
 			this.inherited(arguments);
 
 			this._emitEvt('REFRESH');
+		},
+
+		_handleFilterParams: function(filterParams) {
+
+			this._requestAtlasData({
+				target: this.target,
+				queryParams: filterParams
+			});
 		}
 	});
 });

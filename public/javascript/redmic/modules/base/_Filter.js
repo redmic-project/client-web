@@ -4,13 +4,14 @@ define([
 	, "dojo/aspect"
 	, "redmic/modules/filter/Filter"
 	, "./_FilterItfc"
-], function (
+], function(
 	declare
 	, lang
 	, aspect
 	, Filter
 	, _FilterItfc
-){
+) {
+
 	return declare(_FilterItfc, {
 		//	summary:
 		//
@@ -32,11 +33,10 @@ define([
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setFilterConfigurations));
 			aspect.before(this, "_beforeInitialize", lang.hitch(this, this._initializeFilter));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineFilterSubscriptions));
-			aspect.after(this, "_definePublications", lang.hitch(this, this._defineDefaultFilterPublications));
 			aspect.after(this, "_definePublications", lang.hitch(this, this._defineFilterPublications));
 		},
 
-		_mixFilterEventsAndActions: function () {
+		_mixFilterEventsAndActions: function() {
 
 			lang.mixin(this.events, this.filterEvents);
 			lang.mixin(this.actions, this.filterActions);
@@ -48,12 +48,20 @@ define([
 		_setFilterConfigurations: function() {
 
 			this.filterConfig = this._merge([{
-				target: this.target,
-				parentChannel: this.getChannel()
+				parentChannel: this.getChannel(),
+				target: this.target
 			}, this.filterConfig || {}]);
 		},
 
-		_defineDefaultFilterPublications: function() {
+		_defineFilterSubscriptions: function() {
+
+			this.subscriptionsConfig.push({
+				channel: this.filter.getChannel('SERIALIZED'),
+				callback: '_subFilterSerialized'
+			});
+		},
+
+		_defineFilterPublications: function() {
 
 			this.publicationsConfig.push({
 				event: 'ADD_TO_QUERY',
@@ -75,7 +83,13 @@ define([
 			this._setQueryChannelInModules();
 		},
 
+		_subFilterSerialized: function(res) {
+
+			this._handleFilterParams(res.data);
+		},
+
 		_subUpdateTarget: function(obj) {
+			// TODO no estoy seguro de la necesidad de pisar este método, ademas puede que se repitan acciones
 
 			this.inherited(arguments);
 
@@ -83,6 +97,7 @@ define([
 		},
 
 		_updateTarget: function(obj) {
+			// TODO no estoy seguro de la necesidad de pisar este método, ademas puede que se repitan acciones
 
 			this.inherited(arguments);
 

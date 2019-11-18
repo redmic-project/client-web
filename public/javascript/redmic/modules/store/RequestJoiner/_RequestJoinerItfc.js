@@ -6,7 +6,8 @@ define([
 	declare
 	, lang
 	, _Itfc
-){
+) {
+
 	return declare(_Itfc, {
 		//	summary:
 		//		Interfaz de RequestJoiner.
@@ -18,7 +19,12 @@ define([
 
 			return lang.mixin(this.inherited(arguments), {
 				"_onNewRequest": {},
-				"_parseDataByTarget": {}
+				"_parseDataByTarget": {},
+				"_expandQueryWithPreviousResponse": {},
+				"_getRequestAction": {},
+				"_checkRequestsCanBeParallel": {},
+				"_getQueryObjForParallelRequests": {},
+				"_getQueryObjForSequentialRequests": {}
 			});
 		}
 	});

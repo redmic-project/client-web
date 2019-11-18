@@ -22,6 +22,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: "filter",
 				events: {
 					ADD_TO_QUERY: "addToQuery",
 					AVAILABLE_FACETS: "availableFacets",
@@ -51,7 +52,7 @@ define([
 				_pendingAddToQuery: null,
 				target: null,
 				refreshToInit: false,
-				ownChannel: "filter"
+				serializeOnQueryUpdate: true
 			};
 
 			lang.mixin(this, this.config, args);
@@ -311,7 +312,7 @@ define([
 
 			this._lastRequest = this._getRequestObj(req.data);
 
-			this._emitEvt('REQUEST', this._lastRequest);
+			this.serializeOnQueryUpdate && this._emitEvt('REQUEST', this._lastRequest);
 		},
 
 		_subRefresh: function(req) {

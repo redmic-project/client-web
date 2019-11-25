@@ -1392,12 +1392,12 @@ diff@~3.5.0:
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
   integrity sha512-A46qtFgd+g7pDZinpnwiRJtxbC1hpgf0uzP3iG89scHk0AUC7A1TGxf5OiiOUv/JMZR8GOt8hL900hV0bOy5xA==
 
-dijit@1.13.0, dijit@^1.13.0:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/dijit/-/dijit-1.13.0.tgz#42eceed26d5785d06323aa459306017684e74907"
-  integrity sha512-trzi45atc86S37/AtgcUC4akByxpqeKfoOftXlgrTSoM136tjcgLbWUYGjFkP3hk2APTDrYOCSa8xTjhp3YPpw==
+dijit@1.14.0, dijit@^1.13.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/dijit/-/dijit-1.14.0.tgz#16be2ec2dfdc9f5b43d9e67297fd4c5d0dc59b69"
+  integrity sha512-4RQRjgmzsY/X5T6FedBUwxA/Y6IK8Txu26qwTTS51/uMRH/eOUH/hhCN8qK0QUOgNvMQzTzTcsCaTs9s9N1B7w==
   dependencies:
-    dojo "1.13.0"
+    dojo "1.14.0"
 
 dijit@1.8:
   version "1.8.14"
@@ -1423,23 +1423,23 @@ dojo-util@^1.13.0:
   resolved "https://registry.yarnpkg.com/dojo-util/-/dojo-util-1.13.0.tgz#58e74023d4848e1eedeeaac485337fcaffaed61e"
   integrity sha512-c5Vsd1T8bydfWSyLcgQK+l7k/Ln47B56P5xwxgi9htUIMckK2Ti9F8tAZjBhKhKvtvm77H4KqiuFTT6FXAnRKA==
 
-dojo@1.13.0, dojo@^1.13.0, dojo@^1.9.0:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/dojo/-/dojo-1.13.0.tgz#62a7c53628f4f7acfa791a96924c67f39cd5861b"
-  integrity sha512-mGoGvsXAbPkUrBnxCoO7m6CFH8jvWq7rAL7fP7jrhJEOyswA/bZwWdXwEH0ovs68t8S0+xOpV/3V7addYbaiAA==
+dojo@1.14.0, dojo@^1.13.0, dojo@^1.9.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/dojo/-/dojo-1.14.0.tgz#a1dc905e2898feed4de7a1cb370bbc487b3b5caf"
+  integrity sha512-NTUlwudGVJBdLHkGYReNXyeFkOu/Gfinur1/kZDp1j97o4mWX67dfQesEFmazxLZnlEgatQ/+l847Cz6gH1FYQ==
 
 dojo@1.8, dojo@1.8.14:
   version "1.8.14"
   resolved "https://registry.yarnpkg.com/dojo/-/dojo-1.8.14.tgz#8c239dd321e85e6a55d03329b97bb88bba53fb33"
   integrity sha1-jCOd0yHoXmpV0DMpuXu4i7pT+zM=
 
-dojox@^1.13.0:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/dojox/-/dojox-1.13.0.tgz#5847def545861f7d1cf36664461a7301b79bce82"
-  integrity sha512-mbQv39n3x7DvpZMWsTtCo7hYQzM8O/s+ylgi5zxgRhQOhQPY7V+LV2gF6z4rNk75Sw7Ssrk/PyILtJo8ZHccGw==
+dojox@^1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/dojox/-/dojox-1.14.0.tgz#09afed36654736c2c5b0e96399a751555352251c"
+  integrity sha512-NOxxh6hq5Im3NtXr1rGhzxgXDSxMW9ncKOR95254DlgMY7NCMFAv+TWOO7dssNX/uUg+uFoNaxp79oPOZo2O7w==
   dependencies:
-    dijit "1.13.0"
-    dojo "1.13.0"
+    dijit "1.14.0"
+    dojo "1.14.0"
 
 dom-serializer@0:
   version "0.1.0"
@@ -3069,6 +3069,11 @@ pathval@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.0.tgz#b942e6d4bde653005ef6b71361def8727d0645e0"
   integrity sha1-uULm1L3mUwBe9rcTYd74cn0GReA=
+
+"pdfjs@https://github.com/mozilla/pdf.js.git#gh-pages":
+  version "0.0.0"
+  uid "1771213572f2218144059dcf59094d5eebee5bc1"
+  resolved "https://github.com/mozilla/pdf.js.git#1771213572f2218144059dcf59094d5eebee5bc1"
 
 pend@~1.2.0:
   version "1.2.0"

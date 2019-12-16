@@ -95,9 +95,15 @@ define([
 				if (i > 0) {
 					dfds[i - 1].then(lang.hitch(this, function(target, queryObj, prevRes) {
 
-						var expandedQueryObj = this._expandQueryWithPreviousResponse(target, queryObj, prevRes),
-							reqParams = this._getRequestParams(target, expandedQueryObj);
+						var expandedQueryObj = this._expandQueryWithPreviousResponse(target, queryObj, prevRes);
 
+						if (!expandedQueryObj) {
+							var dfd = this._responsePromises[target];
+							dfd.reject();
+							return;
+						}
+
+						var reqParams = this._getRequestParams(target, expandedQueryObj);
 						this._emitEvt('REQUEST', reqParams);
 					}, target, queryObj));
 				} else {

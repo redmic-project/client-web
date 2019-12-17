@@ -33,6 +33,7 @@ define([
 			groupSelected: 'view',
 			storeSelection: 'commands',
 			retrieveSelectionsTarget: 'view',
+			retrieveSelectionsEditionTarget: 'commands',
 			cloneSelection: 'commands'
 		},
 
@@ -382,11 +383,15 @@ define([
 		_retrieveSelectionsTarget: function(req) {
 
 			var target = req.target,
+				editionTarget = req.editionTarget,
 				action = this.actions.RETRIEVE_SELECTIONS_TARGET,
-				selectionTarget = this._getSelectionTarget(action, target);
+				editionAction = 'retrieveSelectionsEditionTarget',
+				selectionTarget = this._getSelectionTarget(action, target),
+				selectionEditionTarget = this._getSelectionTarget(editionAction, target);
 
 			this._emitEvt('RETRIEVE_SELECTIONS_TARGET', {
-				target: selectionTarget
+				target: selectionTarget,
+				editionTarget: selectionEditionTarget
 			});
 		},
 

@@ -144,6 +144,10 @@ define([
 				ids.push(categoryId);
 			}
 
+			if (!ids.length) {
+				return;
+			}
+
 			return this._merge([{
 				queryParams: {
 					ids: ids

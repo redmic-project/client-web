@@ -94,6 +94,7 @@ define([
 		_subUpdateTarget: function(res) {
 
 			this.target = res.target;
+			this.editionTarget = res.editionTarget;
 
 			this._emitEvt('UPDATE_TARGET', res);
 		},
@@ -121,7 +122,7 @@ define([
 				lang.hitch(this, function(id) {
 
 					this._emitEvt('REMOVE', {
-						target: this.target,
+						target: this.editionTarget,
 						id: id
 					});
 				}, data.id),

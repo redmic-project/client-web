@@ -240,10 +240,12 @@ define([
 
 		_subSelectionsTargetRetrieved: function(res) {
 
-			var selectionTarget = res.target;
+			var selectionTarget = res.target,
+				selectionEditionTarget = res.editionTarget;
 
 			if (!this._loadSelection) {
 				this.loadSelectionConfig.target = selectionTarget;
+				this.loadSelectionConfig.editionTarget = selectionEditionTarget;
 
 				var SelectionDefinition = declare(Selection).extend(_ShowInPopup);
 				this._loadSelection = new SelectionDefinition(this.loadSelectionConfig);
@@ -252,7 +254,8 @@ define([
 					this._subSelectionLoad));
 			} else {
 				this._publish(this._loadSelection.getChannel('UPDATE_TARGET'), {
-					target: selectionTarget
+					target: selectionTarget,
+					editionTarget: selectionEditionTarget
 				});
 			}
 

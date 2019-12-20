@@ -41,10 +41,12 @@ define([
 					SERIALIZED: "serialized"
 				},
 				methodSuggest: "POST",
-				action: "_suggest",
+				suggestAction: "_suggest",
+				searchAction: "_search",
 				itemLabel: null,
 				textValue: '',
-				ownChannel: "textSearch"
+				ownChannel: "textSearch",
+				legacyMode: true
 			};
 
 			lang.mixin(this, this.config, args);
@@ -125,20 +127,9 @@ define([
 			});
 
 			this._once(this._buildChannel(this.queryChannel, this.actions.SERIALIZED),
-				lang.hitch(this, this._subSerialized, evt));
+				lang.hitch(this, this._subSerialized, evt, this.suggestAction));
 
 			this._publish(this._buildChannel(this.queryChannel, this.actions.SERIALIZE));
-		},
-
-		_subSerialized: function(evt, req) {
-
-			this._emitEvt('REQUEST', {
-				target: this._getTarget(),
-				action: this.action,
-				requesterId: this.getOwnChannel(),
-				method: this.methodSuggest,
-				query: req.data
-			});
 		},
 
 		_subRequested: function(req) {
@@ -188,7 +179,27 @@ define([
 
 			this._emitEvt('SEARCH', {
 				text: this._createQuery(evt),
-				from: 0
+				from: 0,
+				omitRefresh: true
+			});
+
+			//Por retrocompatibilidad se debe llamar a _subSerialized
+			if (this.legacyMode) {
+				this._once(this._buildChannel(this.queryChannel, this.actions.SERIALIZED),
+					lang.hitch(this, this._subSerialized, evt, this.searchAction));
+			}
+
+			this._publish(this._buildChannel(this.queryChannel, this.actions.SERIALIZE));
+		},
+
+		_subSerialized: function(evt, action, req) {
+
+			this._emitEvt('REQUEST', {
+				target: this._getTarget(),
+				action: action,
+				requesterId: this.getOwnChannel(),
+				method: this.methodSuggest,
+				query: req.data
 			});
 		},
 

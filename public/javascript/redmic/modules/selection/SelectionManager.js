@@ -229,6 +229,7 @@ define([
 
 				// TODO este mecanismo se debe abstraer para reutilizarlo
 				if (!navigator.clipboard) {
+					console.error('Copy to clipboard failed!');
 					return;
 				}
 				navigator.clipboard.writeText(shareUrl);

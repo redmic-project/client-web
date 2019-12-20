@@ -99,6 +99,7 @@ define({
 		, "overwrite": "Overwrite"
 		, "newNameMessage": "Insert new selection name"
 		, "shareSelection": "Share selection"
+		, "copyToClipboard": "Copy to clipboard"
 		, "loseSelectionConfirmationMessage": "You will lose your current selection. Do you wish to continue?"
 		, "clearSelection": "Clear selection"
 		, "selectAll": "Select all"

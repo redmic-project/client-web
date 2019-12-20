@@ -98,6 +98,7 @@ define({
 	, "overwrite": "Sobrescribir"
 	, "newNameMessage": "Inserte el nombre de la nueva selección"
 	, "shareSelection": "Compartir selección"
+	, "copyToClipboard": "Copiar al portapapeles"
 	, "loseSelectionConfirmationMessage": "Perderá su selección actual. ¿Desea continuar?"
 	, "clearSelection": "Limpiar selección"
 	, "selectAll": "Seleccionar todo"

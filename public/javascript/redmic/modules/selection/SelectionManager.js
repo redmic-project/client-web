@@ -213,9 +213,26 @@ define([
 
 		_subSelectionStored: function(res) {
 
-			if (res.data) {
-				this._lastPersistentSelection = res.data;
+			if (!res.data) {
+				return;
 			}
+
+			this._lastPersistentSelection = res.data;
+
+			if (!res.data[this.sharedProperty]) {
+				return;
+			}
+
+			var shareUrl = window.location + '?settings-id=' + res.data[this.idProperty];
+
+			alertify.message('<i class="fa fa-share-alt"></i> ' + this.i18n.copyToClipboard, 0, lang.hitch(this, function(shareUrl) {
+
+				// TODO este mecanismo se debe abstraer para reutilizarlo
+				if (!navigator.clipboard) {
+					return;
+				}
+				navigator.clipboard.writeText(shareUrl);
+			}, shareUrl));
 		},
 
 		_subRestoreSelection: function() {

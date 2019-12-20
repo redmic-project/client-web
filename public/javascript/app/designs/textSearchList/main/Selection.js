@@ -53,6 +53,10 @@ define([
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
+							icon: "fa-share-alt",
+							btnId: "share",
+							condition: 'shared'
+						},{
 							icon: "fa-download",
 							btnId: "load",
 							returnItem: true
@@ -97,6 +101,24 @@ define([
 			this.editionTarget = res.editionTarget;
 
 			this._emitEvt('UPDATE_TARGET', res);
+		},
+
+		_shareCallback: function(data) {
+
+			var shareUrl = window.location + '?settings-id=' + data.id;
+
+			alertify.confirm(shareUrl,
+				lang.hitch(this, function(shareUrl) {
+
+					// TODO este mecanismo se debe abstraer para reutilizarlo
+					if (!navigator.clipboard) {
+						return;
+					}
+					navigator.clipboard.writeText(shareUrl);
+				}, shareUrl)).set('labels', {
+					ok: this.i18n.copyToClipboard,
+					cancel: this.i18n.cancel
+				}).set('title', this.i18n.shareSelection);
 		},
 
 		_loadCallback: function(data) {

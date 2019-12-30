@@ -58,7 +58,7 @@ define([
 			this._subscribe(this.filter.getChannel('ADDED_TO_QUERY'), lang.hitch(this, function() {
 
 				this._emitEvt('REFRESH');
-			}))
+			}));
 		},
 
 		_requestAtlasDataOnRefresh: function() {

@@ -34,6 +34,7 @@ define([
 				actions: {
 					REFRESH: "refresh",
 					ADD_TO_QUERY: "addToQuery",
+					ADDED_TO_QUERY: "addedToQuery",
 					REFRESHED: "refreshed",
 					AVAILABLE_FACETS: "availableFacets",
 					RESET: "reset",
@@ -233,6 +234,11 @@ define([
 				serialize && this._isValid({
 					callback: this._subSerialized
 				});
+
+				// TODO: Añadir comprobación en la suscripción no en la publicación
+				if (query.aggs) {
+					this._publish(this.getChannel('ADDED_TO_QUERY'));
+				}
 			} else {
 				if (!this._pendingAddToQuery) {
 					this._pendingAddToQuery = {};

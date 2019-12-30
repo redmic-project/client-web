@@ -58,6 +58,9 @@ define([
 			this.subscriptionsConfig.push({
 				channel: this.filter.getChannel('SERIALIZED'),
 				callback: '_subFilterSerialized'
+			},{ // TODO: REQUEST_FILTER parece lo mismo que SERIALIZE, hacer que todo vaya por SERIALIZE
+				channel: this.filter.getChannel('REQUEST_FILTER'),
+				callback: '_subFilterSerialized'
 			});
 		},
 

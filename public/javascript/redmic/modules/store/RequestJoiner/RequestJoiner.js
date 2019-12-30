@@ -117,19 +117,14 @@ define([
 
 			var queryParams;
 			if (queryObj) {
-				if (!queryObj.target) {
-					queryParams = queryObj.queryParams;
-				} else {// if (queryObj.target === target) {
-					queryParams = queryObj.queryParams;
-				}
+				queryParams = queryObj.queryParams;
 			}
 
 			return {
 				target: target,
 				query: this._getRequestQuery(target, queryParams),
 				method: 'POST',
-				action: this._getRequestAction(target, queryObj) || '_search',
-				requesterId: this.getOwnChannel()
+				action: this._getRequestAction(target, queryObj) || '_search'
 			};
 		},
 

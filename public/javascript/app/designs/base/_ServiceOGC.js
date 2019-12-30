@@ -54,23 +54,21 @@ define([
 				pathProperty: this.pathProperty,
 				pathSeparator: this.pathSeparator
 			});
+
+			this._subscribe(this.filter.getChannel('ADDED_TO_QUERY'), lang.hitch(this, function() {
+
+				this._emitEvt('REFRESH');
+			}))
 		},
 
 		_requestAtlasDataOnRefresh: function() {
 
-			this._requestAtlasData();
+			this._publish(this._buildChannel(this.queryChannel, "serialize"));
 		},
 
 		_requestAtlasData: function(queryObj) {
 
 			this._publish(this._atlasData.getChannel('REQUEST_TO_TARGETS'), queryObj || {});
-		},
-
-		postCreate: function() {
-
-			this.inherited(arguments);
-
-			this._emitEvt('REFRESH');
 		},
 
 		_handleFilterParams: function(filterParams) {

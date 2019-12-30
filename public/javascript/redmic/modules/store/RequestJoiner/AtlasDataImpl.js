@@ -123,11 +123,7 @@ define([
 				};
 			}
 
-			if (queryParams && queryParams.text) {
-				return queryParams;
-			}
-
-			return {};
+			return queryParams || {};
 		},
 
 		_expandQueryWithPreviousResponse: function(target, queryParams, prevRes) {

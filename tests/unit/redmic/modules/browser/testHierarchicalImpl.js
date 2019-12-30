@@ -30,7 +30,8 @@ define([
 	, _NoDataTemplate
 	, HierarchicalImpl
 	, template
-){
+) {
+
 	var timeout = 500,
 		parentChannel = "containerList",
 		target = "/test/domain",
@@ -42,9 +43,10 @@ define([
 		publishData = function(objData) {
 
 			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.AVAILABLE), {
-				body: {
+				target: target,
+				res: {
 					data: objData || data,
-					target: target
+					status: 200
 				}
 			});
 		},
@@ -52,9 +54,10 @@ define([
 		publishItem = function(data) {
 
 			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.ITEM_AVAILABLE), {
-				body: {
+				target: target,
+				res: {
 					data: data || item,
-					target: target
+					status: 200
 				}
 			});
 		},

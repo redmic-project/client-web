@@ -10,7 +10,8 @@ define([
 	, aspect
 	, _Selection
 	, _SelectRow
-){
+) {
+
 	return declare(_Selection, {
 		//	summary:
 		//
@@ -179,20 +180,6 @@ define([
 			this._emitEvt('CLEAR_SELECTION_ROWS');
 
 			this._selection = {};
-		},
-
-		_getItemToSelect: function(ids) {
-
-			return {
-				items: ids
-			};
-		},
-
-		_getItemToDeselect: function(ids) {
-
-			return {
-				items: ids
-			};
 		},
 
 		_definitionSelectRow: function() {

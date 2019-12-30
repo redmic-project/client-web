@@ -5,15 +5,9 @@ define([
 	, "app/designs/mapWithSideContent/main/Tracking"
 	, "app/designs/mapWithSideContent/main/_TrackingWithListByFilter"
 	, "app/redmicConfig"
-	, "dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
-	, "redmic/modules/base/_Selection"
-	, "redmic/modules/search/TextImpl"
-	, "templates/AnimalList"
-	, "templates/PlatformList"
 ], function(
 	_EditionWizardView
 	, _GetActivityData
@@ -21,16 +15,11 @@ define([
 	, Tracking
 	, _TrackingWithListByFilter
 	, redmicConfig
-	, BorderContainer
-	, ContentPane
 	, declare
 	, lang
 	, put
-	, _Selection
-	, TextImpl
-	, templateAnimalList
-	, templatePlatformList
-){
+) {
+
 	return declare([Tracking, _TrackingWithListByFilter, _EditionWizardView, _GetActivityData,
 		_ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:

@@ -150,16 +150,7 @@ define([
 
 		_chkSelectionTargetIsBrowserWork: function(res) {
 
-			if (!this._chkSuccessful(res)) {
-				return false;
-			}
-
-			var body = res.body;
-			if (body && body.selectionTarget && (body.selectionTarget !== this.targetBrowserWork)) {
-				return false;
-			}
-
-			return true;
+			return res.target === this.targetBrowserWork;
 		},
 
 		_fillSideContent: function() {
@@ -227,11 +218,11 @@ define([
 
 		_subBrowserWorkDeselected: function(res) {
 
-			if (!res || !res.body || !res.body.ids) {
+			if (!res || !res.ids) {
 				return;
 			}
 
-			var items = res.body.ids;
+			var items = res.ids;
 
 			for (var i = 0; i < items.length; i++) {
 
@@ -252,14 +243,13 @@ define([
 
 		_subBrowserWorkSelected: function(res) {
 
-			if (!res || !res.body || !res.body.ids) {
+			if (!res || !res.ids) {
 				return;
 			}
 
-			var items = res.body.ids;
+			var items = res.ids;
 
 			for (var i = 0; i < items.length; i++) {
-
 				var pathGenerate = items[i],
 					item = {
 						activityId: pathGenerate.split(this.pathSeparator)[1],

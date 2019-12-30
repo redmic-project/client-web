@@ -56,7 +56,8 @@ define([
 	, LoadingCustom
 	, serviceOGCList
 	, templateDetails
-){
+) {
+
 	return declare([_Module, _Show, _Store, _Selection], {
 		//	summary:
 		//		Módulo de Atlas.
@@ -79,9 +80,10 @@ define([
 
 				_itemsSelected: {},
 				localTarget: "local",
-				target: redmicConfig.services.atlas,
+				target: redmicConfig.services.atlasLayer,
+				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: ".",
-				pathProperty: "path",
+				parentProperty: "parent",
 				layerIdSeparator: "_",
 				themeSeparator: "-",
 				showBrowserAnimationClass: "animated fadeIn",
@@ -159,6 +161,7 @@ define([
 			this.catalogConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				browserExts: [_HierarchicalSelect],
+				selectionTarget: this.selectionTarget,
 				target: this.target,
 				perms: this.perms,
 				buttonsInTopZone: true,
@@ -171,7 +174,7 @@ define([
 				classByList: '.borderList',
 				browserConfig: {
 					template: serviceOGCList,
-					noSelectParent: false,
+					//noSelectParent: true,
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
@@ -188,21 +191,14 @@ define([
 					bars: [{
 						instance: SelectionBox,
 						config: {
-							omitShowSelectedOnly: true,
-							itemsShow: {
-								clearSelection: true
-							}
+							omitShowSelectedOnly: true
 						}
 					}]
 				},
 				filterConfig: {
 					initQuery: {
 						size: null,
-						from: null,
-						sorts: [{
-							field: "alias",
-							order: "ASC"
-						}]
+						from: null
 					}
 				}
 			}, this.catalogConfig || {}]);
@@ -531,6 +527,15 @@ define([
 					}
 				};
 
+			this._emitEvt('TRACK', {
+				type: TRACK.type.event,
+				info: {
+					category: TRACK.category.layer,
+					action: TRACK.action.click,
+					label: 'Layer loaded: ' + item.name
+				}
+			});
+
 			this._emitEvt('INJECT_ITEM', {
 				data: data,
 				target: this.localTarget
@@ -763,7 +768,9 @@ define([
 			if (btnId === "addLayer") {
 				this._onAddLayerBrowserButtonClick(objReceived);
 			} else if (btnId === "remove") {
-				var path = objReceived.item.originalItem[this.pathProperty];
+				var parentItem = item.originalItem[this.parentProperty],
+					path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + item.id;
+
 				this._emitEvt('DESELECT', [path]);
 			} else if (btnId === "legend") {
 				this._showLayerLegend(this._createLayerId(item.originalItem));
@@ -829,13 +836,6 @@ define([
 					description: this.i18n.noLegendAvailable
 				});
 			}
-		},
-
-		_getItemToDeselect: function(ids) {
-
-			return {
-				items: ids
-			};
 		}
 	});
 });

@@ -1,16 +1,19 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/query'
 	, 'put-selector/put'
 	, 'redmic/modules/base/_Module'
 	, 'templates/LoadingArrows'
 ], function(
 	declare
 	, lang
+	, query
 	, put
 	, _Module
 	, LoadingTemplate
-){
+) {
+
 	return declare(_Module, {
 		//	summary:
 		//		Módulo para representar cuando otros módulos están esperando a que ocurra algo.
@@ -29,7 +32,8 @@ define([
 					LOADING: 'loading',
 					LOADING_DRAWN: 'loadingDrawn',
 					LOADED: 'loaded',
-					LOAD_FINISHED: 'loadFinished'
+					LOAD_FINISHED: 'loadFinished',
+					ABORT_ALL_LOADING: 'abortAllLoading'
 				},
 
 				_activeGlobalLoadings: 0,
@@ -52,6 +56,9 @@ define([
 			},{
 				channel : this.getChannel('LOADED'),
 				callback: '_subLoaded'
+			},{
+				channel : this.getChannel('ABORT_ALL_LOADING'),
+				callback: '_subAbortAllLoading'
 			});
 		},
 
@@ -80,7 +87,6 @@ define([
 			if (localNode) {
 				this._localLoading({
 					node: localNode,
-					moduleChannel: moduleChannel,
 					loadingClassNames: loadingClassNames
 				});
 			} else {
@@ -91,7 +97,6 @@ define([
 		_localLoading: function(args) {
 
 			var node = args.node,
-				moduleChannel = args.moduleChannel,
 				loadingClassNames = args.loadingClassNames;
 
 			this._applyLoadingAttr(node);
@@ -152,20 +157,20 @@ define([
 				moduleChannel = req.moduleChannel;
 
 			if (localNode) {
-				this._localLoaded(localNode, moduleChannel);
+				this._localLoaded(localNode);
 			} else {
 				this._globalLoaded();
 			}
 		},
 
-		_localLoaded: function(node, moduleChannel) {
+		_localLoaded: function(node) {
 
 			this._hideLoading(node, this.loadingClass);
 		},
 
 		_globalLoaded: function() {
 
-			if (this._activeGlobalLoadings) {
+			if (this._activeGlobalLoadings && this.globalNode) {
 				this._activeGlobalLoadings--;
 				!this._activeGlobalLoadings && this._hideLoading(this.globalNode, this.globalLoadingClass);
 			}
@@ -233,6 +238,30 @@ define([
 
 			this._removeLoadingAttr(node);
 			this._emitEvt('LOADED');
+		},
+
+		_subAbortAllLoading: function() {
+
+			this._hideAllLoadingNodes();
+		},
+
+		_hideAllLoadingNodes: function() {
+
+			if (!this.globalNode) {
+				return;
+			}
+
+			var loadingParentNodes = query('[' + this.loadingAttr + ']');
+
+			for (var i = 0; i < loadingParentNodes.length; i++) {
+				var loadingParentNode = loadingParentNodes[i];
+
+				if (loadingParentNode === this.globalNode) {
+					this._globalLoaded();
+				} else {
+					this._localLoaded(loadingParentNode);
+				}
+			}
 		}
 	});
 });

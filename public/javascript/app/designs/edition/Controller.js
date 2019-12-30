@@ -6,12 +6,13 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "RWidgets/Utilities"
+	, 'redmic/modules/base/_ListenQueryParams'
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/base/_Persistence"
 	, "redmic/modules/layout/wizard/Wizard"
 	, "redmic/modules/layout/wizard/_StepNavigation"
 	, "redmic/modules/layout/wizard/_StepBreadcrumbs"
-], function (
+], function(
 	_EditionCommons
 	, _Controller
 	, declare
@@ -19,13 +20,15 @@ define([
 	, aspect
 	, Deferred
 	, Utilities
+	, _ListenQueryParams
 	, _Store
 	, _Persistence
 	, Wizard
 	, _StepNavigation
 	, _StepBreadcrumbs
-){
-	return declare([_Controller, _Store, _Persistence, _EditionCommons], {
+) {
+
+	return declare([_Controller, _Store, _Persistence, _ListenQueryParams, _EditionCommons], {
 		//	summary:
 		//		Controller para vistas de detalle.
 
@@ -119,19 +122,41 @@ define([
 
 			this._lastPathVariableId = this.pathVariableId;
 
-			if (this.pathVariableId && Number.isInteger(parseInt(this.pathVariableId, 10))) {
-				this._emitGet(this.pathVariableId);
-			} else if(this.pathVariableId && (this.pathVariableId === "new")) {
-				var copySource = this.queryParameters ? this.queryParameters['copy-source'] : null;
-				if (copySource != null) {
-					this._emitGet(copySource);
-				} else {
-					this._emitShowForm();
-				}
-			} else if (this.pathVariableId && Object.keys(this.pathVariableId).length) {
+			if (!this.pathVariableId) {
+				this._goTo404();
+				return;
+			}
+
+			if (typeof this.pathVariableId === 'object') {
 				this._pathVariableIdIsObject();
 			} else {
-				this._goTo404();
+				this._prepareItemEditionOrCreation(this.pathVariableId);
+			}
+		},
+
+		_prepareItemEditionOrCreation: function(itemId, urlId) {
+
+			if (itemId === 'new') {
+				this._getCopyParams = true;
+				this._emitEvt('GET_QUERY_PARAMS');
+			} else {
+				this._emitGet(urlId || itemId);
+			}
+		},
+
+		_gotQueryParams: function(queryParams) {
+
+			if (!this._getCopyParams) {
+				return;
+			}
+			delete this._getCopyParams;
+
+			var copySource = queryParams['copy-source'];
+
+			if (copySource) {
+				this._emitGet(copySource);
+			} else {
+				this._emitShowForm();
 			}
 		},
 
@@ -188,16 +213,7 @@ define([
 			// TODO borrar este seteo, que cambia el target para siempre (efecinquitis) y creo que no es necesario
 			//this.target = lang.replace(this.target, this.pathVariableId);
 
-			if (this.pathVariableId.id === "new") {
-				var copySource = this.queryParameters ? this.queryParameters['copy-source'] : null;
-				if (copySource != null) {
-					this._emitGet(copySource);
-				} else {
-					this._emitShowForm();
-				}
-			} else {
-				this._emitGet(this.pathVariableId[this.idProperty]);
-			}
+			this._prepareItemEditionOrCreation(this.pathVariableId.id, this.pathVariableId[this.idProperty]);
 		},
 
 		_emitShowForm: function(item) {
@@ -249,7 +265,8 @@ define([
 			this._onEvt('SAVED', this._editionSuccessDfd.resolve);
 
 			this._emitEvt('SAVE', {
-				data: response.data
+				data: response.data,
+				target: this.editionTarget || this.target
 			});
 		},
 
@@ -284,13 +301,9 @@ define([
 			return this.domNode;
 		},
 
-		_subSaved: function(result) {
+		_afterSaved: function(result) {
 
 			this._emitEvt('LOADED');
-
-			if (result && result.success) {
-				this._emitEvt('SAVED', result);
-			}
 		}
 	});
 });

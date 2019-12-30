@@ -12,17 +12,17 @@ define([
 	, 'dojo/has'
 	, 'dojo/io-query'
 	, 'dojo/mouse'
-	, 'dojo/request'
 	, 'put-selector/put'
 	, 'redmic/base/CheckBrowser'
 	, 'redmic/modules/notification/CommunicationCenter'
 	, 'redmic/modules/notification/Alert'
 	, 'redmic/modules/base/Credentials'
 	, 'redmic/modules/base/Analytics'
-	//, 'redmic/modules/base/NavegationHistory'
 	, 'redmic/modules/base/MetaTags'
 	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/base/Loading'
+	, 'redmic/modules/store/RestManagerImpl'
 	, 'templates/LoadingCustom'
 ], function(
 	InnerApp
@@ -38,17 +38,17 @@ define([
 	, has
 	, ioQuery
 	, mouse
-	, request
 	, put
 	, CheckBrowser
 	, CommunicationCenter
 	, Alert
 	, Credentials
 	, Analytics
-	//, NavegationHistory
 	, MetaTags
 	, _Module
+	, _Store
 	, Loading
+	, RestManagerImpl
 	, LoadingCustomTemplate
 ) {
 
@@ -83,7 +83,7 @@ define([
 		return;
 	}
 
-	return declare(_Module, {
+	return declare([_Module, _Store], {
 		//	summary:
 		//		Módulo encargado de controlar el acceso a la aplicación.
 		//	description:
@@ -92,8 +92,6 @@ define([
 		//		usuario invitado). Maneja las instancias de layout de aplicación y de los módulos cargados dentro de
 		//		dichos layouts.
 
-		//	query: String
-		//		Filtros de consulta procedentes de Router.
 		//	paths: Object
 		//		Constantes de rutas base
 
@@ -121,16 +119,21 @@ define([
 				ownChannel: 'app',
 				events: {
 					GET_CREDENTIALS: 'getCredentials',
-					GET_MODULE: 'getModule'/*,
-					ADD_NAV_HISTORY: 'addNavHistory'*/
+					GET_MODULE: 'getModule',
+					GET_QUERY_PARAMS: 'getQueryParams'
 				},
-				query: '',
+				actions: {
+					GET_QUERY_PARAMS: 'getQueryParams',
+					GOT_QUERY_PARAMS: 'gotQueryParams'
+				},
+
 				paths: {
 					ERROR: '/404',
 					ROOT: '/',
 					HOME: 'home',
 					LOGIN: 'login'
 				},
+				target: '/env',
 				_reconnectTimeout: 10000
 			};
 
@@ -139,11 +142,13 @@ define([
 			new CookieLoader();
 
 			this._setRouterListeners();
-
-			this._getEnv();
 		},
 
 		_initialize: function() {
+
+			new RestManagerImpl({
+				parentChannel: this.ownChannel
+			});
 
 			new CommunicationCenter({
 				parentChannel: this.ownChannel
@@ -160,10 +165,6 @@ define([
 			new MetaTags({
 				parentChannel: this.ownChannel
 			});
-
-			/*this.navegationHistory = new NavegationHistory({
-				parentChannel: this.ownChannel
-			});*/
 
 			this._credentials = new Credentials({
 				parentChannel: this.ownChannel
@@ -193,6 +194,9 @@ define([
 			},{
 				channel : this._moduleStore.getChannel('AVAILABLE_MODULE'),
 				callback: '_subAvailableModule'
+			},{
+				channel : this.getChannel('GET_QUERY_PARAMS'),
+				callback: '_subGetQueryParams'
 			});
 		},
 
@@ -204,13 +208,15 @@ define([
 			},{
 				event: 'GET_MODULE',
 				channel: this._moduleStore.getChannel('GET_MODULE')
-			}/*,{
-				event: 'ADD_NAV_HISTORY',
-				channel: this.navegationHistory.getChannel('ADD')
-			}*/);
+			},{
+				event: 'GET_QUERY_PARAMS',
+				channel: this.getChannel('GOT_QUERY_PARAMS')
+			});
 		},
 
 		postCreate: function() {
+
+			this._getEnv();
 
 			this._emitEvt('GET_CREDENTIALS');
 
@@ -264,11 +270,11 @@ define([
 
 		_handleAppHref: function(event, target) {
 
-			var url = target.pathname + target.search;
+			var url = target.pathname + target.search + target.hash;
 
 			if (mouse.isMiddle(event)) {
 				var gCtx = getGlobalContext(),
-					newPageUrl = gCtx.location.protocol + '//' + gCtx.location.hostname + url;
+					newPageUrl = target.protocol + '//' + target.hostname + url;
 
 				gCtx.open(newPageUrl, '_blank');
 			} else {
@@ -286,19 +292,13 @@ define([
 		_addHistory: function(value) {
 
 			getGlobalContext().history.pushState(null, null, value);
-
-			/*this._emitEvt('ADD_NAV_HISTORY', {
-				url: value
-			});*/
 		},
 
 		_onRouteChange: function() {
 
 			var locationObj = getGlobalContext().location,
 				locationPath = locationObj.pathname,
-				locationQuery = locationObj.search,
 				route = locationPath.substr(1),
-				query = locationQuery.substr(1),
 				routeIsEmpty = !route || route === '' || route === this.paths.ROOT,
 				loginWasSuccessful = route === this.paths.LOGIN && this._userFound;
 
@@ -307,7 +307,17 @@ define([
 				this._addHistory(route);
 			}
 
-			this._changeModule(route, query);
+			var locationQuery = locationObj.search;
+
+			this._handleQueryParameters(locationQuery.substr(1));
+
+			var routeChanged = this._changeModule(route);
+			if (routeChanged) {
+				this._emitEvt('TRACK', {
+					type: TRACK.type.page,
+					info: route + locationQuery
+				});
+			}
 		},
 
 		_evaluatePopStateEvt: function(evt) {
@@ -324,16 +334,22 @@ define([
 			var envDfd = getGlobalContext().env;
 
 			if (envDfd && !envDfd.isFulfilled()) {
-				request('/env', {
-					handleAs: 'json'
-				}).then(lang.hitch(envDfd, function(data) {
-
-					this.resolve(data);
-				}),lang.hitch(envDfd, function(error) {
-
-					this.reject(error);
-				}));
+				this._emitEvt('GET', {
+					target: this.target
+				});
 			}
+		},
+
+		_itemAvailable: function(res) {
+
+			var envDfd = getGlobalContext().env;
+			envDfd.resolve(res.data);
+		},
+
+		_errorAvailable: function(error, status, resWrapper) {
+
+			var envDfd = getGlobalContext().env;
+			envDfd.reject(error);
 		},
 
 		_subCredentialsRemoved: function() {
@@ -370,36 +386,49 @@ define([
 			hideNativeLoadingNode();
 		},
 
-		_changeModule: function(route, query) {
+		_handleQueryParameters: function(queryString) {
+
+			this._currentQueryParams = this._getQueryParameters(queryString);
+
+			this._removeQueryParametersFromHref();
+		},
+
+		_getQueryParameters: function(queryString) {
+
+			return ioQuery.queryToObject(queryString);
+		},
+
+		_removeQueryParametersFromHref: function() {
+
+			var locationObj = getGlobalContext().location,
+				href = locationObj.protocol + '//' + locationObj.hostname + locationObj.pathname + locationObj.hash;
+
+			getGlobalContext().history.replaceState(null, null, href);
+		},
+
+		_changeModule: function(route) {
 			//	summary:
 			//		Actualiza el módulo que se visualiza.
 			//	tags:
 			//		private
 			//	route:
 			//		ruta del nuevo módulo
-			//	query:
-			//		queryString [Opcional]
 
 			this._currModuleKey = route;
 
-			var newQuery = query ? query : '';
-
-			if (this._currModuleKey === this._prevModuleKey && this.query === newQuery) {
-				return;
+			if (this._currModuleKey === this._prevModuleKey) {
+				return false;
 			}
 
 			this._prevModuleKey = this._currModuleKey;
-			this.query = newQuery;
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.page,
-				info: query ? (route + '?' + query) : route
-			});
 
 			this._once(this._loading.getChannel('LOADING_DRAWN'), lang.hitch(this, this._onLoadingDrawn));
+
 			this._publish(this._loading.getChannel('LOADING'), {
 				instant: !this._currModuleInstance
 			});
+
+			return true;
 		},
 
 		_onLoadingDrawn: function() {
@@ -420,8 +449,7 @@ define([
 			this._prepareApplicationLayout();
 
 			this._emitEvt('GET_MODULE', {
-				key: this._currModuleKey,
-				query: ioQuery.queryToObject(this.query)
+				key: this._currModuleKey
 			});
 		},
 
@@ -452,6 +480,14 @@ define([
 			this._publish(this._currLayoutInstance.getChannel('SHOW_MODULE'), {
 				moduleKey: this._currModuleKey,
 				moduleInstance: instance
+			});
+		},
+
+		_subGetQueryParams: function(req) {
+
+			this._emitEvt('GET_QUERY_PARAMS', {
+				requesterId: req.requesterId,
+				queryParams: this._currentQueryParams || {}
 			});
 		},
 

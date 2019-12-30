@@ -123,7 +123,7 @@ define([
 				return;
 			}
 
-			var moduleDfd = this._getModuleInstance(req.key, req.query);
+			var moduleDfd = this._getModuleInstance(req.key);
 
 			if (!moduleDfd) {
 				this._emitEvt('GET_MODULE');
@@ -264,15 +264,13 @@ define([
 			}));
 		},
 
-		_getModuleInstance: function(/*String*/ key, /*Object*/ query) {
+		_getModuleInstance: function(/*String*/ key) {
 			//	summary:
 			//		Devuelve la instancia de un módulo, y si aun no existe la crea antes.
 			//	tags:
 			//		private
 			//	key:
 			//		Clave del módulo buscado
-			//	query:
-			//		Objeto de consulta
 			//	returns:
 			//		Promesa de la instancia del módulo
 
@@ -286,7 +284,7 @@ define([
 
 			// Si aun no se ha creado la vista
 			if (!moduleItem.instance) {
-				return this._createModule(moduleItem, query);	// return Object
+				return this._createModule(moduleItem);	// return Object
 			}
 
 			// Si ya se creó la vista anteriormente
@@ -296,8 +294,7 @@ define([
 			this._publish(moduleItem.instance.getChannel("CONNECT"));
 
 			this._publish(moduleItem.instance.getChannel('SET_PROPS'), {
-				pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null,
-				queryParameters: query
+				pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null
 			});
 
 			var dfd = new Deferred();
@@ -306,15 +303,13 @@ define([
 			return dfd;	// return Object
 		},
 
-		_createModule: function(/*Object*/ moduleItem, /*Object*/ query) {
+		_createModule: function(/*Object*/ moduleItem) {
 			//	summary:
 			//		Crea la instancia de un módulo de la aplicación.
 			//	tags:
 			//		private
 			//	moduleItem:
 			//		Módulo a crear
-			//	query:
-			//		Objeto de consulta
 			//	returns:
 			//		Promesa de la instancia del módulo
 
@@ -323,12 +318,11 @@ define([
 			require(["app" + moduleItem.internPath + "View"], lang.hitch(this, function(ModuleView) {
 
 				// Creamos el módulo
-				var moduleInstance = new declare([_View, ModuleView])({
-					perms: moduleItem.perms,
+				var moduleInstance = new declare([ModuleView, _View])({
 					parentChannel: this.parentChannel,
 					ownChannel: this.viewSeparator + moduleItem.id,
-					pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null,
-					queryParameters: query
+					perms: moduleItem.perms,
+					pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null
 				});
 
 				// Añadimos al store la instancia del módulo

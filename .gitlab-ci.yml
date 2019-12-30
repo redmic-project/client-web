@@ -109,21 +109,16 @@ prepare-built-version:
       - dist*.tar.gz
 
 .deploy:
-  script:
-    - >
-      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME} OAUTH_URL=${OAUTH_URL} OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
-      API_URL=${API_URL} PRODUCTION=${PRODUCTION}
   environment:
     url: https://${PUBLIC_HOSTNAME}
 
 .deploy-development:
   variables:
-    PRODUCTION: 0
+    DD_PRODUCTION: 0
 
 .deploy-production:
   variables:
-    PRODUCTION: 1
+    DD_PRODUCTION: 1
 
 run-functional-tests:
   stage: test-deploy

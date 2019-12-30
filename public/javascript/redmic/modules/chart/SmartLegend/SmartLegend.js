@@ -1,7 +1,6 @@
 define([
 	"app/designs/list/Controller"
 	, "app/designs/list/layout/NoTitle"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/query"
@@ -20,7 +19,6 @@ define([
 ], function(
 	ListController
 	, ListLayout
-	, ContentPane
 	, declare
 	, lang
 	, query

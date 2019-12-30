@@ -97,8 +97,7 @@ define([
 
 		_chkLayerInfoIsMine: function(res) {
 
-			return this.queryable && res.body && res.body.target === this.infoTarget &&
-				res.body.requesterId === this.getOwnChannel();
+			return this.queryable && res.target === this.infoTarget && res.requesterId === this.getOwnChannel();
 		},
 
 		_subPublishInfoMapClicked: function(response) {
@@ -130,9 +129,9 @@ define([
 			this._requestLayerInfo(response);
 		},
 
-		_subInfoAvailable: function(res) {
+		_subInfoAvailable: function(response) {
 
-			this._processLayerInfo(res.body.data);
+			this._processLayerInfo(response.res.data);
 		},
 
 		_getLayerInfoToPublish: function(res) {

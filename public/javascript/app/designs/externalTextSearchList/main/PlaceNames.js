@@ -5,28 +5,27 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/request"
 	, "put-selector/put"
 	, "templates/PlaceNamesList"
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "RWidgets/Button"
-], function (
+], function(
 	_Main
 	, Controller
 	, Layout
 	, redmicConfig
 	, declare
 	, lang
-	, request
 	, put
 	, TemplateList
 	, Pagination
 	, Total
 	, GeoJsonLayerImpl
 	, Button
-){
+) {
+
 	return declare([Layout, Controller, _Main], {
 		//	summary:
 		//		main Placename.
@@ -62,10 +61,6 @@ define([
 
 				noFixedZoom: false,
 
-				// timeout: int
-				// 	Tiempo en milisegundos de espera por la respuesta antes de dar error.
-				timeout: 10000,
-
 				// overflow: Boolean
 				// 	Informa sobre si ha habido más resultados que el máximo por página.
 				overflow: false
@@ -100,6 +95,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.textSearchConfig = this._merge([{
+				target: this.target,
 				itemLabel: this.itemLabel
 			}, this.textSearchConfig || {}]);
 
@@ -322,10 +318,7 @@ define([
 				this._resetPagination();
 			}
 
-			// Buscamos en el servicio
-			this._findByText(value).then(
-				lang.hitch(this, this._responseDataConversor),
-				lang.hitch(this, this._errorDataConversor));
+			this._findByText(value);
 		},
 
 		_findByText: function(value) {
@@ -334,9 +327,12 @@ define([
 				texto: value
 			};
 
-			return request(this._generateUrl(params), {
-				handleAs: "json",
-				timeout: this.timeout
+			var targetWithParams = this._generateUrl(params);
+
+			this.target = [this.target, targetWithParams];
+
+			this._emitEvt('GET', {
+				target: targetWithParams
 			});
 		},
 
@@ -351,8 +347,7 @@ define([
 			var query = "";
 			for (var key in params) {
 				var hasSeveralQuestionMarks = this.target.indexOf("?") !== -1;
-				query += hasSeveralQuestionMarks ? "&" : "?";
-				query += key + "=" + params[key];
+				query += (hasSeveralQuestionMarks ? "&" : "?") + key + "=" + params[key];
 			}
 
 			return this.target + query;
@@ -369,11 +364,15 @@ define([
 			this._resetTarget();
 		},
 
-		_responseDataConversor: function(res) {
+		_itemAvailable: function(res) {
 
-			var value = res.data,
-				total = res.total,
-				urlNext = res.urlnext,
+			this.target = this.target[0];
+
+			var responseStatus = res.status,
+				responseData = res.data,
+				value = responseData.data,
+				total = responseData.total,
+				urlNext = responseData.urlnext,
 				data = [];
 
 			this.overflow = !!urlNext;
@@ -384,15 +383,18 @@ define([
 			}
 
 			this._emitEvt("SEND_DATA", {
-				body: {
+				res: {
 					data: data,
 					total: total,
-					target: this._browserTarget
-				}
+					status: responseStatus
+				},
+				target: this._browserTarget
 			});
 		},
 
-		_errorDataConversor: function(error) {
+		_errorAvailable: function(error) {
+
+			this.target = this.target[0];
 
 			this._emitEvt('COMMUNICATION', {
 				type: "alert",

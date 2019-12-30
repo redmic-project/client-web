@@ -3,7 +3,7 @@ define([
 	, 'tests/support/pages/Login'
 	, 'tests/support/Config'
 	, 'tests/support/Utils'
-], function (
+], function(
 	lang
 	, LoginPage
 	, Config
@@ -78,6 +78,9 @@ define([
 					name = module.name,
 					path = module.internPath,
 					innerModules = module.modules;
+
+				context = context
+					.then(Utils.checkLoadingIsGone());
 
 				if (path) {
 					context = context

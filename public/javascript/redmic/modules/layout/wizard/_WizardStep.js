@@ -188,8 +188,10 @@ define([
 
 		_setModel: function(res) {
 
-			if (this.modelInstance)
+			if (this.modelInstance) {
+				// TODO revisar esto, puede originar problemas, quizá desconectar y/o destruir primero
 				delete this.modelInstance;
+			}
 
 			res.parentChannel = this.getChannel();
 
@@ -237,12 +239,6 @@ define([
 				options: {
 					predicate: lang.hitch(this, this._chkGotIdProperty)
 				}
-			},{
-				channel: this._buildChannel(this.modelChannel, this.actions.CLEAR),
-				callback: "_subClearModel"
-			},{
-				channel: this._buildChannel(this.modelChannel, this.actions.RESET),
-				callback: "_subResetModel"
 			}]);
 		},
 
@@ -572,37 +568,6 @@ define([
 					properties: [this.propertyName]
 				});
 			}
-		},
-
-		_subResetModel: function(res) {
-
-			var properties = res && res.properties;
-
-			if (this.propertyName &&
-				(!properties || !properties.length || this._propertyNameInProperties(properties))) {
-				this._resetStep();
-			}
-		},
-
-		_subClearModel: function(res) {
-
-			var properties = res && res.properties;
-
-			if (this.propertyName &&
-				(!properties || !properties.length || this._propertyNameInProperties(properties))) {
-				this._clearStep();
-			}
-		},
-
-		_propertyNameInProperties: function(properties) {
-
-			for (var i = 0; i < properties.length; i++) {
-				if (properties[i] === this.properties) {
-					return true;
-				}
-			}
-
-			return false;
 		}
 	});
 });

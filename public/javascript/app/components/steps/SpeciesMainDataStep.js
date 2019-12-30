@@ -2,26 +2,25 @@ define([
 	"app/components/steps/MainDataStep"
 	, "app/designs/externalTextSearchList/main/Worms"
 	, "app/redmicConfig"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/layout/DialogSimple"
-], function (
+	, "redmic/modules/base/_ShowInPopup"
+], function(
 	MainDataStep
 	, Worms
 	, redmicConfig
-	, ContentPane
 	, declare
 	, lang
 	, aspect
-	, DialogSimple
-){
+	, _ShowInPopup
+) {
+
 	return declare(MainDataStep, {
 		//	summary:
 		//		Step de SpeciesMainData.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				speciesMainEvents: {
@@ -56,9 +55,9 @@ define([
 
 		_initializeSpeciesMain: function() {
 
-			this.worms = new Worms({
+			this.worms = new declare([Worms]).extend(_ShowInPopup)({
 				parentChannel: this.getChannel(),
-				notificationSuccess: false
+				title: this.i18n.worms
 			});
 		},
 
@@ -99,21 +98,6 @@ define([
 				});
 			}));
 
-			this.wormsNode = new ContentPane({
-				region: "center"
-			});
-
-			this.wormsDialog = new DialogSimple({
-				title: this.i18n.worms,
-				centerContent: this.wormsNode,
-				width: 4,
-				height: "md",
-				reposition: "e",
-				onHide: lang.hitch(this, this._hideWormsTool)
-			});
-
-			this.wormsDialog.own(this.domNode);
-
 			this.inherited(arguments);
 		},
 
@@ -150,7 +134,6 @@ define([
 		_hideWormsTool: function() {
 
 			this._publish(this.worms.getChannel("HIDE"));
-			this.wormsDialog.hide();
 		},
 
 		_searchByScientificName: function() {
@@ -175,7 +158,7 @@ define([
 				this._ownRequestWorms = false;
 
 				var showInfo = {
-					node: this.wormsNode.domNode
+					//node: this.wormsNode.domNode
 				};
 
 				if (res.value) {
@@ -187,7 +170,6 @@ define([
 				}
 
 				this._publish(this.worms.getChannel("SHOW"), showInfo);
-				this.wormsDialog.show();
 			}
 		}
 	});

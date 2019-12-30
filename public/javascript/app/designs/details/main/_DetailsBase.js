@@ -138,12 +138,12 @@ define([
 			});
 		},
 
-		_itemAvailable: function(response) {
+		_itemAvailable: function(res, resWrapper) {
 
 			this.inherited(arguments);
 
-			if (response.target === this.target[1]){
-				this._dataToActivities(response);
+			if (resWrapper.target === this.target[1]){
+				this._dataToActivities(res);
 				return;
 			}
 		},

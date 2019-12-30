@@ -10,7 +10,8 @@ define([
 	, _Store
 	, Input
 	, FilteringSelect
-){
+) {
+
 	return declare([Input, _Store], {
 		//	summary:
 		//		Implementación de input FilteringSelect.
@@ -76,24 +77,26 @@ define([
 			this._emitEvt('REQUEST', requestObj);
 		},
 
-		_dataAvailable: function(/*Object*/ res) {
+		_dataAvailable: function(/*Object*/ res, resWrapper) {
 
-			if (!res || res.requesterId != this.getOwnChannel()) {
+			var data = res.data;
+
+			if (!data || resWrapper.requesterId !== this.getOwnChannel()) {
 				return;
 			}
 
 			this._inputInstance.emit('receivedResults', {
-				data: (res.data && res.data.data) ? res.data.data : res.data,
-				total: res.data.total || res.total
+				data: data.data || data,
+				total: data.total || res.total
 			});
 		},
 
 		_getRequestObj: function(request) {
 
 			var obj = {
-					target: request.target ? request.target : this.target,
-					requesterId: this.getOwnChannel()
-				};
+				target: request.target || this.target,
+				requesterId: this.getOwnChannel()
+			};
 
 			if (this.type !== 'API') {
 				obj.method = "GET";

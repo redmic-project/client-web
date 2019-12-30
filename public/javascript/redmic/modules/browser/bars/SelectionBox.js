@@ -5,7 +5,7 @@ define([
 	, "redmic/base/Credentials"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
-	, "redmic/modules/base/SelectionBox"
+	, "redmic/modules/selection/SelectionBox"
 	, "redmic/modules/browser/bars/_SelectBox"
 	, "put-selector/put"
 ], function(

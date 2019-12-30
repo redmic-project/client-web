@@ -105,24 +105,26 @@ define([
 			//	summary:
 			//		Busca el elemento correspondiente al selector especificado y clickea sobre él.
 
-			return function() {
+			return lang.partial(function(self, elementSelector) {
 
 				return this.parent
+					.then(self.checkLoadingIsGone())
 					.findByCssSelector(elementSelector)
 						.click();
-			};
+			}, this, elementSelector);
 		},
 
 		clickDisplayedElement: function(elementSelector) {
 			//	summary:
 			//		Busca el elemento mostrado correspondiente al selector especificado y clickea sobre él.
 
-			return function() {
+			return lang.partial(function(self, elementSelector) {
 
 				return this.parent
+					.then(self.checkLoadingIsGone())
 					.findDisplayedByCssSelector(elementSelector)
 						.click();
-			};
+			}, this, elementSelector);
 		},
 
 		clickInToTab: function(index, selector) {
@@ -265,7 +267,7 @@ define([
 			return lang.partial(function(self) {
 
 				var primarySelector = 'li.' + primaryClassName,
-					secondarySelector = 'nav.secondary li a[href="' + secondaryUrl + '"]';
+					secondarySelector = 'nav.secondarySidebar li a[href="' + secondaryUrl + '"]';
 
 				return this.parent
 					.then(self.clickElement(primarySelector))
@@ -280,7 +282,7 @@ define([
 
 			return lang.partial(function(self) {
 
-				var primarySelector = 'nav.primary li a[href="' + primaryUrl + '"]';
+				var primarySelector = 'nav.primarySidebar li a[href="' + primaryUrl + '"]';
 
 				return this.parent
 					.then(self.clickDisplayedElementAndCheckUrl(primarySelector, primaryUrl));

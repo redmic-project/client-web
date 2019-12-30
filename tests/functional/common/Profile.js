@@ -35,6 +35,7 @@ define([
 
 				return this.parent
 					.then(Utils.clickElement(userImageContainerSelector))
+					.then(Utils.checkLoadingIsGone())
 					.then(Utils.clickElement(Config.selector.clearButton))
 					.findByCssSelector(Config.selector.fileUploadInput)
 						.type(newImageUrl)
@@ -71,7 +72,7 @@ define([
 				return goToProfile();
 			},
 
-			'Should_GoToLoginPage_When_ClickOnUserLogout': function() {
+			'Should_GoToHomePage_When_ClickOnUserLogout': function() {
 
 				var logoutButtonSelector = 'i.fa-power-off';
 
@@ -80,7 +81,7 @@ define([
 					.then(Utils.clickElement(Config.selector.userArea))
 					.then(Utils.clickElement(logoutButtonSelector))
 					.then(Utils.checkLoadingIsGone())
-					.then(Utils.checkUrl(Config.url.login));
+					.then(Utils.checkUrl(Config.url.home));
 			},
 
 			'Should_SetImage_When_UploadNewImage': function() {
@@ -195,6 +196,7 @@ define([
 
 				return goToProfile()
 					.then(Utils.clickElement(editButtonSelector))
+					.then(Utils.checkLoadingIsGone())
 					.then(Utils.clickElement(selectInputSelector))
 					.findByCssSelector(selectInputValueSelector)
 						.getVisibleText()
@@ -216,6 +218,7 @@ define([
 						.end()
 					// restaura el valor original
 					.then(Utils.clickElement(editButtonSelector))
+					.then(Utils.checkLoadingIsGone())
 					.then(Utils.clickElement(Config.selector.clearButton))
 					.then(Utils.clickElement(Config.selector.saveButton))
 					.then(Utils.findAndCheckVisibleText(sectorSpanSelector, ''));

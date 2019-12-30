@@ -239,7 +239,7 @@ define([
 
 			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESELECT), {
 				items: items,
-				selectionTarget: this.targetBrowserWork
+				target: this.targetBrowserWork
 			});
 		},
 

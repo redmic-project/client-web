@@ -105,6 +105,7 @@ define([], function() {
 
 		'serviceOGCCatalog': '/service-ogc-catalog',
 		'serviceOGCCatalogDetails': '/service-ogc-catalog/service-ogc-info/{id}',
+		'serviceOGCAdd': '/maintenance/service-ogc-add/{id}',
 		'serviceOGCEdit': '/maintenance/service-ogc-edit/{id}',
 		'serviceOGCDetails': '/maintenance/service-ogc-info/{id}',
 		'serviceOGC': '/maintenance/service-ogc',
@@ -123,6 +124,8 @@ define([], function() {
 	var baseUri = '{apiUrl}/',
 		baseMediastorageUploads = baseUri + 'mediastorage/uploads/';
 
+	retObj.apiUrlVariable = baseUri.slice(0, -1);
+
 	retObj.services = {
 		'grafcan': 'https://visor.grafcan.es/busquedas/toponimo',
 		'socket': baseUri + 'socket',
@@ -136,7 +139,8 @@ define([], function() {
 		'affiliation': baseUri + 'organisations',
 		'animal': baseUri + 'animals',
 		'areaType': baseUri + 'areatypes',
-		'themeInspire': baseUri + 'servicesogc/themeinspire',
+		'themeInspire': baseUri + 'atlas/view/themeinspire',
+		'themeInspireEdition': baseUri + 'atlas/commands/themeinspire',
 		'toponymType': baseUri + 'toponymtypes',
 		'attributeType': baseUri + 'attributetypes',
 		'canaryProtection': baseUri + 'canaryprotections',
@@ -234,6 +238,7 @@ define([], function() {
 		'platformType': baseUri + 'platformtypes',
 		'animalTracking': baseUri + 'animaltracking',
 		'pointTrackingActivities': baseUri + 'tracking/activities',
+		'trackingActivity': baseUri + 'activities/{id}/tracking',
 		'elementsTrackingActivity': baseUri + 'activities/{id}/tracking/elements',
 		'elementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}',
 		'trackElementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track',
@@ -274,10 +279,14 @@ define([], function() {
 		'activityDocuments': baseUri + 'documents/{id}/activities',
 		'activityContacts': baseUri + 'contacts/{id}/activities',
 
-		'atlas': baseUri + 'atlas',
-		'serviceOGC': baseUri + 'servicesogc/layers',
-		'serviceOGCCategory': baseUri + 'servicesogc/layers/category',
-		'serviceOGCRefresh': baseUri + 'servicesogc/layers/refresh',
+		'atlasLayer': baseUri + 'atlas/view/layer',
+		'atlasLayerEdition': baseUri + 'atlas/commands/layer',
+		'atlasLayerSelection': baseUri + 'atlas/{endpoint}/layer/settings',
+		'atlasLayerRefresh': baseUri + 'atlas/commands/layer/refresh',
+		'atlasLayerDiscovery': baseUri + 'atlas/commands/discover-layers',
+		'atlasCategory': baseUri + 'atlas/view/category',
+		'atlasCategoryEdition': baseUri + 'atlas/commands/category',
+
 		'statistics': baseUri + 'statistics',
 		'administrativeStatistics': baseUri + 'statistics/administrative',
 		'qFlag': baseUri + 'qflags',

@@ -53,7 +53,7 @@ define([
 
 		constructor: function(args) {
 
-			this.target = redmicConfig.services.serviceOGC;
+			this.target = redmicConfig.services.atlasLayer;
 			this.activityTarget = "activitiesLayer";
 			this.infoLayerTarget = 'infoLayerTarget';
 

@@ -77,6 +77,7 @@ define([
 					.then(indexPage.clickLogin())
 					.sleep(Config.timeout.longSleep)
 					.findByCssSelector(errorNotificationSelector)
+						.sleep(Config.timeout.longSleep)
 						.getVisibleText()
 						.then(function(text) {
 

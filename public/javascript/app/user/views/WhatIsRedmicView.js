@@ -23,10 +23,7 @@ define([
 			this.config = {
 				templateProps:  {
 					templateString: template,
-					i18n: this.i18n,
-					_onClickGuest: this._onClickGuest,
-					_onSignIn: this._onSignIn,
-					_getAccessToken: this._getAccessToken
+					i18n: this.i18n
 				},
 				ownChannel: "whatIsRedmic"
 			};

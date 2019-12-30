@@ -35,12 +35,14 @@ services:
         traefik.port: '${PORT}'
       restart_policy:
         delay: 10s
-        window: 1m
+      update_config:
+        delay: 10s
       resources:
         limits:
           cpus: '1'
           memory: 128M
         reservations:
+          cpus: '0.001'
           memory: 64M
 
 networks:

@@ -190,7 +190,8 @@ define([
 			this._publish(this._buildChannel(this.storeChannel, this.actions.REQUEST), {
 				target: this.target,
 				method: 'POST',
-				requesterId: this.getOwnChannel()
+				requesterId: this.getOwnChannel(),
+				action: '_search'
 			});
 		},
 
@@ -213,9 +214,9 @@ define([
 			this._emitEvt('DESELECT_TOTAL_ITEMS');
 		},
 
-		_itemAvailable: function(res) {
+		_itemAvailable: function(res, resWrapper) {
 
-			if (res.target === this.target) {
+			if (resWrapper.target === this.target) {
 				var propertyPathSplit = this._inputProps.propertyPath.split(this.pathSeparator),
 					property = res.data;
 
@@ -227,9 +228,9 @@ define([
 			}
 		},
 
-		_dataAvailable: function(res) {
+		_dataAvailable: function(res, resWrapper) {
 
-			if (res.target === this.target) {
+			if (resWrapper.target === this.target) {
 				var data = res.data.data || res.data;
 
 				this._emitEvt('CLEAR_ITEMS');

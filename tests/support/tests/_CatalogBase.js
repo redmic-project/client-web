@@ -5,7 +5,6 @@ define([
 	, 'tests/support/tests/CatalogLinks'
 	, 'tests/support/tests/Filter'
 	, 'tests/support/tests/ListSelection'
-	, 'tests/support/tests/ListWithAllItemsAndInvertSelection'
 	, 'tests/support/tests/ListWithOrder'
 	, 'tests/support/tests/ListWithTextSearch'
 	, './_BaseCommons'
@@ -16,7 +15,6 @@ define([
 	, CatalogLinksTests
 	, FilterTests
 	, ListSelectionTests
-	, ListWithAllItemsAndInvertSelectionTests
 	, ListWithOrderTests
 	, ListWithTextSearchTests
 	, _BaseCommons
@@ -31,11 +29,6 @@ define([
 			this._mixPropsAndRegisterTests({
 				suiteName: suiteName,
 				definition: ListSelectionTests
-			});
-
-			this._mixPropsAndRegisterTests({
-				suiteName: suiteName + ' 2',
-				definition: ListWithAllItemsAndInvertSelectionTests
 			});
 		},
 

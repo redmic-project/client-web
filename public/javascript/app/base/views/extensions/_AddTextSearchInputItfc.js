@@ -9,20 +9,14 @@ define([
 ){
 	return declare(_Itfc, {
 		//	summary:
-		//		Interfaz de Details.
+		//		Interfaz de _AddTextSearchInput.
 		//	description:
 		//		Define los métodos que debe poseer la implementación.
-
 
 		_getMethodsToImplement: function() {
 
 			return lang.mixin(this.inherited(arguments), {
-				"_setImplementationCallbacksForEvents": {},
-				"_showDetails": {},
-				"_hideContent": {},
-				"_select": {},
-				"_deselect": {},
-				"_updateTemplate": {}
+				"_onNewSearchResults": {}
 			});
 		}
 	});

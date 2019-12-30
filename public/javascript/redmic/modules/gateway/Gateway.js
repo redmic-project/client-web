@@ -102,7 +102,7 @@ define([
 				console.error("Callback '%s' for subscription is missing at '%s'", subCallbackName, this.getChannel());
 			}
 
-			if (typeof inputChannel !== "object") {
+			if (!(inputChannel instanceof Array)) {
 				inputChannel = [inputChannel];
 			}
 
@@ -114,20 +114,19 @@ define([
 			}
 		},
 
-		_addPublications: function (outputChannel, evtName) {
+		_addPublications: function (outputChannel, evtValue) {
 
-			evtName = evtName.replace(/([a-z])([A-Z])/g, "$1_$2");
+			var evtName = evtValue.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
 
-			var inputActionAndEventName = evtName.toUpperCase();
-			this.events[inputActionAndEventName] = evtName;
+			this.events[evtName] = evtValue;
 
-			if (typeof outputChannel !== "object") {
+			if (!(outputChannel instanceof Array)) {
 				outputChannel = [outputChannel];
 			}
 
 			for (var i = 0; i < outputChannel.length; i++) {
 				this._setPublication({
-					event: inputActionAndEventName,
+					event: evtName,
 					channel: outputChannel[i]
 				});
 			}

@@ -297,22 +297,23 @@ define([
 			return obj;
 		},
 
-		_itemAvailable: function(res) {
+		_itemAvailable: function(res, resWrapper) {
 
-			if (res.target === this.target) {
+			if (resWrapper.target === this.target) {
 				var propertyPathSplit = this._inputProps.propertyPath.split(this.pathSeparator),
 					property = res.data;
 
-				for (var key in propertyPathSplit)
+				for (var key in propertyPathSplit) {
 					property = property[propertyPathSplit[key]];
+				}
 
 				this._addOptions(property);
 			}
 		},
 
-		_dataAvailable: function(res) {
+		_dataAvailable: function(res, resWrapper) {
 
-			if (res.target === this.target) {
+			if (resWrapper.target === this.target) {
 				var data = res.data.data || res.data;
 
 				this._addOptions(data);

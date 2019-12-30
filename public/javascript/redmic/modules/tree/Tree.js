@@ -14,7 +14,8 @@ define([
 	, _Selection
 	, _Show
 	, _TreeItfc
-){
+) {
+
 	return declare([_Module, _TreeItfc, _Selection, _Show], {
 		//	summary:
 		//		Módulo de Tree.
@@ -221,20 +222,6 @@ define([
 					target: this.target
 				});
 			}), this._refreshedPublicationTimeout);
-		},
-
-		_getItemToSelect: function(itemId) {
-
-			return {
-				items: itemId
-			};
-		},
-
-		_getItemToDeselect: function(itemId) {
-
-			return {
-				items: itemId
-			};
 		},
 
 		_checkSelectedOrDeselected: function(evt) {

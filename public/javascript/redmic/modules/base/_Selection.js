@@ -2,17 +2,16 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "dojo/when"
 	, "redmic/modules/base/_SelectionBase"
 	, "redmic/modules/base/_SelectionItfc"
 ], function(
 	declare
 	, lang
 	, aspect
-	, when
 	, _SelectionBase
 	, _SelectionItfc
-){
+) {
+
 	return declare([_SelectionBase, _SelectionItfc], {
 		//	summary:
 		//		Base común para todos los módulos con selección.
@@ -153,14 +152,6 @@ define([
 				channel: this._buildChannel(selectorChannel, this.actions.CLEAR_SELECTION),
 				callback: "_pubClearSelection"
 			},{
-				event: 'SELECT_ALL',
-				channel: this._buildChannel(selectorChannel, this.actions.SELECT_ALL),
-				callback: "_pubSelectAll"
-			},{
-				event: 'REVERSE',
-				channel: this._buildChannel(selectorChannel, this.actions.REVERSE),
-				callback: "_pubReverse"
-			},{
 				event: 'TOTAL',
 				channel: this._buildChannel(selectorChannel, this.actions.TOTAL),
 				callback: "_pubGetTotal"
@@ -175,31 +166,20 @@ define([
 
 		_chkSelectionTargetIsMine: function(res) {
 
-			if (!this._chkSuccessful(res)) {
-				return false;
-			}
+			var target = res.target;
 
-			var body = res.body;
-			if (body && body.selectionTarget && (body.selectionTarget !== this._getSelectionTarget())) {
-				return false;
-			}
-
-			return true;
+			return !target || target === this._getSelectionTarget();
 		},
 
 		_chkSelectionTargetAndRequester: function(res) {
 
-			if (this._chkSelectionTargetIsMine(res) && this._chkRequesterIsMe(res)) {
-				return true;
-			}
-
-			return false;
+			return this._chkSelectionTargetIsMine(res) && this._chkRequesterIsMe(res);
 		},
 
 		_subSelected: function(res) {
 
-			var ids = res.body.ids,
-				total = res.body.total;
+			var ids = res.ids,
+				total = res.total;
 
 			this._setEmptySelection(!total);
 
@@ -220,8 +200,8 @@ define([
 
 		_subDeselected: function(res) {
 
-			var ids = res.body.ids,
-				total = res.body.total;
+			var ids = res.ids,
+				total = res.total;
 
 			this._setEmptySelection(!total);
 
@@ -246,7 +226,7 @@ define([
 
 		_subSelectedGroup: function(res) {
 
-			var selection = res.body.selection;
+			var selection = res.selection;
 			selection && this._selectedGroup(selection);
 
 			this._tryToEmitEvt('LOADED');
@@ -293,20 +273,6 @@ define([
 			this._emitEvt("CLEAR_SELECTION");
 		},
 
-		_pubSelectAll: function(channel) {
-
-			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget()
-			});
-		},
-
-		_pubReverse: function(channel) {
-
-			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget()
-			});
-		},
-
 		_getSelectionTarget: function() {
 
 			if (this.selectionTarget) {
@@ -318,61 +284,59 @@ define([
 
 		_pubSelect: function(channel, ids) {
 
-			when(this._getItemToSelect(ids), lang.hitch(this, function(obj) {
-				obj.selectionTarget = this._getSelectionTarget();
-				this._publish(channel, obj);
-			}));
+			var obj = {
+				items: ids,
+				target: this._getSelectionTarget()
+			};
+
+			this._publish(channel, obj);
 		},
 
 		_pubDeselect: function(channel, ids) {
 
-			when(this._getItemToDeselect(ids), lang.hitch(this, function(obj) {
-				obj.selectionTarget = this._getSelectionTarget();
-				this._publish(channel, obj);
-			}));
+			var obj = {
+				items: ids,
+				target: this._getSelectionTarget()
+			};
+
+			this._publish(channel, obj);
 		},
 
 		_pubGroupSelected: function(channel) {
 
 			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget()
-				//requesterId: this.getOwnChannel()
+				target: this._getSelectionTarget()
 			});
 		},
 
-		_pubClearSelection: function(channel) {
+		_pubClearSelection: function(channel, req) {
+
+			var omitPersistence = req && req.omitPersistence;
 
 			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget()
+				target: this._getSelectionTarget(),
+				omitPersistence: omitPersistence
 			});
 		},
 
 		_pubGetTotal: function(channel) {
 
 			this._publish(channel, {
-				selectionTarget: this._getSelectionTarget(),
+				target: this._getSelectionTarget(),
 				requesterId: this.getOwnChannel()
 			});
 		},
 
 		_subTotalAvailable: function(res) {
 
-			res.success && this._totalAvailable(res.body);
+			this._totalAvailable(res);
 		},
 
 		_chkSelectionTargetLoadingIsMine: function(res) {
 
-			var target = res.selectionTarget;
+			var target = res.target;
 
-			if (target === this.selectionTarget) {
-				return true;
-			}
-
-			if (target === this.target) {
-				return true;
-			}
-
-			return false;
+			return target === (this.selectionTarget ? this.selectionTarget : this.target);
 		},
 
 		_subSelectionTargetLoading: function(res) {

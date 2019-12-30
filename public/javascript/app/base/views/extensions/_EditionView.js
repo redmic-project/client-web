@@ -91,7 +91,8 @@ define([
 			});
 
 			this._emitEvt('SAVE', {
-				data: res.data
+				data: res.data,
+				target: this.editionTarget || this.target
 			});
 		},
 
@@ -122,10 +123,6 @@ define([
 				requesterId: this.getOwnChannel(),
 				id: idProperty
 			};
-
-			if (this.typeRequest) {
-				obj.type = this.typeRequest;
-			}
 
 			this._emitEvt('GET', obj);
 		},

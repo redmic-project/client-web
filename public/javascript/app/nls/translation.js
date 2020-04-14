@@ -1213,8 +1213,6 @@ define({
 		, "fullscreen": "Fullscreen"
 		, "version": "Version"
 
-		, "endOfProjectMessage": "By the end of this year, REDMIC project can be closed. More info"
-
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"
 		, "descriptio": "Description"

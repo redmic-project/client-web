@@ -1,6 +1,6 @@
 {
   "name": "REDMIC",
-  "version": "0.19.4",
+  "version": "0.19.6",
   "author": "REDMIC",
   "homepage": "https://gitlab.com/redmic-project/client/web/blob/master/README.md",
   "description": "Integrated marine data repository of Canary Islands - Client",
@@ -28,7 +28,6 @@
   },
   "private": true,
   "scripts": {
-    "preinstall": "depsToUnlock='pdfjs'; lockBefore=$(md5sum yarn.lock); for dep in $depsToUnlock; do echo \"Unlocking ${dep}\"; sed -i \"/${dep}@/,/^$/ d\" yarn.lock; done; lockAfter=$(md5sum yarn.lock); if [ \"${lockBefore}\" != \"${lockAfter}\" ]; then echo \"Some dependencies were unlocked, retry install in case of failure\"; fi",
     "start": "node app"
   },
   "dependencies": {
@@ -64,6 +63,8 @@
     "grunt-force-task": "^2.0.0",
     "grunt-git": "^1.0.9",
     "grunt-shell": "^2.1.0",
+    "gulp": "^2.7.0",
+    "gulp-cli": "^2.2.0",
     "handlebars": "^4.0.11",
     "intern": "^4.2.0",
     "jshint": "^2.9.5",
@@ -83,7 +84,7 @@
     "nib": "^1.1.2",
     "node-uuid": "https://github.com/kelektiv/node-uuid.git#v1.4.7",
     "packery": "^2.1.1",
-    "pdfjs": "https://github.com/mozilla/pdf.js.git#gh-pages",
+    "pdfjs": "https://github.com/mozilla/pdf.js.git#v2.3.200",
     "prunecluster": "https://github.com/pedroetb/PruneCluster.git",
     "put-selector": "^0.3.6",
     "sockjs-client": "^1.1.4",

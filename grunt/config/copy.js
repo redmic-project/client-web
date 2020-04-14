@@ -9,7 +9,8 @@ module.exports = function(grunt) {
 		distStylesSubPath = distPath + '/stylesheets',
 
 		pdfjsPath = '/javascript/pdfjs/',
-		srcPdfjsPath = publicPath + pdfjsPath,
+		pdfjsBuildPath = 'build/generic/',
+		srcPdfjsPath = publicPath + pdfjsPath + pdfjsBuildPath,
 		distPdfjsPath = distPath + pdfjsPath,
 		pdfjsWebName = 'web',
 		pdfjsBuildName = 'build';

@@ -1214,8 +1214,6 @@ define({
 	, "fullscreen": "Pantalla completa"
 	, "version": "Versión"
 
-	, "endOfProjectMessage": "A finales de este año, está previsto el cierre del proyecto REDMIC. Más info"
-
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"

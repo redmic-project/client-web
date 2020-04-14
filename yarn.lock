@@ -1660,7 +1660,7 @@ dojo-util@^1.13.0:
   resolved "https://registry.yarnpkg.com/dojo-util/-/dojo-util-1.13.0.tgz#58e74023d4848e1eedeeaac485337fcaffaed61e"
   integrity sha512-c5Vsd1T8bydfWSyLcgQK+l7k/Ln47B56P5xwxgi9htUIMckK2Ti9F8tAZjBhKhKvtvm77H4KqiuFTT6FXAnRKA==
 
-dojo@1.13.0, dojo@^1.13.0, dojo@^1.9.0:
+dojo@1.13.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/dojo/-/dojo-1.13.0.tgz#62a7c53628f4f7acfa791a96924c67f39cd5861b"
   integrity sha512-mGoGvsXAbPkUrBnxCoO7m6CFH8jvWq7rAL7fP7jrhJEOyswA/bZwWdXwEH0ovs68t8S0+xOpV/3V7addYbaiAA==
@@ -1669,6 +1669,11 @@ dojo@1.8, dojo@1.8.14:
   version "1.8.14"
   resolved "https://registry.yarnpkg.com/dojo/-/dojo-1.8.14.tgz#8c239dd321e85e6a55d03329b97bb88bba53fb33"
   integrity sha1-jCOd0yHoXmpV0DMpuXu4i7pT+zM=
+
+dojo@^1.13.7, dojo@^1.9.0:
+  version "1.13.7"
+  resolved "https://registry.yarnpkg.com/dojo/-/dojo-1.13.7.tgz#8dcdb017c8fd0d001638e9447a67f286c248bff6"
+  integrity sha512-dghZxPsmYYX0fvORQbMT111CndnUUn8lWLAPfIyQwhryvGeVifD/r9A0G0kj6b8iK1ACyXMcsT9zxrWZHmVwxg==
 
 dojox@^1.13.0:
   version "1.13.0"

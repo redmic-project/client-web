@@ -194,10 +194,16 @@ define([
 
 		_subSerialized: function(evt, action, req) {
 
+			// TODO: con esto se consigue que las respuestas a peticiones de datos hechas en modo legacy
+			// se escuchen fuera, para cargar los datos en catálogos, por ejemplo.
+			// Lo ideal sería suprimir este modo (que TextImpl solo pida sugerencias) y resolver la petición
+			// de datos cuando se escuche 'ADDED_TO_QUERY' del módulo Filter (por ejemplo, desde _Filter).
+			var requesterId = action === '_suggest' ? this.getOwnChannel() : null;
+
 			this._emitEvt('REQUEST', {
 				target: this._getTarget(),
 				action: action,
-				requesterId: this.getOwnChannel(),
+				requesterId: requesterId,
 				method: this.methodSuggest,
 				query: req.data
 			});

@@ -69,7 +69,7 @@ define([
 
 			aspect.after(this, "_itemAvailable", lang.hitch(this, function(item, args) {
 
-				if (this.target instanceof Array && this.target[0] !== args[0].target) {
+				if (this.target instanceof Array && this.target[0] !== args[1].target) {
 					return;
 				}
 

@@ -76,6 +76,7 @@ define([
 				map: {
 					width: 6,
 					height: 6,
+					showInitially: true,
 					type: declare([LeafletImpl, Map, _PlaceNamesButton]),
 					props: {
 						title: this.i18n.map,
@@ -161,6 +162,7 @@ define([
 
 			var dfd = new Deferred(),
 				parseData = function(resWrapper) {
+
 					var feature = resWrapper.res.data;
 
 					if (data.category === 0) {

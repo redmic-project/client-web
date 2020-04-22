@@ -233,10 +233,14 @@ define([
 
 			var rows = config.height || 1,
 				cols = config.width || 1,
-				nodeParams = "[" + this._rowsParameterName + "=" + rows + "][" + this._colsParameterName + "=" + cols +
-					"]",
-				node = put("div." + this.hiddenClass + nodeParams);
+				showInitially = config.showInitially || false,
+				nodeParams = '[' + this._rowsParameterName + '=' + rows + '][' + this._colsParameterName + '=' + cols +
+					']',
+				node = put('div' + nodeParams);
 
+			if (!showInitially) {
+				put(node, '.' + this.hiddenClass);
+			}
 			this._nodes[key] = node;
 
 			put(this.centerNode, node);

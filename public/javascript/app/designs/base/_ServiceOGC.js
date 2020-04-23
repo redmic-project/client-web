@@ -55,9 +55,11 @@ define([
 				pathSeparator: this.pathSeparator
 			});
 
-			this._subscribe(this.filter.getChannel('ADDED_TO_QUERY'), lang.hitch(this, function() {
+			this._subscribe(this.filter.getChannel('ADDED_TO_QUERY'), lang.hitch(this, function(query) {
 
-				this._emitEvt('REFRESH');
+				if (query && Object.keys(query).indexOf('suggest') === -1) {
+					this._emitEvt('REFRESH');
+				}
 			}));
 		},
 

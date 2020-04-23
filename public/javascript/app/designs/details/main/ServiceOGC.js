@@ -56,6 +56,7 @@ define([
 			this.atlasTarget = redmicConfig.services.atlasLayer;
 			this.activityTarget = redmicConfig.services.activity;
 			this.target = [this.atlasTarget, this.activityTarget];
+			this.selectionTarget = redmicConfig.services.atlasLayerSelection;
 
 			this.activityLocalTarget = "activitiesLayer";
 			this.infoLayerTarget = 'infoLayerTarget';

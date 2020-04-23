@@ -99,7 +99,7 @@ define([
 
 						if (!expandedQueryObj) {
 							var dfd = this._responsePromises[target];
-							dfd.reject();
+							dfd.resolve([]);
 							return;
 						}
 

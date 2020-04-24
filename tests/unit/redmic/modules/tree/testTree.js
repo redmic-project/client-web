@@ -131,8 +131,7 @@ define([
 				// Emulamos la suscripción de Selector
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.SELECT), function(req) {
 
-					assert.strictEqual(req.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(req.target, target, 'El canal informa de datos que no nos corresponden');
 
 					assert.strictEqual(req.items, newData[0][tree.idProperty],
 						'El id recibido como seleccionado no coincide con el id del item seleccionado');
@@ -159,14 +158,12 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), function(res) {
 
-					assert(res.success, 'El canal informa de que hubo un error al seleccionar');
-					assert.strictEqual(res.body.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
 
-					assert(tree.getChecked(tree.getItem(res.body.ids)),
-						'El item seleccionado no lo está para el árbol');
+					assert(tree.getChecked(tree.getItem(res.ids)), 'El item seleccionado no lo está para el árbol');
 
-					assert.deepEqual({'root.0': true}, tree._selection, 'La estructura de seleccionados no es correcta');
+					assert.deepEqual({'root.0': true}, tree._selection,
+						'La estructura de seleccionados no es correcta');
 
 					dfd.resolve();
 				}, {}, this);
@@ -174,12 +171,9 @@ define([
 				var itemId = newData[0][tree.idProperty];
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId],
-						total: 1
-					}
+					ids: [itemId],
+					total: 1,
+					target: target
 				});
 			},
 
@@ -189,14 +183,12 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), function(res) {
 
-					assert(res.success, 'El canal informa de que hubo un error al seleccionar');
-					assert.strictEqual(res.body.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
 
-					assert(tree.getChecked(tree.getItem(res.body.ids[0])),
+					assert(tree.getChecked(tree.getItem(res.ids[0])),
 						'El primer item seleccionado no lo está para el árbol');
 
-					assert(tree.getChecked(tree.getItem(res.body.ids[1])),
+					assert(tree.getChecked(tree.getItem(res.ids[1])),
 						'El segundo item seleccionado no lo está para el árbol');
 
 					assert.deepEqual({'root.0': true, 'root.1': true}, tree._selection,
@@ -210,11 +202,8 @@ define([
 
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId1, itemId2]
-					}
+					target: target,
+					ids: [itemId1, itemId2]
 				});
 			},
 
@@ -225,8 +214,7 @@ define([
 				// Emulamos la suscripción de Selector
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECT), function(req) {
 
-					assert.strictEqual(req.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(req.target, target, 'El canal informa de datos que no nos corresponden');
 
 					assert.strictEqual(req.items, newData[0][tree.idProperty],
 						'El id recibido como deseleccionado no coincide con el id del item deseleccionado');
@@ -253,12 +241,9 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECTED), function(res) {
 
-					assert(res.success, 'El canal informa de que hubo un error al deseleccionar');
+					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
 
-					assert.strictEqual(res.body.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
-
-					assert.notOk(tree.getChecked(tree.getItem(res.body.ids)),
+					assert.notOk(tree.getChecked(tree.getItem(res.ids)),
 						'El item deseleccionado no lo está para el árbol');
 
 					assert.deepEqual({}, tree._selection, 'La estructura de seleccionados no es correcta');
@@ -270,12 +255,9 @@ define([
 				tree.setChecked(tree.getItem(itemId), true);	// Forzamos la selección para poder deseleccionar
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId],
-						total: 0
-					}
+					target: target,
+					ids: [itemId],
+					total: 0
 				});
 			},
 
@@ -285,14 +267,12 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECTED), function(res) {
 
-					assert(res.success, 'El canal informa de que hubo un error al deseleccionar');
-					assert.strictEqual(res.body.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
 
-					assert.notOk(tree.getChecked(tree.getItem(res.body.ids[0])),
+					assert.notOk(tree.getChecked(tree.getItem(res.ids[0])),
 						'El primer item deseleccionado no lo está para el árbol');
 
-					assert.notOk(tree.getChecked(tree.getItem(res.body.ids[1])),
+					assert.notOk(tree.getChecked(tree.getItem(res.ids[1])),
 						'El segundo item deseleccionado no lo está para el árbol');
 
 					assert.deepEqual({}, tree._selection, 'La estructura de seleccionados no es correcta');
@@ -308,11 +288,8 @@ define([
 
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId1, itemId2]
-					}
+					target: target,
+					ids: [itemId1, itemId2]
 				});
 			},
 
@@ -322,7 +299,7 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.GROUP_SELECTED), function(req) {
 
-					assert.strictEqual(req.selectionTarget, target, 'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(req.target, target, 'El canal informa de datos que no nos corresponden');
 
 					dfd.resolve();
 				}, {}, this);
@@ -336,28 +313,25 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED_GROUP), function(res) {
 
-					assert.isTrue(res.success, 'No se recibió correctamente el grupo de seleccionados');
-					assert.strictEqual(res.body.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
 
-					assert.strictEqual(res.body.requesterId, tree.getOwnChannel(), 'El requesterId del solicitante no es el esperado');
-					assert.isTrue(res.body.selection.items[1], 'El item seleccionado no tiene el id esperado');
-					assert.strictEqual(res.body.selection.total, 1, 'El total de seleccionados no es 1');
+					assert.strictEqual(res.requesterId, tree.getOwnChannel(),
+						'El requesterId del solicitante no es el esperado');
+
+					assert.isTrue(res.selection.items[1], 'El item seleccionado no tiene el id esperado');
+					assert.strictEqual(res.selection.total, 1, 'El total de seleccionados no es 1');
 					assert.deepEqual({1: true}, tree._selection, 'La estructura de seleccionados no es correcta');
 
 					dfd.resolve();
 				});
 
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED_GROUP), {
-					success: true,
-					body: {
-						selection: {
-							items: {1: true},
-							total: 1
-						},
-						selectionTarget: target,
-						requesterId: tree.getOwnChannel()
-					}
+					selection: {
+						items: {1: true},
+						total: 1
+					},
+					target: target,
+					requesterId: tree.getOwnChannel()
 				});
 			},
 
@@ -367,7 +341,7 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.CLEAR_SELECTION), function(req) {
 
-					assert.strictEqual(req.selectionTarget, target, 'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(req.target, target, 'El canal informa de datos que no nos corresponden');
 
 					dfd.resolve();
 				}, {}, this);
@@ -381,8 +355,8 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTION_CLEARED), function(req) {
 
-					assert.strictEqual(req.selectionTarget, target, 'El canal informa de datos que no nos corresponden');
-					assert.strictEqual(Object.keys(tree._selection).length, 0, 'El árbol aun tiene items seleccionados');
+					assert.strictEqual(req.target, target, 'El canal informa de datos que no nos corresponden');
+					assert.lengthOf(Object.keys(tree._selection), 0,'El árbol aun tiene items seleccionados');
 
 					dfd.resolve();
 				}, {}, this);
@@ -392,15 +366,12 @@ define([
 
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId1, itemId2]
-					}
+					target: target,
+					ids: [itemId1, itemId2]
 				});
 
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTION_CLEARED), {
-					selectionTarget: target
+					target: target
 				});
 			},
 
@@ -495,9 +466,10 @@ define([
 				var firstItem = newData[0];
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [firstItem]
+					target: target,
+					res: {
+						data: [firstItem],
+						status: 200
 					}
 				});
 
@@ -518,9 +490,10 @@ define([
 				}, {}, this);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: newData[0]
+					target: target,
+					res: {
+						data: newData[0],
+						status: 200
 					}
 				});
 			},
@@ -545,7 +518,6 @@ define([
 
 				Mediator.once(tree.getChannel('REFRESHED'), function(res) {
 
-					assert(res.success, 'El canal informa de que hubo un error al recibir los datos');
 					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
 					dfd.resolve();
 				}, {}, this);
@@ -556,9 +528,10 @@ define([
 
 					// Simulamos la respuesta del store
 					Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-						body: {
-							target: target,
-							data: newData
+						target: target,
+						res: {
+							data: newData,
+							status: 200
 						}
 					});
 				}, {}, this);
@@ -590,17 +563,19 @@ define([
 
 					// Simulamos la respuesta del store
 					Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-						body: {
-							target: target,
-							data: [newData[5]]
+						target: target,
+						res: {
+							data: [newData[5]],
+							status: 200
 						}
 					});
 				}, {}, this);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0], newData[1], newData[2], newData[3], newData[4]]
+					target: target,
+					res: {
+						data: [newData[0], newData[1], newData[2], newData[3], newData[4]],
+						status: 200
 					}
 				});
 
@@ -614,8 +589,7 @@ define([
 				// Emulamos la suscripción de Selector
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.SELECT), function(req) {
 
-					assert.strictEqual(req.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(req.target, target, 'El canal informa de datos que no nos corresponden');
 
 					assert.strictEqual(req.items, newData[0][tree.idProperty],
 						'El id recibido como seleccionado no coincide con el id del item seleccionado');
@@ -624,9 +598,10 @@ define([
 				});
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
@@ -649,11 +624,10 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), function(res) {
 
-					assert(res.success, 'El canal informa de que hubo un error al seleccionar');
-					assert.strictEqual(res.body.selectionTarget, target,
+					assert.strictEqual(res.target, target,
 						'El canal informa de datos que no nos corresponden');
 
-					assert(tree.getChecked(tree.getItem(res.body.ids)),
+					assert(tree.getChecked(tree.getItem(res.ids)),
 						'El item seleccionado no lo está para el árbol');
 
 					assert.deepEqual({'root.0': true}, tree._selection, 'La estructura de seleccionados no es correcta');
@@ -662,21 +636,19 @@ define([
 				}, {}, this);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
 				var itemId = newData[0][tree.idProperty];
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId],
-						total: 1
-					}
+					target: target,
+					ids: [itemId],
+					total: 1
 				});
 			},
 
@@ -686,14 +658,12 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), function(res) {
 
-					assert(res.success, 'El canal informa de que hubo un error al seleccionar');
-					assert.strictEqual(res.body.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
 
-					assert(tree.getChecked(tree.getItem(res.body.ids[0])),
+					assert(tree.getChecked(tree.getItem(res.ids[0])),
 						'El primer item seleccionado no lo está para el árbol');
 
-					assert(tree.getChecked(tree.getItem(res.body.ids[1])),
+					assert(tree.getChecked(tree.getItem(res.ids[1])),
 						'El segundo item seleccionado no lo está para el árbol');
 
 					assert.deepEqual({'root.0': true, 'root.1': true}, tree._selection,
@@ -703,9 +673,10 @@ define([
 				}, {}, this);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0], newData[1]]
+					target: target,
+					res: {
+						data: [newData[0], newData[1]],
+						status: 200
 					}
 				});
 
@@ -714,11 +685,8 @@ define([
 
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId1, itemId2]
-					}
+					target: target,
+					ids: [itemId1, itemId2]
 				});
 			},
 
@@ -729,7 +697,7 @@ define([
 				// Emulamos la suscripción de Selector
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECT), function(req) {
 
-					assert.strictEqual(req.selectionTarget, target, 'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(req.target, target, 'El canal informa de datos que no nos corresponden');
 					assert.strictEqual(req.items, newData[0][tree.idProperty],
 						'El id recibido como deseleccionado no coincide con el id del item deseleccionado');
 
@@ -737,9 +705,10 @@ define([
 				});
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
@@ -761,11 +730,10 @@ define([
 				var dfd = this.async(timeout);
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECTED), function(res) {
-					assert(res.success, 'El canal informa de que hubo un error al deseleccionar');
-					assert.strictEqual(res.body.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
 
-					assert.notOk(tree.getChecked(tree.getItem(res.body.ids)),
+					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
+
+					assert.notOk(tree.getChecked(tree.getItem(res.ids)),
 						'El item deseleccionado no lo está para el árbol');
 
 					assert.deepEqual({}, tree._selection, 'La estructura de seleccionados no es correcta');
@@ -774,9 +742,10 @@ define([
 				}, {}, this);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
@@ -784,12 +753,9 @@ define([
 				tree.setChecked(tree.getItem(itemId), true);	// Forzamos la selección para poder deseleccionar
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId],
-						total: 0
-					}
+					target: target,
+					ids: [itemId],
+					total: 0
 				});
 			},
 
@@ -799,14 +765,12 @@ define([
 
 				Mediator.once(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECTED), function(res) {
 
-					assert(res.success, 'El canal informa de que hubo un error al deseleccionar');
-					assert.strictEqual(res.body.selectionTarget, target,
-						'El canal informa de datos que no nos corresponden');
+					assert.strictEqual(res.target, target, 'El canal informa de datos que no nos corresponden');
 
-					assert.notOk(tree.getChecked(tree.getItem(res.body.ids[0])),
+					assert.notOk(tree.getChecked(tree.getItem(res.ids[0])),
 						'El primer item deseleccionado no lo está para el árbol');
 
-					assert.notOk(tree.getChecked(tree.getItem(res.body.ids[1])),
+					assert.notOk(tree.getChecked(tree.getItem(res.ids[1])),
 						'El segundo item deseleccionado no lo está para el árbol');
 
 					assert.deepEqual({}, tree._selection, 'La estructura de seleccionados no es correcta');
@@ -815,9 +779,10 @@ define([
 				}, {}, this);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0], newData[1]]
+					target: target,
+					res: {
+						data: [newData[0], newData[1]],
+						status: 200
 					}
 				});
 
@@ -828,28 +793,27 @@ define([
 				tree.setChecked(tree.getItem(itemId2), true);	// Forzamos la selección para poder deseleccionar
 				// Emulamos la orden de Selector
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.DESELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId1, itemId2]
-					}
+					target: target,
+					ids: [itemId1, itemId2]
 				});
 			},
 
 			Should_SelectNewAvailableItem_When_ItemWasSelectedBeforeBeingAvailable: function() {
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 				tree.setChecked(tree.getItem(tree.getIdentity(newData[0])), true);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[1], newData[2]]
+					target: target,
+					res: {
+						data: [newData[1], newData[2]],
+						status: 200
 					}
 				});
 
@@ -863,9 +827,10 @@ define([
 			Should_GenerateItemLabel_When_NoLabelGenerationIsDefined: function() {
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
@@ -884,9 +849,10 @@ define([
 				tree.itemLabel = field;
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
@@ -906,9 +872,10 @@ define([
 				tree.itemLabel = '{' + field1 + '}{' + field2 + '}';
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
@@ -928,9 +895,10 @@ define([
 				};
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
@@ -1109,12 +1077,9 @@ define([
 
 				var itemId = newData[9][tree.idProperty];
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId],
-						total: 1
-					}
+					target: target,
+					ids: [itemId],
+					total: 1
 				});
 			},
 
@@ -1123,9 +1088,10 @@ define([
 				var dfd = this.async(timeout);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0]]
+					target: target,
+					res: {
+						data: [newData[0]],
+						status: 200
 					}
 				});
 
@@ -1160,9 +1126,10 @@ define([
 				}, {}, this);
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[3], newData[4]]
+					target: target,
+					res: {
+						data: [newData[3], newData[4]],
+						status: 200
 					}
 				});
 			},
@@ -1204,20 +1171,18 @@ define([
 					item20Id = newData[20][tree.idProperty];
 
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [item9Id, item10Id, item11Id, item12Id, item13Id, item14Id,
-							item15Id, item16Id, item17Id, item18Id, item19Id, item20Id],
-						total: 12
-					}
+					target: target,
+					ids: [item9Id, item10Id, item11Id, item12Id, item13Id, item14Id,
+						item15Id, item16Id, item17Id, item18Id, item19Id, item20Id],
+					total: 12
 				});
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
+					target: target,
+					res: {
 						data: [newData[0], newData[1], newData[2], newData[3], newData[4], newData[5], newData[6],
-							newData[7], newData[8]]
+							newData[7], newData[8]],
+						status: 200
 					}
 				});
 			},
@@ -1239,18 +1204,16 @@ define([
 
 				var itemId = newData[9][tree.idProperty];
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [itemId],
-						total: 1
-					}
+					target: target,
+					ids: [itemId],
+					total: 1
 				});
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0], newData[3]]
+					target: target,
+					res: {
+						data: [newData[0], newData[3]],
+						status: 200
 					}
 				});
 			},
@@ -1274,18 +1237,16 @@ define([
 					item10Id = newData[10][tree.idProperty];
 
 				Mediator.publish(tree._buildChannel(tree.selectorChannel, tree.actions.SELECTED), {
-					success: true,
-					body: {
-						selectionTarget: target,
-						ids: [item9Id, item10Id],
-						total: 2
-					}
+					target: target,
+					ids: [item9Id, item10Id],
+					total: 2
 				});
 
 				Mediator.publish(tree._buildChannel(tree.storeChannel, tree.actions.AVAILABLE), {
-					body: {
-						target: target,
-						data: [newData[0], newData[3]]
+					target: target,
+					res: {
+						data: [newData[0], newData[3]],
+						status: 200
 					}
 				});
 			}

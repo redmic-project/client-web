@@ -16,9 +16,8 @@ define([
 		_getMethodsToImplement: function() {
 
 			return lang.mixin(this.inherited(arguments), {
-				"_defineFilterSubscriptions": {},
-				"_defineFilterPublications": {},
-				"_setQueryChannelInModules": {}
+				"_setQueryChannelInModules": {},
+				"_handleFilterParams": {}
 			});
 		}
 	});

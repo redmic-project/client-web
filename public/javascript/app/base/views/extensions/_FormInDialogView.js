@@ -28,7 +28,7 @@ define([
 		_setFormInDialogViewConfigurations: function() {
 
 			this.formConfig = this._merge([{
-				modelTarget: this.target,
+				modelTarget: this.editionTarget || this.target,
 				modelSchema: this.modelSchema,
 				idProperty: this.idProperty,
 				lockBackground: true,
@@ -49,10 +49,10 @@ define([
 			this.editor = new formDef(this.formConfig);
 		},
 
-		_getSavedObjToPublish: function(results) {
+		_afterSaved: function(results) {
 
-			results.hide = true;
-			return results;
+			this.inherited(arguments);
+			this._publish(this.editor.getChannel('HIDE'));
 		}
 	});
 });

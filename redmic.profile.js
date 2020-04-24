@@ -28,7 +28,7 @@ var profile = {
 	},
 	cssOptimize: 'comments',
 	mini: true,
-	stripConsole: 'all',
+	stripConsole: 'warn',
 	selectorEngine: 'lite',
 	locale: includeLocales[0],
 	localeList: includeLocales.join(','),

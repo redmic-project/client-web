@@ -48,7 +48,8 @@ define([
 				actions: {
 					NOTIFICATION: "Notification",
 					NOTIFICATION_DELETED: "notificationDeleted",
-					BUTTON_EVENT: "btnEvent"
+					BUTTON_EVENT: "btnEvent",
+					REMOVE: 'remove'
 				},
 				target: "task",
 				events: {

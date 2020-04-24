@@ -68,10 +68,6 @@ define([
 					input: this.getChannel("CLEAR_SELECTION"),
 					output: this.getChannel("SELECTION_CLEARED"),
 					subMethod: "clearSelection"
-				},{
-					input: this.getChannel("SELECT_ALL"),
-					output: this.getChannel("SELECTED_ALL"),
-					subMethod: "selectAll"
 				}]
 			});
 		},

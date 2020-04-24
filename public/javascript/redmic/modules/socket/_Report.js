@@ -115,7 +115,7 @@ define([
 			//		private
 
 			if (request.total >= 1) {
-				var selectId = Credentials.get("selectIds")[request.selectionTarget];
+				var selectId = Credentials.get("selectIds")[request.target];
 				if (request.total > 1) {
 					alertify.prompt(null,
 						null,

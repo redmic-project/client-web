@@ -72,11 +72,8 @@ define([
 
 			this.modelInstance = new ModelImpl({
 				parentChannel: this.getChannel(),
-				persistent: true,
 				schema: registerModelSchema,
-				props: {
-					target: this.target
-				}
+				target: this.target
 			});
 		},
 
@@ -205,8 +202,7 @@ define([
 			//	tags:
 			//		callback private
 			//
-			this._once(this.modelInstance.getChannel("WAS_VALID"),
-				lang.hitch(this, this._wasValid));
+			this._once(this.modelInstance.getChannel("WAS_VALID"), lang.hitch(this, this._wasValid));
 
 			this._submitActive = true;
 
@@ -216,16 +212,23 @@ define([
 		_wasValid: function(res) {
 
 			if (this._submitActive && this.reCaptchaVerify && res.isValid && this._acceptTermsAndConditions) {
-				this._emitEvt('LOADING');
-				this.modelInstance.modelInstance.save().then(
-					lang.hitch(this, this._handleResponse),
-					lang.hitch(this, this._handleError));
+				this._once(this.modelInstance.getChannel('SAVED'), lang.hitch(this, this._afterModelSave));
+				this._publish(this.modelInstance.getChannel('SAVE'), {});
 			}
 
 			this._submitActive = false;
 		},
 
-		_handleResponse: function(result){
+		_afterModelSave: function(res) {
+
+			if (res.success) {
+				this._handleResponse(res.data);
+			} else {
+				this._handleError(res.data);
+			}
+		},
+
+		_handleResponse: function(result) {
 			//	summary:
 			//		Función que maneja la respuesta del registro,
 			//		manda a gestionar el error en caso de recibirlo.
@@ -234,17 +237,11 @@ define([
 			//		callback private
 			//
 
-			this._emitEvt('LOADED');
+			alertify.alert(this.i18n.success, this.i18n.activateAccount, lang.hitch(this, function() {
 
-			if (result.success) {
-				alertify.alert(this.i18n.success, this.i18n.activateAccount,
-					lang.hitch(this, function() {
-						this._resetForm();
-						window.location.href = "/";
-					}));
-			} else {
-				this._handleError(result.error);
-			}
+				this._resetForm();
+				window.location.href = "/";
+			}));
 		},
 
 		_handleError: function(error) {
@@ -254,14 +251,7 @@ define([
 			//	tags:
 			//		callback private
 
-			this._emitEvt('LOADED');
-
 			this._resetForm();
-
-			// TODO: cambiar cuando esten unificados los errores de la api
-			if (error.response && error.response.data) {
-				error = error.response.data.error;
-			}
 
 			var msg = error.description;
 			this._emitEvt('TRACK', {

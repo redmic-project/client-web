@@ -42,7 +42,8 @@ define([
 	, TemplateEmpty
 	, TemplateInfo
 	, TemplateTitle
-){
+) {
+
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
 		//	summary:
 		//		Vista detalle de Species.
@@ -191,14 +192,14 @@ define([
 			});
 		},
 
-		_itemAvailable: function(res) {
+		_itemAvailable: function(res, resWrapper) {
 
-			if (res.target === this.target[1]) {
+			if (resWrapper.target === this.target[1]) {
 				this._dataToDocument(res);
 				return;
 			}
 
-			if (res.target === this.target[2]) {
+			if (resWrapper.target === this.target[2]) {
 				this._dataToActivities(res);
 				return;
 			}
@@ -210,6 +211,7 @@ define([
 			this._emitEvt('REQUEST', {
 				method: "POST",
 				target: this.target[3],
+				action: '_search',
 				query: {
 					returnFields: ['scientificName', 'rank']
 				}

@@ -10,14 +10,15 @@ define([
 	, aspect
 	, _Selection
 	, put
-){
+) {
+
 	return declare(_Selection, {
 		//	summary:
 		//		Extensión para añadir selection al la vista de detalles
 
 		constructor: function(args) {
 
-			aspect.after(this, "_dataInTitle", this._groupSelected);
+			aspect.after(this, "_addDataInTitle", this._groupSelected);
 			aspect.after(this, "_createTitle", this._createTitleSelection);
 		},
 
@@ -87,20 +88,6 @@ define([
 
 			this._selectItem = false;
 			this._checkBoxNode.setAttribute("class", this._classDefaultSelection + "square-o");
-		},
-
-		_getItemToSelect: function(ids) {
-
-			return {
-				items: ids
-			};
-		},
-
-		_getItemToDeselect: function(ids) {
-
-			return {
-				items: ids
-			};
 		}
 	});
 });

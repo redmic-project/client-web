@@ -4,29 +4,24 @@ define([
 	, "dojo/aspect"
 	, "app/base/views/_ListenRequestError"
 	, "app/base/views/_ViewHandle"	// QUITAR
+	,'./_SettingsHandler'
 ], function(
 	declare
 	, lang
 	, aspect
 	, _ListenRequestError
 	, _ViewHandle	// QUITAR
-){
-	return declare([_ListenRequestError, _ViewHandle], {
-		//	summary:
-		//		Base común para todas los módulos usados como vistas.
+	, _SettingsHandler
+) {
 
-		//	region: String
-		//		Región del ContentPane.
-		//	baseClass: String
-		//		Clase base del ContentPane.
+	return declare([_ListenRequestError, _ViewHandle, _SettingsHandler], {
+		//	summary:
+		//		Extensión común para todas los módulos usados como vistas. Se adjunta automáticamente cuando la
+		//		navegación a través de la app requiere un módulo como contenido principal a mostrar.
 
 		constructor: function(args) {
 
 			this.config = {
-				title: 'View',
-				ownChannel: "view",
-				region: "center",
-				baseClass: "",
 				viewActions: {
 					PUT_META_TAGS: "putMetaTags"
 				},
@@ -37,18 +32,15 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			this._initializeView && aspect.before(this, "_initialize", this._initializeView);
-			this._mixEventsAndActionsView &&
-				aspect.before(this, "_mixEventsAndActions", this._mixEventsAndActionsView);
+			aspect.before(this, "_mixEventsAndActions", this._mixEventsAndActionsView);
+
 			this._doEvtFacadeView &&
 				aspect.before(this, "_doEvtFacade", this._doEvtFacadeView);
 			this._setOwnCallbacksForEventsView &&
 				aspect.before(this, "_setOwnCallbacksForEvents", this._setOwnCallbacksForEventsView);
-			this._defineViewSubscriptions &&
-				aspect.after(this, "_defineSubscriptions", this._defineViewSubscriptions);
-			this._defineViewPublications &&
-				aspect.after(this, "_definePublications", this._defineViewPublications);
 
+			this._initializeView && aspect.before(this, "_initialize", this._initializeView);
+			aspect.after(this, "_definePublications", this._defineViewPublications);
 			aspect.before(this, "_beforeShow", this._beforeShowView);
 			aspect.before(this, "_afterShow", this._afterShowView);
 		},
@@ -75,13 +67,11 @@ define([
 
 		_afterShowView: function(request) {
 
-			//this.startup();
-			//this.resize();
-			//this._publish(this._buildChannel(this.loadingChannel, this.actions.LOADED));
-			this._putMetaTags();
+			var callback = this._putMetaTags || this._putDefaultMetaTags;
+			lang.hitch(this, callback)();
 		},
 
-		_putMetaTags: function() {
+		_putDefaultMetaTags: function() {
 			//	summary:
 			//		Manda a publicar la información necesaria para que se generen las meta-tags
 			//		de la vista actual. Debe ejecutarse después del show de la vista, ya que este
@@ -95,11 +85,6 @@ define([
 					view: this.ownChannel
 				});
 			}
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
 		},
 
 		_goTo404: function() {

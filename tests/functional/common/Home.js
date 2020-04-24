@@ -3,12 +3,13 @@ define([
 	, 'tests/support/Config'
 	, 'tests/support/pages/Login'
 	, 'tests/support/Utils'
-], function (
+], function(
 	lang
 	, Config
 	, LoginPage
 	, Utils
 ) {
+
 	var registerSuite = intern.getInterface('object').registerSuite,
 		assert = intern.getPlugin('chai').assert,
 
@@ -17,7 +18,7 @@ define([
 
 			'Should_GoToValidView_When_ClickOnFavouritesLink': function() {
 
-				var favouriteLinkSelector = 'div.boxItems > a.module:first-child',
+				var favouriteLinkSelector = 'div.favouritesBoxItems > a.module:first-child',
 					validViewUrlExpr = '\/(?!404)(?!home).*';
 
 				return indexPage

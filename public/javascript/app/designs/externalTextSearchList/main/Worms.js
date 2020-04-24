@@ -143,47 +143,26 @@ define([
 
 			return lang.mixin(request, {
 				target: this.target,
-				requesterId: this.getOwnChannel(),
-				type: "API"
+				requesterId: this.getOwnChannel()
 			});
 		},
 
-		_dataAvailable: function(response) {
-
-			delete response.requesterId;
-			response.target = this.baseTarget;
+		_dataAvailable: function(response, resWrapper) {
 
 			if (!response.data.length && (Object.keys(response.data).length > 0)) {
 				response.data = [response.data];
 				response.total = 1;
 			}
 
-			this._emitEvt('SEND_DATA', {body: response, success: true});
+			this._emitEvt('SEND_DATA', {
+				res: response,
+				target: this.baseTarget
+			});
 		},
 
-		_chkTargetAndRequester: function(response) {
+		_chkTargetIsMine: function(response) {
 
-			if (this._chkRequesterIsMe(response) &&
-				(response.body && response.body.target.indexOf(this.baseTarget) >= 0)) {
-				return true;
-			}
-
-			return false;
-		},
-
-		_chkErrorTargetIsMine: function(response) {
-
-			if (this._chkSuccessful(response)) {
-				return false;
-			}
-
-			var error = response.error;
-
-			if (error.target && error.target.indexOf && (error.target.indexOf(this.baseTarget) >= 0)) {
-				return true;
-			}
-
-			return false;
+			return response.target.indexOf(this.baseTarget) >= 0;
 		},
 
 		_errorAvailable: function(error) {
@@ -201,25 +180,19 @@ define([
 			});
 
 			this._emitEvt('SAVE', {
-				idInTarget: this.editionMode,
-				target: this.toRedmicTarget + '/' + data.item.AphiaID
+				target: this.toRedmicTarget,
+				id: data.item.AphiaID,
+				data: {}
 			});
 		},
 
-		_subSaved: function(result) {
+		_afterSaved: function(result) {
 
 			this._emitEvt('LOADED');
 
-			if (result.success) {
-				this._emitEvt('UPDATE_DATA', {
-					data: result.body
-				});
-			}
-		},
-
-		_getNodeToShow: function() {
-
-			return this.containerNode;
+			this._emitEvt('UPDATE_DATA', {
+				data: result.data
+			});
 		}
 	});
 });

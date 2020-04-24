@@ -53,8 +53,12 @@ define([
 
 		constructor: function(args) {
 
-			this.target = redmicConfig.services.serviceOGC;
-			this.activityTarget = "activitiesLayer";
+			this.atlasTarget = redmicConfig.services.atlasLayer;
+			this.activityTarget = redmicConfig.services.activity;
+			this.target = [this.atlasTarget, this.activityTarget];
+			this.selectionTarget = redmicConfig.services.atlasLayerSelection;
+
+			this.activityLocalTarget = "activitiesLayer";
 			this.infoLayerTarget = 'infoLayerTarget';
 
 			this.config = {
@@ -97,7 +101,7 @@ define([
 							title: this.i18n.dataSource,
 							type: declare([ListImpl, _Framework, _ButtonsInRow]),
 							props: {
-								target: this.activityTarget,
+								target: this.activityLocalTarget,
 								template: TemplateActivities,
 								bars: [{
 									instance: Total
@@ -119,7 +123,7 @@ define([
 							props: {
 								template: TemplateImage,
 								"class": "imageContainer",
-								target: this.target,
+								target: this.atlasTarget,
 								associatedIds: [this.ownChannel]
 							}
 						},*/
@@ -168,61 +172,40 @@ define([
 			this._checkPathVariableId();
 
 			this._emitEvt('GET', {
-				target: this.target,
+				target: this.atlasTarget,
 				requesterId: this.ownChannel,
 				id: this.pathVariableId
 			});
 		},
 
-		_itemAvailable: function(response) {
+		_itemAvailable: function(response, resObj) {
 
-			var data = response.data;
+			var target = resObj.target,
+				data = response.data;
+
+			if (target === this.activityTarget) {
+				this._handleActivityItemAvailable(data);
+			} else {
+				this._handleAtlasItemAvailable(data);
+			}
+		},
+
+		_handleAtlasItemAvailable: function(data) {
 
 			this._emitEvt('INJECT_ITEM', {
 				data: data,
 				target: this.infoLayerTarget
 			});
 
+			this._createMapBoundingLayer(data);
+			this._retrieveLayerActivities(data);
+			this._createMapLayer(data);
+		},
+
+		_createMapBoundingLayer: function(data) {
+
 			if (data && data.geometry && data.geometry.coordinates) {
 				this._addPolygon(data.geometry);
-			}
-
-			var activities = data.activities;
-
-			if (activities && activities.length) {
-				for (var i = 0; i < activities.length; i++) {
-
-					var activity = activities[i];
-
-					activity.rank = RedmicUtilities.getActivityRankByPath(activity.path);
-
-					this._emitEvt('INJECT_ITEM', {
-						data: activity,
-						target: this.activityTarget
-					});
-				}
-			}
-
-			if (data.urlSource && data.name) {
-
-				this.layer = new WmsLayerImpl({
-					parentChannel: this.getChannel(),
-					mapChannel: this._widgets.additionalInfo.getChildChannel("childInstances.1"),
-					layer: OpenLayers.build({
-						type: "wms",
-						url: data.urlSource,
-						props: {
-							layers: [data.name],
-							format: "image/png",
-							transparent: true,
-							tiled: true
-						}
-					})
-				});
-
-				this._publishMapBox("ADD_LAYER", {
-					layer: this.layer
-				});
 			}
 		},
 
@@ -240,6 +223,59 @@ define([
 				layerId: "boundingBox",
 				layerLabel: this.i18n.boundingBox,
 				optional: true
+			});
+		},
+
+		_retrieveLayerActivities: function(data) {
+
+			var activities = data.activities;
+
+			if (!activities || !activities.length) {
+				return;
+			}
+
+			for (var i = 0; i < activities.length; i++) {
+				var activity = activities[i];
+				this._publish(this._buildChannel(this.storeChannel, this.actions.GET), {
+					target: this.activityTarget,
+					id: activity[this.idProperty]
+				});
+			}
+		},
+
+		_createMapLayer: function(data) {
+
+			if (!data.urlSource || !data.name) {
+				return;
+			}
+
+			this.layer = new WmsLayerImpl({
+				parentChannel: this.getChannel(),
+				mapChannel: this._widgets.additionalInfo.getChildChannel("childInstances.1"),
+				layer: OpenLayers.build({
+					type: "wms",
+					url: data.urlSource,
+					props: {
+						layers: [data.name],
+						format: "image/png",
+						transparent: true,
+						tiled: true
+					}
+				})
+			});
+
+			this._publishMapBox("ADD_LAYER", {
+				layer: this.layer
+			});
+		},
+
+		_handleActivityItemAvailable: function(activity) {
+
+			activity.rank = RedmicUtilities.getActivityRankByPath(activity.path);
+
+			this._emitEvt('INJECT_ITEM', {
+				data: activity,
+				target: this.activityLocalTarget
 			});
 		}
 	});

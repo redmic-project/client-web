@@ -20,7 +20,6 @@ define([
 				"_select": {},
 				"_deselect": {},
 				"_clearSelection": {},
-				"_getItemToSelectOrDeselect": {},
 				"_checkSelectionAfterShown": {},
 				"_totalAvailable": {}
 			});

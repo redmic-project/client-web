@@ -19,8 +19,6 @@ define([
 				title: this.i18n.edit
 			}];
 
-			this.target = redmicConfig.services.serviceOGC;
-
 			this.viewPathsWidgets = {
 				activities: "/admin/{rank}-info/{id}"
 			};

@@ -107,22 +107,22 @@ define([
 
 		},
 
-		_dataAvailable: function(response) {
+		_dataAvailable: function(res, resWrapper) {
 
-			if (response.data && response.target == this.targetAdministrative) {
+			var data = res.data;
 
+			if (data && resWrapper.target === this.targetAdministrative) {
 				var id = 1;
 
-				for (var item in response.data) {
-
+				for (var item in data) {
 					var result = {};
-					result.data = response.data[item];
+					result.data = data[item];
 					result.name = item;
 					result.id = id;
 
-					if ("activityOutProject" == item) {
+					if ("activityOutProject" === item) {
 						result.href = "activity";
-					} else if ("projectOutProgram" == item) {
+					} else if ("projectOutProgram" === item) {
 						result.href = "project";
 					} else {
 						result.href = item;
@@ -133,7 +133,7 @@ define([
 						target: this.targetBrowser
 					});
 
-					id ++;
+					id++;
 				}
 			}
 		}

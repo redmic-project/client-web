@@ -84,8 +84,9 @@ define([
 
 			if (item) {
 				this._itemAvailable({
-					target: this.target,
 					data: item
+				},{
+					target: this.target
 				});
 			} else {
 				this._emitEvt('GET', {
@@ -96,9 +97,9 @@ define([
 			}
 		},
 
-		_itemAvailable: function(response) {
+		_itemAvailable: function(response, resWrapper) {
 
-			if (response.target == this.target) {
+			if (resWrapper.target === this.target) {
 				var item = lang.clone(response.data);
 
 				if (this.type === "copy") {

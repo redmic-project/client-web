@@ -26,20 +26,22 @@ define([
 		publishData = function() {
 
 			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.AVAILABLE), {
-				body: {
+				res: {
 					data: data,
-					target: target
-				}
+					status: 200
+				},
+				target: target
 			});
 		},
 
 		publishItem = function() {
 
 			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.ITEM_AVAILABLE), {
-				body: {
+				res: {
 					data: item,
-					target: target
-				}
+					status: 200
+				},
+				target: target
 			});
 		},
 

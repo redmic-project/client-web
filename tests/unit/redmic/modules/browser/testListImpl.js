@@ -47,20 +47,22 @@ define([
 		publishData = function() {
 
 			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.AVAILABLE), {
-				body: {
+				res: {
 					data: data,
-					target: target
-				}
+					status: 200
+				},
+				target: target
 			});
 		},
 
 		publishItem = function() {
 
 			Mediator.publish(browser._buildChannel(browser.storeChannel, browser.actions.ITEM_AVAILABLE), {
-				body: {
+				res: {
 					data: item,
-					target: target
-				}
+					status: 200
+				},
+				target: target
 			});
 		},
 
@@ -88,7 +90,7 @@ define([
 
 			"Should_AddItem_When_ReceiveItemAvailablePublication": function() {
 
-				var dfd = this.async(timeout);
+				var dfd = this.async(timeout+10000);
 
 				Mediator.once(browser.getChannel('DATA_ADDED'), function() {
 
@@ -530,7 +532,6 @@ define([
 	specificTests = {
 		"Should_HaveStructuresAvailable_When_ModuleIsInitialized": function() {
 
-			assert.ok(browser.persistence, "No se ha creado correctamente");
 			assert.isUndefined(browser.form, "No se ha creado correctamente");
 		},
 

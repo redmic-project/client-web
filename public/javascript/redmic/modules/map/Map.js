@@ -686,6 +686,15 @@ define([
 
 			this.bringLayerToBack(layerInstance);
 
+			this._emitEvt('TRACK', {
+				type: TRACK.type.event,
+				info: {
+					category: TRACK.category.layer,
+					action: TRACK.action.click,
+					label: 'Basemap changed: ' + layerId
+				}
+			});
+
 			this._publish(channel, {
 				success: true,
 				baseLayer: baseLayer
@@ -783,9 +792,7 @@ define([
 
 			return {
 				success: true,
-				body: {
-					instance: this._getMapInstance()
-				}
+				instance: this._getMapInstance()
 			};
 		}
 

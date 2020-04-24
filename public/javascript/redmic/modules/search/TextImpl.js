@@ -41,10 +41,12 @@ define([
 					SERIALIZED: "serialized"
 				},
 				methodSuggest: "POST",
-				action: "_suggest",
+				suggestAction: "_suggest",
+				searchAction: "_search",
 				itemLabel: null,
 				textValue: '',
-				ownChannel: "textSearch"
+				ownChannel: "textSearch",
+				legacyMode: true
 			};
 
 			lang.mixin(this, this.config, args);
@@ -119,26 +121,15 @@ define([
 		_requestSuggestions: function(/*Object*/ evt) {
 
 			this._emitEvt('SEARCH', {
-				suggest: evt,
+				suggest: this._createSuggest(evt),
 				query: this.initialQuery,
 				omitRefresh: true
 			});
 
 			this._once(this._buildChannel(this.queryChannel, this.actions.SERIALIZED),
-				lang.hitch(this, this._subSerialized, evt));
+				lang.hitch(this, this._subSerialized, evt, this.suggestAction));
 
 			this._publish(this._buildChannel(this.queryChannel, this.actions.SERIALIZE));
-		},
-
-		_subSerialized: function(evt, req) {
-
-			this._emitEvt('REQUEST', {
-				target: this._getTarget(),
-				action: this.action,
-				requesterId: this.getOwnChannel(),
-				method: this.methodSuggest,
-				query: req.data
-			});
 		},
 
 		_subRequested: function(req) {
@@ -149,10 +140,10 @@ define([
 			this.textSearch.setValue(text);
 		},
 
-		_dataAvailable: function(/*Object*/ response) {
+		_dataAvailable: function(res, resWrapper) {
 
-			if (response.requesterId === this.getOwnChannel()) {
-				this._setSuggestions(response.data);
+			if (resWrapper.requesterId === this.getOwnChannel()) {
+				this._setSuggestions(res.data);
 			}
 		},
 
@@ -188,13 +179,48 @@ define([
 
 			this._emitEvt('SEARCH', {
 				text: this._createQuery(evt),
-				from: 0
+				from: 0,
+				omitRefresh: true
+			});
+
+			//Por retrocompatibilidad se debe llamar a _subSerialized
+			if (this.legacyMode) {
+				this._once(this._buildChannel(this.queryChannel, this.actions.SERIALIZED),
+					lang.hitch(this, this._subSerialized, evt, this.searchAction));
+			}
+
+			this._publish(this._buildChannel(this.queryChannel, this.actions.SERIALIZE));
+		},
+
+		_subSerialized: function(evt, action, req) {
+
+			// TODO: con esto se consigue que las respuestas a peticiones de datos hechas en modo legacy
+			// se escuchen fuera, para cargar los datos en catálogos, por ejemplo.
+			// Lo ideal sería suprimir este modo (que TextImpl solo pida sugerencias) y resolver la petición
+			// de datos cuando se escuche 'ADDED_TO_QUERY' del módulo Filter (por ejemplo, desde _Filter).
+			var requesterId = action === '_suggest' ? this.getOwnChannel() : null;
+
+			this._emitEvt('REQUEST', {
+				target: this._getTarget(),
+				action: action,
+				requesterId: requesterId,
+				method: this.methodSuggest,
+				query: req.data
 			});
 		},
 
 		_refresh: function() {
 
 			this.textSearch.emit("refresh");
+		},
+
+		_createSuggest: function(query) {
+
+			if (this.suggestFields) {
+				query.searchFields = this.suggestFields;
+			}
+
+			return query;
 		},
 
 		_createQuery: function(value) {
@@ -237,12 +263,13 @@ define([
 
 		_subUpdateTextSeachParams: function(evt) {
 
-			this._updateTextSearchParams(evt);
+			var fields = evt.suggestFields;
+			fields && this._updateTextSearchParams(fields);
 		},
 
-		_updateTextSearchParams: function(/*Object*/ params) {
+		_updateTextSearchParams: function(fields) {
 
-			params.suggestFields && this.textSearch.set("suggestFields", params.suggestFields);
+			this.textSearch.set("suggestFields", fields);
 		},
 
 		_pubClosed: function(/*String*/ channel, /*Object*/ evt) {

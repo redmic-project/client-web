@@ -22,6 +22,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: "filter",
 				events: {
 					ADD_TO_QUERY: "addToQuery",
 					AVAILABLE_FACETS: "availableFacets",
@@ -33,6 +34,7 @@ define([
 				actions: {
 					REFRESH: "refresh",
 					ADD_TO_QUERY: "addToQuery",
+					ADDED_TO_QUERY: "addedToQuery",
 					REFRESHED: "refreshed",
 					AVAILABLE_FACETS: "availableFacets",
 					RESET: "reset",
@@ -51,7 +53,7 @@ define([
 				_pendingAddToQuery: null,
 				target: null,
 				refreshToInit: false,
-				ownChannel: "filter"
+				serializeOnQueryUpdate: true
 			};
 
 			lang.mixin(this, this.config, args);
@@ -232,6 +234,8 @@ define([
 				serialize && this._isValid({
 					callback: this._subSerialized
 				});
+
+				this._publish(this.getChannel('ADDED_TO_QUERY'), query);
 			} else {
 				if (!this._pendingAddToQuery) {
 					this._pendingAddToQuery = {};
@@ -311,7 +315,7 @@ define([
 
 			this._lastRequest = this._getRequestObj(req.data);
 
-			this._emitEvt('REQUEST', this._lastRequest);
+			this.serializeOnQueryUpdate && this._emitEvt('REQUEST', this._lastRequest);
 		},
 
 		_subRefresh: function(req) {
@@ -358,7 +362,8 @@ define([
 			var obj = {
 				method: "POST",
 				query: query,
-				target: this._getTarget()
+				target: this._getTarget(),
+				action: '_search'
 			};
 
 			if (this.requesterId) {

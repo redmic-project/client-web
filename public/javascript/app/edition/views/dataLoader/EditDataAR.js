@@ -69,8 +69,8 @@ define([
 			this._onEvt('SAVED', this._editionSuccessDfd.resolve);
 
 			this._emitEvt('SAVE', {
-				idInTarget: true,
-				target: this.target + '/' + this.pathVariableId.id,
+				target: this.target,
+				id: this.pathVariableId.id,
 				data: response.data
 			});
 		}

@@ -1,18 +1,20 @@
 define([
-	"app/components/steps/MainDataStep"
-	, "app/components/steps/MapSelectAreaStep"
+	"app/base/views/extensions/_AddAtlasCategory"
+	, "app/components/steps/MainDataStep"
+	//, "app/components/steps/MapSelectAreaStep"
 	, "app/components/steps/ProtocolsSetStep"
-	, "app/components/steps/ReorderLayerStep"
+	, "app/components/steps/SelectLayerStep"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	MainDataStep
-	, MapSelectAreaStep
+	_AddAtlasCategory
+	, MainDataStep
+	//, MapSelectAreaStep
 	, ProtocolsSetStep
-	, ReorderLayerStep
+	, SelectLayerStep
 	, Controller
 	, Layout
 	, redmicConfig
@@ -31,7 +33,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				target: redmicConfig.services.serviceOGC,
+				target: redmicConfig.services.atlasLayer,
+				editionTarget: redmicConfig.services.atlasLayerEdition,
 				propsToClean: ["id"]
 			};
 
@@ -46,30 +49,28 @@ define([
 					primary: this.i18n.editServiceOGC,
 					secondary: "{title}"
 				},
-				modelTarget: this.target,
+				modelTarget: this.editionTarget,
 				steps: [{
-					definition: MainDataStep,
+					definition: SelectLayerStep,
+					noEditable: true,
 					props: {
-						formTemplate: "maintenance/views/templates/forms/ServiceOGC",
-						label: this.i18n.info
+						propertyName: 'name'
 					}
 				},{
+					definition: declare([MainDataStep, _AddAtlasCategory]),
+					props: {
+						formTemplate: "maintenance/views/templates/forms/ServiceOGC",
+						editionTarget: redmicConfig.services.atlasCategoryEdition,
+						label: this.i18n.info
+					}
+				/*},{
 					definition: MapSelectAreaStep,
 					props: {
-						target: redmicConfig.services.serviceOGC,
+						target: this.target,
 						propertyName: "latLonBoundsImage",
 						skippable: true,
 						label: this.i18n.layerImage
-					}
-				},{
-					definition: ReorderLayerStep,
-					props: {
-						label: this.i18n.categorizeLayer,
-						propertyName: "parent",
-						browserConfig: {
-							draggableItemIds: [parseInt(this.pathVariableId, 10)]
-						}
-					}
+					}*/
 				},{
 					definition: ProtocolsSetStep,
 					props: {
@@ -77,20 +78,6 @@ define([
 					}
 				}]
 			}, this.editorConfig || {}]);
-		},
-
-		_setOwnCallbacksForEvents: function() {
-
-			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
-		},
-
-		_onMeOrAncestorShown: function(req) {
-
-			if (this.editor.checkChildChannel("_stepInstances.2")) {
-				this._publish(this.editor.getChildChannel("_stepInstances.2.browser", "UPDATE_DRAGGABLE_ITEMS"), {
-					items: [parseInt(this.pathVariableId, 10)]
-				});
-			}
 		}
 	});
 });

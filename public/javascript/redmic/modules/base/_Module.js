@@ -96,7 +96,6 @@ define([
 			CREDENTIALS: "credentials",
 			ANALYTICS: "analytics",
 			MODULE_STORE: "moduleStore",
-			QUERY_STORE: "queryStore",
 			TASK: "task",
 			NOTIFICATION: "notification",
 			SOCKET: "socket",
@@ -147,8 +146,6 @@ define([
 
 		//	storeChannel: String
 		//		Nombre del canal por donde se van a recibir los datos.
-		//	queryStoreChannel: String
-		//		Nombre del canal por donde se van a recibir las querys aplicadas
 		//	selectorChannel: String
 		//		Nombre del canal por donde se van a seleccionar los items.
 		//	managerChannel: String
@@ -192,7 +189,6 @@ define([
 				credentialsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.CREDENTIALS),
 				analyticsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ANALYTICS),
 				moduleStoreChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.MODULE_STORE),
-				queryStoreChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.QUERY_STORE),
 				taskChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.TASK),
 				socketChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.SOCKET),
 				metaTagsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.META_TAGS),

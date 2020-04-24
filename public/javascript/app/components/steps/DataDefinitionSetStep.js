@@ -106,7 +106,7 @@ define([
 
 			this._publish(this.form.getChannel("SET_PROPERTY_VALUE"), {
 				propertyName: "parameter",
-				value: res.body
+				value: res.body || res
 			});
 		}
 	});

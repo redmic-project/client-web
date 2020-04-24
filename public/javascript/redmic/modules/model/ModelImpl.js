@@ -1,13 +1,11 @@
 define([
 	"app/base/models/_Model"
-	, "app/base/models/_Persistent"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "./Model"
 ], function(
 	_Model
-	, _Persistent
 	, declare
 	, lang
 	, Deferred
@@ -27,7 +25,6 @@ define([
 				ownChannel: "model",
 				valuePropertyName: "value",
 				pathSeparator: "/",
-				persistent: false,
 
 				_lastValidationErrors: {}
 			};
@@ -37,13 +34,7 @@ define([
 
 		_initialize: function() {
 
-			var ext = [_Model];
-
-			if (this.persistent) {
-				ext.push(_Persistent);
-			}
-
-			this.modelInstance = new declare(ext)(this.props);
+			this.modelInstance = new _Model(this.props);
 
 			this.modelBuildDfd = new Deferred();
 		},
@@ -67,7 +58,6 @@ define([
 		_onValidationErrorsChanged: function(errors) {
 
 			this._lastValidationErrors = errors;
-			//console.log(errors, this.modelInstance);
 			this._emitEvt('VALIDATION_ERRORS_CHANGED', {
 				errors: errors,
 				isValid: this.modelInstance.get("isValid")
@@ -350,6 +340,48 @@ define([
 		_getModelUuid: function(req) {
 
 			return this.modelInstance.get('modelUuid');
+		},
+
+		_saveModel: function() {
+
+			if (!this.modelInstance.isValid) {
+				console.error('Tried to save invalid model \'%s\' with this schema:',
+					this.modelInstance.get('modelName'), this.modelInstance.get('schema'));
+
+				return;
+			}
+
+			if (!this.modelInstance.hasChanged) {
+				console.error('Tried to save unchanged model \'%s\' with this schema:',
+					this.modelInstance.get('modelName'), this.modelInstance.get('schema'));
+
+				return;
+			}
+
+			var id = this.modelInstance.getIdValue(),
+				data = this.modelInstance.serialize();
+
+			this._emitEvt('SAVE', {
+				target: this.target,
+				id: id,
+				data: data
+			});
+		},
+
+		_afterSaved: function(res, resWrapper) {
+
+			this._emitEvt('SAVE_MODEL', {
+				success: true,
+				data: res.data
+			});
+		},
+
+		_afterSaveError: function(error, status, resWrapper) {
+
+			this._emitEvt('SAVE_MODEL', {
+				success: false,
+				data: resWrapper.res.data
+			});
 		}
 	});
 });

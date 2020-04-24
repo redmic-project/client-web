@@ -4,29 +4,29 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/request"
 	, "dojo/text!./templates/ConfirmResetting.html"
+	, 'redmic/modules/base/_ListenQueryParams'
+	, 'redmic/modules/base/_Store'
 ], function(
 	alertify
 	, _ExternalUserBaseView
 	, redmicConfig
 	, declare
 	, lang
-	, request
 	, template
-){
+	, _ListenQueryParams
+	, _Store
+) {
 
-	return declare(_ExternalUserBaseView, {
+	return declare([_ExternalUserBaseView, _Store, _ListenQueryParams], {
 		//	summary:
-		//		Vista de confimación de resetting password
-		//
-		//	description:
-		//		Permite resetear la contraseña a partir de un enlace enviado al correo electrónico
-		//		asociado a la cuenta.
+		//		Vista que permite resetear la contraseña de un usuario, a partir de un enlace enviado al correo
+		//		electrónico asociado a dicha cuenta.
 
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: "confirmResetting",
 				templateProps:  {
 					templateString: template,
 					i18n: this.i18n,
@@ -34,7 +34,7 @@ define([
 					_onCloseResetting: lang.hitch(this, this._onCloseResetting),
 					_confirmValidator: lang.hitch(this, this._confirmValidator)
 				},
-				ownChannel: "confirmResetting"
+				target: redmicConfig.services.resettingSetPassword
 			};
 
 			lang.mixin(this, this.config, args);
@@ -44,7 +44,12 @@ define([
 
 			this.inherited(arguments);
 
-			var token = this.queryParameters ? this.queryParameters.token : null;
+			this._emitEvt('GET_QUERY_PARAMS');
+		},
+
+		_gotQueryParams: function(queryParams) {
+
+			var token = queryParams.token;
 
 			if (token) {
 				this.token = token;
@@ -75,27 +80,21 @@ define([
 					token: this.token
 				};
 
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
-			}
+			this._emitEvt('REQUEST', {
+				target: this.target,
+				method: 'POST',
+				query: data
+			});
+		},
 
-			envDfd.then(lang.hitch(this, function(data, envData) {
+		_dataAvailable: function(res, resWrapper) {
 
-				var target = redmicConfig.getServiceUrl(redmicConfig.services.resettingSetPassword, envData);
+			this._handleResponse(res.data);
+		},
 
-				request(target, {
-					handleAs: "json",
-					method: "POST",
-					data: JSON.stringify(data),
-					headers: {
-						"Content-Type": "application/json",
-						"Accept": "application/javascript, application/json"
-					}
-				}).then(
-					lang.hitch(this, this._handleResponse),
-					lang.hitch(this, this._handleError));
-			}, data));
+		_errorAvailable: function(error, status, resWrapper) {
+
+			this._handleError(resWrapper.res.data);
 		},
 
 		_handleResponse: function(result) {
@@ -107,11 +106,7 @@ define([
 			//		callback private
 			//
 
-			if (result.success) {
-				alertify.alert(this.i18n.success, this.i18n.successResetting, this._goBack);
-			} else {
-				this._handleError(result.error);
-			}
+			alertify.alert(this.i18n.success, this.i18n.successResetting, this._goBack);
 		},
 
 		_handleError: function(error) {
@@ -135,10 +130,6 @@ define([
 			// TODO: cambiar cuando esten unificados los errores de la api
 			if (Array.isArray(error)) {
 				error = error[0];
-			}
-
-			if (error.response && error.response.data) {
-				error = error.response.data.error;
 			}
 
 			var msg = error.description;

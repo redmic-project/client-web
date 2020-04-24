@@ -9,9 +9,9 @@ define([], function() {
 		},
 		selector: {
 			cookiesNotice: 'span.cookies'
-			, homeButton: 'div.topbarLogo > a'
-			, userArea: 'div.userArea > div > :first-child'
-			, notificationArea: 'div.notification > div'
+			, homeButton: 'a.topbarLogo'
+			, userArea: 'div.userArea > :first-child'
+			, notificationArea: 'div.notification'
 			, saveButton: 'div.keypad div.right span.success'
 			, cancelButton: 'div.keypad div.right span.danger'
 			, resetButton: 'div.keypad div.left span.primary'

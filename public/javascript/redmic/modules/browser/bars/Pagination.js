@@ -356,8 +356,12 @@ define([
 			var data = response.data,
 				total = (data.total >= 0) ? data.total : response.total;
 
-			if ((total === undefined || total === null) && data.data) {
-				total = data.data.total;
+			if ((total === undefined || total === null)) {
+				if (data.data) {
+					total = data.data.total;
+				} else {
+					total = data.length;
+				}
 			}
 
 			this._updateDataByMe = false;

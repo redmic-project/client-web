@@ -26,7 +26,8 @@ define([
 	, FormContainerImpl
 	, _ListenModelHasChanged
 	, ModelImpl
-){
+) {
+
 	return declare(_ExternalUserBaseView, {
 		// summary:
 		// 	Vista de feedback
@@ -63,11 +64,8 @@ define([
 
 			this.modelInstance = new ModelImpl({
 				parentChannel: this.getChannel(),
-				persistent: true,
 				schema: feedbackModelSchema,
-				props: {
-					target: this.target
-				}
+				target: this.target
 			});
 		},
 
@@ -191,16 +189,23 @@ define([
 		_wasValid: function(res) {
 
 			if (this._submitActive && this.reCaptchaVerify && res.isValid) {
-				this._emitEvt('LOADING');
-				this.modelInstance.modelInstance.save().then(
-					lang.hitch(this, this._handleResponse),
-					lang.hitch(this, this._handleError));
+				this._once(this.modelInstance.getChannel('SAVED'), lang.hitch(this, this._afterModelSave));
+				this._publish(this.modelInstance.getChannel('SAVE'), {});
 			}
 
 			this._submitActive = false;
 		},
 
-		_handleResponse: function(result){
+		_afterModelSave: function(res) {
+
+			if (res.success) {
+				this._handleResponse(res.data);
+			} else {
+				this._handleError(res.data);
+			}
+		},
+
+		_handleResponse: function(result) {
 			//	summary:
 			//		Función que maneja la respuesta,
 			//		manda a gestionar el error en caso de recibirlo.
@@ -209,20 +214,14 @@ define([
 			//		callback private
 			//
 
-			this._emitEvt('LOADED');
-
-			if (result.success) {
-				alertify.alert(
-					this.i18n.success,
-					this.i18n.sendFeedback,
-					lang.hitch(this, function() {
-						this._resetForm();
-						window.location.href = "/";
-					})
-				);
-			} else {
-				this._handleError(result.error);
-			}
+			alertify.alert(
+				this.i18n.success,
+				this.i18n.sendFeedback,
+				lang.hitch(this, function() {
+					this._resetForm();
+					window.location.href = "/";
+				})
+			);
 		},
 
 		_handleError: function(error) {
@@ -232,14 +231,7 @@ define([
 			//	tags:
 			//		callback private
 
-			this._emitEvt('LOADED');
-
 			this._resetForm();
-
-			// TODO: cambiar cuando esten unificados los errores de la api
-			if (error.response && error.response.data) {
-				error = error.response.data.error;
-			}
 
 			var msg = error.description;
 			this._emitEvt('TRACK', {

@@ -24,7 +24,8 @@ define([
 	, TrackingSecondaryList
 	, SpeciesDistributionPrimaryList
 	, SpeciesDistributionCitation
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Extensión para las vistas con mapa que desean hacer consultas sobre el mismo.

@@ -13,8 +13,6 @@ define([
 
 		_setConfigurations: function() {
 
-			this.target = redmicConfig.services.serviceOGC;
-
 			this.viewPathsWidgets = {
 				activities: "/catalog/{rank}-info/{id}"
 			};

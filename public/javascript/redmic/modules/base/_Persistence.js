@@ -1,45 +1,51 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "redmic/modules/store/Persistence"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
+	, './_PersistenceItfc'
 ], function(
 	declare
 	, lang
 	, aspect
-	, Persistence
-){
-	return declare(null, {
+	, _PersistenceItfc
+) {
+
+	return declare(_PersistenceItfc, {
 		//	summary:
-		//		Base común para todos los módulos con persistenicia de datos.
-		//	description:
-		//		Aporta la funcionalidad de pedir y obtener datos al módulo que extiende de él.
+		//		Permite a los módulos realizar persistencia de datos, comunicándose con RestManager.
 
 		persistenceEvents: {
-			SAVE: "save",
-			SAVED: "saved"
+			SAVE: 'save',
+			SAVED: 'saved',
+			REMOVE: 'remove',
+			REMOVED: 'removed'
 		},
 
-		persistenceActions: {},
+		persistenceActions: {
+			SAVE: 'save',
+			SAVED: 'saved',
+			REMOVE: 'remove',
+			REMOVED: 'removed'
+		},
 
 		constructor: function(args) {
 
 			this.config = {
-				idProperty: "id",
-				notificationSuccess: true
+				idProperty: 'id',
+				omitRefreshAfterSuccess: false
 			};
 
 			lang.mixin(this, this.config, args);
 
-			aspect.before(this, "_initialize", this._initializePersistence);
-			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixEventsAndActionsPersistence));
-			aspect.after(this, "_defineSubscriptions",
+			aspect.after(this, '_mixEventsAndActions', lang.hitch(this, this._mixPersistenceEventsAndActions));
+			aspect.after(this, '_defineSubscriptions',
 				lang.hitch(this, this._definePersistenceSubscriptions));
-			aspect.after(this, "_definePublications",
+
+			aspect.after(this, '_definePublications',
 				lang.hitch(this, this._definePersistencePublications));
 		},
 
-		_mixEventsAndActionsPersistence: function () {
+		_mixPersistenceEventsAndActions: function () {
 
 			lang.mixin(this.events, this.persistenceEvents);
 			lang.mixin(this.actions, this.persistenceActions);
@@ -50,8 +56,11 @@ define([
 		_definePersistenceSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel: this.persistence.getChannel("SAVED"),
-				callback: "_subSaved"
+				channel: this._buildChannel(this.storeChannel, this.actions.SAVED),
+				callback: '_subSaved'
+			},{
+				channel: this._buildChannel(this.storeChannel, this.actions.REMOVED),
+				callback: '_subRemoved'
 			});
 
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
@@ -61,58 +70,51 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'SAVE',
-				channel: this.persistence.getChannel("SAVE"),
-				callback: "_pubSave"
+				channel: this._buildChannel(this.storeChannel, this.actions.SAVE)
+			},{
+				event: 'REMOVE',
+				channel: this._buildChannel(this.storeChannel, this.actions.REMOVE)
 			});
 
 			this._deleteDuplicatedChannels(this.publicationsConfig);
 		},
 
-		_initializePersistence: function() {
+		_subSaved: function(resWrapper) {
 
-			this.persistence = new Persistence({
-				parentChannel: this.getChannel(),
-				notificationSuccess: this.notificationSuccess
-			});
-		},
+			var response = resWrapper.res,
+				status = response.status;
 
-		_pubSave: function(channel, obj) {
-
-			var target = this._getTarget(obj.target);
-
-			this._publish(channel, {
-				idInTarget: obj.idInTarget,
-				target: target,
-				item: obj.data || {},
-				idProperty: obj.idProperty || this.idPropertySave || this.idProperty
-			});
-		},
-
-		_getTarget: function(target) {
-
-			if (target) {
-				return target;
+			if (!this.omitRefreshAfterSuccess) {
+				this._tryToEmitEvt('REFRESH');
 			}
 
-			if (this.baseTarget) {
-				return this.baseTarget;
-			}
+			if (this._chkSuccessfulStatus(status)) {
+				var savedObj = this._getSavedObjToPublish(response) || response;
+				this._emitEvt('SAVED', savedObj);
 
-			if (this.target instanceof Array) {
-				return this.target[0];
+				this._afterSaved(response, resWrapper);
+			} else {
+				this._afterSaveError(response.error, status, resWrapper);
 			}
-
-			return this.target;
 		},
 
-		_subSaved: function(result) {
+		_subRemoved: function(resWrapper) {
 
-			this._emitEvt('REFRESH');
+			var response = resWrapper.res,
+				status = response.status;
 
-			var savedObj = this._getSavedObjToPublish ? this._getSavedObjToPublish(result) : result;
-			this._emitEvt('SAVED', savedObj);
+			if (!this.omitRefreshAfterSuccess) {
+				this._tryToEmitEvt('REFRESH');
+			}
 
-			this._afterSaved && this._afterSaved(result);
+			if (this._chkSuccessfulStatus(status)) {
+				var removedObj = this._getRemovedObjToPublish(response) || response;
+				this._emitEvt('REMOVED', removedObj);
+
+				this._afterRemoved(response, resWrapper);
+			} else {
+				this._afterRemoveError(response.error, status, resWrapper);
+			}
 		}
 	});
 });

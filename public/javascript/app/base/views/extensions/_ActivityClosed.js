@@ -36,11 +36,7 @@ define([
 
 			this.activityModelInstance = new ModelImpl({
 				parentChannel: this.getChannel(),
-				persistent: true,
-				target: redmicConfig.services.activity,
-				props: {
-					target: redmicConfig.services.activity
-				}
+				target: redmicConfig.services.activity
 			});
 		},
 
@@ -69,11 +65,7 @@ define([
 			this._once(this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
 				lang.hitch(this, function (response) {
 
-				if (!response.body) {
-					return;
-				}
-
-				var data = response.body.data;
+				var data = response.res.data;
 
 				this._activityData = data;
 
@@ -83,7 +75,9 @@ define([
 			}), {
 				predicate: function(response) {
 
-					return !!response.body.data.activityType;
+					var data = response.res.data;
+
+					return data && data.activityType;
 				}
 			}, this);
 
@@ -156,12 +150,20 @@ define([
 
 		_wasValidActivityModel: function(res) {
 
-			this.activityModelInstance.modelInstance.save().then(
-				lang.hitch(this, this._handleResponse),
-				lang.hitch(this, this._handleError));
+			this._once(this.activityModelInstance.getChannel('SAVED'), lang.hitch(this, this._afterModelSave));
+			this._publish(this.activityModelInstance.getChannel('SAVE'), {});
 		},
 
-		_handleResponse: function(result){
+		_afterModelSave: function(res) {
+
+			if (res.success) {
+				this._handleResponse(res.data);
+			} else {
+				this._handleError(res.data);
+			}
+		},
+
+		_handleResponse: function(result) {
 			//	summary:
 			//		Función que maneja la respuesta,
 			//		manda a gestionar el error en caso de recibirlo.
@@ -170,11 +172,7 @@ define([
 			//		callback private
 			//
 
-			if (!result.success) {
-				this._handleError(result.error);
-			} else if (result && result.body) {
-				this._setDataActivityClosed(result.body);
-			}
+			this._setDataActivityClosed(result && result.body);
 		},
 
 		_handleError: function(error) {
@@ -183,11 +181,6 @@ define([
 			//
 			//	tags:
 			//		callback private
-
-			// TODO: cambiar cuando esten unificados los errores de la api
-			if (error.response && error.response.data) {
-				error = error.response.data.error;
-			}
 
 			var msg = error.description;
 

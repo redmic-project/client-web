@@ -1060,10 +1060,10 @@ define([
 
 			this._emitEvt('LOADED');
 
-			var description = "Error";
+			var description = "Error on step " + stepId + '. ';
 
 			if (error && error.description) {
-				description = error.description;
+				description += error.description;
 			}
 
 			this._emitEvt('COMMUNICATION', {

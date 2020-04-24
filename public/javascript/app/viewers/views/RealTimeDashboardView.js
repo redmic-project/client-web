@@ -701,11 +701,13 @@ define([
 			});
 		},
 
-		_itemAvailable: function(res) {
+		_itemAvailable: function(res, resWrapper) {
 
-			if (res.target === this.timeSeriesStationsTarget) {
+			var target = resWrapper.target;
+
+			if (target === this.timeSeriesStationsTarget) {
 				this._receiveSiteData(res);
-			} else if (res.target === this.activityTarget) {
+			} else if (target === this.activityTarget) {
 				this._receiveActivityData(res);
 			}
 		},

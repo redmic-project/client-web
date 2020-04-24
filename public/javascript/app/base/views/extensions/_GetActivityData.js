@@ -57,9 +57,9 @@ define([
 			this._emitGetActivity();
 		},
 
-		_itemGetActivityDataAvailable: function(res) {
+		_itemGetActivityDataAvailable: function(res, resWrapper) {
 
-			var target = res.target,
+			var target = resWrapper.target,
 				data = res.data;
 
 			if (this.activityTarget === target) {

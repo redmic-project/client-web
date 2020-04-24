@@ -4,7 +4,8 @@ define([
 ], function(
 	declare
 	, lang
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Extensión para definir los predicados por defecto.
@@ -30,41 +31,25 @@ define([
 			return !this.actionsPaused[action];
 		},
 
-		_chkSuccessful: function(response) {
+		_chkTargetIsValid: function(obj) {
 
-			if (response && (response.success === undefined || response.success)) {
-				return true;
+			// TODO eliminar cuando el server no responda con envoltorio body
+			var data = obj.body || obj;
+
+			var targetIsValid = data && data.target;
+
+			if (!targetIsValid) {
+				console.error('Received publication with invalid target at module "%s":', this.getChannel(), data);
 			}
 
-			return false;
+			return targetIsValid;
 		},
 
-		_chkTargetIsMine: function(response) {
+		_chkTargetIsMine: function(res) {
 
-			if (!this._chkSuccessful(response)) {
-				return false;
-			}
-
-			var body = response.body;
-			if (body && body.target && !this._targetIsMine(body.target)) {
-				return false;
-			}
-
-			return true;
-		},
-
-		_chkErrorTargetIsMine: function(response) {
-
-			if (this._chkSuccessful(response)) {
-				return false;
-			}
-
-			var error = response.error;
-			if (error && error.target && !this._targetIsMine(error.target)) {
-				return false;
-			}
-
-			return true;
+			// TODO eliminar cuando el server no responda con envoltorio body
+			var response = res.body || res;
+			return this._chkTargetIsValid(res) && this._targetIsMine(response.target);
 		},
 
 		_targetIsMine: function(target) {
@@ -76,58 +61,25 @@ define([
 			}
 
 			if (this.target instanceof Array) {
-				return (this.target.indexOf(target) !== -1 || this.target.indexOf(cleanTarget) !== -1);
+				return this.target.indexOf(target) !== -1 || this.target.indexOf(cleanTarget) !== -1;
 			}
 
-			return (this.target === target || this.target === cleanTarget);
+			return this.target === target || this.target === cleanTarget;
 		},
 
-		_chkRequesterIsMe: function(response) {
+		_chkRequesterIsMe: function(res) {
 
-			if (!this._chkSuccessful(response)) {
-				return false;
-			}
+			// TODO eliminar cuando el server no responda con envoltorio body
+			var response = res.body || res;
+			var requesterId = response && response.requesterId;
 
-			var body = response.body;
-			if (body && body.requesterId && ((body.requesterId !== this.getOwnChannel()) &&
-				(this.associatedIds.indexOf(body.requesterId) < 0))) {
-				return false;
-			}
-
-			return true;
-		},
-
-		_chkErrorRequesterIsMe: function(response) {
-
-			if (this._chkSuccessful(response)) {
-				return false;
-			}
-
-			var error = response.error;
-			if (error && error.requesterId && ((error.requesterId !== this.getOwnChannel()) &&
-				(this.associatedIds.indexOf(error.requesterId) < 0))) {
-				return false;
-			}
-
-			return true;
+			return !requesterId || (requesterId === this.getOwnChannel() ||
+				this.associatedIds.indexOf(requesterId) !== -1);
 		},
 
 		_chkTargetAndRequester: function(response) {
 
-			if (this._chkTargetIsMine(response) && this._chkRequesterIsMe(response)) {
-				return true;
-			}
-
-			return false;
-		},
-
-		_chkErrorTargetAndRequester: function(response) {
-
-			if (this._chkErrorTargetIsMine(response) && this._chkErrorRequesterIsMe(response)) {
-				return true;
-			}
-
-			return false;
+			return this._chkTargetIsMine(response) && this._chkRequesterIsMe(response);
 		},
 
 		_chkPublicationIsForMe: function(res) {
@@ -168,6 +120,11 @@ define([
 				}));
 
 			return allowedActionsMapped.indexOf(triggeredAction) !== -1;
+		},
+
+		_chkSuccessfulStatus: function(status) {
+
+			return status >= 200 && status < 400;
 		}
 	});
 });

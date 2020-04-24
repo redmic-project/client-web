@@ -1,15 +1,16 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/base/_Itfc"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/base/_Itfc'
 ], function(
 	declare
 	, lang
 	, _Itfc
-){
+) {
+
 	return declare(_Itfc, {
 		//	summary:
-		//		Interfaz de Selector.
+		//		Interfaz de _Persistence.
 		//	description:
 		//		Define los métodos que debe poseer el módulo o la implementación.
 
@@ -17,10 +18,12 @@ define([
 		_getMethodsToImplement: function() {
 
 			return lang.mixin(this.inherited(arguments), {
-				"_emitSave": {},
-				"_groupSelected": {},
-				"_selectAll": {},
-				"_reverse": {}
+				'_getSavedObjToPublish': {},
+				'_afterSaved': {},
+				'_afterSaveError': {},
+				'_getRemovedObjToPublish': {},
+				'_afterRemoved': {},
+				'_afterRemoveError': {}
 			});
 		}
 	});

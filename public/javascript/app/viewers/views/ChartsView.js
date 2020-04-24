@@ -145,10 +145,7 @@ define([
 					bars: [{
 						instance: SelectionBox,
 						config: {
-							omitShowSelectedOnly: true,
-							itemsShow: {
-								clearSelection: true
-							}
+							omitShowSelectedOnly: true
 						}
 					}],
 					rowConfig: {

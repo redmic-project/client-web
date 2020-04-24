@@ -8,10 +8,8 @@ define([
 	, 'dojo/on'
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
-	, 'redmic/modules/base/Selector'
+	, 'redmic/modules/selection/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
-	, 'redmic/modules/store/RestManagerImpl'
-	, 'redmic/modules/store/QueryStore'
 	, 'redmic/modules/notification/Notification'
 	, 'redmic/modules/socket/_IngestData'
 	, 'redmic/modules/socket/_Report'
@@ -30,8 +28,6 @@ define([
 	, Credentials
 	, Selector
 	, MainSidebarImpl
-	, RestManagerImpl
-	, QueryStore
 	, Notification
 	, _IngestData
 	, _Report
@@ -179,14 +175,6 @@ define([
 			//	tags:
 			//		private
 
-			new QueryStore({
-				parentChannel: this.ownChannel
-			});
-
-			new RestManagerImpl({
-				parentChannel: this.ownChannel
-			});
-
 			new Selector({
 				parentChannel: this.ownChannel
 			});
@@ -303,10 +291,8 @@ define([
 			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
 			this._publish(this.topbar.getChannel('DESTROY'));
 			this._publish(this.sidebar.getChannel('DESTROY'));
-			this._publish(this._buildChannel(this.storeChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.managerChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.queryStoreChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.taskChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.socketChannel, this.actions.DESTROY));
 			this._publish(this._buildChannel(this.notificationChannel, this.actions.DESTROY));

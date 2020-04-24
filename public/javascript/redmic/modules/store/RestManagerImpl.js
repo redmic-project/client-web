@@ -1,230 +1,443 @@
 define([
-	'app/redmicConfig'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/io-query'
 	, 'dojo/request'
-	, 'dojo/Deferred'
+	, 'dojo/request/notify'
+	, 'dojo/request/registry'
+	, 'redmic/base/Credentials'
 	, './RestManager'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, lang
-	, ioQuery
 	, request
-	, Deferred
+	, notify
+	, registry
+	, Credentials
 	, RestManager
-){
+) {
+
 	return declare(RestManager, {
 		//	summary:
-		//		Implementación del módulo RestManager, que nos permite intercambiar datos con los diferentes servicios.
+		//		Implementación del módulo RestManager, que provee métodos de comunicación mediante dojo/request.
 		//	description:
-		//		Proporciona los métodos de consulta (get, query y post).
+		//		También maneja errores de permisos en peticiones y les añade cabeceras de autentificación.
+		//		Importante: el campo 'options' recibido en las peticiones desde otros módulos, sobreescribe directamente
+		//		las opciones que se usarán a su vez para realizar la petición HTTP.
+
+		//	_apiUrl: String
+		//		Prefijo de rutas hacia el servidor
+		//	_filteredUrls: Array
+		//		Define las URLs a las que no hay que añadirle caberas de autentificación
 
 		constructor: function(args) {
 
 			this.config = {
-				timeout: 45000,
-				type: 'ES',
-				defaultType: 'ES',
-				action: '_search',
-				headers: {},
 				idProperty: 'id',
-				ascendingPrefix: '%2B',
-				descendingPrefix: '-',
 				limitDefault: 100,
+				sortParamName: 'sort',
+				ascendingPrefix: '+',
+				descendingPrefix: '-',
+
+				headers: {
+					'Accept': 'application/javascript, application/json'
+				},
+				sync: false,
+				preventCache: false,
+				timeout: 45000,
 				handleAs: 'json',
-				accepts: 'application/javascript, application/json'
+
+				_apiUrl: 'api',
+				_filteredUrls: [
+					'token',
+					'reCaptcha',
+					'register',
+					'resettingRequest',
+					'resettingSetPassword',
+					'activateAccount'
+				]
 			};
 
 			lang.mixin(this, this.config, args);
+
+			this._prepareRequestHandlers();
 		},
 
-		get: function(target, id, options) {
-			//	summary:
-			//		Devuelve el item correspondiente al id en el servicio especificado por target
-			//	id: Integer
-			//		Identificador del objeto
-			//	options: Object?
-			//
-			//	returns: Object
-			//		El item traido del servicio
+		_prepareRequestHandlers: function() {
 
-			var builtTarget = target + id;
+			notify('error', lang.hitch(this, this._requestErrorHandler));
+			registry.register(lang.hitch(this, this._preRequestHandler), request);
 
-			var requestDfd = request(builtTarget, {
-				method: 'GET',
-				handleAs: this.handleAs,
-				headers: this._getHeaders('get', options || {}),
-				timeout: this.timeout
-			});
+			var envDfd = window.env;
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
 
-			return requestDfd.response;
-		},
-
-		query: function(target, query, options) {
-			//	summary:
-			//		Devuelve, desde el servicio especificado por target, los items que satisfacen la query establecida
-			//	query: Object
-			//		Query que especifica los datos requeridos
-			//	options: Object?
-			//
-			//	returns: Object
-
-			var queryString = this._getQuery(target, query, options) || '',
-				builtTarget = target + queryString;
-
-			var requestDfd = request(builtTarget, {
-				method: 'GET',
-				handleAs: this.handleAs,
-				headers: this._getHeaders('query', options),
-				timeout: this.timeout,
-				query : queryString ? {} : query
-			});
-
-			return requestDfd.response;
-		},
-
-		post: function(target, queryObject, queryString, options) {
-			//	summary:
-			//		Consultas vía post
-			//	queryObject: Object
-			//		Query object.
-			//	options: Object?
-			//
-			//	returns: Object
-
-			var requestDfd = request(target, {
-				method: 'POST',
-				data: JSON.stringify(queryObject),
-				handleAs: this.handleAs,
-				headers: this._getHeaders('post', options || {}),
-				timeout: this.timeout,
-				query: queryString
-			});
-
-			return requestDfd.response;
-		},
-
-		_handleResponse: function(res) {
-
-			var data = res.data,
-				status = res.status;
-
-			if (data && data.body) {
-				data = data.body;
+					this._apiUrl = envData.apiUrl;
+				}));
 			}
-
-			return {
-				data: data,
-				status: status
-			};
 		},
 
-		_handleError: function(err) {
+		_getTargetWithEndingSlash: function(target) {
 
-			console.error(err.message);
-
-			var errObj = err.response,
-				data = errObj.data,
-				status = errObj.status;
-
-			if (data && data.error) {
-				data = data.error;
-			}
-
-			return {
-				data: data,
-				status: status
-			};
-		},
-
-		_getBuiltTarget: function(req) {
-
-			var target = this._getSafeTarget(req.target),
-				type = req.type || this.type,
-				action = req.action || this.action;
-
-			if (type === this.defaultType) {
-				target += action;
+			if (target.indexOf('?') === -1 && target[target.length - 1] !== '/') {
+				target += '/';
 			}
 
 			return target;
 		},
 
-		_getSafeTarget: function(target) {
+		_launchRequest: function(url, options) {
 
-			var resolvedTarget = redmicConfig.getServiceUrl(target, this._evt);
-
-			if (resolvedTarget.indexOf('?') === -1) {
-				return resolvedTarget + '/';
-			}
-
-			return resolvedTarget;
+			return request(url, options).response;
 		},
 
-		_getHeaders: function(type, options) {
+		_getRequest: function(target, req) {
 
-			if (type === 'query') {
-				var headers = lang.mixin({ Accept: this.accepts }, this.headers, options.headers);
+			var url = this._getGetRequestTarget(target, req),
+				options = this._getGetRequestOptions(req);
 
-				if (options.start >= 0 || options.count >= 0) {
-					//set X-Range for Opera since it blocks "Range" header
-					headers.Range = headers['X-Range'] = 'items=' + (options.start || '0') + '-' +
-						(('count' in options && options.count != Infinity) ?
-							(options.count + (options.start || 0) - 1) :
-							this.limitDefault);  // cambiar this.limitDefault por ''
-				}
-				return headers;
+			return this._launchRequest(url, options);
+		},
 
-			} else if (type === 'get') {
-				return lang.mixin({Accept: this.accepts}, this.headers, options.headers || options);
+		_getGetRequestTarget: function(target, req) {
 
-			} else if (type === 'post') {
-				return lang.mixin({
-					'Content-Type': 'application/json',
-					'Accept': this.accepts,
-					'If-Match': options.overwrite === true ? '*' : null,
-					'If-None-Match': options.overwrite === false ? '*' : null
-				}, this.headers, options.headers);
+			var targetWithSlash = this._getTargetWithEndingSlash(target),
+				id = req.id;
+
+			if (typeof id === 'string' || typeof id === 'number') {
+				return targetWithSlash + id;
+			}
+
+			return targetWithSlash;
+		},
+
+		_getGetRequestOptions: function(req) {
+
+			var headers = lang.mixin({}, this.headers, req.headers || {}),
+				query = lang.mixin({}, req.query || {}),
+				options = req.options || {};
+
+			return lang.mixin({
+				method: 'GET',
+				headers: headers,
+				query: query,
+				sync: this.sync,
+				preventCache: this.preventCache,
+				timeout: this.timeout,
+				handleAs: this.handleAs
+			}, options);
+		},
+
+		_requestRequest: function(target, req) {
+
+			var url = this._getRequestRequestTarget(target, req),
+				options = this._getRequestRequestOptions(req);
+
+			return this._launchRequest(url, options);
+		},
+
+		_getRequestRequestTarget: function(target, req) {
+
+			var targetWithSlash = this._getTargetWithEndingSlash(target),
+				action = req.action || '';
+
+			return targetWithSlash + action;
+		},
+
+		_getRequestRequestOptions: function(req) {
+
+			var requestHeaders = this._getRequestRequestHeaders(req),
+				headers = lang.mixin({}, this.headers, requestHeaders, req.headers || {}),
+				requestQuery = this._getRequestRequestQuery(req),
+				query = lang.mixin({}, requestQuery, req.query || {}),
+				reqOptions = req.options || {},
+				method = req.method || 'GET';
+
+			var options = {
+				method: method,
+				headers: headers,
+				sync: this.sync,
+				preventCache: this.preventCache,
+				timeout: this.timeout,
+				handleAs: this.handleAs
+			};
+
+			if (method === 'POST') {
+				options.data = JSON.stringify(query);
+			} else {
+				options.query = query;
+			}
+
+			return lang.mixin(options, reqOptions);
+		},
+
+		_getRequestRequestHeaders: function(req) {
+			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
+			// reciban directamente las cabeceras listas para usar.
+
+			var method = req.method,
+				headers = {};
+
+			if (method === 'POST') {
+				headers['Content-Type'] = 'application/json';
+			} else {
+				this._setRangeHeaders(headers, req);
+			}
+
+			return headers;
+		},
+
+		_setRangeHeaders: function(headers, req) {
+
+			var start = req.start,
+				count = req.count;
+
+			if (start >= 0 || count >= 0) {
+				start = start || 0;
+
+				// cambiar this.limitDefault por ''
+				var end = count !== undefined ? count + start - 1 : this.limitDefault,
+					rangeHeader = 'items=' + start + '-' + end;
+
+				headers.Range = headers['X-Range'] = rangeHeader;
 			}
 		},
 
-		_getQuery: function(target, query, options) {
+		_getRequestRequestQuery: function(req) {
+			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
+			// reciban directamente los parámetros de consulta listos para usar.
 
-			var hasQuestionMark = target.indexOf('?') > -1;
+			var sort = req.sort,
+				query = {};
 
-			if (query && typeof query == 'object') {
-				query = ioQuery.objectToQuery(query);
-				query = query ? (hasQuestionMark ? '&' : '?') + query: '';
-			}
+			if (sort) {
+				var sortValue = '(';
 
-			if (options && options.sort) {
-				if (!query) {
-					query = '';
-				}
+				for (var i = 0; i < sort.length; i++) {
+					var sortItem = sort[i],
+						attributeName = sortItem.attribute,
+						descendingDirection = sortItem.descending || false,
+						directionPrefix = descendingDirection ? this.descendingPrefix : this.ascendingPrefix;
 
-				var sortParam = this.sortParam;
-
-				query += (query || hasQuestionMark ? '&' : '?') + (sortParam ? sortParam + '=' : 'sort=(');
-
-				for (var i = 0; i < options.sort.length; i++) {
-					var sort = options.sort[i];
-
-					if (sort.property) {
-						sort.attribute = sort.property;
+					if (i > 0) {
+						sortValue += ',';
 					}
-
-					query += (i > 0 ? ',' : '') + (sort.descending ? this.descendingPrefix :
-						this.ascendingPrefix) + encodeURIComponent(sort.attribute || sort.property);
+					sortValue += encodeURIComponent(directionPrefix) + encodeURIComponent(attributeName);
 				}
 
-				if (!sortParam) {
-					query += ')';
-				}
+				sortValue += ')';
+
+				query[this.sortParamName] = sortValue;
 			}
 
 			return query;
+		},
+
+		_saveRequest: function(target, req) {
+
+			var url = this._getSaveRequestTarget(target, req),
+				options = this._getSaveRequestOptions(req);
+
+			return this._launchRequest(url, options);
+		},
+
+		_getSaveRequestTarget: function(target, req) {
+
+			var id = this._getItemIdFromSaveRequest(req),
+				targetWithSlash = this._getTargetWithEndingSlash(target);
+
+			if (!id) {
+				return targetWithSlash;
+			}
+
+			return targetWithSlash + id;
+		},
+
+		_getItemIdFromSaveRequest: function(req) {
+
+			var data = req.data,
+				idProperty = req.idProperty || this.idProperty,
+				idInReq = req[idProperty],
+				idInReqData = data[idProperty];
+
+			return idInReq || idInReqData;
+		},
+
+		_getSaveRequestOptions: function(req) {
+
+			var method = this._getSaveRequestMethod(req),
+				saveHeaders = this._getSaveRequestHeaders(req),
+				headers = lang.mixin({}, this.headers, saveHeaders, req.headers || {}),
+				data = JSON.stringify(req.data),
+				options = req.options || {};
+
+			return lang.mixin({
+				method: method,
+				headers: headers,
+				data: data,
+				sync: this.sync,
+				preventCache: this.preventCache,
+				timeout: this.timeout,
+				handleAs: this.handleAs
+			}, options);
+		},
+
+		_getSaveRequestMethod: function(req) {
+			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
+			// reciba directamente el método de consulta listo para usar.
+
+			var id = this._getItemIdFromSaveRequest(req);
+
+			return id ? 'PUT' : 'POST';
+		},
+
+		_getSaveRequestHeaders: function(req) {
+			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
+			// reciban directamente las cabeceras listas para usar.
+
+			var headers = {
+				'Content-Type': 'application/json'
+			};
+
+			return headers;
+		},
+
+		_removeRequest: function(target, req) {
+
+			var url = this._getRemoveRequestTarget(target, req),
+				options = this._getRemoveRequestOptions(req);
+
+			return this._launchRequest(url, options);
+		},
+
+		_getRemoveRequestTarget: function(target, req) {
+
+			var targetWithSlash = this._getTargetWithEndingSlash(target),
+				id = req.id;
+
+			return targetWithSlash + id;
+		},
+
+		_getRemoveRequestOptions: function(req) {
+
+			var headers = lang.mixin({}, this.headers, req.headers || {}),
+				options = req.options || {};
+
+			return lang.mixin({
+				method: 'DELETE',
+				headers: headers,
+				sync: this.sync,
+				preventCache: this.preventCache,
+				timeout: this.timeout,
+				handleAs: this.handleAs
+			}, options);
+		},
+
+		_parseResponse: function(res) {
+
+			// TODO usar res.data directamente cuando no se envuelva la respuesta con body
+			var data = res.data;
+			if (data && data.body) {
+				data = data.body;
+			}
+
+			return {
+				status: res.status,
+				data: data,
+				text: res.text,
+				url: res.url,
+				getHeader: res.getHeader,
+				options: res.options
+			};
+		},
+
+		_parseError: function(res) {
+
+			var response = res.response;
+
+			// TODO usar response.data directamente cuando no se envuelva la respuesta con error
+			var data = response.data;
+			if (data && data.error) {
+				data = data.error;
+			}
+
+			return {
+				status: response.status,
+				data: data,
+				text: response.text,
+				url: response.url,
+				getHeader: response.getHeader,
+				options: response.options,
+				error: res.message
+			};
+		},
+
+		_requestErrorHandler: function(err) {
+			//	summary:
+			//		Se ejecuta cuando un request produce un error y permite manejarlo
+			//	tags:
+			//		private
+			//	err:
+			//		respuesta con el error del request
+
+			var res = err.response,
+				status = res.status;
+
+			this._emitEvt('ABORT_ALL_LOADING');
+
+			if (status === 401) {
+				this._onRequestPermissionError(res);
+			} else if (status === 502) {
+				this._onRequestReachabilityError(res);
+			}
+		},
+
+		_onRequestPermissionError: function(res) {
+
+			// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
+			// privilegios insuficientes)
+			Credentials.set('accessToken', null);
+		},
+
+		_onRequestReachabilityError: function(res) {
+
+			// TODO notificar al usuario que hubo un error de conexión y ofrecerle recargar (para que pueda actuar
+			// sobre la página actual antes de recargar)
+		},
+
+		_preRequestHandler: function(url, options) {
+			//	summary:
+			//		Se ejecuta antes de hacer un request y nos permite añadir cabeceras
+			//	tags:
+			//		private
+			//	url:
+			//		url del servicio
+			//	options:
+			//		opciones del request (headers...)
+
+			var urlSplitted = url.split('/'),
+				lastUrlItem = urlSplitted.pop();
+
+			if (!lastUrlItem.length) {
+				lastUrlItem = urlSplitted.pop();
+			}
+
+			var lastUrlItemWithoutParams = lastUrlItem.split('?')[0],
+				isFilteredUrlItem = this._filteredUrls.indexOf(lastUrlItemWithoutParams) !== -1,
+				isUrlToServer = url.indexOf(this._apiUrl) !== -1,
+				urlNeedsAuth = isUrlToServer && !isFilteredUrlItem;
+
+			if (urlNeedsAuth) {
+				if (!options.headers) {
+					options.headers = {};
+				}
+
+				var accessToken = Credentials.get('accessToken');
+				if (accessToken) {
+					options.headers.Authorization = 'Bearer ' + accessToken;
+				}
+			}
+
+			return !!options.useXHR;
 		}
 	});
 });

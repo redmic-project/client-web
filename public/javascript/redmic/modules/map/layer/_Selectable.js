@@ -10,7 +10,8 @@ define([
 	, aspect
 	, _Selection
 	, _SelectableItfc
-){
+) {
+
 	return declare([_Selection, _SelectableItfc], {
 		//	summary:
 		//		Extensión de MapLayer para que sea capaz de seleccionar marcadores.
@@ -307,20 +308,6 @@ define([
 
 			delete this._selection[itemId];
 			this._deselectMarker(itemId);
-		},
-
-		_getItemToSelect: function(itemId) {
-
-			return {
-				items: itemId
-			};
-		},
-
-		_getItemToDeselect: function(itemId) {
-
-			return {
-				items: itemId
-			};
 		},
 
 		_clearSelection: function() {

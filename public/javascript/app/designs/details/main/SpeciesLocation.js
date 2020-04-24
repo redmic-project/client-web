@@ -76,6 +76,7 @@ define([
 				map: {
 					width: 6,
 					height: 6,
+					showInitially: true,
 					type: declare([LeafletImpl, Map, _PlaceNamesButton]),
 					props: {
 						title: this.i18n.map,
@@ -160,8 +161,9 @@ define([
 			}
 
 			var dfd = new Deferred(),
-				parseData = function(response) {
-					var feature = response.body.data;
+				parseData = function(resWrapper) {
+
+					var feature = resWrapper.res.data;
 
 					if (data.category === 0) {
 						obj.feature = feature;
@@ -184,9 +186,9 @@ define([
 
 					dfd.resolve(templatePopup(obj));
 				},
-				parseDataActivity = function(response) {
+				parseDataActivity = function(resWrapper) {
 
-					var dataActivity = response.body.data;
+					var dataActivity = resWrapper.res.data;
 
 					obj.feature.properties.activity = dataActivity;
 

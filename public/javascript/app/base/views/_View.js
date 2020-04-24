@@ -67,10 +67,11 @@ define([
 
 		_afterShowView: function(request) {
 
-			this._putMetaTags();
+			var callback = this._putMetaTags || this._putDefaultMetaTags;
+			lang.hitch(this, callback)();
 		},
 
-		_putMetaTags: function() {
+		_putDefaultMetaTags: function() {
 			//	summary:
 			//		Manda a publicar la información necesaria para que se generen las meta-tags
 			//		de la vista actual. Debe ejecutarse después del show de la vista, ya que este

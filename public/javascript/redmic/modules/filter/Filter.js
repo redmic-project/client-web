@@ -235,10 +235,7 @@ define([
 					callback: this._subSerialized
 				});
 
-				// TODO: Añadir comprobación en la suscripción no en la publicación
-				if (query.aggs) {
-					this._publish(this.getChannel('ADDED_TO_QUERY'));
-				}
+				this._publish(this.getChannel('ADDED_TO_QUERY'), query);
 			} else {
 				if (!this._pendingAddToQuery) {
 					this._pendingAddToQuery = {};

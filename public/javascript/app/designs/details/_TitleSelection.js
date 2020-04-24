@@ -18,7 +18,7 @@ define([
 
 		constructor: function(args) {
 
-			aspect.after(this, "_dataInTitle", this._groupSelected);
+			aspect.after(this, "_addDataInTitle", this._groupSelected);
 			aspect.after(this, "_createTitle", this._createTitleSelection);
 		},
 

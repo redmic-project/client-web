@@ -204,7 +204,6 @@ define([
 				target: this.elasticTarget,
 				highlightField: ['scientificName', 'commonName', 'peculiarity.popularNames',
 					"scientificName.suggest", "commonName.suggest", "peculiarity.popularNames.suggest"],
-				suggestFields: ["scientificName", "aphia", "commonName", "peculiarity.popularNames"],
 				searchFields: ["scientificName", "aphia", "scientificName.suggest", "commonName",
 					"commonName.suggest", "peculiarity.popularNames.suggest"],
 				itemLabel: null

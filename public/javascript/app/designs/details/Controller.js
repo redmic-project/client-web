@@ -69,7 +69,7 @@ define([
 
 			aspect.after(this, "_itemAvailable", lang.hitch(this, function(item, args) {
 
-				if (this.target instanceof Array && this.target[0] !== args[0].target) {
+				if (this.target instanceof Array && this.target[0] !== args[1].target) {
 					return;
 				}
 
@@ -233,10 +233,14 @@ define([
 
 			var rows = config.height || 1,
 				cols = config.width || 1,
-				nodeParams = "[" + this._rowsParameterName + "=" + rows + "][" + this._colsParameterName + "=" + cols +
-					"]",
-				node = put("div." + this.hiddenClass + nodeParams);
+				showInitially = config.showInitially || false,
+				nodeParams = '[' + this._rowsParameterName + '=' + rows + '][' + this._colsParameterName + '=' + cols +
+					']',
+				node = put('div' + nodeParams);
 
+			if (!showInitially) {
+				put(node, '.' + this.hiddenClass);
+			}
 			this._nodes[key] = node;
 
 			put(this.centerNode, node);

@@ -294,33 +294,6 @@ define([
 			this._atlasContainer = put('div.atlasContainer');
 
 			this._showBrowser(this.catalogView, this._atlasContainer, null, this.hideBrowserAnimationClass);
-
-			/*this.atlasNode = new ContentPane({
-				region: "center",
-				'class': 'noScrolledContainer'
-			});
-
-			this.container = new BorderContainer({
-				width: "100%"
-			}).placeAt(this.atlasNode);
-
-			this.themesBrowserNode = new ContentPane({
-				region: "center",
-				'class': 'noScrolledContainer marginedSizeContainer'
-			});*/
-
-			/*this.container.addChild(this.themesBrowserNode);
-
-			this._showBrowser(this.themesBrowser, this.themesBrowserNode.domNode,
-				null, this.hideBrowserAnimationClass);*/
-
-			/*this.catalogViewNode = new ContentPane({
-				region: "center",
-				'class': 'noScrolledContainer marginedSizeContainer'
-			});
-
-			this._showBrowser(this.catalogView, this.catalogViewNode.domNode, null, this.hideBrowserAnimationClass);
-			this.container.addChild(this.catalogViewNode);*/
 		},
 
 		_getNodeToShow: function() {

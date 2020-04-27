@@ -186,6 +186,7 @@ define([
 		_requestChartsData: function() {
 
 			this._emitEvt('REQUEST', {
+				action: '_search',
 				target: this.target,
 				method: 'POST',
 				query: this._queryObj

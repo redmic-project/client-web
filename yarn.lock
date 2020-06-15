@@ -1629,7 +1629,7 @@ diff@~3.5.0:
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
   integrity sha512-A46qtFgd+g7pDZinpnwiRJtxbC1hpgf0uzP3iG89scHk0AUC7A1TGxf5OiiOUv/JMZR8GOt8hL900hV0bOy5xA==
 
-dijit@1.13.0, dijit@^1.13.0:
+dijit@1.13.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/dijit/-/dijit-1.13.0.tgz#42eceed26d5785d06323aa459306017684e74907"
   integrity sha512-trzi45atc86S37/AtgcUC4akByxpqeKfoOftXlgrTSoM136tjcgLbWUYGjFkP3hk2APTDrYOCSa8xTjhp3YPpw==
@@ -1642,6 +1642,13 @@ dijit@1.8:
   integrity sha1-1cZRsNCJTJMX0LcYLjCbKr4BkAM=
   dependencies:
     dojo "1.8.14"
+
+dijit@^1.13.8:
+  version "1.13.8"
+  resolved "https://registry.yarnpkg.com/dijit/-/dijit-1.13.8.tgz#a10105e5be2cafaf2376e45315380660fb5f47d7"
+  integrity sha512-XpKcrK76kEVnZxXzdBjqay/0vro7mSqW9bTA8idpfeyz2DDgtYtGM/BLnmfBytKqYu33Pd5UwPMjurRElyQ3kQ==
+  dependencies:
+    dojo "1.13.8"
 
 doctypes@^1.1.0:
   version "1.1.0"
@@ -1660,10 +1667,15 @@ dojo-util@^1.13.0:
   resolved "https://registry.yarnpkg.com/dojo-util/-/dojo-util-1.13.0.tgz#58e74023d4848e1eedeeaac485337fcaffaed61e"
   integrity sha512-c5Vsd1T8bydfWSyLcgQK+l7k/Ln47B56P5xwxgi9htUIMckK2Ti9F8tAZjBhKhKvtvm77H4KqiuFTT6FXAnRKA==
 
-dojo@1.13.0, dojo@^1.13.0, dojo@^1.9.0:
+dojo@1.13.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/dojo/-/dojo-1.13.0.tgz#62a7c53628f4f7acfa791a96924c67f39cd5861b"
   integrity sha512-mGoGvsXAbPkUrBnxCoO7m6CFH8jvWq7rAL7fP7jrhJEOyswA/bZwWdXwEH0ovs68t8S0+xOpV/3V7addYbaiAA==
+
+dojo@1.13.8, dojo@^1.13.0, dojo@^1.9.0:
+  version "1.13.8"
+  resolved "https://registry.yarnpkg.com/dojo/-/dojo-1.13.8.tgz#5f6d150ac028b23c2b4001fa79399b6943011ea0"
+  integrity sha512-LYFynZD4mKGJWeO5iDRWlHoo05OSw2TryvWI4pFVLeI6AOzTxD0Y1XtuGN4M/am1u2Y9J9UKrfsgFFs16YS93g==
 
 dojo@1.8, dojo@1.8.14:
   version "1.8.14"

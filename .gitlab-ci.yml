@@ -117,14 +117,6 @@ prepare-built-version:
   environment:
     url: https://${PUBLIC_HOSTNAME}
 
-.deploy-development:
-  variables:
-    DD_PRODUCTION: 0
-
-.deploy-production:
-  variables:
-    DD_PRODUCTION: 1
-
 run-functional-tests:
   extends: .web-build
   stage: test-deploy

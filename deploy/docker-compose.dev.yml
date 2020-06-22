@@ -1,1 +1,6 @@
 version: '3.5'
+
+services:
+  web:
+    environment:
+      PRODUCTION: 0

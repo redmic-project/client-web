@@ -80,6 +80,9 @@ run-unit-tests:
     - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
     - echo "Coverage - ${coverage}%"
     - rm test.out
+  cache:
+    paths:
+      - node_modules/
   rules: *only-non-master-branches-job-rules
 
 run-modules-functional-tests:
@@ -88,6 +91,9 @@ run-modules-functional-tests:
   script:
     - npm start &
     - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
+  cache:
+    paths:
+      - node_modules/
   rules: *only-non-master-branches-job-rules
 
 prepare-built-version:

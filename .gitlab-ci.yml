@@ -28,29 +28,19 @@ variables:
 .web-build:
   image: ${WEB_BUILD_IMAGE_NAME}:${WEB_BUILD_IMAGE_TAG}
   variables:
+    GIT_SUBMODULE_STRATEGY: normal
     WEB_BUILD_IMAGE_NAME: registry.gitlab.com/redmic-project/docker/web-build
     WEB_BUILD_IMAGE_TAG: latest
   before_script:
     - type yarn grunt java
     - yarn install
     - grunt preBuild
-
-.build-job:
-  cache: &build-job-cache
-    key: build-job
+  cache:
     paths:
       - node_modules/
       - public/javascript/redmic-widgets/node_modules/
       - public/javascript/templates/node_modules/
       - public/stylesheets/node_modules/
-    policy: pull-push
-
-.test-job:
-  cache: &test-job-cache
-    key: test-job
-    paths:
-      - node_modules/
-    policy: pull
 
 .only-non-master-branches-job:
   rules: &only-non-master-branches-job-rules
@@ -64,10 +54,7 @@ variables:
 prepare-unbuilt-version:
   extends: .web-build
   stage: pre-build
-  variables:
-    GIT_SUBMODULE_STRATEGY: normal
   script: ':'
-  cache: *build-job-cache
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
     expire_in: 1 week
@@ -89,7 +76,8 @@ run-unit-tests:
     - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
     - echo "Coverage - ${coverage}%"
     - rm test.out
-  cache: *test-job-cache
+  cache:
+    policy: pull
   rules: *only-non-master-branches-job-rules
 
 run-modules-functional-tests:
@@ -98,18 +86,16 @@ run-modules-functional-tests:
   script:
     - npm start &
     - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
-  cache: *test-job-cache
+  cache:
+    policy: pull
   rules: *only-non-master-branches-job-rules
 
 prepare-built-version:
   extends: .web-build
   stage: build
-  variables:
-    GIT_SUBMODULE_STRATEGY: normal
   script:
     - grunt
   dependencies: []
-  cache: *build-job-cache
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
     expire_in: 1 month
@@ -136,8 +122,9 @@ run-functional-tests:
     - >
       grunt test-functional-local --serverUrl="https://${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
       --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups="${SUITES_GROUPS}" --headless
-  cache: *test-job-cache
   dependencies: []
+  cache:
+    policy: pull
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
     expire_in: 1 month

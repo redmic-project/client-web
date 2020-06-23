@@ -34,12 +34,22 @@ variables:
     - type yarn grunt java
     - yarn install
     - grunt preBuild
-  cache:
+
+.build-job:
+  cache: &build-job-cache
+    key: build-job
     paths:
       - node_modules/
       - public/javascript/redmic-widgets/node_modules/
       - public/javascript/templates/node_modules/
       - public/stylesheets/node_modules/
+    policy: pull-push
+
+.test-job:
+  cache: &test-job-cache
+    key: test-job
+    paths:
+      - node_modules/
     policy: pull
 
 .only-non-master-branches-job:
@@ -57,8 +67,7 @@ prepare-unbuilt-version:
   variables:
     GIT_SUBMODULE_STRATEGY: normal
   script: ':'
-  cache:
-    policy: pull-push
+  cache: *build-job-cache
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
     expire_in: 1 week
@@ -80,9 +89,7 @@ run-unit-tests:
     - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
     - echo "Coverage - ${coverage}%"
     - rm test.out
-  cache:
-    paths:
-      - node_modules/
+  cache: *test-job-cache
   rules: *only-non-master-branches-job-rules
 
 run-modules-functional-tests:
@@ -91,9 +98,7 @@ run-modules-functional-tests:
   script:
     - npm start &
     - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
-  cache:
-    paths:
-      - node_modules/
+  cache: *test-job-cache
   rules: *only-non-master-branches-job-rules
 
 prepare-built-version:
@@ -104,6 +109,7 @@ prepare-built-version:
   script:
     - grunt
   dependencies: []
+  cache: *build-job-cache
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}
     expire_in: 1 month
@@ -130,9 +136,7 @@ run-functional-tests:
     - >
       grunt test-functional-local --serverUrl="https://${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
       --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups="${SUITES_GROUPS}" --headless
-  cache:
-    paths:
-      - node_modules/
+  cache: *test-job-cache
   dependencies: []
   artifacts:
     name: ${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}

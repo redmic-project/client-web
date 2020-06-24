@@ -2,6 +2,8 @@ version: '3.5'
 
 services:
   web:
+    environment:
+      PRODUCTION: 1
     deploy:
       placement:
         constraints:

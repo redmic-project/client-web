@@ -110,7 +110,7 @@ define([
 
 			// Sólo escuchamos las pulsaciones del enter
 			if (evt.keyCode === 13) {
-				self._onSignIn();
+				lang.hitch(this, self._onSignIn)(self);
 			}
 		},
 

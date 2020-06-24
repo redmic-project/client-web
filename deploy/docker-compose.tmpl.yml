@@ -2,24 +2,24 @@ version: '3.5'
 
 services:
   web:
-    image: ${IMAGE_NAME}:${IMAGE_TAG:-latest}
+    image: ${IMAGE_NAME:-registry.gitlab.com/redmic-project/client/web}:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: ${DOCKERFILE:-Dockerfile}
+      args:
+        NODE_IMAGE_TAG:
+        PORT:
+        DIRPATH:
     environment:
       OAUTH_URL:
       OAUTH_CLIENT_SECRET:
       API_URL:
-      PRODUCTION:
     networks:
-      - traefik-net
-      - metric-net
-    healthcheck:
-      test: wget --spider -q http://localhost:${PORT}
-      interval: 30s
-      timeout: 30s
-      retries: 3
-      start_period: 1m
+      traefik-net:
+      metric-net:
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: ${REPLICAS:-1}
       labels:
         traefik.default.frontend.rule: Host:${PUBLIC_HOSTNAME}
         traefik.redirect.frontend.rule: HostRegexp:{subdomain:www|es}.${PUBLIC_HOSTNAME}
@@ -28,28 +28,30 @@ services:
         traefik.redirect.frontend.redirect.permanent: 'true'
         traefik.en.frontend.rule: Host:en.${PUBLIC_HOSTNAME}
         traefik.en.frontend.headers.customRequestHeaders: content-language:en
-        traefik.frontend.errors.5xx.status: 500-599
-        traefik.frontend.errors.5xx.backend: static-pages-static-pages-static-pages
-        traefik.frontend.errors.5xx.query: '/web-5xx/'
+        traefik.frontend.errors.5xx.status: ${TRAEFIK_ERROR_5XX_STATUS:-500-599}
+        traefik.frontend.errors.5xx.backend: ${TRAEFIK_ERROR_5XX_BACKEND:-static-pages-static-pages-static-pages}
+        traefik.frontend.errors.5xx.query: ${TRAEFIK_ERROR_5XX_QUERY:-/web-5xx/}
         traefik.backend: web
         traefik.port: '${PORT}'
       restart_policy:
-        delay: 10s
+        delay: ${RESTART_DELAY:-10s}
       update_config:
-        delay: 10s
+        delay: ${UPDATE_DELAY:-1m}
       resources:
         limits:
-          cpus: '1'
-          memory: 128M
+          cpus: '${RESOURCES_LIMITS_CPUS:-1}'
+          memory: ${RESOURCES_LIMITS_MEMORY:-128M}
         reservations:
-          cpus: '0.001'
-          memory: 64M
+          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.001}'
+          memory: ${RESOURCES_RESERVATIONS_MEMORY:-64M}
 
 networks:
   traefik-net:
     name: ${TRAEFIK_NET_NAME:-traefik-net}
+    driver: ${TRAEFIK_NET_DRIVER:-overlay}
     external: true
 
   metric-net:
     name: ${METRIC_NET_NAME:-metric-net}
+    driver: ${METRIC_NET_DRIVER:-overlay}
     external: true

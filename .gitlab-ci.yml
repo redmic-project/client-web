@@ -22,9 +22,6 @@ stages:
   - deploy
   - test-deploy
 
-variables:
-  PROJECT_PARENT_NAME: client
-
 .web-build:
   image: ${WEB_BUILD_IMAGE_NAME}:${WEB_BUILD_IMAGE_TAG}
   variables:
@@ -109,8 +106,7 @@ prepare-built-version:
 
 .deploy:
   variables:
-    STACK: ${PROJECT_PARENT_NAME}
-    SERVICES_TO_CHECK: ${PROJECT_PARENT_NAME}_${CI_PROJECT_NAME}
+    STACK: client
   environment:
     url: https://${PUBLIC_HOSTNAME}
 

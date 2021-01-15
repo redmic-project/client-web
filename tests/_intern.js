@@ -24,9 +24,9 @@ module.exports = function(args) {
 
 		environments: [{
 			browserName: 'chrome'
-		/*},{
-			browserName: 'firefox'
 		},{
+			browserName: 'firefox'
+		/*},{
 			browserName: 'internet explorer'*/
 		}],
 
@@ -34,14 +34,14 @@ module.exports = function(args) {
 		socketPort: socketPort,
 
 		tunnelOptions: {
-			version: '3.12.0',
+			version: '3.141.0',
 			port: tunnelPort,
 			drivers: [{
 				name: 'chrome',
-				version: '2.38'
+				version: '87.0.4280.88'
 			},{
 				name: 'firefox',
-				version: '0.19.1'
+				version: '0.29.0'
 			}]
 		},
 

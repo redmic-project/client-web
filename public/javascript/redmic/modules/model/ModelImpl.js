@@ -233,6 +233,58 @@ define([
 			dfd.resolve(propertyInstance);
 		},
 
+		_obtainPropertySchema: function(key) {
+
+			var keySplit = key.split(this.pathSeparator),
+				dfd = new Deferred(),
+				action = lang.hitch(this, function(propKeySplit, schemaDfd) {
+
+					this._findPropertySchema({
+						pathArray: propKeySplit,
+						dfd: schemaDfd
+					}, this.modelInstance);
+				}, keySplit, dfd);
+
+			this._doActionWhenBuilt(action);
+
+			return dfd;
+		},
+
+		_findPropertySchema: function(obj, propertyInstance) {
+
+			var pathArray = obj.pathArray,
+				dfd = obj.dfd,
+				schema = propertyInstance.get('schema');
+
+			for (var i = 0; i < pathArray.length; i++) {
+				var pathItem = pathArray[i],
+					schemaType = schema.type;
+
+				if (!pathItem.length) {
+					break;
+				}
+
+				if (schemaType === 'object' || (schemaType instanceof Array && schemaType.indexOf('object') !== -1)) {
+					schema = schema.properties;
+				}
+
+				if (pathItem === '{i}' && (schemaType === 'array' || (schemaType instanceof Array && schemaType.indexOf('array') !== -1))) {
+					schema = schema.items;
+				} else {
+					schema = schema[pathItem];
+				}
+
+				if (!schema) {
+					console.error("Tried to get schema of missing property '%s' at model '%s'", pathItem,
+						this.getChannel());
+
+					break;
+				}
+			}
+
+			dfd.resolve(schema);
+		},
+
 		_reset: function(req) {
 
 			var action = lang.hitch(this, function(req) {
@@ -324,6 +376,20 @@ define([
 					instance: instance,
 					propertyPath: instance && instance.get("modelPath"),
 					propertyName: key
+				});
+			}, key));
+		},
+
+		_getPropertySchema: function(req) {
+
+			var key = req.key || '',
+				dfd = this._obtainPropertySchema(key);
+
+			dfd.then(lang.hitch(this, function(propKey, schema) {
+
+				this._emitEvt('GOT_PROPERTY_SCHEMA', {
+					schema: schema,
+					propertyName: propKey
 				});
 			}, key));
 		},

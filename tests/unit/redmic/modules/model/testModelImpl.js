@@ -6,7 +6,7 @@ define([
 	declare
 	, Mediator
 	, ModelImpl
-){
+) {
 
 	var timeout, modelInstance, schema;
 
@@ -159,8 +159,33 @@ define([
 				Mediator.publish(modelInstance.getChannel('DESERIALIZE'), value);
 
 				Mediator.publish(modelInstance.getChannel('SERIALIZE'));
-			}
+			},
 
+			Should_ReturnOriginalSchema_When_GetPropertySchema: function() {
+
+				var dfd = this.async(timeout);
+
+				Mediator.once(modelInstance.getChannel('GOT_PROPERTY_SCHEMA'), dfd.callback(function(res) {
+
+					assert.deepEqual(res.schema, schema.properties.name, 'El esquema obtenido no es el original');
+				}));
+
+				Mediator.publish(modelInstance.getChannel('GET_PROPERTY_SCHEMA'), {
+					key: 'name'
+				});
+			},
+
+			Should_ReturnOriginalSchema_When_GetRootSchema: function() {
+
+				var dfd = this.async(timeout);
+
+				Mediator.once(modelInstance.getChannel('GOT_PROPERTY_SCHEMA'), dfd.callback(function(res) {
+
+					assert.deepEqual(res.schema, schema, 'El esquema obtenido no es el original');
+				}));
+
+				Mediator.publish(modelInstance.getChannel('GET_PROPERTY_SCHEMA'), {});
+			}
 		}
 	});
 });

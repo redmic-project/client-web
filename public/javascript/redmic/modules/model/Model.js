@@ -38,7 +38,8 @@ define([
 					VALUE_REINDEXED: "valueReindexed",
 					MODEL_BUILD: "modelBuild",
 					GOT_MODEL_UUID: "gotModelUuid",
-					SAVE_MODEL: 'saveModel'
+					SAVE_MODEL: 'saveModel',
+					GOT_PROPERTY_SCHEMA: "gotPropertySchema"
 				},
 				actions: {
 					SET_PROPERTY_VALUE: "setPropertyValue",
@@ -67,7 +68,9 @@ define([
 					REMEMBER_CURRENT_VALUE: "rememberCurrentValue",
 					MODEL_BUILD: "modelBuild",
 					GET_MODEL_UUID: "getModelUuid",
-					GOT_MODEL_UUID: "gotModelUuid"
+					GOT_MODEL_UUID: "gotModelUuid",
+					GOT_PROPERTY_SCHEMA: "gotPropertySchema",
+					GET_PROPERTY_SCHEMA: "getPropertySchema"
 				},
 				idForGet: '_schema'
 			};
@@ -126,6 +129,9 @@ define([
 			},{
 				channel: this.getChannel('SAVE'),
 				callback: '_subSave'
+			},{
+				channel: this.getChannel("GET_PROPERTY_SCHEMA"),
+				callback: "_subGetPropertySchema"
 			});
 		},
 
@@ -173,6 +179,9 @@ define([
 			},{
 				event: 'SAVE_MODEL',
 				channel: this.getChannel('SAVED')
+			},{
+				event: 'GOT_PROPERTY_SCHEMA',
+				channel: this.getChannel("GOT_PROPERTY_SCHEMA")
 			});
 		},
 
@@ -296,6 +305,11 @@ define([
 		_subSave: function(req) {
 
 			this._saveModel(req);
-		}
+		},
+
+		_subGetPropertySchema: function(req) {
+
+			this._getPropertySchema(req);
+		},
 	});
 });

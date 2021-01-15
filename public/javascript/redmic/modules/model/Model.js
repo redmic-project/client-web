@@ -310,6 +310,6 @@ define([
 		_subGetPropertySchema: function(req) {
 
 			this._getPropertySchema(req);
-		},
+		}
 	});
 });

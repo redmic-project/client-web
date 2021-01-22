@@ -34,7 +34,7 @@ module.exports = function(args) {
 		socketPort: socketPort,
 
 		tunnelOptions: {
-			version: '3.141.0',
+			version: '3.141.59',
 			port: tunnelPort,
 			drivers: [{
 				name: 'chrome',

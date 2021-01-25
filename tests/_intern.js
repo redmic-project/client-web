@@ -24,9 +24,9 @@ module.exports = function(args) {
 
 		environments: [{
 			browserName: 'chrome'
-		},{
-			browserName: 'firefox'
 		/*},{
+			browserName: 'firefox'
+		},{
 			browserName: 'internet explorer'*/
 		}],
 
@@ -38,7 +38,7 @@ module.exports = function(args) {
 			port: tunnelPort,
 			drivers: [{
 				name: 'chrome',
-				version: '87.0.4280.88'
+				version: '88.0.4324.96'
 			},{
 				name: 'firefox',
 				version: '0.29.0'

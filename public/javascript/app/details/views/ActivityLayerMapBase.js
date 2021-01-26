@@ -1,20 +1,20 @@
 define([
-	'app/designs/details/main/ActivityMap'
+	'app/designs/details/main/ActivityLayerMap'
 	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
+	, 'redmic/map/OpenLayers'
 	, 'redmic/modules/map/layer/WmsLayerImpl'
 ], function(
-	ActivityMap
+	ActivityLayerMap
 	, redmicConfig
 	, declare
 	, lang
-	, aspect
+	, OpenLayers
 	, WmsLayerImpl
 ) {
 
-	return declare(ActivityMap, {
+	return declare(ActivityLayerMap, {
 		//	summary:
 		//
 
@@ -22,10 +22,11 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.activity,
-				templateTargetChange: '',
+				templateTargetChange: 'activityLayers',
 				layerTarget: redmicConfig.services.atlasLayer,
 				activityCategory: ['ml'],
-				definitionLayer: [WmsLayerImpl]
+				definitionLayer: [WmsLayerImpl],
+				_activityLayers: []
 			};
 
 			lang.mixin(this, this.config, args);
@@ -50,14 +51,57 @@ define([
 			});
 		},
 
-		_chkIsDataFromLayerActivities: function(res) {
+		_chkIsDataFromLayerActivities: function(resWrapper) {
 
-			return res.target === this.layerTarget;
+			var target = resWrapper.target,
+				query = resWrapper.req.query || {},
+				terms = query.terms || {},
+				activities = terms.activities;
+
+			return target === this.layerTarget && activities && activities.indexOf(this.pathVariableId) !== -1;
 		},
 
-		_onLayerActivitiesData: function(res) {
+		_onLayerActivitiesData: function(resWrapper) {
 
-			console.log('llega atlas', res);
+			var data = resWrapper.res.data,
+				layers = data.data || [];
+
+			this._emitEvt('INJECT_DATA', {
+				target: this.templateTargetChange,
+				data: layers
+			});
+
+			this._activityLayers = [];
+
+			for (var i = 0; i < layers.length; i++) {
+				this._createLayer(layers[i]);
+			}
+		},
+
+		_createLayer: function(layer) {
+
+			// TODO me parece mala idea hacer esto, referencia directa a instancias que no se han creado aquí
+			var widgetInstance = this._widgets.geographic;
+
+			this.layerConfig = this._merge([{
+				mapChannel: widgetInstance.getChildChannel('map'),
+				layer: OpenLayers.build({
+					type: 'wmts',
+					url: layer.urlSource,
+					props: {
+						layers: [layer.name],
+						format: 'image/png',
+						transparent: true,
+						tiled: true
+					}
+				}),
+				selectorChannel: widgetInstance.getChannel()
+			}, this.layerConfig || {}]);
+
+			var layerInstance = new this._layerDefinition(this.layerConfig);
+			this._activityLayers.push(layerInstance);
+
+			this._publish(widgetInstance.getChildChannel('map', 'ADD_LAYER'), layerInstance);
 		}
 	});
 });

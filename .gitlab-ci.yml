@@ -65,27 +65,27 @@ prepare-unbuilt-version:
       - public/stylesheets/submodules/
   rules: *only-non-master-branches-job-rules
 
-run-unit-tests:
-  extends: .web-build
-  stage: pre-build
-  script:
-    - grunt test | tee test.out
-    - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
-    - echo "Coverage - ${coverage}%"
-    - rm test.out
-  cache:
-    policy: pull
-  rules: *only-non-master-branches-job-rules
-
-run-modules-functional-tests:
-  extends: .web-build
-  stage: pre-build
-  script:
-    - npm start &
-    - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
-  cache:
-    policy: pull
-  rules: *only-non-master-branches-job-rules
+#run-unit-tests:
+#  extends: .web-build
+#  stage: pre-build
+#  script:
+#    - grunt test | tee test.out
+#    - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
+#    - echo "Coverage - ${coverage}%"
+#    - rm test.out
+#  cache:
+#    policy: pull
+#  rules: *only-non-master-branches-job-rules
+#
+#run-modules-functional-tests:
+#  extends: .web-build
+#  stage: pre-build
+#  script:
+#    - npm start &
+#    - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
+#  cache:
+#    policy: pull
+#  rules: *only-non-master-branches-job-rules
 
 prepare-built-version:
   extends: .web-build

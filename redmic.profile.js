@@ -479,6 +479,8 @@ var viewLayers = {
 	, 'app/details/views/ActivityInfrastructureMapView': {}
 	, 'app/details/views/ActivityCatalogAreaMapView': {}
 	, 'app/details/views/ActivityAreaMapView': {}
+	, 'app/details/views/ActivityCatalogLayerMapView': {}
+	, 'app/details/views/ActivityLayerMapView': {}
 	, 'app/details/views/ServiceOGCDetailsView': {}
 	, 'app/details/views/StatisticsDetailsView': {}
 	, 'app/details/views/OrganisationDetailsView': {}

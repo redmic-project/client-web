@@ -93,14 +93,16 @@ module.exports = function(grunt) {
 				ownTunnelPort: ownTunnelPort,
 				suitesGroups: suitesGroups,
 				browser: browser,
-				headless: headless
+				headless: headless,
+				userDataDir: userDataDir,
+				remoteHost: remoteHost,
+				remotePort: remotePort
 			},
 			testUnitParams = deepmerge(testParams, {
 				reporters: unitReporters,
 				suites: suites,
 				coverage: coverage,
 				dojoBaseUrl: dojoCommonBaseUrl,
-				userDataDir: userDataDir
 			}),
 			testFunctionalParams = deepmerge(testParams, {
 				serverUrl: serverUrl,
@@ -110,10 +112,7 @@ module.exports = function(grunt) {
 				reporters: functionalReporters,
 				functionalSuites: functionalSuites,
 				reportersOutputPath: reportersOutputPath,
-				dojoBaseUrl: '.' + dojoCommonBaseUrl,
-				userDataDir: userDataDir,
-				remoteHost: remoteHost,
-				remotePort: remotePort
+				dojoBaseUrl: '.' + dojoCommonBaseUrl
 			}),
 
 			testUnitLocalOptions = require(testUnitLocalPath)(testUnitParams),

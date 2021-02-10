@@ -5,7 +5,7 @@ module.exports = function(args) {
 		_internFunctional = require('./_intern-functional')(args),
 		_remote = require('./_remote')(args),
 
-		serverUrl = args.serverUrl || 'https://redmic.net',
+		serverUrl = args.serverUrl || 'https://redmic.grafcan.es',
 
 		config = {
 			serverUrl: serverUrl

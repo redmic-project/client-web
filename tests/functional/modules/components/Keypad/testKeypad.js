@@ -23,17 +23,17 @@ define([
 
 		pressButtonAndListen = function(buttonSelector, buttonKey) {
 
-			return lang.partial(function(buttonSelector, buttonKey) {
+			return lang.partial(function(buttonSelector1, buttonKey1) {
 
 				return this.parent
-					.then(Utils.clickElement(buttonSelector))
+					.then(Utils.clickElement(buttonSelector1))
 					.then(pollUntil(function() {
 
 						return window.inputKey;
 					}, timeout))
 					.then(function(inputKey) {
 
-						assert.strictEqual(inputKey, buttonKey,
+						assert.strictEqual(inputKey, buttonKey1,
 							'Se ha publicado una pulsación de botón diferente al pulsado');
 					}, function(error) {
 

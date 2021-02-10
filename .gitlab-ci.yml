@@ -65,27 +65,93 @@ prepare-unbuilt-version:
       - public/stylesheets/submodules/
   rules: *only-non-master-branches-job-rules
 
-#run-unit-tests:
-#  extends: .web-build
-#  stage: pre-build
-#  script:
-#    - grunt test | tee test.out
-#    - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
-#    - echo "Coverage - ${coverage}%"
-#    - rm test.out
-#  cache:
-#    policy: pull
-#  rules: *only-non-master-branches-job-rules
-#
-#run-modules-functional-tests:
-#  extends: .web-build
-#  stage: pre-build
-#  script:
-#    - npm start &
-#    - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
-#  cache:
-#    policy: pull
-#  rules: *only-non-master-branches-job-rules
+.run-unit-tests:
+  extends: .web-build
+  stage: pre-build
+  script:
+    - grunt test --headless --browser=${TEST_BROWSER} | tee test.out
+    - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
+    - echo "Coverage - ${coverage}%"
+    - rm test.out
+  cache:
+    policy: pull
+  rules: *only-non-master-branches-job-rules
+
+.run-remote-unit-tests:
+  extends: .web-build
+  stage: pre-build
+  variables:
+    TEST_REMOTE_HOST: selenium-hub
+  script:
+    - grunt test-unit-remote --headless --browser=${TEST_BROWSER} --remoteHost=${TEST_REMOTE_HOST} | tee test.out
+    - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
+    - echo "Coverage - ${coverage}%"
+    - rm test.out
+  cache:
+    policy: pull
+  rules: *only-non-master-branches-job-rules
+
+run-unit-tests-chrome:
+  extends: .run-unit-tests
+  variables:
+    TEST_BROWSER: chrome
+
+run-unit-tests-firefox:
+  extends: .run-unit-tests
+  variables:
+    TEST_BROWSER: firefox
+
+run-remote-unit-tests-chrome:
+  extends: .run-remote-unit-tests
+  variables:
+    TEST_BROWSER: chrome
+
+run-remote-unit-tests-firefox:
+  extends: .run-remote-unit-tests
+  variables:
+    TEST_BROWSER: firefox
+
+.run-modules-functional-tests:
+  extends: .web-build
+  stage: pre-build
+  script:
+    - npm start &
+    - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless --browser=${TEST_BROWSER}
+  cache:
+    policy: pull
+  rules: *only-non-master-branches-job-rules
+
+.run-remote-modules-functional-tests:
+  extends: .web-build
+  stage: pre-build
+  variables:
+    TEST_REMOTE_HOST: selenium-hub
+  script:
+    - npm start &
+    - grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless --browser=${TEST_BROWSER} --remoteHost=${TEST_REMOTE_HOST}
+  cache:
+    policy: pull
+  rules: *only-non-master-branches-job-rules
+
+run-modules-functional-tests-chrome:
+  extends: .run-modules-functional-tests
+  variables:
+    TEST_BROWSER: chrome
+
+run-modules-functional-tests-firefox:
+  extends: .run-modules-functional-tests
+  variables:
+    TEST_BROWSER: firefox
+
+run-remote-modules-functional-tests-chrome:
+  extends: .run-remote-modules-functional-tests
+  variables:
+    TEST_BROWSER: chrome
+
+run-remote-modules-functional-tests-firefox:
+  extends: .run-remote-modules-functional-tests
+  variables:
+    TEST_BROWSER: firefox
 
 prepare-built-version:
   extends: .web-build
@@ -113,10 +179,13 @@ prepare-built-version:
 run-functional-tests:
   extends: .web-build
   stage: test-deploy
+  variables:
+    TEST_REMOTE_HOST: selenium-hub
   script:
     - >
       grunt test-functional-local --serverUrl="https://${DEV_PUBLIC_HOSTNAME}" --user="${REDMIC_TEST_USER}"
-      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups="${SUITES_GROUPS}" --headless
+      --pass="${REDMIC_TEST_PASS}" --role=administrator --suitesGroups="${SUITES_GROUPS}" --headless --browser=chrome
+      --browser=firefox --remoteHost=${TEST_REMOTE_HOST}
   dependencies: []
   cache:
     policy: pull

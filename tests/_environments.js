@@ -3,7 +3,7 @@ module.exports = function(args) {
 	var headless = args.headless,
 		browser = args.browser,
 		browserList = typeof browser === 'string' ? browser.split(',') : browser,
-		userDataDir = args.userDataDir || '.config',
+		//userDataDir = args.userDataDir || '.config',
 		windowWidth = 1280,
 		windowHeight = 768,
 		environments = [];
@@ -15,7 +15,7 @@ module.exports = function(args) {
 				args: [
 					'disable-extensions',
 					'window-size=' + windowWidth + ',' + windowHeight,
-					'user-data-dir=' + userDataDir
+					//'user-data-dir=' + userDataDir
 				]
 			}
 		},

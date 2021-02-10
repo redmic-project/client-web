@@ -3,6 +3,7 @@ module.exports = function(args) {
 	var path = require('path'),
 		dojoConfig = require('./_dojoConfig')(args),
 		browserDojoConfig = JSON.parse(JSON.stringify(dojoConfig)),
+		environments = require('./_environments')(args),
 
 		testsPath = args.testsPath,
 		coverage = args.coverage,
@@ -22,13 +23,7 @@ module.exports = function(args) {
 			fixSessionCapabilities: false
 		},
 
-		environments: [{
-			browserName: 'chrome'
-		/*},{
-			browserName: 'firefox'
-		},{
-			browserName: 'internet explorer'*/
-		}],
+		environments: environments,
 
 		serverPort: ownServerPort,
 		socketPort: socketPort,
@@ -45,9 +40,10 @@ module.exports = function(args) {
 			}]
 		},
 
-		maxConcurrency: 3,
+		maxConcurrency: 1,
 		defaultTimeout: 250000,
 		leaveRemoteOpen: false,
+		showConfig: false,
 
 		loader: {
 			script: 'dojo',

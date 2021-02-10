@@ -9,13 +9,11 @@ module.exports = function(args) {
 		role = args.role,
 		user = args.user,
 		pass = args.pass,
-		headless = args.headless,
 		suitesGroups = args.suitesGroups,
 		functionalSuites = args.functionalSuites,
 
 		pathPrefix = path.join(testsPath, 'functional'),
-		config = {},
-		propsMix = [_intern];
+		config = {};
 
 	if (functionalSuites) {
 		config.functionalSuites = _functions.getParameterValueAsArray(functionalSuites);
@@ -43,14 +41,7 @@ module.exports = function(args) {
 
 	global.reportersOutputPath = args.reportersOutputPath;
 
-	propsMix.push(config);
-
-	if (headless) {
-		var _headlessConfig = require('./_headlessConfig')(args);
-		propsMix.push(_headlessConfig);
-	}
-
-	return deepmerge.all(propsMix, {
+	return deepmerge.all([_intern, config], {
 		arrayMerge: function (destinationArray, sourceArray, options) {
 
 			return sourceArray;

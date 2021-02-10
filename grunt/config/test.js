@@ -18,6 +18,7 @@ module.exports = function(grunt) {
 			ownServerPort = parseInt(grunt.option('ownServerPort'), 10) || 9000,
 			ownSocketPort = parseInt(grunt.option('ownSocketPort'), 10),
 			ownTunnelPort = parseInt(grunt.option('ownTunnelPort'), 10),
+			browser = grunt.option('browser') || 'chrome',
 			headless = grunt.option('headless') || false,
 			serverUrl = grunt.option('serverUrl'),
 			role = grunt.option('role'),
@@ -90,7 +91,9 @@ module.exports = function(grunt) {
 				ownServerPort: ownServerPort,
 				ownSocketPort: ownSocketPort,
 				ownTunnelPort: ownTunnelPort,
-				suitesGroups: suitesGroups
+				suitesGroups: suitesGroups,
+				browser: browser,
+				headless: headless
 			},
 			testUnitParams = deepmerge(testParams, {
 				reporters: unitReporters,
@@ -104,7 +107,6 @@ module.exports = function(grunt) {
 				role: role,
 				user: user,
 				pass: pass,
-				headless: headless,
 				reporters: functionalReporters,
 				functionalSuites: functionalSuites,
 				reportersOutputPath: reportersOutputPath,

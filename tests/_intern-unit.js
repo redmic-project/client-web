@@ -5,7 +5,6 @@ module.exports = function(args) {
 
 		_intern = require('./_intern')(args),
 		_functions = require('./_functions'),
-		_headlessConfig = require('./_headlessConfig')(args),
 
 		testsPath = args.testsPath,
 		suitesGroups = args.suitesGroups,	// TODO por ahora no funciona, porque se recorre desde directorio no controlable
@@ -87,7 +86,7 @@ module.exports = function(args) {
 		config.suites = _functions.getSuites(pathPrefix, suitesGroups);
 	}
 
-	return deepmerge.all([_intern, config, _headlessConfig], {
+	return deepmerge.all([_intern, config], {
 		arrayMerge: function (destinationArray, sourceArray, options) {
 
 			return sourceArray;

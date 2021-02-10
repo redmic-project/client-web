@@ -102,7 +102,7 @@ module.exports = function(grunt) {
 				reporters: unitReporters,
 				suites: suites,
 				coverage: coverage,
-				dojoBaseUrl: dojoCommonBaseUrl,
+				dojoBaseUrl: dojoCommonBaseUrl
 			}),
 			testFunctionalParams = deepmerge(testParams, {
 				serverUrl: serverUrl,

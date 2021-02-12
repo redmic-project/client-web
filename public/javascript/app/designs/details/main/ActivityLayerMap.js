@@ -109,10 +109,6 @@ define([
 				target: this.targetChange,
 				refresh: true
 			});
-		},
-
-		_itemAvailable: function(response) {
-
 		}
 	});
 });

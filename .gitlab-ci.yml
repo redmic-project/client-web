@@ -108,7 +108,9 @@ run-remote-unit-tests-firefox:
     <<: *run-remote-test-variables
   script:
     - npm start &
-    - grunt test-functional-remote --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless --browser=${TEST_BROWSER} --remoteHost=${TEST_REMOTE_HOST}
+    - >
+      grunt test-functional-remote --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
+      --browser=${TEST_BROWSER} --remoteHost=${TEST_REMOTE_HOST}
 
 run-remote-modules-functional-tests-chrome:
   extends: .run-remote-modules-functional-tests

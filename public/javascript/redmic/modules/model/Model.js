@@ -1,12 +1,14 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/base/_Module"
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Persistence'
-	, "redmic/modules/base/_Store"
-	, "./_ModelItfc"
+	, 'redmic/modules/base/_Store'
+	, './_ModelItfc'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, _Module
 	, _Persistence
@@ -191,7 +193,7 @@ define([
 
 			if (this.schema) {
 				this._buildModelWithSchema(this.schema);
-			} else {
+			} else if (this.target.indexOf(redmicConfig.apiUrlVariable) !== -1) {
 				this._emitEvt("GET", {
 					target: this.target,
 					id: this.idForGet,

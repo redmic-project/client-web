@@ -9,7 +9,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'redmic/modules/map/layer/WmsLayerImpl'
-	, 'templates/ActivityList'
+	, 'templates/ActivityLayerList'
 ], function(
 	_ListenActivityDataAndAccessByActivityCategory
 	, _Main
@@ -21,7 +21,7 @@ define([
 	, declare
 	, lang
 	, WmsLayerImpl
-	, ActivityList
+	, ActivityLayerList
 ) {
 
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection,
@@ -56,17 +56,7 @@ define([
 						classWindowContent: "view",
 						notTextSearch: true,
 						browserConfig: {
-							rowConfig: {
-								buttonsConfig: {
-									listButton: [{
-										icon: "fa-map-marker",
-										title: "map centering",
-										btnId: "mapCentering",
-										returnItem: true
-									}]
-								}
-							},
-							template: ActivityList
+							template: ActivityLayerList
 						}
 					}
 				}

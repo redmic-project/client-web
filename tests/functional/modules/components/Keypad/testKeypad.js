@@ -25,7 +25,7 @@ define([
 
 			return lang.partial(function(buttonSelector1, buttonKey1) {
 
-				return this.parent
+				return this.remote
 					.then(Utils.clickElement(buttonSelector1))
 					.then(pollUntil(function() {
 
@@ -67,7 +67,7 @@ define([
 					buttonKey = 'btn1';
 
 				return this.remote
-					.then(pressButtonAndListen(buttonSelector, buttonKey));
+					.then(lang.hitch(this, pressButtonAndListen), buttonSelector, buttonKey);
 			},
 
 			Should_FindNotDisplayedButton_When_LookForHiddenButton: function() {
@@ -89,7 +89,7 @@ define([
 					buttonKey = 'btn3';
 
 				return this.remote
-					.then(pressButtonAndListen(buttonSelector, buttonKey));
+					.then(lang.hitch(this, pressButtonAndListen), buttonSelector, buttonKey);
 			}
 		}
 	});

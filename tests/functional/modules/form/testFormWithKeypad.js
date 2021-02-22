@@ -11,7 +11,7 @@ define([
 ){
 	var indexPageUrl,
 		timeout = Config.timeout.findElement,
-		disabledClassName = 'dijitDisabled';
+		disabledClassName = '.dijitDisabled';
 
 	var registerSuite = intern.getInterface('object').registerSuite,
 		assert = intern.getPlugin('chai').assert;
@@ -38,7 +38,7 @@ define([
 			Should_FindADisabledButton_When_FormIsUnfilled: function() {
 
 				return this.remote
-					.findAllByClassName(disabledClassName)
+					.findAllByCssSelector(disabledClassName)
 					.then(function(disabledArr) {
 
 						assert.lengthOf(disabledArr, 1,
@@ -57,7 +57,7 @@ define([
 					.then(Utils.setInputValue(nameInputSelector, exampleValue))
 					.then(Utils.setInputValue(nameEnInputSelector, exampleValue))
 
-					.findAllByClassName(disabledClassName)
+					.findAllByCssSelector(disabledClassName)
 					.then(function(disabledArr) {
 
 						assert.lengthOf(disabledArr, 0, 'Se han encontrado elementos deshabilitados');

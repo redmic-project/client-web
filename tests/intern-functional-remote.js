@@ -5,11 +5,16 @@ module.exports = function(args) {
 		_internFunctional = require('./_intern-functional')(args),
 		_remote = require('./_remote')(args),
 
-		serverUrl = args.serverUrl || 'https://redmic.grafcan.es',
+		serverUrl = args.serverUrl;
 
-		config = {
-			serverUrl: serverUrl
-		};
+	if (!serverUrl) {
+		var IpGetter = require('./IpGetter')();
+		serverUrl = 'http://' + IpGetter.getIp();
+	}
+
+	var config = {
+		serverUrl: serverUrl
+	};
 
 	return deepmerge.all([_internFunctional, _remote, config], {
 		arrayMerge: function (destinationArray, sourceArray, options) {

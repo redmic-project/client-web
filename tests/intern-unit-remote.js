@@ -13,7 +13,6 @@ module.exports = function(args) {
 		ownResolvableHost = ownServerHost;
 	} else {
 		var IpGetter = require('./IpGetter')();
-
 		ownResolvableHost = IpGetter.getIp();
 	}
 

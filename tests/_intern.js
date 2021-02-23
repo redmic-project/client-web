@@ -20,7 +20,8 @@ module.exports = function(args) {
 	var config = {
 		capabilities: {
 			'idle-timeout': 30,
-			fixSessionCapabilities: false
+			fixSessionCapabilities: false,
+			remoteFiles: true
 		},
 
 		environments: environments,

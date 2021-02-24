@@ -1,6 +1,6 @@
 module.exports = function(args) {
 
-	var IpGetter = require('./IpGetter')(),
+	var localIp = args.localIp,
 		remoteHost = args.remoteHost || '127.0.0.1',
 		remotePort = args.remotePort || '4444',
 		remoteTunnel = remoteHost + ':' + remotePort,
@@ -10,7 +10,7 @@ module.exports = function(args) {
 		ownServerPort = args.ownServerPort;
 
 	if (!ownServerHost || !ownServerHost.length) {
-		ownServerHost = IpGetter.getIp();
+		ownServerHost = localIp;
 	}
 
 	var ownServerUrl = 'http://' + ownServerHost + ':' + ownServerPort;

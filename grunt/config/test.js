@@ -85,6 +85,10 @@ module.exports = function(grunt) {
 			testFunctionalRemotePath = path.join(absoluteTestsPath, 'intern-functional-remote'),
 			dojoCommonBaseUrl = path.join(' ', srcPath, '*').trim(),
 
+			ipGetterPath = path.join(absoluteTestsPath, 'IpGetter'),
+			IpGetter = require(ipGetterPath)(),
+			localIp = IpGetter.getIp(),
+
 			testParams = {
 				srcPath: srcPath,
 				testsPath: testsPath,
@@ -99,7 +103,8 @@ module.exports = function(grunt) {
 			remoteTestParams = {
 				ownServerHost: ownServerHost,
 				remoteHost: remoteHost,
-				remotePort: remotePort
+				remotePort: remotePort,
+				localIp: localIp
 			},
 			testUnitParams = deepmerge(testParams, {
 				reporters: unitReporters,

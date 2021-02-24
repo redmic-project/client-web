@@ -94,7 +94,10 @@ module.exports = function(grunt) {
 				suitesGroups: suitesGroups,
 				browser: browser,
 				headless: headless,
-				userDataDir: userDataDir,
+				userDataDir: userDataDir
+			},
+			remoteTestParams = {
+				ownServerHost: ownServerHost,
 				remoteHost: remoteHost,
 				remotePort: remotePort
 			},
@@ -116,11 +119,10 @@ module.exports = function(grunt) {
 			}),
 
 			testUnitLocalOptions = require(testUnitLocalPath)(testUnitParams),
-			testUnitRemoteOptions = require(testUnitRemotePath)(deepmerge(testUnitParams, {
-				ownServerHost: ownServerHost
-			})),
+			testUnitRemoteOptions = require(testUnitRemotePath)(deepmerge(testUnitParams, remoteTestParams)),
 			testFunctionalLocalOptions = require(testFunctionalLocalPath)(testFunctionalParams),
-			testFunctionalRemoteOptions = require(testFunctionalRemotePath)(testFunctionalParams);
+			testFunctionalRemoteOptions = require(testFunctionalRemotePath)(deepmerge(testFunctionalParams,
+				remoteTestParams));
 
 		grunt.config('intern', {
 			'test-unit-local': {

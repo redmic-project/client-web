@@ -15,6 +15,7 @@ module.exports = function(grunt) {
 		remoteOptionParameters = [
 			'"--remoteHost=host" para redefinir la dirección del servicio de testeo remoto'
 			, '"--remotePort=port" para redefinir el puerto del servicio de testeo remoto'
+			, '"--ownServerHost=host" para redefinir dirección del servidor de intern, para indicarle al túnel remoto'
 		],
 
 		unitOptionParameters = [
@@ -45,8 +46,7 @@ module.exports = function(grunt) {
 		commonTasks.concat(['intern:test-functional-local']));
 
 	grunt.registerTask('test-unit-remote',
-		['Ejecuta los tests unitarios en entorno remoto'
-			, '"--ownServerHost=host" para redefinir dirección del servidor de intern, para indicarle al túnel remoto']
+		['Ejecuta los tests unitarios en entorno remoto']
 			.concat(commonOptionParameters)
 			.concat(unitOptionParameters)
 			.concat(remoteOptionParameters)

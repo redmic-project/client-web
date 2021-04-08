@@ -1213,6 +1213,11 @@ define({
 	, "urlSource": "URL de origen"
 	, "fullscreen": "Pantalla completa"
 	, "version": "Versión"
+	, "resource": "Recurso"
+	, "resources": "Recursos"
+	, "urlResource": "URL de recurso"
+	, "resourcesAssociated": "Recursos asociados"
+	, "layer": "Capa"
 
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"

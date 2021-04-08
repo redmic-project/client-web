@@ -7,11 +7,15 @@ module.exports = function(grunt) {
 			, '"--ownSocketPort=port" para redefinir puerto del socket de intern (por defecto, "ownServerPort" + 1)'
 			, '"--ownTunnelPort=port" para redefinir puerto del túnel selenium (por defecto, "ownServerPort" + 2)'
 			, '"--suitesGroups=suitesFolderName" para indicar grupos de suites ejecutar desde la raíz correspondiente'
+			, '"--browser" para elegir navegadores a usar, soporta definiciones múltiples y lista separada por comas ' +
+				'(por defecto, chrome)'
+			, '"--headless" para ejecutar sin interfaz'
 		],
 
 		remoteOptionParameters = [
 			'"--remoteHost=host" para redefinir la dirección del servicio de testeo remoto'
 			, '"--remotePort=port" para redefinir el puerto del servicio de testeo remoto'
+			, '"--ownServerHost=host" para redefinir dirección del servidor de intern, para indicarle al túnel remoto'
 		],
 
 		unitOptionParameters = [
@@ -24,7 +28,6 @@ module.exports = function(grunt) {
 			, '"--role=userRole" para definir el nivel de permisos del usuario'
 			, '"--user=userEmail" para definir el nombre de acceso del usuario'
 			, '"--pass=userPassword" para definir el password de acceso del usuario'
-			, '"--headless" para ejecutar sin interfaz'
 			, '"--serverUrl=url" para definir la dirección de la aplicación a testear'
 		];
 
@@ -43,8 +46,7 @@ module.exports = function(grunt) {
 		commonTasks.concat(['intern:test-functional-local']));
 
 	grunt.registerTask('test-unit-remote',
-		['Ejecuta los tests unitarios en entorno remoto'
-			, '"--ownServerHost=host" para redefinir dirección del servidor de intern, para indicarle al túnel remoto']
+		['Ejecuta los tests unitarios en entorno remoto']
 			.concat(commonOptionParameters)
 			.concat(unitOptionParameters)
 			.concat(remoteOptionParameters)

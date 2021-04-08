@@ -1,14 +1,27 @@
 module.exports = function(args) {
 
-	var remoteHost = args.remoteHost || '192.168.40.6',
+	var localIp = args.localIp,
+		remoteHost = args.remoteHost || '127.0.0.1',
 		remotePort = args.remotePort || '4444',
 		remoteTunnel = remoteHost + ':' + remotePort,
 
-		config = {
-			tunnelOptions: {
-				host: remoteTunnel
-			}
-		};
+		serverUrl = args.serverUrl,
+		ownServerHost = args.ownServerHost,
+		ownServerPort = args.ownServerPort;
 
-	return config;
+	if (!ownServerHost || !ownServerHost.length) {
+		ownServerHost = localIp;
+	}
+
+	var ownServerUrl = 'http://' + ownServerHost + ':' + ownServerPort;
+
+	return {
+		capabilities: {
+			remoteFiles: true
+		},
+		tunnelOptions: {
+			host: remoteTunnel
+		},
+		serverUrl: serverUrl || ownServerUrl
+	};
 };

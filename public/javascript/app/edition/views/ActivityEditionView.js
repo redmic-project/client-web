@@ -5,6 +5,7 @@ define([
 	, "app/components/steps/MainDataStep"
 	, "app/components/steps/OrganisationSetStep"
 	, "app/components/steps/PlatformSetStep"
+	, "app/components/steps/ResourceSetStep"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
 	, "app/redmicConfig"
@@ -18,6 +19,7 @@ define([
 	, ActivityMainDataStep
 	, OrganisationSetStep
 	, PlatformSetStep
+	, ResourceSetStep
 	, Controller
 	, Layout
 	, redmicConfig
@@ -39,7 +41,8 @@ define([
 			this.config = {
 				target: redmicConfig.services.activity,
 				propsToClean: [
-					'code', 'id', 'contacts.{i}.id', 'organisations.{i}.id', 'documents.{i}.id', 'platforms.{i}.id'
+					'code', 'id', 'contacts.{i}.id', 'organisations.{i}.id', 'documents.{i}.id', 'platforms.{i}.id',
+					'resources.{i}.id'
 				]
 			};
 
@@ -92,6 +95,12 @@ define([
 					props: {
 						propertyName: 'documents'
 					}
+				},{
+					definition: ResourceSetStep,
+					props: {
+						propertyName: 'resources'
+					},
+					skippable: true
 				}]
 			}, this.editorConfig || {}]);
 		}

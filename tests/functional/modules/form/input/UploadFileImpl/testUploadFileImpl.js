@@ -50,7 +50,7 @@ define([
 
 		afterEach: function(test) {
 
-			return Utils.getBrowserLogs(test, this.remote);
+			return Utils.inspectAfterTests(test, this.remote);
 		},
 
 		tests: {

@@ -171,7 +171,6 @@ function expose(app) {
 	} else {
 		require('./styles')(app);
 		exposeContents(app, 'public');
-		exposeContents(app, 'tests');
 		exposeContents(app, 'node_modules');
 	}
 

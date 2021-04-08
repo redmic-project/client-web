@@ -1,13 +1,12 @@
 {
-  "name": "REDMIC",
+  "name": "redmic",
   "version": "0.20.3",
   "author": "REDMIC",
   "homepage": "https://gitlab.com/redmic-project/client/web/blob/master/README.md",
   "description": "Integrated marine data repository of Canary Islands - Client",
   "contributors": [
     {
-      "name": "Ignacio Lorenzo García",
-      "email": "nacho@oag-fundacion.org"
+      "name": "Ignacio Lorenzo García"
     },
     {
       "name": "Pedro E. Trujillo Brito",
@@ -18,8 +17,7 @@
       "email": "noel@redmic.es"
     },
     {
-      "name": "Carlos Alberto González Carballo",
-      "email": "carlos@redmic.es"
+      "name": "Carlos Alberto González Carballo"
     }
   ],
   "repository": {
@@ -66,7 +64,7 @@
     "gulp": "^2.7.0",
     "gulp-cli": "^2.2.0",
     "handlebars": "^4.0.11",
-    "intern": "^4.2.0",
+    "intern": "^4.9.0",
     "jshint": "^2.9.5",
     "json-schema-ref-parser": "^5.0.3",
     "leaflet": "^1.3.0",

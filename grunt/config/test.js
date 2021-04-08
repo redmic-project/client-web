@@ -18,6 +18,7 @@ module.exports = function(grunt) {
 			ownServerPort = parseInt(grunt.option('ownServerPort'), 10) || 9000,
 			ownSocketPort = parseInt(grunt.option('ownSocketPort'), 10),
 			ownTunnelPort = parseInt(grunt.option('ownTunnelPort'), 10),
+			browser = grunt.option('browser') || 'chrome',
 			headless = grunt.option('headless') || false,
 			serverUrl = grunt.option('serverUrl'),
 			role = grunt.option('role'),
@@ -84,42 +85,49 @@ module.exports = function(grunt) {
 			testFunctionalRemotePath = path.join(absoluteTestsPath, 'intern-functional-remote'),
 			dojoCommonBaseUrl = path.join(' ', srcPath, '*').trim(),
 
+			ipGetterPath = path.join(absoluteTestsPath, 'IpGetter'),
+			IpGetter = require(ipGetterPath)(),
+			localIp = IpGetter.getIp(),
+
 			testParams = {
 				srcPath: srcPath,
 				testsPath: testsPath,
 				ownServerPort: ownServerPort,
 				ownSocketPort: ownSocketPort,
 				ownTunnelPort: ownTunnelPort,
-				suitesGroups: suitesGroups
+				suitesGroups: suitesGroups,
+				browser: browser,
+				headless: headless,
+				userDataDir: userDataDir
+			},
+			remoteTestParams = {
+				ownServerHost: ownServerHost,
+				remoteHost: remoteHost,
+				remotePort: remotePort,
+				localIp: localIp
 			},
 			testUnitParams = deepmerge(testParams, {
 				reporters: unitReporters,
 				suites: suites,
 				coverage: coverage,
-				dojoBaseUrl: dojoCommonBaseUrl,
-				userDataDir: userDataDir
+				dojoBaseUrl: dojoCommonBaseUrl
 			}),
 			testFunctionalParams = deepmerge(testParams, {
 				serverUrl: serverUrl,
 				role: role,
 				user: user,
 				pass: pass,
-				headless: headless,
 				reporters: functionalReporters,
 				functionalSuites: functionalSuites,
 				reportersOutputPath: reportersOutputPath,
-				dojoBaseUrl: '.' + dojoCommonBaseUrl,
-				userDataDir: userDataDir,
-				remoteHost: remoteHost,
-				remotePort: remotePort
+				dojoBaseUrl: '.' + dojoCommonBaseUrl
 			}),
 
 			testUnitLocalOptions = require(testUnitLocalPath)(testUnitParams),
-			testUnitRemoteOptions = require(testUnitRemotePath)(deepmerge(testUnitParams, {
-				ownServerHost: ownServerHost
-			})),
+			testUnitRemoteOptions = require(testUnitRemotePath)(deepmerge(testUnitParams, remoteTestParams)),
 			testFunctionalLocalOptions = require(testFunctionalLocalPath)(testFunctionalParams),
-			testFunctionalRemoteOptions = require(testFunctionalRemotePath)(testFunctionalParams);
+			testFunctionalRemoteOptions = require(testFunctionalRemotePath)(deepmerge(testFunctionalParams,
+				remoteTestParams));
 
 		grunt.config('intern', {
 			'test-unit-local': {

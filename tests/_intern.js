@@ -3,6 +3,7 @@ module.exports = function(args) {
 	var path = require('path'),
 		dojoConfig = require('./_dojoConfig')(args),
 		browserDojoConfig = JSON.parse(JSON.stringify(dojoConfig)),
+		environments = require('./_environments')(args),
 
 		testsPath = args.testsPath,
 		coverage = args.coverage,
@@ -22,32 +23,27 @@ module.exports = function(args) {
 			fixSessionCapabilities: false
 		},
 
-		environments: [{
-			browserName: 'chrome'
-		/*},{
-			browserName: 'firefox'
-		},{
-			browserName: 'internet explorer'*/
-		}],
+		environments: environments,
 
 		serverPort: ownServerPort,
 		socketPort: socketPort,
 
 		tunnelOptions: {
-			version: '3.12.0',
+			version: '4.0.0-alpha-2',
 			port: tunnelPort,
 			drivers: [{
 				name: 'chrome',
-				version: '2.38'
+				version: '88.0.4324.96'
 			},{
 				name: 'firefox',
-				version: '0.19.1'
+				version: '0.29.0'
 			}]
 		},
 
-		maxConcurrency: 3,
+		maxConcurrency: 1,
 		defaultTimeout: 250000,
 		leaveRemoteOpen: false,
+		showConfig: false,
 
 		loader: {
 			script: 'dojo',

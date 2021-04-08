@@ -52,6 +52,11 @@ define([
 				return remote;
 			}
 
+			var currentBrowser = remote.session.capabilities.browserName;
+			if (currentBrowser === 'firefox') {
+				return remote;
+			}
+
 			return remote.getAvailableLogTypes()
 				.then(function(logTypes) {
 

@@ -23,17 +23,17 @@ define([
 
 		pressButtonAndListen = function(buttonSelector, buttonKey) {
 
-			return lang.partial(function(buttonSelector, buttonKey) {
+			return lang.partial(function(buttonSelector1, buttonKey1) {
 
-				return this.parent
-					.then(Utils.clickElement(buttonSelector))
+				return this.remote
+					.then(Utils.clickElement(buttonSelector1))
 					.then(pollUntil(function() {
 
 						return window.inputKey;
 					}, timeout))
 					.then(function(inputKey) {
 
-						assert.strictEqual(inputKey, buttonKey,
+						assert.strictEqual(inputKey, buttonKey1,
 							'Se ha publicado una pulsación de botón diferente al pulsado');
 					}, function(error) {
 
@@ -56,7 +56,7 @@ define([
 
 		afterEach: function(test) {
 
-			return Utils.getBrowserLogs(test, this.remote);
+			return Utils.inspectAfterTests(test, this.remote);
 		},
 
 		tests: {
@@ -67,7 +67,7 @@ define([
 					buttonKey = 'btn1';
 
 				return this.remote
-					.then(pressButtonAndListen(buttonSelector, buttonKey));
+					.then(lang.hitch(this, pressButtonAndListen), buttonSelector, buttonKey);
 			},
 
 			Should_FindNotDisplayedButton_When_LookForHiddenButton: function() {
@@ -89,7 +89,7 @@ define([
 					buttonKey = 'btn3';
 
 				return this.remote
-					.then(pressButtonAndListen(buttonSelector, buttonKey));
+					.then(lang.hitch(this, pressButtonAndListen), buttonSelector, buttonKey);
 			}
 		}
 	});

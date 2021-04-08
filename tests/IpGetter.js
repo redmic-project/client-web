@@ -1,15 +1,16 @@
 module.exports = function(args) {
 
 	var os = require('os'),
-		interfaces = os.networkInterfaces();
+		interfaces = os.networkInterfaces(),
+		localIpExpr = /(^10\.)|(^192\.168\.)/gi;
 
 	function pushValidAddress(ipList, addressProps) {
 
-		if ('IPv4' !== addressProps.family || addressProps.internal) {
+		var addr = addressProps.address;
+		if ('IPv4' !== addressProps.family || addressProps.internal || !localIpExpr.test(addr)) {
 			return;
 		}
-
-		ipList.push(addressProps.address);
+		ipList.push(addr);
 	}
 
 	function getIp() {
@@ -18,12 +19,11 @@ module.exports = function(args) {
 
 		for (var interfaceName in interfaces) {
 			var interfaceItem = interfaces[interfaceName];
-
 			interfaceItem.forEach(pushValidAddress.bind(null, ipList));
 		}
 
 		var firstIp = ipList && ipList[0];
-		console.log('Found IP addresses:', ipList, ', using:', firstIp);
+		console.log('Found local IP addresses:', ipList, ', using:', firstIp);
 
 		return firstIp;
 	}

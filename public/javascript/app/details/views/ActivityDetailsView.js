@@ -58,6 +58,11 @@ define([
 				conditionHref: "activityCategory",
 				conditionValue: "ar",
 				href: redmicConfig.viewPaths.activityAreaMap
+			},{
+				title: "seeMap",
+				conditionHref: "activityCategory",
+				conditionValue: "ml",
+				href: redmicConfig.viewPaths.activityLayerMap
 			}];
 
 			this.pathParent = redmicConfig.viewPaths.activity;

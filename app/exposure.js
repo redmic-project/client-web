@@ -2,11 +2,10 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	fs = require('fs'),
 	path = require('path'),
-	request = require('request');
+	https = require('https');
 
 var logger, params, version,
 	oauthUrl = process.env.OAUTH_URL,
-	getTokenUrl = oauthUrl + '/token',
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 	production = !!parseInt(process.env.PRODUCTION, 10),
 	apiUrl = process.env.API_URL;
@@ -94,33 +93,46 @@ function onOauthTokenRequest(req, res) {
 		password = body.password,
 		username = body.username,
 
+		getTokenUrl = oauthUrl + '/token',
 		clientCredentials = clientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
-		authorization = 'Basic ' + base64ClientCredentials,
-		bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write',
-
 		options = {
-			url: getTokenUrl,
 			method: 'POST',
-			body: bodyData,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
-				'Authorization': authorization
+				'Authorization': 'Basic ' + base64ClientCredentials
 			}
-		};
+		},
 
-	request(options, (function(originalRes, err, res, body) {
+		internalReq = https.request(getTokenUrl, options, (function(originalRes, internalRes) {
 
-		if (err) {
-			logger.error(err);
-			originalRes.sendStatus(500);
-			return;
-		}
+			var chunks = [];
 
-		originalRes.statusCode = res.statusCode;
-		originalRes.send(body);
+			internalRes.on('data', (function(nestedChunks, chunk) {
+
+				nestedChunks.push(chunk);
+			}).bind(this, chunks));
+
+			internalRes.on('end', (function(nestedOriginalRes, nestedChunks) {
+
+				var content = "";
+				for (var i = 0; i < nestedChunks.length; i++) {
+					content += nestedChunks[i].toString();
+				}
+				nestedOriginalRes.status(this.statusCode).send(content);
+			}).bind(internalRes, originalRes, chunks));
+		}).bind(this, res));
+
+	internalReq.on('error', (function(originalRes, err) {
+
+		logger.error(err);
+		originalRes.sendStatus(500);
 	}).bind(this, res));
+
+	var bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+	internalReq.write(bodyData);
+	internalReq.end();
 }
 
 function exposeRoutes(app) {

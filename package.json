@@ -33,7 +33,7 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "prom-client": "^11.5.3",
-    "pug": "^2.0.4",
+    "pug": "^3.0.2",
     "response-time": "^2.3.2",
     "winston": "^2.4.5"
   },

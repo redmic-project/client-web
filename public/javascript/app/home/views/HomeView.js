@@ -9,6 +9,7 @@ define([
 	, "templates/InitialTitle"
 	, "templates/InitialInfo"
 	, "redmic/base/Credentials"
+	, 'app/home/views/SearchWidget'
 	, "app/home/views/SocialWidget"
 	, "app/home/views/WidgetLastActivity"
 	, "app/home/views/WidgetFavourites"
@@ -23,11 +24,12 @@ define([
 	, TemplateTitle
 	, TemplateInfo
 	, Credentials
+	, SearchWidget
 	, SocialWidget
 	, WidgetLastActivity
 	, WidgetFavourites
 ){
-	return declare([Layout, Controller, _AddTitle], {
+	return declare([Layout, Controller/*, _AddTitle*/], {
 		//	summary:
 		//		Vista detalle de Activity.
 
@@ -48,6 +50,15 @@ define([
 			};
 
 			this.widgetConfigs = {
+				search: {
+					width: 6,
+					height: 1,
+					type: SearchWidget,
+					props: {
+						omitTitleBar: true,
+						"class": "containerDetails"
+					}
+				},
 				favourites: {
 					width: 3,
 					height: 4,

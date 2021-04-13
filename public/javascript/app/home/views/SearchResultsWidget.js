@@ -33,7 +33,7 @@ define([
 					'HIDE_SEARCH_RESULTS': 'hideSearchResults'
 				},
 				target: redmicConfig.services.activity,
-				className: 'searchResultsPanel'
+				className: 'listZone'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -62,7 +62,9 @@ define([
 
 		_afterShow: function() {
 
-			var parentNode = put(this.contentNode, 'div.' + this.className);
+			// TODO retocar contenedores de por encima, igual no extender de la base de ahora
+			put(this.containerNode, '.flex');
+			var parentNode = put(this.containerNode, 'div.' + this.className);
 
 			this._publish(this.browser.getChannel("SHOW"), {
 				node: parentNode

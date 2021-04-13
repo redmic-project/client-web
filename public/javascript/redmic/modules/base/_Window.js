@@ -482,7 +482,9 @@ define([
 
 		_resizeModuleWindow: function() {
 
-			this._limitMaxHeightToAvailableHeight();
+			if (this._windowNode) {
+				this._limitMaxHeightToAvailableHeight();
+			}
 
 			if (this.node && !this._getResizedByUser()) {
 				this._autoMaximizeOnLowWidth();

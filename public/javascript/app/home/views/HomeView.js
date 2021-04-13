@@ -1,80 +1,69 @@
 define([
 	"app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/InitialTitle"
 	, "templates/InitialInfo"
 	, "redmic/base/Credentials"
-	, 'app/home/views/SearchWidget'
+	, 'app/home/views/SearchBarWidget'
+	, 'app/home/views/SearchResultsWidget'
 	, "app/home/views/SocialWidget"
 	, "app/home/views/WidgetLastActivity"
 	, "app/home/views/WidgetFavourites"
 ], function(
 	Controller
 	, Layout
-	, _AddTitle
-	, redmicConfig
 	, declare
 	, lang
 	, TemplateDisplayer
-	, TemplateTitle
 	, TemplateInfo
 	, Credentials
-	, SearchWidget
+	, SearchBarWidget
+	, SearchResultsWidget
 	, SocialWidget
 	, WidgetLastActivity
 	, WidgetFavourites
-){
-	return declare([Layout, Controller/*, _AddTitle*/], {
+) {
+
+	return declare([Layout, Controller], {
 		//	summary:
-		//		Vista detalle de Activity.
+		//		Vista inicial de la aplicación.
 
 		constructor: function(args) {
 
 			this.config = {
-				_titleRightButtonsList: [],
-				centerTitle: true,
 				noScroll: true,
 				propsWidget: {
 					omitTitleButtons: true
 				}
 			};
 
-			this.titleWidgetConfig = {
-				template: TemplateTitle,
-				target: "initial_title"
-			};
-
 			this.widgetConfigs = {
-				search: {
+				searchBar: {
 					width: 6,
 					height: 1,
-					type: SearchWidget,
+					type: SearchBarWidget,
 					props: {
 						omitTitleBar: true,
 						"class": "containerDetails"
 					}
 				},
-				favourites: {
-					width: 3,
+				searchFilter: {
+					width: 2,
 					height: 4,
-					type: WidgetFavourites,
+					type: SearchResultsWidget,
+					hidden: true,
 					props: {
-						title: this.i18n.favourites,
 						"class": "containerDetails"
 					}
 				},
-				lastActivities: {
-					width: 3,
-					height: 6,
-					type: WidgetLastActivity,
+				searchResults: {
+					width: 4,
+					height: 4,
+					type: SearchResultsWidget,
+					hidden: true,
 					props: {
-						title: this.i18n.lastActivities,
-						template: TemplateInfo,
 						"class": "containerDetails"
 					}
 				},
@@ -96,6 +85,25 @@ define([
 					props: {
 						title: this.i18n.followUs
 					}
+				},
+				favourites: {
+					width: 3,
+					height: 5,
+					type: WidgetFavourites,
+					props: {
+						title: this.i18n.favourites,
+						"class": "containerDetails"
+					}
+				},
+				lastActivities: {
+					width: 3,
+					height: 5,
+					type: WidgetLastActivity,
+					props: {
+						title: this.i18n.lastActivities,
+						template: TemplateInfo,
+						"class": "containerDetails"
+					}
 				}
 			};
 
@@ -112,7 +120,38 @@ define([
 
 		_afterShow: function(request) {
 
-			this.startup();
+			//this.startup();
+			this._listenWidgets();
+		},
+
+		_listenWidgets: function() {
+
+			this._setSubscriptions([{
+				channel: this._widgets.searchBar.getChannel('SHOW_SEARCH_RESULTS'),
+				callback: lang.hitch(this, this._showSearchResults)
+			},{
+				channel: this._widgets.searchBar.getChannel('HIDE_SEARCH_RESULTS'),
+				callback: lang.hitch(this, this._hideSearchResults)
+			}]);
+		},
+
+		_showSearchResults: function(searchDefinition) {
+
+			console.log('me llego', searchDefinition);
+
+			this._showWidget('searchFilter');
+			this._showWidget('searchResults');
+			this._reloadInteractive();
+		},
+
+		_hideSearchResults: function(searchDefinition) {
+
+			console.log('me llego', searchDefinition);
+
+			this._hideWidget('searchFilter');
+			this._hideWidget('searchResults');
+			this._reloadInteractive();
+			this._updateInteractive();
 		},
 
 		_clearModules: function() {
@@ -122,27 +161,22 @@ define([
 
 		_refreshModules: function() {
 
-			this._emitEvt('INJECT_ITEM', {
-				data: {},
-				target: "initial_title"
-			});
-
-			var object = {};
-
-			object.info = "";
+			var obj = {
+				info: ''
+			};
 
 			if (Credentials.get("userRole") === "ROLE_GUEST") {
-				object.roleGuest = this.i18n.contentInfo1 + " ";
-				object.roleGuest += this.i18n.visitor;
-				object.roleGuest += this.i18n.contentInfo2;
-				object.register = this.i18n.register.toLowerCase();
-				object.info += this.i18n.contentInfo3;
+				obj.roleGuest = this.i18n.contentInfo1 + " ";
+				obj.roleGuest += this.i18n.visitor;
+				obj.roleGuest += this.i18n.contentInfo2;
+				obj.register = this.i18n.register.toLowerCase();
+				obj.info += this.i18n.contentInfo3;
 			}
 
-			object.info += this.i18n.contentSend;
+			obj.info += this.i18n.contentSend;
 
 			this._emitEvt('INJECT_ITEM', {
-				data: object,
+				data: obj,
 				target: "initial_info"
 			});
 		}

@@ -79,6 +79,10 @@ define([
 
 		_beforeShow: function(req) {
 
+			if (this._getShown()) {
+				return this.inherited(arguments);
+			}
+
 			if (this._getPreviouslyShown()) {
 				this._removeNodeListeners();
 			}

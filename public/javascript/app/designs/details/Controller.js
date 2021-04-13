@@ -140,6 +140,12 @@ define([
 
 			this._createWidgetNode(key, config);
 
+			if (config.hidden) {
+				var dfd = new Deferred();
+				dfd.resolve();
+				return dfd;
+			}
+
 			return this._showWidget(key);
 		},
 
@@ -158,12 +164,18 @@ define([
 		_onControllerShown: function() {
 
 			if (this._getShown()) {
-				this.packery.reloadItems();
+				this._reloadInteractive();
 				this._updateInteractive();
 			}
 
 			this._clearModules();
 			this._refreshModules();
+		},
+
+		_reloadInteractive: function() {
+
+			this.packery.layout();
+			this.packery.reloadItems();
 		},
 
 		_checkPathVariableId: function() {
@@ -176,6 +188,7 @@ define([
 
 		_onControllerMeOrAncestorShown: function(res) {
 
+			this._reloadInteractive();
 			this._updateInteractive();
 		},
 
@@ -284,10 +297,14 @@ define([
 				return;
 			}
 
-			this._once(instance.getChannel("HIDDEN"), lang.hitch(this, function(node) {
+			this._once(instance.getChannel("HIDDEN"), lang.hitch(this, function(args) {
 
-				put(node, "." + this.hiddenClass);
-			}, node));
+				put(args.node, "." + this.hiddenClass);
+				this._removeWidgetInteractivity(args.key);
+			}, {
+				key: key,
+				node: node
+			}));
 
 			this._publish(instance.getChannel("HIDE"), {
 				node: node
@@ -335,6 +352,11 @@ define([
 			this.packery.bindDraggabillyEvents(draggie);
 
 			return draggie;
+		},
+
+		_removeWidgetInteractivity: function(key) {
+
+			delete this._nodesHandlers[key];
 		},
 
 		_subModuleResized: function() {

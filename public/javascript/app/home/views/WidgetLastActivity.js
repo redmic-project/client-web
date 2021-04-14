@@ -52,7 +52,8 @@ define([
 						field: "id",
 						order: "DESC"
 					}]
-				}
+				},
+				requesterId: this.getOwnChannel()
 			});
 		},
 

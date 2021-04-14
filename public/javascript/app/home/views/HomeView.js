@@ -137,16 +137,16 @@ define([
 
 		_showSearchResults: function(searchDefinition) {
 
-			console.log('me llego', searchDefinition);
-
 			this._showWidget('searchFilter');
 			this._showWidget('searchResults');
 			this._reloadInteractive();
+
+			this._publish(this._widgets.searchResults.getChannel('SEARCH_DATA'), searchDefinition);
 		},
 
 		_hideSearchResults: function(searchDefinition) {
 
-			console.log('me llego', searchDefinition);
+			this._publish(this._widgets.searchResults.getChannel('CLEAR_DATA'), searchDefinition);
 
 			this._hideWidget('searchFilter');
 			this._hideWidget('searchResults');

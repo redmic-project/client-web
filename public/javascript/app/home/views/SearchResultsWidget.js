@@ -4,19 +4,31 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
+	, 'redmic/modules/base/_Filter'
 	, 'redmic/modules/base/_Store'
+	, 'redmic/modules/browser/bars/Pagination'
+	, 'redmic/modules/browser/bars/Total'
+	, 'redmic/modules/browser/_ButtonsInRow'
+	, 'redmic/modules/browser/_Framework'
 	, 'redmic/modules/browser/ListImpl'
+	, 'templates/ActivityList'
 ], function(
 	_DashboardItem
 	, redmicConfig
 	, declare
 	, lang
 	, put
+	, _Filter
 	, _Store
+	, Pagination
+	, Total
+	, _ButtonsInRow
+	, _Framework
 	, ListImpl
+	, ActivityList
 ) {
 
-	return declare([_DashboardItem, _Store], {
+	return declare([_DashboardItem, _Store, _Filter], {
 		//	summary:
 		//		Widget contenedor de resultados de búsqueda sobre actividades
 
@@ -24,13 +36,9 @@ define([
 
 			this.config = {
 				ownChannel: 'searchResultsWidget',
-				events: {
-					'SHOW_SEARCH_RESULTS': 'showSearchResults',
-					'HIDE_SEARCH_RESULTS': 'hideSearchResults'
-				},
 				actions: {
-					'SHOW_SEARCH_RESULTS': 'showSearchResults',
-					'HIDE_SEARCH_RESULTS': 'hideSearchResults'
+					'SEARCH_DATA': 'searchData',
+					'CLEAR_DATA': 'clearData'
 				},
 				target: redmicConfig.services.activity,
 				className: 'listZone'
@@ -43,53 +51,68 @@ define([
 
 			this.browserConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				target: this.target
+				target: this.target,
+				template: ActivityList,
+				bars: [{
+					instance: Total
+				},{
+					instance: Pagination
+				}],
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+								icon: 'fa-info-circle',
+								btnId: 'info',
+								title: 'info',
+								href: redmicConfig.viewPaths.activityCatalogDetails
+						}]
+					}
+				}
 			}, this.browserConfig || {}]);
 
-			this.browser = new ListImpl(this.browserConfig);
+			var BrowserDefinition = declare([ListImpl, _Framework, _ButtonsInRow]);
+			this.browser = new BrowserDefinition(this.browserConfig);
 		},
 
-		_definePublications: function() {
+		_defineSubscriptions: function() {
 
-			this.publicationsConfig.push({
-				event: 'SHOW_SEARCH_RESULTS',
-				channel: this.getChannel('SHOW_SEARCH_RESULTS')
+			this.subscriptionsConfig.push({
+				channel: this.getChannel('SEARCH_DATA'),
+				callback: '_subSearchData'
 			},{
-				event: 'HIDE_SEARCH_RESULTS',
-				channel: this.getChannel('HIDE_SEARCH_RESULTS')
+				channel: this.getChannel('CLEAR_DATA'),
+				callback: '_subClearData'
 			});
 		},
 
 		_afterShow: function() {
 
-			// TODO retocar contenedores de por encima, igual no extender de la base de ahora
-			put(this.containerNode, '.flex');
-			var parentNode = put(this.containerNode, 'div.' + this.className);
+			if (!this._getPreviouslyShown()) {
+				// TODO retocar contenedores de por encima, igual no extender de la base de ahora
+				put(this.containerNode, '.flex');
+				this._browserNode = put(this.containerNode, 'div.' + this.className);
+			}
 
 			this._publish(this.browser.getChannel("SHOW"), {
-				node: parentNode
+				node: this._browserNode
 			});
 		},
 
-		_handleFilterParams: function(filterParams) {
+		_subSearchData: function(req) {
 
-			if (filterParams.suggest) {
-				return;
-			}
-
-			if (!filterParams.text) {
-				this._emitEvt('HIDE_SEARCH_RESULTS', {
-					target: this.target
-				});
-				return;
-			}
-
-			var searchResult = filterParams.text.text;
-
-			this._emitEvt('SHOW_SEARCH_RESULTS', {
-				target: this.target,
-				searchResult: searchResult
+			this._emitEvt('ADD_TO_QUERY', {
+				query: {
+					text: {
+						text: req.searchText
+					}
+				},
+				omitRefresh: false
 			});
+		},
+
+		_subClearData: function(req) {
+
+			this._publish(this.browser.getChannel("CLEAR"));
 		}
 	});
 });

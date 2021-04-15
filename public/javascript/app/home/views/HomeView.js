@@ -7,6 +7,8 @@ define([
 	, "templates/InitialInfo"
 	, "redmic/base/Credentials"
 	, 'app/home/views/SearchBarWidget'
+	, 'app/home/views/SearchFastFilterWidget'
+	, 'app/home/views/SearchFilterWidget'
 	, 'app/home/views/SearchResultsWidget'
 	, "app/home/views/SocialWidget"
 	, "app/home/views/WidgetLastActivity"
@@ -20,6 +22,8 @@ define([
 	, TemplateInfo
 	, Credentials
 	, SearchBarWidget
+	, SearchFastFilterWidget
+	, SearchFilterWidget
 	, SearchResultsWidget
 	, SocialWidget
 	, WidgetLastActivity
@@ -50,9 +54,18 @@ define([
 					}
 				},
 				searchFilter: {
+					width: 6,
+					height: 2,
+					type: SearchFilterWidget,
+					hidden: true,
+					props: {
+						"class": "containerDetails"
+					}
+				},
+				searchFastFilter: {
 					width: 2,
 					height: 4,
-					type: SearchResultsWidget,
+					type: SearchFastFilterWidget,
 					hidden: true,
 					props: {
 						"class": "containerDetails"
@@ -132,12 +145,15 @@ define([
 			},{
 				channel: this._widgets.searchBar.getChannel('HIDE_SEARCH_RESULTS'),
 				callback: lang.hitch(this, this._hideSearchResults)
+			},{
+				channel: this._widgets.searchBar.getChannel('TOGGLE_ADVANCED_SEARCH'),
+				callback: lang.hitch(this, this._toggleAdvancedSearch)
 			}]);
 		},
 
 		_showSearchResults: function(searchDefinition) {
 
-			this._showWidget('searchFilter');
+			this._showWidget('searchFastFilter');
 			this._showWidget('searchResults');
 			this._reloadInteractive();
 
@@ -148,10 +164,26 @@ define([
 
 			this._publish(this._widgets.searchResults.getChannel('CLEAR_DATA'), searchDefinition);
 
-			this._hideWidget('searchFilter');
+			this._hideWidget('searchFastFilter');
 			this._hideWidget('searchResults');
 			this._reloadInteractive();
 			this._updateInteractive();
+		},
+
+		_toggleAdvancedSearch: function() {
+
+			if (!this._advancedSearchShown) {
+				this._advancedSearchShown = true;
+				this._showWidget('searchFilter');
+				this._reloadInteractive();
+				this._updateInteractive();
+			} else {
+				this._advancedSearchShown = false;
+				this._hideWidget('searchFilter');
+				//this._publish(this._widgets.searchFilter.getChannel('TOGGLE_SHOW'));
+				this._reloadInteractive();
+				this._updateInteractive();
+			}
 		},
 
 		_clearModules: function() {

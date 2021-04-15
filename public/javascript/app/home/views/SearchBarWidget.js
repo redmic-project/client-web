@@ -26,11 +26,13 @@ define([
 				ownChannel: 'searchWidget',
 				events: {
 					'SHOW_SEARCH_RESULTS': 'showSearchResults',
-					'HIDE_SEARCH_RESULTS': 'hideSearchResults'
+					'HIDE_SEARCH_RESULTS': 'hideSearchResults',
+					'TOGGLE_ADVANCED_SEARCH': 'toggleAdvancedSearch'
 				},
 				actions: {
 					'SHOW_SEARCH_RESULTS': 'showSearchResults',
-					'HIDE_SEARCH_RESULTS': 'hideSearchResults'
+					'HIDE_SEARCH_RESULTS': 'hideSearchResults',
+					'TOGGLE_ADVANCED_SEARCH': 'toggleAdvancedSearch'
 				},
 				target: redmicConfig.services.activity,
 				className: 'searchBarPanel'
@@ -59,12 +61,21 @@ define([
 			},{
 				event: 'HIDE_SEARCH_RESULTS',
 				channel: this.getChannel('HIDE_SEARCH_RESULTS')
+			},{
+				event: 'TOGGLE_ADVANCED_SEARCH',
+				channel: this.getChannel('TOGGLE_ADVANCED_SEARCH')
 			});
 		},
 
 		_afterShow: function() {
 
+			if (this._getPreviouslyShown()) {
+				return;
+			}
+
 			var parentNode = put(this.contentNode, 'div.' + this.className);
+			this._toggleAdvancedNode = put(this.contentNode, 'i.fa.fa-info');
+			this._toggleAdvancedNode.onclick = lang.hitch(this, this._emitEvt, 'TOGGLE_ADVANCED_SEARCH');
 
 			this._publish(this.textSearch.getChannel("SHOW"), {
 				node: parentNode

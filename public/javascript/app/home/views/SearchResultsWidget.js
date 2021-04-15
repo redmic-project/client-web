@@ -106,7 +106,7 @@ define([
 						text: req.searchText
 					}
 				},
-				omitRefresh: false
+				requesterId: this.getOwnChannel()
 			});
 		},
 

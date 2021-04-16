@@ -96,6 +96,11 @@ define([
 				delete search.omitRefresh;
 			}
 
+			if (search.requesterId !== undefined) {
+				obj.requesterId = search.requesterId;
+				delete search.requesterId;
+			}
+
 			this._emitEvt('ADD_TO_QUERY', obj);
 		},
 

@@ -98,11 +98,17 @@ define([
 
 		_getFacets: function(/*object*/ evt) {
 
+			this._emitEvt('LOADING');
+
 			this.facets.setAggs(evt.aggs);
 			this._setAggs(lang.clone(evt.aggs));
 
 			if (!this._facetsCreate) {
-				this._emitEvt('SEARCH', {"aggs": this.aggs});
+				this._emitEvt('SEARCH', {
+					aggs: this.aggs,
+					size: 0,
+					requesterId: this.queryChannel
+				});
 			}
 
 			this._facetsCreate = true;
@@ -121,7 +127,7 @@ define([
 						size: terms.size || null,
 						field: field,
 						term: item,
-						minCount: 1 // TODO
+						minCount: 0
 					};
 
 				if (nested) {
@@ -161,6 +167,7 @@ define([
 		_subAvailableFacets: function(/*Object*/ response) {
 
 			this._setFacets(response);
+			this._emitEvt('LOADED');
 		},
 
 		_setFacets: function(/*object*/ facets) {

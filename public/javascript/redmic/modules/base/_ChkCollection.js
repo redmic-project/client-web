@@ -73,7 +73,7 @@ define([
 			var response = res.body || res;
 			var requesterId = response && response.requesterId;
 
-			return !requesterId || (requesterId === this.getOwnChannel() ||
+			return !requesterId || (requesterId === this.getOwnChannel() || requesterId === this.getChannel() ||
 				this.associatedIds.indexOf(requesterId) !== -1);
 		},
 

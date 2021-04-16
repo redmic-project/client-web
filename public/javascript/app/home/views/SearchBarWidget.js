@@ -75,7 +75,10 @@ define([
 
 			var parentNode = put(this.contentNode, 'div.' + this.className);
 			this._toggleAdvancedNode = put(this.contentNode, 'i.fa.fa-info');
-			this._toggleAdvancedNode.onclick = lang.hitch(this, this._emitEvt, 'TOGGLE_ADVANCED_SEARCH');
+			this._toggleAdvancedNode.onclick = lang.hitch(this, this._emitEvt, 'TOGGLE_ADVANCED_SEARCH', {
+				target: this.target,
+				queryChannel: this.queryChannel
+			});
 
 			this._publish(this.textSearch.getChannel("SHOW"), {
 				node: parentNode
@@ -99,7 +102,8 @@ define([
 
 			this._emitEvt('SHOW_SEARCH_RESULTS', {
 				target: this.target,
-				searchText: searchText
+				searchText: searchText,
+				queryChannel: this.queryChannel
 			});
 		}
 	});

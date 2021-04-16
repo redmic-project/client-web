@@ -39,7 +39,6 @@ define([
 			this.config = {
 				noScroll: true,
 				propsWidget: {
-					omitTitleButtons: true
 				}
 			};
 
@@ -153,9 +152,18 @@ define([
 
 		_showSearchResults: function(searchDefinition) {
 
+			var obj = {
+				target: searchDefinition.target,
+				queryChannel: searchDefinition.queryChannel
+			};
+
+			this._publish(this._widgets.searchResults.getChannel('SET_PROPS'), obj);
+			this._publish(this._widgets.searchFastFilter.getChannel('SET_PROPS'), obj);
+
 			this._showWidget('searchFastFilter');
 			this._showWidget('searchResults');
 			this._reloadInteractive();
+			this._updateInteractive();
 
 			this._publish(this._widgets.searchResults.getChannel('SEARCH_DATA'), searchDefinition);
 		},
@@ -170,9 +178,15 @@ define([
 			this._updateInteractive();
 		},
 
-		_toggleAdvancedSearch: function() {
+		_toggleAdvancedSearch: function(searchDefinition) {
 
 			if (!this._advancedSearchShown) {
+				if (this._advancedSearchShown === undefined) {
+					this._publish(this._widgets.searchFilter.getChannel('SET_PROPS'), {
+						target: searchDefinition.target,
+						queryChannel: searchDefinition.queryChannel
+					});
+				}
 				this._advancedSearchShown = true;
 				this._showWidget('searchFilter');
 				this._reloadInteractive();

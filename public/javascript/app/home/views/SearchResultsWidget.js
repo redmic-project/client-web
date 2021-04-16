@@ -4,9 +4,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
-	, 'redmic/modules/base/_Filter'
 	, 'redmic/modules/base/_Store'
-	, 'redmic/modules/browser/bars/Pagination'
 	, 'redmic/modules/browser/bars/Total'
 	, 'redmic/modules/browser/_ButtonsInRow'
 	, 'redmic/modules/browser/_Framework'
@@ -18,9 +16,7 @@ define([
 	, declare
 	, lang
 	, put
-	, _Filter
 	, _Store
-	, Pagination
 	, Total
 	, _ButtonsInRow
 	, _Framework
@@ -28,7 +24,7 @@ define([
 	, ActivityList
 ) {
 
-	return declare([_DashboardItem, _Store, _Filter], {
+	return declare([_DashboardItem, _Store], {
 		//	summary:
 		//		Widget contenedor de resultados de búsqueda sobre actividades
 
@@ -47,24 +43,23 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_initialize: function() {
+		_createModules: function() {
 
 			this.browserConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
+				queryChannel: this.queryChannel,
 				template: ActivityList,
 				bars: [{
 					instance: Total
-				},{
-					instance: Pagination
 				}],
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
-								icon: 'fa-info-circle',
-								btnId: 'info',
-								title: 'info',
-								href: redmicConfig.viewPaths.activityCatalogDetails
+							icon: 'fa-info-circle',
+							btnId: 'info',
+							title: 'info',
+							href: redmicConfig.viewPaths.activityCatalogDetails
 						}]
 					}
 				}
@@ -88,6 +83,7 @@ define([
 		_afterShow: function() {
 
 			if (!this._getPreviouslyShown()) {
+				this._createModules();
 				// TODO retocar contenedores de por encima, igual no extender de la base de ahora
 				put(this.containerNode, '.flex');
 				this._browserNode = put(this.containerNode, 'div.' + this.className);
@@ -106,7 +102,7 @@ define([
 						text: req.searchText
 					}
 				},
-				requesterId: this.getOwnChannel()
+				//requesterId: this.getOwnChannel()
 			});
 		},
 

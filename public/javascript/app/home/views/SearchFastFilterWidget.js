@@ -4,7 +4,6 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
-	, 'redmic/modules/base/_Filter'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
 	, 'redmic/modules/base/_Store'
@@ -15,14 +14,13 @@ define([
 	, declare
 	, lang
 	, put
-	, _Filter
 	, _Module
 	, _Show
 	, _Store
 	, FacetsImpl
 ) {
 
-	return declare([_Module, _Show, _Filter], {
+	return declare([_Module, _Show], {
 		//	summary:
 		//		Widget contenedor de resultados de búsqueda sobre actividades
 
@@ -37,7 +35,7 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_initialize: function() {
+		_createModules: function() {
 
 			this.facetsSearchConfig = this._merge([{
 				parentChannel: this.getChannel(),
@@ -67,6 +65,8 @@ define([
 			if (this._getPreviouslyShown()) {
 				return;
 			}
+
+			this._createModules();
 
 			var facetsSearchNode = put(this.domNode, 'div.' + this.className);
 

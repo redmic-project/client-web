@@ -273,7 +273,7 @@ define([], function() {
 		'unitType': baseUri + 'unittypes',
 
 		'timeSeries': baseUri + 'timeseries',
-		'timeSeriesTemporalData': baseUri + 'timeseries/temporaldata',
+		'timeSeriesTemporalData': baseUri + 'time-series/view/temporaldata',
 		'timeSeriesWindRose': baseUri + 'time-series/view/activities/{id}/timeseries/windrose',
 
 		'activityOrganisations': baseUri + 'organisations/{id}/activities',

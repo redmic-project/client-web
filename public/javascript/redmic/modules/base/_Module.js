@@ -720,12 +720,18 @@ define([
 			var propNames = [];
 
 			for (var prop in req) {
-				var value = req[prop];
+				var value = req[prop],
+					oldValue = this[prop];
 
 				if (this._checkPropIsShareable(prop)) {
+					if (value === oldValue) {
+						console.warn('Tried to update property "%s" using same value "%s" at module "%s"', prop, value,
+							this.getChannel());
+
+							continue;
+					}
 					var evtKey = this._createEvent(prop + this.propSetSuffix),
-						methodName = '_on' + Utilities.capitalize(prop) + 'PropSet';
-						oldValue = this[prop],
+						methodName = '_on' + Utilities.capitalize(prop) + 'PropSet',
 						changeObj = {
 							prop: prop,
 							oldValue: oldValue,

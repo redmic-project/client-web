@@ -193,7 +193,9 @@ define([
 
 			if (this.schema) {
 				this._buildModelWithSchema(this.schema);
-			} else if (this.target.indexOf(redmicConfig.apiUrlVariable) !== -1) {
+			} else if (this.target.indexOf(redmicConfig.apiUrlVariable) !== -1 ||
+				this.target.indexOf('undefined') !== -1) {
+
 				this._emitEvt("GET", {
 					target: this.target,
 					id: this.idForGet,

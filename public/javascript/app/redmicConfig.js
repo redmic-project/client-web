@@ -274,7 +274,7 @@ define([], function() {
 
 		'timeSeries': baseUri + 'timeseries',
 		'timeSeriesTemporalData': baseUri + 'time-series/view/temporaldata',
-		'timeSeriesWindRose': baseUri + 'time-series/view/activities/{id}/timeseries/windrose',
+		'timeSeriesWindRose': baseUri + 'time-series/view/activities/{id}/windrose',
 
 		'activityOrganisations': baseUri + 'organisations/{id}/activities',
 		'activityPlatforms': baseUri + 'platforms/{id}/activities',

@@ -162,8 +162,6 @@ define([
 				this._deleteModelSubscriptionAndPublications();
 				this._publish(this.modelInstance.getChannel("DISCONNECT"));
 				delete this.modelInstance;
-
-				isOldModelInstance = true;
 			}
 
 			this.modelInstance = new ModelImpl(this.modelConfig);
@@ -221,6 +219,13 @@ define([
 
 			if (req.requesterId) {
 				this.requesterId = req.requesterId;
+			}
+
+			if (query.size === undefined) {
+				// TODO si anteriormente se pidió con un size determinado, queda persistente (y no debería, creo).
+				// si se setea de nuevo cuando no venga definido, se consigue eliminar esa persistencia, además
+				// de usar un límite superior para las consultas de datos.
+				query.size = 50;
 			}
 
 			this._addToQuery(query, !omitRefresh);

@@ -74,6 +74,10 @@ define([
 					put(containerActivity, 'a[href="/catalog/activity-info/' +
 						data[i].id + '"][d-state-url=true] .fa.fa-info-circle');
 				}
+
+				this._publish(this.getChannel('DISCONNECT'), {
+					actions: ['AVAILABLE', 'ITEM_AVAILABLE', 'TARGET_LOADING', 'INJECT_DATA', 'INJECT_ITEM']
+				});
 			}
 		}
 	});

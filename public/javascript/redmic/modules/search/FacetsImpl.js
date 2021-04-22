@@ -105,9 +105,9 @@ define([
 
 			if (!this._facetsCreate) {
 				this._emitEvt('SEARCH', {
-					aggs: this.aggs,
-					size: 0,
-					requesterId: this.queryChannel
+					aggs: this.aggs//,
+					//size: 0,
+					//requesterId: this.queryChannel
 				});
 			}
 

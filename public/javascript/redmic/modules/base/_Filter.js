@@ -134,7 +134,6 @@ define([
 
 		_onQueryChannelUpdated: function(obj) {
 
-			console.log('entra', obj)
 			this._disconnectFromFilter(obj.oldValue);
 			this._connectToFilter(obj.value);
 		},

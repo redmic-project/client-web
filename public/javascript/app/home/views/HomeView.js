@@ -152,26 +152,22 @@ define([
 
 		_showSearchResults: function(searchDefinition) {
 
-			var obj = {
+			this._publish(this._widgets.searchFastFilter.getChannel('SET_PROPS'), {
 				target: searchDefinition.target,
 				queryChannel: searchDefinition.queryChannel
-			};
-
-			this._publish(this._widgets.searchResults.getChannel('SET_PROPS'), obj);
-			this._publish(this._widgets.searchFastFilter.getChannel('SET_PROPS'), obj);
+			});
 
 			this._showWidget('searchFastFilter');
 			this._showWidget('searchResults');
 			this._reloadInteractive();
 			this._updateInteractive();
-
-			this._publish(this._widgets.searchResults.getChannel('SEARCH_DATA'), searchDefinition);
 		},
 
 		_hideSearchResults: function(searchDefinition) {
 
 			this._publish(this._widgets.searchResults.getChannel('CLEAR_DATA'), searchDefinition);
 
+			this._hideWidget('searchFilter');
 			this._hideWidget('searchFastFilter');
 			this._hideWidget('searchResults');
 			this._reloadInteractive();
@@ -194,7 +190,6 @@ define([
 			} else {
 				this._advancedSearchShown = false;
 				this._hideWidget('searchFilter');
-				//this._publish(this._widgets.searchFilter.getChannel('TOGGLE_SHOW'));
 				this._reloadInteractive();
 				this._updateInteractive();
 			}

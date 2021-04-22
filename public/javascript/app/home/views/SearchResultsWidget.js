@@ -33,7 +33,6 @@ define([
 			this.config = {
 				ownChannel: 'searchResultsWidget',
 				actions: {
-					'SEARCH_DATA': 'searchData',
 					'CLEAR_DATA': 'clearData'
 				},
 				target: redmicConfig.services.activity,
@@ -72,9 +71,6 @@ define([
 		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel: this.getChannel('SEARCH_DATA'),
-				callback: '_subSearchData'
-			},{
 				channel: this.getChannel('CLEAR_DATA'),
 				callback: '_subClearData'
 			});
@@ -91,18 +87,6 @@ define([
 
 			this._publish(this.browser.getChannel("SHOW"), {
 				node: this._browserNode
-			});
-		},
-
-		_subSearchData: function(req) {
-
-			this._emitEvt('ADD_TO_QUERY', {
-				query: {
-					text: {
-						text: req.searchText
-					}
-				},
-				//requesterId: this.getOwnChannel()
 			});
 		},
 

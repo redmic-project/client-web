@@ -76,7 +76,7 @@ define([
 
 				return this.remote
 					.findByCssSelector(buttonSelector)
-					.sleep(Config.timeout.shortSleep)
+					.sleep(Config.timeout.veryLongSleep)
 					.isDisplayed()
 					.then(function(displayed) {
 

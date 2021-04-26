@@ -132,6 +132,7 @@ run-local-modules-functional-tests:
   variables:
     <<: *run-local-tests-variables
   script:
+    - grunt buildStyles
     - npm start &
     - >
       grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless

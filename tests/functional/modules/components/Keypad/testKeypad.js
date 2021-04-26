@@ -75,7 +75,6 @@ define([
 				var buttonSelector = 'div.center' + firstButtonOfGroupSelector;
 
 				return this.remote
-					.sleep(Config.timeout.longSleep)
 					.findByCssSelector(buttonSelector)
 					.isDisplayed()
 					.then(function(displayed) {

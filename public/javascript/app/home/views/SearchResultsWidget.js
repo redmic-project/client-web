@@ -42,12 +42,11 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_createModules: function() {
+		_initialize: function() {
 
 			this.browserConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
-				queryChannel: this.queryChannel,
 				template: ActivityList,
 				bars: [{
 					instance: Total
@@ -79,7 +78,6 @@ define([
 		_afterShow: function() {
 
 			if (!this._getPreviouslyShown()) {
-				this._createModules();
 				// TODO retocar contenedores de por encima, igual no extender de la base de ahora
 				put(this.containerNode, '.flex');
 				this._browserNode = put(this.containerNode, 'div.' + this.className);
@@ -88,6 +86,24 @@ define([
 			this._publish(this.browser.getChannel("SHOW"), {
 				node: this._browserNode
 			});
+		},
+
+		_onTargetPropSet: function(evt) {
+
+			this._setPropToChildModules(evt.prop, evt.value);
+		},
+
+		_onQueryChannelPropSet: function(evt) {
+
+			this._setPropToChildModules(evt.prop, evt.value);
+		},
+
+		_setPropToChildModules: function(prop, value) {
+
+			var obj = {};
+			obj[prop] = value;
+
+			this._publish(this.browser.getChannel('SET_PROPS'), obj);
 		},
 
 		_subClearData: function(req) {

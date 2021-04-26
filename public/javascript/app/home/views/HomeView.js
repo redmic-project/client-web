@@ -152,10 +152,14 @@ define([
 
 		_showSearchResults: function(searchDefinition) {
 
-			this._publish(this._widgets.searchFastFilter.getChannel('SET_PROPS'), {
+			var obj = {
 				target: searchDefinition.target,
 				queryChannel: searchDefinition.queryChannel
-			});
+			};
+
+			this._publish(this._widgets.searchResults.getChannel('SET_PROPS'), obj);
+			this._publish(this._widgets.searchFastFilter.getChannel('SET_PROPS'), obj);
+			this._publish(this._widgets.searchFilter.getChannel('SET_PROPS'), obj);
 
 			this._showWidget('searchFastFilter');
 			this._showWidget('searchResults');

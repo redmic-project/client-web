@@ -1,6 +1,5 @@
 define([
 	'app/home/views/_DashboardItem'
-	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
@@ -10,7 +9,6 @@ define([
 	, 'redmic/modules/search/CompositeImpl'
 ], function(
 	_DashboardItem
-	, redmicConfig
 	, declare
 	, lang
 	, put
@@ -28,18 +26,16 @@ define([
 
 			this.config = {
 				ownChannel: 'searchFilterWidget',
-				target: redmicConfig.services.activity,
 				className: 'composite'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_createModules: function() {
+		_initialize: function() {
 
 			this.compositeSearchConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				filterChannel: this.queryChannel
+				parentChannel: this.getChannel()
 			}, this.compositeSearchConfig || {}]);
 
 			this.compositeSearch = new CompositeImpl(this.compositeSearchConfig);
@@ -51,13 +47,29 @@ define([
 				return;
 			}
 
-			this._createModules();
-
 			var compositeSearchNode = put(this.domNode, 'div.' + this.className);
 
 			this._publish(this.compositeSearch.getChannel("SHOW"), {
 				node: compositeSearchNode
 			});
+		},
+
+		_onTargetPropSet: function(evt) {
+
+			this._setPropToChildModules(evt.prop, evt.value);
+		},
+
+		_onQueryChannelPropSet: function(evt) {
+
+			this._setPropToChildModules(evt.prop, evt.value);
+		},
+
+		_setPropToChildModules: function(prop, value) {
+
+			var obj = {};
+			obj[prop] = value;
+
+			this._publish(this.compositeSearch.getChannel('SET_PROPS'), obj);
 		}
 	});
 });

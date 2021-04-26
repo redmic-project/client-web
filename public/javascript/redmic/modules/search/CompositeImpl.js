@@ -141,9 +141,17 @@ define([
 			}]);
 		},
 
+		_onQueryChannelPropSet: function(evt) {
+
+			this._updateFilterChannel(evt.value);
+		},
+
 		_subFilterChangeChannel: function(req) {
 
-			var filterChannel = req.filterChannel;
+			this._updateFilterChannel(req.filterChannel);
+		},
+
+		_updateFilterChannel: function(filterChannel) {
 
 			if (filterChannel && (!this.filterChannel || this.filterChannel !== filterChannel)) {
 				this.filterChannel = filterChannel;

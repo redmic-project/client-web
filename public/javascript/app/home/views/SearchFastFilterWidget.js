@@ -1,6 +1,5 @@
 define([
 	'app/home/views/_DashboardItem'
-	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
@@ -10,7 +9,6 @@ define([
 	, 'redmic/modules/search/FacetsImpl'
 ], function(
 	_DashboardItem
-	, redmicConfig
 	, declare
 	, lang
 	, put
@@ -28,34 +26,30 @@ define([
 
 			this.config = {
 				ownChannel: 'searchFastFilterWidget',
-				target: redmicConfig.services.activity,
 				className: 'facets'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_createModules: function() {
+		_initialize: function() {
 
 			this.facetsSearchConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				queryChannel: this.queryChannel,
 				aggs: {
 					"activityType": {
 						"open": true,
 						"terms": {
-							"field": "activityType.name",
-							"size": 100
+							"field": "activityType.name"
 						}
 					},
 					"territorialScope": {
 						"terms": {
-							"field": "scope.name",
-							"size": 20
+							"field": "scope.name"
 						}
 					}
 				}
-			}, this.compositeSearchConfig || {}]);
+			}, this.facetsSearchConfig || {}]);
 
 			this.facetsSearch = new FacetsImpl(this.facetsSearchConfig);
 		},
@@ -66,13 +60,29 @@ define([
 				return;
 			}
 
-			this._createModules();
-
 			var facetsSearchNode = put(this.domNode, 'div.' + this.className);
 
 			this._publish(this.facetsSearch.getChannel("SHOW"), {
 				node: facetsSearchNode
 			});
+		},
+
+		_onTargetPropSet: function(evt) {
+
+			this._setPropToChildModules(evt.prop, evt.value);
+		},
+
+		_onQueryChannelPropSet: function(evt) {
+
+			this._setPropToChildModules(evt.prop, evt.value);
+		},
+
+		_setPropToChildModules: function(prop, value) {
+
+			this._publish(this.facetsSearch.getChannel('DESTROY'));
+
+			this.facetsSearchConfig[prop] = value;
+			this.facetsSearch = new FacetsImpl(this.facetsSearchConfig);
 		}
 	});
 });

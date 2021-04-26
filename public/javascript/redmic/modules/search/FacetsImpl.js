@@ -124,7 +124,7 @@ define([
 					field = terms.field,
 					nested = terms.nested,
 					obj = {
-						size: terms.size || null,
+						size: terms.size || 100,
 						field: field,
 						term: item,
 						minCount: 0

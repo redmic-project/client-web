@@ -138,6 +138,11 @@ define([
 			this._connectToFilter(obj.value);
 		},
 
+		_onQueryChannelPropSet: function(evt) {
+
+			this._onQueryChannelUpdated(evt);
+		},
+
 		_disconnectFromFilter: function(oldQueryChannel) {
 
 			this._removeSubscriptions([

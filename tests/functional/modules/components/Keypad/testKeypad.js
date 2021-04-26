@@ -19,7 +19,7 @@ define([
 
 	var indexPageUrl,
 		timeout = Config.timeout.findElement,
-		firstButtonOfGroupSelector = ' div.btnGroup span span:first-child',
+		firstButtonOfGroupSelector = ' div.btnGroup span:first-child',
 
 		pressButtonAndListen = function(buttonSelector, buttonKey) {
 
@@ -75,8 +75,8 @@ define([
 				var buttonSelector = 'div.center' + firstButtonOfGroupSelector;
 
 				return this.remote
+					.sleep(Config.timeout.longSleep)
 					.findByCssSelector(buttonSelector)
-					.sleep(Config.timeout.veryLongSleep)
 					.isDisplayed()
 					.then(function(displayed) {
 

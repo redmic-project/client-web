@@ -28,7 +28,7 @@ require([
 				'class': 'warning'
 			}
 		},
-		keypad = new declare([TrizoneKeypadImpl, Keypad])({
+		keypad = new TrizoneKeypadImpl({
 			parentChannel: 'test',
 			items: {
 				btn1: btn1Config,

@@ -208,6 +208,10 @@ define([
 
 		_onGrandParentScroll: function(evt) {
 
+			if (!this._getShown()) {
+				return;
+			}
+
 			var gParent = evt.target,
 				gParentVisibleTop = gParent.scrollTop - this.scrollMargin,
 				gParentVisibleBottom = gParent.scrollTop + gParent.offsetHeight + this.scrollMargin,

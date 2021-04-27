@@ -1219,6 +1219,9 @@ define({
 	, "resourcesAssociated": "Recursos asociados"
 	, "layer": "Capa"
 
+	, "showMore": "Mostrar más"
+	, "showLess": "Mostrar menos"
+
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"

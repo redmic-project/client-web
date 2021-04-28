@@ -133,16 +133,14 @@ define([
 
 		_onCloseNotificationSidebar: function(evt) {
 
-			var clickedNode = evt.target,
-				targets = this._getClickTargets(evt),
-				nodeDoesNotBelongToNotificationButton = targets.indexOf(this.domNode) === -1 &&
-					clickedNode !== this.domNode,
+			var nodeBelongsToNotificationButton = this._checkClickBelongsToNode(evt, this.domNode),
+				nodeBelongsToNotificationSidebar = this._checkClickBelongsToNode(evt, this.notificationSidebarNode);
 
-				nodeDoesNotBelongToNotificationSidebar = targets.indexOf(this.notificationSidebarNode) === -1;
-
-			if (nodeDoesNotBelongToNotificationButton && nodeDoesNotBelongToNotificationSidebar) {
-				this._clickNotification(evt);
+			if (nodeBelongsToNotificationButton || nodeBelongsToNotificationSidebar) {
+				return;
 			}
+
+			this._clickNotification(evt);
 		},
 
 		_clickNotification: function(evt) {

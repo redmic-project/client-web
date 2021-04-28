@@ -23,6 +23,13 @@ define([
 			}
 
 			return targets.concat(targetPath);
+		},
+
+		_checkClickBelongsToNode: function(event, node) {
+
+			var targets = this._getClickTargets(event);
+
+			return targets.indexOf(node) !== -1;
 		}
 	});
 });

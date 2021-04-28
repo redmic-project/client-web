@@ -218,7 +218,7 @@ define([
 
 			this._contentContainer = put(this.domNode, 'div.' + this.contentContainerClass);
 
-			put(this.domNode, 'div.' + this.overlaySidebarBackgroundClass);
+			this._overlaySidebarBackground = put(this.domNode, 'div.' + this.overlaySidebarBackgroundClass);
 		},
 
 		_createListeners: function() {
@@ -300,23 +300,13 @@ define([
 
 		_onAppClicked: function(evt) {
 
-			var clickedNode = evt.target,
-				targets = this._getClickTargets(evt),
-				nodeDoesNotBelongToMainSidebar = targets.indexOf(this.sidebar.domNode) === -1,
-				nodeDoesNotBelongToToggleButton = !this._findCollapseButtonNode(targets).length;
+			var nodeDoesNotBelongToMainSidebar = !this._checkClickBelongsToNode(evt, this.sidebar.domNode),
+				nodeBelongsToSidebarOverlay = this._checkClickBelongsToNode(evt, this._overlaySidebarBackground);
 
-			if (nodeDoesNotBelongToMainSidebar && nodeDoesNotBelongToToggleButton) {
+			if (nodeDoesNotBelongToMainSidebar && nodeBelongsToSidebarOverlay) {
 				this._appClickHandler.pause();
 				this._collapseMainSidebar();
 			}
-		},
-
-		_findCollapseButtonNode: function(nodes) {
-
-			return nodes.filter(lang.hitch(this, function(target) {
-
-				return target && target.classList && target.classList.contains(this.collapseButtonClass);
-			}));
 		}
 	});
 });

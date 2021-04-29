@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "put-selector/put"
+	, 'dojo/query'
 	, "redmic/modules/base/_Store"
 	, "RWidgets/TextSearch"
 	, "./Search"
@@ -10,7 +10,7 @@ define([
 	declare
 	, lang
 	, aspect
-	, put
+	, query
 	, _Store
 	, TextSearch
 	, Search
@@ -46,7 +46,8 @@ define([
 				itemLabel: null,
 				textValue: '',
 				ownChannel: "textSearch",
-				legacyMode: true
+				legacyMode: true,
+				suggestionsContainerClass: 'suggestions'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -70,7 +71,8 @@ define([
 
 			this.textSearchConfig = this._merge([{
 				itemLabel: this.itemLabel,
-				i18n: this.i18n
+				i18n: this.i18n,
+				suggestionsContainerClass: this.suggestionsContainerClass
 			}, this.textSearchConfig || {}]);
 		},
 
@@ -111,6 +113,9 @@ define([
 			this.textSearch.on("requestSuggests", lang.hitch(this, this._requestSuggestions));
 
 			this.textSearch.on("changeSearchParams", lang.hitch(this, this._changeSearchParams));
+
+			this._globalClicksHandler = this._listenGlobalClicks(lang.hitch(this, this._evaluateToCloseSuggests));
+			this._globalClicksHandler.pause();
 		},
 
 		_getNodeToShow: function() {
@@ -118,7 +123,26 @@ define([
 			return this.textSearch.domNode;
 		},
 
+		_evaluateToCloseSuggests: function(evt) {
+
+			if (!this._suggestionsContainer) {
+				var suggestionsContainer = query('div.' + this.suggestionsContainerClass, this.ownerDocumentBody);
+				if (suggestionsContainer.length) {
+					this._suggestionsContainer = suggestionsContainer[0];
+				}
+			}
+
+			var nodeBelongsToSuggestionsContainer = this._checkClickBelongsToNode(evt, this._suggestionsContainer),
+				nodeBelongsToTextSearch = this._checkClickBelongsToNode(evt, this.textSearch.domNode);
+
+			if (!nodeBelongsToSuggestionsContainer && !nodeBelongsToTextSearch) {
+				this._close();
+			}
+		},
+
 		_requestSuggestions: function(/*Object*/ evt) {
+
+			this._globalClicksHandler.resume();
 
 			this._emitEvt('SEARCH', {
 				suggest: this._createSuggest(evt),
@@ -134,8 +158,8 @@ define([
 
 		_subRequested: function(req) {
 
-			var query = req.query,
-				text = (query.text && query.text.text) || '';
+			var queryObj = req.query,
+				text = (queryObj.text && queryObj.text.text) || '';
 
 			this.textSearch.setValue(text);
 		},
@@ -214,30 +238,30 @@ define([
 			this.textSearch.emit("refresh");
 		},
 
-		_createSuggest: function(query) {
+		_createSuggest: function(queryObj) {
 
 			if (this.suggestFields) {
-				query.searchFields = this.suggestFields;
+				queryObj.searchFields = this.suggestFields;
 			}
 
-			return query;
+			return queryObj;
 		},
 
 		_createQuery: function(value) {
 
-			var query = {
+			var queryObj = {
 				"text": value
 			};
 
 			if (this.searchFields) {
-				query.searchFields = this.searchFields;
+				queryObj.searchFields = this.searchFields;
 			}
 
 			if (this.highlightField) {
-				query.highlightFields = this.highlightField;
+				queryObj.highlightFields = this.highlightField;
 			}
 
-			return value !== "" ? query : null;
+			return value !== "" ? queryObj : null;
 		},
 
 		_changeSearchParams: function(evt) {
@@ -253,6 +277,7 @@ define([
 		_close: function() {
 
 			this.textSearch.emit("close");
+			this._globalClicksHandler.pause();
 		},
 
 		_reset: function() {

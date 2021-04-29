@@ -223,8 +223,7 @@ define([
 
 		_createListeners: function() {
 
-			this._appClickHandler = on.pausable(this.ownerDocumentBody, 'click', lang.hitch(this, this._onAppClicked));
-
+			this._appClickHandler = this._listenGlobalClicks(lang.hitch(this, this._onAppClicked));
 			this._appClickHandler.pause();
 		},
 

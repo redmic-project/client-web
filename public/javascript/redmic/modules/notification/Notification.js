@@ -126,12 +126,11 @@ define([
 
 			this.domNode.onclick = lang.hitch(this, this._clickNotification);
 
-			this.closeNotificationSidebarHandler = on.pausable(this.ownerDocumentBody, "click",
-				lang.hitch(this, this._onCloseNotificationSidebar));
-			this.closeNotificationSidebarHandler.pause();
+			this._globalClicksHandler = this._listenGlobalClicks(lang.hitch(this, this._evaluateToCloseSidebar));
+			this._globalClicksHandler.pause();
 		},
 
-		_onCloseNotificationSidebar: function(evt) {
+		_evaluateToCloseSidebar: function(evt) {
 
 			var nodeBelongsToNotificationButton = this._checkClickBelongsToNode(evt, this.domNode),
 				nodeBelongsToNotificationSidebar = this._checkClickBelongsToNode(evt, this.notificationSidebarNode);
@@ -149,10 +148,10 @@ define([
 
 			if (this.statusNotificationSidebarShown) {
 				this.statusNotificationSidebarShown = false;
-				this.closeNotificationSidebarHandler.pause();
+				this._globalClicksHandler.pause();
 				eventPublication = 'HIDE_NOTIFICATION_SIDEBAR';
 			} else {
-				this.closeNotificationSidebarHandler.resume();
+				this._globalClicksHandler.resume();
 				this.statusNotificationSidebarShown = true;
 				eventPublication = 'SHOW_NOTIFICATION_SIDEBAR';
 

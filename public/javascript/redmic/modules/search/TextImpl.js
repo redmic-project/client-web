@@ -114,6 +114,8 @@ define([
 
 			this.textSearch.on("changeSearchParams", lang.hitch(this, this._changeSearchParams));
 
+			this.textSearch.on("expandSearch", lang.hitch(this, this._expandSearch));
+
 			this._globalClicksHandler = this._listenGlobalClicks(lang.hitch(this, this._evaluateToCloseSuggests));
 			this._globalClicksHandler.pause();
 		},
@@ -267,6 +269,11 @@ define([
 		_changeSearchParams: function(evt) {
 
 			this._emitEvt('CHANGE_SEARCH_PARAMS', evt);
+		},
+
+		_expandSearch: function() {
+
+			console.log('expand');
 		},
 
 		_subClose: function() {

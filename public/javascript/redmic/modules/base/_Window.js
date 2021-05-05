@@ -181,7 +181,9 @@ define([
 			}
 
 			if (this.resizable) {
-				this._windowNode.addEventListener('mousedown', lang.hitch(this, this._onWindowUserResizeStart));
+				var startCallback = lang.hitch(this, this._onWindowUserResizeStart);
+				this._windowNode.addEventListener('mousedown', startCallback);
+				this._windowNode.addEventListener('touchstart', startCallback);
 			}
 		},
 
@@ -233,26 +235,36 @@ define([
 
 		_onWindowUserResizeStart: function(evt) {
 
-			var boundingRect = this._windowNode.getBoundingClientRect(),
-				localX = evt.clientX - boundingRect.left,
-				localY = evt.clientY - boundingRect.top,
-				localWidth = boundingRect.width - this.resizableActionableThreshold,
-				localHeight = boundingRect.height - this.resizableActionableThreshold,
-				isBottomRightCorner = localX >= localWidth && localY >= localHeight;
-
-			if (!isBottomRightCorner) {
+			if (!this._checkEventAtBottomRightCorner(evt)) {
 				return;
 			}
 
 			if (!this._windowMutationObserver) {
 				this._windowMutationObserver = new MutationObserver(lang.partial(this._onWindowResizeProgress, this));
-				on.once(window, 'mouseup', lang.hitch(this, this._onWindowUserResizeEnd));
+
+				var endCallback = lang.hitch(this, this._onWindowUserResizeEnd);
+				this._mouseResizeEndListener = on.once(window, 'mouseup', endCallback);
+				this._touchEndResizeEndListener = on.once(window, 'touchend', endCallback);
+				this._touchLeaveResizeEndListener = on.once(window, 'touchleave', endCallback);
 			}
 
 			this._windowMutationObserver.observe(this._windowNode, {
 				attributes: true,
 				attributeFilter: ['style']
 			});
+		},
+
+		_checkEventAtBottomRightCorner: function(evt) {
+
+			var boundingRect = this._windowNode.getBoundingClientRect(),
+				isMouseEvent = evt.type === 'mousedown',
+				evtSource = isMouseEvent ? evt : evt.touches[0],
+				localX = evtSource.clientX - boundingRect.left,
+				localY = evtSource.clientY - boundingRect.top,
+				localWidth = boundingRect.width - this.resizableActionableThreshold,
+				localHeight = boundingRect.height - this.resizableActionableThreshold;
+
+			return localX >= localWidth && localY >= localHeight;
 		},
 
 		_onWindowResizeProgress: function(self, mutations) {
@@ -282,6 +294,10 @@ define([
 
 			this._windowMutationObserver.disconnect();
 			delete this._windowMutationObserver;
+
+			this._mouseResizeEndListener.remove();
+			this._touchEndResizeEndListener.remove();
+			this._touchLeaveResizeEndListener.remove();
 		},
 
 		_show: function(req) {

@@ -50,6 +50,7 @@ define([
 		maxWidthCols: 6,
 
 		resizableBottomPadding: 15,
+		resizableActionableThreshold: 15,
 
 		scrollMargin: 10,
 
@@ -232,10 +233,20 @@ define([
 
 		_onWindowUserResizeStart: function(evt) {
 
-			on.once(window, 'mouseup', lang.hitch(this, this._onWindowUserResizeEnd));
+			var boundingRect = this._windowNode.getBoundingClientRect(),
+				localX = evt.clientX - boundingRect.left,
+				localY = evt.clientY - boundingRect.top,
+				localWidth = boundingRect.width - this.resizableActionableThreshold,
+				localHeight = boundingRect.height - this.resizableActionableThreshold,
+				isBottomRightCorner = localX >= localWidth && localY >= localHeight;
+
+			if (!isBottomRightCorner) {
+				return;
+			}
 
 			if (!this._windowMutationObserver) {
 				this._windowMutationObserver = new MutationObserver(lang.partial(this._onWindowResizeProgress, this));
+				on.once(window, 'mouseup', lang.hitch(this, this._onWindowUserResizeEnd));
 			}
 
 			this._windowMutationObserver.observe(this._windowNode, {
@@ -246,9 +257,9 @@ define([
 
 		_onWindowResizeProgress: function(self, mutations) {
 
-			if (!self._resizeMutationHandler) {
+			if (!this.isNotFirstIteration) {
+				this.isNotFirstIteration = true;
 				lang.hitch(self, self._onWindowResizeProgressFirstUpdate)();
-				self._resizeMutationHandler = this;
 			}
 
 			clearTimeout(self._userResizeTimeoutHandler);
@@ -269,8 +280,8 @@ define([
 
 		_onWindowUserResizeEnd: function(evt) {
 
-			this._resizeMutationHandler && this._resizeMutationHandler.disconnect();
-			delete this._resizeMutationHandler;
+			this._windowMutationObserver.disconnect();
+			delete this._windowMutationObserver;
 		},
 
 		_show: function(req) {

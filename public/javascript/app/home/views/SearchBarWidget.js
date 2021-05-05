@@ -1,22 +1,22 @@
 define([
-	'app/home/views/_DashboardItem'
-	, 'app/redmicConfig'
+	'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'put-selector/put'
 	, 'redmic/modules/base/_Filter'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
 	, 'redmic/modules/search/TextImpl'
 ], function(
-	_DashboardItem
-	, redmicConfig
+	redmicConfig
 	, declare
 	, lang
-	, put
 	, _Filter
+	, _Module
+	, _Show
 	, TextImpl
 ) {
 
-	return declare([_DashboardItem, _Filter], {
+	return declare([_Module, _Show, _Filter], {
 		//	summary:
 		//		Widget contenedor de barra de búsqueda sobre actividades
 
@@ -52,6 +52,14 @@ define([
 			this.textSearch = new TextImpl(this.textSearchConfig);
 		},
 
+		_defineSubscriptions: function() {
+
+			this.subscriptionsConfig.push({
+				channel: this.textSearch.getChannel('EXPAND_SEARCH'),
+				callback: '_subExpandSearch'
+			});
+		},
+
 		_definePublications: function() {
 
 			this.publicationsConfig.push({
@@ -66,21 +74,24 @@ define([
 			});
 		},
 
+		_subExpandSearch: function() {
+
+			this._emitEvt('TOGGLE_ADVANCED_SEARCH', {
+				target: this.target,
+				queryChannel: this.queryChannel
+			});
+		},
+
 		_afterShow: function() {
 
 			if (this._getPreviouslyShown()) {
 				return;
 			}
 
-			var parentNode = put(this.contentNode, 'div.' + this.className);
-			this._toggleAdvancedNode = put(this.contentNode, 'i.fa.fa-info');
-			this._toggleAdvancedNode.onclick = lang.hitch(this, this._emitEvt, 'TOGGLE_ADVANCED_SEARCH', {
-				target: this.target,
-				queryChannel: this.queryChannel
-			});
+			this._addClass(this.className);
 
 			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: parentNode
+				node: this.domNode
 			});
 		},
 

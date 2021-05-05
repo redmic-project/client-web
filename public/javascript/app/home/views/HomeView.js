@@ -44,12 +44,19 @@ define([
 
 			this.widgetConfigs = {
 				searchBar: {
-					width: 6,
+					width: 3,
 					height: 1,
 					type: SearchBarWidget,
 					props: {
-						omitTitleBar: true,
-						"class": "containerDetails"
+						omitTitleBar: true
+					}
+				},
+				social: {
+					width: 3,
+					height: 1,
+					type: SocialWidget,
+					props: {
+						title: this.i18n.followUs
 					}
 				},
 				searchFilter: {
@@ -79,6 +86,15 @@ define([
 						"class": "containerDetails"
 					}
 				},
+				favourites: {
+					width: 3,
+					height: 5,
+					type: WidgetFavourites,
+					props: {
+						title: this.i18n.favourites,
+						"class": "containerDetails"
+					}
+				},
 				info: {
 					width: 3,
 					height: 1,
@@ -90,26 +106,9 @@ define([
 						target: "initial_info"
 					}
 				},
-				social: {
-					width: 3,
-					height: 1,
-					type: SocialWidget,
-					props: {
-						title: this.i18n.followUs
-					}
-				},
-				favourites: {
-					width: 3,
-					height: 5,
-					type: WidgetFavourites,
-					props: {
-						title: this.i18n.favourites,
-						"class": "containerDetails"
-					}
-				},
 				lastActivities: {
 					width: 3,
-					height: 5,
+					height: 4,
 					type: WidgetLastActivity,
 					props: {
 						title: this.i18n.lastActivities,

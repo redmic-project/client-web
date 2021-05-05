@@ -28,9 +28,9 @@ define([
 					CLOSE: "close",
 					CLOSED: "closed",
 					SERIALIZED: "serialized",
-					CHANGE_SEARCH_PARAMS: "changeSearchParams"
+					CHANGE_SEARCH_PARAMS: "changeSearchParams",
+					EXPAND_SEARCH: 'expandSearch'
 				},
-				// own actions
 				textActions: {
 					CLOSE: "close",
 					CLOSED: "closed",
@@ -38,7 +38,8 @@ define([
 					UPDATE_TEXT_SEARCH_PARAMS: "updateTextSearchParams",
 					REQUESTED: "requested",
 					SERIALIZE: "serialize",
-					SERIALIZED: "serialized"
+					SERIALIZED: "serialized",
+					EXPAND_SEARCH: 'expandSearch'
 				},
 				methodSuggest: "POST",
 				suggestAction: "_suggest",
@@ -99,6 +100,9 @@ define([
 			},{
 				event: 'CHANGE_SEARCH_PARAMS',
 				channel: this.getChannel("SEARCH_PARAMS_CHANGED")
+			},{
+				event: 'EXPAND_SEARCH',
+				channel: this.getChannel('EXPAND_SEARCH')
 			});
 		},
 
@@ -114,7 +118,7 @@ define([
 
 			this.textSearch.on("changeSearchParams", lang.hitch(this, this._changeSearchParams));
 
-			this.textSearch.on("expandSearch", lang.hitch(this, this._expandSearch));
+			this.textSearch.on('expandSearch', lang.hitch(this, this._groupEventArgs, 'EXPAND_SEARCH'));
 
 			this._globalClicksHandler = this._listenGlobalClicks(lang.hitch(this, this._evaluateToCloseSuggests));
 			this._globalClicksHandler.pause();
@@ -269,11 +273,6 @@ define([
 		_changeSearchParams: function(evt) {
 
 			this._emitEvt('CHANGE_SEARCH_PARAMS', evt);
-		},
-
-		_expandSearch: function() {
-
-			console.log('expand');
 		},
 
 		_subClose: function() {

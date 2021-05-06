@@ -64,6 +64,7 @@ define([
 				scaleBar: true,
 				measureTools: true,
 				queryableClass: "leaflet-queryable",
+				omitContainerSizeCheck: false,
 
 				_mapNodeValidSizeInterval: 100,
 
@@ -176,15 +177,20 @@ define([
 
 		_afterShow: function() {
 
+			if (this.omitContainerSizeCheck) {
+				this._onMapNodeValidSize();
+				return;
+			}
+
 			var dfd = new Deferred();
 
 			dfd.then(lang.hitch(this, this._onMapNodeValidSize));
 
-			this._mapNodeValidSizeIntervalHandler = setInterval(lang.hitch(this, function(dfd) {
+			this._mapNodeValidSizeIntervalHandler = setInterval(lang.hitch(this, function(nestedDfd) {
 
 				if (this.mapParentNode.clientHeight) {
 					clearInterval(this._mapNodeValidSizeIntervalHandler);
-					dfd.resolve();
+					nestedDfd.resolve();
 				}
 			}, dfd), this._mapNodeValidSizeInterval);
 

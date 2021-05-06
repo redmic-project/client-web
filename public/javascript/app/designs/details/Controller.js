@@ -11,7 +11,7 @@ define([
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/base/_Window"
 	, "./_ControllerItfc"
-], function (
+], function(
 	_Controller
 	, declare
 	, lang
@@ -24,7 +24,8 @@ define([
 	, _Store
 	, _Window
 	, _ControllerItfc
-){
+) {
+
 	return declare([_ControllerItfc, _Controller, _Store], {
 		//	summary:
 		//		Controller para vistas de detalle, que dividen la información a mostrar en cajitas independientes.
@@ -35,10 +36,10 @@ define([
 			this.config = {
 				controllerEvents: {
 					LAYOUT_COMPLETE: "layoutComplete",
-					BUTTON_EVENT: "btnEvent"
+					BUTTON_EVENT: "btnEvent" // TODO esto es específico, reubicar
 				},
 				controllerActions: {
-					GET_REPORT: "getReport"
+					GET_REPORT: "getReport" // TODO esto es específico, reubicar
 				},
 
 				idProperty: "id",
@@ -49,7 +50,6 @@ define([
 				_updateInteractiveTimeout: 100,
 
 				_widgets: {},
-				_widgetsShowWindows: {},
 				_nodes: {},
 				_nodesHandlers: {}
 			};
@@ -99,7 +99,7 @@ define([
 			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onControllerMeOrAncestorShown));
 			this._onEvt('RESIZE', lang.hitch(this, this._onControllerResize));
 			this._onEvt('LAYOUT_COMPLETE', lang.hitch(this, this._onLayoutComplete));
-			this._onEvt('BUTTON_EVENT', lang.hitch(this, this._onButtonEvent));
+			this._onEvt('BUTTON_EVENT', lang.hitch(this, this._onButtonEvent)); // TODO esto es específico, reubicar
 		},
 
 		_afterControllerShow: function() {
@@ -161,7 +161,7 @@ define([
 			this[methodName] && this[methodName](evt);
 		},
 
-		_onControllerShown: function() {
+		/*_onControllerShown: function() {
 
 			if (this._getShown()) {
 				this._reloadInteractive();
@@ -170,7 +170,7 @@ define([
 
 			this._clearModules();
 			this._refreshModules();
-		},
+		},*/
 
 		_reloadInteractive: function() {
 
@@ -188,11 +188,16 @@ define([
 
 		_onControllerMeOrAncestorShown: function(res) {
 
-			this._reloadInteractive();
-			this._updateInteractive();
+			if (this._getShown()) {
+				this._reloadInteractive();
+				this._updateInteractive();
+			}
+
+			this._clearModules();
+			this._refreshModules();
 		},
 
-		_getModuleRootNode: function() {
+		/*_getModuleRootNode: function() {
 
 			return this.containerNode;
 		},
@@ -200,9 +205,10 @@ define([
 		_getModuleMainNode: function() {
 
 			return this.centerNode;
-		},
+		},*/
 
 		_evaluateCondition: function(condition) {
+			// TODO: eso es para casos concretos (botones), debería separarse
 
 			if (typeof condition === "function") {
 				return condition(this.data);
@@ -246,17 +252,11 @@ define([
 
 			var rows = config.height || 1,
 				cols = config.width || 1,
-				showInitially = config.showInitially || false,
-				nodeParams = '[' + this._rowsParameterName + '=' + rows + '][' + this._colsParameterName + '=' + cols +
-					']',
-				node = put('div' + nodeParams);
+				rowsParam = '[' + this._rowsParameterName + '=' + rows + ']',
+				colsParam = '[' + this._colsParameterName + '=' + cols + ']',
+				nodeDefinition = 'div.' + this.hiddenClass + rowsParam + colsParam;
 
-			if (!showInitially) {
-				put(node, '.' + this.hiddenClass);
-			}
-			this._nodes[key] = node;
-
-			put(this.centerNode, node);
+			this._nodes[key] = put(this.centerNode, nodeDefinition);
 		},
 
 		_showWidget: function(key) {
@@ -265,6 +265,7 @@ define([
 				node = this._nodes[key];
 
 			if (!instance || !node) {
+				console.error('Tried to show non-existent widget "%s" or node was missing', key);
 				return;
 			}
 
@@ -294,6 +295,7 @@ define([
 				node = this._nodes[key];
 
 			if (!instance || !node) {
+				console.error('Tried to hide non-existent widget "%s" or node was missing', key);
 				return;
 			}
 
@@ -315,12 +317,22 @@ define([
 
 			var instance = this._getWidgetInstance(key);
 
+			if (!instance) {
+				console.error('Tried to connect non-existent widget "%s"', key);
+				return;
+			}
+
 			this._publish(instance.getChannel("CONNECT"));
 		},
 
 		_disconnectWidget: function(key) {
 
 			var instance = this._getWidgetInstance(key);
+
+			if (!instance) {
+				console.error('Tried to disconnect non-existent widget "%s"', key);
+				return;
+			}
 
 			this._publish(instance.getChannel("DISCONNECT"));
 		},
@@ -341,7 +353,7 @@ define([
 
 			this.packery.addItems(node);
 
-			var widthStep = this.centerNode.offsetWidth * (1 / 6),// - 2.555,
+			var widthStep = this.centerNode.offsetWidth * (1 / 6),
 				draggie = new draggabilly(node, {
 					handle: ".windowTitle",
 					grid: [ widthStep, 100 ]
@@ -377,14 +389,14 @@ define([
 				totalWidth = this.centerNode.scrollWidth,
 				sizeHasChanged = this._oldTotalHeight !== totalHeight || this._oldTotalWidth !== totalWidth;
 
+			this._oldTotalWidth = totalWidth;
+			this._oldTotalHeight = totalHeight;
+
 			if (sizeHasChanged) {
 				this._emitEvt("RESIZE");
 			}
 
-			this._oldTotalWidth = totalWidth;
-			this._oldTotalHeight = totalHeight;
-
-			this._emitEvt("LOADED");
+			//this._emitEvt("LOADED");
 		},
 
 		_reportClicked: function() {

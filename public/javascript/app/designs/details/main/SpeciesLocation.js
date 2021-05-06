@@ -42,7 +42,8 @@ define([
 	, TemplateTitle
 	, citationTemplate
 	, pointTrackingTemplate
-){
+) {
+
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection, _LocalSelectionView], {
 		//	summary:
 		//		Vista detalle de Species.
@@ -53,7 +54,6 @@ define([
 
 			this.config = {
 				_titleRightButtonsList: [],
-				noScroll: true,
 				idProperty: "uuid",
 				propsWidget: {
 					omitTitleBar: true,
@@ -76,11 +76,10 @@ define([
 				map: {
 					width: 6,
 					height: 6,
-					showInitially: true,
 					type: declare([LeafletImpl, Map, _PlaceNamesButton]),
 					props: {
 						title: this.i18n.map,
-						omitTitleCloseButton: true
+						omitContainerSizeCheck: true
 					}
 				}
 			}, this.widgetConfigs || {}]);
@@ -94,10 +93,16 @@ define([
 
 		_afterShow: function(request) {
 
+			var widgetInstance = this._getWidgetInstance('map');
+
+			if (!widgetInstance) {
+				return;
+			}
+
 			if (!this.pruneClusterLayer) {
 				this.pruneClusterLayer = new this._pruneClusterLayerDefinition({
 					parentChannel: this.getChannel(),
-					mapChannel: this._widgets.map.getChannel(),
+					mapChannel: widgetInstance.getChannel(),
 					selectorChannel: this.getChannel(),
 					categoryStyle: "bubbles",
 					getPopupContent: this._getPopupContent,
@@ -116,10 +121,8 @@ define([
 					}
 				});
 
-				this._publish(this._widgets.map.getChannel("ADD_LAYER"), this.pruneClusterLayer);
+				this._publish(widgetInstance.getChannel("ADD_LAYER"), this.pruneClusterLayer);
 			}
-
-			this.startup();
 		},
 
 		_clearModules: function() { },

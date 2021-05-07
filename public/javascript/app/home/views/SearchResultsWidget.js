@@ -34,7 +34,7 @@ define([
 					'CLEAR_DATA': 'clearData'
 				},
 				target: redmicConfig.services.activity,
-				class: 'listZone'
+				'class': 'listZone'
 			};
 
 			lang.mixin(this, this.config, args);

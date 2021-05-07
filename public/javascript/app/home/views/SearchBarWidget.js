@@ -35,7 +35,7 @@ define([
 					'TOGGLE_ADVANCED_SEARCH': 'toggleAdvancedSearch'
 				},
 				target: redmicConfig.services.activity,
-				class: 'searchBarPanel'
+				'class': 'searchBarPanel'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -46,7 +46,10 @@ define([
 			this.textSearchConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
-				queryChannel: this.queryChannel
+				queryChannel: this.queryChannel,
+				highlightField: ['name'],
+				suggestFields: ['name', 'code'],
+				searchFields: ['name^3', 'code^3']
 			}, this.textSearchConfig || {}]);
 
 			this.textSearch = new TextImpl(this.textSearchConfig);
@@ -99,12 +102,12 @@ define([
 				return;
 			}
 
-			if (!filterParams.text) {
+			/*if (!filterParams.text) {
 				this._emitEvt('HIDE_SEARCH_RESULTS', {
 					target: this.target
 				});
 				return;
-			}
+			}*/
 
 			var searchText = filterParams.text.text;
 

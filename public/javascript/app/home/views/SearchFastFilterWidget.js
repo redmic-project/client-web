@@ -20,7 +20,7 @@ define([
 
 			this.config = {
 				ownChannel: 'searchFastFilterWidget',
-				class: 'facets'
+				'class': 'facets'
 			};
 
 			lang.mixin(this, this.config, args);

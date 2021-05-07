@@ -20,7 +20,7 @@ define([
 
 			this.config = {
 				ownChannel: 'searchFilterWidget',
-				class: 'composite'
+				'class': 'composite'
 			};
 
 			lang.mixin(this, this.config, args);

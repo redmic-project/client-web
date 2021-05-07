@@ -346,17 +346,29 @@ define([
 
 		_decorateTitleNode: function() {
 
-			var windowTitle = this.windowTitle || this.getOwnChannel(),
-				titleTextValue = this.i18n[windowTitle] || this.title || this.getOwnChannel(),
+			var titleTextValue = this._getWindowTitleTextValue(),
 				titleAttr = '[title="' + titleTextValue + '"]';
 
-			put(this._windowTitleNode, '[id="' + windowTitle + '"]');
+			put(this._windowTitleNode, '[id="' + this._getWindowTitleIdValue() + '"]');
 
-			put(this._windowTitleNode, 'div.' + this.windowTitleValueClass + titleAttr, titleTextValue);
+			this._windowTitleTextNode = put(this._windowTitleNode, 'div.' + this.windowTitleValueClass + titleAttr,
+				titleTextValue);
 
 			if (!this.omitTitleButtons) {
 				this._createWindowButtons();
 			}
+		},
+
+		_getWindowTitleIdValue: function() {
+
+			return this.windowTitle || this.getOwnChannel();
+		},
+
+		_getWindowTitleTextValue: function() {
+
+			var windowTitle = this.windowTitle || this.getOwnChannel();
+
+			return this.i18n[windowTitle] || this.title || this.getOwnChannel();
 		},
 
 		_createWindowButtons: function() {
@@ -572,6 +584,23 @@ define([
 			put(this._windowNode, '!');
 
 			this.inherited(arguments);
+		},
+
+		_onTitlePropSet: function(evt) {
+
+			this._updateWindowTitleValue(this.title);
+		},
+
+		_onWindowTitlePropSet: function(evt) {
+
+			domAttr.set(this._windowTitleNode, 'id', this._getWindowTitleIdValue());
+			this._updateWindowTitleValue(this._getWindowTitleTextValue());
+		},
+
+		_updateWindowTitleValue: function(newValue) {
+
+			domAttr.set(this._windowTitleTextNode, 'title', newValue);
+			this._windowTitleTextNode.innerHTML = newValue;
 		}
 	};
 });

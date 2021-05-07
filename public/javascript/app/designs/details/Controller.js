@@ -146,7 +146,7 @@ define([
 				return dfd;
 			}
 
-			return this._showWidget(key);
+			return this._showWidget(key, true);
 		},
 
 		_onControllerResize: function() {
@@ -259,7 +259,7 @@ define([
 			this._nodes[key] = put(this.centerNode, nodeDefinition);
 		},
 
-		_showWidget: function(key) {
+		_showWidget: function(key, omitReload) {
 
 			var instance = this._getWidgetInstance(key),
 				node = this._nodes[key];
@@ -276,10 +276,14 @@ define([
 				put(args.node, "!" + this.hiddenClass);
 				this._addWidgetInteractivity(args.key);
 				args.dfd.resolve();
+				if (!args.omitReload) {
+					this._reloadInteractive();
+				}
 			}, {
 				key: key,
 				node: node,
-				dfd: dfd
+				dfd: dfd,
+				omitReload: omitReload
 			}));
 
 			this._publish(instance.getChannel("SHOW"), {
@@ -289,7 +293,7 @@ define([
 			return dfd;
 		},
 
-		_hideWidget: function(key) {
+		_hideWidget: function(key, omitReload) {
 
 			var instance = this._getWidgetInstance(key),
 				node = this._nodes[key];
@@ -303,9 +307,13 @@ define([
 
 				put(args.node, "." + this.hiddenClass);
 				this._removeWidgetInteractivity(args.key);
+				if (!args.omitReload) {
+					this._reloadInteractive();
+				}
 			}, {
 				key: key,
-				node: node
+				node: node,
+				omitReload: omitReload
 			}));
 
 			this._publish(instance.getChannel("HIDE"), {

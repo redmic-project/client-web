@@ -1226,6 +1226,11 @@ define({
 		, "showMore": "Show more"
 		, "showLess": "Show less"
 
+		, "searchResults": "Search results"
+		, "starredActivities": "Starred activities"
+		, "fastFilters": "Fast filters"
+		, "advancedFilters": "Advanced filters"
+
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"
 		, "descriptio": "Description"

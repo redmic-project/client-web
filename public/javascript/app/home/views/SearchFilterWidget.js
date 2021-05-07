@@ -1,32 +1,26 @@
 define([
-	'app/home/views/_DashboardItem'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'put-selector/put'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
-	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/search/CompositeImpl'
 ], function(
-	_DashboardItem
-	, declare
+	declare
 	, lang
-	, put
 	, _Module
 	, _Show
-	, _Store
 	, CompositeImpl
 ) {
 
 	return declare([_Module, _Show], {
 		//	summary:
-		//		Widget contenedor de resultados de búsqueda sobre actividades
+		//		Widget contenedor de filtros avanzados de búsqueda sobre actividades
 
 		constructor: function(args) {
 
 			this.config = {
 				ownChannel: 'searchFilterWidget',
-				className: 'composite'
+				class: 'composite'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -47,10 +41,8 @@ define([
 				return;
 			}
 
-			var compositeSearchNode = put(this.domNode, 'div.' + this.className);
-
-			this._publish(this.compositeSearch.getChannel("SHOW"), {
-				node: compositeSearchNode
+			this._publish(this.compositeSearch.getChannel('SHOW'), {
+				node: this.domNode
 			});
 		},
 

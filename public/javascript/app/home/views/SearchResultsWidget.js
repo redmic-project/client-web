@@ -1,22 +1,20 @@
 define([
-	'app/home/views/_DashboardItem'
-	, 'app/redmicConfig'
+	'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'put-selector/put'
-	, 'redmic/modules/base/_Store'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
 	, 'redmic/modules/browser/bars/Total'
 	, 'redmic/modules/browser/_ButtonsInRow'
 	, 'redmic/modules/browser/_Framework'
 	, 'redmic/modules/browser/ListImpl'
 	, 'templates/ActivityList'
 ], function(
-	_DashboardItem
-	, redmicConfig
+	redmicConfig
 	, declare
 	, lang
-	, put
-	, _Store
+	, _Module
+	, _Show
 	, Total
 	, _ButtonsInRow
 	, _Framework
@@ -24,7 +22,7 @@ define([
 	, ActivityList
 ) {
 
-	return declare([_DashboardItem, _Store], {
+	return declare([_Module, _Show], {
 		//	summary:
 		//		Widget contenedor de resultados de búsqueda sobre actividades
 
@@ -36,7 +34,7 @@ define([
 					'CLEAR_DATA': 'clearData'
 				},
 				target: redmicConfig.services.activity,
-				className: 'listZone'
+				class: 'listZone'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -77,14 +75,12 @@ define([
 
 		_afterShow: function() {
 
-			if (!this._getPreviouslyShown()) {
-				// TODO retocar contenedores de por encima, igual no extender de la base de ahora
-				put(this.containerNode, '.flex');
-				this._browserNode = put(this.containerNode, 'div.' + this.className);
+			if (this._getPreviouslyShown()) {
+				return;
 			}
 
-			this._publish(this.browser.getChannel("SHOW"), {
-				node: this._browserNode
+			this._publish(this.browser.getChannel('SHOW'), {
+				node: this.domNode
 			});
 		},
 

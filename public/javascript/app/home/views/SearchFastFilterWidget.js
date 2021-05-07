@@ -1,32 +1,26 @@
 define([
-	'app/home/views/_DashboardItem'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'put-selector/put'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
-	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/search/FacetsImpl'
 ], function(
-	_DashboardItem
-	, declare
+	declare
 	, lang
-	, put
 	, _Module
 	, _Show
-	, _Store
 	, FacetsImpl
 ) {
 
 	return declare([_Module, _Show], {
 		//	summary:
-		//		Widget contenedor de resultados de búsqueda sobre actividades
+		//		Widget contenedor de filtros rápidos de búsqueda sobre actividades
 
 		constructor: function(args) {
 
 			this.config = {
 				ownChannel: 'searchFastFilterWidget',
-				className: 'facets'
+				class: 'facets'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -60,10 +54,8 @@ define([
 				return;
 			}
 
-			var facetsSearchNode = put(this.domNode, 'div.' + this.className);
-
-			this._publish(this.facetsSearch.getChannel("SHOW"), {
-				node: facetsSearchNode
+			this._publish(this.facetsSearch.getChannel('SHOW'), {
+				node: this.domNode
 			});
 		},
 

@@ -35,7 +35,7 @@ define([
 					'TOGGLE_ADVANCED_SEARCH': 'toggleAdvancedSearch'
 				},
 				target: redmicConfig.services.activity,
-				className: 'searchBarPanel'
+				class: 'searchBarPanel'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -88,9 +88,7 @@ define([
 				return;
 			}
 
-			this._addClass(this.className);
-
-			this._publish(this.textSearch.getChannel("SHOW"), {
+			this._publish(this.textSearch.getChannel('SHOW'), {
 				node: this.domNode
 			});
 		},

@@ -2,6 +2,7 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	fs = require('fs'),
 	path = require('path'),
+	http = require('http'),
 	https = require('https');
 
 var logger, params, version,
@@ -105,7 +106,8 @@ function onOauthTokenRequest(req, res) {
 			}
 		},
 
-		internalReq = https.request(getTokenUrl, options, (function(originalRes, internalRes) {
+		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https,
+		internalReq = reqLibrary.request(getTokenUrl, options, (function(originalRes, internalRes) {
 
 			var chunks = [];
 
@@ -168,7 +170,7 @@ function exposeContents(app, directoryName) {
 	};
 
 	var exposedPath = path.join(__dirname, '..', directoryName),
-		servedPath = express['static'](exposedPath, pathOptions);
+		servedPath = express.static(exposedPath, pathOptions);
 
 	app.use(servedPath)
 		.use('/' + directoryName, servedPath);

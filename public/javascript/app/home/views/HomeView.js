@@ -1,10 +1,12 @@
 define([
 	"app/designs/details/Controller"
 	, "app/designs/details/Layout"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/InitialInfo"
+	, 'redmic/modules/base/_Filter'
 	, "redmic/base/Credentials"
 	, 'app/home/views/SearchBarWidget'
 	, 'app/home/views/SearchFastFilterWidget'
@@ -16,10 +18,12 @@ define([
 ], function(
 	Controller
 	, Layout
+	, redmicConfig
 	, declare
 	, lang
 	, TemplateDisplayer
 	, TemplateInfo
+	, _Filter
 	, Credentials
 	, SearchBarWidget
 	, SearchFastFilterWidget
@@ -30,13 +34,14 @@ define([
 	, WidgetFavourites
 ) {
 
-	return declare([Layout, Controller], {
+	return declare([Layout, Controller, _Filter], {
 		//	summary:
 		//		Vista inicial de la aplicación.
 
 		constructor: function(args) {
 
 			this.config = {
+				target: redmicConfig.services.activity,
 				propsWidget: {
 				}
 			};
@@ -66,7 +71,19 @@ define([
 					type: SearchFastFilterWidget,
 					props: {
 						windowTitle: 'fastFilters',
-						omitTitleCloseButton: true
+						omitTitleCloseButton: true,
+						facetsSearchConfig: {
+							query: {
+								terms: {
+									starred: true
+								},
+								size: 10,
+								sorts: [{
+									field: 'id',
+									order: 'DESC'
+								}]
+							}
+						}
 					}
 				},
 				searchResults: {
@@ -132,6 +149,13 @@ define([
 		_afterShow: function(request) {
 
 			this._listenWidgets();
+
+			var obj = {
+				queryChannel: this.queryChannel
+			};
+
+			this._publish(this._getWidgetInstance('searchFastFilter').getChannel('SET_PROPS'), obj);
+			this._publish(this._getWidgetInstance('searchFilter').getChannel('SET_PROPS'), obj);
 		},
 
 		_listenWidgets: function() {

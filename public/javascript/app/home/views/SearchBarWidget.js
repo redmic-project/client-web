@@ -49,7 +49,7 @@ define([
 				queryChannel: this.queryChannel,
 				highlightField: ['name'],
 				suggestFields: ['name', 'code'],
-				searchFields: ['name^3', 'code^3']
+				searchFields: ['name', 'code']
 			}, this.textSearchConfig || {}]);
 
 			this.textSearch = new TextImpl(this.textSearchConfig);

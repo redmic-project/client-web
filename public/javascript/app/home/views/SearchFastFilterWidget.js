@@ -54,6 +54,11 @@ define([
 				return;
 			}
 
+			this._showFacets();
+		},
+
+		_showFacets: function() {
+
 			this._publish(this.facetsSearch.getChannel('SHOW'), {
 				node: this.domNode
 			});
@@ -75,6 +80,8 @@ define([
 
 			this.facetsSearchConfig[prop] = value;
 			this.facetsSearch = new FacetsImpl(this.facetsSearchConfig);
+
+			this._showFacets();
 		}
 	});
 });

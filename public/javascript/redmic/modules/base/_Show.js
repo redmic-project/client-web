@@ -521,17 +521,6 @@ define([
 
 		_hide: function(req) {
 
-			if (!this.node) {
-				return;
-			}
-
-			//TODO revisar la manera de guardar el nodo padre y el propio, se esta duplicando en dos variables el del padre
-
-			var node = this._getNodeToShow();
-			if (node) {
-				put(node.domNode || node, "!");
-			}
-
 			this._destroyNode();
 			this._emitHideEventWhenAfterHideIsDone(req);
 		},
@@ -550,6 +539,16 @@ define([
 
 		_destroyNode: function() {
 
+			if (!this.node) {
+				return;
+			}
+
+			//TODO revisar la manera de guardar el nodo padre y el propio, el padre se esta duplicando en dos variables
+
+			var node = this._getNodeToShow() || this.node,
+				nodeToShow = node.domNode || node;
+
+			put(nodeToShow, '!');
 			this.node = null;
 		},
 

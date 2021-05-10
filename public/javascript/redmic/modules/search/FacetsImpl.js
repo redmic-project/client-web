@@ -104,11 +104,15 @@ define([
 			this._setAggs(lang.clone(evt.aggs));
 
 			if (!this._facetsCreate) {
-				this._emitEvt('SEARCH', {
+				var obj = {
 					aggs: this.aggs//,
 					//size: 0,
 					//requesterId: this.queryChannel
-				});
+				};
+
+				lang.mixin(obj, this.query || {});
+
+				this._emitEvt('SEARCH', obj);
 			}
 
 			this._facetsCreate = true;

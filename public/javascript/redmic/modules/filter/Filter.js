@@ -218,6 +218,7 @@ define([
 			}
 
 			if (req.requesterId) {
+				// TODO quizá sería mejor añadir a un array de ids y luego sacarlo, en lugar de pisarlo
 				this.requesterId = req.requesterId;
 			}
 

@@ -999,6 +999,7 @@ define([
 		_deleteDuplicatedChannels: function(configArray) {
 
 			configArray = Utilities.uniqBy(configArray, lang.hitch(this, this._isChannelDuplicated));
+			return configArray;
 		},
 
 		_isChannelDuplicated: function(value, index, array) {

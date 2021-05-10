@@ -170,7 +170,8 @@ function exposeContents(app, directoryName) {
 	};
 
 	var exposedPath = path.join(__dirname, '..', directoryName),
-		servedPath = express.static(exposedPath, pathOptions);
+		staticPropName = 'static',
+		servedPath = express[staticPropName](exposedPath, pathOptions);
 
 	app.use(servedPath)
 		.use('/' + directoryName, servedPath);

@@ -302,7 +302,7 @@ define([
 		_chkModuleCanShow: function(req) {
 
 			var node = req ? req.node : null,
-				data = req ? req.data : null;
+				reqData = req ? req.data : null;
 
 			var chkData = function(data) {
 				if (data) {
@@ -320,7 +320,7 @@ define([
 					if (!this._getShown()) {
 						return true;
 					} else {
-						return chkData(data);
+						return chkData(reqData);
 					}
 				}
 			} else {
@@ -328,7 +328,7 @@ define([
 					if (!this._getShown()) {
 						return true;
 					} else {
-						return chkData(data);
+						return chkData(reqData);
 					}
 				}
 			}
@@ -440,10 +440,10 @@ define([
 				this.node.firstChild.removeEventListener('animationend',
 					this._afterAnimationCallback);
 			}
-			this._afterAnimationCallback = lang.hitch(this, function(dfd) {
+			this._afterAnimationCallback = lang.hitch(this, function(nestedDfd) {
 
 				clearTimeout(this._animationSafetyHandler);
-				dfd.resolve();
+				nestedDfd.resolve();
 			}, dfd);
 
 			// Seguro para cuando la animación es nula

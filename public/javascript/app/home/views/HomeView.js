@@ -62,7 +62,7 @@ define([
 					type: SearchFilterWidget,
 					hidden: true,
 					props: {
-						windowTitle: 'advancedFilters'
+						omitTitleBar: true
 					}
 				},
 				searchFastFilter: {

@@ -68,7 +68,7 @@ define([
 
 		_checkActiveButton: function(key) {
 
-			return !this.buttons[key].noActive;
+			return !this.buttons[key].disable;
 		},
 
 		_subDisableButton: function(req) {

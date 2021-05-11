@@ -59,20 +59,10 @@ define([
 					filterSchema: true
 				},
 				buttonsConfig: {
-					reset: {
-						noActive: false
-					},
 					submit: {
 						props: {
 							label: this.i18n.apply
 						}
-					},
-					clear: {
-						noActive: true
-					},
-					cancel: {
-						noActive: false,
-						zone: "left"
 					}
 				},
 				cancel: function() {

@@ -48,7 +48,7 @@ define([
 			this.formConfig = this._merge([{
 				buttonsConfig: {
 					reset: {
-						noActive: false
+						disable: false
 					},
 					submit: {
 						props: {
@@ -56,7 +56,7 @@ define([
 						}
 					},
 					clear: {
-						noActive: true
+						disable: true
 					}
 				}
 			}, this.formConfig || {}]);
@@ -74,7 +74,7 @@ define([
 
 			this.inherited(arguments);
 
-			var titleNode = put(this.domNode, 'div.titleStyleContainer.mediumSolidContainer span', this.i18n.style);
+			put(this.domNode, 'div.titleStyleContainer.mediumSolidContainer span', this.i18n.style);
 			this._selectInputNode = put(this.domNode, 'div.selectInputContainer');
 
 			this.optionsNode = put(this.domNode, 'div.optionsContainer');

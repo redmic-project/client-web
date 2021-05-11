@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/form/_CreateInternalKeypad"
+	, "redmic/modules/form/_CreateKeypad"
 	, "redmic/modules/form/FormContainerImpl"
 	, "redmic/modules/form/_ListenModelHasChanged"
 

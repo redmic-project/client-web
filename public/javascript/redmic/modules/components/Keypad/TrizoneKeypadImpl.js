@@ -67,7 +67,7 @@ define([
 
 		_createButton: function(itemKey, item) {
 
-			if (item.noActive) {
+			if (item.disable) {
 				return;
 			}
 

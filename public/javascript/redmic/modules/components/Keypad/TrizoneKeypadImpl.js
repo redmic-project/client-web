@@ -1,28 +1,22 @@
 define([
 	"dijit/form/Button"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/dom-class"
 	, "put-selector/put"
 	, "./Keypad"
 ], function(
 	DefaultButton
-	, ContentPane
 	, declare
 	, lang
-	, domClass
 	, put
 	, Keypad
-){
+) {
+
 	return declare(Keypad, {
 		//	summary:
 		//		Implementación de Keypad.
 		//	description:
 		//		Incluye tres zonas para colocar botones.
-
-		//	config: Object
-		//		Opciones por defecto.
 
 
 		constructor: function() {
@@ -40,21 +34,18 @@ define([
 
 		_initialize: function() {
 
-			var classKeypad = 'defaultContainer keypad ' + this.className;
+			var classKeypad = 'defaultContainer.keypad.' + this.className;
 
-			this.keypadContainer = new ContentPane({
-				region: "bottom",
-				"class": classKeypad
-			});
+			this.keypadContainer = put('div.' + classKeypad);
 
 			this._createStructure(this.items);
 		},
 
 		_createStructure: function(items) {
 
-			var leftContainer = put(this.keypadContainer.domNode, "div.left"),
-				centerContainer = put(this.keypadContainer.domNode, "div.center"),
-				rightContainer = put(this.keypadContainer.domNode, "div.right");
+			var leftContainer = put(this.keypadContainer, "div.left"),
+				centerContainer = put(this.keypadContainer, "div.center"),
+				rightContainer = put(this.keypadContainer, "div.right");
 
 			this._zoneNodes.left = put(leftContainer, "div.btnGroup");
 			this._zoneNodes.center = put(centerContainer, "div.btnGroup");
@@ -89,7 +80,7 @@ define([
 
 		_getNodeToShow: function() {
 
-			return this.keypadContainer.domNode;
+			return this.keypadContainer;
 		},
 
 		_getItemInstance: function(key) {
@@ -115,12 +106,12 @@ define([
 
 		_showButton: function(key) {
 
-			domClass.remove(this._getItemInstance(key).domNode, this.hiddenClass);
+			put(this._getItemInstance(key).domNode, '!' + this.hiddenClass);
 		},
 
 		_hideButton: function(key) {
 
-			domClass.add(this._getItemInstance(key).domNode, this.hiddenClass);
+			put(this._getItemInstance(key).domNode, '.' + this.hiddenClass);
 		}
 	});
 });

@@ -54,9 +54,12 @@ define([
 		_createContainer: function() {
 
 			this.popupBody = new ContentPane();
+			put(this.popupBody.domNode, '.flex');
+		},
 
-			this.currentNode = this.popupBody.domNode;
-			put(this.currentNode, '.flex');
+		_getCurrentParentNode: function(req) {
+
+			return this.popupBody.domNode;
 		},
 
 		_beforeShow: function(req) {
@@ -78,15 +81,15 @@ define([
 
 		_afterShow: function(req) {
 
-			var afterOriginalDfd = function(returnDfd) {
+			var afterOriginalDfd = function(innerReturnDfd) {
 
 				var dfdPopup = this._popupInstance.show();
 
-				dfdPopup.then(lang.hitch(this, function(returnDfd) {
+				dfdPopup.then(lang.hitch(this, function(innerInnerReturnDfd) {
 
 					this._popupInstance.set('centerContent', this.popupBody);
-					returnDfd.resolve();
-				}, returnDfd));
+					innerInnerReturnDfd.resolve();
+				}, innerReturnDfd));
 			};
 
 			var dfd = this.inherited(arguments),

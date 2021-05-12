@@ -161,14 +161,16 @@ define([
 			if (this._getTarget() === item.target) {
 
 				if (item.data.level === "running" && item.data.progress != null) {
-					var nodeSpanList = query("span[data-redmic-id='" + item.data.id + "']", this.browser.currentNode);
+					var nodeSpanList = query("span[data-redmic-id='" + item.data.id + "']",
+						this.browser._moduleOwnNode);
+
 					if (nodeSpanList.length > 0) {
 						nodeSpanList = nodeSpanList[0];
 						put(nodeSpanList, ".notificationProgressBar");
 						var nodeProgressBar = query(" div[data-redmic-id='progressBar']", nodeSpanList);
 						if (nodeProgressBar.length > 0) {
 							nodeProgressBar = nodeProgressBar[0];
-							var myProgressBar = new ProgressBar({
+							new ProgressBar({
 								value: item.data.progress
 							}).placeAt(nodeProgressBar).startup();
 						}

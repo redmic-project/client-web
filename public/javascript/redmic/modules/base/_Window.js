@@ -93,7 +93,7 @@ define([
 			if (req && req.node) {
 				node = req.node.domNode || req.node;
 			} else {
-				node = this.currentNode;
+				node = this._moduleOwnNode;
 			}
 
 			if (node) {
@@ -331,7 +331,7 @@ define([
 
 			this._validSizeIntervalHandler = setInterval(lang.hitch(this, function(dfd) {
 
-				if (this.node && this.node.offsetWidth) {
+				if (this._moduleOwnNode && this._moduleOwnNode.offsetWidth) {
 					clearInterval(this._validSizeIntervalHandler);
 					dfd.resolve();
 				}
@@ -398,7 +398,7 @@ define([
 				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
 			}
 
-			domStyle.set(this.node, 'height', 0);
+			domStyle.set(this._moduleOwnNode, 'height', 0);
 			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'rem');
 		},
 
@@ -412,7 +412,7 @@ define([
 
 			var contentHeightReduction = this.titleHeight;
 
-			domStyle.set(this.node, 'height', 'calc(100% - ' + contentHeightReduction + 'rem)');
+			domStyle.set(this._moduleOwnNode, 'height', 'calc(100% - ' + contentHeightReduction + 'rem)');
 			domStyle.set(this._windowNode.parentNode, 'height', '');
 		},
 
@@ -529,18 +529,20 @@ define([
 				this._limitMaxHeightToAvailableHeight();
 			}
 
-			if (this.node && !this._getResizedByUser()) {
+			if (this._moduleOwnNode && !this._getResizedByUser()) {
 				this._autoMaximizeOnLowWidth();
 			}
 		},
 
 		_autoMaximizeOnLowWidth: function() {
 
-			if (!this.node.offsetWidth || (this.resizable && this.node.offsetWidth === this._resizableForcedMinWidth)) {
+			if (!this._moduleOwnNode.offsetWidth || (this.resizable &&
+				this._moduleOwnNode.offsetWidth === this._resizableForcedMinWidth)) {
+
 				return;
 			}
 
-			if (this.node.offsetWidth < this.minWidth) {
+			if (this._moduleOwnNode.offsetWidth < this.minWidth) {
 				this._setAutoMaximized(true);
 				this._maximizeModule();
 			} else if (this._getAutoMaximized()) {

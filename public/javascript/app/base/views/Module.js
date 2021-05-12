@@ -40,12 +40,12 @@ define([
 
 			var item;
 			if (this.domain) {
-				this.moduleNode = put('a.boxButton[href="' + this.url + '"][d-state-url=true]');
-				item = put(this.moduleNode, 'div.name.mediumSolidContainer.colorWhite');
+				this.appModuleBoxNode = put('a.boxButton[href="' + this.url + '"][d-state-url=true]');
+				item = put(this.appModuleBoxNode, 'div.name.mediumSolidContainer.colorWhite');
 				put(item, 'span', this.name);
 			} else {
-				this.moduleNode = put('a.module[title="' + this.name + '"][href="' + this.url + '"][d-state-url=true]');
-				item = put(this.moduleNode, 'div.button.mediumSolidContainer.colorWhite');
+				this.appModuleBoxNode = put('a.module[title="' + this.name + '"][href="' + this.url + '"][d-state-url=true]');
+				item = put(this.appModuleBoxNode, 'div.button.mediumSolidContainer.colorWhite');
 				put(item, 'i.iconModule.' + this.icon.replace(/\ /g, '.'));
 				put(item, 'div.name', this.name);
 			}
@@ -54,7 +54,7 @@ define([
 		// TODO reemplazo de método de Dijit, eliminar si deja de usarse
 		placeAt: function(node) {
 
-			put(node, this.moduleNode);
+			put(node, this.appModuleBoxNode);
 		}
 	});
 });

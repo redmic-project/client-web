@@ -346,22 +346,6 @@ define([
 			return this.domNode;
 		},
 
-		/*_beforeShow: function(req) {
-
-			if (req && req.node) {
-				put(req.node.domNode || req.node, ".flex");
-				this._addFlexInNode = true;
-			}
-		},
-
-		_afterHide: function() {
-
-			if (this._addFlexInNode) {
-				put(this.currentNode.domNode || this.currentNode, "!flex");
-				this._addFlexInNode = false;
-			}
-		},*/
-
 		_getData: function() {
 
 			var data = [];

@@ -26,7 +26,7 @@ define([
 
 		_afterShowNodesCreation: function() {
 
-			put(this.node, '[required=' + this._inputProps.required + ']');
+			put(this._moduleOwnNode, '[required=' + this._inputProps.required + ']');
 		},
 
 		_createInputNodes: function() {

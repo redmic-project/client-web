@@ -57,7 +57,7 @@ define([
 
 		_showInTableListOnShown: function(evt) {
 
-			this._showInputs(this.node);
+			this._showInputs(this._moduleOwnNode);
 
 			domClass.add(this.form.containerNode, 'hidden');
 		},

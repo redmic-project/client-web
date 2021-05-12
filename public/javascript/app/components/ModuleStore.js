@@ -42,7 +42,8 @@ define([
 					GET_ALLOWED_MODULES: "getAllowedModules",
 					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules",
 					GET_MODULE: "getModule",
-					AVAILABLE_MODULE: "availableModule"
+					AVAILABLE_MODULE: "availableModule",
+					CLEAR_MODULE: 'clearModule'
 				},
 				events: {
 					GET_ALLOWED_MODULES: "getAllowedModules",
@@ -72,6 +73,9 @@ define([
 			},{
 				channel : this.getChannel("GET_MODULE"),
 				callback: "_subGetModule"
+			},{
+				channel : this.getChannel('CLEAR_MODULE'),
+				callback: '_subClearModule'
 			});
 		},
 
@@ -238,7 +242,6 @@ define([
 					copyPath = copyPath.replace("{" + arrayAux[3] + "}", this.parameterRegExp);
 					results[arrayAux[3]] = true;
 
-					regex.lastIndex;
 					arrayAux = regex.exec(item.id);
 				}
 
@@ -280,7 +283,7 @@ define([
 				return;
 			}
 
-			moduleItem = moduleList[0];
+			var moduleItem = moduleList[0];
 
 			// Si aun no se ha creado la vista
 			if (!moduleItem.instance) {
@@ -313,31 +316,48 @@ define([
 			//	returns:
 			//		Promesa de la instancia del módulo
 
-			var dfd = new Deferred();
+			var dfd = new Deferred(),
+				parentChannel = redmicConfig.isOuterPath(moduleItem.id) ? this.outerAppChannel : this.innerAppChannel,
+				moduleDefinitionPath = 'app' + moduleItem.internPath + 'View';
 
-			require(["app" + moduleItem.internPath + "View"], lang.hitch(this, function(ModuleView) {
+			require([moduleDefinitionPath], lang.hitch(this, function(moduleObj, ModuleView) {
+
+				var moduleDefinition = declare([ModuleView, _View]);
 
 				// Creamos el módulo
-				var moduleInstance = new declare([ModuleView, _View])({
-					parentChannel: this.parentChannel,
-					ownChannel: this.viewSeparator + moduleItem.id,
-					perms: moduleItem.perms,
+				var moduleInstance = new moduleDefinition({
+					parentChannel: parentChannel,
+					ownChannel: this.viewSeparator + moduleObj.id,
+					perms: moduleObj.perms,
 					pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null
 				});
 
 				// Añadimos al store la instancia del módulo
-				moduleItem.instance = moduleInstance;
-				moduleItem.timeStamp = new Date().getTime();
-				this.moduleStore.put(moduleItem);
+				moduleObj.instance = moduleInstance;
+				moduleObj.timeStamp = new Date().getTime();
+				this.moduleStore.put(moduleObj);
 
 				// Resolvemos para devolver la instancia creada
 				dfd.resolve(moduleInstance);
 
 				// Limpiamos las instancias antiguas
 				this._clearOldInstances();
-			}));
+			}, moduleItem));
 
 			return dfd;	// return Object
+		},
+
+		_subClearModule: function(/*Object*/ req) {
+
+			var moduleKey = req.key,
+				moduleList = this._findModuleByPath(moduleKey);
+
+			if (!moduleList.length) {
+				return;
+			}
+
+			var moduleItem = moduleList[0];
+			this._updateClearedModuleInStore(moduleItem);
 		},
 
 		_clearOldInstances: function() {

@@ -294,8 +294,8 @@ function(
 
 		_getNamespaceSplitted: function(data, channel) {
 
-			var obj = channel || data,
-				namespace = obj.namespace;
+			var channelObj = channel || data,
+				namespace = channelObj.namespace;
 
 			return namespace.split(this.channelSeparator);
 		},

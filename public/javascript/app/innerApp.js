@@ -47,6 +47,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: this.innerAppOwnChannel,
 				'class': 'mainContainer',
 				reducedWidthClass: 'reducedWidth',
 				contentContainerClass: 'contentContainer',
@@ -176,17 +177,17 @@ define([
 			//		private
 
 			new Selector({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			var userRole = Credentials.get('userRole');
 			if (userRole !== 'ROLE_GUEST') {
 				new Notification({
-					parentChannel: this.ownChannel
+					parentChannel: this.getChannel()
 				});
 
 				new Socket({
-					parentChannel: this.ownChannel
+					parentChannel: this.getChannel()
 				});
 			}
 
@@ -197,16 +198,16 @@ define([
 			}
 
 			new definitionTask({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			this.topbar = new Topbar({
-				parentChannel: this.ownChannel,
+				parentChannel: this.getChannel(),
 				collapseButtonClass: this.collapseButtonClass
 			});
 
 			this.sidebar = new MainSidebarImpl({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 		},
 
@@ -239,11 +240,6 @@ define([
 		},
 
 		_onAppResize: function(evt) {
-
-			// TODO evita que entren instancias viejas (login, logout, login), cuando se destruya bien app, eliminar
-			if (!this.domNode) {
-				return;
-			}
 
 			this._appClickHandler.pause();
 
@@ -286,15 +282,6 @@ define([
 		_onAppHide: function() {
 
 			this._appClickHandler.pause();
-
-			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
-			this._publish(this.topbar.getChannel('DESTROY'));
-			this._publish(this.sidebar.getChannel('DESTROY'));
-			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.managerChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.taskChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.socketChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.notificationChannel, this.actions.DESTROY));
 		},
 
 		_onAppClicked: function(evt) {

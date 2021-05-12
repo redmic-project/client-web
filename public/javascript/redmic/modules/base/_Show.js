@@ -545,10 +545,6 @@ define([
 				return;
 			}
 
-			if (this._moduleOwnNode.id === 'rootContainer') {
-				console.log('me voy a cargar', this._moduleOwnNode, this.getChannel());
-				return;
-			}
 			put(this._moduleOwnNode, '!');
 			this._moduleOwnNode = null;
 		},

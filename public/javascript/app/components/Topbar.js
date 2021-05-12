@@ -29,6 +29,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: 'topbar',
 				'class': 'topbar',
 
 				collapseButtonClass: 'collapseSidebarButton',
@@ -126,7 +127,7 @@ define([
 
 		_onCollapseClicked: function() {
 
-			this._publish(this._buildChannel(this.rootChannel, 'toggleSidebar'));
+			this._publish(this._buildChannel(this.innerAppChannel, 'toggleSidebar'));
 		}
 	});
 });

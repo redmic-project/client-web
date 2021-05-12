@@ -120,7 +120,8 @@ define([
 				events: {
 					GET_CREDENTIALS: 'getCredentials',
 					GET_MODULE: 'getModule',
-					GET_QUERY_PARAMS: 'getQueryParams'
+					GET_QUERY_PARAMS: 'getQueryParams',
+					CLEAR_MODULE: 'clearModule'
 				},
 				actions: {
 					GET_QUERY_PARAMS: 'getQueryParams',
@@ -147,35 +148,35 @@ define([
 		_initialize: function() {
 
 			new RestManagerImpl({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			new CommunicationCenter({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			new Alert({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			new Analytics({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			new MetaTags({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			this._credentials = new Credentials({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			this._moduleStore = new ModuleStore({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			this._loading = new Loading({
-				parentChannel: this.ownChannel,
+				parentChannel: this.getChannel(),
 				globalNode: rootNode
 			});
 		},
@@ -208,6 +209,9 @@ define([
 			},{
 				event: 'GET_MODULE',
 				channel: this._moduleStore.getChannel('GET_MODULE')
+			},{
+				event: 'CLEAR_MODULE',
+				channel: this._moduleStore.getChannel('CLEAR_MODULE')
 			},{
 				event: 'GET_QUERY_PARAMS',
 				channel: this.getChannel('GOT_QUERY_PARAMS')
@@ -475,6 +479,9 @@ define([
 
 			this._currModuleInstance = instance;
 
+			this._once(this._currModuleInstance.getChannel('DESTROYED'), lang.hitch(this, this._onModuleDestroyed,
+				this._currModuleKey));
+
 			this._once(this._currLayoutInstance.getChannel('MODULE_SHOWN'), lang.hitch(this, this._onModuleShown));
 
 			this._publish(this._currLayoutInstance.getChannel('SHOW_MODULE'), {
@@ -513,7 +520,9 @@ define([
 
 			this._deleteLayout();
 
-			this._currLayoutInstance = new InnerApp();
+			this._currLayoutInstance = new InnerApp({
+				parentChannel: this.getChannel()
+			});
 
 			this._setCurrentLayout(this._currLayoutInstance);
 		},
@@ -529,7 +538,9 @@ define([
 
 			this._deleteLayout();
 
-			this._currLayoutInstance = new OuterApp();
+			this._currLayoutInstance = new OuterApp({
+				parentChannel: this.getChannel()
+			});
 
 			this._setCurrentLayout(this._currLayoutInstance);
 		},
@@ -579,12 +590,8 @@ define([
 			//	tags:
 			//		private
 
-			// TODO utilizar destroy de módulos cuando la jerarquía de canales sea correcta
-			this._onLayoutDestroyed();
-			/*
 			this._once(this._currLayoutInstance.getChannel('DESTROYED'), lang.hitch(this, this._onLayoutDestroyed));
 			this._publish(this._currLayoutInstance.getChannel('DESTROY'));
-			*/
 		},
 
 		_onLayoutDestroyed: function() {
@@ -609,6 +616,20 @@ define([
 
 			this._once(this._currModuleInstance.getChannel('DISCONNECTED'), lang.hitch(this, this._openModule));
 			this._publish(this._currModuleInstance.getChannel('DISCONNECT'));
+		},
+
+		_onModuleDestroyed: function(/*String*/ moduleKey) {
+			//	summary:
+			//		Se ejecuta cuando el módulo actual se ha terminado de destruir. Manda a borrar su instancia del
+			//		almacén de modulos.
+			//	tags:
+			//		private
+			//	moduleKey:
+			//		Clave del módulo destruido
+
+			this._emitEvt('CLEAR_MODULE', {
+				key: moduleKey
+			});
 		}
 	});
 });

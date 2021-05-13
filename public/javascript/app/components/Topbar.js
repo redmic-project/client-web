@@ -101,7 +101,7 @@ define([
 			// TODO integrar manager con topbar, manager está desfasado casi por completo
 			this._manager = new Manager({
 				//parentChannel: this.getChannel()
-				parentChannel: this.parentChannel
+				parentChannel: this.getParentChannel()
 			}, containerNode);
 		},
 

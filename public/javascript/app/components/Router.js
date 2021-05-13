@@ -116,7 +116,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: 'app',
+				ownChannel: this.rootChannel,
 				events: {
 					GET_CREDENTIALS: 'getCredentials',
 					GET_MODULE: 'getModule',
@@ -468,7 +468,7 @@ define([
 
 		_subAvailableModule: function(/*Object*/ instance) {
 			//	summary:
-			//		Se ejecuta este callback cuando recibe el modulo dedido
+			//		Se ejecuta este callback cuando recibe el módulo pedido
 			//	tags:
 			//		private
 
@@ -571,7 +571,7 @@ define([
 
 		_deleteLayout: function() {
 			//	summary:
-			//		Elimina el layout actual y lo manda a destruir tras ocultarse
+			//		Oculta el layout actual
 			//	tags:
 			//		private
 
@@ -596,7 +596,6 @@ define([
 
 		_onLayoutDestroyed: function() {
 
-			this._currLayoutInstance.destroy();
 			delete this._currLayoutInstance;
 		},
 

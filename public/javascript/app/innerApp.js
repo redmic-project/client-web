@@ -4,13 +4,12 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, "dojo/dom-class"
-	, 'dojo/on'
+	, 'dojo/dom-class'
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
-	, 'redmic/modules/selection/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
 	, 'redmic/modules/notification/Notification'
+	, 'redmic/modules/selection/Selector'
 	, 'redmic/modules/socket/_IngestData'
 	, 'redmic/modules/socket/_Report'
 	, 'redmic/modules/socket/_Worms'
@@ -23,12 +22,11 @@ define([
 	, lang
 	, aspect
 	, domClass
-	, on
 	, put
 	, Credentials
-	, Selector
 	, MainSidebarImpl
 	, Notification
+	, Selector
 	, _IngestData
 	, _Report
 	, _Worms

@@ -34,9 +34,7 @@ define([
 					UPDATE_DATA: "updateData"
 				},
 
-				idProperty: 'id',
-
-				templateColClass: ".col-xs-12.col-sm-12.col-md-12.col-lg-12.col-xl-12"
+				idProperty: 'id'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -71,7 +69,6 @@ define([
 			this.rowBottomNode = put(this.domNode, "div." + this.rowContainerBottomClass);
 
 			this.templateNode = put(this.rowTopNode, "span.rowList");
-			put(this.templateNode, this.templateColClass);
 		},
 
 		_subUpdateTemplate: function(req) {

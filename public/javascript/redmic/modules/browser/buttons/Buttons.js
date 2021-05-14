@@ -40,7 +40,7 @@ define([
 				_buttonsOccult: 0,
 				_totalButtons: 0,
 
-				"class": "containerButtons col-xs-3 col-sm-5 col-md-4 col-lg-3 col-xl-2"
+				"class": "containerButtons"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -264,8 +264,7 @@ define([
 
 			this._updateIconClass(config, node);
 
-			var obj = this._getClickButtonReturnObj(config, item, node),
-				idProperty = item[this.idProperty];
+			var obj = this._getClickButtonReturnObj(config, item, node);
 
 			if (config.callback) {
 				obj.callback = config.callback;

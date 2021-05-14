@@ -17,8 +17,9 @@ function(
 	, Credentials
 	, _Module
 	, _Show
-){
-	var obj = declare([_Module, _Show], {
+) {
+
+	return declare([_Module, _Show], {
 		//	summary:
 		//		Este widget reune todos los elementos dinámicos de la barra superior de la aplicación.
 		//	description:
@@ -46,13 +47,6 @@ function(
 					DOWNLOAD_FILE: "downloadFile"
 				},
 				zones: {
-					/*edit: {
-						node: null,
-						align: "left",
-						"class": "div.btnGroup.col-xs-3.col-sm-3.col-md-3.col-lg-3",
-						btns: {
-						}
-					},*/
 					filter: {
 						node: null,
 						align: "right",
@@ -305,6 +299,4 @@ function(
 			this._emitEvt('DOWNLOAD_FILE', {format: format});
 		}
 	});
-
-	return obj;
 });

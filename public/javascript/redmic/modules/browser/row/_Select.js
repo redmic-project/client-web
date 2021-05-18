@@ -2,15 +2,14 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "dojo/dom-class"
 	, "put-selector/put"
 ], function(
 	declare
 	, lang
 	, aspect
-	, domClass
 	, put
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//

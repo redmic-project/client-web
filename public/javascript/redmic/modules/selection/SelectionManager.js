@@ -225,14 +225,14 @@ define([
 
 			var shareUrl = window.location + '?settings-id=' + res.data[this.idProperty];
 
-			alertify.message('<i class="fa fa-share-alt"></i> ' + this.i18n.copyToClipboard, 0, lang.hitch(this, function(shareUrl) {
+			alertify.message('<i class="fa fa-share-alt"></i> ' + this.i18n.copyToClipboard, 0, lang.hitch(this, function(url) {
 
 				// TODO este mecanismo se debe abstraer para reutilizarlo
 				if (!navigator.clipboard) {
 					console.error('Copy to clipboard failed!');
 					return;
 				}
-				navigator.clipboard.writeText(shareUrl);
+				navigator.clipboard.writeText(url);
 			}, shareUrl));
 		},
 
@@ -249,7 +249,7 @@ define([
 				this.i18n.saveSelection,
 				this.i18n.loseSelectionConfirmationMessage,
 				overwriteCbk,
-				function() {}
+				null
 			).set('labels', {
 				ok: this.i18n.ok,
 				cancel: this.i18n.cancel

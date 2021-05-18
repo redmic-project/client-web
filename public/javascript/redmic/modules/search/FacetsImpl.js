@@ -2,17 +2,16 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "put-selector/put"
 	, "RWidgets/ContainerFacets"
 	, "./Search"
 ], function(
 	declare
 	, lang
 	, aspect
-	, put
 	, ContainerFacets
 	, Search
-){
+) {
+
 	return declare(Search, {
 		//	summary:
 		//		Todo lo necesario para trabajar con FacetsSearch.
@@ -176,7 +175,15 @@ define([
 
 		_setFacets: function(/*object*/ facets) {
 
-			this.facets.setConfig({"aggregations": facets});
+			var cleanFacets = {};
+			for (var key in facets) {
+				var keySplitted = key.split('#');
+				cleanFacets[keySplitted.pop()] = facets[key];
+			}
+
+			this.facets.setConfig({
+				aggregations: cleanFacets
+			});
 		},
 
 		_reset: function() {

@@ -14,7 +14,8 @@ define([
 	, _Store
 	, TextSearch
 	, Search
-){
+) {
+
 	return declare([Search, _Store], {
 		//	summary:
 		//		Todo lo necesario para trabajar con TextSearch.
@@ -59,7 +60,7 @@ define([
 			aspect.before(this, "_defineSubscriptions", lang.hitch(this, this._defineTextSubscriptions));
 		},
 
-		_mixTextEventsAndActions: function () {
+		_mixTextEventsAndActions: function() {
 
 			lang.mixin(this.events, this.textEvents);
 			lang.mixin(this.actions, this.textActions);
@@ -77,7 +78,7 @@ define([
 			}, this.textSearchConfig || {}]);
 		},
 
-		_defineTextSubscriptions: function () {
+		_defineTextSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel: this.getChannel("CLOSE"),

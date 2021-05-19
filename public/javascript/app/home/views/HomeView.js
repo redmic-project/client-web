@@ -74,9 +74,6 @@ define([
 						omitTitleCloseButton: true,
 						facetsSearchConfig: {
 							query: {
-								terms: {
-									starred: true
-								},
 								size: 10,
 								sorts: [{
 									field: 'id',

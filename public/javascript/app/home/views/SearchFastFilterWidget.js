@@ -31,8 +31,13 @@ define([
 			this.facetsSearchConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				aggs: {
-					"activityType": {
+					themeInspire: {
 						"open": true,
+						"terms": {
+							"field": "themeInspire.name"
+						}
+					},
+					"activityType": {
 						"terms": {
 							"field": "activityType.name"
 						}

@@ -102,14 +102,8 @@ define([
 				return;
 			}
 
-			/*if (!filterParams.text) {
-				this._emitEvt('HIDE_SEARCH_RESULTS', {
-					target: this.target
-				});
-				return;
-			}*/
-
-			var searchText = filterParams.text.text;
+			var textObj = filterParams.text || {},
+				searchText = textObj.text || '';
 
 			this._emitEvt('SHOW_SEARCH_RESULTS', {
 				target: this.target,

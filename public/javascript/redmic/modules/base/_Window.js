@@ -233,6 +233,22 @@ define([
 			}
 		},
 
+		_unsetWindowParentNodeSize: function() {
+
+			this._unsetNodeSize(this._windowNode.parentNode);
+		},
+
+		_unsetWindowNodeSize: function() {
+
+			this._unsetNodeSize(this._windowNode);
+		},
+
+		_unsetNodeSize: function(node) {
+
+			domStyle.set(node, 'width', null);
+			domStyle.set(node, 'height', null);
+		},
+
 		_onWindowUserResizeStart: function(evt) {
 
 			if (!this._checkEventAtBottomRightCorner(evt)) {
@@ -281,10 +297,11 @@ define([
 
 		_onWindowResizeProgressFirstUpdate: function() {
 
-			// TODO sería mejor que esta clase la colocase el propio padre (details) cuando este lo pida
 			domClass.add(this._windowNode.parentNode, this.windowResizedParentClass);
 
 			this._setResizedByUser(true);
+			this._unsetWindowParentNodeSize();
+
 			if (!this.omitTitleBar && !this.omitTitleButtons) {
 				this._prepareMaximizeForUndoUserResize();
 			}
@@ -298,6 +315,17 @@ define([
 			this._mouseResizeEndListener.remove();
 			this._touchEndResizeEndListener.remove();
 			this._touchLeaveResizeEndListener.remove();
+
+			this._setWindowParentNodeSize();
+		},
+
+		_setWindowParentNodeSize: function() {
+
+			var windowWidth = this._windowNode.clientWidth + 'px',
+				windowHeight = this._windowNode.clientHeight + 'px';
+
+			domStyle.set(this._windowNode.parentNode, 'width', windowWidth);
+			domStyle.set(this._windowNode.parentNode, 'height', windowHeight);
 		},
 
 		_show: function(req) {
@@ -398,6 +426,8 @@ define([
 				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModuleReturn);
 			}
 
+			this._prevMinimizeWindowHeight = this._windowNode.clientHeight;
+
 			domStyle.set(this._moduleOwnNode, 'height', 0);
 			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'rem');
 		},
@@ -410,10 +440,10 @@ define([
 				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
 			}
 
-			var contentHeightReduction = this.titleHeight;
+			domStyle.set(this._moduleOwnNode, 'height', null);
 
-			domStyle.set(this._moduleOwnNode, 'height', 'calc(100% - ' + contentHeightReduction + 'rem)');
-			domStyle.set(this._windowNode.parentNode, 'height', '');
+			var prevHeight = this._prevMinimizeWindowHeight ? this._prevMinimizeWindowHeight + 'px' : null;
+			domStyle.set(this._windowNode.parentNode, 'height', prevHeight);
 		},
 
 		_resizeAfterMinimizeToggle: function() {
@@ -423,7 +453,8 @@ define([
 			}
 
 			this._minimizeDfd = new Deferred();
-			this._minimizeDfd.then(lang.hitch(this, this._prepareToResizeModuleWindow), function() {});
+			this._minimizeDfd.then(lang.hitch(this, this._prepareToResizeModuleWindow),
+				lang.hitch(this, this._cancelResizeModuleWindow));
 		},
 
 		_maximizeModule: function() {
@@ -436,8 +467,10 @@ define([
 			}
 
 			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this.maxWidthCols);
+			this._unsetWindowParentNodeSize();
+			this._unsetWindowNodeSize();
 
-			this._minimizeModuleReturn();
+			this._undoMinimizeModule();
 		},
 
 		_maximizeModuleReturn: function() {
@@ -450,6 +483,8 @@ define([
 			}
 
 			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this._originalWidthByCols);
+
+			this._undoMinimizeModule();
 		},
 
 		_prepareMaximizeForUndoUserResize: function() {
@@ -460,13 +495,21 @@ define([
 
 			this._maximizeButton.onclick = lang.hitch(this, this._undoUserResize);
 			this._updateMaximizeButtonIcon(true);
+
+			this._undoMinimizeModule();
+		},
+
+		_undoMinimizeModule: function() {
+
+			delete this._prevMinimizeWindowHeight;
+			this._minimizeModuleReturn();
 		},
 
 		_undoUserResize: function() {
 
-			domStyle.set(this._windowNode, 'width', null);
-			domStyle.set(this._windowNode, 'height', null);
-			// TODO sería mejor que esta clase la colocase el propio padre (details) cuando este lo pida
+			this._unsetWindowParentNodeSize();
+			this._unsetWindowNodeSize();
+
 			domClass.remove(this._windowNode.parentNode, this.windowResizedParentClass);
 
 			this._setResizedByUser(false);
@@ -482,7 +525,8 @@ define([
 			}
 
 			this._maximizeDfd = new Deferred();
-			this._maximizeDfd.then(lang.hitch(this, this._prepareToResizeModuleWindow), function() {});
+			this._maximizeDfd.then(lang.hitch(this, this._prepareToResizeModuleWindow),
+				lang.hitch(this, this._cancelResizeModuleWindow));
 		},
 
 		_updateMaximizeButtonIcon: function(/*Boolean*/ altIcon) {
@@ -521,6 +565,11 @@ define([
 
 			this._moduleWindowResizeTimeoutHandler = setTimeout(lang.hitch(this, this._moduleShowResize),
 				this._moduleWindowResizeTimeout);
+		},
+
+		_cancelResizeModuleWindow: function() {
+
+			// TODO
 		},
 
 		_resizeModuleWindow: function() {

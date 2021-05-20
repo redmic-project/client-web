@@ -117,13 +117,7 @@ define([
 
 		_isValidDate: function(valueMoment) {
 
-			valueMomentFormat = valueMoment.format(this.formatDateTimeModel);
-
-			if (valueMomentFormat !== 'Invalid date') {
-				return true;
-			}
-
-			return false;
+			return valueMoment.format(this.formatDateTimeModel) !== 'Invalid date';
 		},
 
 		_setValueTimeDefault: function(valueMoment, value) {

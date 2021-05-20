@@ -10,7 +10,8 @@ define([
 	, lang
 	, put
 	, Input
-){
+) {
+
 	return declare(Input, {
 		//	summary:
 		//		Implementación de input CheckBox.
@@ -33,18 +34,24 @@ define([
 
 			var widget = new CheckBox(this._inputProps).placeAt(this.containerInput);
 
-			if (this._inputProps.description)
+			if (this._inputProps.description) {
 				put(this.containerInput, 'span[title=$].separateLeft.fa.fa-info-circle', this._inputProps.description);
+			}
 
 			return widget;
 		},
 
 		_getValueToSet: function(value) {
 
-			if (value)
-				return this._inputProps.value || value;
+			if (this._disableInputActive && this._inputDisabled) {
+				return null;
+			}
 
-			return this._inputProps.value !== undefined ? null : false;
+			if (value !== undefined && value !== null) {
+				return value;
+			}
+
+			return this._inputProps.value || false;
 		}
 	});
 });

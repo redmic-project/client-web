@@ -52,6 +52,16 @@ define([
 			}
 
 			return this._inputProps.value || false;
+		},
+
+		_enable: function() {
+
+			this.inherited(arguments);
+
+			var obj = {};
+			obj[this.propertyName] = this._inputProps.value || false;
+
+			this._emitSetValue(obj);
 		}
 	});
 });

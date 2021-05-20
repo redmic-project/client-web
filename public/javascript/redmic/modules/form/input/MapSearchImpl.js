@@ -26,8 +26,6 @@ define([
 
 		_createInputInstance: function() {
 
-			this._inputDisabled = true;
-
 			return false;
 		},
 

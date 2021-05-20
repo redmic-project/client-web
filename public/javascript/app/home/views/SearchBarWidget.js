@@ -47,9 +47,6 @@ define([
 				parentChannel: this.getChannel(),
 				target: this.target,
 				queryChannel: this.queryChannel,
-				highlightField: ['name'],
-				suggestFields: ['name', 'code'],
-				searchFields: ['name', 'code']
 			}, this.textSearchConfig || {}]);
 
 			this.textSearch = new TextImpl(this.textSearchConfig);

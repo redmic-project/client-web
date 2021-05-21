@@ -134,6 +134,7 @@ define([], function() {
 		'document': baseUri + 'documents',
 		'accessibility': baseUri + 'accessibilities',
 		'activity': baseUri + 'activities',
+		'activityResource': baseUri + 'activities/resources',
 		'activityProject': baseUri + 'projects/{id}/activities',
 		'activityField': baseUri + 'activityfields',
 		'activityType': baseUri + 'activitytypes',

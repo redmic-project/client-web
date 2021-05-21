@@ -13,6 +13,7 @@ define([
 	, 'app/home/views/SearchFilterWidget'
 	, 'app/home/views/SearchResultsWidget'
 	, "app/home/views/SocialWidget"
+	, 'app/home/views/StatsWidget'
 	, "app/home/views/WidgetLastActivity"
 	, "app/home/views/WidgetFavourites"
 ], function(
@@ -30,6 +31,7 @@ define([
 	, SearchFilterWidget
 	, SearchResultsWidget
 	, SocialWidget
+	, StatsWidget
 	, WidgetLastActivity
 	, WidgetFavourites
 ) {
@@ -92,6 +94,15 @@ define([
 						omitTitleCloseButton: true
 					}
 				},
+				favourites: {
+					width: 3,
+					height: 5,
+					type: WidgetFavourites,
+					props: {
+						windowTitle: 'favourites',
+						"class": "containerDetails"
+					}
+				},
 				info: {
 					width: 3,
 					height: 1,
@@ -103,21 +114,20 @@ define([
 						target: "initial_info"
 					}
 				},
+				stats: {
+					width: 3,
+					height: 3,
+					type: StatsWidget,
+					props: {
+						windowTitle: 'statistics'
+					}
+				},
 				social: {
 					width: 3,
 					height: 1,
 					type: SocialWidget,
 					props: {
 						windowTitle: 'followUs'
-					}
-				},
-				favourites: {
-					width: 3,
-					height: 5,
-					type: WidgetFavourites,
-					props: {
-						windowTitle: 'favourites',
-						"class": "containerDetails"
 					}
 				},
 				lastActivities: {

@@ -32,9 +32,9 @@ define([
 			this.config = {
 				showTimeout: 500,
 				hideTimeout: 14500,
-				warningText: "<span class='cookies fa fa-exclamation-circle'></span> " + i18n.cookiesWarning +
-					"<a href='https://blog.redmic.es/?page_id=77' target='_blank'>" +
-					i18n.here + "</a>."
+				warningText: '<span class="cookies fa fa-exclamation-circle"></span> ' + i18n.cookiesWarning +
+					'<a href="/terms-and-conditions" d-state-url="true">' +
+					i18n.here + '</a>.'
 			};
 
 			lang.mixin(this, this.config, args);

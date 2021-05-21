@@ -46,7 +46,7 @@ define([
 			this.textSearchConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
-				queryChannel: this.queryChannel,
+				queryChannel: this.queryChannel
 			}, this.textSearchConfig || {}]);
 
 			this.textSearch = new TextImpl(this.textSearchConfig);

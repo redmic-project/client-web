@@ -163,8 +163,9 @@ define([
 
 		_setValue: function(value) {
 
-			if (this._valueInput === value)
+			if (this._valueInput === value || this._inputDisabled) {
 				return;
+			}
 
 			if (value && this._inputProps.valueIsObject)
 				value = this._items[value];
@@ -217,21 +218,22 @@ define([
 				this._resetValue = false;
 
 				this._inputInstance.reset();
-				if (this._valueInput)
+				if (this._valueInput) {
 					this._inputInstance.set('value', this._valueInput);
-				else if (options.length)
+				} else if (options.length && !this._inputProps.disabled) {
 					this._inputInstance.set('value', options[0][this._inputProps.idProperty]);
-				else {
+				} else {
 					this._inputInstance.set('value', null);
 					this._setValue(null);
 				}
 			} else if (this._inputProps.defaultOptions) {
 				this._inputInstance.set('value', lang.clone(this._inputProps.defaultOptions));
 			} else  {
-				if (this._inputInstance.get('value') !== this._valueInput)
+				if (this._inputInstance.get('value') !== this._valueInput) {
 					this._inputInstance.set('value', this._valueInput);
-				else
+				} else {
 					this._setValue(this._valueInput);
+				}
 			}
 		},
 
@@ -333,6 +335,16 @@ define([
 
 				this._addOptions(property);
 			}
+		},
+
+		_enable: function() {
+
+			this.inherited(arguments);
+
+			var obj = {};
+			obj[this.propertyName] = this._inputInstance.get('value');
+
+			this._emitSetValue(obj);
 		}
 	});
 });

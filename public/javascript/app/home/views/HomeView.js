@@ -14,7 +14,6 @@ define([
 	, 'app/home/views/SearchResultsWidget'
 	, "app/home/views/SocialWidget"
 	, 'app/home/views/StatsWidget'
-	, "app/home/views/WidgetLastActivity"
 	, "app/home/views/WidgetFavourites"
 ], function(
 	Controller
@@ -32,7 +31,6 @@ define([
 	, SearchResultsWidget
 	, SocialWidget
 	, StatsWidget
-	, WidgetLastActivity
 	, WidgetFavourites
 ) {
 
@@ -128,16 +126,6 @@ define([
 					type: SocialWidget,
 					props: {
 						windowTitle: 'followUs'
-					}
-				},
-				lastActivities: {
-					width: 3,
-					height: 5,
-					type: WidgetLastActivity,
-					props: {
-						windowTitle: 'lastActivities',
-						template: TemplateInfo,
-						"class": "containerDetails"
 					}
 				}
 			};

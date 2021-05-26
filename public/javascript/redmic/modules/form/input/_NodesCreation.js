@@ -1,23 +1,32 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "dojo/dom-class"
-	, "put-selector/put"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
+	, 'dojo/dom-class'
+	, 'redmic/modules/base/_ShowInTooltip'
+	, 'redmic/modules/base/_ShowOnEvt'
+	, 'redmic/modules/layout/dataDisplayer/DataDisplayer'
+	, 'put-selector/put'
 ], function(
 	declare
 	, lang
 	, aspect
 	, domClass
+	, _ShowInTooltip
+	, _ShowOnEvt
+	, DataDisplayer
 	, put
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Base que define la creación y colocación de nodos para el módulo Input.
 
 		constructor: function(args) {
 
-			this.config = {};
+			this.config = {
+				infoClass: 'inputInfoButton'
+			};
 
 			lang.mixin(this, this.config, args);
 
@@ -35,16 +44,11 @@ define([
 				this._isValid = true;
 			}
 
-			var createLabel = false;
-			if (!this._inputProps.notLabel && (this.label || this._inputProps.label)) {
-				createLabel = true;
-			}
+			if (!this._inputProps.notLabel && (this.label || this._inputProps.label) ||
+				this._disableInputActive || this._inputProps.info) {
 
-			if (this._disableInputActive || createLabel) {
 				this.containerLeft = put(this.domNode, 'div.leftContainer');
-			}
-
-			if (createLabel) {
+				this._createInfo(this._inputProps.info);
 				this._createLabel(this.label);
 			}
 
@@ -76,6 +80,26 @@ define([
 					put(this.containerInput, child);
 				}
 			}
+		},
+
+		_createInfo: function(info) {
+
+			if (!info || !info.length) {
+				return;
+			}
+
+			var infoValue = this.i18n[info] || info,
+				infoNode = put(this.containerLeft, 'i.' + this.infoClass);
+
+			var infoDefinition = declare([DataDisplayer, _ShowOnEvt]).extend(_ShowInTooltip);
+			this._infoInstance = new infoDefinition({
+				parentChannel: this.getChannel(),
+				data: infoValue
+			});
+
+			this._publish(this._infoInstance.getChannel('ADD_EVT'), {
+				sourceNode: infoNode
+			});
 		},
 
 		_createLabel: function(/*String*/ label) {

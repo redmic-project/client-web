@@ -1227,7 +1227,26 @@ define({
 	, "fastFilters": "Filtros rápidos"
 	, "advancedFilters": "Filtros avanzados"
 
-	// Para capas que no se pueden cambiar las keys
+	, "activityStatus": "Estado de la actividad"
+	, "activityStatusFirstValue": "Sin iniciar"
+	, "activityStatusSecondValue": "En curso"
+	, "activityStatusThirdValue": "Concluida"
+	, "starredActivity": "Destacada"
+	, "activityHasResource": "Con recursos"
+	, "accessibilityFilterInfo": "La accesibilidad de una actividad determina si los datos que contiene son públicos o tienen algún tipo de restricción para su visualización y descarga. Utiliza este filtro para diferenciar actividades con datos libres o con algún tipo de restricción."
+	, "dateLimitsFilterInfo": "Las actividades tienen una fecha de inicio y una fecha de finalización. Utiliza este filtro para encontrar actividades que han tenido lugar en un rango de tiempo determinado."
+	, "activityStatusFilterInfo": "La fecha de inicio y finalización de una actividad determina su estado. Utiliza este filtro para encontrar actividades en diferente fase de su ciclo vital."
+	, "bboxFilterInfo": "Las actividades se desarrollan en una ubicación. Utiliza este filtro para encontrar actividades que contengan datos sobre la región geográfica seleccionada."
+	, "starredFilterInfo": "Existen actividades con mayor relevancia, atendiendo a la importancia de sus datos. Utiliza este filtro para diferenciar actividades en función de este distintivo."
+	, "hasResourceFilterInfo": "Las actividades pueden referenciar a elementos externos (recursos), como conjuntos de datos descargables (datasets) u otros contenidos relacionados. Utiliza este filtro para diferenciar actividades según tengan o no recursos asociados."
+	, "programFilterInfo": "Las actividades pueden ser independientes o pertenecer a un proyecto, que a su vez pertenece a un programa. Utiliza este filtro para encontrar actividades que pertenecen a un programa en concreto."
+	, "projectFilterInfo": "Las actividades pueden ser independientes o pertenecer a un proyecto. Utiliza este filtro para encontrar actividades que pertenecen a un proyecto en concreto."
+	, "organisationFilterInfo": "Las actividades pueden contar con la participación de organizaciones con un rol determinado. Utiliza este filtro para encontrar actividades en las que participa una organización concreta."
+	, "contactFilterInfo": "Las actividades pueden contar con la participación de profesionales con un rol determinado. Utiliza este filtro para encontrar actividades en las que participa un contacto en concreto."
+	, "documentFilterInfo": "Las actividades pueden contener información en forma de documentos, como memorias de proyecto, artículos de revista, publicaciones científicas... Utiliza este filtro para encontrar actividades relacionadas con algún documento de la biblioteca."
+	, "platformFilterInfo": "Las labores desempeñadas en el desarrollo de una actividad pueden tener lugar en una o varias plataformas. Utiliza este filtro para encontrar actividades que guardan relación con una plataforma concreta."
+
+// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"
 	, "featurecod": "Feature code"

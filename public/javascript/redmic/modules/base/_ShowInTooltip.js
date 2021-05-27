@@ -1,10 +1,10 @@
 define([
-	"dijit/_WidgetBase"
-	, "dijit/popup"
-	, "dojo/_base/lang"
-	, "dojo/Deferred"
-	, "dojo/promise/all"
-	, "put-selector/put"
+	'dijit/_WidgetBase'
+	, 'dijit/popup'
+	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'dojo/promise/all'
+	, 'put-selector/put'
 ], function(
 	_WidgetBase
 	, popup
@@ -12,7 +12,8 @@ define([
 	, Deferred
 	, all
 	, put
-){
+) {
+
 	return {
 		//	summary:
 		//		Extensión de módulos para que se muestren en un tooltip.
@@ -26,31 +27,47 @@ define([
 
 		postCreate: function() {
 
-			if (this.timeClose === undefined) {
-				this.timeClose = 600;
-			}
-
 			this.inherited(arguments);
 
-			var classTooltip = "dijitMenu tooltipButton ";
+			var tooltipClass = 'tooltipContainer',
+				sourceIndicatorClass = 'tooltipSourceIndicator',
+				defaultTooltipCloseTimeout = 1000;
 
-			if (this.indicatorLeft) {
-				classTooltip += "tooltipButtonLeft ";
+			this._tooltipAboveClass = 'tooltipAboveSource';
+			this._tooltipBelowClass = 'tooltipBelowSource';
+			this._tooltipLeftClass = 'tooltipLeftSource';
+			this._tooltipRightClass = 'tooltipRightSource';
+
+			if (this.timeClose === undefined) {
+				this.timeClose = defaultTooltipCloseTimeout;
 			}
 
 			if (this.classTooltip) {
-				classTooltip += this.classTooltip;
+				tooltipClass += ' ' + this.classTooltip;
 			}
 
 			this.tooltipNode = new _WidgetBase({
-				'class': classTooltip
+				'class': tooltipClass
 			});
 
-			if (!this.notIndicator) {
-				var nodeIndicator = put(this.tooltipNode.domNode, "i.fa.fa-caret-up.indicatorParent");
+			this._tooltipSourceIndicatorNode = put(this.tooltipNode.domNode, 'i.' + sourceIndicatorClass);
+
+			this._globalClicksHandler = this._listenGlobalClicks(lang.hitch(this, this._evaluateToHideTooltip));
+			this._globalClicksHandler.pause();
+		},
+
+		_evaluateToHideTooltip: function(evt) {
+
+			if (!this.tooltipNode._popupWrapper) {
+				return;
 			}
 
-			this.nodeModule = put(this.tooltipNode.domNode, "div.containerContent");
+			var nodeBelongsToTooltipContainer = this._checkClickBelongsToNode(evt, this.tooltipNode._popupWrapper),
+				nodeBelongsToSourceNode = this._checkClickBelongsToNode(evt, this._tooltipSourceNode);
+
+			if (!nodeBelongsToTooltipContainer && !nodeBelongsToSourceNode) {
+				this._hideTooltip();
+			}
 		},
 
 		_beforeShow: function() {
@@ -86,14 +103,19 @@ define([
 			return !this._ancestorTooltipNode;
 		},
 
+		_subAncestorGotProps: function(res) {
+
+			this._ancestorTooltipNode = res.tooltipNode;
+		},
+
 		_showWrapper: function(req) {
 
-			this.nodeSource = req.node;
-			req.node = this.nodeModule;
+			this._tooltipSourceNode = req.node;
+			req.node = this.tooltipNode.domNode;
 
 			this.inherited(arguments);
 
-			this._openTooltip(req.additionalNode);
+			this._openTooltip();
 		},
 
 		_afterShow: function(req) {
@@ -110,12 +132,66 @@ define([
 			return all(dfdList);
 		},
 
-		_openTooltip: function(additionalNode) {
+		_openTooltip: function() {
+
+			this._calculateOrientation();
+
+			this._setParentPopup();
+
+			if (this.timeClose) {
+				this._prepareTooltipClose();
+			}
+
+			this._globalClicksHandler.resume();
+			this._dfdTooltip.resolve();
+		},
+
+		_calculateOrientation: function() {
+
+			var middleWidth = window.innerWidth / 2,
+				middleHeight = window.innerHeight / 2,
+
+				sourceBounding = this._tooltipSourceNode.getBoundingClientRect(),
+				sourceMiddleWidth = sourceBounding.left + sourceBounding.width / 2,
+				sourceMiddleHeight = sourceBounding.top + sourceBounding.height / 2,
+
+				leftAvailable = sourceMiddleWidth > middleWidth,
+				topAvailable = sourceMiddleHeight > middleHeight,
+				orientValue, xOrientClass, yOrientClass;
+
+			if (leftAvailable && topAvailable) {
+				orientValue = 'above-alt';
+				xOrientClass = this._tooltipLeftClass;
+				yOrientClass = this._tooltipAboveClass;
+			} else if (!leftAvailable && topAvailable) {
+				orientValue = 'above';
+				xOrientClass = this._tooltipRightClass;
+				yOrientClass = this._tooltipAboveClass;
+			} else if (leftAvailable && !topAvailable) {
+				orientValue = 'below-alt';
+				xOrientClass = this._tooltipLeftClass;
+				yOrientClass = this._tooltipBelowClass;
+			} else {
+				orientValue = 'below';
+				xOrientClass = this._tooltipRightClass;
+				yOrientClass = this._tooltipBelowClass;
+			}
+
+			this._tooltipOrientValue = orientValue;
+			this._setOrientationClasses(xOrientClass, yOrientClass);
+		},
+
+		_setOrientationClasses: function(xOrientClass, yOrientClass) {
+
+			put(this.tooltipNode.domNode, '.' + xOrientClass + '.' + yOrientClass);
+		},
+
+		_setParentPopup: function() {
 
 			var obj = {
 				popup: this.tooltipNode,
-				around: this.nodeSource,
-				orient: this.orient
+				around: this._tooltipSourceNode,
+				orient: [this._tooltipOrientValue],
 			};
 
 			if (this._ancestorTooltipNode) {
@@ -123,61 +199,68 @@ define([
 			}
 
 			popup.open(obj);
-
-			if (this.timeClose) {
-				this.tooltipNode._popupWrapper.onmouseleave = lang.hitch(this, this._startTimeout);
-				this.tooltipNode._popupWrapper.onmouseover = lang.hitch(this, this._stopTimeout);
-
-				this.nodeSource.onmouseleave = lang.hitch(this, this._startTimeout);
-				this.nodeSource.onmouseover = lang.hitch(this, this._stopTimeout);
-
-				if (additionalNode) {
-					additionalNode.onmouseleave = lang.hitch(this, this._startTimeout);
-				}
-			}
-
-			this._dfdTooltip.resolve();
 		},
 
-		_startTimeout: function() {
+		_prepareTooltipClose: function() {
 
-			this.timeout = setTimeout(lang.hitch(this, this._publish, this.getChannel("HIDE")), this.timeClose);
+			var popupNode = this.tooltipNode._popupWrapper,
+				startCallback = lang.hitch(this, this._startCloseTimeout),
+				stopCallback = lang.hitch(this, this._stopCloseTimeout);
+
+			popupNode.onmouseleave = startCallback;
+			popupNode.onmouseover = stopCallback;
+
+			this._tooltipSourceNodeOldMouseLeaveCallback = this._tooltipSourceNode.onmouseleave;
+			this._tooltipSourceNodeOldMouseOverCallback = this._tooltipSourceNode.onmouseover;
+			this._tooltipSourceNode.onmouseleave = startCallback;
+			this._tooltipSourceNode.onmouseover = stopCallback;
 		},
 
-		_stopTimeout: function() {
+		_startCloseTimeout: function() {
 
-			clearTimeout(this.timeout);
+			this._closeTimeoutHandler = setTimeout(lang.hitch(this, this._hideTooltip), this.timeClose);
+		},
+
+		_stopCloseTimeout: function() {
+
+			clearTimeout(this._closeTimeoutHandler);
 		},
 
 		_onModuleAncestorHide: function() {
 
-			this._publish(this.getChannel("HIDE"));
+			this._hideTooltip();
+		},
+
+		_hideTooltip: function() {
+
+			this._publish(this.getChannel('HIDE'));
 		},
 
 		_onModuleHide: function() {
 
-			this._stopTimeout();
-			this._closeTooltip();
+			this._stopCloseTimeout();
+			this._removeTooltip();
 
 			this.inherited(arguments);
 		},
 
-		_closeTooltip: function(evt) {
+		_removeTooltip: function(evt) {
 
 			popup.close(this.tooltipNode);
 
+			put('!', this.tooltipNode._popupWrapper);
+
+			var classesToRemove = '!' + this._tooltipAboveClass + '!' + this._tooltipBelowClass +
+				'!' + this._tooltipLeftClass + '!' + this._tooltipRightClass;
+
+			put(this.tooltipNode.domNode, classesToRemove);
+
+			this._globalClicksHandler.pause();
+
 			if (this.timeClose) {
-				this.tooltipNode._popupWrapper.onmouseover = function(){};
-				this.tooltipNode._popupWrapper.onmouseleave = function(){};
-
-				this.nodeSource.onmouseleave = function(){};
-				this.nodeSource.onmouseover = function(){};
+				this._tooltipSourceNode.onmouseleave = this._tooltipSourceNodeOldMouseLeaveCallback;
+				this._tooltipSourceNode.onmouseover = this._tooltipSourceNodeOldMouseOverCallback;
 			}
-		},
-
-		_subAncestorGotProps: function(res, c) {
-
-			this._ancestorTooltipNode = res.tooltipNode;
 		}
 	};
 });

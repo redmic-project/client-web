@@ -624,12 +624,6 @@ define([
 			var node = res.iconNode,
 				item = res.item;
 
-			if (node.firstChild) {
-				node = node.firstChild;
-			} else {
-				node = put(node, 'div');
-			}
-
 			item.href = lang.replace(redmicConfig.viewPaths.serviceOGCCatalogDetails, item);
 
 			this._emitEvt('INJECT_ITEM', {
@@ -638,8 +632,7 @@ define([
 			});
 
 			this._publish(this.templateDisplayerDetails.getChannel("SHOW"), {
-				node: node,
-				additionalNode: res.iconNode
+				node: node
 			});
 		},
 

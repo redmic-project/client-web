@@ -38,8 +38,6 @@ define([
 
 			this.inputInTooltipConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				notIndicator: true,
-				indicatorLeft: true,
 				classTooltip: "tooltipButtonMenu tooltipButtonChart",
 				propertyName: this.propertyNameInputInTooltip,
 				timeClose: this.timeClose,

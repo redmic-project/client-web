@@ -25,7 +25,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				infoClass: 'inputInfoButton'
+				infoClass: 'inputInfoButton',
+				infoTooltipClass: 'inputInfoTooltipContent'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -94,7 +95,8 @@ define([
 			var infoDefinition = declare([DataDisplayer, _ShowOnEvt]).extend(_ShowInTooltip);
 			this._infoInstance = new infoDefinition({
 				parentChannel: this.getChannel(),
-				data: infoValue
+				data: infoValue,
+				'class': this.infoTooltipClass
 			});
 
 			this._publish(this._infoInstance.getChannel('ADD_EVT'), {

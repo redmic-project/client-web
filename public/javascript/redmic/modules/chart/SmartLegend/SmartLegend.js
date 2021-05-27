@@ -117,7 +117,6 @@ define([
 			this.listMenu = new declare(ListMenu).extend(_ShowInTooltip)({
 				classTooltip: "tooltipButtonMenu tooltipButtonAggrement",
 				parentChannel: this.getChannel(),
-				notIndicator: true,
 				select: {
 					"default": 0
 				},

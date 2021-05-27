@@ -40,7 +40,6 @@ define([
 
 			this.dateRangeComplexConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				orient: ['below-alt'],
 				classTooltip: 'tooltipButtonMenu',
 				filterChannel: this.queryChannel
 			}, this.dateRangeComplexConfig || {}]);

@@ -14,7 +14,8 @@ define([
 	, DialogComplex
 	, DialogSimple
 	, put
-){
+) {
+
 	return {
 		//	summary:
 		//		Extensión de módulos mostrables para que lo hagan dentro de un popup.
@@ -54,12 +55,14 @@ define([
 		_createContainer: function() {
 
 			this.popupBody = new ContentPane();
+
+			this._moduleParentNode = this.popupBody.domNode;
 			put(this.popupBody.domNode, '.flex');
 		},
 
 		_getCurrentParentNode: function(req) {
 
-			return this.popupBody.domNode;
+			return this._moduleParentNode;
 		},
 
 		_beforeShow: function(req) {

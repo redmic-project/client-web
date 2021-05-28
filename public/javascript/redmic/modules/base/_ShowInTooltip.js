@@ -191,7 +191,7 @@ define([
 			var obj = {
 				popup: this.tooltipNode,
 				around: this._tooltipSourceNode,
-				orient: [this._tooltipOrientValue],
+				orient: [this._tooltipOrientValue]
 			};
 
 			if (this._ancestorTooltipNode) {

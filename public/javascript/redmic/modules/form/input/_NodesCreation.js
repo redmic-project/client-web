@@ -90,7 +90,8 @@ define([
 			}
 
 			var infoValue = this.i18n[info] || info,
-				infoNode = put(this.containerLeft, 'i.' + this.infoClass);
+				infoNodeParams = 'i.' + this.infoClass + '[title=' + this.i18n.infoButtonTitle + ']',
+				infoNode = put(this.containerLeft, infoNodeParams);
 
 			var infoDefinition = declare([DataDisplayer, _ShowOnEvt]).extend(_ShowInTooltip);
 			this._infoInstance = new infoDefinition({

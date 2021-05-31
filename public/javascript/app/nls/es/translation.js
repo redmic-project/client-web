@@ -1227,7 +1227,7 @@ define({
 	, "fastFilters": "Filtros rápidos"
 	, "advancedFilters": "Filtros avanzados"
 
-	, "infoButtonTitle": "Mostrar más información"
+	, "infoButtonTitle": "Pulsa para mostrar más información"
 	, "activityStatus": "Estado de la actividad"
 	, "activityStatusFirstValue": "Sin iniciar"
 	, "activityStatusSecondValue": "En curso"

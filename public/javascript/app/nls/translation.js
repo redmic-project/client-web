@@ -1231,7 +1231,7 @@ define({
 		, "fastFilters": "Fast filters"
 		, "advancedFilters": "Advanced filters"
 
-		, "infoButtonTitle": "Show more information"
+		, "infoButtonTitle": "Press to show more information"
 		, "activityStatus": "Activity status"
 		, "activityStatusFirstValue": "Not started"
 		, "activityStatusSecondValue": "In progress"

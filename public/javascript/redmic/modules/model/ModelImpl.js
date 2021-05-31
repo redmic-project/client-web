@@ -315,6 +315,10 @@ define([
 
 			this._obtainPropertyInstance(propertyName).then(lang.hitch(this, function(propName, instance) {
 
+				if (!instance) {
+					return;
+				}
+
 				this._emitEvt('WAS_VALID', {
 					propertyName: propName,
 					value: instance.get(this.valuePropertyName),	// TODO debe mandar el valor?? creo que no

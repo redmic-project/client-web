@@ -103,7 +103,7 @@ define([
 
 		_getNodeInputInTooltip: function() {
 
-			return this.containerInput.children[1];
+			return this.containerInput;
 		},
 
 		_subInputInTooltipValueChanged: function(res) {

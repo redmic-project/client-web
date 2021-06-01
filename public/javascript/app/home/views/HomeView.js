@@ -92,24 +92,24 @@ define([
 						omitTitleCloseButton: true
 					}
 				},
-				favourites: {
-					width: 3,
-					height: 5,
-					type: WidgetFavourites,
-					props: {
-						windowTitle: 'favourites',
-						"class": "containerDetails"
-					}
-				},
 				info: {
 					width: 3,
-					height: 1,
+					height: 2,
 					type: TemplateDisplayer,
 					props: {
 						windowTitle: 'info',
 						template: TemplateInfo,
 						"class": "mediumSolidContainer.borderRadiusBottom",
 						target: "initial_info"
+					}
+				},
+				favourites: {
+					width: 3,
+					height: 6,
+					type: WidgetFavourites,
+					props: {
+						windowTitle: 'favourites',
+						"class": "containerDetails"
 					}
 				},
 				stats: {
@@ -143,6 +143,9 @@ define([
 
 		_afterShow: function(request) {
 
+			if (this._getPreviouslyShown()) {
+				return;
+			}
 			this._listenWidgets();
 
 			var obj = {

@@ -250,8 +250,8 @@ define({
 	, "recording-types": "Tipos de grabación"
 
 	, "closed": "Concluido"
-	, "activityOutProjects": "Actividades fuera de proyectos"
-	, "projectOutPrograms": "Proyectos fuera de programas"
+	, "attached": "Asociado"
+	, "independent": "Independiente"
 
 	, "precision": "Precisión"
 	, "bathymetry": "Batimetría"
@@ -1247,7 +1247,14 @@ define({
 	, "documentFilterInfo": "Las actividades pueden contener información en forma de documentos, como memorias de proyecto, artículos de revista, publicaciones científicas... Utiliza este filtro para encontrar actividades relacionadas con algún documento de la biblioteca."
 	, "platformFilterInfo": "Las labores desempeñadas en el desarrollo de una actividad pueden tener lugar en una o varias plataformas. Utiliza este filtro para encontrar actividades que guardan relación con una plataforma concreta."
 
-// Para capas que no se pueden cambiar las keys
+	, "activityMoreInfo": "La actividad es el elemento básico para organizar la información. Recoge los metadatos que definen al conjunto de datos (dataset) marinos generados en dicha actividad. Las actividades pueden ser independientes o pertenecer a un proyecto. Atendiendo a su fecha de inicio y finalización, pueden estar en curso o concluidas."
+	, "projectMoreInfo": "Un proyecto es una colección de actividades que persiguen un mismo fin. Usualmente son desarrollados por una única organización. Los proyectos pueden ser independientes o pertenecer a un programa. Atendiendo a su fecha de inicio y finalización, pueden estar en curso o concluidos."
+	, "programMoreInfo": "Un programa es una agrupación de proyectos que guardan relación entre sí. Suelen tener una duración prolongada y es común que participen varias organizaciones con diferentes roles en ellos. Atendiendo a su fecha de inicio y finalización, pueden estar en curso o concluidos."
+	, "documentMoreInfo": "Los documentos contienen información de cualquier tipo, desde bibliografía marina hasta contenido técnico relacionado con la obtención de datos."
+	, "organisationMoreInfo": "Las organizaciones son entidades que participan en una actividad con un rol establecido. Pueden ser de carácter público, privado o profesionales autónomos."
+	, "platformMoreInfo": "Una plataforma es cualquier instalación o artefacto, ya sea fijo o móvil, desde donde se opera para la obtención de datos, o que porta los sensores o aparatos de muestreo."
+
+	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"
 	, "featurecod": "Feature code"

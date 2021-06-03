@@ -250,8 +250,8 @@ define({
 		, "recording-types": "Recording types"
 
 		, "closed": "Concluded"
-		, "activityOutProjects": "Activities out of projects"
-		, "projectOutPrograms": "Projects out of programs"
+		, "attached": "Attached"
+		, "independent": "Independent"
 
 		, "precision": "Precision"
 		, "bathymetry": "Bathymetry"
@@ -559,7 +559,7 @@ define({
 		, "contactRole": "Contact role"
 		, "organisationRole": "Organisation role"
 		, "qualityControl": "Quality control"
-		, "opened": "Alive"
+		, "opened": "In progress"
 		, "unit": "Unit"
 		, "units": "Parameter unit"
 		, "condition": "Attribute definition"
@@ -1250,6 +1250,13 @@ define({
 		, "contactFilterInfo": "Activities can be participated by professionals with a specific role. Use this filter to find activities in which a specific contact participates."
 		, "documentFilterInfo": "Activities can contain information in the form of documents, such as project reports, magazine articles, scientific publications... Use this filter to find activities related to a library document."
 		, "platformFilterInfo": "The tasks performed in the development of an activity can take place on one or more platforms. Use this filter to find activities that are related to a specific platform."
+
+		, "activityMoreInfo": "Activity is the basic element to organize information. It includes the metadata which defines the marine dataset generated in the activity. Activities can be independent or belong to a project. Based on their start and end date, they may be in progress or concluded."
+		, "projectMoreInfo": "A project is a collection of activities that pursue the same goal. They are usually developed by a single organisation. Projects can be independent or belong to a program. Based on their start and end date, they may be in progress or concluded."
+		, "programMoreInfo": "A program is a grouping of projects that are related to each other. They tend to last for a long time and commonly are participated by several organisations with different roles in them. Based on their start and end date, they may be in progress or concluded."
+		, "documentMoreInfo": "Documents contain information of any kind, from marine bibliography to technical content related to data collection."
+		, "organisationMoreInfo": "Organizations are entities that participate in an activity with an established role. They can be public, private or self-employed professionals."
+		, "platformMoreInfo": "A platform is any installation or device, whether fixed or mobile, from where someone operates to obtain data, or which carry sensors or sampling devices."
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

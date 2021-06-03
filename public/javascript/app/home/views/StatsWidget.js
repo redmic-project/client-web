@@ -32,10 +32,9 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.administrativeStatistics,
-				_browserTarget: 'browserStatistics',
+				_browserTarget: 'statisticsBrowser',
 				'class': 'statsPanel',
-				infoTooltipClass: 'inputInfoTooltipContent',
-				_titleRightButtonsList: []
+				infoTooltipClass: 'inputInfoTooltipContent'
 			};
 
 			lang.mixin(this, this.config, args);

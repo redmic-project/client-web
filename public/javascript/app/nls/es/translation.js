@@ -1254,6 +1254,26 @@ define({
 	, "organisationMoreInfo": "Las organizaciones son entidades que participan en una actividad con un rol establecido. Pueden ser de carácter público, privado o profesionales autónomos."
 	, "platformMoreInfo": "Una plataforma es cualquier instalación o artefacto, ya sea fijo o móvil, desde donde se opera para la obtención de datos, o que porta los sensores o aparatos de muestreo."
 
+	, "speciesCatalogProductName": "Catálogo de especies"
+	, "atlasProductName": "Atlas"
+	, "serviceOgcProductName": "Servicios OGC"
+	, "trackingProductName": "Seguimiento"
+	, "speciesDistributionProductName": "Distribución de especies"
+	, "timeSeriesProductName": "Series temporales"
+	, "trashCollectionProductName": "Recolección de basura"
+	, "realTimeProductName": "Datos en tiempo real"
+	, "bibliographyProductName": "Bibliografía"
+	, "speciesCatalogProductDescription": "Listado de especies sincronizado con WoRMS, pero centrado en la región de la Macaronesia. Incluye aquellas especies que se encuentran referenciadas en los datos recogidos en la plataforma."
+	, "atlasProductDescription": "Mapa interactivo con una selección de información relevante para los interesados en el mar y la costa, organizada por capas combinables: demarcaciones jurídicas, zonas de baño, áreas protegidas, pesquerías, batimetrías, etc."
+	, "serviceOgcProductDescription": "Listado de servicios contenidos en REDMIC que se ofrecen a terceros, siguiendo los protocolos del Open Geospatial Consortium."
+	, "trackingProductDescription": "Visor interactivo de datos de seguimiento. Consiste en un mapa acompañado de una barra de reproducción, que permite moverse en la dimensión temporal para ver su evolución."
+	, "speciesDistributionProductDescription": "Visor interactivo sobre la distribución de las especies, representada en mallas o retículas de 0,5 - 10 km². Permite calcular el número total de especies presentes en cada cuadrícula, dato muy útil en estudios de biodiversidad y planificación territorial."
+	, "timeSeriesProductDescription": "Visor interactivo para series temporales de parámetros oceanográficos, recogidos en las diferentes actividades registradas en la plataforma. Los datos están asociados a una estación, fija o eventual, donde se recogen una serie de parámetros para su estudio."
+	, "trashCollectionProductDescription": "Visor interactivo centrado en datos de muestreo de recogida de basuras, fruto de diferentes campañas registradas en la plataforma. Se representa el transecto de recogida sobre el mapa y la composición cualitativa de los elementos recogidos en gráficas de frecuencia para cada elemento, acumulados, clasificación por tipología, etc."
+	, "realTimeProductDescription": "Visor interactivo de series de datos, que permite su consulta en tiempo real y del pasado reciente. Contiene en su mayoría datos meteorológicos, pudiendo visualizar diferentes parámetros por estación con sus respectivas representaciones gráficas."
+	, "bibliographyProductDescription": "Listado de gran cantidad de publicaciones científicas relacionadas con el medio marino en su ámbito de actuación. También se pueden encontrar manuales, textos legislativos y otros documentos relacionados con actividades concretas. Algunos de estos documentos se pueden consultar directamente en el visor, para otros se proporciona un enlace externo o simplemente sirve de escaparate para conocer de su existencia."
+
+
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"
 	, "descriptio": "Descripción"

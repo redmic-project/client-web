@@ -1,37 +1,37 @@
 define([
-	"app/designs/details/Controller"
-	, "app/designs/details/Layout"
-	, 'app/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/InitialInfo"
-	, 'redmic/modules/base/_Filter'
-	, "redmic/base/Credentials"
+	'app/designs/details/Controller'
+	, 'app/designs/details/Layout'
+	, 'app/home/views/ProductWidget'
 	, 'app/home/views/SearchBarWidget'
 	, 'app/home/views/SearchFastFilterWidget'
 	, 'app/home/views/SearchFilterWidget'
 	, 'app/home/views/SearchResultsWidget'
-	, "app/home/views/SocialWidget"
+	, 'app/home/views/SocialWidget'
 	, 'app/home/views/StatsWidget'
-	, "app/home/views/WidgetFavourites"
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/base/Credentials'
+	, 'redmic/modules/base/_Filter'
+	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
+	, 'templates/InitialInfo'
 ], function(
 	Controller
 	, Layout
-	, redmicConfig
-	, declare
-	, lang
-	, TemplateDisplayer
-	, TemplateInfo
-	, _Filter
-	, Credentials
+	, ProductWidget
 	, SearchBarWidget
 	, SearchFastFilterWidget
 	, SearchFilterWidget
 	, SearchResultsWidget
 	, SocialWidget
 	, StatsWidget
-	, WidgetFavourites
+	, redmicConfig
+	, declare
+	, lang
+	, Credentials
+	, _Filter
+	, TemplateDisplayer
+	, TemplateInfo
 ) {
 
 	return declare([Layout, Controller, _Filter], {
@@ -99,17 +99,16 @@ define([
 					props: {
 						windowTitle: 'info',
 						template: TemplateInfo,
-						"class": "mediumSolidContainer.borderRadiusBottom",
-						target: "initial_info"
+						'class': 'mediumSolidContainer.borderRadiusBottom',
+						target: 'initial_info'
 					}
 				},
-				favourites: {
+				products: {
 					width: 3,
 					height: 6,
-					type: WidgetFavourites,
+					type: ProductWidget,
 					props: {
-						windowTitle: 'favourites',
-						"class": "containerDetails"
+						windowTitle: 'products'
 					}
 				},
 				stats: {
@@ -216,7 +215,7 @@ define([
 
 		_clearModules: function() {
 
-			this._publish(this._getWidgetInstance('info').getChannel("CLEAR"));
+			this._publish(this._getWidgetInstance('info').getChannel('CLEAR'));
 		},
 
 		_refreshModules: function() {
@@ -225,8 +224,8 @@ define([
 				info: ''
 			};
 
-			if (Credentials.get("userRole") === "ROLE_GUEST") {
-				obj.roleGuest = this.i18n.contentInfo1 + " ";
+			if (Credentials.get('userRole') === 'ROLE_GUEST') {
+				obj.roleGuest = this.i18n.contentInfo1 + ' ';
 				obj.roleGuest += this.i18n.visitor;
 				obj.roleGuest += this.i18n.contentInfo2;
 				obj.register = this.i18n.register.toLowerCase();
@@ -237,7 +236,7 @@ define([
 
 			this._emitEvt('INJECT_ITEM', {
 				data: obj,
-				target: "initial_info"
+				target: 'initial_info'
 			});
 		}
 	});

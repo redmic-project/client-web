@@ -5,6 +5,7 @@ define([
 	, 'redmic/modules/base/_Filter'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
+	, 'redmic/modules/layout/dataDisplayer/DataDisplayer'
 	, 'redmic/modules/search/TextImpl'
 ], function(
 	redmicConfig
@@ -13,6 +14,7 @@ define([
 	, _Filter
 	, _Module
 	, _Show
+	, DataDisplayer
 	, TextImpl
 ) {
 
@@ -50,6 +52,12 @@ define([
 			}, this.textSearchConfig || {}]);
 
 			this.textSearch = new TextImpl(this.textSearchConfig);
+
+			this._infoInstance = new DataDisplayer({
+				parentChannel: this.getChannel(),
+				data: this.i18n.findDataInActivitiesStart + ' ' + this.i18n.findDataInActivitiesEnd,
+				'class': this.infoTooltipClass
+			});
 		},
 
 		_defineSubscriptions: function() {
@@ -91,6 +99,10 @@ define([
 			this._publish(this.textSearch.getChannel('SHOW'), {
 				node: this.domNode
 			});
+
+			this._publish(this._infoInstance.getChannel('SHOW'), {
+				node: this.domNode
+			});
 		},
 
 		_handleFilterParams: function(filterParams) {
@@ -106,6 +118,16 @@ define([
 				target: this.target,
 				searchText: searchText,
 				queryChannel: this.queryChannel
+			});
+		},
+
+		_onTotalActivitiesPropSet: function(propEvt) {
+
+			var newData = this.i18n.findDataInActivitiesStart + ' <b>' + propEvt.value + '</b> ' +
+				this.i18n.findDataInActivitiesEnd;
+
+			this._publish(this._infoInstance.getChannel('SET_PROPS'), {
+				data: newData,
 			});
 		}
 	});

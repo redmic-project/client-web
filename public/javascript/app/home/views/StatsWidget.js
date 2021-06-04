@@ -31,6 +31,13 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: 'statsWidget',
+				events: {
+					TOTAL_ACTIVITIES: 'totalActivities'
+				},
+				actions: {
+					TOTAL_ACTIVITIES: 'totalActivities'
+				},
 				target: redmicConfig.services.administrativeStatistics,
 				_browserTarget: 'statisticsBrowser',
 				'class': 'statsPanel',
@@ -75,6 +82,14 @@ define([
 			this.subscriptionsConfig.push({
 				channel: this.browser.getChannel('BUTTON_EVENT'),
 				callback: '_subBrowserButtonEvent'
+			});
+		},
+
+		_definePublications: function() {
+
+			this.publicationsConfig.push({
+				event: 'TOTAL_ACTIVITIES',
+				channel: this.getChannel('TOTAL_ACTIVITIES'),
 			});
 		},
 
@@ -138,13 +153,22 @@ define([
 				var specificStatsItem = specificStatsData[i],
 					attachedKey = specificStatsItem.attachedKey,
 					independentKey = specificStatsItem.independentKey,
-					specificData = this._extractSpecificStats(data, attachedKey, independentKey);
+					specificData = this._extractSpecificStats(data, attachedKey, independentKey),
+					href = attachedKey;
+
+				if (attachedKey === 'activity') {
+
+					this._emitEvt('TOTAL_ACTIVITIES', {
+						value: specificData.total
+					})
+					href = 'activities'; // TODO ruta incorrecta de vista
+				}
 
 				this._addStats({
 					id: id,
 					name: attachedKey,
 					stats: specificData,
-					href: attachedKey === 'activity' ? 'activities': attachedKey // TODO ruta incorrecta de vista
+					href: href
 				});
 
 				id++;

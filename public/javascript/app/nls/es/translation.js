@@ -276,7 +276,7 @@ define({
 	, "zoomLevelTooLowForCurrentMode": "Aumente el zoom para mostrar información en el modo actual"
 	, "noLegendAvailable": "Esta capa no tiene leyenda disponible"
 
-	, "tracking": "Tracking"
+	, "tracking": "Seguimiento"
 
 	, "location": "Localización"
 
@@ -741,7 +741,7 @@ define({
 	, "geometryAndClassifications": "Geometría y clasificaciones"
 	, "censusing-status": "Fases del censo"
 	, "service": "Servicios"
-	, "charts": "Gráficas"
+	, "charts": "Series temporales"
 	, "species-catalog": "Especies"
 	, "activities-catalog": "Actividades"
 	, "project-catalog": "Proyectos"
@@ -1260,7 +1260,7 @@ define({
 	, "trackingProductName": "Seguimiento"
 	, "speciesDistributionProductName": "Distribución de especies"
 	, "timeSeriesProductName": "Series temporales"
-	, "trashCollectionProductName": "Recolección de basura"
+	, "trashCollectionProductName": "Inventario de basura"
 	, "realTimeProductName": "Datos en tiempo real"
 	, "bibliographyProductName": "Bibliografía"
 	, "speciesCatalogProductDescription": "Listado de especies sincronizado con WoRMS, pero centrado en la región de la Macaronesia. Incluye aquellas especies que se encuentran referenciadas en los datos recogidos en la plataforma."
@@ -1272,6 +1272,9 @@ define({
 	, "trashCollectionProductDescription": "Visor interactivo centrado en datos de muestreo de recogida de basuras, fruto de diferentes campañas registradas en la plataforma. Se representa el transecto de recogida sobre el mapa y la composición cualitativa de los elementos recogidos en gráficas de frecuencia para cada elemento, acumulados, clasificación por tipología, etc."
 	, "realTimeProductDescription": "Visor interactivo de series de datos, que permite su consulta en tiempo real y del pasado reciente. Contiene en su mayoría datos meteorológicos, pudiendo visualizar diferentes parámetros por estación con sus respectivas representaciones gráficas."
 	, "bibliographyProductDescription": "Listado de gran cantidad de publicaciones científicas relacionadas con el medio marino en su ámbito de actuación. También se pueden encontrar manuales, textos legislativos y otros documentos relacionados con actividades concretas. Algunos de estos documentos se pueden consultar directamente en el visor, para otros se proporciona un enlace externo o simplemente sirve de escaparate para conocer de su existencia."
+
+	, "findDataInActivitiesStart": "Encuentra datos entre las"
+	, "findDataInActivitiesEnd": "actividades disponibles"
 
 
 	// Para capas que no se pueden cambiar las keys

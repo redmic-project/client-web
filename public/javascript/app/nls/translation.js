@@ -742,7 +742,7 @@ define({
 		, "geometryAndClassifications": "Geometry & classifications"
 		, "censusing-status": "Censusing status"
 		, "service": "Services"
-		, "charts": "Charts"
+		, "charts": "Time series"
 		, "species-catalog": "Species"
 		, "activities-catalog": "Activities"
 		, "project-catalog": "Projects"
@@ -889,7 +889,7 @@ define({
 		, "goToDashboard": "Visualize data"
 		, "dashboard": "Dashboard"
 
-		, "trash-collection": "Trash survey"
+		, "trash-collection": "Trash inventory"
 		, "collect": "Collect"
 		, "places": "Places"
 		, "track": "Track"
@@ -1264,7 +1264,7 @@ define({
 		, "trackingProductName": "Tracking"
 		, "speciesDistributionProductName": "Species distribution"
 		, "timeSeriesProductName": "Timeseries"
-		, "trashCollectionProductName": "Trash collection"
+		, "trashCollectionProductName": "Trash inventory"
 		, "realTimeProductName": "Real-time data"
 		, "bibliographyProductName": "Bibliography"
 		, "speciesCatalogProductDescription": "Species list synchronized with WoRMS, but focused on the Macaronesia region. It includes those species that are referenced in the data collected on the platform."
@@ -1276,6 +1276,9 @@ define({
 		, "trashCollectionProductDescription": "Interactive viewer focused on trash collection sampling data, as a result of different campaigns registered on the platform. The collection transect is represented on the map and the qualitative composition of the elements collected in graphs of frequency for each element, accumulated, classification by typology, etc."
 		, "realTimeProductDescription": "Interactive viewer of data series, which allows querying in real time and the recent past. It contains mostly meteorological data, being able to view different parameters per station with their respective graphic representations."
 		, "bibliographyProductDescription": "List of a large number of scientific publications related to the marine environment in its field of action. You can also find manuals, legislative texts and other documents related to specific activities. Some of these documents can be consulted directly in the viewer, for others an external link is provided or simply serves as a showcase to find out about their existence."
+
+		, "findDataInActivitiesStart": "Find data within the"
+		, "findDataInActivitiesEnd": "available activities"
 
 
 		//Para capas que no se pueden cambiar las keys

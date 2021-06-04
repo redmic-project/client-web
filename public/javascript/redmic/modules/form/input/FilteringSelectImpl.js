@@ -187,6 +187,7 @@ define([
 
 		_valueChanged: function(obj) {
 
+			console.log('a validar!', this.getOwnChannel())
 			if (this._isPropertyNameValue(obj)) {
 				if (obj[this.propertyName]) {
 					this._valueObjPendingToComplete = obj;

@@ -166,6 +166,9 @@ define([
 			},{
 				channel: this._getWidgetInstance('searchBar').getChannel('TOGGLE_ADVANCED_SEARCH'),
 				callback: lang.hitch(this, this._toggleAdvancedSearch)
+			},{
+				channel: this._getWidgetInstance('stats').getChannel('TOTAL_ACTIVITIES'),
+				callback: lang.hitch(this, this._subStatsTotalActivities)
 			}]);
 		},
 
@@ -211,6 +214,13 @@ define([
 				this._advancedSearchShown = false;
 				this._hideWidget('searchFilter');
 			}
+		},
+
+		_subStatsTotalActivities: function(res) {
+
+			this._publish(this._getWidgetInstance('searchBar').getChannel('SET_PROPS'), {
+				totalActivities: res.value
+			});
 		},
 
 		_clearModules: function() {

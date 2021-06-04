@@ -72,6 +72,11 @@ define([
 						label: 'whatIsRedmic',
 						href: '/inner-what-is-redmic'
 					},
+					feedbackItem: {
+						icon: 'fa-envelope-o',
+						label: 'feedback',
+						href: '/feedback'
+					},
 					termConditionItem: {
 						icon: 'fa-file-text-o',
 						label: 'termCondition',
@@ -119,6 +124,7 @@ define([
 						href: '/user'
 					},
 					this._commonItems.infoItem,
+					this._commonItems.feedbackItem,
 					this._commonItems.termConditionItem,
 					this._commonItems.versionItem,
 					{
@@ -141,6 +147,7 @@ define([
 						label: 'register',
 						href: '/register'
 					},
+					this._commonItems.feedbackItem,
 					this._commonItems.termConditionItem,
 					this._commonItems.versionItem,
 					{

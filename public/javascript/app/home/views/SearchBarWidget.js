@@ -127,7 +127,7 @@ define([
 				this.i18n.findDataInActivitiesEnd;
 
 			this._publish(this._infoInstance.getChannel('SET_PROPS'), {
-				data: newData,
+				data: newData
 			});
 		}
 	});

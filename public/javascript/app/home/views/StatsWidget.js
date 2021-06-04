@@ -89,7 +89,7 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'TOTAL_ACTIVITIES',
-				channel: this.getChannel('TOTAL_ACTIVITIES'),
+				channel: this.getChannel('TOTAL_ACTIVITIES')
 			});
 		},
 
@@ -160,7 +160,7 @@ define([
 
 					this._emitEvt('TOTAL_ACTIVITIES', {
 						value: specificData.total
-					})
+					});
 					href = 'activities'; // TODO ruta incorrecta de vista
 				}
 

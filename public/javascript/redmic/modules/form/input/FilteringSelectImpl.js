@@ -30,7 +30,8 @@ define([
 				sizeDefault: 10,
 				target: null,
 				omitLoading: true,
-				defaultReturnFields: ['id', 'name']
+				defaultReturnFields: ['id', 'name'],
+				setValueAsObject: false
 			};
 
 			lang.mixin(this, this.config, args);
@@ -174,7 +175,8 @@ define([
 
 			var obj = {};
 
-			if (value) {
+			// TODO quizá hay que detectar aquí si el modelo requiere objeto o entero, probar
+			if (value && this.setValueAsObject) {
 				obj[this.propertyName] = {};
 				obj[this.propertyName][this.idProperty] = value;
 				obj[this.propertyName][this._inputProps.labelAttr] = this._inputInstance.label;

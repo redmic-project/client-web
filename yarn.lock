@@ -3238,9 +3238,9 @@ lcid@^1.0.0:
   version "0.0.0"
   resolved "https://github.com/heyman/leaflet-areaselect.git#d0910cc4e74b59bbd9eead447d2353c29dfe84b1"
 
-"leaflet-awesome-markers@https://github.com/lvoogdt/Leaflet.awesome-markers.git#2.0/develop":
+"leaflet-awesome-markers@https://github.com/lennardv2/Leaflet.awesome-markers.git#2.0/develop":
   version "0.0.0"
-  resolved "https://github.com/lvoogdt/Leaflet.awesome-markers.git#734042aef260eb3d9b72bbac5db00dfc07dbc602"
+  resolved "https://github.com/lennardv2/Leaflet.awesome-markers.git#b17993e25db48db7bedd9f613b89d0ac0d733e32"
 
 leaflet-draw@^1.0.2:
   version "1.0.2"
@@ -5487,6 +5487,11 @@ which@~1.2.1:
   integrity sha1-mofEN48D6CfOyvGs31bHNsAcFOU=
   dependencies:
     isexe "^2.0.0"
+
+wicket@^1.3.6:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/wicket/-/wicket-1.3.6.tgz#f1c8bfca78205a533e696cd8ee77ea0bcaa612c3"
+  integrity sha512-062Cc5HHbzy6PYATPugoEezg4gotGmrUf7RD7B15lV866NwWMD1qK/vEZmaNhXC7cMNioA0VAWx8KjotNDb5gw==
 
 window-size@0.1.0:
   version "0.1.0"

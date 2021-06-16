@@ -39,6 +39,9 @@ dojoConfig = {
 		},
 		'pruneCluster/PruneCluster.amd.min': {
 			'leaflet': 'leaflet/leaflet'
+		},
+		'wicket': {
+			'wicket': 'wicket/wicket'
 		}
 	},
 

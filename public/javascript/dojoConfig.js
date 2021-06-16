@@ -110,6 +110,9 @@ dojoConfig = {
 	},{
 		name: 'leaflet-wms',
 		location: '../leaflet-wms/dist'
+	},{
+		name: 'wicket',
+		location: '../wicket'
 	}],
 
 	map: {
@@ -124,6 +127,9 @@ dojoConfig = {
 		},
 		'pruneCluster/PruneCluster.amd.min': {
 			'leaflet': 'leaflet/leaflet'
+		},
+		'wicket': {
+			'wicket': 'wicket/wicket'
 		}
 	},
 

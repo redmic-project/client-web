@@ -1,9 +1,7 @@
 define([
-	"dijit/registry"
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/_base/kernel"
-	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "dojo/dom-class"
 	, "dojo/on"
@@ -21,11 +19,9 @@ define([
 	, 'L-navBar/Leaflet.NavBar'
 	, 'leaflet-measure/leaflet-measure.min'
 ], function(
-	registry
-	, declare
+	declare
 	, lang
 	, kernel
-	, aspect
 	, Deferred
 	, domClass
 	, on

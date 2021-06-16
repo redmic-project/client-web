@@ -4,6 +4,9 @@ define([
 	, "dojo/_base/lang"
 	, "redmic/modules/layout/TabsDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
+	, "redmic/modules/map/_ImportWkt"
+	, "redmic/modules/map/LeafletImpl"
+	, "redmic/modules/map/Map"
 	, "templates/ActivityInfo"
 	, "templates/ActivityInfoHelp"
 	, "./_ActivityBase"
@@ -13,6 +16,9 @@ define([
 	, lang
 	, TabsDisplayer
 	, TemplateDisplayer
+	, _ImportWkt
+	, LeafletImpl
+	, Map
 	, TemplateInfo
 	, TemplateInfoHelp
 	, _ActivityBase
@@ -49,6 +55,21 @@ define([
 					height: 5,
 					template: TemplateInfo
 				}),
+				spatialExtensionMap: {
+					width: 3,
+					height: 2,
+					hidden: true,
+					type: declare([LeafletImpl, _ImportWkt, Map]),
+					props: {
+						title: this.i18n.spatialExtension,
+						omitContainerSizeCheck: true,
+						coordinatesViewer: false,
+						navBar: false,
+						miniMap: false,
+						scaleBar: false,
+						measureTools: false
+					}
+				},
 				additionalInfo: {
 					width: 3,
 					height: 5,
@@ -64,6 +85,11 @@ define([
 					}
 				}
 			}, this.widgetConfigs || {}]);
+		},
+
+		_setMainOwnCallbacksForEvents: function() {
+
+			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onActivityDetailsHidden));
 		},
 
 		_refreshModules: function() {
@@ -103,6 +129,8 @@ define([
 				}
 			});
 
+			this._prepareSpatialExtension();
+
 			this.inherited(arguments);
 		},
 
@@ -119,6 +147,46 @@ define([
 				data: this._activityData,
 				target: this.infoTarget
 			});
+		},
+
+		_prepareSpatialExtension: function() {
+
+			var wkt = this._activityData.spatialExtension;
+			if (!wkt) {
+				return;
+			}
+
+			var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+			this._once(mapInstance.getChannel('BBOX_CHANGED'), lang.hitch(this, this._showSpatialExtension, wkt));
+
+			this._showWidget('spatialExtensionMap');
+		},
+
+		_showSpatialExtension: function(wkt) {
+
+			var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+
+			this._once(mapInstance.getChannel('WKT_ADDED'), lang.hitch(this, function(res) {
+
+				this._lastWktLayer = res.layer;
+			}));
+
+			this._publish(mapInstance.getChannel('ADD_WKT'), {
+				wkt: wkt
+			});
+		},
+
+		_onActivityDetailsHidden: function() {
+
+			this._hideWidget('spatialExtensionMap');
+
+			if (this._lastWktLayer) {
+				var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+
+				this._publish(mapInstance.getChannel('REMOVE_LAYER'), {
+					layer: this._lastWktLayer
+				});
+			}
 		}
 	});
 });

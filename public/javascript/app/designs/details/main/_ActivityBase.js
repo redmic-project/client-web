@@ -13,14 +13,11 @@ define([
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/layout/TabsDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/ContactSet"
 	, "templates/DocumentList"
 	, "templates/OrganisationSet"
 	, "templates/PlatformSet"
-	, "templates/ActivityInfo"
-	, "templates/ActivityInfoHelp"
 ], function(
 	_Main
 	, Controller
@@ -36,14 +33,11 @@ define([
 	, ListImpl
 	, Pagination
 	, Total
-	, TabsDisplayer
 	, TemplateDisplayer
 	, TemplateContacts
 	, TemplateDocuments
 	, TemplateOrganisation
 	, TemplatePlatform
-	, TemplateInfo
-	, TemplateInfoHelp
 ){
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
 		//	summary:

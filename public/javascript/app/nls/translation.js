@@ -243,7 +243,7 @@ define({
 		, "raster-types": "Raster Types"
 		, "ending": "Ending (animals)"
 		, "destiny": "Destiny (animals)"
-		, "inspire-themes": "Inspire themes"
+		, "inspire-themes": "INSPIRE themes"
 		, "toponym-types": "Toponym types"
 		, "toponymType": "Toponym types"
 
@@ -981,7 +981,7 @@ define({
 		, "deviation": "Deviation"
 		, "seeDetails": "See more information"
 		, "alias": "Alias"
-		, "themeInspire": "Inspire theme"
+		, "themeInspire": "INSPIRE theme"
 
 		, "apply": "Apply"
 
@@ -1279,6 +1279,8 @@ define({
 
 		, "findDataInActivitiesStart": "Find data within the"
 		, "findDataInActivitiesEnd": "available activities"
+
+		, "spatialExtension": "Spatial extension"
 
 
 		//Para capas que no se pueden cambiar las keys

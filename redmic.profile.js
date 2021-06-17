@@ -92,6 +92,9 @@ var profile = {
 		name: 'put-selector',
 		location: 'put-selector'
 	},{
+		name: 'wicket',
+		location: 'wicket'
+	},{
 		name: 'app',
 		location: 'app',
 		resourceTags: {
@@ -308,6 +311,9 @@ var profile = {
 		},
 		'pruneCluster/PruneCluster.amd.min': {
 			'leaflet': 'leaflet/leaflet'
+		},
+		'wicket': {
+			'wicket': 'wicket/wicket'
 		}
 	},
 

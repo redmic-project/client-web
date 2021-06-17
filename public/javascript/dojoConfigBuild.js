@@ -11,8 +11,6 @@ dojoConfig = {
 	},{
 		name: 'app',
 		location: '../app'
-
-
 	},{
 		name: 'json-schema-ref-parser',
 		location: '../json-schema-ref-parser'

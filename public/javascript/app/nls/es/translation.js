@@ -272,7 +272,6 @@ define({
 	, "medium": "Media"
 	, "high": "Alta"
 
-	, "helpTextActivityDetails": "Actualmente, la descarga de datos desde REDMIC no está disponible. Sin embargo, los datos son públicos y puede solicitarlos a través del "
 	, "zoomLevelTooLowForCurrentMode": "Aumente el zoom para mostrar información en el modo actual"
 	, "noLegendAvailable": "Esta capa no tiene leyenda disponible"
 

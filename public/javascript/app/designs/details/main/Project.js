@@ -2,7 +2,6 @@ define([
 	"app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/layout/TabsDisplayer"
 	, "templates/ActivityList"
 	, "templates/ProjectInfo"
 	, "./_ActivityBase"
@@ -10,7 +9,6 @@ define([
 	redmicConfig
 	, declare
 	, lang
-	, TabsDisplayer
 	, TemplateActivities
 	, TemplateInfo
 	, _ActivityBase
@@ -37,25 +35,13 @@ define([
 				info: this._infoConfig({
 					template: TemplateInfo
 				}),
-				additionalInfo: {
-					width: 3,
-					height: 6,
-					type: TabsDisplayer,
-					props: {
-						title: this.i18n.additionalInfo,
-						childTabs: [
-							this._organisationsConfig(),
-							this._platformsConfig(),
-							this._contactsConfig(),
-							this._documentsConfig(),
-							this._setAdditionalConfig(
-								this.i18n.activities,
-								TemplateActivities,
-								this.viewPathsWidgets.activities
-							)
-						]
-					}
-				}
+				additionalInfo: this._setAdditionalConfig(this.i18n.activities, TemplateActivities,
+					this.viewPathsWidgets.activities
+				),
+				organisationList: this._organisationsConfig(),
+				platformList: this._platformsConfig(),
+				contactList: this._contactsConfig(),
+				documentList: this._documentsConfig()
 			}, this.widgetConfigs || {}]);
 		}
 	});

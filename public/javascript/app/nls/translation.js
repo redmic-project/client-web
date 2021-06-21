@@ -272,7 +272,6 @@ define({
 		, "medium": "Medium"
 		, "high": "High"
 
-		, "helpTextActivityDetails": "Data downloading from REDMIC is not ready yet. However, this data are public and you can ask for it through "
 		, "zoomLevelTooLowForCurrentMode": "Increase zoom to show data in the current mode"
 		, "noLegendAvailable": "This layer has no legend available"
 

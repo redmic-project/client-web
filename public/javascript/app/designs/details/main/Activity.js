@@ -2,25 +2,19 @@ define([
 	"app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/layout/TabsDisplayer"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "redmic/modules/map/_ImportWkt"
 	, "redmic/modules/map/LeafletImpl"
 	, "redmic/modules/map/Map"
 	, "templates/ActivityInfo"
-	, "templates/ActivityInfoHelp"
 	, "./_ActivityBase"
 ], function(
 	redmicConfig
 	, declare
 	, lang
-	, TabsDisplayer
-	, TemplateDisplayer
 	, _ImportWkt
 	, LeafletImpl
 	, Map
 	, TemplateInfo
-	, TemplateInfoHelp
 	, _ActivityBase
 ) {
 
@@ -40,17 +34,6 @@ define([
 		_setMainConfigurations: function() {
 
 			this.widgetConfigs = this._merge([{
-				helpText: {
-					width: 6,
-					height: 1,
-					type: TemplateDisplayer,
-					props: {
-						title: this.i18n.dataDownload,
-						template: TemplateInfoHelp,
-						"class": "templateInfo",
-						target: "helpTextActivity"
-					}
-				},
 				info: this._infoConfig({
 					height: 5,
 					template: TemplateInfo
@@ -70,20 +53,10 @@ define([
 						measureTools: false
 					}
 				},
-				additionalInfo: {
-					width: 3,
-					height: 5,
-					type: TabsDisplayer,
-					props: {
-						title: this.i18n.additionalInfo,
-						childTabs: [
-							this._organisationsConfig(),
-							this._platformsConfig(),
-							this._contactsConfig(),
-							this._documentsConfig()
-						]
-					}
-				}
+				organisationList: this._organisationsConfig(),
+				platformList: this._platformsConfig(),
+				contactList: this._contactsConfig(),
+				documentList: this._documentsConfig()
 			}, this.widgetConfigs || {}]);
 		},
 
@@ -93,15 +66,6 @@ define([
 		},
 
 		_refreshModules: function() {
-
-			var object = {};
-
-			object.info = this.i18n.helpTextActivityDetails;
-
-			this._emitEvt('INJECT_ITEM', {
-				data: object,
-				target: "helpTextActivity"
-			});
 
 			this.inherited(arguments);
 		},

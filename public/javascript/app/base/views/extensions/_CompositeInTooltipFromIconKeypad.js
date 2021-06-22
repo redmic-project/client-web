@@ -3,7 +3,6 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "put-selector/put"
-	, "redmic/base/Credentials"
 	, "redmic/modules/base/_ShowInTooltip"
 	, "redmic/modules/base/_ShowOnEvt"
 	, "redmic/modules/components/Keypad/IconKeypadImpl"
@@ -14,7 +13,6 @@ define([
 	, lang
 	, aspect
 	, put
-	, Credentials
 	, _ShowInTooltip
 	, _ShowOnEvt
 	, IconKeypadImpl
@@ -44,14 +42,6 @@ define([
 			lang.mixin(this, this.config, args);
 
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixCompositeEventsAndActions));
-			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._constructorComposite));
-		},
-
-		_constructorComposite: function(args) {
-
-			if (this.blockCompositeToUser && Credentials.get("userRole") !== 'ROLE_ADMINISTRATOR')
-				return;
-
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setCompositeConfigurations));
 			aspect.before(this, "_initialize", lang.hitch(this, this._initializeBeforeCompositeView));
 			aspect.before(this, "_defineSubscriptions", lang.hitch(this, this._initializeAfterCompositeView));
@@ -74,14 +64,6 @@ define([
 			}, this.compositeConfig || {}]);
 		},
 
-		_defineCompositeSubcriptions: function () {
-
-			this.subscriptionsConfig.push({
-				channel: this._buildChannel(this.iconKeypadChannel, this.actions.KEYPAD_INPUT),
-				callback: "_subKeypadInputComposite"
-			});
-		},
-
 		_initializeBeforeCompositeView: function() {
 
 			this.compositeConfig.filterChannel = this.queryChannel;
@@ -100,6 +82,14 @@ define([
 
 				this.iconKeypadChannel = this.iconKeypadComposite.getChannel();
 			}
+		},
+
+		_defineCompositeSubcriptions: function () {
+
+			this.subscriptionsConfig.push({
+				channel: this._buildChannel(this.iconKeypadChannel, this.actions.KEYPAD_INPUT),
+				callback: "_subKeypadInputComposite"
+			});
 		},
 
 		postCreate: function() {

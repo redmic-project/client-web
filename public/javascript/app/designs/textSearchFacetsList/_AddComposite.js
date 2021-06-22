@@ -15,13 +15,6 @@ define([
 
 			this.inherited(arguments);
 
-			this.buttonsComposite = this._merge([this.buttonsComposite || {}, {
-				"filters": {
-					className: "fa-binoculars",
-					title: this.i18n.advancedSearch
-				}
-			}]);
-
 			this.compositeConfig = this._merge([{
 				formConfig: {
 					dataTemplate: {
@@ -31,9 +24,34 @@ define([
 			}, this.compositeConfig || {}]);
 		},
 
-		_getIconKeypadNode: function() {
+		// TODO pisar/limpiar de manera más elegante
+		_initializeAfterCompositeView: function() {},
 
-			return this.topNode;
+		// TODO pisar/limpiar de manera más elegante
+		_defineCompositeSubcriptions: function () {
+
+			this.subscriptionsConfig.push({
+				channel: this.textSearch.getChannel('EXPAND_SEARCH'),
+				callback: "_subTextSearchExpand"
+			});
+		},
+
+		_subTextSearchExpand: function(res) {
+
+			if (this._initFilters) {
+				return;
+			}
+
+			this._publish(this.composite.getChannel("ADD_EVT"), {
+				sourceNode: res.node,
+				initAction: 'hide'
+			});
+
+			this._publish(this.composite.getChannel("SHOW"), {
+				node: res.node
+			});
+
+			this._initFilters = true;
 		}
 	});
 });

@@ -33,8 +33,7 @@ define([
 
 			this.config = {
 				browserExts: [_Select],
-				title: this.i18n.projects,
-				blockCompositeToUser: true
+				title: this.i18n.projects
 			};
 
 			lang.mixin(this, this.config, args);

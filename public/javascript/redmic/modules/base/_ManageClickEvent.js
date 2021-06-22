@@ -44,6 +44,22 @@ define([
 			var targets = this._getClickTargets(event);
 
 			return targets.indexOf(node) !== -1;
+		},
+
+		_checkClickBelongsToNodeWithClass: function(event, className) {
+
+			var targets = this._getClickTargets(event);
+
+			for (var target of targets) {
+				if (!target) {
+					continue;
+				}
+				var targetClasses = target.classList;
+				if (targetClasses && targetClasses.contains(className)) {
+					return true;
+				}
+			}
+			return false;
 		}
 	});
 });

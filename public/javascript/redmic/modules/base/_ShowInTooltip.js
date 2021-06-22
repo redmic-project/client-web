@@ -29,7 +29,10 @@ define([
 
 			this.inherited(arguments);
 
-			var tooltipClass = 'tooltipContainer',
+			this._tooltipClass = 'tooltipContainer';
+			this._suggestionsClass = 'suggestions';
+
+			var tooltipClass = this._tooltipClass,
 				sourceIndicatorClass = 'tooltipSourceIndicator',
 				defaultTooltipCloseTimeout = 1000;
 
@@ -63,9 +66,13 @@ define([
 			}
 
 			var nodeBelongsToTooltipContainer = this._checkClickBelongsToNode(evt, this.tooltipNode._popupWrapper),
-				nodeBelongsToSourceNode = this._checkClickBelongsToNode(evt, this._tooltipSourceNode);
+				nodeBelongsToSourceNode = this._checkClickBelongsToNode(evt, this._tooltipSourceNode),
+				nodeBelongsToOtherTooltip = this._checkClickBelongsToNodeWithClass(evt, this._tooltipClass),
+				nodeBelongsToSuggestions = this._checkClickBelongsToNodeWithClass(evt, this._suggestionsClass);
 
-			if (!nodeBelongsToTooltipContainer && !nodeBelongsToSourceNode) {
+			if (!nodeBelongsToTooltipContainer && !nodeBelongsToSourceNode && !nodeBelongsToOtherTooltip &&
+				!nodeBelongsToSuggestions) {
+
 				this._hideTooltip();
 			}
 		},

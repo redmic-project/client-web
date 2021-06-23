@@ -50,7 +50,8 @@ define([
 
 			var targets = this._getClickTargets(event);
 
-			for (var target of targets) {
+			for (var i = 0; i < targets.length; i++) {
+				var target = targets[i];
 				if (!target) {
 					continue;
 				}

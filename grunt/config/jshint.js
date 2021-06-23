@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 		options: {
 			laxcomma: true,
 			expr: true,
-			esversion: 6
+			esversion: 3
 		}
 	});
 };

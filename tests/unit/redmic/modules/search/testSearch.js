@@ -1,20 +1,16 @@
 define([
 	"dojo/_base/declare"
-	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "redmic/base/Mediator"
 	, "redmic/modules/search/Search"
 	, "redmic/modules/search/TextSearchImpl"
-	, "redmic/modules/search/FacetsImpl"
 	, "redmic/modules/search/MapSearchImpl"
 ], function(
 	declare
-	, lang
 	, put
 	, Mediator
 	, Search
 	, TextSearchImpl
-	, FacetsImpl
 	, MapSearchImpl
 ){
 	var timeout, search;
@@ -187,57 +183,6 @@ define([
 					highlightField: highlightField,
 					suggestFields: suggestFields
 				});
-			}
-		}
-	});
-
-	registerSuite("FacetsSearch tests", {
-		before: function() {
-			timeout = 300;
-			search = new declare([FacetsImpl, Search])();
-		},
-
-		after: function() {
-			Mediator.publish(search.getChannel("DISCONNECT"));
-		},
-
-		tests: {
-			"creation": function() {
-				assert.ok(search.facets, "Search no se ha creado correctamente.");
-			},
-
-			"pub request": function() {
-
-				var dfd = this.async(timeout),
-					expectedResult = {
-						facets: [
-							{"peculiarity.interest.name": ["Uso ornamental"]},
-							{"peculiarity.endemicity.name": ["Desconocida", "Otro"]}]};
-
-				Mediator.once(search._buildChannel(search.queryChannel, search.actions.REQUEST),
-					dfd.callback(function(obj) {
-					assert.deepEqual(obj, expectedResult,
-						"El search no envía la búsqueda al queryCatalog correctamente"
-					);
-				}));
-
-				search.emit(search.events.SEARCH, expectedResult);
-			},
-
-			"update facets": function() {
-
-				var dfd = this.async(timeout),
-					newAggs = {
-						"type": { "terms": { "field": "type.name" } }
-					};
-
-				Mediator.once(search.getChannel("UPDATE_FACETS"),
-					dfd.callback(function(obj) {
-					assert.deepEqual(obj.aggs, newAggs, "El search no escucha el canal de actualizar facets correctamente");
-					assert.deepEqual(search.aggs, newAggs, "El search no actualiza facets correctamente");
-				}));
-
-				Mediator.publish(search.getChannel("UPDATE_FACETS"), {aggs: newAggs, prefixFieldFacet: ""});
 			}
 		}
 	});

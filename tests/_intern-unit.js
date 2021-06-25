@@ -51,6 +51,7 @@ module.exports = function(args) {
 				, suitesPrefix + 'redmic/modules/browser/bars/testPagination'
 				, suitesPrefix + 'redmic/modules/browser/bars/testSelectionBox'
 				, suitesPrefix + 'redmic/modules/browser/bars/testTotal'
+				, suitesPrefix + 'redmic/modules/search/testFacetsImpl'
 			],
 
 			// TODO irlos arreglando e incorporando a 'suites'. Borrar 'suitesFAIL' cuando se vacíe

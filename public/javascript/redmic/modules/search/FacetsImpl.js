@@ -1,22 +1,22 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "RWidgets/ContainerFacets"
-	, "./Search"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
+	, 'RWidgets/Facet'
+	, './Search'
 ], function(
 	declare
 	, lang
 	, aspect
-	, ContainerFacets
+	, Facet
 	, Search
 ) {
 
 	return declare(Search, {
 		//	summary:
-		//		Todo lo necesario para trabajar con FacetsSearch.
+		//		Implementación de búsqueda a nivel de agregaciones, seleccionando los grupos deseados.
 		//	description:
-		//		Proporciona métodos y contenedor para la búsqueda de tipo facets.
+		//		Proporciona los medios para realizar búsquedas de tipo facets.
 
 		//	config: Object
 		//		Opciones por defecto.
@@ -24,28 +24,37 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				// own actions
-				facetsActions: {
-					AVAILABLE_FACETS: "availableFacets",
-					UPDATE_FACETS: "updateFacets"
+				facetsEvents: {
 				},
+				facetsActions: {
+					AVAILABLE_FACETS: 'availableFacets',
+					UPDATE_FACETS: 'updateFacets'
+				},
+				ownChannel: 'facetsSearch',
+				'class': 'containerFacets',
 				propertyName: 'postFilter',
 				aggs: null,
 				_aggs: {},
 				openFacets: false,
-				ownChannel: "facetsSearch"
+				maxInitialEntries: 5,
+				order: null,
+				instance: {},
+				query: {}
 			};
 
 			lang.mixin(this, this.config, args);
-			aspect.before(this, "_setConfigurations", lang.hitch(this, this._setFacetsConfigurations));
-			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixFacetsEventsAndActions));
-			aspect.before(this, "_defineSubscriptions", lang.hitch(this, this._defineFacetsSubscriptions));
+
+			aspect.before(this, '_setConfigurations', lang.hitch(this, this._setFacetsConfigurations));
+			aspect.before(this, '_mixEventsAndActions', lang.hitch(this, this._mixFacetsEventsAndActions));
+			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineFacetsSubscriptions));
 		},
 
-		_mixFacetsEventsAndActions: function () {
+		_mixFacetsEventsAndActions: function() {
 
+			lang.mixin(this.events, this.facetsEvents);
 			lang.mixin(this.actions, this.facetsActions);
 
+			delete this.facetsEvents;
 			delete this.facetsActions;
 		},
 
@@ -57,22 +66,19 @@ define([
 			}, this.facetsConfig || {}]);
 		},
 
-		_defineFacetsSubscriptions: function () {
+		_defineFacetsSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel: this._buildChannel(this.queryChannel, this.actions.AVAILABLE_FACETS),
-				callback: "_subAvailableFacets"
+				callback: '_subAvailableFacets'
 			},{
-				channel: this.getChannel("UPDATE_FACETS"),
-				callback: "_subUpdateFacets"
+				channel: this.getChannel('UPDATE_FACETS'),
+				callback: '_subUpdateFacets'
 			});
 		},
 
 		_initialize: function() {
 
-			this.facets = new ContainerFacets(this.facetsConfig);
-
-			this.facets.on("updateConsult", lang.hitch(this, this._onNewSearch));
 		},
 
 		_beforeShow: function(/*Object*/ obj) {
@@ -85,11 +91,6 @@ define([
 			});
 		},
 
-		_getNodeToShow: function() {
-
-			return this.facets.domNode;
-		},
-
 		_subUpdateFacets: function(evt) {
 
 			this._getFacets(evt);
@@ -99,7 +100,6 @@ define([
 
 			this._emitEvt('LOADING');
 
-			this.facets.setAggs(evt.aggs);
 			this._setAggs(lang.clone(evt.aggs));
 
 			if (!this._facetsCreate) {
@@ -118,6 +118,9 @@ define([
 		},
 
 		_setAggs: function(/*json*/ aggs) {
+
+			this.aggs2 = aggs;
+			this.order = Object.keys(aggs);
 
 			this.aggs = [];
 
@@ -164,7 +167,7 @@ define([
 
 			var nestedTerm = this._aggs[field];
 
-			return field.replace(nestedTerm + ".", nestedTerm + "$.");
+			return field.replace(nestedTerm + '.', nestedTerm + '$.');
 		},
 
 		_subAvailableFacets: function(/*Object*/ response) {
@@ -181,14 +184,97 @@ define([
 				cleanFacets[keySplitted.pop()] = facets[key];
 			}
 
-			this.facets.setConfig({
+			this._showFacetsGroups({
 				aggregations: cleanFacets
 			});
 		},
 
 		_reset: function() {
 
-			this.facets.setI18n(this.i18n);
+		},
+
+		_showFacetsGroups: function(config) {
+
+			if (Object.keys(this.instance).length !== 0) {
+				for (var item in this.instance) {
+					this.instance[item].termSelection = this.instance[item].widget.termSelection;
+				}
+			}
+
+			this._cleanChildrenNode();
+
+			for (var i = 0; i < this.order.length; i++) {
+				this._showFacetsGroup(config, this.order[i]);
+			}
+		},
+
+		_cleanChildrenNode: function() {
+
+			while (this.domNode.firstChild) {
+				this.domNode.removeChild(this.domNode.firstChild);
+			}
+		},
+
+		_showFacetsGroup: function(config, item) {
+
+			var facetsPrefix = 'sterms#',
+				content = config.aggregations[item],
+				open;
+
+			if (!content) {
+				return;
+			}
+
+			if (!content.buckets) {
+				content = content[item] || content[facetsPrefix + item];
+			}
+
+			if (this.instance && this.instance[item] && (this.instance[item].termSelection.length != 0)) {
+				open = true;
+			} else if (this.aggs2 && this.aggs2[item] && this.aggs2[item].open) {
+				open = this.aggs2[item].open;
+			} else {
+				open = this.openFacets;
+			}
+
+			var widget = new Facet({
+				termSelection: (this.instance && this.instance[item]) ? this.instance[item].termSelection : [],
+				label: item,
+				termsFieldFacet: (this.aggs2 && this.aggs2[item]) ? this.aggs2[item].terms.field : item,
+				title: (this.i18n && this.i18n[item]) ? this.i18n[item] : item,
+				i18n: this.i18n,
+				open: open,
+				config: content,
+				maxInitialEntries: this.maxInitialEntries
+			}).placeAt(this.domNode);
+
+			this.instance[item] = {
+				widget: widget,
+				termSelection: []
+			};
+
+			if (widget.termSelection.length != 0) {
+				widget.emit(widget.events.TERMS_CHANGED);
+			}
+
+			widget.on('updateQuery', lang.hitch(this, this._onFacetChangeEvent));
+		},
+
+		_onFacetChangeEvent: function(queryTerm, title) {
+
+			queryTerm ? this._addFacetToQuery(title, queryTerm) : this._removeFacetFromQuery(title);
+
+			this._onNewSearch(this.query);
+		},
+
+		_addFacetToQuery: function(title, queryTerm) {
+
+			this.query[title] = queryTerm;
+		},
+
+		_removeFacetFromQuery: function(title) {
+
+			delete this.query[title];
 		}
 	});
 });

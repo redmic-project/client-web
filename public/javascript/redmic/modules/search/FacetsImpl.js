@@ -147,9 +147,11 @@ define([
 
 		_onNewSearch: function(evt) {
 
-			// TODO: quitar las claves más externas desde el widget no aquí
 			var result = {};
 			for (var item in evt) {
+				if (typeof evt[item] !== 'object' || this.order.indexOf(item) === -1) {
+					continue;
+				}
 				for (var field in evt[item]) {
 					var value = evt[item][field];
 					if (this._aggs[field]) {

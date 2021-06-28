@@ -33,23 +33,23 @@ define([
 				ownChannel: 'facetsSearch',
 				'class': 'containerFacets',
 				propertyName: 'postFilter',
-				aggs: null,
-				_aggs: {},
 				openFacets: false,
 				maxInitialEntries: 5,
-				order: null,
-				instance: {},
+				aggs: null,
+				_nestedAggs: {},
+				_facetsInstances: {},
+				_selectionByAggregationGroup: {},
+				_facetsOpened: {},
+				_facetsExpanded: {},
 				query: {}
 			};
 
 			lang.mixin(this, this.config, args);
 
-			aspect.before(this, '_setConfigurations', lang.hitch(this, this._setFacetsConfigurations));
-			aspect.before(this, '_mixEventsAndActions', lang.hitch(this, this._mixFacetsEventsAndActions));
 			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineFacetsSubscriptions));
 		},
 
-		_mixFacetsEventsAndActions: function() {
+		_mixEventsAndActions: function() {
 
 			lang.mixin(this.events, this.facetsEvents);
 			lang.mixin(this.actions, this.facetsActions);
@@ -58,12 +58,10 @@ define([
 			delete this.facetsActions;
 		},
 
-		_setFacetsConfigurations: function() {
+		_initialize: function() {
 
-			this.facetsConfig = this._merge([{
-				i18n: this.i18n,
-				openFacets: this.openFacets
-			}, this.facetsConfig || {}]);
+			this._originalAggregationGroupsDefinition = this.aggs;
+			this._groupsOrder = Object.keys(this.aggs);
 		},
 
 		_defineFacetsSubscriptions: function() {
@@ -77,55 +75,47 @@ define([
 			});
 		},
 
-		_initialize: function() {
+		_beforeShow: function() {
 
+			this._getFacets();
 		},
 
-		_beforeShow: function(/*Object*/ obj) {
+		_subUpdateFacets: function(req) {
 
-			this._getFacets({
-				aggs: this.aggs,
-				prefixFieldFacet: this.prefixFieldFacet,
-				suffixFieldFacet: this.suffixFieldFacet,
-				fieldFacet: this.fieldFacet
-			});
+			var newAggs = req && req.aggs;
+
+			if (!newAggs) {
+				return;
+			}
+
+			this.aggs = newAggs;
+			this._selectionByAggregationGroup = {};
+			this._getFacets();
 		},
 
-		_subUpdateFacets: function(evt) {
-
-			this._getFacets(evt);
-		},
-
-		_getFacets: function(/*object*/ evt) {
+		_getFacets: function(aggs) {
 
 			this._emitEvt('LOADING');
 
-			this._setAggs(lang.clone(evt.aggs));
+			this._setAggs(this.aggs);
 
-			if (!this._facetsCreate) {
-				var obj = {
-					aggs: this.aggs//,
-					//size: 0,
-					//requesterId: this.queryChannel
-				};
+			var obj = {
+				aggs: this._currentAggregationGroups//,
+				//size: 0,
+				//requesterId: this.queryChannel
+			};
 
-				lang.mixin(obj, this.query || {});
+			lang.mixin(obj, this.query || {});
 
-				this._emitEvt('SEARCH', obj);
-			}
-
-			this._facetsCreate = true;
+			this._emitEvt('SEARCH', obj);
 		},
 
-		_setAggs: function(/*json*/ aggs) {
+		_setAggs: function(aggs) {
 
-			this.aggs2 = aggs;
-			this.order = Object.keys(aggs);
-
-			this.aggs = [];
+			this._aggregationGroupsDefinition = aggs;
+			this._currentAggregationGroups = [];
 
 			for (var item in aggs) {
-
 				var terms = aggs[item].terms,
 					field = terms.field,
 					nested = terms.nested,
@@ -138,24 +128,29 @@ define([
 
 				if (nested) {
 					obj.nested = nested;
-					this._aggs[field] = nested;
+					this._nestedAggs[field] = nested;
 				}
 
-				this.aggs.push(obj);
+				this._currentAggregationGroups.push(obj);
 			}
 		},
 
-		_onNewSearch: function(evt) {
+		_onNewSearch: function(query) {
 
 			var result = {};
-			for (var item in evt) {
-				if (typeof evt[item] !== 'object' || this.order.indexOf(item) === -1) {
+
+			for (var item in query) {
+				var aggGroup = query[item];
+
+				if (typeof aggGroup !== 'object' || this._groupsOrder.indexOf(item) === -1) {
 					continue;
 				}
-				for (var field in evt[item]) {
-					var value = evt[item][field];
-					if (this._aggs[field]) {
-						result[this._processNested(field, value)] = value;
+
+				for (var field in aggGroup) {
+					var value = aggGroup[field];
+
+					if (this._nestedAggs[field]) {
+						result[this._getNestedField(field)] = value;
 					} else {
 						result[field] = value;
 					}
@@ -165,106 +160,125 @@ define([
 			this._newSearch(result);
 		},
 
-		_processNested: function(field, value) {
+		_getNestedField: function(field) {
 
-			var nestedTerm = this._aggs[field];
-
-			return field.replace(nestedTerm + '.', nestedTerm + '$.');
+			return field.replace('.', '$.');
 		},
 
-		_subAvailableFacets: function(/*Object*/ response) {
+		_subAvailableFacets: function(availableAggregationGroups) {
 
-			this._setFacets(response);
+			this._setFacets(availableAggregationGroups);
 			this._emitEvt('LOADED');
 		},
 
-		_setFacets: function(/*object*/ facets) {
+		_setFacets: function(availableAggregationGroups) {
 
-			var cleanFacets = {};
-			for (var key in facets) {
+			var cleanAggregationGroups = {};
+			for (var key in availableAggregationGroups) {
 				var keySplitted = key.split('#');
-				cleanFacets[keySplitted.pop()] = facets[key];
+				cleanAggregationGroups[keySplitted.pop()] = availableAggregationGroups[key];
 			}
 
-			this._showFacetsGroups({
-				aggregations: cleanFacets
-			});
+			this._showFacetsGroups(cleanAggregationGroups);
 		},
 
 		_reset: function() {
 
+			this._selectionByAggregationGroup = {};
 		},
 
-		_showFacetsGroups: function(config) {
-
-			if (Object.keys(this.instance).length !== 0) {
-				for (var item in this.instance) {
-					this.instance[item].termSelection = this.instance[item].widget.termSelection;
-				}
-			}
+		_showFacetsGroups: function(aggregationGroups) {
 
 			this._cleanChildrenNode();
 
-			for (var i = 0; i < this.order.length; i++) {
-				this._showFacetsGroup(config, this.order[i]);
+			for (var i = 0; i < this._groupsOrder.length; i++) {
+				var groupName = this._groupsOrder[i],
+					aggGroup = aggregationGroups[groupName];
+
+				if (!aggGroup) {
+					continue;
+				}
+
+				if (!aggGroup.buckets) {
+					aggGroup = aggGroup[groupName];
+				}
+
+				this._showFacetsGroup(aggGroup, groupName);
 			}
 		},
 
 		_cleanChildrenNode: function() {
 
-			while (this.domNode.firstChild) {
-				this.domNode.removeChild(this.domNode.firstChild);
+			for (var aggGroup in this._facetsInstances) {
+				this._facetsInstances[aggGroup].destroy();
 			}
 		},
 
-		_showFacetsGroup: function(config, item) {
+		_showFacetsGroup: function(aggregationGroup, groupName) {
 
-			var facetsPrefix = 'sterms#',
-				content = config.aggregations[item],
-				open;
-
-			if (!content) {
-				return;
-			}
-
-			if (!content.buckets) {
-				content = content[item] || content[facetsPrefix + item];
-			}
-
-			if (this.instance && this.instance[item] && (this.instance[item].termSelection.length != 0)) {
-				open = true;
-			} else if (this.aggs2 && this.aggs2[item] && this.aggs2[item].open) {
-				open = this.aggs2[item].open;
-			} else {
-				open = this.openFacets;
-			}
+			var prevSelection = this._getAggregationGroupPreviousSelection(groupName),
+				propertyPath = this._getAggregationGroupPropertyPath(groupName),
+				openStatus = this._getAggregationGroupOpenStatus(groupName);
 
 			var widget = new Facet({
-				termSelection: (this.instance && this.instance[item]) ? this.instance[item].termSelection : [],
-				label: item,
-				termsFieldFacet: (this.aggs2 && this.aggs2[item]) ? this.aggs2[item].terms.field : item,
-				title: (this.i18n && this.i18n[item]) ? this.i18n[item] : item,
+				termSelection: prevSelection,
+				label: groupName,
+				termsFieldFacet: propertyPath,
+				title: this.i18n[groupName] || groupName,
 				i18n: this.i18n,
-				open: open,
-				config: content,
+				open: openStatus,
+				expanded: this._facetsExpanded[groupName] || false,
+				config: aggregationGroup,
 				maxInitialEntries: this.maxInitialEntries
 			}).placeAt(this.domNode);
 
-			this.instance[item] = {
-				widget: widget,
-				termSelection: []
-			};
-
-			if (widget.termSelection.length != 0) {
-				widget.emit(widget.events.TERMS_CHANGED);
-			}
+			this._facetsInstances[groupName] = widget;
 
 			widget.on('updateQuery', lang.hitch(this, this._onFacetChangeEvent));
+			widget.on('showMore', lang.hitch(this, this._onFacetShowMoreEvent));
+			widget.on('showLess', lang.hitch(this, this._onFacetShowLessEvent));
+			widget.on('open', lang.hitch(this, this._onFacetOpenEvent));
+			widget.on('close', lang.hitch(this, this._onFacetCloseEvent));
+		},
+
+		_getAggregationGroupPreviousSelection: function(groupName) {
+
+			return this._selectionByAggregationGroup[groupName] || [];
+		},
+
+		_getAggregationGroupPropertyPath: function(groupName) {
+
+			var aggGroupDefinition = this._aggregationGroupsDefinition[groupName];
+
+			if (aggGroupDefinition && aggGroupDefinition.terms) {
+				return aggGroupDefinition.terms.field || groupName;
+			} else {
+				return groupName;
+			}
+		},
+
+		_getAggregationGroupOpenStatus: function(groupName) {
+
+			var aggGroupDefinition = this._aggregationGroupsDefinition[groupName],
+				defaultStatus = (aggGroupDefinition && aggGroupDefinition.open !== undefined) ?
+					aggGroupDefinition.open : this.openFacets,
+
+				currentStatus = this._facetsOpened[groupName];
+
+			return currentStatus !== undefined ? currentStatus : defaultStatus;
 		},
 
 		_onFacetChangeEvent: function(queryTerm, title) {
 
-			queryTerm ? this._addFacetToQuery(title, queryTerm) : this._removeFacetFromQuery(title);
+			var propertyPath = this._getAggregationGroupPropertyPath(title);
+
+			if (queryTerm) {
+				this._addFacetToQuery(title, queryTerm);
+				this._selectionByAggregationGroup[title] = queryTerm[propertyPath];
+			} else {
+				this._removeFacetFromQuery(title);
+				this._selectionByAggregationGroup[title] = [];
+			}
 
 			this._onNewSearch(this.query);
 		},
@@ -277,6 +291,26 @@ define([
 		_removeFacetFromQuery: function(title) {
 
 			delete this.query[title];
+		},
+
+		_onFacetShowMoreEvent: function(facetsGroupTitle) {
+
+			this._facetsExpanded[facetsGroupTitle] = true;
+		},
+
+		_onFacetShowLessEvent: function(facetsGroupTitle) {
+
+			delete this._facetsExpanded[facetsGroupTitle];
+		},
+
+		_onFacetOpenEvent: function(facetsGroupTitle) {
+
+			this._facetsOpened[facetsGroupTitle] = true;
+		},
+
+		_onFacetCloseEvent: function(facetsGroupTitle) {
+
+			this._facetsOpened[facetsGroupTitle] = false;
 		}
 	});
 });

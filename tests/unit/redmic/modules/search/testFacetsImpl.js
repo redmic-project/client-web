@@ -45,10 +45,10 @@ define([
 
 						facets._onFacetChangeEvent({'themeInspire.name': ['Species distribution']}, 'themeInspire');
 
-						assert.lengthOf(Object.keys(facets.instance), 1);
+						assert.lengthOf(Object.keys(facets._facetsInstances), 1);
 					}));
 
-					assert.lengthOf(Object.keys(facets.instance), 0);
+					assert.lengthOf(Object.keys(facets._facetsInstances), 0);
 
 					Mediator.publish(facets._buildChannel(facets.queryChannel, facets.actions.AVAILABLE_FACETS), {
 						'sterms#themeInspire': {

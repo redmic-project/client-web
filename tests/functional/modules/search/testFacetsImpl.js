@@ -14,7 +14,7 @@ define([
 	var indexPageUrl,
 		timeout = Config.timeout.findElement;
 
-	registerSuite('Keypad tests', {
+	registerSuite('FacetsImpl (Search module)', {
 		before: function() {
 
 			this.remote.setFindTimeout(timeout);
@@ -32,8 +32,7 @@ define([
 		},
 
 		tests: {
-
-			Should_FindNotDisplayedButton_When_LookForHiddenButton: function() {
+			Should_FindFacetsGroup_When_AddedByStartupConfig: function() {
 
 				return this.remote
 					.findByCssSelector('div[data-redmic-id="Tema INSPIRE"]')

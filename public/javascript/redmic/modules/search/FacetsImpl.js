@@ -36,6 +36,9 @@ define([
 				openFacets: false,
 				maxInitialEntries: 5,
 				aggs: null,
+				aggGroupNamePrefix: 'sterms',
+				aggGroupNameSeparator: '#',
+				nestedAggNameSuffix: '$',
 				_nestedAggs: {},
 				_facetsInstances: {},
 				_selectionByAggregationGroup: {},
@@ -162,7 +165,9 @@ define([
 
 		_getNestedField: function(field) {
 
-			return field.replace('.', '$.');
+			var nestedAggName = this._nestedAggs[field];
+
+			return field.replace(nestedAggName, nestedAggName + this.nestedAggNameSuffix);
 		},
 
 		_subAvailableFacets: function(availableAggregationGroups) {
@@ -175,11 +180,16 @@ define([
 
 			var cleanAggregationGroups = {};
 			for (var key in availableAggregationGroups) {
-				var keySplitted = key.split('#');
-				cleanAggregationGroups[keySplitted.pop()] = availableAggregationGroups[key];
+				var cleanAggGroupName = this._getAggregationGroupNameWithoutPrefix(key);
+				cleanAggregationGroups[cleanAggGroupName] = availableAggregationGroups[key];
 			}
 
 			this._showFacetsGroups(cleanAggregationGroups);
+		},
+
+		_getAggregationGroupNameWithoutPrefix: function(aggGroupName) {
+
+			return aggGroupName.split(this.aggGroupNameSeparator).pop();
 		},
 
 		_reset: function() {
@@ -200,7 +210,12 @@ define([
 				}
 
 				if (!aggGroup.buckets) {
-					aggGroup = aggGroup[groupName];
+					if (aggGroup[groupName]) {
+						aggGroup = aggGroup[groupName];
+					} else {
+						var prefixedAggGroupName = this._getAggregationGroupNameWithPrefix(groupName);
+						aggGroup = aggGroup[prefixedAggGroupName];
+					}
 				}
 
 				this._showFacetsGroup(aggGroup, groupName);
@@ -212,6 +227,15 @@ define([
 			for (var aggGroup in this._facetsInstances) {
 				this._facetsInstances[aggGroup].destroy();
 			}
+		},
+
+		_getAggregationGroupNameWithPrefix: function(cleanAggGroupName) {
+
+			if (cleanAggGroupName.indexOf(this.aggGroupNameSeparator) !== -1) {
+				return cleanAggGroupName;
+			}
+
+			return this.aggGroupNamePrefix + this.aggGroupNameSeparator + cleanAggGroupName;
 		},
 
 		_showFacetsGroup: function(aggregationGroup, groupName) {

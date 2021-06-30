@@ -1277,6 +1277,12 @@ define({
 
 	, "spatialExtension": "Extensión espacial"
 
+	, "activityPending": "Pendiente de asignar accesibilidad, sólo visible para administradores"
+	, "activityFree": "Accesibilidad libre, visible para todos"
+	, "activityEmbargoed": "Accesibilidad bajo embargo, sólo visible para tí"
+	, "activityRestricted": "Accesibilidad restringida, algunos contenidos son de acceso limitado"
+	, "activityConfidential": "Accesibilidad confidencial, sólo visible para determinados usuarios"
+
 
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"

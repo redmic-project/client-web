@@ -1281,6 +1281,12 @@ define({
 
 		, "spatialExtension": "Spatial extension"
 
+		, "activityPending": "Pending to assign accessibility, only visible to administrators"
+		, "activityFree": "Free accessibility, visible to everyone"
+		, "activityEmbargoed": "Accessibility under embargo, only visible to you"
+		, "activityRestricted": "Restricted accessibility, some contents have limited access"
+		, "activityConfidential": "Confidential accessibility, only visible to certain users"
+
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

@@ -19,6 +19,7 @@ module.exports = function(args) {
 				// Funcionalidades básicas
 				suitesPrefix + 'redmic/base/testRedmicLocalStorage'
 				, suitesPrefix + 'redmic/base/testCredentials'
+				, suitesPrefix + 'redmic/base/testMediator'
 
 				// Otros
 				, suitesPrefix + 'redmic/map/testOpenLayers'
@@ -31,7 +32,6 @@ module.exports = function(args) {
 				, suitesPrefix + 'app/base/models/test_Model'
 
 				// Módulos
-				, suitesPrefix + 'redmic/base/testMediator'
 				, suitesPrefix + 'redmic/modules/base/test_Module'
 				, suitesPrefix + 'redmic/modules/store/testRestManager'
 				, suitesPrefix + 'redmic/modules/layout/wizard/testWizard'

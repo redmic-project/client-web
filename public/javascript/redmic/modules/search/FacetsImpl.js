@@ -64,7 +64,7 @@ define([
 		_initialize: function() {
 
 			this._originalAggregationGroupsDefinition = this.aggs;
-			this._groupsOrder = Object.keys(this.aggs);
+			this._updateAgreggationGroupsDefinitions(this.aggs);
 		},
 
 		_defineFacetsSubscriptions: function() {
@@ -91,9 +91,15 @@ define([
 				return;
 			}
 
-			this.aggs = newAggs;
-			this._selectionByAggregationGroup = {};
+			this._updateAgreggationGroupsDefinitions(newAggs);
 			this._getFacets();
+		},
+
+		_updateAgreggationGroupsDefinitions: function(newAggs) {
+
+			this.aggs = newAggs;
+			this._groupsOrder = Object.keys(newAggs);
+			this._selectionByAggregationGroup = {};
 		},
 
 		_getFacets: function(aggs) {

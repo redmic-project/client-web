@@ -52,7 +52,31 @@ define([
 
 						assert.strictEqual(checked, true, 'El checkbox no se ha marcado tras pulsar el label');
 					}).end();
-			}
+			},
+
+			Should_CloseFacetsGroup_When_OpenedFacetsGroupTitleIsPressed: function() {
+
+				// TODO
+				assert.ok('TODO');
+			},
+
+			Should_OpenFacetsGroup_When_ClosedFacetsGroupTitleIsPressed: function() {
+
+				// TODO
+				assert.ok('TODO');
+			},
+
+			Should_ExpandFacetsGroup_When_FacetsGroupShowMoreIsPressed: function() {
+
+				// TODO
+				assert.ok('TODO');
+			},
+
+			Should_CollapseFacetsGroup_When_FacetsGroupShowLessIsPressed: function() {
+
+				// TODO
+				assert.ok('TODO');
+			},
 		}
 	});
 });

@@ -1,57 +1,72 @@
 define([
-	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
-	, "dojo/_base/declare"
+	'app/base/views/extensions/_CompositeSearchInTooltip'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
 ], function(
-	_CompositeInTooltipFromIconKeypad
+	_CompositeSearchInTooltip
 	, declare
-){
-	return declare(_CompositeInTooltipFromIconKeypad, {
+	, lang
+	, aspect
+) {
+
+	return declare(_CompositeSearchInTooltip, {
 		//	summary:
-		//
+		//		Muestra la instancia de CompositeImpl (Search) en tooltip, asociado a una suscripción a TextImpl
+		//		(Search).
 		//	description:
-		//
+		//		Escucha la publicación de "expandir búsqueda" desde una instancia de buscador de texto, para vincular
+		//		al nodo recibido el despliegue del tooltip con la búsqueda compuesta.
+		//		Da por hecho que la instancia del buscador de texto se encuentra en 'this.textSearch'.
 
-		_setCompositeConfigurations: function() {
+		constructor: function(args) {
 
-			this.inherited(arguments);
-
-			this.compositeConfig = this._merge([{
-				formConfig: {
-					dataTemplate: {
-						formTitle: this.i18n.advancedSearch
+			this.config = {
+				compositeConfig: {
+					formConfig: {
+						dataTemplate: {
+							formTitle: this.i18n.advancedSearch
+						}
 					}
 				}
-			}, this.compositeConfig || {}]);
+			};
+
+			lang.mixin(this, this.config, args);
+
+			aspect.after(this, '_defineSubscriptions', lang.hitch(this,
+				this._defineAddCompositeSearchInTooltipSubcriptions));
 		},
 
-		// TODO pisar/limpiar de manera más elegante
-		_initializeAfterCompositeView: function() {},
+		_defineAddCompositeSearchInTooltipSubcriptions: function () {
 
-		// TODO pisar/limpiar de manera más elegante
-		_defineCompositeSubcriptions: function () {
+			if (!this.textSearch) {
+				return;
+			}
 
 			this.subscriptionsConfig.push({
 				channel: this.textSearch.getChannel('EXPAND_SEARCH'),
-				callback: "_subTextSearchExpand"
+				callback: '_subTextSearchExpand'
 			});
 		},
 
 		_subTextSearchExpand: function(res) {
 
-			if (this._initFilters) {
+			if (this._addCompositeSearchInTooltipShowEventAdded) {
 				return;
 			}
 
-			this._publish(this.composite.getChannel("ADD_EVT"), {
-				sourceNode: res.node,
+			var sourceNode = res.node;
+
+			this._publish(this.composite.getChannel('ADD_EVT'), {
+				sourceNode: sourceNode,
 				initAction: 'hide'
 			});
 
-			this._publish(this.composite.getChannel("SHOW"), {
-				node: res.node
+			this._publish(this.composite.getChannel('SHOW'), {
+				node: sourceNode
 			});
 
-			this._initFilters = true;
+			this._addCompositeSearchInTooltipShowEventAdded = true;
 		}
 	});
 });

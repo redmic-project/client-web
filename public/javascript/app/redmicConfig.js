@@ -303,14 +303,14 @@ define([], function() {
 		'activityObjectCollectingSeriesStations': baseUri +
 			'activities/{activityid}/objectcollectingseriesstations',
 
-		'objectCollectingSeries': baseUri + 'objectcollectingseries',
+		'objectCollectingSeries': baseUri + 'time-series/view/objectcollectingseries',
 		'objectCollectingSeriesByDataDefinition': baseUri +
 			'datadefinitions/{datadefinitionid}/objectcollectingseries',
 
 		'objectCollectingSeriesActivities': baseUri + 'objectcollectingseries/activities',
-		'objectCollectingSeriesTemporalData': baseUri + 'objectcollectingseries/temporaldata',
-		'objectCollectingSeriesClassification': baseUri + 'objectcollectingseries/classification',
-		'objectCollectingSeriesClassificationList': baseUri + 'objectcollectingseries/classificationlist',
+		'objectCollectingSeriesTemporalData': baseUri + 'time-series/view/objectcollectingseries/temporaldata',
+		'objectCollectingSeriesClassification': baseUri + 'time-series/view/objectcollectingseries/classification',
+		'objectCollectingSeriesClassificationList': baseUri + 'time-series/view/objectcollectingseries/classificationlist',
 		'convertShapefileToGeoJSON': baseUri + 'utils/geo/convert2geojson',
 
 		'attributesByInfrastructure': baseUri + 'activities/{activityid}/infrastructures/{id}/attributes',

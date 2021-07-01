@@ -1,6 +1,5 @@
 define([
 	'alertify/alertify.min'
-	, "app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
 	, "app/designs/embeddedContentWithTopbar/main/EmbeddedContentSelectionInTopbar"
 	, "app/designs/chart/main/_ProcessDataDefinitionAndGetTimeSeries"
 	, "app/designs/chart/main/ChartsWithLegendAndToolbarsAndSlider"
@@ -29,7 +28,6 @@ define([
 	, "templates/SurveyStationDataList"
 ], function (
 	alertify
-	, _CompositeInTooltipFromIconKeypad
 	, EmbeddedContentSelectionInTopbar
 	, _ProcessDataDefinitionAndGetTimeSeries
 	, ChartsWithLegendAndToolbarsAndSlider
@@ -114,15 +112,7 @@ define([
 				},
 				aggregationToolConfig: {
 					defaultIntervalOptions: []
-				},
-				getIconKeypadNode: lang.hitch(this, function() {
-
-					return this._optionNode;
-				})/*,
-				getIconKeypadNode: function() {
-
-					return this.optionsContainerChartsTopNode;
-				}*/
+				}
 			}, this.chartsConfig || {}]);
 
 			this.filterConfig = this._merge([{
@@ -266,7 +256,7 @@ define([
 
 		_clearSelection: function() {
 
-			this._clearMapLayerSelection(markerId);
+			this._clearMapLayerSelection();
 		},
 
 		_selectMarker: function(markerId) {
@@ -286,17 +276,18 @@ define([
 
 		_publishSelectionToMapLayer: function(action, markerId) {
 
+			// TODO rompe el mapa, arreglar
+			//return;
+
 			var pubBody = {
-				selectionTarget: this._mapLayerSelectionTarget
+				target: this._mapLayerSelectionTarget
 			};
 
 			if (markerId !== undefined) {
 				pubBody.ids = markerId;
 			}
 
-			this._publish(this.getChannel(action), {
-				body: pubBody
-			});
+			this._publish(this.getChannel(action), pubBody);
 		},
 
 		_updateGuideMessagesAfterSelect: function() {
@@ -337,8 +328,6 @@ define([
 
 		_showMap: function(inputKey) {
 
-			this._changeFilterOfNoCharts();
-
 			this._initializeMap();
 
 			this._publish(this.filterContainer.getChannel("SET_PROPS"), {
@@ -347,18 +336,6 @@ define([
 			this._embedModule(this.filterContainer, inputKey);
 
 			this._resetMarkerActive();
-		},
-
-		_changeFilterOfNoCharts: function() {
-
-			this.chartContainer && this._publish(this.chartContainer.getChildChannel("iconKeypadComposite", 'HIDE'));
-			this._publish(this.iconKeypadComposite.getChannel('SHOW'));
-		},
-
-		_changeFilterOfCharts: function() {
-
-			this._publish(this.iconKeypadComposite.getChannel('HIDE'));
-			this.chartContainer && this._publish(this.chartContainer.getChildChannel("iconKeypadComposite", 'SHOW'));
 		},
 
 		_initializeMap: function() {
@@ -399,8 +376,6 @@ define([
 
 		_showList: function(inputKey) {
 
-			this._changeFilterOfNoCharts();
-
 			this._initializeList();
 
 			this._publish(this.filterContainer.getChannel("SET_PROPS"), {
@@ -413,11 +388,7 @@ define([
 
 			if (!this.browser) {
 				this.browserConfig.parentChannel = this.filterContainer.getChannel();
-
-				this.browser = new declare([
-					ListLayout,
-					ListController
-				])(this.browserConfig);
+				this.browser = new declare([ListLayout, ListController])(this.browserConfig);
 			}
 		},
 
@@ -450,8 +421,6 @@ define([
 
 			this._initializeChart();
 
-			this._changeFilterOfCharts();
-
 			this._embedModule(this.chartContainer, inputKey);
 
 			if (this._updateDataChart) {
@@ -469,8 +438,7 @@ define([
 			if (!this.chartContainer) {
 				this.chartContainer = new declare([
 					ChartsWithLegendAndToolbarsAndSlider,
-					_ProcessDataDefinitionAndGetTimeSeries,
-					_CompositeInTooltipFromIconKeypad
+					_ProcessDataDefinitionAndGetTimeSeries
 				])(this.chartsConfig);
 			}
 		},

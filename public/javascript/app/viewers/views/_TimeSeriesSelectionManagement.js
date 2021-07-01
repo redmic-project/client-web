@@ -113,7 +113,7 @@ define([
 
 		_showChartIsValid: function() {
 
-			return Object.keys(this._insertedInTimeSeriesData).length ? true : false;
+			return !!Object.keys(this._insertedInTimeSeriesData).length;
 		},
 
 		_clear: function() {

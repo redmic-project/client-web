@@ -1,6 +1,5 @@
 define([
-	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/Deferred"
@@ -8,16 +7,16 @@ define([
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/search/FacetsImpl"
 ], function(
-	_CompositeInTooltipFromIconKeypad
-	, declare
+	declare
 	, lang
 	, aspect
 	, Deferred
 	, _Filter
 	, _Store
 	, FacetsImpl
-){
-	return declare([_Filter, _CompositeInTooltipFromIconKeypad, _Store], {
+) {
+
+	return declare([_Filter, _Store], {
 		//	summary:
 		//		Extensión para la vista de timeSeries para el manejo de datos.
 		//	description:
@@ -73,7 +72,7 @@ define([
 		_initializeDataView: function() {
 
 			this.facetsConfig.queryChannel = this.queryChannel;
-			this.facets = new declare([FacetsImpl])(this.facetsConfig);
+			this.facets = new FacetsImpl(this.facetsConfig);
 		},
 
 		_mixDataViewEventsAndActions: function() {
@@ -211,21 +210,21 @@ define([
 
 		_prepareTimeSeriesData: function(argument) {
 
-			if (!this._showChartIsValid()) {
+			if (this._showChartIsValid()) {
+				return;
+			}
 
-				if (this._dataListIsEmpty()) {
-
-					this._getListDataDfd = new Deferred();
-					this._getListData();
-				} else {
-					this._generateTimeSeriesData();
-				}
+			if (this._dataListIsEmpty()) {
+				this._getListDataDfd = new Deferred();
+				this._getListData();
+			} else {
+				this._generateTimeSeriesData();
 			}
 		},
 
 		_dataListIsEmpty: function() {
 
-			return (!this._dataList || (this._dataList.length === 0));
+			return !this._dataList || this._dataList.length === 0;
 		},
 
 		_getListData: function() {
@@ -235,11 +234,6 @@ define([
 					returnFields: this._listDataReturnFields
 				}
 			});
-		},
-
-		_getIconKeypadNode: function() {
-
-			return this._optionNode;
 		}
 	});
 });

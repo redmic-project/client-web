@@ -23,7 +23,7 @@ define([
 		//		Extensión que instancia una búsqueda compuesta para ser mostrada en tooltip, a determinar por la lógica
 		//		de quien importe esta extensión.
 		//		Se puede configurar añadiendo propiedades a 'this.compositeConfig' y la instancia creada se coloca en
-		//		'this.composite'.
+		//		'this.composite'. Necesita tener disponible un canal de filtrado en 'this.queryChannel'.
 
 		constructor: function(args) {
 

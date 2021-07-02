@@ -26,6 +26,8 @@ define([
 
 			this._clear();
 
+			this.seriesData.data.activityId = data.activityId;
+
 			var stationId = this._insertStation(data.site),
 				measurements = data.measurements;
 

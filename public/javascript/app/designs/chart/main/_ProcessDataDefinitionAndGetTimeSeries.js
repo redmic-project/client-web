@@ -317,7 +317,6 @@ define([
 			}
 
 			for (var cat in this.chartsData.definitionIndex) {
-
 				var dataDefinitionIds = [],
 					catSplitted = cat.split(this.idSeparator);
 
@@ -334,6 +333,7 @@ define([
 					qFlags: null
 				},this.reqObjQuery || {}, {
 					terms: {
+						activityId: this.chartsData.data.activityId,
 						dataDefinition: dataDefinitionIds
 					},
 					returnFields: ["value", "date"]

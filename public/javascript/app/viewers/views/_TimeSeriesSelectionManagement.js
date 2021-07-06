@@ -1,12 +1,14 @@
 define([
-	"app/viewers/views/_SeriesSelectionManagement"
+	'alertify/alertify.min'
+	, "app/viewers/views/_SeriesSelectionManagement"
 	, "app/viewers/views/_TimeSeriesDataManagement"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "redmic/modules/base/_Selection"
 ], function(
-	_SeriesSelectionManagement
+	alertify
+	, _SeriesSelectionManagement
 	, _TimeSeriesDataManagement
 	, declare
 	, lang
@@ -24,13 +26,22 @@ define([
 			this.config = {
 				_selected: {},
 				_insertedInTimeSeriesData: {},
-				pathSeparator: "."
+				pathSeparator: '.',
+				maxParams: 10
 			};
 
 			lang.mixin(this, this.config);
 
+			aspect.after(this, '_setOwnCallbacksForEvents', lang.hitch(this,
+				this._setTimeSeriesSelectionManagementOwnCallbacksForEvents));
+
 			aspect.before(this, "_select", lang.hitch(this, this._selectTimeSeriesSelectionManagement));
 			aspect.before(this, "_deselect", lang.hitch(this, this._deselectTimeSeriesSelectionManagement));
+		},
+
+		_setTimeSeriesSelectionManagementOwnCallbacksForEvents: function() {
+
+			this._onEvt('HIDE', lang.hitch(this, this._onTimeSeriesSelectionManagementHidden));
 		},
 
 		postCreate: function() {
@@ -43,21 +54,29 @@ define([
 		_selectTimeSeriesSelectionManagement: function(path) {
 
 			this._selected[path] = true;
-			this._insertedInTimeSeriesData = {};
 		},
 
 		_deselectTimeSeriesSelectionManagement: function(path) {
 
 			delete this._selected[path];
-			this._insertedInTimeSeriesData = {};
+			delete this._insertedInTimeSeriesData[path];
 		},
 
 		_generateTimeSeriesData: function() {
 
 			this._clear();
 
-			for (var path in this._selected) {
-				if (path.split(".").length > 2) {
+			var selectedKeys = Object.keys(this._selected),
+				selectedCount = selectedKeys.length;
+
+			if (selectedCount > this.maxParams) {
+				this._selectionTooBigAlertify = alertify.message(this.i18n.cannotGetDataWithTooBigSelection, 0);
+				selectedCount = this.maxParams;
+			}
+
+			for (var i = 0; i < selectedCount; i++) {
+				var path = selectedKeys[i];
+				if (path.split(this.pathSeparator).length > 2) {
 					this._insertItemInDataChart(path);
 				}
 			}
@@ -66,7 +85,6 @@ define([
 		_insertItemInDataChart: function(path) {
 
 			if (this._indexDataList[path] !== undefined && !this._insertedInTimeSeriesData[path]) {
-
 				this._updateDataChart = true;
 				this._insertedInTimeSeriesData[path] = true;
 
@@ -92,7 +110,6 @@ define([
 				dataDefinitions = item.dataDefinitions;
 
 			for (var n = 0; n < dataDefinitions.length; n++) {
-
 				if (!ids[dataDefinitions[n].z]) {
 					ids[dataDefinitions[n].z] = [];
 				}
@@ -121,6 +138,11 @@ define([
 			this._insertedInTimeSeriesData = {};
 
 			this.inherited(arguments);
+		},
+
+		_onTimeSeriesSelectionManagementHidden: function() {
+
+			this._selectionTooBigAlertify && this._selectionTooBigAlertify.dismiss();
 		}
 	});
 });

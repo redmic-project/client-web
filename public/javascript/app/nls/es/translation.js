@@ -931,6 +931,7 @@ define({
 
 	, "cannotShowDataWithEmptySelection": "Debe seleccionar al menos un elemento antes de mostrar sus datos asociados"
 	, "canShowDataWithSelectionAvailable": "Ahora puede mostrar los datos asociados a los elementos seleccionados"
+	, "cannotGetDataWithTooBigSelection": "Demasiados elementos seleccionados, mostrando sólo los primeros seleccionados"
 
 	, "groupedBy": "Agrupado por"
 	, "dataSelector": "Agrupación"

@@ -936,6 +936,7 @@ define({
 
 		, "cannotShowDataWithEmptySelection": "You must select at least one item before displaying its associated data"
 		, "canShowDataWithSelectionAvailable": "Now you can display data associated to selected items"
+		, "cannotGetDataWithTooBigSelection": "Too many items selected, showing data only for the first selected"
 
 		, "groupedBy": "Grouped by"
 		, "dataSelector": "Group"

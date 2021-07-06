@@ -124,7 +124,7 @@ define({
 	, "programCatalogView": "Catálogo de programas"
 	, "platformCatalogView": "Catálogo de plataformas"
 	, "organisationCatalogView": "Catálogo de organizaciones"
-	, "print": "Imprimir"
+	, "printToPdf": "Imprimir contenido a PDF"
 	, "remove": "Borrar"
 	, "module": "Módulo"
 	, "perms": "Permisos"
@@ -281,7 +281,7 @@ define({
 
 	, "feedback": "Contacto"
 	, "message": "Mensaje"
-	, "createReport": "Crear report"
+	, "createReport": "Generar informe"
 	, "errorReport": "Reporte de error"
 	, "subject": "Asunto"
 	, "sendFeedback": "Mensaje enviado correctamente, muchas gracias por su colaboración."

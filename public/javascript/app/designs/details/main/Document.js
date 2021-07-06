@@ -21,7 +21,7 @@ define([
 				_titleRightButtonsList: [{
 					icon: "fa-print",
 					btnId: "report",
-					title: this.i18n.print
+					title: this.i18n.printToPdf
 				}],
 
 				target: redmicConfig.services.document,

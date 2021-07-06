@@ -4,6 +4,7 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/search/TextImpl"
 	, "./_AddFilter"
 ], function (
@@ -12,6 +13,7 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, Pagination
 	, TextImpl
 	, _AddFilter
 ){
@@ -22,7 +24,10 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				viewPaths: redmicConfig.viewPaths
+				viewPaths: redmicConfig.viewPaths,
+				browserBars: [{
+					definition: Pagination
+				}]
 			};
 
 			lang.mixin(this, this.config, args);

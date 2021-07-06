@@ -85,9 +85,6 @@ define([
 			this.searchConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
-				highlightField: ['properties.site.name'],
-				suggestFields: ['properties.site.name', 'properties.site.code'],
-				searchFields: ['properties.site.name', 'properties.site.code'],
 				initialQuery: this.filterConfig.initQuery,
 				itemLabel: null
 			}, this.searchConfig || {}]);

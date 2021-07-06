@@ -1,6 +1,6 @@
 define([
 	"app/designs/base/_Main"
-	, "app/designs/textSearchFacetsList/_AddComposite"
+	, 'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
 	, "dojo/_base/declare"

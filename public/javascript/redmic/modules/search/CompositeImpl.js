@@ -36,7 +36,9 @@ define([
 					REMEMBER_CURRENT_VALUE: "rememberCurrentValue",
 					HAS_CHANGED: "hasChanged",
 					WAS_CHANGED: "wasChanged"
-				}
+				},
+
+				template: formTemplate
 			};
 
 			lang.mixin(this, this.config, args);
@@ -69,7 +71,7 @@ define([
 
 					this._emitEvt('CANCELLED');
 				},
-				template: formTemplate,
+				template: this.template,
 				dataTemplate: {
 					formTitle: this.i18n.filters
 				}

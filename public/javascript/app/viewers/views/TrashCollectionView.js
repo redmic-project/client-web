@@ -1,5 +1,5 @@
 define([
-	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
+	'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
@@ -22,10 +22,10 @@ define([
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/search/TextImpl"
 	, "templates/ActivityList"
-
+	, "templates/FilterTrashForm"
 	, "./TrashDetails"
 ], function(
-	_CompositeInTooltipFromIconKeypad
+	_AddCompositeSearchInTooltipFromTextSearch
 	, Controller
 	, Layout
 	, redmicConfig
@@ -48,10 +48,10 @@ define([
 	, _AddFilter
 	, TextImpl
 	, TemplateList
-
+	, FilterForm
 	, TrashDetails
 ){
-	return declare([Layout, Controller, _Filter, _CompositeInTooltipFromIconKeypad, _Selection], {
+	return declare([Layout, Controller, _Filter, _AddCompositeSearchInTooltipFromTextSearch, _Selection], {
 		//	summary:
 		//		Vista de TrashCollection.
 		//	description:
@@ -82,6 +82,10 @@ define([
 						size: null,
 						from: null
 					}
+				},
+
+				compositeConfig: {
+					template: FilterForm
 				}
 			};
 
@@ -93,9 +97,6 @@ define([
 			this.searchConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
-				highlightField: ['name'],
-				suggestFields: ["name", "code"],
-				searchFields: ["name^3", "code^3"],
 				itemLabel: null
 			}, this.searchConfig || {}]);
 
@@ -127,10 +128,11 @@ define([
 		_initialize: function() {
 
 			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new declare([TextImpl])(this.searchConfig);
+			this.textSearch = new TextImpl(this.searchConfig);
 
 			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare([ListImpl, _Framework, _Select])(this.browserConfig);
+			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
+			this.browser = new BrowserDefinition(this.browserConfig);
 
 			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
@@ -138,7 +140,8 @@ define([
 				getMapChannel: lang.hitch(this.map, this.map.getChannel)
 			});
 
-			this.trashDetails = new declare(TrashDetails).extend(_ShowInPopup)({
+			var TrashDetailsDefinition = declare(TrashDetails).extend(_ShowInPopup);
+			this.trashDetails = new TrashDetailsDefinition({
 				parentChannel: this.getChannel()
 			});
 
@@ -240,9 +243,10 @@ define([
 
 			var target = lang.replace(this.layersTarget, {activityid: item}),
 				infoTarget = target,
-				layerId = this._layerIdPrefix + this.layerIdSeparator + item;
+				layerId = this._layerIdPrefix + this.layerIdSeparator + item,
+				LayerDefinition = declare([GeoJsonLayerImpl, _AddFilter]);
 
-			this._layerInstances[item] =  new declare([GeoJsonLayerImpl, _AddFilter])({
+			this._layerInstances[item] = new LayerDefinition({
 				parentChannel: this.getChannel(),
 				mapChannel: this.map.getChannel(),
 				geoJsonStyle: {
@@ -257,13 +261,13 @@ define([
 					modelChannel: this.modelChannel
 				},
 				onEachFeature: lang.hitch(this, function(feature, layer) {
-					layer.on("click", lang.hitch(this, function(feature, item) {
+					layer.on("click", lang.hitch(this, function(innerFeature) {
 						this._publish(this.trashDetails.getChannel("SHOW"), {
 							data: {
-								id: feature.id,
-								parentId: feature.uuid,
-								grandparentId: feature.properties.activityId,
-								feature: feature
+								id: innerFeature.id,
+								parentId: innerFeature.uuid,
+								grandparentId: innerFeature.properties.activityId,
+								feature: innerFeature
 							}
 						});
 					}, feature));

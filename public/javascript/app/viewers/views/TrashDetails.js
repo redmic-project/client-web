@@ -1,6 +1,5 @@
 define([
-	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
-	, "app/designs/dynamicDualContent/Controller"
+	"app/designs/dynamicDualContent/Controller"
 	, "app/designs/dynamicDualContent/layout/TopSecondaryContent"
 	, "app/designs/embeddedContentWithTopbar/main/EmbeddedContentSelectionInTopbar"
 	, "app/viewers/views/TrashCharts"
@@ -17,12 +16,9 @@ define([
 	, "redmic/modules/browser/_DataTypeParser"
 	, "redmic/modules/browser/_HierarchicalTable"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/SurveyStationDataList"
 	, "templates/LoadingEmpty"
-	, "put-selector/put"
 ], function(
-	_CompositeInTooltipFromIconKeypad
-	, DynamicContentController
+	DynamicContentController
 	, DynamicContentLayout
 	, EmbeddedContentSelectionInTopbar
 	, TrashCharts
@@ -39,11 +35,10 @@ define([
 	, _DataTypeParser
 	, _HierarchicalTable
 	, TemplateDisplayer
-	, ListTemplate
 	, NoDataTemplate
-	, put
-){
-	return declare([EmbeddedContentSelectionInTopbar, _SelectTimeInterval, _Filter, _CompositeInTooltipFromIconKeypad, _Store], {
+) {
+
+	return declare([EmbeddedContentSelectionInTopbar, _SelectTimeInterval, _Filter, _Store], {
 		//	summary:
 		//		Permite agrupar la información sobre recogidas de basura.
 		//	description:

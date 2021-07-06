@@ -223,10 +223,7 @@ define([
 			}
 
 			if (query.size === undefined) {
-				// TODO si anteriormente se pidió con un size determinado, queda persistente (y no debería, creo).
-				// si se setea de nuevo cuando no venga definido, se consigue eliminar esa persistencia, además
-				// de usar un límite superior para las consultas de datos.
-				query.size = 50;
+				query.size = null;
 			}
 
 			this._addToQuery(query, !omitRefresh);

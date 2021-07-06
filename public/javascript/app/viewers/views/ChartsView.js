@@ -277,7 +277,7 @@ define([
 		_publishSelectionToMapLayer: function(action, markerId) {
 
 			// TODO rompe el mapa, arreglar
-			//return;
+			return;
 
 			var pubBody = {
 				target: this._mapLayerSelectionTarget

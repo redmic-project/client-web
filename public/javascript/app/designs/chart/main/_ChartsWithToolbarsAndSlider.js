@@ -1,17 +1,17 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/chart/Controller"
-	, "app/designs/chart/main/_ChartsWithToolbarsAndSliderItfc"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/chart/ChartsContainer/_InfoOnEmptyData"
-	, "redmic/modules/chart/ChartsContainer/_LayerColorSelection"
-	, "redmic/modules/chart/ChartsContainer/SliderChartsContainerImpl"
-	, "redmic/modules/chart/layer/ChartLayer/_QueryableValue"
-	, "redmic/modules/chart/layer/ChartLayer/LinearChartImpl"
-	, "redmic/modules/chart/Toolbar/AggregationToolImpl"
-	, "redmic/modules/chart/Toolbar/GridManagementImpl"
-], function (
+	'app/designs/base/_Main'
+	, 'app/designs/chart/Controller'
+	, 'app/designs/chart/main/_ChartsWithToolbarsAndSliderItfc'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/chart/ChartsContainer/_InfoOnEmptyData'
+	, 'redmic/modules/chart/ChartsContainer/_LayerColorSelection'
+	, 'redmic/modules/chart/ChartsContainer/SliderChartsContainerImpl'
+	, 'redmic/modules/chart/layer/ChartLayer/_QueryableValue'
+	, 'redmic/modules/chart/layer/ChartLayer/LinearChartImpl'
+	, 'redmic/modules/chart/Toolbar/AggregationToolImpl'
+	, 'redmic/modules/chart/Toolbar/GridManagementImpl'
+], function(
 	_Main
 	, Controller
 	, _ChartsWithToolbarsAndSliderItfc
@@ -24,7 +24,8 @@ define([
 	, LinearChartImpl
 	, AggregationToolImpl
 	, GridManagementImpl
-){
+) {
+
 	return declare([Controller, _Main, _ChartsWithToolbarsAndSliderItfc], {
 		//	summary:
 		//		Main ChartsWithToolbars.
@@ -32,14 +33,14 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "chartsWithToolbars",
+				ownChannel: 'chartsWithToolbars',
 				events: {
-					ADD_LAYER: "addLayer",
-					REMOVE_LAYER: "removeLayer",
-					CHANGE_DOMAIN: "changeDomain",
-					TIME_INTERVAL_SET: "timeIntervalSet",
-					CHARTS_DATA_SET: "chartsDataSet",
-					CLEAR_LAYERS: "clearLayers"
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer',
+					CHANGE_DOMAIN: 'changeDomain',
+					TIME_INTERVAL_SET: 'timeIntervalSet',
+					CHARTS_DATA_SET: 'chartsDataSet',
+					CLEAR_LAYERS: 'clearLayers'
 				},
 				actions: {
 				},
@@ -49,11 +50,11 @@ define([
 				_layersIndexByLayerId: {},
 				_categoriesIndexed: {},
 				aggregationToolSelection: {
-					interval: ["raw"],
-					metrics: ["avg"]
+					interval: ['raw'],
+					metrics: ['avg']
 				},
-				pathSeparator: ".",
-				idSeparator: ","
+				pathSeparator: '.',
+				idSeparator: ','
 			};
 
 			lang.mixin(this, this.config, args);
@@ -96,17 +97,17 @@ define([
 		_defineMainSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel : this.aggregationTool.getChannel("TOOL_ACTUATED"),
-				callback: "_subAggregationToolActuated"
+				channel : this.aggregationTool.getChannel('TOOL_ACTUATED'),
+				callback: '_subAggregationToolActuated'
 			},{
-				channel : this.chartsContainer.getChannel("SHOWN"),
-				callback: "_subChartsContainerShown"
+				channel : this.chartsContainer.getChannel('SHOWN'),
+				callback: '_subChartsContainerShown'
 			},{
-				channel : this.chartsContainer.getChannel("LAYER_CLEARED"),
-				callback: "_subChartsContainerLayerCleared"
+				channel : this.chartsContainer.getChannel('LAYER_CLEARED'),
+				callback: '_subChartsContainerLayerCleared'
 			},{
-				channel : this.slider.getChannel("DOMAIN_CHANGED"),
-				callback: "_subSliderDomainChanged"
+				channel : this.slider.getChannel('DOMAIN_CHANGED'),
+				callback: '_subSliderDomainChanged'
 			});
 		},
 
@@ -114,16 +115,16 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'ADD_LAYER',
-				channel: this.chartsContainer.getChannel("ADD_LAYER")
+				channel: this.chartsContainer.getChannel('ADD_LAYER')
 			},{
 				event: 'REMOVE_LAYER',
-				channel: this.chartsContainer.getChannel("REMOVE_LAYER")
+				channel: this.chartsContainer.getChannel('REMOVE_LAYER')
 			},{
 				event: 'CHANGE_DOMAIN',
-				channel: this.chartsContainer.getChannel("CHANGE_DOMAIN")
+				channel: this.chartsContainer.getChannel('CHANGE_DOMAIN')
 			},{
 				event: 'CLEAR_LAYERS',
-				channel: this.chartsContainer.getChannel("CLEAR")
+				channel: this.chartsContainer.getChannel('CLEAR')
 			});
 		},
 
@@ -152,13 +153,12 @@ define([
 				selection.interval = [this._interval];
 			}
 
-			this._publish(this.aggregationTool.getChannel("SET_PROPS"), {
+			this._publish(this.aggregationTool.getChannel('SET_PROPS'), {
 				selection: selection,
 				dataDefinitions: this._parseDataForAggregationTool(this.categories)
 			});
 
 			if (this._chartsContainerIsReady) {
-
 				this._emitEvt('CLEAR_LAYERS');
 				this._interval && this._setInterval(this._interval);
 			}
@@ -181,31 +181,31 @@ define([
 
 			this.inherited(arguments);
 
-			this._publish(this.aggregationTool.getChannel("SHOW"), {
+			this._publish(this.aggregationTool.getChannel('SHOW'), {
 				node: this.toolbarContainerChartsTopNode
 			});
 
-			this._publish(this.gridManagement.getChannel("SHOW"), {
+			this._publish(this.gridManagement.getChannel('SHOW'), {
 				node: this.buttonsContainerChartsTopNode
 			});
 
-			this._publish(this.slider.getChannel("SHOW"), {
+			this._publish(this.slider.getChannel('SHOW'), {
 				node: this.chartsBottomNode
 			});
 
-			this._publish(this.chartsContainer.getChannel("SET_PROPS"), {
+			this._publish(this.chartsContainer.getChannel('SET_PROPS'), {
 				buttonsContainer: this.buttonsContainerChartsTopNode
 			});
 		},
 
 		_addDataToChart: function(chartInstance, dataObj) {
 
-			this._publish(chartInstance.getChannel("ADD_DATA"), dataObj);
+			this._publish(chartInstance.getChannel('ADD_DATA'), dataObj);
 		},
 
 		_setChartProps: function(chartInstance, propsObj) {
 
-			this._publish(chartInstance.getChannel("SET_PROPS"), propsObj);
+			this._publish(chartInstance.getChannel('SET_PROPS'), propsObj);
 		},
 
 		_subAggregationToolActuated: function(req) {
@@ -248,7 +248,7 @@ define([
 
 		_subSliderDomainChanged: function(res) {
 
-			this._emitEvt("CHANGE_DOMAIN", res);
+			this._emitEvt('CHANGE_DOMAIN', res);
 		},
 
 		_setInterval: function(interval) {
@@ -279,7 +279,6 @@ define([
 			var categories = Object.keys(this._data);
 
 			for (var i = 0; i < categories.length; i++) {
-
 				var cat = categories[i].split(this.idSeparator);
 				this._selectAndRemoveUnusedAggregationCharts(cat, aggsDiff);
 			}
@@ -287,8 +286,8 @@ define([
 
 		_selectAndRemoveUnusedAggregationCharts: function(cat, aggs) {
 
-			if (this._interval !== "raw") {
-				aggs.push("raw");
+			if (this._interval !== 'raw') {
+				aggs.push('raw');
 				this._removeUnusedAggregationCharts(cat, aggs);
 			} else {
 				this._removeAllAggregationCharts(cat);
@@ -303,8 +302,8 @@ define([
 				return;
 			}
 
-			for (var j = 0; j < aggs.length; j++) {
-				var agg = aggs[j],
+			for (var i = 0; i < aggs.length; i++) {
+				var agg = aggs[i],
 					layerInstance = catLayers[agg];
 
 				if (layerInstance) {
@@ -337,7 +336,6 @@ define([
 			var categories = Object.keys(this._data);
 
 			for (var i = 0; i < categories.length; i++) {
-
 				var cat = categories[i].split(this.idSeparator);
 				this._addUsedAggregationChart(aggs, cat);
 			}
@@ -345,21 +343,16 @@ define([
 
 		_addUsedAggregationChart: function(aggs, cat) {
 
-			var catLayers = this._layers[cat];
-
-			if (!catLayers) {
-				catLayers = this._layers[cat] = {};
+			if (!this._layers[cat]) {
+				this._layers[cat] = {};
 			}
 
-			if (this._interval !== "raw") {
-
-				for (var j = 0; j < aggs.length; j++) {
-
-					this._addAggregationChart(cat, aggs[j]);
+			if (this._interval !== 'raw') {
+				for (var i = 0; i < aggs.length; i++) {
+					this._addAggregationChart(cat, aggs[i]);
 				}
 			} else {
-
-				this._addAggregationChart(cat, "raw");
+				this._addAggregationChart(cat, 'raw');
 			}
 		},
 
@@ -375,7 +368,7 @@ define([
 			}
 
 			this._setChartProps(layerInstance, {
-				pathToValue: agg === "raw" ? "" : agg,
+				pathToValue: agg === 'raw' ? '' : agg,
 				hierarchicalInfo: this._getHierarchicalInfo(cat),
 				definition: definitions,
 				label: this._createChartLabel(agg)
@@ -391,12 +384,9 @@ define([
 			var definitions = {};
 
 			if (!(cat instanceof Array)) {
-
 				definitions[cat] = this._getDefinitionsData(cat);
 			} else {
-
 				for (var i = 0; i < cat.length; i++) {
-
 					var catComponent = cat[i];
 					definitions[catComponent] = this._getDefinitionsData(catComponent);
 				}
@@ -409,18 +399,20 @@ define([
 
 			var config = {
 				parentChannel: this.getChannel(),
-				xName: "date",
-				yName: "value"
+				xName: 'date',
+				yName: 'value'
 			};
 
 			lang.mixin(config, layerConfig);
 
-			var layerInstance = new declare([LinearChartImpl, _QueryableValue])(config),
+			var LayerDefinition = declare([LinearChartImpl, _QueryableValue]),
+				layerInstance = new LayerDefinition(config),
 				layerId = layerInstance.getOwnChannel(),
 				layerCat = this._layers[cat];
 
 			if (!layerCat) {
-				layerCat = this._layers[cat] = {};
+				this._layers[cat] = {};
+				layerCat = this._layers[cat];
 			}
 
 			this._layersIndexByLayerId[layerId] = {
@@ -436,7 +428,7 @@ define([
 
 			var intervalLabel = this.intervalLabelKey || this._intervalLabelKey;
 
-			return this._interval !== "raw" ? agg + "_by_" + intervalLabel || this._interval : agg;
+			return this._interval !== 'raw' ? agg + '_by_' + intervalLabel || this._interval : agg;
 		}
 
 	});

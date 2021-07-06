@@ -89,10 +89,9 @@ define([
 
 			for (var i = 0; i < this.browserBars.length; i++) {
 				var item = this.browserBars[i],
-					instance = item.instance,
-					config = this[item.config] || {};
+					Definition = item.definition;
 
-				config = this._merge([{
+				var config = this._merge([{
 					parentChannel: this.getChannel(),
 					queryChannel: this.browserConfig.queryChannel,
 					target: this._getTarget(),
@@ -100,9 +99,9 @@ define([
 					perms: this.perms,
 					selectorChannel: this.selectorChannel,
 					browserChannel: this.browser.getChannel()
-				}, config]);
+				}, this[item.config] || {}]);
 
-				instance = new instance(config);
+				var instance = new Definition(config);
 
 				this._publish(this.browser.getChannel("ADD_TOOLBAR_IN_FRAMEWORK"), {
 					instance: instance

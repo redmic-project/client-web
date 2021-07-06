@@ -2,12 +2,14 @@ define([
 	"app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "dojo/aspect"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Store"
 ], function (
 	redmicConfig
 	, declare
 	, lang
+	, aspect
 	, _Filter
 	, _Store
 ){
@@ -32,6 +34,8 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			aspect.after(this, '_setInterval', lang.hitch(this, this._buildQueryAndRequestData));
 		},
 
 		_getCategories: function() {
@@ -308,46 +312,50 @@ define([
 			}
 		},
 
-		_setInterval: function(interval) {
-
-			this.inherited(arguments);
+		_buildQueryAndRequestData: function() {
 
 			if (!this.chartsData) {
 				return;
 			}
 
+			var dataDefinitionIds = [];
 			for (var cat in this.chartsData.definitionIndex) {
-				var dataDefinitionIds = [],
-					catSplitted = cat.split(this.idSeparator);
+				var catSplitted = cat.split(this.idSeparator);
 
 				for (var i = 0; i < catSplitted.length; i++) {
 					dataDefinitionIds.push(parseInt(catSplitted[i], 10));
 				}
-
-				this.reqObjQuery && delete this.reqObjQuery.terms;
-
-				var objQuery = this._merge([{
-					dateLimits: null,
-					accessibilityIds: null,
-					vFlags: null,
-					qFlags: null
-				},this.reqObjQuery || {}, {
-					terms: {
-						activityId: this.chartsData.data.activityId,
-						dataDefinition: dataDefinitionIds
-					},
-					returnFields: ["value", "date"]
-				}]);
-
-				if (this._interval !== "raw")
-					objQuery.interval = this._interval;
-				else
-					objQuery.interval = null;
-
-				this._emitEvt('ADD_TO_QUERY', {
-					query: objQuery
-				});
 			}
+
+			this.reqObjQuery && delete this.reqObjQuery.terms;
+
+			var objQuery = this._merge([{
+				dateLimits: null,
+				accessibilityIds: null,
+				vFlags: null,
+				qFlags: null
+			}, this.reqObjQuery || {}, {
+				terms: {
+					dataDefinition: dataDefinitionIds
+				},
+				returnFields: ["value", "date"]
+			}]);
+
+			var activityId = this.chartsData.data.activityId;
+			if (activityId) {
+				objQuery.terms.activityId = activityId;
+				objQuery.terms.grandparentId = activityId;
+			}
+
+			if (this._interval !== "raw") {
+				objQuery.interval = this._interval;
+			} else {
+				objQuery.interval = null;
+			}
+
+			this._emitEvt('ADD_TO_QUERY', {
+				query: objQuery
+			});
 		}
 	});
 });

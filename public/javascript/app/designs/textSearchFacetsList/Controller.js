@@ -39,7 +39,10 @@ define([
 					GET_REPORT: "getReport"
 				},
 				browserBars: [{
-					definition: Pagination
+					definition: Pagination,
+					config: {
+						rowPerPage: 25
+					}
 				}]
 			};
 
@@ -90,6 +93,12 @@ define([
 
 			this._publish(this.textSearch.getChannel("SHOW"), {
 				node: this.textSearchNode
+			});
+
+			this._emitEvt('ADD_TO_QUERY', {
+				query: {
+					size: 25
+				}
 			});
 
 			this._publish(this.facets.getChannel("SHOW"), {

@@ -99,7 +99,7 @@ define([
 					perms: this.perms,
 					selectorChannel: this.selectorChannel,
 					browserChannel: this.browser.getChannel()
-				}, this[item.config] || {}]);
+				}, item.config || {}]);
 
 				var instance = new Definition(config);
 

@@ -318,44 +318,45 @@ define([
 				return;
 			}
 
-			var dataDefinitionIds = [];
+			// TODO cada item tiene que esperar por el ADDED_TO_QUERY del anterior, salvo el primero
 			for (var cat in this.chartsData.definitionIndex) {
-				var catSplitted = cat.split(this.idSeparator);
+				var dataDefinitionIds = [],
+					catSplitted = cat.split(this.idSeparator);
 
 				for (var i = 0; i < catSplitted.length; i++) {
 					dataDefinitionIds.push(parseInt(catSplitted[i], 10));
 				}
+
+				this.reqObjQuery && delete this.reqObjQuery.terms;
+
+				var objQuery = this._merge([{
+					dateLimits: null,
+					accessibilityIds: null,
+					vFlags: null,
+					qFlags: null
+				}, this.reqObjQuery || {}, {
+					terms: {
+						dataDefinition: dataDefinitionIds
+					},
+					returnFields: ["value", "date"]
+				}]);
+
+				var activityId = this.chartsData.data.activityId;
+				if (activityId) {
+					objQuery.terms.activityId = activityId;
+					objQuery.terms.grandparentId = activityId;
+				}
+
+				if (this._interval !== "raw") {
+					objQuery.interval = this._interval;
+				} else {
+					objQuery.interval = null;
+				}
+
+				this._emitEvt('ADD_TO_QUERY', {
+					query: objQuery
+				});
 			}
-
-			this.reqObjQuery && delete this.reqObjQuery.terms;
-
-			var objQuery = this._merge([{
-				dateLimits: null,
-				accessibilityIds: null,
-				vFlags: null,
-				qFlags: null
-			}, this.reqObjQuery || {}, {
-				terms: {
-					dataDefinition: dataDefinitionIds
-				},
-				returnFields: ["value", "date"]
-			}]);
-
-			var activityId = this.chartsData.data.activityId;
-			if (activityId) {
-				objQuery.terms.activityId = activityId;
-				objQuery.terms.grandparentId = activityId;
-			}
-
-			if (this._interval !== "raw") {
-				objQuery.interval = this._interval;
-			} else {
-				objQuery.interval = null;
-			}
-
-			this._emitEvt('ADD_TO_QUERY', {
-				query: objQuery
-			});
 		}
 	});
 });

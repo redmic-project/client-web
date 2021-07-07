@@ -159,7 +159,7 @@ define([
 		_disconnectFromFilter: function(oldQueryChannel) {
 
 			this._removeSubscriptions([
-				this._buildChannel(queryChannel, this.actions.ADDED_TO_QUERY),
+				this._buildChannel(oldQueryChannel, this.actions.ADDED_TO_QUERY),
 				this._buildChannel(oldQueryChannel, this.actions.SERIALIZED),
 				this._buildChannel(oldQueryChannel, this.actions.REQUEST_FILTER)
 			]);

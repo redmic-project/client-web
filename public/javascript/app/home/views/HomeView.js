@@ -153,6 +153,7 @@ define([
 
 			this._publish(this._getWidgetInstance('searchFastFilter').getChannel('SET_PROPS'), obj);
 			this._publish(this._getWidgetInstance('searchFilter').getChannel('SET_PROPS'), obj);
+			this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), obj);
 		},
 
 		_listenWidgets: function() {

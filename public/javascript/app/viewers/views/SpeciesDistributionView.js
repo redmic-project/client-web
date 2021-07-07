@@ -229,13 +229,10 @@ define([
 				bars: [{
 					instance: Total
 				},{
-					instance: SelectionBox,
-					config: 'selectionBoxConfig'
+					instance: SelectionBox
 				},{
 					instance: Pagination
-				}],
-				selectionBoxConfig: {
-				}
+				}]
 			}, this.browserConfig || {}]);
 
 			this.treeConfig = this._merge([{

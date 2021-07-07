@@ -261,24 +261,22 @@ define([
 
 		_selectMarker: function(markerId) {
 
-			this._publishSelectionToMapLayer('SELECTED', markerId);
+			//this._publishSelectionToMapLayer('SELECTED', markerId);
 		},
 
 		_deselectMarker: function(markerId) {
 
-			this._publishSelectionToMapLayer('DESELECTED', markerId);
+			//this._publishSelectionToMapLayer('DESELECTED', markerId);
 		},
 
 		_clearMapLayerSelection: function() {
 
-			this._publishSelectionToMapLayer('SELECTION_CLEARED');
+			//this._publishSelectionToMapLayer('SELECTION_CLEARED');
 		},
 
 		_publishSelectionToMapLayer: function(action, markerId) {
 
-			// TODO rompe el mapa, arreglar
-			return;
-
+			// TODO rompe la capa pruneCluster dejando rastros, arreglar
 			var pubBody = {
 				target: this._mapLayerSelectionTarget
 			};

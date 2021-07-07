@@ -3,6 +3,7 @@ define([
 	, 'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ActivityList"
@@ -15,6 +16,7 @@ define([
 	, _AddComposite
 	, Controller
 	, Layout
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -43,7 +45,7 @@ define([
 
 			this.filterConfig = this._merge([{
 				initQuery: {
-					returnFields: ['id', 'name', 'code', 'endDate', 'activityType', 'activityCategory']
+					returnFields: redmicConfig.returnFields.activity
 				}
 			}, this.filterConfig || {}]);
 
@@ -70,21 +72,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					"activityType": {
-						"open": true,
-						"terms": {
-							"field": "activityType.name",
-							"size": 100
-						}
-					},
-					"territorialScope": {
-						"terms": {
-							"field": "scope.name",
-							"size": 20
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.activity
 			}, this.facetsConfig || {}]);
 		}
 	});

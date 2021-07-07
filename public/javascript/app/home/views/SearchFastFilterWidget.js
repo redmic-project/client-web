@@ -1,11 +1,13 @@
 define([
-	'dojo/_base/declare'
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
 	, 'redmic/modules/search/FacetsImpl'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, _Module
 	, _Show
@@ -30,23 +32,10 @@ define([
 
 			this.facetsSearchConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				aggs: {
-					themeInspire: {
-						"open": true,
-						"terms": {
-							"field": "themeInspire.name"
-						}
-					},
-					"activityType": {
-						"terms": {
-							"field": "activityType.name"
-						}
-					},
-					"territorialScope": {
-						"terms": {
-							"field": "scope.name"
-						}
-					}
+				aggs: redmicConfig.aggregations.activity,
+				query: {
+					returnFields: redmicConfig.returnFields.activity
+
 				}
 			}, this.facetsSearchConfig || {}]);
 

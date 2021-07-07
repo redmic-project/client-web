@@ -37,7 +37,12 @@ define([
 					'TOGGLE_ADVANCED_SEARCH': 'toggleAdvancedSearch'
 				},
 				target: redmicConfig.services.activity,
-				'class': 'searchBarPanel'
+				'class': 'searchBarPanel',
+				filterConfig: {
+					initQuery: {
+						returnFields: redmicConfig.returnFields.activity
+					}
+				}
 			};
 
 			lang.mixin(this, this.config, args);

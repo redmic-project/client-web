@@ -336,6 +336,32 @@ define([], function() {
 		//	***********************************************************************************
 	};
 
+	retObj.aggregations = {
+		activity: {
+			themeInspire: {
+				open: true,
+				terms: {
+					field: 'themeInspire.name'
+				}
+			},
+			activityType: {
+				terms: {
+					field: 'activityType.name'
+				}
+			},
+			territorialScope: {
+				terms: {
+					field: 'scope.name'
+				}
+			}
+		}
+	};
+
+	retObj.returnFields = {
+		activity: ['accessibility', 'activityCategory', 'activityType', 'code', 'endDate', 'id', 'name', 'starred',
+			'startDate', 'themeInspire']
+	};
+
 	retObj.outerPaths = [
 		'login',
 		'register',

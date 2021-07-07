@@ -68,7 +68,8 @@ define([
 
 		_initialize: function() {
 
-			this.chartsList = new declare([ListLayout, ListController])({
+			var ListDesignDefinition = declare([ListLayout, ListController]);
+			this.chartsList = new ListDesignDefinition({
 				parentChannel: this.getChannel(),
 				title: this.i18n.selectedLayers,
 				target: this._localTarget,
@@ -114,7 +115,8 @@ define([
 				}
 			});
 
-			this.listMenu = new declare(ListMenu).extend(_ShowInTooltip)({
+			var ListMenuDefinition = declare(ListMenu).extend(_ShowInTooltip);
+			this.listMenu = new ListMenuDefinition({
 				classTooltip: "tooltipButtonMenu tooltipButtonAggrement",
 				parentChannel: this.getChannel(),
 				select: {
@@ -132,7 +134,8 @@ define([
 				}]
 			});
 
-			this._colorPicker = new declare(ColorPickerImpl).extend(_ShowInTooltip)({
+			var ColorPickerDefinition = declare(ColorPickerImpl).extend(_ShowInTooltip);
+			this._colorPicker = new ColorPickerDefinition({
 				parentChannel: this.getChannel(),
 				idProperty: this.idProperty,
 				propertyName: "colorPicker",
@@ -236,13 +239,15 @@ define([
 
 		_subGotLayerInfo: function(res) {
 
-			var layerId = res.chart;
-
-			this._updateLegendContentWithNewInfo(res);
-			this._deactivateHiddenLayer(this._pathsByLayerId[layerId]);
+			this._onLayerInfoUpdate(res);
 		},
 
 		_subLayerInfoUpdated: function(res) {
+
+			this._onLayerInfoUpdate(res);
+		},
+
+		_onLayerInfoUpdate: function(res) {
 
 			var layerId = res.chart;
 
@@ -406,8 +411,10 @@ define([
 
 		_addDataToBrowser: function(data) {
 
+			var dataToAdd = this._getDataToAddToBrowser(data) || data;
+
 			this._emitEvt("INJECT_DATA", {
-				data: data,
+				data: dataToAdd,
 				target: this._localTarget
 			});
 		},
@@ -524,13 +531,13 @@ define([
 				return;
 			}
 
-			var itemContentUpdate = {
+			lang.mixin(this._currentData[layerPath], {
 				path: layerPath,
 				label: label
-			};
+			});
 
 			this._emitEvt("INJECT_ITEM", {
-				data: itemContentUpdate,
+				data: this._currentData[layerPath],
 				target: this._localTarget
 			});
 		},

@@ -222,7 +222,7 @@ define([
 				this.requesterId = req.requesterId;
 			}
 
-			if (query.size === undefined) {
+			if (query.size === -1) {
 				query.size = null;
 			}
 

@@ -3,16 +3,19 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, "dojo/Deferred"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Store"
-], function (
+], function(
 	redmicConfig
 	, declare
 	, lang
 	, aspect
+	, Deferred
 	, _Filter
 	, _Store
-){
+) {
+
 	return declare([_Filter, _Store], {
 		//	summary:
 		//		Extensión para procesar las estructuras de datos que representan a los
@@ -291,15 +294,13 @@ define([
 				idsSplitted = ids.toString().split(this.idSeparator);
 
 			for (var i = 0; i < idsSplitted.length; i++) {
-
 				var idsComponent = idsSplitted[i];
-				for (var path in this.categories) {
 
+				for (var path in this.categories) {
 					var pathSplitted = path.split(this.pathSeparator),
 						id = pathSplitted.pop();
 
 					if (id === idsComponent) {
-
 						pathSplitted.splice(this._specificPathLengthLimit - 1, 1);
 
 						var parentPath = pathSplitted.join(this.pathSeparator),
@@ -314,49 +315,75 @@ define([
 
 		_buildQueryAndRequestData: function() {
 
-			if (!this.chartsData) {
+			if (!this.chartsData || this._dataRequestInProgress) {
 				return;
 			}
 
-			// TODO cada item tiene que esperar por el ADDED_TO_QUERY del anterior, salvo el primero
-			for (var cat in this.chartsData.definitionIndex) {
-				var dataDefinitionIds = [],
-					catSplitted = cat.split(this.idSeparator);
+			this._dataRequestInProgress = true;
 
-				for (var i = 0; i < catSplitted.length; i++) {
-					dataDefinitionIds.push(parseInt(catSplitted[i], 10));
-				}
+			var definitionIds = Object.keys(this.chartsData.definitionIndex),
+				addedToQueryDfds = [];
 
-				this.reqObjQuery && delete this.reqObjQuery.terms;
+			for (var i = 0; i < definitionIds.length; i++) {
+				var cat = definitionIds[i],
+					dfd = new Deferred();
 
-				var objQuery = this._merge([{
-					dateLimits: null,
-					accessibilityIds: null,
-					vFlags: null,
-					qFlags: null
-				}, this.reqObjQuery || {}, {
-					terms: {
-						dataDefinition: dataDefinitionIds
-					},
-					returnFields: ["value", "date"]
-				}]);
+				addedToQueryDfds.push(dfd);
 
-				var activityId = this.chartsData.data.activityId;
-				if (activityId) {
-					objQuery.terms.activityId = activityId;
-					objQuery.terms.grandparentId = activityId;
-				}
-
-				if (this._interval !== "raw") {
-					objQuery.interval = this._interval;
+				if (i !== 0) {
+					var prevDfd = addedToQueryDfds[i - 1];
+					prevDfd.then(lang.hitch(this, this._continueBuildQueryAndRequestData, dfd, cat));
 				} else {
-					objQuery.interval = null;
+					this._continueBuildQueryAndRequestData(dfd, cat);
 				}
-
-				this._emitEvt('ADD_TO_QUERY', {
-					query: objQuery
-				});
 			}
+
+			addedToQueryDfds[addedToQueryDfds.length - 1].then(lang.hitch(this, function() {
+
+				this._dataRequestInProgress = false;
+			}));
+		},
+
+		_continueBuildQueryAndRequestData: function(dfd, cat) {
+
+			var dataDefinitionIds = [],
+				catSplitted = cat.split(this.idSeparator);
+
+			for (var i = 0; i < catSplitted.length; i++) {
+				dataDefinitionIds.push(parseInt(catSplitted[i], 10));
+			}
+
+			this.reqObjQuery && delete this.reqObjQuery.terms;
+
+			var objQuery = this._merge([{
+				dateLimits: null,
+				accessibilityIds: null,
+				vFlags: null,
+				qFlags: null
+			}, this.reqObjQuery || {}, {
+				terms: {
+					dataDefinition: dataDefinitionIds
+				},
+				returnFields: ["value", "date"]
+			}]);
+
+			var activityId = this.chartsData.data.activityId;
+			if (activityId) {
+				objQuery.terms.activityId = activityId;
+				objQuery.terms.grandparentId = activityId;
+			}
+
+			if (this._interval !== "raw") {
+				objQuery.interval = this._interval;
+			} else {
+				objQuery.interval = null;
+			}
+
+			this._once(this.getChannel('ADDED_TO_QUERY'), dfd.resolve);
+
+			this._emitEvt('ADD_TO_QUERY', {
+				query: objQuery
+			});
 		}
 	});
 });

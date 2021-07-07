@@ -21,11 +21,13 @@ define([
 			this.config = {
 				filterEvents: {
 					ADD_TO_QUERY: 'addToQuery',
+					ADDED_TO_QUERY: 'addedToQuery',
 					REFRESH: 'refresh',
 					UPDATE_TARGET: 'updateTarget',
 					QUERY_CHANNEL_SET: 'queryChannelSet'
 				},
 				filterActions: {
+					ADDED_TO_QUERY: 'addedToQuery',
 					SERIALIZED: 'serialized',
 					REQUEST_FILTER: 'requestFilter',
 					ADD_TO_QUERY: 'addToQuery',
@@ -79,6 +81,9 @@ define([
 		_subscribeToFilter: function(queryChannel) {
 
 			this.subscriptionsConfig.push({
+				channel: this._buildChannel(queryChannel, this.actions.ADDED_TO_QUERY),
+				callback: '_subAddedToQuery'
+			},{
 				channel: this._buildChannel(queryChannel, this.actions.SERIALIZED),
 				callback: '_subFilterSerialized'
 			},{ // TODO: REQUEST_FILTER parece lo mismo que SERIALIZE, hacer que todo vaya por SERIALIZE
@@ -98,6 +103,9 @@ define([
 				event: 'ADD_TO_QUERY',
 				channel: this._buildChannel(queryChannel, this.actions.ADD_TO_QUERY)
 			},{
+				event: 'ADDED_TO_QUERY',
+				channel: this.getChannel('ADDED_TO_QUERY')
+			},{
 				event: 'REFRESH',
 				channel: this._buildChannel(queryChannel, this.actions.REFRESH)
 			},{
@@ -109,6 +117,11 @@ define([
 		_setFilterOwnCallbacksForEvents: function() {
 
 			this._onEvt('QUERY_CHANNEL_SET', lang.hitch(this, this._onQueryChannelUpdated));
+		},
+
+		_subAddedToQuery: function(res) {
+
+			this._emitEvt('ADDED_TO_QUERY', res);
 		},
 
 		_subFilterSerialized: function(res) {
@@ -146,6 +159,7 @@ define([
 		_disconnectFromFilter: function(oldQueryChannel) {
 
 			this._removeSubscriptions([
+				this._buildChannel(queryChannel, this.actions.ADDED_TO_QUERY),
 				this._buildChannel(oldQueryChannel, this.actions.SERIALIZED),
 				this._buildChannel(oldQueryChannel, this.actions.REQUEST_FILTER)
 			]);

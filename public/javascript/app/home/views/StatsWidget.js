@@ -157,7 +157,6 @@ define([
 					href = attachedKey;
 
 				if (attachedKey === 'activity') {
-
 					this._emitEvt('TOTAL_ACTIVITIES', {
 						value: specificData.total
 					});

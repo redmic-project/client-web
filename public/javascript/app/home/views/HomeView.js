@@ -43,6 +43,11 @@ define([
 			this.config = {
 				target: redmicConfig.services.activity,
 				propsWidget: {
+				},
+				filterConfig: {
+					initQuery: {
+						returnFields: redmicConfig.returnFields.activity
+					}
 				}
 			};
 
@@ -88,6 +93,7 @@ define([
 					height: 4,
 					type: SearchResultsWidget,
 					props: {
+						queryChannel: 'stub',
 						windowTitle: 'starredActivities',
 						omitTitleCloseButton: true
 					}
@@ -175,17 +181,17 @@ define([
 
 		_showSearchResults: function(searchDefinition) {
 
-			var obj = {
-				target: searchDefinition.target,
-				queryChannel: searchDefinition.queryChannel
-			};
+			this._emitEvt('ADD_TO_QUERY', {
+				query: {
+					text: {
+						text: searchDefinition.searchText
+					}
+				}
+			});
 
-			this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), lang.mixin({
+			this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), {
 				windowTitle: 'searchResults'
-			}, obj));
-
-			this._publish(this._getWidgetInstance('searchFastFilter').getChannel('SET_PROPS'), obj);
-			this._publish(this._getWidgetInstance('searchFilter').getChannel('SET_PROPS'), obj);
+			});
 		},
 
 		_hideSearchResults: function(searchDefinition) {
@@ -203,12 +209,6 @@ define([
 		_toggleAdvancedSearch: function(searchDefinition) {
 
 			if (!this._advancedSearchShown) {
-				if (this._advancedSearchShown === undefined) {
-					this._publish(this._getWidgetInstance('searchFilter').getChannel('SET_PROPS'), {
-						target: searchDefinition.target,
-						queryChannel: searchDefinition.queryChannel
-					});
-				}
 				this._advancedSearchShown = true;
 				this._showWidget('searchFilter');
 			} else {

@@ -71,7 +71,7 @@ define([
 					instance: Pagination,
 					config: {
 						pageSizeOptions: [10],
-						rowPerPage: 10,
+						rowPerPage: 10
 					}
 				}],
 				rowConfig: {

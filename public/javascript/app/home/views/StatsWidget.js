@@ -190,30 +190,30 @@ define([
 
 			var sourceStats = data[attachedKey],
 				sourceIndependentStats = independentKey ? data[independentKey] : null,
-				attachedTotal = sourceStats.open + sourceStats.close;
+				total = sourceStats.open + sourceStats.close;
 
 			var stats = {
-				attachedTotal: attachedTotal,
-				attachedOpen: sourceStats.open,
-				attachedClosed: sourceStats.close
+				total: total,
+				totalOpen: sourceStats.open,
+				totalClosed: sourceStats.close
 			};
 
-			if (independentKey) {
+			if (sourceIndependentStats) {
 				var independentTotal = sourceIndependentStats.open + sourceIndependentStats.close;
 
 				stats.independentTotal = independentTotal;
 				stats.independentOpen = sourceIndependentStats.open;
 				stats.independentClosed = sourceIndependentStats.close;
 
-				stats.total = attachedTotal + independentTotal;
-				stats.totalOpen = sourceStats.open + sourceIndependentStats.open;
-				stats.totalClosed = sourceStats.close + sourceIndependentStats.close;
+				stats.attachedTotal = total - independentTotal;
+				stats.attachedOpen = stats.totalOpen - stats.independentOpen;
+				stats.attachedClosed = stats.totalClosed - stats.independentClosed;
 
 				delete data[independentKey];
 			} else {
-				stats.total = attachedTotal;
-				stats.totalOpen = sourceStats.open;
-				stats.totalClosed = sourceStats.close;
+				stats.attachedTotal = stats.total;
+				stats.attachedOpen = stats.totalOpen;
+				stats.attachedClosed = stats.totalClosed;
 			}
 
 			delete data[attachedKey];

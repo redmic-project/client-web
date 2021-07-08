@@ -39,6 +39,10 @@ define([
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixFrameworkEventsAndActions));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineFrameworkSubscriptions));
 			aspect.after(this, "_definePublications", lang.hitch(this, this._defineFrameworkPublications));
+
+			if (this._onQueryChannelPropSet) {
+				aspect.before(this, '_onQueryChannelPropSet', lang.hitch(this, this._onFrameworkQueryChannelPropSet));
+			}
 		},
 
 		_mixFrameworkEventsAndActions: function () {
@@ -153,6 +157,21 @@ define([
 			this._publish(instance.getChannel("HIDE"));
 
 			this._emitEvt("REMOVE_TOOLBAR_IN_FRAMEWORK");
+		},
+
+		_onFrameworkQueryChannelPropSet: function(evt) {
+
+			this._setPropToBarModules(evt.prop, evt.value);
+		},
+
+		_setPropToBarModules: function(prop, value) {
+
+			var obj = {};
+			obj[prop] = value;
+
+			for (var i = 0; i < this._barsIntances.length; i++) {
+				this._publish(this._barsIntances[i].getChannel('SET_PROPS'), obj);
+			}
 		},
 
 		_updateTarget: function(obj) {

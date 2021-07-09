@@ -1288,6 +1288,9 @@ define({
 		, "activityRestricted": "Restricted accessibility, some contents have limited access"
 		, "activityConfidential": "Confidential accessibility, only visible to certain users"
 
+		, "activityWithResources": "With resources"
+		, "activityStarred": "Starred"
+
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

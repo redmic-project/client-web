@@ -47,7 +47,10 @@ define([
 				filterConfig: {
 					initQuery: {
 						returnFields: redmicConfig.returnFields.activity,
-						starred: true
+						sorts: [{
+							field: 'starred',
+							order: 'DESC'
+						}]
 					}
 				}
 			};

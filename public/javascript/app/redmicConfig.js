@@ -358,8 +358,8 @@ define([], function() {
 	};
 
 	retObj.returnFields = {
-		activity: ['accessibility', 'activityCategory', 'activityType', 'code', 'endDate', 'id', 'name', 'starred',
-			'startDate', 'themeInspire']
+		activity: ['accessibility', 'activityCategory', 'activityType', 'code', 'endDate', 'id', 'name', 'resources',
+			 'starred', 'startDate', 'themeInspire']
 	};
 
 	retObj.outerPaths = [

@@ -27,13 +27,11 @@ define([
 			this.config = {
 				ownChannel: 'searchWidget',
 				events: {
-					'SHOW_SEARCH_RESULTS': 'showSearchResults',
-					'HIDE_SEARCH_RESULTS': 'hideSearchResults',
+					'SEARCH_BY_TEXT': 'searchByText',
 					'TOGGLE_ADVANCED_SEARCH': 'toggleAdvancedSearch'
 				},
 				actions: {
-					'SHOW_SEARCH_RESULTS': 'showSearchResults',
-					'HIDE_SEARCH_RESULTS': 'hideSearchResults',
+					'SEARCH_BY_TEXT': 'searchByText',
 					'TOGGLE_ADVANCED_SEARCH': 'toggleAdvancedSearch'
 				},
 				target: redmicConfig.services.activity,
@@ -77,11 +75,8 @@ define([
 		_definePublications: function() {
 
 			this.publicationsConfig.push({
-				event: 'SHOW_SEARCH_RESULTS',
-				channel: this.getChannel('SHOW_SEARCH_RESULTS')
-			},{
-				event: 'HIDE_SEARCH_RESULTS',
-				channel: this.getChannel('HIDE_SEARCH_RESULTS')
+				event: 'SEARCH_BY_TEXT',
+				channel: this.getChannel('SEARCH_BY_TEXT')
 			},{
 				event: 'TOGGLE_ADVANCED_SEARCH',
 				channel: this.getChannel('TOGGLE_ADVANCED_SEARCH')
@@ -120,10 +115,10 @@ define([
 			var textObj = filterParams.text || {},
 				searchText = textObj.text || '';
 
-			this._emitEvt('SHOW_SEARCH_RESULTS', {
+			this._emitEvt('SEARCH_BY_TEXT', {
 				target: this.target,
 				searchText: searchText,
-				queryChannel: this.queryChannel
+				suggestionsQueryChannel: this.queryChannel
 			});
 		},
 

@@ -46,7 +46,8 @@ define([
 				},
 				filterConfig: {
 					initQuery: {
-						returnFields: redmicConfig.returnFields.activity
+						returnFields: redmicConfig.returnFields.activity,
+						starred: true
 					}
 				}
 			};
@@ -151,7 +152,41 @@ define([
 			if (this._getPreviouslyShown()) {
 				return;
 			}
+
+			this._listenAfterFirstShow();
+			this._publishAfterFirstShow();
+		},
+
+		_listenAfterFirstShow: function() {
+
+			this._once(this.getChannel('ADDED_TO_QUERY'), lang.hitch(this, function() {
+
+				this._once(this.getChannel('ADDED_TO_QUERY'), lang.hitch(this, function() {
+
+					this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), {
+						windowTitle: 'searchResults'
+					});
+				}));
+			}));
+
 			this._listenWidgets();
+		},
+
+		_listenWidgets: function() {
+
+			this._setSubscriptions([{
+				channel: this._getWidgetInstance('searchBar').getChannel('SEARCH_BY_TEXT'),
+				callback: lang.hitch(this, this._onSearchByText)
+			},{
+				channel: this._getWidgetInstance('searchBar').getChannel('TOGGLE_ADVANCED_SEARCH'),
+				callback: lang.hitch(this, this._toggleAdvancedSearch)
+			},{
+				channel: this._getWidgetInstance('stats').getChannel('TOTAL_ACTIVITIES'),
+				callback: lang.hitch(this, this._subStatsTotalActivities)
+			}]);
+		},
+
+		_publishAfterFirstShow: function() {
 
 			var obj = {
 				queryChannel: this.queryChannel
@@ -162,48 +197,15 @@ define([
 			this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), obj);
 		},
 
-		_listenWidgets: function() {
-
-			this._setSubscriptions([{
-				channel: this._getWidgetInstance('searchBar').getChannel('SHOW_SEARCH_RESULTS'),
-				callback: lang.hitch(this, this._showSearchResults)
-			},{
-				channel: this._getWidgetInstance('searchBar').getChannel('HIDE_SEARCH_RESULTS'),
-				callback: lang.hitch(this, this._hideSearchResults)
-			},{
-				channel: this._getWidgetInstance('searchBar').getChannel('TOGGLE_ADVANCED_SEARCH'),
-				callback: lang.hitch(this, this._toggleAdvancedSearch)
-			},{
-				channel: this._getWidgetInstance('stats').getChannel('TOTAL_ACTIVITIES'),
-				callback: lang.hitch(this, this._subStatsTotalActivities)
-			}]);
-		},
-
-		_showSearchResults: function(searchDefinition) {
+		_onSearchByText: function(searchDefinition) {
 
 			this._emitEvt('ADD_TO_QUERY', {
 				query: {
 					text: {
-						text: searchDefinition.searchText
+						text: searchDefinition.searchText || null
 					}
 				}
 			});
-
-			this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), {
-				windowTitle: 'searchResults'
-			});
-		},
-
-		_hideSearchResults: function(searchDefinition) {
-
-			var resultsWidget = this._getWidgetInstance('searchResults');
-
-			this._publish(resultsWidget.getChannel('CLEAR_DATA'), searchDefinition);
-			this._publish(resultsWidget.getChannel('SET_PROPS'), {
-				windowTitle: 'starredActivities'
-			});
-
-			this._hideWidget('searchFilter');
 		},
 
 		_toggleAdvancedSearch: function(searchDefinition) {

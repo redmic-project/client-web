@@ -32,7 +32,6 @@ define([
 				compositeActions: {
 					CHANGED_MODEL: "changedModel",
 					CHANGE_FILTER_CHANNEL: "changeFilterChannel",
-					REQUEST_FILTER: "requestFilter",
 					REMEMBER_CURRENT_VALUE: "rememberCurrentValue",
 					HAS_CHANGED: "hasChanged",
 					WAS_CHANGED: "wasChanged"
@@ -189,8 +188,8 @@ define([
 				key: 'reset'
 			});
 
-			this._publish(this._buildChannel(this.filterChannel, this.actions.REQUEST_FILTER), {
-				data: data
+			this._publish(this._buildChannel(this.filterChannel, this.actions.ADD_TO_QUERY), {
+				query: data
 			});
 
 			this._submitted = true;

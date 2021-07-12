@@ -54,12 +54,13 @@ define([
 		_selectTimeSeriesSelectionManagement: function(path) {
 
 			this._selected[path] = true;
+			this._insertedInTimeSeriesData = {};
 		},
 
 		_deselectTimeSeriesSelectionManagement: function(path) {
 
 			delete this._selected[path];
-			delete this._insertedInTimeSeriesData[path];
+			this._insertedInTimeSeriesData = {};
 		},
 
 		_generateTimeSeriesData: function() {

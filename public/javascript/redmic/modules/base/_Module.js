@@ -733,38 +733,49 @@ define([
 			var propNames = [];
 
 			for (var prop in req) {
-				var value = req[prop],
+				var value = this._getUnmutableValue(req[prop]),
 					oldValue = this[prop];
 
-				if (this._checkPropIsShareable(prop)) {
-					if (value === oldValue) {
-						console.warn('Tried to update property "%s" using same value "%s" at module "%s"', prop, value,
-							this.getChannel());
-
-							continue;
-					}
-					var evtKey = this._createEvent(prop + this.propSetSuffix),
-						methodName = '_on' + Utilities.capitalize(prop) + 'PropSet',
-						changeObj = {
-							prop: prop,
-							oldValue: oldValue,
-							value: value
-						};
-
-					this[prop] = value;
-
-					this._emitEvt(evtKey, changeObj);
-					this[methodName] && this[methodName](changeObj);
-
-					propNames.push(prop);
-				} else {
-					console.error("Tried to set not settable property '%s' at module '%s'", prop, this.getChannel());
+				if (!this._checkPropIsShareable(prop)) {
+					console.error('Tried to set not settable property "%s" at module "%s"', prop, this.getChannel());
+					continue;
 				}
+
+				if (value === oldValue) {
+					console.warn('Tried to update property "%s" using same value "%s" at module "%s"', prop, value,
+						this.getChannel());
+
+					continue;
+				}
+
+				this[prop] = value;
+				propNames.push(prop);
+
+				var evtKey = this._createEvent(prop + this.propSetSuffix),
+					methodName = '_on' + Utilities.capitalize(prop) + 'PropSet',
+					changeObj = {
+						prop: prop,
+						oldValue: oldValue,
+						value: value
+					};
+
+
+				this._emitEvt(evtKey, changeObj);
+				this[methodName] && this[methodName](changeObj);
 			}
 
 			this._emitEvt('PROPS_SET', {
 				propNames: propNames
 			});
+		},
+
+		_getUnmutableValue: function(value) {
+
+			if (typeof value === 'object' && !value.ownChannel) {
+				return lang.clone(value);
+			}
+
+			return value;
 		},
 
 		_subGetProps: function(req) {

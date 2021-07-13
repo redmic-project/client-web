@@ -744,8 +744,6 @@ define([
 				if (value === oldValue) {
 					console.warn('Tried to update property "%s" using same value "%s" at module "%s"', prop, value,
 						this.getChannel());
-
-					continue;
 				}
 
 				this[prop] = value;
@@ -759,7 +757,6 @@ define([
 						value: value
 					};
 
-
 				this._emitEvt(evtKey, changeObj);
 				this[methodName] && this[methodName](changeObj);
 			}
@@ -771,7 +768,7 @@ define([
 
 		_getUnmutableValue: function(value) {
 
-			if (typeof value === 'object' && !value.ownChannel) {
+			if (typeof value === 'object' && value && !value.ownChannel) {
 				return lang.clone(value);
 			}
 

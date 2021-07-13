@@ -162,9 +162,10 @@ define([
 
 		_listenAfterFirstShow: function() {
 
-			this._once(this.getChannel('ADDED_TO_QUERY'), lang.hitch(this, function() {
+			var addedToQueryChannel = this.getChannel('ADDED_TO_QUERY');
+			this._once(addedToQueryChannel, lang.hitch(this, function() {
 
-				this._once(this.getChannel('ADDED_TO_QUERY'), lang.hitch(this, function() {
+				this._once(addedToQueryChannel, lang.hitch(this, function() {
 
 					this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), {
 						windowTitle: 'searchResults'
@@ -211,7 +212,7 @@ define([
 			});
 		},
 
-		_toggleAdvancedSearch: function(searchDefinition) {
+		_toggleAdvancedSearch: function() {
 
 			if (!this._advancedSearchShown) {
 				this._advancedSearchShown = true;

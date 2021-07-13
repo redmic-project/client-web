@@ -422,7 +422,6 @@ define([
 			this._embedModule(this.chartContainer, inputKey);
 
 			if (this._updateDataChart) {
-
 				this._publish(this.chartContainer.getChannel("SET_PROPS"), {
 					chartsData: this.seriesData
 				});

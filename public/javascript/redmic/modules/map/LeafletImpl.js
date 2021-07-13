@@ -326,7 +326,7 @@ define([
 			this.map.panTo(latLng, options);
 		},
 
-		fitBounds: function(bounds, options) {
+		fitBounds: function(bounds) {
 
 			this.map.fitBounds(bounds);
 		},

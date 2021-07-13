@@ -95,7 +95,12 @@ define([
 
 			newLayer.addTo(this.map);
 
-			this.fitBounds(newLayer.getBounds());
+			var bounds = newLayer.getBounds();
+			if (this._getShown()) {
+				this.fitBounds(bounds);
+			} else {
+				this._onceEvt('BBOX_CHANGE', lang.hitch(this, this.fitBounds, bounds));
+			}
 
 			this._emitEvt('ADD_WKT', {
 				layer: newLayer

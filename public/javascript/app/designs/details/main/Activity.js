@@ -46,6 +46,7 @@ define([
 					props: {
 						title: this.i18n.spatialExtension,
 						omitContainerSizeCheck: true,
+						maxZoom: 15,
 						coordinatesViewer: false,
 						navBar: false,
 						miniMap: false,
@@ -142,8 +143,6 @@ define([
 
 		_onActivityDetailsHidden: function() {
 
-			this._hideWidget('spatialExtensionMap');
-
 			if (this._lastWktLayer) {
 				var mapInstance = this._getWidgetInstance('spatialExtensionMap');
 
@@ -151,6 +150,8 @@ define([
 					layer: this._lastWktLayer
 				});
 			}
+
+			this._hideWidget('spatialExtensionMap');
 		}
 	});
 });

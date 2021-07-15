@@ -75,6 +75,11 @@ function onRobotsRequest(req, res) {
 	res.send(fileData);
 }
 
+function onApiRequest(req, res) {
+
+	res.redirect('/404');
+}
+
 function onJqueryRequest(req, res) {
 
 	res.set('Content-Type', 'application/json');
@@ -139,26 +144,16 @@ function onOauthTokenRequest(req, res) {
 
 function exposeRoutes(app) {
 
-	app.get(
-		/^((?!\/(activateAccount|resetting|noSupportBrowser|404|sitemap.xml|robots.txt|node_modules|env|.*\/jquery.js)))(\/.*)$/,
-		onGeneralRequest)
-
-		.get('/env', onEnvRequest)
-
+	app.get('/env', onEnvRequest)
 		.get('/activateAccount/:token', onActivateAccountRequest)
-
 		.get('/noSupportBrowser', onNoSupportBrowserRequest)
-
 		.get('/404', on404Request)
-
 		.get('/sitemap.xml', onSitemapRequest)
-
 		.get('/robots.txt', onRobotsRequest)
-
+		.get(/\/api\/.*/, onApiRequest)
 		.get(/.*\/jquery.js/, onJqueryRequest)
-
+		.get(/.*/, onGeneralRequest)
 		.post('/oauth/token', onOauthTokenRequest)
-
 		.use(onUnknownRequest);
 }
 

@@ -1,67 +1,52 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/details/Controller"
-	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
-	, "app/redmicConfig"
+	"app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/Deferred"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/layout/TabsDisplayer"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/ActivityList"
 	, "templates/DocumentList"
 	, "templates/LoadingCustom"
-	, "templates/LoadingEmpty"
 	, "templates/SpeciesInfo"
 	, "templates/SpeciesTitle"
+	, "./_DetailsBase"
 ], function(
-	_Main
-	, Controller
-	, Layout
-	, _AddTitle
-	, _TitleSelection
-	, redmicConfig
+	redmicConfig
 	, declare
 	, lang
-	, Deferred
 	, _ButtonsInRow
 	, _Framework
 	, ListImpl
 	, Total
-	, TabsDisplayer
-	, TemplateDisplayer
-	, TemplateActivities
 	, TemplateDocuments
 	, TemplateCustom
-	, TemplateEmpty
 	, TemplateInfo
 	, TemplateTitle
+	, _DetailsBase
 ) {
 
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
+	return declare([_DetailsBase], {
 		//	summary:
-		//		Vista detalle de Species.
+		//		Vista detalle de especies.
 
 		constructor: function(args) {
 
-			this.target = [redmicConfig.services.species];
-			this.reportService = "species";
-			this.ancestorsTarget = redmicConfig.services.taxonAncestors;
-			this.documentTarget = "documents";
-			this.activityTarget = "activities";
-			this.infoTarget = "infoTarget";
-			this.titleWidgetTarget = "titleWidgetTarget";
-
-			this.titleRightButtonsList = [];
-
 			this.config = {
-				noScroll: true
+				_titleRightButtonsList: [{
+					icon: "fa-print",
+					btnId: "report",
+					title: this.i18n.printToPdf
+				}],
+				templateTitle: TemplateTitle,
+				templateInfo: TemplateInfo,
+				target: redmicConfig.services.species,
+				reportService: "species",
+				ancestorsTarget: redmicConfig.services.taxonAncestors,
+				documentTarget: "documents",
+				activityTarget: "activities",
+				infoTarget: "infoTarget",
+				titleWidgetTarget: "titleWidgetTarget"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -69,93 +54,68 @@ define([
 
 		_setMainConfigurations: function() {
 
+			this.inherited(arguments);
+
 			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle,
 				target: this.titleWidgetTarget
 			}, this.titleWidgetConfig || {}]);
 
-			this.widgetConfigs = this._merge([{
-				info: {
-					width: 3,
-					height: 6,
-					type: TemplateDisplayer,
-					props: {
-						title: this.i18n.info,
-						template: TemplateInfo,
-						"class": "containerDetails",
-						classEmptyTemplate: "contentListNoData",
-						target: this.infoTarget,
-						associatedIds: [this.ownChannel]
-					}
-				},
-				additionalInfo: {
-					width: 3,
-					height: 6,
-					type: TabsDisplayer,
-					props: {
-						title: this.i18n.additionalInfo,
-						childTabs: [{
-							title: this.i18n.activities,
-							type: declare([ListImpl, _Framework, _ButtonsInRow]),
-							props: {
-								target: this.activityTarget,
-								template: TemplateActivities,
-								bars: [{
-									instance: Total
-								}],
-								rowConfig: {
-									buttonsConfig: {
-										listButton: [{
-											icon: "fa-info-circle",
-											btnId: "details",
-											title: this.i18n.info,
-											href: this.viewPathsWidgets.activities
-										}]
-									}
-								}
-							}
-						},{
-							title: this.i18n.documents,
-							type: declare([ListImpl, _Framework, _ButtonsInRow]),
-							props: {
-								target: this.documentTarget,
-								template: TemplateDocuments,
-								bars: [{
-									instance: Total
-								}],
-								rowConfig: {
-									buttonsConfig: {
-										listButton: [{
-											icon: "fa-file-pdf-o",
-											btnId: "downloadPdf",
-											title: this.i18n.download,
-											condition: "url",
-											href: redmicConfig.viewPaths.bibliographyPDF
-
-										},{
-											icon: "fa-info-circle",
-											btnId: "details",
-											title: this.i18n.info,
-											href: this.viewPathsWidgets.documents
-										}]
-									}
-								},
-								noDataMessage: TemplateCustom({
-									message: this.i18n.noAssociatedDocuments,
-									iconClass: "fr fr-no-data"
-								})
-							}
-						}]
-					}
+			this.widgetConfigs = this._merge([
+				this.widgetConfigs || {},
+				{
+					info: {
+						props: {
+							target: this.infoTarget
+						}
+					},
+					documentList: this._documentsConfig()
 				}
-			}, this.widgetConfigs || {}]);
+			]);
+		},
+
+		_documentsConfig: function() {
+
+			return {
+				width: 3,
+				height: 2,
+				type: declare([ListImpl, _Framework, _ButtonsInRow]),
+				props: {
+					title: this.i18n.documents,
+					target: this.documentTarget,
+					template: TemplateDocuments,
+					bars: [{
+						instance: Total
+					}],
+					rowConfig: {
+						buttonsConfig: {
+							listButton: [{
+								icon: "fa-file-pdf-o",
+								btnId: "downloadPdf",
+								title: this.i18n.download,
+								condition: "url",
+								href: redmicConfig.viewPaths.bibliographyPDF
+							},{
+								icon: "fa-info-circle",
+								btnId: "details",
+								title: this.i18n.info,
+								href: this.viewPathsWidgets.documents
+							}]
+						}
+					},
+					noDataMessage: TemplateCustom({
+						message: this.i18n.noAssociatedDocuments,
+						iconClass: "fr fr-no-data"
+					})
+				}
+			};
 		},
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.info.getChannel("CLEAR"));
-			this._publish(this._widgets.additionalInfo.getChildChannel("childInstances.0", "CLEAR"));
-			this._publish(this._widgets.additionalInfo.getChildChannel("childInstances.1", "CLEAR"));
+			this.inherited(arguments);
+
+			this._publish(this._getWidgetInstance('activityList').getChannel('CLEAR'));
+			this._publish(this._getWidgetInstance('documentList').getChannel('CLEAR'));
 		},
 
 		_refreshModules: function() {
@@ -264,8 +224,9 @@ define([
 
 			var valueItem = this._speciesData[idProperty];
 
-			if (valueItem)
+			if (valueItem) {
 				return lang.replace(this.viewPathsWidgets.documents, { id: valueItem });
+			}
 		}
 	});
 });

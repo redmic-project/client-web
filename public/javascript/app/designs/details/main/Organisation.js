@@ -13,7 +13,7 @@ define([
 ){
 	return declare([_DetailsBase], {
 		//	summary:
-		//		Vista detalle de Organisation.
+		//		Vista detalle de organizaciones.
 
 
 		constructor: function(args) {

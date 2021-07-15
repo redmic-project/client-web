@@ -12,7 +12,6 @@ define([
 	, "redmic/modules/browser/_Select"
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/layout/TabsDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/ActivityList"
 ], function(
@@ -29,22 +28,17 @@ define([
 	, _Select
 	, ListImpl
 	, Total
-	, TabsDisplayer
 	, TemplateDisplayer
 	, TemplateActivities
-){
+) {
+
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
 		//	summary:
-		//		Vista detalle de Organisation.
+		//		Base de vistas detalle.
 
 		constructor: function(args) {
 
 			this.activityTarget = "activities";
-
-			this.config = {
-				noScroll: true,
-				_titleRightButtonsList: []
-			};
 
 			lang.mixin(this, this.config, args);
 		},
@@ -74,24 +68,18 @@ define([
 						shownOption: this.shownOptionInfo
 					}
 				},
-				additionalInfo: {
-					width: 3,
-					height: 6,
-					type: TabsDisplayer,
-					props: {
-						title: this.i18n.additionalInfo,
-						childTabs: [this._configAdditionalInfoActivity()]
-					}
-				}
+				activityList: this._configAdditionalInfoActivity()
 			}, this.widgetConfigs || {}]);
 		},
 
 		_configAdditionalInfoActivity: function() {
 
 			return {
-				title: this.i18n.activities,
 				type: declare([ListImpl, _Framework, _ButtonsInRow, _Select]),
+				width: 3,
+				height: 2,
 				props: {
+					title: this.i18n.activities,
 					selectionTarget: redmicConfig.services.activity,
 					target: this.activityTarget,
 					template: TemplateActivities,
@@ -114,7 +102,7 @@ define([
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.info.getChannel("CLEAR"));
+			this._publish(this._getWidgetInstance('info').getChannel('CLEAR'));
 		},
 
 		_refreshModules: function() {
@@ -142,9 +130,8 @@ define([
 
 			this.inherited(arguments);
 
-			if (resWrapper.target === this.target[1]){
+			if (resWrapper.target === this.target[1]) {
 				this._dataToActivities(res);
-				return;
 			}
 		},
 

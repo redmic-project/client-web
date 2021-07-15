@@ -21,7 +21,7 @@ define([
 ){
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
 		//	summary:
-		//		Vista detalle de Document.
+		//		Vista detalle de documento PDF.
 
 		constructor: function(args) {
 

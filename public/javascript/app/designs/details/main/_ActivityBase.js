@@ -41,12 +41,17 @@ define([
 ){
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
 		//	summary:
-		//		Vista detalle de Activity.
+		//		Base de vistas detalle de la rama de actividades.
 
 		constructor: function(args) {
 
 			this.config = {
-				noScroll: true,
+				_titleRightButtonsList: [{
+					icon: "fa-print",
+					btnId: "report",
+					title: this.i18n.printToPdf
+				}],
+
 				documentTarget: "documents",
 				contactTarget: "contacts",
 				organisationTarget: "organisations",

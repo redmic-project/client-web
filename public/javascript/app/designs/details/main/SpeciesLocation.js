@@ -46,7 +46,7 @@ define([
 
 	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection, _LocalSelectionView], {
 		//	summary:
-		//		Vista detalle de Species.
+		//		Vista detalle de localización de especies.
 
 		constructor: function(args) {
 
@@ -60,8 +60,6 @@ define([
 					resizable: false
 				}
 			};
-
-			this.titleRightButtonsList = [];
 
 			lang.mixin(this, this.config, args);
 		},

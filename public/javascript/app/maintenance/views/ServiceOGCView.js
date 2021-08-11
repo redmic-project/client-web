@@ -20,7 +20,7 @@ define([
 
 			this.config = {
 				ownChannel: "serviceOGC",
-				addPath: this.viewPaths.serviceOGCAdd
+				addPath: this.viewPaths.serviceOGCEdit
 			};
 
 			lang.mixin(this, this.config, args);

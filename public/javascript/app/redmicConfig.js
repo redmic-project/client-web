@@ -107,7 +107,6 @@ define([], function() {
 
 		'serviceOGCCatalog': '/service-ogc-catalog',
 		'serviceOGCCatalogDetails': '/service-ogc-catalog/service-ogc-info/{id}',
-		'serviceOGCAdd': '/maintenance/service-ogc-add/{id}',
 		'serviceOGCEdit': '/maintenance/service-ogc-edit/{id}',
 		'serviceOGCDetails': '/maintenance/service-ogc-info/{id}',
 		'serviceOGC': '/maintenance/service-ogc',

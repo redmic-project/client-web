@@ -222,6 +222,13 @@ define([
 			return this._widgets[key];
 		},
 
+		_addWidget: function(key, config) {
+
+			this._createWidget(key, config);
+			this._createWidgetNode(key, config);
+			this._showWidget(key);
+		},
+
 		_createWidget: function(key, config) {
 
 			if (this._getWidgetInstance(key)) {
@@ -257,6 +264,14 @@ define([
 				nodeDefinition = 'div.' + this.hiddenClass + rowsParam + colsParam;
 
 			this._nodes[key] = put(this.centerNode, nodeDefinition);
+		},
+
+		_removeWidgetNode: function(key) {
+
+			var widgetNode = this._nodes[key];
+
+			this._removeWidgetInteractivity(key);
+			widgetNode && put('!', widgetNode);
 		},
 
 		_showWidget: function(key, omitReload) {
@@ -343,6 +358,20 @@ define([
 			}
 
 			this._publish(instance.getChannel("DISCONNECT"));
+		},
+
+		_destroyWidget: function(key) {
+
+			var instance = this._getWidgetInstance(key);
+
+			if (!instance) {
+				console.error('Tried to destroy non-existent widget "%s"', key);
+				return;
+			}
+
+			this._removeWidgetNode(key);
+			this._publish(instance.getChannel('DESTROY'));
+			delete this._widgets[key];
 		},
 
 		_addWidgetInteractivity: function(key) {

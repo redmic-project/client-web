@@ -3,8 +3,6 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/map/layer/PruneClusterLayerImpl"
@@ -15,16 +13,13 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, _AddTitle
-	, _TitleSelection
 	, declare
 	, lang
 	, PruneClusterLayerImpl
 	, _RadiusOnClick
 	, Geographic
 ){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection,
-		_ListenActivityDataAndAccessByActivityCategory], {
+	return declare([Layout, Controller, _Main, _ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
 		//		Vista detalle de ActivityMap.
 

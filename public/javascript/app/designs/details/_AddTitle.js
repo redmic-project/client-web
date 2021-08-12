@@ -180,26 +180,24 @@ define([
 			this._tabstitleNode = put(this.titleNode, "div.tabs");
 
 			for (var i = 0; i < this.tabs.length; i++) {
-				this._insertTab(i);
+				this._insertTab(this.tabs[i]);
 			}
 		},
 
-		_insertTab: function(pos) {
+		_insertTab: function(tab) {
 
-			if (this.tabs[pos].select) {
+			if (tab.select || !this._insertTabByCondition(tab)) {
 				return;
 			}
 
-			if (this._insertTabByCondition(this.tabs[pos])) {
-				var classTab = ".tab.tabSelect";
+			var tabClass = '.tab.tabSelect',
+				tabTitleKey = tab.title,
+				tabTitleValue = this.i18n[tabTitleKey] || tabTitleKey,
+				tabNode = put(this._tabstitleNode, 'div' + tabClass + ' a', tabTitleValue);
 
-				tabNode = put(this._tabstitleNode, "div" + classTab + " a",
-					this.i18n[this.tabs[pos].title] ? this.i18n[this.tabs[pos].title] : this.tabs[pos].title);
-
-				if (!this.tabs[pos].select && this.tabs[pos].href) {
-					tabNode.setAttribute('href', lang.replace(this.tabs[pos].href, this.data));
-					tabNode.setAttribute('d-state-url', true);
-				}
+			if (tab.href) {
+				tabNode.setAttribute('href', lang.replace(tab.href, this.data));
+				tabNode.setAttribute('d-state-url', true);
 			}
 		},
 

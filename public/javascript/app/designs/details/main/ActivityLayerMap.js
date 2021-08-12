@@ -3,8 +3,6 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "app/designs/mapWithSideContent/main/Geographic"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -15,8 +13,6 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, _AddTitle
-	, _TitleSelection
 	, Geographic
 	, declare
 	, lang
@@ -24,8 +20,7 @@ define([
 	, ActivityLayerList
 ) {
 
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection,
-		_ListenActivityDataAndAccessByActivityCategory], {
+	return declare([Layout, Controller, _Main, _ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
 		//		Vista detalle de ActivityLayerMap.
 

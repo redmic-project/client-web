@@ -100,43 +100,44 @@ define([
 			this._layerDefinition = declare(this.definitionLayer);
 		},
 
-		_afterShow: function(request) {
+		_afterShow: function() {
 
-			if (!this.layerInstance) {
-
-				this.layerConfig = this._merge([{
-					mapChannel: this._widgets.geographic.getChildChannel("map"),
-					selectorChannel: this._widgets.geographic.getChannel()
-				}, this.layerConfig || {}]);
-
-				this.layerInstance = new this._layerDefinition(this.layerConfig);
-
-				this._publish(this._widgets.geographic.getChildChannel("map", "ADD_LAYER"), this.layerInstance);
-
-				var widgetInstance = this._widgets.geographic;
-
-				this._publish(
-					widgetInstance.getChildChannel("mapCenteringGateway", "ADD_CHANNELS_DEFINITION"), {
-						channelsDefinition: [{
-							input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
-							output: this.layerInstance.getChannel("SET_CENTER"),
-							subMethod: "setCenter"
-						},{
-							input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
-							output: this.layerInstance.getChannel("ANIMATE_MARKER"),
-							subMethod: "animateMarker"
-						}]
-					}
-				);
+			if (this.layerInstance) {
+				this.startup();
+				return;
 			}
+
+			var widgetInstance = this._getWidgetInstance('geographic');
+
+			this.layerConfig = this._merge([{
+				mapChannel: widgetInstance.getChildChannel("map"),
+				selectorChannel: widgetInstance.getChannel()
+			}, this.layerConfig || {}]);
+
+			this.layerInstance = new this._layerDefinition(this.layerConfig);
+
+			this._publish(widgetInstance.getChildChannel("map", "ADD_LAYER"), this.layerInstance);
+
+			this._publish(widgetInstance.getChildChannel("mapCenteringGateway", "ADD_CHANNELS_DEFINITION"), {
+				channelsDefinition: [{
+					input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
+					output: this.layerInstance.getChannel("SET_CENTER"),
+					subMethod: "setCenter"
+				},{
+					input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
+					output: this.layerInstance.getChannel("ANIMATE_MARKER"),
+					subMethod: "animateMarker"
+				}]
+			});
 
 			this.startup();
 		},
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.geographic.getChannel("CLEAR"));
-			this._publish(this._widgets.geographic.getChannel("REFRESH"));
+			var widgetInstance = this._getWidgetInstance('geographic');
+			this._publish(widgetInstance.getChannel("CLEAR"));
+			this._publish(widgetInstance.getChannel("REFRESH"));
 		},
 
 		_refreshModules: function() {
@@ -155,7 +156,8 @@ define([
 				target: this.targetChange
 			});
 
-			this._publish(this._widgets.geographic.getChannel("UPDATE_TARGET"), {
+			var widgetInstance = this._getWidgetInstance('geographic');
+			this._publish(widgetInstance.getChannel("UPDATE_TARGET"), {
 				target: this.targetChange,
 				refresh: true
 			});

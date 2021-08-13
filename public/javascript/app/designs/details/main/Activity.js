@@ -1,18 +1,15 @@
 define([
-	'app/details/views/ActivityCitationMapBase'
-	, 'app/details/views/ActivityLayerMapBase'
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/map/_ImportWkt"
-	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
-	, "templates/ActivityInfo"
-	, "./_ActivityBase"
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/map/_ImportWkt'
+	, 'redmic/modules/map/LeafletImpl'
+	, 'redmic/modules/map/Map'
+	, 'templates/ActivityInfo'
+	, './_ActivityBase'
+	, './_ActivityCategoryWidgets'
 ], function(
-	ActivityCitationMapBase
-	, ActivityLayerMapBase
-	, redmicConfig
+	redmicConfig
 	, declare
 	, lang
 	, _ImportWkt
@@ -20,19 +17,20 @@ define([
 	, Map
 	, TemplateInfo
 	, _ActivityBase
+	, _ActivityCategoryWidgets
 ) {
 
-	return declare([_ActivityBase], {
+	return declare([_ActivityBase, _ActivityCategoryWidgets], {
 		//	summary:
 		//		Vista detalle de Activity.
 
 		constructor: function(args) {
 
 			this.target = redmicConfig.services.activity;
-			this.reportService = "activity";
+			this.reportService = 'activity';
 			this.ancestorsTarget = redmicConfig.services.activityAncestors;
 
-			this.infoTarget = "infoWidgetTarget";
+			this.infoTarget = 'infoWidgetTarget';
 		},
 
 		_setMainConfigurations: function() {
@@ -90,7 +88,7 @@ define([
 			});
 
 			this._emitEvt('REQUEST', {
-				method: "POST",
+				method: 'POST',
 				target: ancestorsTarget,
 				action: '_search',
 				query: {
@@ -146,62 +144,6 @@ define([
 			});
 		},
 
-		_prepareActivityCategoryCustomWidgets: function() {
-
-			if (!this._activityCategoryCustomWidgets) {
-				this._activityCategoryCustomWidgets = [];
-			}
-
-			var activityCategory = this._activityData.activityCategory,
-				widgetKey;
-
-			if (activityCategory === 'ci') {
-				widgetKey = this._prepareCitationActivityWidgets();
-			} else if (activityCategory === 'ml') {
-				widgetKey = this._prepareMapLayerActivityWidgets();
-			}
-
-			widgetKey && this._activityCategoryCustomWidgets.push(widgetKey);
-		},
-
-		_prepareCitationActivityWidgets: function() {
-
-			var key = 'activityCitation';
-
-			var config = {
-				width: 6,
-				height: 6,
-				type: ActivityCitationMapBase,
-				props: {
-					title: this.i18n.citations,
-					pathVariableId: this._activityData.id
-				}
-			};
-
-			this._addWidget(key, config);
-
-			return key;
-		},
-
-		_prepareMapLayerActivityWidgets: function() {
-
-			var key = 'activityMapLayer';
-
-			var config = {
-				width: 6,
-				height: 6,
-				type: ActivityLayerMapBase,
-				props: {
-					title: this.i18n.layers,
-					pathVariableId: this._activityData.id
-				}
-			};
-
-			this._addWidget(key, config);
-
-			return key;
-		},
-
 		_onActivityDetailsHidden: function() {
 
 			if (this._lastWktLayer) {
@@ -215,14 +157,6 @@ define([
 			this._hideWidget('spatialExtensionMap');
 
 			this._removeActivityCategoryCustomWidgets();
-		},
-
-		_removeActivityCategoryCustomWidgets: function() {
-
-			while (this._activityCategoryCustomWidgets.length) {
-				var key = this._activityCategoryCustomWidgets.pop();
-				this._destroyWidget(key);
-			}
 		}
 	});
 });

@@ -3,8 +3,6 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "app/designs/mapWithSideContent/main/Tracking"
 	, "app/designs/mapWithSideContent/main/_TrackingWithListByFilter"
 	, "app/redmicConfig"
@@ -15,16 +13,14 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, _AddTitle
-	, _TitleSelection
 	, Tracking
 	, _TrackingWithListByFilter
 	, redmicConfig
 	, declare
 	, lang
-){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection,
-		_ListenActivityDataAndAccessByActivityCategory], {
+) {
+
+	return declare([Layout, Controller, _Main, _ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
 		//		Vista detalle de Activity tracking.
 
@@ -62,14 +58,16 @@ define([
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.tracking.getChannel("CLEAR"));
+			var widgetInstance = this._getWidgetInstance('tracking');
+			this._publish(widgetInstance.getChannel("CLEAR"));
 		},
 
 		_refreshModules: function() {
 
 			this._checkPathVariableId();
 
-			this._publish(this._widgets.tracking.getChannel("SET_PROPS"), {
+			var widgetInstance = this._getWidgetInstance('tracking');
+			this._publish(widgetInstance.getChannel("SET_PROPS"), {
 				pathVariableId: this.pathVariableId
 			});
 
@@ -86,7 +84,8 @@ define([
 
 			this.target[1] = target;
 
-			this._publish(this._widgets.tracking.getChannel("UPDATE_TARGET"), {
+			var widgetInstance = this._getWidgetInstance('tracking');
+			this._publish(widgetInstance.getChannel("UPDATE_TARGET"), {
 				target: target,
 				refresh: true
 			});

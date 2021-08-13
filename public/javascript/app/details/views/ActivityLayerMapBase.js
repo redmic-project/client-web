@@ -80,8 +80,11 @@ define([
 
 		_createLayer: function(layer) {
 
-			// TODO me parece mala idea hacer esto, referencia directa a instancias que no se han creado aquí
-			var widgetInstance = this._widgets.geographic;
+			var widgetInstance = this._getWidgetInstance('geographic');
+
+			if (!widgetInstance) {
+				return;
+			}
 
 			this.layerConfig = this._merge([{
 				mapChannel: widgetInstance.getChildChannel('map'),

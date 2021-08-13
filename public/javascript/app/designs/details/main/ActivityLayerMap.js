@@ -74,8 +74,9 @@ define([
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.geographic.getChannel("CLEAR"));
-			this._publish(this._widgets.geographic.getChannel("REFRESH"));
+			var widgetInstance = this._getWidgetInstance('geographic');
+			this._publish(widgetInstance.getChannel("CLEAR"));
+			this._publish(widgetInstance.getChannel("REFRESH"));
 		},
 
 		_refreshModules: function() {
@@ -90,7 +91,8 @@ define([
 
 			this.targetChange = lang.replace(this.templateTargetChange, {id: this.pathVariableId});
 
-			this._publish(this._widgets.geographic.getChannel("UPDATE_TARGET"), {
+			var widgetInstance = this._getWidgetInstance('geographic');
+			this._publish(widgetInstance.getChannel("UPDATE_TARGET"), {
 				target: this.targetChange,
 				refresh: true
 			});

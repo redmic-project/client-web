@@ -135,7 +135,7 @@ define([
 
 			this._tryToEmitEvt('LOADED');
 
-			if (this.target !== obj.target) {
+			if (obj.refresh || this.target !== obj.target) {
 				this.target = obj.target;
 
 				this._updateTarget && this._updateTarget(obj);

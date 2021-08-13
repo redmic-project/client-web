@@ -11,6 +11,7 @@ define([
 	, "templates/SpeciesInfo"
 	, "templates/SpeciesTitle"
 	, "./_DetailsBase"
+	, "./SpeciesLocation"
 ], function(
 	redmicConfig
 	, declare
@@ -24,6 +25,7 @@ define([
 	, TemplateInfo
 	, TemplateTitle
 	, _DetailsBase
+	, SpeciesLocation
 ) {
 
 	return declare([_DetailsBase], {
@@ -64,11 +66,24 @@ define([
 				this.widgetConfigs || {},
 				{
 					info: {
+						height: 5,
 						props: {
 							target: this.infoTarget
 						}
 					},
-					documentList: this._documentsConfig()
+					activityList: {
+						height: 3
+					},
+					documentList: this._documentsConfig(),
+					map: {
+						width: 6,
+						height: 4,
+						type: SpeciesLocation,
+						props: {
+							title: this.i18n.location,
+							pathVariableId: this.pathVariableId
+						}
+					}
 				}
 			]);
 		},

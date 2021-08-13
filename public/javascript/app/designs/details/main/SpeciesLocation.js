@@ -3,8 +3,6 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -25,8 +23,6 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, _AddTitle
-	, _TitleSelection
 	, redmicConfig
 	, declare
 	, lang
@@ -44,7 +40,7 @@ define([
 	, pointTrackingTemplate
 ) {
 
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection, _LocalSelectionView], {
+	return declare([Layout, Controller, _Main, _LocalSelectionView], {
 		//	summary:
 		//		Vista detalle de localización de especies.
 

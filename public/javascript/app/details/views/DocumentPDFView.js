@@ -13,16 +13,6 @@ define([
 
 		_setConfigurations: function() {
 
-			this.tabs = [{
-				title: "seeInfo",
-				href: redmicConfig.viewPaths.documentDetails
-			},{
-				title: "PDF",
-				select: true,
-				conditionHref: "url",
-				href: redmicConfig.viewPaths.documentPDF
-			}];
-
 			this.pathParent = redmicConfig.viewPaths.document;
 		}
 	});

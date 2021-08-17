@@ -154,7 +154,7 @@ define([
 								btnId: "downloadPdf",
 								title: this.i18n.download,
 								condition: "url",
-								href: redmicConfig.viewPaths.bibliographyPDF
+								href: redmicConfig.viewPaths.bibliographyDetails
 							},{
 								icon: "fa-info-circle",
 								btnId: "details",

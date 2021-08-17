@@ -17,16 +17,6 @@ define([
 				activities: redmicConfig.viewPaths.activityCatalogDetails
 			};
 
-			this.tabs = [{
-				select: true,
-				title: "seeInfo",
-				href: redmicConfig.viewPaths.bibliographyDetails
-			},{
-				title: "PDF",
-				conditionHref: "url",
-				href: redmicConfig.viewPaths.bibliographyPDF
-			}];
-
 			this.pathParent = redmicConfig.viewPaths.bibliography;
 		}
 	});

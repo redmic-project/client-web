@@ -119,7 +119,12 @@ define([
 			}
 		},
 
-		_clearModules: function() { },
+		_clearModules: function() {
+
+			this.inherited(arguments);
+
+			this.pruneClusterLayer && this._publish(this.pruneClusterLayer.getChannel('CLEAR'));
+		},
 
 		_refreshModules: function() {
 

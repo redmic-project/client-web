@@ -108,7 +108,7 @@ define([
 								btnId: "downloadPdf",
 								title: this.i18n.download,
 								condition: "url",
-								href: redmicConfig.viewPaths.bibliographyPDF
+								href: redmicConfig.viewPaths.bibliographyDetails
 							},{
 								icon: "fa-info-circle",
 								btnId: "details",
@@ -147,6 +147,10 @@ define([
 		},
 
 		_refreshChildrenDataModules: function() {
+
+			this._publish(this._getWidgetInstance('map').getChannel('SET_PROPS'), {
+				pathVariableId: this.pathVariableId
+			});
 
 			this.target[1] = lang.replace(redmicConfig.services.documentsBySpecies, {
 				id: this.pathVariableId

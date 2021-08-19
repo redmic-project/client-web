@@ -1,5 +1,6 @@
 define([
-	"dojo/_base/declare"
+	'app/redmicConfig'
+	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/Deferred"
@@ -7,7 +8,8 @@ define([
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/search/FacetsImpl"
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, aspect
 	, Deferred
@@ -27,18 +29,8 @@ define([
 			this.config = {
 				dataViewEvents: {},
 				dataViewActions: {},
-				_listDataReturnFields: [
-					"uuid", "properties.activityId", "properties.site.path", "properties.site.name",
-					"properties.site.code", "properties.site.id", "properties.measurements.parameter.id",
-					"properties.measurements.parameter.name", "properties.measurements.unit.id",
-					"properties.measurements.unit.name", "properties.measurements.dataDefinition.id",
-					"properties.measurements.dataDefinition.z"
-				],
-				_mapReturnFields: ["uuid", "geometry", "properties.activityId", "properties.site.path",
-					"properties.site.name", "properties.site.code", "properties.measurements.parameter.id",
-					"properties.measurements.parameter.name", "properties.measurements.unit.id",
-					"properties.measurements.unit.name", "properties.measurements.dataDefinition.id"
-				],
+				_listDataReturnFields: redmicConfig.returnFields.timeSeriesStationsList,
+				_mapReturnFields: redmicConfig.returnFields.timeSeriesStationsMap,
 				_dataList: [],
 				_indexDataList: {},
 				_getListDataDfd: null
@@ -56,16 +48,7 @@ define([
 
 			this.facetsConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				aggs: {
-					"properties": {
-						'open': true,
-						"terms": {
-							"field": "properties.measurements.parameter.name",
-							"nested": "properties.measurements",
-							"size": 100
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.timeSeriesStations
 			}, this.facetsConfig || {}]);
 		},
 

@@ -2,6 +2,7 @@ define([
 	"app/designs/base/_Main"
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/OrganisationList"
@@ -13,6 +14,7 @@ define([
 	_Main
 	, Controller
 	, Layout
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -40,7 +42,7 @@ define([
 		_setMainConfigurations: function() {
 
 			this.filterConfig = this._merge([{
-				returnFields: ['id', 'name', 'acronym', 'logo', 'organisationType', 'webpage']
+				returnFields: redmicConfig.returnFields.organisation
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
@@ -64,15 +66,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs:  {
-					"organisationType": {
-						'open': true,
-						"terms": {
-							"field": "organisationType.name",
-							"size": 20
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.organisation
 			}, this.facetsConfig || {}]);
 		}
 	});

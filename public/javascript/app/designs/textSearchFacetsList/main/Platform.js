@@ -61,15 +61,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs:  {
-					"platformType": {
-						'open': true,
-						"terms": {
-							"field": "platformType.name",
-							"size": 20
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.platform
 			}, this.facetsConfig || {}]);
 		}
 	});

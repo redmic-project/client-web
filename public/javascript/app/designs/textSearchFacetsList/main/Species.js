@@ -49,8 +49,7 @@ define([
 		_setMainConfigurations: function() {
 
 			this.filterConfig = this._merge([{
-				returnFields: ['aphia', 'authorship', 'commonName', 'groupIcon', 'id',
-					'peculiarity.popularNames', 'scientificName', 'status']
+				returnFields: redmicConfig.returnFields.species
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
@@ -80,59 +79,8 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					"status": {
-						'open': true,
-						"terms": {
-							"field": "status.name"
-						}
-					},
-					"origin": {
-						"terms": {
-							"field": "peculiarity.origin.name"
-						}
-					},
-					"endemicity": {
-						"terms": {
-							"field": "peculiarity.endemicity.name"
-						}
-					},
-					"permanence": {
-						"terms": {
-							"field": "peculiarity.permanence.name"
-						}
-					},
-					"ecology": {
-						"terms": {
-							"field": "peculiarity.ecology.name"
-						}
-					},
-					"trophicRegime": {
-						"terms": {
-							"field": "peculiarity.trophicRegime.name"
-						}
-					},
-					"interest": {
-						"terms": {
-							"field": "peculiarity.interest.name"
-						}
-					},
-					"canaryProtection": {
-						"terms": {
-							"field": "peculiarity.canaryProtection.name"
-						}
-					},
-					"spainProtection": {
-						"terms": {
-							"field": "peculiarity.spainProtection.name"
-						}
-					},
-					"euProtection": {
-						"terms": {
-							"field": "peculiarity.euProtection.name"
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.species,
+				openFacets: false
 			}, this.facetsConfig || {}]);
 		},
 
@@ -147,22 +95,26 @@ define([
 				idProperty: "path",
 				itemLabel: "{rank.name} - {scientificName} ({leaves})",
 				createQuery: function(item) {
+
 					var query = {
-						"returnFields" : ["scientificName", "rank", "path", "leaves"],
-						"regexp": [{"field": "path", "exp": "root.[0-9]+"}]
+						returnFields: redmicConfig.returnFields.taxonsTree,
+						regexp: [{
+							field: "path",
+							exp: "root.[0-9]+"
+						}]
 					};
 
-					if (!item)
+					if (!item) {
 						return query;
+					}
 
 					query.regexp[0].exp = item.path + ".[0-9]+";
 
 					return query;
 				},
 				maxDepthReached: function(item) {
-					if (item.rank.name === "Genus")
-						return true;
-					return false;
+
+					return item.rank.name === 'Genus';
 				}
 			});
 

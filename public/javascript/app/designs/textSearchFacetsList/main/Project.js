@@ -3,6 +3,7 @@ define([
 	, 'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ProjectList"
@@ -15,6 +16,7 @@ define([
 	, _AddComposite
 	, Controller
 	, Layout
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -42,7 +44,7 @@ define([
 		_setMainConfigurations: function() {
 
 			this.filterConfig = this._merge([{
-				returnFields: ['id', 'name', 'code', 'endDate', 'projectGroup']
+				returnFields: redmicConfig.returnFields.project
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
@@ -68,31 +70,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					"projectGroup": {
-						"terms": {
-							"field": "projectGroup.name",
-							"size": 20
-						}
-					},
-					"territorialScope": {
-						"terms": {
-							"field": "scope.name",
-							"size": 20
-						}
-					}
-				},
-				fieldFacet: {
-					'projectGroup': {
-						'open': true
-					},
-					'territorialScope': {
-						'open': true
-					}
-				},
-				prefixFieldFacet: "",
-				suffixFieldFacet: ".name",
-				openFacets: true
+				aggs: redmicConfig.aggregations.project
 			}, this.facetsConfig || {}]);
 		}
 	});

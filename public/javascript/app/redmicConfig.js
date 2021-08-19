@@ -338,7 +338,6 @@ define([], function() {
 	retObj.aggregations = {
 		activity: {
 			themeInspire: {
-				open: true,
 				terms: {
 					field: 'themeInspire.name'
 				}
@@ -353,12 +352,219 @@ define([], function() {
 					field: 'scope.name'
 				}
 			}
+		},
+		activityType: {
+			activityField: {
+				terms: {
+					field: 'activityField.name'
+				}
+			}
+		},
+		animal: {
+			sex: {
+				terms: {
+					field: 'sex.name'
+				}
+			},
+			lifeStage: {
+				terms: {
+					field: 'lifeStage.name'
+				}
+			}
+		},
+		atlasLayer: {
+			protocols: {
+				terms: {
+					field: 'protocols.type',
+					nested: 'protocols',
+				}
+			},
+			themeInspire: {
+				terms: {
+					field: 'themeInspire.name',
+				}
+			},
+			keywords: {
+				terms: {
+					field: 'keywords',
+				}
+			}
+		},
+		contact: {
+			organisation: {
+				terms: {
+					field: 'affiliation.name'
+				}
+			}
+		},
+		device: {
+			deviceType: {
+				terms: {
+					field: 'deviceType.name'
+				}
+			}
+		},
+		document: {
+			documentType: {
+				terms: {
+					field: 'documentType.name',
+				}
+			},
+			language: {
+				terms: {
+					field: 'language'
+				}
+			}
+		},
+		metricsDefinition: {
+			metricGroup: {
+				terms: {
+					field: 'metricGroup.name',
+				}
+			}
+		},
+		organisation: {
+			organisationType: {
+				terms: {
+					field: 'organisationType.name'
+				}
+			}
+		},
+		parameter: {
+			parameterType: {
+				terms: {
+					field: 'parameterType.name'
+				}
+			}
+		},
+		platform: {
+			platformType: {
+				terms: {
+					field: 'platformType.name'
+				}
+			}
+		},
+		program: {
+			territorialScope: {
+				terms: {
+					field: 'scope.name'
+				}
+			}
+		},
+		project: {
+			projectGroup: {
+				terms: {
+					field: 'projectGroup.name'
+				}
+			},
+			territorialScope: {
+				terms: {
+					field: 'scope.name'
+				}
+			}
+		},
+		species: {
+			status: {
+				terms: {
+					field: 'status.name'
+				}
+			},
+			origin: {
+				terms: {
+					field: 'peculiarity.origin.name'
+				}
+			},
+			endemicity: {
+				terms: {
+					field: 'peculiarity.endemicity.name'
+				}
+			},
+			permanence: {
+				terms: {
+					field: 'peculiarity.permanence.name'
+				}
+			},
+			ecology: {
+				terms: {
+					field: 'peculiarity.ecology.name'
+				}
+			},
+			trophicRegime: {
+				terms: {
+					field: 'peculiarity.trophicRegime.name'
+				}
+			},
+			interest: {
+				terms: {
+					field: 'peculiarity.interest.name'
+				}
+			},
+			canaryProtection: {
+				terms: {
+					field: 'peculiarity.canaryProtection.name'
+				}
+			},
+			spainProtection: {
+				terms: {
+					field: 'peculiarity.spainProtection.name'
+				}
+			},
+			euProtection: {
+				terms: {
+					field: 'peculiarity.euProtection.name'
+				}
+			}
+		},
+		taxons: {
+			status: {
+				terms: {
+					field: 'status.name'
+				}
+			}
+		},
+		timeSeriesStations: {
+			properties: {
+				terms: {
+					field: 'properties.measurements.parameter.name',
+					nested: 'properties.measurements'
+				}
+			}
+		},
+		unit: {
+			unitType: {
+				terms: {
+					field: 'unitType.name'
+				}
+			}
 		}
 	};
 
 	retObj.returnFields = {
-		activity: ['accessibility', 'activityCategory', 'activityType', 'code', 'endDate', 'id', 'name', 'resources',
-			 'starred', 'startDate', 'themeInspire']
+		activity: [
+			'accessibility', 'activityCategory', 'activityType', 'code', 'endDate', 'id', 'name', 'resources',
+			'starred', 'startDate', 'themeInspire'
+		],
+		document: ['id', 'title', 'author', 'year', 'documentType', 'language', 'url'],
+		organisation: ['id', 'name', 'acronym', 'logo', 'organisationType', 'webpage'],
+		program: ['id', 'name', 'code', 'endDate'],
+		project: ['id', 'name', 'code', 'endDate', 'projectGroup'],
+		species: [
+			'aphia', 'authorship', 'commonName', 'groupIcon', 'id', 'peculiarity.popularNames', 'scientificName',
+			'status'
+		],
+		taxonsTree: ['scientificName', 'rank', 'path', 'leaves'],
+		timeSeriesStationsList: [
+			'uuid', 'properties.activityId', 'properties.site.path', 'properties.site.name', 'properties.site.code',
+			'properties.site.id', 'properties.measurements.parameter.id', 'properties.measurements.parameter.name',
+			'properties.measurements.unit.id', 'properties.measurements.unit.name',
+			'properties.measurements.dataDefinition.id', 'properties.measurements.dataDefinition.z'
+		],
+		timeSeriesStationsListMap: [
+			'uuid', 'geometry', 'properties.activityId', 'properties.site.path', 'properties.site.name',
+			'properties.site.code', 'properties.measurements.parameter.id', 'properties.measurements.parameter.name',
+			'properties.measurements.unit.id', 'properties.measurements.unit.name',
+			'properties.measurements.dataDefinition.id'
+		],
 	};
 
 	retObj.outerPaths = [

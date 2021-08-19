@@ -33,7 +33,7 @@ define([
 				ownChannel: 'facetsSearch',
 				'class': 'containerFacets',
 				propertyName: 'postFilter',
-				openFacets: false,
+				openFacets: true,
 				maxInitialEntries: 5,
 				aggs: null,
 				aggGroupNamePrefix: 'sterms',

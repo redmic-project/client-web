@@ -1,12 +1,14 @@
 define([
 	"app/designs/textSearchFacetsList/main/Domain"
 	, "app/base/views/extensions/_EditionWizardView"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ParameterList"
 ], function(
 	DomainMain
 	, _EditionWizardView
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -62,15 +64,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					"parameterType": {
-						'open': true,
-						"terms": {
-							"field": "parameterType.name",
-							"size": 20
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.parameter
 			}, this.facetsConfig || {}]);
 		}
 	});

@@ -1,12 +1,14 @@
 define([
 	"app/designs/textSearchFacetsList/main/Domain"
 	, "app/base/views/extensions/_EditionWizardView"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ConditionList"
 ], function(
 	DomainMain
 	, _EditionWizardView
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -60,15 +62,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					"metricGroup": {
-						'open': true,
-						"terms": {
-							"field": "metricGroup.name",
-							"size": 20
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.metricsDefinition,
 			}, this.facetsConfig || {}]);
 		}
 	});

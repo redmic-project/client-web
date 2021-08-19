@@ -65,22 +65,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs:  {
-					"organisation": {
-						"terms": {
-							"field": "affiliation.name",
-							"size": 20
-						}
-					}
-				},
-				fieldFacet: {
-					'organisation': {
-						'open': true
-					}
-				},
-				prefixFieldFacet: "",
-				suffixFieldFacet: ".firstName",
-				openFacets: true
+				aggs: redmicConfig.aggregations.contact
 			}, this.facetsConfig || {}]);
 		}
 	});

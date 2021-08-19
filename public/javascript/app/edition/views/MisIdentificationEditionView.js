@@ -72,11 +72,7 @@ define([
 						propertyName: "document",
 						title: this.i18n.selectDocument,
 						facetsConfig: {
-							aggs: {
-								"language": {
-									"open": true
-								}
-							},
+							aggs: redmicConfig.aggregations.document,
 							openFacets: false
 						}
 					}

@@ -1286,6 +1286,7 @@ define({
 
 	, "activityWithResources": "Con recursos"
 	, "activityStarred": "Destacada"
+	, "normative": "Normativa"
 
 
 	// Para capas que no se pueden cambiar las keys

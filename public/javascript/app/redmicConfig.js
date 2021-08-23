@@ -564,7 +564,7 @@ define([], function() {
 			'properties.site.code', 'properties.measurements.parameter.id', 'properties.measurements.parameter.name',
 			'properties.measurements.unit.id', 'properties.measurements.unit.name',
 			'properties.measurements.dataDefinition.id'
-		],
+		]
 	};
 
 	retObj.outerPaths = [

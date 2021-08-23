@@ -24,7 +24,7 @@ define([
 						icon: 'fa-bar-chart'
 					},
 					'oc': {
-						icon: 'fa-stack-overflow'
+						icon: 'fa-trash'
 					},
 					'if': {
 						icon: 'fa-map-marker'

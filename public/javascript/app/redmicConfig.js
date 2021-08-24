@@ -376,17 +376,17 @@ define([], function() {
 			protocols: {
 				terms: {
 					field: 'protocols.type',
-					nested: 'protocols',
+					nested: 'protocols'
 				}
 			},
 			themeInspire: {
 				terms: {
-					field: 'themeInspire.name',
+					field: 'themeInspire.name'
 				}
 			},
 			keywords: {
 				terms: {
-					field: 'keywords',
+					field: 'keywords'
 				}
 			}
 		},
@@ -407,7 +407,7 @@ define([], function() {
 		document: {
 			documentType: {
 				terms: {
-					field: 'documentType.name',
+					field: 'documentType.name'
 				}
 			},
 			language: {
@@ -419,7 +419,7 @@ define([], function() {
 		metricsDefinition: {
 			metricGroup: {
 				terms: {
-					field: 'metricGroup.name',
+					field: 'metricGroup.name'
 				}
 			}
 		},

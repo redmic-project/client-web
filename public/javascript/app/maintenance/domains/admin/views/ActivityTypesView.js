@@ -55,7 +55,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: redmicConfig.aggregations.activityType,
+				aggs: redmicConfig.aggregations.activityType
 			}, this.facetsConfig || {}]);
 		}
 	});

@@ -62,7 +62,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: redmicConfig.aggregations.metricsDefinition,
+				aggs: redmicConfig.aggregations.metricsDefinition
 			}, this.facetsConfig || {}]);
 		}
 	});

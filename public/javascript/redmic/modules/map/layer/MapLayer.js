@@ -37,7 +37,8 @@ define([
 					SET_CENTER: "setCenter",
 					LAYER_LOADING: "layerLoading",
 					LAYER_LOADED: "layerLoaded",
-					LAYER_LEGEND: "layerLegend"
+					LAYER_LEGEND: "layerLegend",
+					POPUP_LOADED: 'popupLoaded'
 				},
 				actions: {
 					CLEAR: "clear",
@@ -46,6 +47,7 @@ define([
 					REMOVE_LAYER: "removeLayer",
 					ADD_DATA: "addData",
 					POPUP_CLOSED: "popupClosed",
+					POPUP_LOADED: 'popupLoaded',
 					MAP_CLICKED: "mapClicked",
 					LAYER_LOADING: "layerLoading",
 					LAYER_LOADED: "layerLoaded",
@@ -146,6 +148,9 @@ define([
 			},{
 				event: 'FIT_BOUNDS',
 				channel: this._buildChannel(this.mapChannel, this.actions.FIT_BOUNDS)
+			},{
+				event: 'POPUP_LOADED',
+				channel: this.getChannel('POPUP_LOADED')
 			});
 		},
 

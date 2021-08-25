@@ -354,12 +354,15 @@ define([
 				var popupContent = this.getPopupContent(data);
 				if (popupContent.then) {
 					popupContent.then(lang.hitch(this, function(data, value) {
+
 						this._markerById[data.feature[this.idProperty]].data.popup = value;
 						popup.setContent(value);
+						this._emitEvt('POPUP_LOADED', popup);
 					}, data));
 				} else {
 					this._markerById[data.feature[this.idProperty]].data.popup = popupContent;
 					popup.setContent(popupContent);
+					this._emitEvt('POPUP_LOADED', popup);
 				}
 			}
 		},

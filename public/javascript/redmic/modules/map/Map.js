@@ -69,6 +69,7 @@ define([
 					CENTER_SET: "centerSet",
 					ZOOM_SET: "zoomSet",
 					BBOX_CHANGED: "bBoxChanged",
+					POPUP_OPENED: 'popupOpened',
 					POPUP_CLOSED: "popupClosed",
 					MAP_CLICKED: "mapClicked",
 					CLOSE_POPUP: "closePopup",
@@ -210,6 +211,9 @@ define([
 				event: 'BBOX_CHANGE',
 				channel: this.getChannel("BBOX_CHANGED"),
 				callback: "_pubBBoxChanged"
+			},{
+				event: 'POPUP_OPEN',
+				channel: this.getChannel('POPUP_OPENED')
 			},{
 				event: 'POPUP_CLOSE',
 				channel: this.getChannel("POPUP_CLOSED")

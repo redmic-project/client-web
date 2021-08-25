@@ -32,7 +32,8 @@ define([
 				propsWidget: {
 					omitTitleBar: true,
 					resizable: false
-				}
+				},
+				targetReplaceParameter: 'id'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -40,7 +41,7 @@ define([
 
 		_setMainConfigurations: function() {
 
-			this.targetChange = lang.replace(this.templateTargetChange, {id: this.pathVariableId});
+			this._replacePathVariableIdInTarget();
 
 			this.widgetConfigs = this._merge([{
 				geographic: {
@@ -85,6 +86,14 @@ define([
 					return 0;
 				}
 			}, this.layerConfig || {}]);
+		},
+
+		_replacePathVariableIdInTarget: function() {
+
+			var replaceObj = {};
+			replaceObj[this.targetReplaceParameter] = this.pathVariableId;
+
+			this.targetChange = lang.replace(this.templateTargetChange, replaceObj);
 		},
 
 		_initialize: function() {
@@ -142,15 +151,15 @@ define([
 
 		_refreshModules: function() {
 
-			this._checkPathVariableId();
+			/*this._checkPathVariableId();
 
 			this._emitEvt('GET', {
 				target: this.target,
 				requesterId: this.ownChannel,
 				id: this.pathVariableId
-			});
+			});*/
 
-			this.targetChange = lang.replace(this.templateTargetChange, {id: this.pathVariableId});
+			this._replacePathVariableIdInTarget();
 
 			this.layerInstance && this._publish(this.layerInstance.getChannel("CHANGE_TARGET"), {
 				target: this.targetChange
@@ -161,10 +170,6 @@ define([
 				target: this.targetChange,
 				refresh: true
 			});
-		},
-
-		_itemAvailable: function(response) {
-
 		},
 
 		_getPopupContent: function(data) {

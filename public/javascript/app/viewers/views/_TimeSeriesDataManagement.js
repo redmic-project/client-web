@@ -79,11 +79,9 @@ define([
 				embeddedListKey = embeddedButtonKeys[1],
 				currentEmbeddedContentKey = this._getCurrentContentKey();
 
-			// TODO hay cosas en el injectDataToList que no son solo para el listado, revisar para no tener que
-			// llamar a este, sino solo a la parte necesaria
-			this._injectDataToList(data.features);
+			this._prepareDataToInject(data.features);
 			if (currentEmbeddedContentKey === embeddedListKey) {
-				//this._injectDataToList(data.features);
+				this._injectDataToList(data.features);
 			} else {
 				this._injectDataToMap(data);
 			}
@@ -107,6 +105,16 @@ define([
 			});
 		},
 
+		_prepareDataToInject: function(features) {
+
+			this._dataList = [];
+			this._indexDataList = {};
+
+			for (var i = 0; i < features.length; i++) {
+				this._parseData(features[i].properties);
+			}
+		},
+
 		_injectDataToMap: function(data) {
 
 			this._emitEvt('INJECT_DATA', {
@@ -116,13 +124,6 @@ define([
 		},
 
 		_injectDataToList: function(features) {
-
-			this._dataList = [];
-			this._indexDataList = {};
-
-			for (var i = 0; i < features.length; i++) {
-				this._parseData(features[i].properties);
-			}
 
 			this._emitEvt('INJECT_DATA', {
 				data: lang.clone(this._dataList),

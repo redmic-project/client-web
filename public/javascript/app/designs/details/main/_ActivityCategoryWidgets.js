@@ -2,6 +2,8 @@ define([
 	'app/designs/details/main/ActivityTrackingMap'
 	, 'app/details/views/ActivityAreaMapBase'
 	, 'app/details/views/ActivityCitationMapBase'
+	, 'app/details/views/ActivityFixedTimeseriesChart'
+	, 'app/details/views/ActivityFixedTimeseriesMap'
 	, 'app/details/views/ActivityInfrastructureMapBase'
 	, 'app/details/views/ActivityLayerMapBase'
 	, 'dojo/_base/declare'
@@ -9,6 +11,8 @@ define([
 	ActivityTrackingMap
 	, ActivityAreaMapBase
 	, ActivityCitationMapBase
+	, ActivityFixedTimeseriesChart
+	, ActivityFixedTimeseriesMap
 	, ActivityInfrastructureMapBase
 	, ActivityLayerMapBase
 	, declare
@@ -37,9 +41,17 @@ define([
 				widgetKey = this._prepareInfrastructureActivityWidgets();
 			} else if (activityCategory === 'ar') {
 				widgetKey = this._prepareAreaActivityWidgets();
+			} else if (activityCategory === 'ft') {
+				widgetKey = this._prepareFixedTimeseriesActivityWidgets();
 			}
 
-			widgetKey && this._activityCategoryCustomWidgets.push(widgetKey);
+			if (widgetKey) {
+				if (widgetKey instanceof Array) {
+					this._activityCategoryCustomWidgets = this._activityCategoryCustomWidgets.concat(widgetKey);
+				} else {
+					this._activityCategoryCustomWidgets.push(widgetKey);
+				}
+			}
 		},
 
 		_prepareCitationActivityWidgets: function() {
@@ -135,6 +147,40 @@ define([
 			this._addWidget(key, config);
 
 			return key;
+		},
+
+		_prepareFixedTimeseriesActivityWidgets: function() {
+
+			var mapKey = 'activityFixedTimeseriesMap';
+
+			var mapConfig = {
+				width: 6,
+				height: 6,
+				type: ActivityFixedTimeseriesMap,
+				props: {
+					title: this.i18n.associatedSurveyStation,
+					pathVariableId: this._activityData.id
+				}
+			};
+
+			this._addWidget(mapKey, mapConfig);
+
+			var chartKey = 'activityFixedTimeseriesChart';
+
+			var chartConfig = {
+				width: 6,
+				height: 6,
+				type: ActivityFixedTimeseriesChart,
+				props: {
+					title: this.i18n.charts,
+					pathVariableId: this._activityData.id,
+					timeseriesDataChannel: this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA')
+				}
+			};
+
+			this._addWidget(chartKey, chartConfig);
+
+			return [mapKey, chartKey];
 		},
 
 		_removeActivityCategoryCustomWidgets: function() {

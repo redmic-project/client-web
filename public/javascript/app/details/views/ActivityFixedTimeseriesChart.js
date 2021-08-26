@@ -3,15 +3,11 @@ define([
 	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
-	, 'dojo/Deferred'
 ], function(
 	ActivityChart
 	, redmicConfig
 	, declare
 	, lang
-	, aspect
-	, Deferred
 ) {
 
 	return declare(ActivityChart, {
@@ -21,7 +17,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				templateTargetChange: redmicConfig.services.timeSeriesTemporalData,
+				target: redmicConfig.services.timeSeriesTemporalData,
 				activityCategory: ['ft']
 			};
 
@@ -34,15 +30,7 @@ define([
 
 			this._subscribe(this.timeseriesDataChannel, lang.hitch(this, function(data) {
 
-				this._dataList = [];
-				this._indexDataList = {};
-
-				this._dataList = this._parseData(data.properties);
-				this._generateTimeSeriesData(this._dataList);
-
-				this._publish(this._getWidgetInstance('chart').getChannel('SET_PROPS'), {
-					chartsData: this.seriesData
-				});
+				this._buildAndLoadChartData(data);
 			}));
 		}
 	});

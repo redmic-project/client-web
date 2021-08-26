@@ -33,14 +33,10 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				_titleRightButtonsList: [],
-				_activeRadius: true,
-				noScroll: true,
 				propsWidget: {
 					omitTitleBar: true,
 					resizable: false
-				},
-				targetReplaceParameter: 'id'
+				}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -48,16 +44,14 @@ define([
 
 		_setMainConfigurations: function() {
 
-			this._replacePathVariableIdInTarget();
-
 			this.widgetConfigs = this._merge([{
-				chart: {
+				chartDesign: {
 					width: 6,
 					height: 6,
 					type: [ChartsWithLegendAndToolbarsAndSlider, _ProcessDataDefinitionAndGetTimeSeries],
 					props: {
 						title: this.i18n.chart,
-						target: this.targetChange,
+						target: this.target,
 						filterConfig: {
 							initQuery: {
 								size: null
@@ -81,29 +75,18 @@ define([
 			}, this.widgetConfigs || {}]);
 		},
 
-		_replacePathVariableIdInTarget: function() {
+		_buildAndLoadChartData: function(sourceData) {
 
-			var replaceObj = {};
-			replaceObj[this.targetReplaceParameter] = this.pathVariableId;
+			this._buildChartData(sourceData);
 
-			this.targetChange = lang.replace(this.templateTargetChange, replaceObj);
+			this._publish(this._getWidgetInstance('chartDesign').getChannel('SET_PROPS'), {
+				chartsData: this.seriesData
+			});
 		},
 
 		_clearModules: function() {
 
-			var widgetInstance = this._getWidgetInstance('chart');
-			this._publish(widgetInstance.getChannel('CLEAR'));
-			this._publish(widgetInstance.getChannel('REFRESH'));
-		},
-
-		_refreshModules: function() {
-
-			this._replacePathVariableIdInTarget();
-
-			this._publish(this._getWidgetInstance('chart').getChannel('UPDATE_TARGET'), {
-				target: this.targetChange,
-				refresh: true
-			});
+			this._publish(this._getWidgetInstance('chartDesign').getChannel('CLEAR'));
 		}
 	});
 });

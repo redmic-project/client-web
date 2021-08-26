@@ -24,14 +24,15 @@ define([
 			};
 
 			lang.mixin(this, this.config);
-
-			aspect.after(this, '_setOwnCallbacksForEvents', lang.hitch(this,
-				this._setTimeSeriesSelectionManagementOwnCallbacksForEvents));
 		},
 
-		_setTimeSeriesSelectionManagementOwnCallbacksForEvents: function() {
+		_buildChartData: function(sourceData) {
 
-			this._onEvt('HIDE', lang.hitch(this, this._onTimeSeriesSelectionManagementHidden));
+			this._dataList = [];
+			this._indexDataList = {};
+
+			var parsedData = this._parseData(sourceData);
+			this._generateTimeSeriesData(parsedData);
 		},
 
 		_generateTimeSeriesData: function(listData) {

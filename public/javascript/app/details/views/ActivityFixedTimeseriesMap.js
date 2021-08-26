@@ -47,7 +47,22 @@ define([
 				geographic: {
 					props: {
 						browserConfig: {
-							template: TemplateList
+							template: TemplateList,
+							rowConfig: {
+								buttonsConfig: {
+									listButton: [{
+										icon: 'fa-bar-chart',
+										title: this.i18n.charts,
+										btnId: 'showCharts',
+										returnItem: true
+									},{
+										icon: 'fa-map-marker',
+										title: this.i18n.map,
+										btnId: 'mapCentering',
+										returnItem: true
+									}]
+								}
+							}
 						}
 					}
 				}
@@ -60,7 +75,10 @@ define([
 
 			this._subscribe(this.getChildChannel('layerInstance', 'POPUP_LOADED'),
 				lang.hitch(this, this._onStationPopupLoaded));
-		},
+
+			this._subscribe(this._getWidgetInstance('geographic').getChildChannel('browser', 'BUTTON_EVENT'),
+				lang.hitch(this, this._onBrowserShowChartsButtonEvent));
+			},
 
 		_onStationPopupLoaded: function(res) {
 
@@ -69,7 +87,7 @@ define([
 			}
 
 			var popupNode = res._contentNode,
-				popupData = res._source.feature;
+				popupData = res._source.feature.properties;
 
 			if (popupNode && popupData) {
 				var showChartsNode = query('.' + this._showChartsButtonClass, popupNode)[0];
@@ -77,10 +95,7 @@ define([
 					return;
 				}
 
-				showChartsNode.onclick = lang.hitch(this, function(data) {
-
-					this._publish(this.getChannel('TIMESERIES_DATA'), data);
-				}, popupData);
+				showChartsNode.onclick = lang.hitch(this, this._loadTimeseriesData, popupData);
 			}
 		},
 
@@ -90,6 +105,16 @@ define([
 				i18n: this.i18n,
 				feature: data.feature
 			});
+		},
+
+		_onBrowserShowChartsButtonEvent: function(evt) {
+
+			this._loadTimeseriesData(evt.item);
+		},
+
+		_loadTimeseriesData: function(itemData) {
+
+			this._publish(this.getChannel('TIMESERIES_DATA'), itemData);
 		}
 	});
 });

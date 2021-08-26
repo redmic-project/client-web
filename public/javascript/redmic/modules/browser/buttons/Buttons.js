@@ -93,7 +93,7 @@ define([
 
 			for (var i = 0; i < this.listButton.length; i++) {
 				this._createButton(this.listButton[i]);
-				this._totalButtons ++;
+				this._totalButtons++;
 			}
 		},
 
@@ -104,8 +104,6 @@ define([
 
 		_addButton: function(config) {
 
-			var link = null;
-
 			if (config.href) {
 				this._addLinkButton(config);
 			} else {
@@ -115,24 +113,27 @@ define([
 
 		_addLinkButton: function(config) {
 
-			var linkButtonNode = put(this.domNode, "a");
+			var linkButtonNode = put(this.domNode, 'a');
 
 			this._addIconButton(config, linkButtonNode);
 		},
 
-		_addIconButton: function(config, node) {
+		_addIconButton: function(config, parentNode) {
 
 			var icon = config.icon,
-				iconNode,
-				classIcon;
-
-			classIcon = '.' + icon.split('-')[0] + '.iconList.' + icon;
+				iconTitle = config.title,
+				iconClass = '.' + icon.split('-')[0] + '.iconList.' + icon,
+				iconAttr = '';
 
 			if (config.classIcon) {
-				classIcon += "." + config.classIcon;
+				iconClass += '.' + config.iconClass;
 			}
 
-			put(node, 'i' + classIcon);
+			if (iconTitle) {
+				iconAttr += '[title=' + iconTitle + ']';
+			}
+
+			put(parentNode, 'i' + iconClass + iconAttr);
 		},
 
 		_afterShow: function(obj) {
@@ -172,7 +173,7 @@ define([
 			var condition = config.condition;
 
 			if (condition !== undefined && !this._evaluateCondition(item, condition)) {
-				this._buttonsOccult ++;
+				this._buttonsOccult++;
 				this._incorrectConditionButton(item, config, node);
 			} else {
 				this._correctConditionButton(item, config, node);

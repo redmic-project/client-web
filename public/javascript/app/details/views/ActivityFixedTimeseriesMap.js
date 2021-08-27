@@ -109,7 +109,9 @@ define([
 
 		_onBrowserShowChartsButtonEvent: function(evt) {
 
-			this._loadTimeseriesData(evt.item);
+			if (evt.btnId === 'showCharts') {
+				this._loadTimeseriesData(evt.item);
+			}
 		},
 
 		_loadTimeseriesData: function(itemData) {

@@ -87,7 +87,7 @@ define([
 			}
 
 			if (this._getListDataDfd && !this._getListDataDfd.isFulfilled()) {
-				this._generateTimeSeriesData();
+				this._generateTimeSeriesDataFromSelectedData();
 				this._getListDataDfd.resolve();
 				this._getListDataDfd = null;
 			}
@@ -202,7 +202,7 @@ define([
 				this._getListDataDfd = new Deferred();
 				this._getListData();
 			} else {
-				this._generateTimeSeriesData();
+				this._generateTimeSeriesDataFromSelectedData();
 			}
 		},
 

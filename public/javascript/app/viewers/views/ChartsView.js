@@ -6,6 +6,7 @@ define([
 	, "app/designs/dynamicDualContent/main/FacetsWithDynamicRightContent"
 	, "app/designs/list/Controller"
 	, "app/designs/list/layout/Layout"
+	, 'app/details/views/_ActivityTimeSeriesDataManagement'
 	, "app/viewers/views/_TimeSeriesSelectionManagement"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
@@ -34,6 +35,7 @@ define([
 	, FacetsWithDynamicRightContent
 	, ListController
 	, ListLayout
+	, _ActivityTimeSeriesDataManagement
 	, _TimeSeriesSelectionManagement
 	, redmicConfig
 	, declare
@@ -55,7 +57,9 @@ define([
 	, _Selectable
 	, ListTemplate
 ){
-	return declare([EmbeddedContentSelectionInTopbar, _TimeSeriesSelectionManagement], {
+	return declare([
+		EmbeddedContentSelectionInTopbar, _ActivityTimeSeriesDataManagement, _TimeSeriesSelectionManagement
+	], {
 		//	summary:
 		//		Vista de ChartsView.
 

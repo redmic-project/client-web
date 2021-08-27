@@ -1,21 +1,25 @@
 define([
-	'app/viewers/views/_TimeSeriesDataManagement'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 ], function(
-	_TimeSeriesDataManagement
-	, declare
+	declare
 	, lang
 ) {
 
-	return declare(_TimeSeriesDataManagement, {
+	return declare(null, {
 		//	summary:
 		//		Extensión para la vista de detalle de actividad para el manejo de series temporales.
 
 		constructor: function(args) {
 
 			this.config = {
-				emptySeriesData: {
+				pathSeparator: '.',
+				_timeseriesDefinitionList: [],
+				_timeseriesStationList: [],
+				_timeseriesDefinitionIndexByPath: {},
+				_timeseriesStationIndexByPath: {},
+				// TODO renombrar, esqueleto de 'seriesData'
+				_emptySeriesData: {
 					data: {
 						stations: {},
 						parameters: {},
@@ -25,7 +29,9 @@ define([
 					parameterIndex: {},
 					definitionIndex: {}
 				},
-				pathSeparator: '.'
+				// TODO renombrar, definición de datos de timeseries disponibles para consultar
+				// por ejemplo, '_chartsDefinitionData'
+				seriesData: null
 			};
 
 			lang.mixin(this, this.config);
@@ -33,33 +39,106 @@ define([
 
 		_buildChartData: function(sourceData) {
 
-			this._dataList = [];
-			this._indexDataList = {};
-
-			var parsedData = this._parseData(sourceData);
-			this._generateTimeSeriesDataFromParsedData(parsedData);
-		},
-
-		_generateTimeSeriesDataFromParsedData: function(parsedData) {
-
 			this._clear();
 
-			for (var i = 0; i < parsedData.length; i++) {
-				var item = parsedData[i],
+			this._parseData(sourceData);
+			this._generateChartsDefinitionDataFromTimeseriesInternalStructures();
+		},
+
+		_parseData: function(item) {
+
+			var site = item.site,
+				measurementsSize = item.measurements.length,
+				parameters = [],
+				dataList = [];
+
+			for (var n = 0; n < measurementsSize; n++) {
+				var measurement = item.measurements[n],
+					parameter = measurement.parameter,
+					dataDefinition = measurement.dataDefinition,
+ 					index = this._isInserted(dataList, parameter.path);
+ 				if (index < 0) {
+ 					parameter.leaves = 0;
+ 					parameter.dataDefinitions = [dataDefinition];
+ 					parameter.unit = measurement.unit.name;
+
+ 					parameters.push(parameter);
+ 					dataList.push(parameter);
+ 				} else {
+ 					dataList[index].dataDefinitions.push(dataDefinition);
+ 				}
+			}
+
+			site.activityId = item.activityId;
+			site.leaves = parameters.length;
+			dataList.push(site);
+
+			this._addSourceDataToTimeseriesInternalStructures(dataList);
+		},
+
+		_isInserted: function(data, itemId) {
+
+ 			for (var n = 0; n < data.length; n++) {
+ 				if (data[n].path === itemId) {
+ 					return n;
+ 				}
+ 			}
+
+ 			return -1;
+ 		},
+
+		_addSourceDataToTimeseriesInternalStructures: function(data) {
+
+			for (var i = 0; i < data.length; i++) {
+				var item = data[i],
+					itemPath = item.path,
+					isStationItem = itemPath.split(this.pathSeparator).length < 3;
+
+				if (isStationItem) {
+					this._timeseriesStationList.push(item);
+					this._timeseriesStationIndexByPath[itemPath] = this._timeseriesStationList.length - 1;
+				} else {
+					this._timeseriesDefinitionList.push(item);
+					this._timeseriesDefinitionIndexByPath[itemPath] = this._timeseriesDefinitionList.length - 1;
+				}
+			}
+		},
+
+		_timeseriesDefinitionListIsEmpty: function() {
+
+			return !this._timeseriesDefinitionList || this._timeseriesDefinitionList.length === 0;
+		},
+
+		_getTimeseriesDefinitionList: function() {
+
+			return this._timeseriesDefinitionList;
+		},
+
+		_generateChartsDefinitionDataFromTimeseriesInternalStructures: function() {
+
+			for (var i = 0; i < this._timeseriesDefinitionList.length; i++) {
+				var item = this._timeseriesDefinitionList[i],
 					path = item.path;
 
 				this._insertItemInDataChart(path);
 			}
 		},
 
+		// TODO renombrar
 		_insertItemInDataChart: function(path) {
 
-			if (this._indexDataList[path] === undefined || path.split(this.pathSeparator).length < 3) {
+			var itemIndex = this._timeseriesDefinitionIndexByPath[path];
+
+			if (itemIndex === undefined) {
 				return false;
 			}
 
-			var item = this._dataList[this._indexDataList[path]],
-				stationId = this._insertStation(this._dataList[this._indexDataList[this._getParentPath(path)]]),
+			var item = this._timeseriesDefinitionList[itemIndex],
+				parentPath = this._getParentPath(path),
+				parentIndex = this._timeseriesStationIndexByPath[parentPath],
+				parentItem = this._timeseriesStationList[parentIndex],
+
+				stationId = this._insertStation(parentItem),
 				parameterId = this._insertParameter(item),
 				dataDefinitionIds = this._insertDataDefinitions(item);
 
@@ -75,6 +154,7 @@ define([
 			return path.replace(regex, '$1');
 		},
 
+		// TODO renombrar
 		_insertStation: function(itemStation) {
 
 			if (itemStation && !this.seriesData.data.stations[itemStation.id]) {
@@ -84,6 +164,7 @@ define([
 			return itemStation.id;
 		},
 
+		// TODO renombrar
 		_insertParameter: function(item) {
 
 			var parameter = lang.clone(item);
@@ -95,6 +176,7 @@ define([
 			return item.id;
 		},
 
+		// TODO renombrar
 		_insertDataDefinitions: function(item) {
 
 			var ids = {},
@@ -119,6 +201,7 @@ define([
 			return ids;
 		},
 
+		// TODO renombrar
 		_insertOrUpdateIndex: function(stationId, parameterId, dataDefinitionIds) {
 
 			if (!this.seriesData.stationIndex[stationId]) {
@@ -145,11 +228,30 @@ define([
 			}
 		},
 
+		_getChartsDefinitionData: function() {
+
+			return this.seriesData;
+		},
+
 		_clear: function() {
 
 			this.inherited(arguments);
 
-			this.seriesData = lang.clone(this.emptySeriesData);
+			this._clearChartsDefinitionData();
+			this._clearTimeseriesInternalStructures();
+		},
+
+		_clearChartsDefinitionData: function() {
+
+			this.seriesData = lang.clone(this._emptySeriesData);
+		},
+
+		_clearTimeseriesInternalStructures: function() {
+
+			this._timeseriesDefinitionList = [];
+			this._timeseriesStationList = [];
+			this._timeseriesDefinitionIndexByPath = {};
+			this._timeseriesStationIndexByPath = {};
 		}
 	});
 });

@@ -61,7 +61,7 @@ define([
 
 		_generateTimeSeriesDataFromSelectedData: function() {
 
-			this._clear();
+			this._clearChartsDefinitionData();
 
 			var selectedKeys = Object.keys(this._selected),
 				selectedCount = selectedKeys.length;
@@ -92,7 +92,7 @@ define([
 			this._selectionTooBigAlertify && this._selectionTooBigAlertify.dismiss();
 		},
 
-		_clear: function() {
+		_clearChartsDefinitionData: function() {
 
 			this.inherited(arguments);
 

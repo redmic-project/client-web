@@ -1,5 +1,6 @@
 define([
 	'app/redmicConfig'
+	, 'app/details/views/_ActivityTimeSeriesDataManagement'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -9,6 +10,7 @@ define([
 	, "redmic/modules/search/FacetsImpl"
 ], function(
 	redmicConfig
+	, _ActivityTimeSeriesDataManagement
 	, declare
 	, lang
 	, aspect
@@ -18,7 +20,7 @@ define([
 	, FacetsImpl
 ) {
 
-	return declare([_Filter, _Store], {
+	return declare([_Filter, _Store, _ActivityTimeSeriesDataManagement], {
 		//	summary:
 		//		Extensión para la vista de timeSeries para el manejo de datos.
 		//	description:
@@ -31,8 +33,6 @@ define([
 				dataViewActions: {},
 				_listDataReturnFields: redmicConfig.returnFields.timeSeriesStationsList,
 				_mapReturnFields: redmicConfig.returnFields.timeSeriesStationsMap,
-				_dataList: [],
-				_indexDataList: {},
 				_getListDataDfd: null
 			};
 
@@ -81,7 +81,7 @@ define([
 
 			this._prepareDataToInject(data.features);
 			if (currentEmbeddedContentKey === embeddedListKey) {
-				this._injectDataToList(data.features);
+				this._injectDataToList();
 			} else {
 				this._injectDataToMap(data);
 			}
@@ -95,20 +95,19 @@ define([
 
 		_itemAvailable: function(response) {
 
-			var dataToInject = this._parseData(response.data.properties);
+			this._parseData(response.data.properties);
 
 			this._publish(this.browserPopup.getChannel("SHOW"));
 
 			this._emitEvt('INJECT_DATA', {
-				data: dataToInject,
+				data: this._getTimeseriesDefinitionList(),
 				target: this.browserPopupTarget
 			});
 		},
 
 		_prepareDataToInject: function(features) {
 
-			this._dataList = [];
-			this._indexDataList = {};
+			this._clearTimeseriesInternalStructures();
 
 			for (var i = 0; i < features.length; i++) {
 				this._parseData(features[i].properties);
@@ -123,64 +122,12 @@ define([
 			});
 		},
 
-		_injectDataToList: function(features) {
+		_injectDataToList: function() {
 
 			this._emitEvt('INJECT_DATA', {
-				data: lang.clone(this._dataList),
+				data: lang.clone(this._getTimeseriesDefinitionList()),
 				target: this.browserTarget
 			});
-		},
-
-		_parseData: function(item) {
-
-			var site = item.site,
-				measurementsSize = item.measurements.length,
-				parameters = [],
-				dataList = [];
-
-			for (var n = 0; n < measurementsSize; n++) {
-				var measurement = item.measurements[n],
-					parameter = measurement.parameter,
-					dataDefinition = measurement.dataDefinition,
- 					index = this._isInserted(dataList, parameter.path);
- 				if (index < 0) {
- 					parameter.leaves = 0;
- 					parameter.dataDefinitions = [dataDefinition];
- 					parameter.unit = measurement.unit.name;
-
- 					parameters.push(parameter);
- 					dataList.push(parameter);
- 				} else {
- 					dataList[index].dataDefinitions.push(dataDefinition);
- 				}
-			}
-
-			site.activityId = item.activityId;
-			site.leaves = parameters.length;
-
-			dataList.push(site);
-			this._addToDataList(dataList);
-
-			return dataList;
-		},
-
-		_isInserted: function(data, itemId) {
-
- 			for (var n = 0; n < data.length; n++) {
- 				if (data[n].path === itemId) {
- 					return n;
- 				}
- 			}
-
- 			return -1;
- 		},
-
-		_addToDataList: function(data) {
-
-			for (var i = 0; i < data.length; i++) {
-				this._dataList.push(data[i]);
-				this._indexDataList[data[i].path] = this._dataList.length - 1;
-			}
 		},
 
 		_getMapData: function() {
@@ -198,17 +145,12 @@ define([
 				return;
 			}
 
-			if (this._dataListIsEmpty()) {
+			if (this._timeseriesDefinitionListIsEmpty()) {
 				this._getListDataDfd = new Deferred();
 				this._getListData();
 			} else {
 				this._generateTimeSeriesDataFromSelectedData();
 			}
-		},
-
-		_dataListIsEmpty: function() {
-
-			return !this._dataList || this._dataList.length === 0;
 		},
 
 		_getListData: function() {

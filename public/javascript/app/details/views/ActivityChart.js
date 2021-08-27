@@ -80,7 +80,7 @@ define([
 			this._buildChartData(sourceData);
 
 			this._publish(this._getWidgetInstance('chartDesign').getChannel('SET_PROPS'), {
-				chartsData: this.seriesData
+				chartsData: this._getChartsDefinitionData()
 			});
 		},
 

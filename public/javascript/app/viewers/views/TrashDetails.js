@@ -60,7 +60,7 @@ define([
 				activityTarget: redmicConfig.services.activity,
 
 				intervalValue: '1q',
-				_dataList: [],
+				//_dataList: [],
 				_pathSeparator: '.',
 				_idData: null,
 				embeddedButtons: {

@@ -149,10 +149,12 @@ define([
 		_createWindowContent: function() {
 
 			var contentClass = this.windowContentClass,
+				contentAttr = '',
 				contentHeightReduction = this.titleHeight;
 
 			if (this.omitTitleBar) {
 				contentClass += '.' + this.windowWithoutTitleContentClass;
+				contentAttr += '[id="' + this._getWindowTitleIdValue() + '"]';
 				contentHeightReduction = 0;
 			}
 
@@ -160,7 +162,7 @@ define([
 				contentClass += '.' + this.classWindowContent;
 			}
 
-			this._windowContentNode = put(this._windowNode, 'div.' + contentClass);
+			this._windowContentNode = put(this._windowNode, 'div.' + contentClass + contentAttr);
 
 			var contentHeight = 'calc(100% - ' + contentHeightReduction + 'rem)';
 			domStyle.set(this._windowContentNode, 'height', contentHeight);
@@ -644,11 +646,24 @@ define([
 
 		_onWindowTitlePropSet: function(evt) {
 
-			domAttr.set(this._windowTitleNode, 'id', this._getWindowTitleIdValue());
+			var nodeToUpdate,
+				windowId = this._getWindowTitleIdValue();
+
+			if (this.omitTitleBar) {
+				nodeToUpdate = this._windowContentNode;
+			} else {
+				nodeToUpdate = this._windowTitleNode;
+			}
+			domAttr.set(nodeToUpdate, 'id', windowId);
+
 			this._updateWindowTitleValue(this._getWindowTitleTextValue());
 		},
 
 		_updateWindowTitleValue: function(newValue) {
+
+			if (this.omitTitleBar) {
+				return;
+			}
 
 			domAttr.set(this._windowTitleTextNode, 'title', newValue);
 			this._windowTitleTextNode.innerHTML = newValue;

@@ -54,6 +54,7 @@ define([
 										icon: 'fa-bar-chart',
 										title: this.i18n.charts,
 										btnId: 'showCharts',
+										href: '#charts',
 										returnItem: true
 									},{
 										icon: 'fa-map-marker',

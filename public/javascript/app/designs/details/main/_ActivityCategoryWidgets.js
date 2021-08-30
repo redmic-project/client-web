@@ -63,7 +63,7 @@ define([
 				height: 6,
 				type: ActivityCitationMapBase,
 				props: {
-					title: this.i18n.citations,
+					windowTitle: 'citations',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -82,7 +82,7 @@ define([
 				height: 6,
 				type: ActivityLayerMapBase,
 				props: {
-					title: this.i18n.layers,
+					windowTitle: 'layers',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -101,7 +101,7 @@ define([
 				height: 6,
 				type: ActivityTrackingMap,
 				props: {
-					title: this.i18n.tracking,
+					windowTitle: 'tracking',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -120,7 +120,7 @@ define([
 				height: 6,
 				type: ActivityInfrastructureMapBase,
 				props: {
-					title: this.i18n.infrastructures,
+					windowTitle: 'infrastructures',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -139,7 +139,7 @@ define([
 				height: 6,
 				type: ActivityAreaMapBase,
 				props: {
-					title: this.i18n.area,
+					windowTitle: 'area',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -158,7 +158,7 @@ define([
 				height: 6,
 				type: ActivityFixedTimeseriesMap,
 				props: {
-					title: this.i18n.associatedSurveyStation,
+					windowTitle: 'associatedSurveyStation',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -172,7 +172,7 @@ define([
 				height: 6,
 				type: ActivityFixedTimeseriesChart,
 				props: {
-					title: this.i18n.charts,
+					windowTitle: 'charts',
 					pathVariableId: this._activityData.id,
 					timeseriesDataChannel: this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA')
 				}

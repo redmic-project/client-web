@@ -197,12 +197,10 @@ define([
 
 			if (href) {
 				this._updateHref(item, config, node);
-			} else {
-				var event = config.event || 'onclick';
-
-				node[event] = lang.hitch(this, this._eventClickButton, config, item, node);
-				node.setAttribute('d-state-url', true);
 			}
+
+			var event = config.event || 'onclick';
+			node[event] = lang.hitch(this, this._eventClickButton, config, item, node);
 		},
 
 		_incorrectConditionButton: function(item, config, node) {
@@ -225,7 +223,9 @@ define([
 			href = lang.replace(href, itemReplace);
 
 			node.setAttribute('href', href);
-			node.setAttribute('d-state-url', true);
+			if (href.indexOf('#') !== 0) {
+				node.setAttribute('d-state-url', true);
+			}
 		},
 
 		_hrefIsMultiple: function(config, item) {

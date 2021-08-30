@@ -8,7 +8,7 @@ define([
 	, "app/designs/embeddedContentWithTopbar/main/EmbeddedContentSelectionInTopbar"
 	, "app/designs/list/Controller"
 	, "app/designs/list/layout/Layout"
-	, "app/viewers/views/_SeriesSelectionManagement"
+	, "app/details/views/_ActivityTimeSeriesDataManagement"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -33,7 +33,7 @@ define([
 	, EmbeddedContentSelectionInTopbar
 	, ListController
 	, ListLayout
-	, _SeriesSelectionManagement
+	, _ActivityTimeSeriesDataManagement
 	, redmicConfig
 	, declare
 	, lang
@@ -50,7 +50,7 @@ define([
 	, NoDataTemplate
 ){
 	return declare([EmbeddedContentSelectionInTopbar, _Store, _Filter, _CompositeInTooltipFromIconKeypad,
-		_LocalSelectionView, _SeriesSelectionManagement], {
+		_LocalSelectionView, _ActivityTimeSeriesDataManagement], {
 		//	summary:
 		//		Base común para vistas de SeriesData.
 		//	description:

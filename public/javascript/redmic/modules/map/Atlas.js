@@ -8,7 +8,6 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "put-selector/put"
-	, "redmic/map/OpenLayers"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_Show"
@@ -21,6 +20,7 @@ define([
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
+	, 'redmic/modules/map/_AtlasLayersManagement'
 	, "redmic/modules/map/layer/_PublishInfo"
 	, "redmic/modules/map/layer/WmsLayerImpl"
 	, "templates/AtlasList"
@@ -37,7 +37,6 @@ define([
 	, lang
 	, Deferred
 	, put
-	, OpenLayers
 	, _Module
 	, _Selection
 	, _Show
@@ -50,6 +49,7 @@ define([
 	, Total
 	, DataDisplayer
 	, TemplateDisplayer
+	, _AtlasLayersManagement
 	, _PublishInfo
 	, WmsLayerImpl
 	, ListTemplate
@@ -58,7 +58,7 @@ define([
 	, templateDetails
 ) {
 
-	return declare([_Module, _Show, _Store, _Selection], {
+	return declare([_Module, _Show, _Store, _Selection, _AtlasLayersManagement], {
 		//	summary:
 		//		Módulo de Atlas.
 		//	description:
@@ -407,21 +407,6 @@ define([
 			this._lastOrder = 0;
 		},
 
-		_isTiled: function(item) {
-
-			var protocols = item.protocols;
-
-			if (item.protocols && item.protocols.length !== 0) {
-				for (var i = 0; i < protocols.length; i++) {
-					if (protocols[i].type === 'WMTS') {
-						return true;
-					}
-				}
-			}
-
-			return false;
-		},
-
 		_errorAvailable: function(error) {
 
 			var patt = new RegExp('_selection');
@@ -449,23 +434,6 @@ define([
 				return;
 			}
 
-			var isTiled = this._isTiled(item),
-				props = {
-					layers: [item.name],
-					transparent: true
-				};
-
-			if (isTiled) {
-				props.tiled = true;
-				props.pane = 'overlayPane';
-			}
-
-			if (item.formats) {
-				if (item.formats.indexOf('image/png') !== -1) {
-					props.format = 'image/png';
-				}
-			}
-
 			var itemId = item.id;
 
 			if (this._layerIdsById[itemId]) {
@@ -474,31 +442,26 @@ define([
 
 			var layerId = this._createLayerId(item),
 				layerLabel = item.alias || item.title,
+				layerDefinition = this._getLayerDefinitionByProtocol(item);
 
-				layer = OpenLayers.build({
-					type: isTiled ? "wmts" : "wms",
-					url: item.urlSource,
-					props: props
-				}),
-
-				data = {
-					id: itemId,
-					label: layerLabel,
-					originalItem: item,
-					layer: {
-						definition: declare([WmsLayerImpl, _PublishInfo]),
-						props: {
-							parentChannel: this.getChannel(),
-							mapChannel: this.getMapChannel(),
-							layer: layer,
-							styleLayer: item.styleLayer,
-							queryable: item.queryable,
-							layerId: layerId,
-							layerLabel: layerLabel,
-							refresh: item.refresh
-						}
+			var data = {
+				id: itemId,
+				label: layerLabel,
+				originalItem: item,
+				layer: {
+					definition: declare([WmsLayerImpl, _PublishInfo]),
+					props: {
+						parentChannel: this.getChannel(),
+						mapChannel: this.getMapChannel(),
+						layerDefinition: layerDefinition,
+						styleLayer: item.styleLayer,
+						queryable: item.queryable,
+						layerId: layerId,
+						layerLabel: layerLabel,
+						refresh: item.refresh
 					}
-				};
+				}
+			};
 
 			this._emitEvt('TRACK', {
 				type: TRACK.type.event,

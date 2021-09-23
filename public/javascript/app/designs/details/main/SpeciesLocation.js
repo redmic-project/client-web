@@ -13,7 +13,6 @@ define([
 	, "redmic/modules/map/layer/_ListenZoom"
 	, "redmic/modules/map/layer/_RadiusOnClick"
 	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
 	, "redmic/modules/map/_PlaceNamesButton"
 	, "templates/SpeciesTitle"
 	, "templates/SpeciesDistributionPopup"
@@ -33,7 +32,6 @@ define([
 	, _ListenZoom
 	, _RadiusOnClick
 	, LeafletImpl
-	, Map
 	, _PlaceNamesButton
 	, TemplateTitle
 	, citationTemplate
@@ -70,7 +68,7 @@ define([
 				map: {
 					width: 6,
 					height: 6,
-					type: declare([LeafletImpl, Map, _PlaceNamesButton]),
+					type: declare([LeafletImpl, _PlaceNamesButton]),
 					props: {
 						title: this.i18n.map,
 						omitContainerSizeCheck: true

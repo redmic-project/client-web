@@ -1292,6 +1292,12 @@ define({
 		, "activityStarred": "Starred"
 		, "normative": "Normative"
 
+		, "redmic": "REDMIC"
+		, "topografico": "Topographic"
+		, "ortofoto": "Orthophoto"
+		, "eoc-map": "World"
+		, "eoc-overlay": "Names"
+
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

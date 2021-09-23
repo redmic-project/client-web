@@ -3,18 +3,18 @@ define([
 	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/map/OpenLayers'
+	, 'redmic/modules/map/_AtlasLayersManagement'
 	, 'redmic/modules/map/layer/WmsLayerImpl'
 ], function(
 	ActivityLayerMap
 	, redmicConfig
 	, declare
 	, lang
-	, OpenLayers
+	, _AtlasLayersManagement
 	, WmsLayerImpl
 ) {
 
-	return declare(ActivityLayerMap, {
+	return declare([ActivityLayerMap, _AtlasLayersManagement], {
 		//	summary:
 		//
 
@@ -86,25 +86,18 @@ define([
 				return;
 			}
 
+			var layerDefinition = this._getLayerDefinitionByProtocol(layer);
+
 			this.layerConfig = this._merge([{
+				layerDefinition: layerDefinition,
 				mapChannel: widgetInstance.getChildChannel('map'),
-				layer: OpenLayers.build({
-					type: 'wmts',
-					url: layer.urlSource,
-					props: {
-						layers: [layer.name],
-						format: 'image/png',
-						transparent: true,
-						tiled: true
-					}
-				}),
 				selectorChannel: widgetInstance.getChannel()
 			}, this.layerConfig || {}]);
 
-			var layerInstance = new this._layerDefinition(this.layerConfig);
-			this._activityLayers.push(layerInstance);
+			var mapLayerInstance = new this._layerDefinition(this.layerConfig);
+			this._activityLayers.push(mapLayerInstance);
 
-			this._publish(widgetInstance.getChildChannel('map', 'ADD_LAYER'), layerInstance);
+			this._publish(widgetInstance.getChildChannel('map', 'ADD_LAYER'), mapLayerInstance);
 		}
 	});
 });

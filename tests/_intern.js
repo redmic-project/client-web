@@ -33,6 +33,7 @@ module.exports = function(args) {
 			port: tunnelPort,
 			drivers: [{
 				version: '88.0.4324.96',
+				//version: '94.0.4606.41',
 				name: 'chrome'
 			},{
 				version: '0.29.0',

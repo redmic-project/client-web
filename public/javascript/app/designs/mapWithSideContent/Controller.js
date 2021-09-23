@@ -2,17 +2,13 @@ define([
 	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
 	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
 	, "redmic/modules/map/_PlaceNamesButton"
 ], function (
 	_Controller
 	, declare
 	, lang
-	, aspect
 	, LeafletImpl
-	, Map
 	, _PlaceNamesButton
 ){
 	return declare(_Controller, {
@@ -41,7 +37,7 @@ define([
 
 		_initializeController: function() {
 
-			var exts = [LeafletImpl, Map, _PlaceNamesButton].concat(this.mapExts);
+			var exts = [LeafletImpl, _PlaceNamesButton].concat(this.mapExts);
 
 			this.map = new declare(exts)(this.mapConfig);
 		},

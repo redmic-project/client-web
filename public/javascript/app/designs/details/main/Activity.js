@@ -4,7 +4,6 @@ define([
 	, 'dojo/_base/lang'
 	, 'redmic/modules/map/_ImportWkt'
 	, 'redmic/modules/map/LeafletImpl'
-	, 'redmic/modules/map/Map'
 	, 'templates/ActivityInfo'
 	, './_ActivityBase'
 	, './_ActivityCategoryWidgets'
@@ -14,7 +13,6 @@ define([
 	, lang
 	, _ImportWkt
 	, LeafletImpl
-	, Map
 	, TemplateInfo
 	, _ActivityBase
 	, _ActivityCategoryWidgets
@@ -44,7 +42,7 @@ define([
 					width: 3,
 					height: 2,
 					hidden: true,
-					type: declare([LeafletImpl, _ImportWkt, Map]),
+					type: declare([LeafletImpl, _ImportWkt]),
 					props: {
 						title: this.i18n.spatialExtension,
 						omitContainerSizeCheck: true,

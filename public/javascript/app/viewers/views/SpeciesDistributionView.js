@@ -12,12 +12,9 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/Deferred"
-	, "dojo/dom-attr"
-	, "dojo/query"
 	, "put-selector/put"
 	, "redmic/base/Credentials"
 	, "redmic/form/FormContainer"
-	, "redmic/map/OpenLayers"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_Store"
@@ -40,7 +37,7 @@ define([
 	, "redmic/modules/search/TextImpl"
 	, "redmic/modules/tree/_LazyLoad"
 	, "redmic/modules/tree/_LeafSelection"
-	, "redmic/modules/tree/_SelectionBox"
+//	, "redmic/modules/tree/_SelectionBox"
 	, "redmic/modules/tree/CbtreeImpl"
 	, "templates/SpeciesDistributionPopup"
 	, "templates/SpeciesList"
@@ -58,12 +55,9 @@ define([
 	, lang
 	, aspect
 	, Deferred
-	, domAttr
-	, query
 	, put
 	, Credentials
 	, FormContainer
-	, OpenLayers
 	, _Filter
 	, _Selection
 	, _Store
@@ -86,7 +80,7 @@ define([
 	, TextImpl
 	, _LazyLoad
 	, _LeafSelection
-	, _SelectionBoxTree
+//	, _SelectionBoxTree
 	, CbtreeImpl
 	, TemplatePopup
 	, TemplateList
@@ -121,7 +115,7 @@ define([
 				grid5000MinZoom: 7,
 				grid1000MinZoom: 10,
 				grid500MinZoom: 11,
-				grid100MinZoom: 13,
+				grid100MinZoom: 14,
 
 				mode: [{
 					selectorType: "checkbox",
@@ -296,10 +290,11 @@ define([
 		_initialize: function() {
 
 			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new declare([TextImpl])(this.searchConfig);
+			this.textSearch = new TextImpl(this.searchConfig);
 
 			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare([ListImpl, _Framework, _ButtonsInRow, _Select])(this.browserConfig);
+			var BrowserDefinition = declare([ListImpl, _Framework, _ButtonsInRow, _Select]);
+			this.browser = new BrowserDefinition(this.browserConfig);
 
 			var tree = declare([CbtreeImpl, _LazyLoad, _LeafSelection/*, _SelectionBoxTree*/]);
 			this.tree = new tree(this.treeConfig);
@@ -316,71 +311,28 @@ define([
 				.extend(_ListenBounds)).extend(_ListenZoom);
 			this.pruneClusterLayer = new pruneClusterLayerDef(this.pruneClusterLayerConfig);
 
-			var gridingUrl = "https://atlas.redmic.es/geoserver/gg/wms";
-
-			var grid5000 = "grid5000m";
 			this.grid5000Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: this.map.getChannel(),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: gridingUrl,
-					props: {
-						layers: [grid5000],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
+				layerDefinition: 'grid5000m'
 			});
 
-			var grid1000 = "grid1000m";
 			this.grid1000Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: this.map.getChannel(),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: gridingUrl,
-					props: {
-						id: grid1000,
-						layers: [grid1000],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
+				layerDefinition: 'grid1000m'
 			});
-			var grid500 = "grid500m";
+
 			this.grid500Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: this.map.getChannel(),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: gridingUrl,
-					props: {
-						id: grid500,
-						layers: [grid500],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
+				layerDefinition: 'grid500m'
 			});
-			var grid100 = "grid100m";
+
 			this.grid100Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: this.map.getChannel(),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: gridingUrl,
-					props: {
-						id: grid100,
-						layers: [grid100],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
+				layerDefinition: 'grid100m'
 			});
 
 			this.atlas = new Atlas({
@@ -464,7 +416,6 @@ define([
 				currentGridLayer: this.currentGridLayer
 			});
 
-			//this._emitEvt('ADD_LAYER', {layer: this.grid5000Layer});
 			this._emitEvt('ADD_LAYER', {layer: this.gridLayer});
 			this._emitEvt('ADD_LAYER', {layer: this.pruneClusterLayer});
 

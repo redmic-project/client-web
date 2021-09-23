@@ -22,7 +22,6 @@ define([
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
 	, "redmic/modules/map/layer/PruneClusterLayerImpl"
 	, "redmic/modules/map/layer/_Highlightable"
 	, "redmic/modules/map/layer/_Selectable"
@@ -51,7 +50,6 @@ define([
 	, _Framework
 	, SelectionBox
 	, LeafletImpl
-	, Map
 	, PruneClusterLayerImpl
 	, _Highlightable
 	, _Selectable
@@ -343,7 +341,7 @@ define([
 		_initializeMap: function() {
 
 			if (!this.map) {
-				this.map = new declare([LeafletImpl, Map])({
+				this.map = new LeafletImpl({
 					parentChannel: this.filterContainer.getChannel()
 				});
 			}

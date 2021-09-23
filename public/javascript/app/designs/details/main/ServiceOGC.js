@@ -3,32 +3,30 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/map/OpenLayers"
+	, 'redmic/modules/map/_AtlasLayersManagement'
 	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
 	, "redmic/modules/map/layer/WmsLayerImpl"
 	, "RWidgets/RedmicUtilities"
 	, "templates/ServiceOGCTitle"
 	, "templates/ServiceOGCInfo"
-	, "templates/ServiceOGCImage"
+//	, "templates/ServiceOGCImage"
 	, "./_DetailsBase"
 ], function(
 	_Main
 	, redmicConfig
 	, declare
 	, lang
-	, OpenLayers
+	, _AtlasLayersManagement
 	, LeafletImpl
-	, Map
 	, WmsLayerImpl
 	, RedmicUtilities
 	, TemplateTitle
 	, TemplateInfo
-	, TemplateImage
+//	, TemplateImage
 	, _DetailsBase
 ) {
 
-	return declare([_DetailsBase], {
+	return declare([_DetailsBase, _AtlasLayersManagement], {
 		//	summary:
 		//		Vista detalle de servicios OGC.
 
@@ -74,7 +72,7 @@ define([
 				spatialExtensionMap: {
 					width: 3,
 					height: 3,
-					type: declare([LeafletImpl, Map]),
+					type: LeafletImpl,
 					props: {
 						title: this.i18n.geograficFrame,
 						omitContainerSizeCheck: true,
@@ -213,19 +211,12 @@ define([
 				return;
 			}
 
+			var layerDefinition = this._getLayerDefinitionByProtocol(data);
+
 			this.layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: this._getWidgetInstance('spatialExtensionMap').getChannel(),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: data.urlSource,
-					props: {
-						layers: [data.name],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
+				layerDefinition: layerDefinition
 			});
 
 			this._publishMapBox("ADD_LAYER", {

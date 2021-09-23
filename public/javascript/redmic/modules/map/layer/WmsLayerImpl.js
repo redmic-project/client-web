@@ -2,29 +2,46 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'leaflet/leaflet'
-	, 'moment/moment.min'
+	, 'redmic/modules/map/StaticLayersDefinition'
+	, './_LayerProtocols'
 	, './MapLayer'
 ], function(
 	declare
 	, lang
 	, L
-	, moment
+	, StaticLayersDefinition
+	, _LayerProtocols
 	, MapLayer
-){
-	return declare(MapLayer, {
+) {
+
+	return declare([MapLayer, _LayerProtocols], {
 		//	summary:
-		//		Implementación de capa WMS.
+		//		Implementación de capa provista por servicio externo.
 		//	description:
-		//		Proporciona la fachada para trabajar con capas WMS.
+		//		Proporciona la fachada para trabajar con capas servidas mediante protocolos WMS, WMS-C, WMTS y TMS.
 
 		constructor: function(args) {
 
 			this.config = {
 				ownChannel: 'wmsLayer',
+				layerDefinition: null,
 				refresh: 0
 			};
 
 			lang.mixin(this, this.config, args);
+		},
+
+		_initialize: function() {
+
+			if (!this.layerDefinition) {
+				return;
+			}
+
+			if (typeof this.layerDefinition === 'string') {
+				this.layerDefinition = StaticLayersDefinition[this.layerDefinition];
+			}
+
+			this.layer = this._getLayerInstance(this.layerDefinition);
 		},
 
 		_afterLayerAdded: function(data) {

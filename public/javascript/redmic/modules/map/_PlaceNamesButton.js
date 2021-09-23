@@ -3,7 +3,7 @@ define([
 	,"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/map/MapButton"
+	, "redmic/modules/map/MapButton"
 	, "redmic/modules/base/_ShowInPopup"
 ], function(
 	PlaceNames

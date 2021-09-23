@@ -16,7 +16,6 @@ define([
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
 	, "redmic/modules/map/_PlaceNamesButton"
 	, "templates/RealTimeInfo"
 	, "templates/SitePopup"
@@ -39,7 +38,6 @@ define([
 	, TemplateDisplayer
 	, GeoJsonLayerImpl
 	, LeafletImpl
-	, Map
 	, _PlaceNamesButton
 	, RealTimeInfo
 	, SitePopupTemplate
@@ -668,7 +666,7 @@ define([
 				location: {
 					width: 3,
 					height: 5,
-					type: [LeafletImpl, Map, _PlaceNamesButton],
+					type: [LeafletImpl, _PlaceNamesButton],
 					props: {
 						title: this.i18n.location
 					}

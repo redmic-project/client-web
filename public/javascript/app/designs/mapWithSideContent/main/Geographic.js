@@ -9,7 +9,6 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/map/OpenLayers"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/gateway/MapCenteringGatewayImpl"
@@ -32,7 +31,6 @@ define([
 	, declare
 	, lang
 	, aspect
-	, OpenLayers
 	, _Filter
 	, _Store
 	, MapCenteringGatewayImpl

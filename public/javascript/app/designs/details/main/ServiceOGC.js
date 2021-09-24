@@ -147,6 +147,7 @@ define([
 				target: this.infoLayerTarget
 			});
 
+			this._publishMapBox('CLEAR');
 			this._createMapBoundingLayer(data);
 			this._retrieveLayerActivities(data);
 			this._createMapLayer(data);

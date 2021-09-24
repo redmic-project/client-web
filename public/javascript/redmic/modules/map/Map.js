@@ -85,7 +85,8 @@ define([
 					LAYER_REMOVED_CONFIRMED: "layerRemovedConfirmed",
 					SET_QUERYABLE_CURSOR: "setQueryableCursor",
 					MAP_SHOWN: "mapShown",
-					MAP_HIDDEN: "mapHidden"
+					MAP_HIDDEN: "mapHidden",
+					CLEAR: 'clear'
 				},
 
 				ownChannel: "map",
@@ -162,6 +163,9 @@ define([
 			},{
 				channel : this.getChannel("SET_QUERYABLE_CURSOR"),
 				callback: "_subSetQueryableCursor"
+			},{
+				channel : this.getChannel('CLEAR'),
+				callback: '_subClear'
 			});
 		},
 
@@ -299,7 +303,7 @@ define([
 
 			var optional = obj.optional,
 				order = obj.order ? obj.order + 1 : null,
-				layerId = this._getLayerId(obj),
+				layerId = this._getLayerId(obj) || uuid.v4(),
 				layerLabel = obj.layerLabel || layerId;
 
 			// Si la capa es un módulo
@@ -350,9 +354,11 @@ define([
 				return layerObj.layerId;
 			}
 
-			var layer = layerObj.layer || layerObj;
+			if (layerObj.layer) {
+				return this._getLayerId(layerObj.layer) || layerObj.id;
+			}
 
-			return (layer.options && layer.options.id) || layer.id || uuid.v4();
+			return layerObj._leaflet_id || (layerObj.options && layerObj.options.id);
 		},
 
 		_subRemoveLayer: function(obj) {
@@ -361,12 +367,12 @@ define([
 				keepInstance = obj.keepInstance,
 				layerId;
 
-			if (typeof layer === "object") {
-				layerId = this._getLayerId(obj);
-
+			if (typeof layer === 'object') {
 				if (layer.isInstanceOf && layer.isInstanceOf(_Module)) {
 					layer = layer.layer;
 				}
+
+				layerId = this._getLayerId(obj);
 
 				// Si no contiene una capa de tipo leaflet (D3, por ejemplo)
 				if (!layer) {
@@ -578,6 +584,11 @@ define([
 			} else {
 				this._removeQueryableCursor();
 			}
+		},
+
+		_subClear: function() {
+
+			this.clear();
 		},
 
 		_pubLayerRemoveFailed: function(channel, layer) {

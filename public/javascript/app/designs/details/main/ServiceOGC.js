@@ -108,20 +108,12 @@ define([
 
 			this.inherited(arguments);
 
-			this._publish(this._getWidgetInstance('activityList').getChannel("CLEAR"));
+			this._publish(this._getWidgetInstance('activityList').getChannel('CLEAR'));
 
-			if (this.layerPolygon) {
-				this._publishMapBox("REMOVE_LAYER", {
-					layer: this.layerPolygon
-				});
-			}
+			this._publishMapBox('CLEAR');
 
 			if (this.layer) {
-				this._publishMapBox("REMOVE_LAYER", {
-					layer: this.layer
-				});
-
-				this._publish(this.layer.getChannel("DESTROY"));
+				this._publish(this.layer.getChannel('DESTROY'));
 			}
 		},
 
@@ -176,9 +168,9 @@ define([
 				}
 			});
 
-			this._publishMapBox("ADD_LAYER", {
+			this._publishMapBox('ADD_LAYER', {
 				layer: this.layerPolygon,
-				layerId: "boundingBox",
+				layerId: 'boundingBox',
 				layerLabel: this.i18n.boundingBox,
 				optional: true
 			});
@@ -219,8 +211,10 @@ define([
 				layerDefinition: layerDefinition
 			});
 
-			this._publishMapBox("ADD_LAYER", {
-				layer: this.layer
+			this._publishMapBox('ADD_LAYER', {
+				layer: this.layer,
+				layerLabel: data.alias || data.name,
+				optional: true
 			});
 		},
 

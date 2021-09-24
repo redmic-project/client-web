@@ -97,6 +97,7 @@ define([
 		_setControllerOwnCallbacksForEvents: function() {
 
 			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onControllerMeOrAncestorShown));
+			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onControllerMeOrAncestorHidden));
 			this._onEvt('RESIZE', lang.hitch(this, this._onControllerResize));
 			this._onEvt('LAYOUT_COMPLETE', lang.hitch(this, this._onLayoutComplete));
 			this._onEvt('BUTTON_EVENT', lang.hitch(this, this._onButtonEvent)); // TODO esto es específico, reubicar
@@ -195,6 +196,11 @@ define([
 
 			this._clearModules();
 			this._refreshModules();
+		},
+
+		_onControllerMeOrAncestorHidden: function(res) {
+
+			this._clearModules();
 		},
 
 		/*_getModuleRootNode: function() {

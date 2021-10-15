@@ -1298,6 +1298,9 @@ define({
 		, "eoc-map": "World"
 		, "eoc-overlay": "Names"
 
+		, "layerRefreshInterval": "Layer auto-refresh interval"
+		, "layerName": "Layer name"
+
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

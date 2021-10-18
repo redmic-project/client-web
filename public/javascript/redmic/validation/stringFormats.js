@@ -106,13 +106,11 @@ define([
 				return null;
 			}
 
-			var textSegmentWithBreak = '[a-zA-Z0-9_-]+',
-				textSegment = '[a-zA-Z0-9]+',
-				regExp = new RegExp(
-					'^(((http(s)?)|(ftp)):\/\/)((' + textSegmentWithBreak + ')[.])*(' + textSegmentWithBreak +
-					')([.](' + textSegmentWithBreak + '))+(\/(' + textSegmentWithBreak + ')\/?)*([.](' +
-					textSegment + '))*([?](' + textSegment + '[=]([\\\"]|[\\\'])?' + textSegment +
-					'([\\\"]|[\\\'])?[&]?)*)?([#]' + textSegment + ')?$');
+			var protocols = '((https?)|(ftp))',
+				textSegment = '\\w-.:@%+~#={}',
+				textSegmentPlusParams = textSegment + '?&/',
+				regExp = new RegExp('^(' + protocols + ':\/\/)?[' + textSegment + ']{2,256}\.[a-z]{2,6}[' +
+					textSegmentPlusParams + ']*$');
 
 			if (!regExp.test(value)) {
 				return 'A valid URL string was expected';

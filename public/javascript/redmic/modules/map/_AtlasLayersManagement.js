@@ -29,34 +29,49 @@ define([
 			//		Configuración de la capa procesada, lista para instanciar.
 
 			var protocols = atlasLayer.protocols,
-				wmtsProtocol, tmsProtocol, wmscProtocol, wmsProtocol;
+				definitionsByProtocol = {};
 
+			var layerDefinitions = [];
 			for (var i = 0; i < protocols.length; i++) {
 				var protocol = protocols[i],
-					protocolType = protocol.type;
+					protocolType = protocol.type,
+					definition;
 
-				if (protocolType === 'WMTS' && !wmtsProtocol) {
-					wmtsProtocol = protocol;
-				} else if (protocolType === 'TMS' && !tmsProtocol) {
-					tmsProtocol = protocol;
-				} else if (protocolType === 'WMS-C' && !wmscProtocol) {
-					wmscProtocol = protocol;
-				} else if (protocolType === 'WMS' && !wmsProtocol) {
-					wmsProtocol = protocol;
+				if (protocolType === 'WMTS' && !definitionsByProtocol.wmts) {
+					definition = this._getTiledLayerDefinition(atlasLayer, protocol);
+					definitionsByProtocol.wmts = definition;
+				} else if (protocolType === 'TMS' && !definitionsByProtocol.tms) {
+					definition = this._getTiledLayerDefinition(atlasLayer, protocol, true)
+					definitionsByProtocol.tms = definition;
+				} else if (protocolType === 'WMS-C' && !definitionsByProtocol.wmsc) {
+					definition = this._getWmscLayerDefinition(atlasLayer, protocol);
+					definitionsByProtocol.wmsc = definition;
+				} else if (protocolType === 'WMS' && !definitionsByProtocol.wms) {
+					definition = this._getWmsLayerDefinition(atlasLayer, protocol);
+					definitionsByProtocol.wms = definition;
 				}
+
+				layerDefinitions.push(definition);
 			}
 
-			if (wmtsProtocol) {
-				return this._getTiledLayerDefinition(atlasLayer, wmtsProtocol);
-			} else if (tmsProtocol) {
-				return this._getTiledLayerDefinition(atlasLayer, tmsProtocol, true);
-			} else if (wmscProtocol) {
-				return this._getWmscLayerDefinition(atlasLayer, wmscProtocol);
-			} else if (wmsProtocol) {
-				return this._getWmsLayerDefinition(atlasLayer, wmsProtocol);
+			var layerDefinition;
+			if (definitionsByProtocol.wmts) {
+				layerDefinition = definitionsByProtocol.wmts;
+			} else if (definitionsByProtocol.tms) {
+				layerDefinition = definitionsByProtocol.tms;
+			} else if (definitionsByProtocol.wmsc) {
+				layerDefinition = definitionsByProtocol.wmsc;
+			} else if (definitionsByProtocol.wms) {
+				layerDefinition = definitionsByProtocol.wms;
 			} else {
 				console.error('No valid map layer protocol found at:', atlasLayer);
+				return;
 			}
+
+			layerDefinitions.splice(layerDefinitions.indexOf(layerDefinition), 1);
+			layerDefinition.alternativeDefinitions = layerDefinitions;
+
+			return layerDefinition;
 		},
 
 		_getTiledLayerDefinition: function(atlasLayer, protocol, /*Boolean?*/ useTms) {

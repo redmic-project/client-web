@@ -112,6 +112,7 @@ define([
 
 			!this._clickDisabled && this._emitEvt('CLICK', {
 				latLng: evt.latlng,
+				zoom: this.getZoom(),
 				bbox: this.getBounds(),
 				size: this.map.getSize(),
 				containerPoint: evt.containerPoint,

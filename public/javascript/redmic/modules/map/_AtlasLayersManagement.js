@@ -41,7 +41,7 @@ define([
 					definition = this._getTiledLayerDefinition(atlasLayer, protocol);
 					definitionsByProtocol.wmts = definition;
 				} else if (protocolType === 'TMS' && !definitionsByProtocol.tms) {
-					definition = this._getTiledLayerDefinition(atlasLayer, protocol, true)
+					definition = this._getTiledLayerDefinition(atlasLayer, protocol, true);
 					definitionsByProtocol.tms = definition;
 				} else if (protocolType === 'WMS-C' && !definitionsByProtocol.wmsc) {
 					definition = this._getWmscLayerDefinition(atlasLayer, protocol);

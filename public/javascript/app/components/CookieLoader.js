@@ -105,23 +105,20 @@ define([
 			var script = document.createElement('script'),
 				gtagId = redmicConfig.googleAnalyticsId;
 
-			script.async = false;
+			script.async = true;
 			script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gtagId;
 
-			script.onload = function() {
+			document.head.appendChild(script);
 
-				window.dataLayer = [];
+			window.dataLayer = [];
 
-				window.gtag = function() {
+			window.gtag = function() {
 
-					dataLayer.push(arguments);
-				};
-
-				gtag('js', new Date());
-				gtag('config', gtagId);
+				dataLayer.push(arguments);
 			};
 
-			document.head.appendChild(script);
+			gtag('js', new Date());
+			gtag('config', gtagId);
 		}
 	});
 });

@@ -206,7 +206,9 @@ define([
 			//		pj. page, title, version...
 
 			if (this._gtagIsAvailable()) {
-				gtag('event', 'page_view', pageInfo);
+				gtag('event', 'page_view', {
+					page_path: '/' + pageInfo
+				});
 			}
 		},
 

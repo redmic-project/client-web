@@ -9,7 +9,7 @@ define([], function() {
 		'oauthClientId': 'app',
 		'siteKeyReCaptcha': '6LfA6_0SAAAAACT3i8poH1NqztZCtIW1OahT0cXs',
 		'siteKeyForDebugReCaptcha': '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-		'googleAnalyticsId': 'UA-58848624-1'
+		'googleAnalyticsId': 'G-J753HC86F0'
 	};
 
 	retObj.viewPaths = {

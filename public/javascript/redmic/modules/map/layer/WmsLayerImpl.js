@@ -25,7 +25,14 @@ define([
 			this.config = {
 				ownChannel: 'wmsLayer',
 				layerDefinition: null,
-				refresh: 0
+				refresh: 0,
+				getFeatureInfoService: 'WMS',
+				getFeatureInfoVersion: '1.1.1',
+				getFeatureInfoRequest: 'GetFeatureInfo',
+				getFeatureInfoSrs: 'EPSG:4326',
+				getFeatureInfoFormat: 'application/json',
+				getFeatureInfoMaxCount: 100,
+				getFeatureInfoBuffer: 5
 			};
 
 			lang.mixin(this, this.config, args);
@@ -178,40 +185,60 @@ define([
 				this._obtainAltGetParams(alternativeDefinition, data));
 		},
 
+		_obtainCommonGetParams: function() {
+
+			return {
+				service: this.getFeatureInfoService,
+				version: this.getFeatureInfoVersion,
+				request: this.getFeatureInfoRequest,
+				srs: this.getFeatureInfoSrs,
+				info_format: this.getFeatureInfoFormat,
+				feature_count: this.getFeatureInfoMaxCount,
+				buffer: this.getFeatureInfoBuffer
+			};
+		},
+
+		_obtainPositionGetParams: function(position, version) {
+
+			var params = {},
+				lngParam, latParam;
+
+			if (version === '1.3.0') {
+				lngParam = 'i';
+				latParam = 'j';
+			} else {
+				lngParam = 'x';
+				latParam = 'y';
+			}
+
+			params[lngParam] = parseInt(position.x, 10);
+			params[latParam] = parseInt(position.y, 10);
+
+			return params;
+		},
+
 		_obtainAltGetUrl: function(altDef) {
 
-			// TODO
 			return altDef.url + '?';
 		},
 
 		_obtainAltGetParams: function(altDef, data) {
 
-			// TODO
-			var layerProtocol = altDef.protocol,
+			var getParams = this._obtainCommonGetParams(),
+				posParams = this._obtainPositionGetParams(data.containerPoint, getParams.version),
 				layerProps = altDef.props,
-				layerName = layerProps.layers,
-				layerFormat = layerProps.format,
-				layerTransparent = layerProps.transparent;
+				layerName = layerProps.layers;
 
-			return L.Util.getParamString({
-				request: 'GetFeatureInfo',
-				srs: 'EPSG:4326',
-				info_format: 'application/json',
-				service: layerProtocol,
-				version: '1.1.1',
+			lang.mixin(getParams, posParams, {
 				layers: layerName,
 				query_layers: layerName,
-				//styles: this.layer.wmsParams.styles,
-				format: layerFormat,
-				transparent: layerTransparent,
-				feature_count: 100,
-
+				//styles: TODO,
 				width: data.size.x,
 				height: data.size.y,
-				bbox: data.bbox.toBBoxString(),
-				x: parseInt(data.containerPoint.x, 10),
-				y: parseInt(data.containerPoint.y, 10)
+				bbox: data.bbox.toBBoxString()
 			});
+
+			return L.Util.getParamString(getParams);
 		},
 
 		_obtainMainGetUrl: function() {
@@ -221,50 +248,40 @@ define([
 
 		_obtainMainGetParams: function(data) {
 
-			var params = {
-				request: 'GetFeatureInfo',
-				srs: 'EPSG:4326',
-				info_format: 'application/json',
-				service: this.layer.wmsParams.service,
-				version: this.layer.wmsParams.version,
-				layers: this.layer.wmsParams.layers,
-				query_layers: this.layer.wmsParams.layers,
-				styles: this.layer.wmsParams.styles,
-				format: this.layer.wmsParams.format,
-				transparent: this.layer.wmsParams.transparent,
-				feature_count: 100
-			};
+			var getParams = this._obtainCommonGetParams(),
+				serviceVersion = getParams.version,
+				layerName = this.layer.wmsParams.layers;
 
-			var lngParam, latParam;
-			if (params.version === '1.3.0') {
-				lngParam = 'i';
-				latParam = 'j';
-			} else {
-				lngParam = 'x';
-				latParam = 'y';
-			}
+			lang.mixin(getParams, {
+				layers: layerName,
+				query_layers: layerName,
+				styles: this.layer.wmsParams.styles
+			});
 
 			var isTiled = this.layerDefinition.protocol === 'WMS-C';
 			if (!isTiled) {
-				params.width = data.size.x;
-				params.height = data.size.y;
-				params.bbox = data.bbox.toBBoxString();
-				params[lngParam] = parseInt(data.containerPoint.x, 10);
-				params[latParam] = parseInt(data.containerPoint.y, 10);
+				var containerPosParams = this._obtainPositionGetParams(data.containerPoint, serviceVersion);
+
+				lang.mixin(getParams, containerPosParams, {
+					width: data.size.x,
+					height: data.size.y,
+					bbox: data.bbox.toBBoxString()
+				});
 			} else {
 				var tile = this._getClickedTile(data.latLng, data.zoom),
 					tileSize = this.layer.getTileSize(),
-					tilePoint = this._getClickedTilePoint(data.containerPoint, tile);
+					tilePoint = this._getClickedTilePoint(data.containerPoint, tile),
+					tilePosParams = this._obtainPositionGetParams(tilePoint, serviceVersion);
 
-				params.width = tileSize.x;
-				params.height = tileSize.y;
-				params.bbox = this._getTileBbox(tile);
 				// TODO falla el punto
-				params[lngParam] = parseInt(tilePoint.x, 10);
-				params[latParam] = parseInt(tilePoint.y, 10);
+				lang.mixin(getParams, tilePosParams, {
+					width: tileSize.x,
+					height: tileSize.y,
+					bbox: this._getTileBbox(tile)
+				});
 			}
 
-			return L.Util.getParamString(params);
+			return L.Util.getParamString(getParams);
 		},
 
 		_getClickedTile: function(clickLatLng, currZoom) {

@@ -39,7 +39,7 @@ run-local-unit-tests:
   script:
     - >
       grunt test-unit-local --headless --browser=${TEST_BROWSER} --seleniumVersion=${LOCAL_SELENIUM_VERSION}
-      --chromeVersion=${LOCAL_CHROME_VERSION} --firefoxVersion=${LOCAL_FIREFOX_VERSION} | tee test.out
+      --chromeVersion=${LOCAL_CHROME_VERSION} | tee test.out
 
 .run-remote-unit-tests:
   extends: .run-unit-tests
@@ -79,7 +79,6 @@ run-local-modules-functional-tests:
     - >
       grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
       --browser=${TEST_BROWSER} --seleniumVersion=${LOCAL_SELENIUM_VERSION} --chromeVersion=${LOCAL_CHROME_VERSION}
-      --firefoxVersion=${LOCAL_FIREFOX_VERSION}
   artifacts: &run-functional-tests-artifacts
 
 .run-remote-modules-functional-tests:

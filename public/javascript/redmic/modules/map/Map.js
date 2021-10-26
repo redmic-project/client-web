@@ -257,6 +257,7 @@ define([
 
 			this._cleanOtherBaseLayers(layerInstance);
 			this.addLayer(layerInstance, layerId);
+			this._setLayerZIndex(layerInstance, 0);
 		},
 
 		_createBaseLayer: function(layerId) {
@@ -302,7 +303,7 @@ define([
 			}
 
 			var optional = obj.optional,
-				order = obj.order ? obj.order + 1 : null,
+				order = obj.order,
 				layerId = this._getLayerId(obj) || uuid.v4(),
 				layerLabel = obj.layerLabel || layerId;
 
@@ -327,19 +328,32 @@ define([
 
 			if (optional) {
 				this._addLayerToSelector(layer, layerLabel, true);
+			} else {
+				if (order) {
+					var nextOrder = 0;
+					for (var key in this._overlayLayers) {
+						var overlayLayer = this._overlayLayers[key];
+						if (overlayLayer.optional) {
+							nextOrder++;
+						}
+					}
+					order += nextOrder;
+				}
 			}
 
-			if (!this._overlayLayers[layerId]) {
-				this._overlayLayers[layerId] = {
+			var overlayLayerObj = this._overlayLayers[layerId];
+
+			if (!overlayLayerObj) {
+				overlayLayerObj = this._overlayLayers[layerId] = {
 					instance: layer,
 					optional: !!optional
 				};
 			} else {
-				this._setLayerZIndex(layer, this._overlayLayers[layerId].order);
+				this._setLayerZIndex(layer, overlayLayerObj.order);
 			}
 
 			if (order) {
-				this._overlayLayers[layerId].order = order;
+				overlayLayerObj.order = order;
 				this._setLayerZIndex(layer, order);
 			}
 		},
@@ -679,11 +693,14 @@ define([
 			}
 
 			for (var i = 0; i < this._optionalLayerKeys.length; i++) {
-				var optionalLayerKey = this._optionalLayerKeys[i];
+				var optionalLayerKey = this._optionalLayerKeys[i],
+					layerInstance = this._getStaticLayerInstance(optionalLayerKey);
+
 				this._addMapLayer({
-					layer: this._getStaticLayerInstance(optionalLayerKey),
+					layer: layerInstance,
 					layerId: optionalLayerKey,
-					optional: true
+					optional: true,
+					order: i + 1
 				});
 			}
 		},

@@ -195,6 +195,8 @@ define([
 			var layerInstance = evt.layer,
 				layerId = layerInstance._leaflet_id;
 
+			this._setLayerZIndex(layerInstance, 0);
+
 			this._emitEvt('TRACK', {
 				type: TRACK.type.event,
 				info: {

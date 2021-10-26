@@ -246,16 +246,6 @@ define([
 			this.map.removeLayer(layer);
 		},
 
-		bringLayerToFront: function(layer) {
-
-			layer.bringToFront && layer.bringToFront();
-		},
-
-		bringLayerToBack: function(layer) {
-
-			layer.bringToBack && layer.bringToBack();
-		},
-
 		getBounds: function() {
 
 			var bounds = this.map.getBounds(),

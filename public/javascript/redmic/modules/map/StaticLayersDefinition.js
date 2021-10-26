@@ -38,20 +38,6 @@ define({
 		}
 	},
 
-	'redmic': {
-		//basemap: true,
-		protocol: 'WMS-C',
-		url: 'https://atlas.redmic.es/geoserver/basemap/wms',
-		props: {
-			layers: 'Redmic',
-			format: 'image/jpeg',
-			attribution: '<a href="https://redmic.es" target="_blank" title="Repositorio de datos marinos integrados de Canarias">REDMIC</a>',
-			minZoom: 1,
-			maxZoom: 18,
-			tiled: true
-		}
-	},
-
 	'eoc-map': {
 		basemap: true,
 		order: 1,

@@ -245,7 +245,10 @@ define([
 			//		Objecto con información de la excepción. ej: exDescription, exFatal(boolen)...
 
 			if (this._gtagIsAvailable()) {
-				gtag('event', 'exception', exceptionInfo);
+				gtag('event', 'exception', {
+					description: exceptionInfo.exDescription,
+					fatal: !!exceptionInfo.exFatal
+				});
 			}
 		}
 	});

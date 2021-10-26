@@ -8,6 +8,11 @@ module.exports = function(args) {
 		testsPath = args.testsPath,
 		coverage = args.coverage,
 		reporters = args.reporters,
+
+		seleniumVersion = args.seleniumVersion,
+		chromeVersion = args.chromeVersion,
+		firefoxVersion = args.firefoxVersion,
+
 		ownServerPort = args.ownServerPort,
 		ownSocketPort = args.ownSocketPort,
 		ownTunnelPort = args.ownTunnelPort,
@@ -16,6 +21,37 @@ module.exports = function(args) {
 		tunnelPort = ownTunnelPort || ownServerPort + 2;
 
 	delete dojoConfig.deps;
+
+	var drivers = [];
+
+	var chromeDriver = {
+		name: 'chrome'
+	};
+
+	if (chromeVersion) {
+		chromeDriver.version = chromeVersion;
+	}
+
+	drivers.push(chromeDriver);
+
+	var firefoxDriver = {
+		name: 'firefox'
+	};
+
+	if (firefoxVersion) {
+		firefoxDriver.version = firefoxVersion;
+	}
+
+	drivers.push(firefoxDriver);
+
+	var tunnelOptions = {
+		port: tunnelPort,
+		drivers: drivers
+	};
+
+	if (seleniumVersion) {
+		tunnelOptions.version = seleniumVersion;
+	}
 
 	var config = {
 		capabilities: {
@@ -28,18 +64,7 @@ module.exports = function(args) {
 		serverPort: ownServerPort,
 		socketPort: socketPort,
 
-		tunnelOptions: {
-			version: '4.0.0-alpha-2',
-			port: tunnelPort,
-			drivers: [{
-				version: '88.0.4324.96',
-				//version: '94.0.4606.41',
-				name: 'chrome'
-			},{
-				version: '0.29.0',
-				name: 'firefox'
-			}]
-		},
+		tunnelOptions: tunnelOptions,
 
 		maxConcurrency: 1,
 		defaultTimeout: 250000,

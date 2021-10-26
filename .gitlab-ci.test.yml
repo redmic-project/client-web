@@ -37,7 +37,9 @@ run-local-unit-tests:
   variables:
     <<: *run-local-tests-variables
   script:
-    - grunt test-unit-local --headless --browser=${TEST_BROWSER} | tee test.out
+    - >
+      grunt test-unit-local --headless --browser=${TEST_BROWSER} --seleniumVersion=${LOCAL_SELENIUM_VERSION}
+      --chromeVersion=${LOCAL_CHROME_VERSION} --firefoxVersion=${LOCAL_FIREFOX_VERSION} | tee test.out
 
 .run-remote-unit-tests:
   extends: .run-unit-tests
@@ -46,7 +48,8 @@ run-local-unit-tests:
   script:
     - >
       grunt test-unit-remote --headless --browser=${TEST_BROWSER} --ownServerHost="${TEST_OWN_SERVER_HOST}"
-      --remoteHost=${TEST_REMOTE_HOST} | tee test.out
+      --remoteHost=${TEST_REMOTE_HOST} --seleniumVersion=${REMOTE_SELENIUM_VERSION}
+      --chromeVersion=${REMOTE_CHROME_VERSION} --firefoxVersion=${REMOTE_FIREFOX_VERSION} | tee test.out
 
 run-remote-unit-tests-chrome:
   extends: .run-remote-unit-tests
@@ -75,7 +78,8 @@ run-local-modules-functional-tests:
     - npm start &
     - >
       grunt test-functional-local --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
-      --browser=${TEST_BROWSER}
+      --browser=${TEST_BROWSER} --seleniumVersion=${LOCAL_SELENIUM_VERSION} --chromeVersion=${LOCAL_CHROME_VERSION}
+      --firefoxVersion=${LOCAL_FIREFOX_VERSION}
   artifacts: &run-functional-tests-artifacts
 
 .run-remote-modules-functional-tests:
@@ -88,6 +92,8 @@ run-local-modules-functional-tests:
     - >
       grunt test-functional-remote --functionalSuites=tests/functional/modules/**/!\(*Script\).js --headless
       --browser=${TEST_BROWSER} --ownServerHost="${TEST_OWN_SERVER_HOST}" --remoteHost=${TEST_REMOTE_HOST}
+      --seleniumVersion=${REMOTE_SELENIUM_VERSION} --chromeVersion=${REMOTE_CHROME_VERSION}
+      --firefoxVersion=${REMOTE_FIREFOX_VERSION}
   artifacts: &run-functional-tests-artifacts
 
 run-remote-modules-functional-tests-chrome:
@@ -112,6 +118,8 @@ run-scheduled-remote-functional-tests:
     - >
       grunt test-functional-remote --serverUrl="${SERVER_URL}" --user="${REDMIC_TEST_USER}" --pass="${REDMIC_TEST_PASS}"
       --role=${TEST_ROLE} --suitesGroups="${SUITES_GROUPS}" --browser=${TEST_BROWSER} --remoteHost=${TEST_REMOTE_HOST}
+      --seleniumVersion=${REMOTE_SELENIUM_VERSION} --chromeVersion=${REMOTE_CHROME_VERSION}
+      --firefoxVersion=${REMOTE_FIREFOX_VERSION}
   dependencies: []
   artifacts: &run-functional-tests-artifacts
   rules:

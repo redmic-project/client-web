@@ -9,6 +9,9 @@ module.exports = function(grunt) {
 			, '"--suitesGroups=suitesFolderName" para indicar grupos de suites ejecutar desde la raíz correspondiente'
 			, '"--browser" para elegir navegadores a usar, soporta definiciones múltiples y lista separada por comas ' +
 				'(por defecto, chrome)'
+			, '"--seleniumVersion=version" para definir una versión del túnel Selenium (por defecto, automática)'
+			, '"--chromeVersion=version" para definir una versión del driver para Chrome (por defecto, automática)'
+			, '"--firefoxVersion=version" para definir una versión del driver para Firefox (por defecto, automática)'
 			, '"--headless" para ejecutar sin interfaz'
 		],
 

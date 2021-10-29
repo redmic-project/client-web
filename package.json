@@ -74,7 +74,7 @@
     "leaflet-minimap": "^3.6.1",
     "leaflet-navbar": "https://github.com/davidchouse/Leaflet.NavBar.git#master",
     "leaflet.coordinates": "^0.1.5",
-    "leaflet.wms": "https://github.com/heigeo/leaflet.wms.git#gh-pages",
+    "leaflet.nontiledlayer": "^1.0.9",
     "load-grunt-tasks": "^4.0.0",
     "mediator-js": "^0.11.0",
     "moment": "^2.22.1",

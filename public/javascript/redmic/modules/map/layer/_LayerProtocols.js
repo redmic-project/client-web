@@ -2,12 +2,12 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'leaflet/leaflet'
-	, 'leaflet-wms/leaflet.wms'
+
+	, 'leaflet.nontiledlayer/NonTiledLayer'
 ], function(
 	declare
 	, lang
 	, L
-	, leafletWms
 ) {
 
 	return declare(null, {
@@ -21,7 +21,7 @@ define([
 			this.config = {
 				_protocolImplementationMapping: {
 					'WMS-C': L.tileLayer.wms,
-					'WMS': leafletWms.overlay,
+					'WMS': L.NonTiledLayer.WMS,
 					'WMTS': L.tileLayer,
 					'TMS': L.tileLayer
 				}
@@ -52,6 +52,10 @@ define([
 			if (!layerUrl) {
 				console.error('Received invalid layer definition, URL is mandatory');
 				return;	// return undefined
+			}
+
+			if (layerProtocol === 'WMS') {
+				layerProps.pane = 'tilePane';
 			}
 
 			return new LayerImplementation(layerUrl, layerProps);	// return Object

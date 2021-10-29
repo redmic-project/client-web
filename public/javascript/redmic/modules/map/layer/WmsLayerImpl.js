@@ -243,7 +243,7 @@ define([
 
 		_obtainMainGetUrl: function() {
 
-			return this.layer._url + '?';
+			return this.layer._wmsUrl + '?';
 		},
 
 		_obtainMainGetParams: function(data) {

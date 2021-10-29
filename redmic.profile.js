@@ -481,26 +481,11 @@ var viewLayers = {
 	, 'app/details/views/DocumentDetailsView': {}
 	, 'app/details/views/BibliographyDetailsView': {}
 	, 'app/details/views/ContactDetailsView': {}
-	, 'app/details/views/ActivityCatalogInfrastructureMapView': {}
-	, 'app/details/views/ActivityInfrastructureMapView': {}
-	, 'app/details/views/ActivityCatalogAreaMapView': {}
-	, 'app/details/views/ActivityAreaMapView': {}
-	, 'app/details/views/ActivityCatalogLayerMapView': {}
-	, 'app/details/views/ActivityLayerMapView': {}
 	, 'app/details/views/ServiceOGCDetailsView': {}
 	, 'app/details/views/StatisticsDetailsView': {}
 	, 'app/details/views/OrganisationDetailsView': {}
-	, 'app/details/views/BibliographyPDFView': {}
-	, 'app/details/views/DocumentPDFView': {}
-	, 'app/details/views/SpeciesCatalogLocationView': {}
-	, 'app/details/views/SpeciesLocationView': {}
-	, 'app/details/views/ActivityCatalogCitationMapView': {}
 	, 'app/details/views/OrganisationCatalogDetailsView': {}
-	, 'app/details/views/ActivityCitationMapView': {}
-	, 'app/details/views/ActivityTrackingMapView': {}
-	, 'app/details/views/ActivityCatalogTrackingMapView': {}
 	, 'app/details/views/SpeciesCatalogDetailsView': {}
-
 	, 'app/edition/views/ActivityEditionView': {}
 	, 'app/edition/views/DeviceEditionView': {}
 	, 'app/edition/views/DocumentEditionView': {}

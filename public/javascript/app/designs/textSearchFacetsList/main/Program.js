@@ -1,6 +1,5 @@
 define([
 	"app/designs/base/_Main"
-	, 'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
 	, 'app/redmicConfig'
@@ -13,7 +12,6 @@ define([
 	, "redmic/modules/browser/bars/Total"
 ], function(
 	_Main
-	, _AddComposite
 	, Controller
 	, Layout
 	, redmicConfig
@@ -25,7 +23,7 @@ define([
 	, Order
 	, Total
 ){
-	return declare([Layout, Controller, _Main, _AddComposite], {
+	return declare([Layout, Controller, _Main], {
 		//	summary:
 		//		Extensión para establecer la configuración de las vistas de program.
 		//	description:

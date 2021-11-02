@@ -269,7 +269,7 @@ define([
 			if (!this._startDate || !this._endDate) {
 				var currentDate = moment();
 				this._endDate = currentDate.toISOString();
-				this._startDate = currentDate.subtract(1, 'days').toISOString();
+				this._startDate = currentDate.subtract(7, 'days').toISOString();
 			}
 
 			this._queryObj = {

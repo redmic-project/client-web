@@ -29,7 +29,7 @@ dojoConfig = {
 		'd3Tip/index': {
 			'd3': 'd3/d3.min'
 		},
-		'leaflet.nontiledlayer/NonTiledLayer': {
+		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'L-miniMap/Control.MiniMap.min': {

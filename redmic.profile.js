@@ -141,8 +141,8 @@ var profile = {
 			ignore: ignoreTagger.bind(null, 'leaflet/leaflet')
 		}
 	},{
-		name: 'leaflet-wms',
-		location: 'leaflet-wms/dist',
+		name: 'leaflet-nontiledlayer',
+		location: 'leaflet-nontiledlayer/dist',
 		resourceTags: {
 			amd: amdTagger
 		}
@@ -303,7 +303,7 @@ var profile = {
 		'd3Tip/index': {
 			'd3': 'd3/d3.min'
 		},
-		'leaflet-wms/leaflet.wms': {
+		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'L-miniMap/Control.MiniMap.min': {

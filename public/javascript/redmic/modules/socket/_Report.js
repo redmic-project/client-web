@@ -27,7 +27,8 @@ define([
 				// own actions
 				reportActions: {
 					GET_REPORT: "getReport"
-				}
+				},
+				_envData: null
 			};
 
 			lang.mixin(this, this.config, args);
@@ -37,6 +38,15 @@ define([
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setReportConfigurations));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineReportSubscriptions));
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixReportEventsAndActions));
+
+			var envDfd = window.env;
+
+			if (envDfd) {
+				envDfd.then(lang.hitch(this, function(envData) {
+
+					this._envData = envData;
+				}));
+			}
 		},
 
 		_setReportConfigurations: function() {
@@ -172,11 +182,13 @@ define([
 			}
 
 			if (obj.status === this._taskStatus.COMPLETED) {
+				var resultUrl = obj.taskResult.replace('/api', redmicConfig.apiUrlVariable),
+					downloadPath = redmicConfig.getServiceUrl(resultUrl, this._envData),
+					downloadUrl = downloadPath + '?access_token=' + Credentials.get("accessToken");
+
 				return this.i18n.completedReport1 + this._processTaskName(obj) +
-					this.i18n.completedReport2 + '<a href="' + obj.taskResult +
-					'?access_token=' + Credentials.get("accessToken") +
-					'" target="_blank"><i class="fa iconList fa-download iconDownloadReport" title="' +
-					this.i18n.download + '"></i></a>';
+					this.i18n.completedReport2 + '<a href="' + downloadUrl + '" target="_blank">' +
+					'<i class="fa iconList fa-download iconDownloadReport" title="' + this.i18n.download + '"></i></a>';
 			}
 
 			if (obj.status === this._taskStatus.FAILED) {

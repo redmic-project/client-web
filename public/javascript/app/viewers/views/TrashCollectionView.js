@@ -1,5 +1,7 @@
 define([
 	'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
+	, "app/base/views/extensions/_QueryOnMap"
+	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
@@ -26,6 +28,8 @@ define([
 	, "./TrashDetails"
 ], function(
 	_AddCompositeSearchInTooltipFromTextSearch
+	, _QueryOnMap
+	, _ShowInPopupResultsFromQueryOnMap
 	, Controller
 	, Layout
 	, redmicConfig
@@ -134,7 +138,7 @@ define([
 			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
 			this.browser = new BrowserDefinition(this.browserConfig);
 
-			this.atlas = new Atlas({
+			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
 				getMapChannel: lang.hitch(this.map, this.map.getChannel)

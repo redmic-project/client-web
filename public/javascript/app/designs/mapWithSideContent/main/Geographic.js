@@ -1,5 +1,7 @@
 define([
 	"app/base/views/extensions/_LocalSelectionView"
+	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
+	, "app/base/views/extensions/_QueryOnMap"
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
@@ -22,6 +24,8 @@ define([
 	, "templates/CitationList"
 ], function(
 	_LocalSelectionView
+	, _ShowInPopupResultsFromQueryOnMap
+	, _QueryOnMap
 	, _Main
 	, Controller
 	, Layout
@@ -224,7 +228,7 @@ define([
 
 		_createAtlas: function() {
 
-			this.atlas = new Atlas({
+			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
 				getMapChannel: lang.hitch(this.map, this.map.getChannel)

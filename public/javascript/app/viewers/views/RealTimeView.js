@@ -1,5 +1,7 @@
 define([
-	'app/designs/mapWithSideContent/Controller'
+	"app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
+	, "app/base/views/extensions/_QueryOnMap"
+	, 'app/designs/mapWithSideContent/Controller'
 	, 'app/designs/mapWithSideContent/layout/MapAndContent'
 	, 'app/redmicConfig'
 	, 'dijit/layout/LayoutContainer'
@@ -20,7 +22,9 @@ define([
 	, 'templates/SurveyStationList'
 	, 'templates/SurveyStationPopup'
 ], function(
-	Controller
+	_ShowInPopupResultsFromQueryOnMap
+	, _QueryOnMap
+	, Controller
 	, Layout
 	, redmicConfig
 	, LayoutContainer
@@ -129,7 +133,7 @@ define([
 			this.browserConfig.queryChannel = this.queryChannel;
 			this.browser = new declare([ListImpl, _Framework, _GeoJsonParser, _ButtonsInRow])(this.browserConfig);
 
-			this.atlas = new Atlas({
+			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
 				getMapChannel: lang.hitch(this.map, this.map.getChannel)

@@ -466,7 +466,7 @@ define([
 				// TODO cuando los terms en el schema esten con propiedades borrar el if
 				if (this.currentMode === 3) {
 					if (this.precision) {
-						obj.terms.precision = this.precision;
+						obj.precision = this.precision;
 					}
 				} else {
 					obj.terms.confidences = this.confidences;
@@ -697,31 +697,22 @@ define([
 
 		_changePrecisionSlider: function(value) {
 
-			// TODO cuando los terms en el schema esten con propiedades, cambiar lo de selection
-
-			value = value && [value.min, value.max];
-
-			this.precision = value;
-
 			var obj = {
-				"terms": {
-					"selection": this.selectIds,
-					"precision": this.precision
-				}
+				terms: {
+					selection: this.selectIds
+				},
+				precision: value
 			};
 
 			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
 
 			if (value) {
-				var min = value[0],
-					max = value[1];
-
 				this._emitEvt('TRACK', {
 					type: TRACK.type.event,
 					info: {
 						category: TRACK.category.button,
 						action: TRACK.action.click,
-						label: "changeDistributionPrecision:" + min + "-" + max
+						label: "changeDistributionPrecision:" + value.min + "-" + value.max
 					}
 				});
 			}
@@ -736,15 +727,12 @@ define([
 			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
 
 			if (value) {
-				var min = value.min,
-					max = value.max;
-
 				this._emitEvt('TRACK', {
 					type: TRACK.type.event,
 					info: {
 						category: TRACK.category.button,
 						action: TRACK.action.click,
-						label: "changeDistributionDepth:" + min + "-" + max
+						label: "changeDistributionDepth:" + value.min + "-" + value.max
 					}
 				});
 			}
@@ -846,11 +834,7 @@ define([
 
 		_shouldAbortRequestForDataLayer: function() {
 
-			if (this._getEmptySelection()) {
-				return true;
-			}
-
-			return false;
+			return this._getEmptySelection();
 		}
 	});
 });

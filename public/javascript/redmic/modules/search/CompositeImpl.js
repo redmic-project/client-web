@@ -72,7 +72,6 @@ define([
 				},
 				template: this.template,
 				dataTemplate: {
-					formTitle: this.i18n.filters
 				}
 			}, this.formConfig || {}]);
 		},

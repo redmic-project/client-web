@@ -74,7 +74,8 @@ define([
 			this.textSearchConfig = this._merge([{
 				itemLabel: this.itemLabel,
 				i18n: this.i18n,
-				suggestionsContainerClass: this.suggestionsContainerClass
+				suggestionsContainerClass: this.suggestionsContainerClass,
+				showExpandIcon: this.showExpandIcon
 			}, this.textSearchConfig || {}]);
 		},
 

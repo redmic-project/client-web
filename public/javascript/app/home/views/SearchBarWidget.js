@@ -52,7 +52,8 @@ define([
 				parentChannel: this.getChannel(),
 				target: this.target,
 				queryChannel: this.queryChannel,
-				legacyMode: false
+				legacyMode: false,
+				showExpandIcon: true
 			}, this.textSearchConfig || {}]);
 
 			this.textSearch = new TextImpl(this.textSearchConfig);

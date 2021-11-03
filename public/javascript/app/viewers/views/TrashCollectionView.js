@@ -24,7 +24,7 @@ define([
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/search/TextImpl"
 	, "templates/ActivityList"
-	, "templates/FilterTrashForm"
+	, "templates/FilterForm"
 	, "./TrashDetails"
 ], function(
 	_AddCompositeSearchInTooltipFromTextSearch
@@ -101,7 +101,8 @@ define([
 			this.searchConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
-				itemLabel: null
+				itemLabel: null,
+				showExpandIcon: true
 			}, this.searchConfig || {}]);
 
 			this.browserConfig = this._merge([{

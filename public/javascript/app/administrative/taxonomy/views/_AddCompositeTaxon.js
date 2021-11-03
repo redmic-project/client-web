@@ -40,6 +40,10 @@ define([
 					valueChanged: lang.hitch(this, this.valueChangedForm)
 				}
 			}, this.compositeConfig || {}]);
+
+			this.textSearchConfig = this._merge([{
+				showExpandIcon: true
+			}, this.textSearchConfig || {}]);
 		},
 
 		_mixAddCompositeTaxonEventsAndActions: function() {

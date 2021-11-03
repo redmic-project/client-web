@@ -21,18 +21,6 @@ define([
 
 		constructor: function(args) {
 
-			this.config = {
-				compositeConfig: {
-					formConfig: {
-						dataTemplate: {
-							formTitle: this.i18n.advancedSearch
-						}
-					}
-				}
-			};
-
-			lang.mixin(this, this.config, args);
-
 			aspect.after(this, '_defineSubscriptions', lang.hitch(this,
 				this._defineAddCompositeSearchInTooltipSubcriptions));
 		},

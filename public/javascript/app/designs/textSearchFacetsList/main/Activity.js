@@ -74,6 +74,10 @@ define([
 			this.facetsConfig = this._merge([{
 				aggs: redmicConfig.aggregations.activity
 			}, this.facetsConfig || {}]);
+
+			this.textSearchConfig = this._merge([{
+				showExpandIcon: true
+			}, this.textSearchConfig || {}]);
 		}
 	});
 });

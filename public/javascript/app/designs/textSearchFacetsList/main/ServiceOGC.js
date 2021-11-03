@@ -72,6 +72,10 @@ define([
 			this.facetsConfig = this._merge([{
 				aggs: redmicConfig.aggregations.atlasLayer
 			}, this.facetsConfig || {}]);
+
+			this.textSearchConfig = this._merge([{
+				showExpandIcon: true
+			}, this.textSearchConfig || {}]);
 		}
 	});
 });

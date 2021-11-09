@@ -201,6 +201,7 @@ define([
 			});
 
 			this._showMap("showMap");
+			this._getMapData();
 
 			this._showGuideMessagesHandler = setTimeout(lang.hitch(this, this._showGuideMessagesAtStartup),
 				this._guideMessagesStartupTimeout);
@@ -452,27 +453,23 @@ define([
 
 		_clickInMarker: function(obj) {
 
-			var _activeBrowserPopupCopy = this._activeBrowserPopup;
+			var currClickedStationId = obj.data[this.idProperty];
 
-			if (this._activeBrowserPopup) {
-				if (this._activeBrowserPopup === obj.data[this.idProperty]) {
-					this._activeBrowserPopup = false;
+			if (this._lastClickedStationId) {
+				if (currClickedStationId === this._lastClickedStationId) {
+					this._lastClickedStationId = null;
 				}
-
-				this._publish(this.browserPopup.getChannel("HIDE"));
+				this._publish(this.browserPopup.getChannel('HIDE'));
 			}
 
-			if (_activeBrowserPopupCopy !== obj.data[this.idProperty]) {
-				this._itemAvailable(obj); // TODO refactorizar en _TimeSeriesDataManagement
-
-				// TODO no hace falta pedir mientras la petición inicial siga trayendo todos los datos
-				/*this._activeBrowserPopup = obj.data[this.idProperty];
+			if (currClickedStationId !== this._lastClickedStationId) {
+				this._lastClickedStationId = currClickedStationId;
 
 				this._emitEvt('GET', {
 					target: this.target,
 					requesterId: this.getOwnChannel(),
-					id: obj.data[this.idProperty]
-				});*/
+					id: currClickedStationId
+				});
 			}
 		},
 
@@ -483,13 +480,13 @@ define([
 
 		_resetMarkerActive: function() {
 
-			if (this._activeBrowserPopup) {
+			if (this._lastClickedStationId) {
 				this._publish(this.mapLayerImpl.getChannel("DELETE_HIGHLIGHT_MARKER"), {
-					id: this._activeBrowserPopup
+					id: this._lastClickedStationId
 				});
 			}
 
-			this._activeBrowserPopup = false;
+			this._lastClickedStationId = false;
 		},
 
 		_onViewHidden: function() {

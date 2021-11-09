@@ -75,22 +75,25 @@ define([
 				return;
 			}
 
+			if (this._getListDataDfd && !this._getListDataDfd.isFulfilled()) {
+				this._prepareDataToInject(data.features);
+				this._generateTimeSeriesDataFromSelectedData();
+
+				this._getListDataDfd.resolve();
+				this._getListDataDfd = null;
+
+				return;
+			}
+
 			var embeddedButtonKeys = Object.keys(this.embeddedButtons),
 				embeddedListKey = embeddedButtonKeys[1],
-				currentEmbeddedContentKey = this._getCurrentContentKey();
+				currentKey = this._getCurrentContentKey();
 
-			this._prepareDataToInject(data.features);
-
-			if (currentEmbeddedContentKey === embeddedListKey) {
+			if (currentKey === embeddedListKey) {
+				this._prepareDataToInject(data.features);
 				this._injectDataToList();
 			} else {
 				this._injectDataToMap(data);
-			}
-
-			if (this._getListDataDfd && !this._getListDataDfd.isFulfilled()) {
-				this._generateTimeSeriesDataFromSelectedData();
-				this._getListDataDfd.resolve();
-				this._getListDataDfd = null;
 			}
 		},
 
@@ -98,24 +101,13 @@ define([
 
 			this._publish(this.browserPopup.getChannel('SHOW'));
 
-			var browserPopupData = [],
-				itemProps = response.data.properties;
+			var itemProps = response.data.properties;
 
-			var stationPath = itemProps.site.path,
-				stationParsedData = this._getParsedStation(stationPath);
-
-			browserPopupData.push(stationParsedData);
-
-			for (var i = 0; i < itemProps.measurements.length; i++) {
-				var measurement = itemProps.measurements[i],
-					parameterPath = measurement.parameter.path,
-					dataDefinitionParsedData = this._getParsedDataDefinition(parameterPath);
-
-				browserPopupData.push(dataDefinitionParsedData);
-			}
+			this._clearTimeseriesInternalStructures();
+			this._parseData(itemProps);
 
 			this._emitEvt('INJECT_DATA', {
-				data: browserPopupData,
+				data: this._getTimeseriesHierarchicalList(),
 				target: this.browserPopupTarget
 			});
 		},

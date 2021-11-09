@@ -540,17 +540,12 @@ define([], function() {
 		],
 		taxonsTree: ['scientificName', 'rank', 'path', 'leaves'],
 		timeSeriesStationsList: [
-			'uuid', 'properties.activityId', 'properties.site.path', 'properties.site.name', 'properties.site.code',
+			'properties.activityId', 'properties.site.path', 'properties.site.name', 'properties.site.code',
 			'properties.site.id', 'properties.measurements.parameter.id', 'properties.measurements.parameter.name',
 			'properties.measurements.unit.id', 'properties.measurements.unit.name',
 			'properties.measurements.dataDefinition.id', 'properties.measurements.dataDefinition.z'
 		],
-		timeSeriesStationsMap: [
-			'uuid', 'geometry', 'properties.activityId', 'properties.site.path', 'properties.site.name',
-			'properties.site.code', 'properties.measurements.parameter.id', 'properties.measurements.parameter.name',
-			'properties.measurements.unit.id', 'properties.measurements.unit.name',
-			'properties.measurements.dataDefinition.id'
-		]
+		timeSeriesStationsMap: ['geometry']
 	};
 
 	retObj.outerPaths = [

@@ -464,14 +464,17 @@ define([
 				this._publish(this.browserPopup.getChannel("HIDE"));
 			}
 
-			if (_activeBrowserPopupCopy !== obj.data[this.idProperty]){
-				this._activeBrowserPopup = obj.data[this.idProperty];
+			if (_activeBrowserPopupCopy !== obj.data[this.idProperty]) {
+				this._itemAvailable(obj); // TODO refactorizar en _TimeSeriesDataManagement
+
+				// TODO no hace falta pedir mientras la petición inicial siga trayendo todos los datos
+				/*this._activeBrowserPopup = obj.data[this.idProperty];
 
 				this._emitEvt('GET', {
 					target: this.target,
 					requesterId: this.getOwnChannel(),
 					id: obj.data[this.idProperty]
-				});
+				});*/
 			}
 		},
 

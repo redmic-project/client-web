@@ -16,7 +16,7 @@ define([
 				pathSeparator: '.',
 				_timeseriesDefinitionList: [],
 				_timeseriesStationList: [],
-				_timeseriesDefinitionIndexByPath: {},
+				_timeseriesDefinitionIndexByParameterPath: {},
 				_timeseriesStationIndexByPath: {},
 				// TODO renombrar, esqueleto de 'seriesData'
 				_emptySeriesData: {
@@ -99,7 +99,8 @@ define([
 					this._timeseriesStationIndexByPath[itemPath] = this._timeseriesStationList.length - 1;
 				} else {
 					this._timeseriesDefinitionList.push(item);
-					this._timeseriesDefinitionIndexByPath[itemPath] = this._timeseriesDefinitionList.length - 1;
+					this._timeseriesDefinitionIndexByParameterPath[itemPath] = this._timeseriesDefinitionList.length -
+						1;
 				}
 			}
 		},
@@ -109,9 +110,29 @@ define([
 			return !this._timeseriesDefinitionList || this._timeseriesDefinitionList.length === 0;
 		},
 
-		_getTimeseriesDefinitionList: function() {
+		_getTimeseriesHierarchicalList: function() {
 
-			return this._timeseriesDefinitionList;
+			return this._timeseriesDefinitionList.concat(this._timeseriesStationList);
+		},
+
+		_getParsedStation: function(/*string?*/ stationPath) {
+
+			if (stationPath && stationPath.length) {
+				var index = this._timeseriesStationIndexByPath[stationPath];
+				return this._timeseriesStationList[index]; // object
+			}
+
+			return this._timeseriesStationList; // array
+		},
+
+		_getParsedDataDefinition: function(/*string?*/ parameterPath) {
+
+			if (parameterPath && parameterPath.length) {
+				var index = this._timeseriesDefinitionIndexByParameterPath[parameterPath];
+				return this._timeseriesDefinitionList[index]; // object
+			}
+
+			return this._timeseriesDefinitionList; // array
 		},
 
 		_generateChartsDefinitionDataFromTimeseriesInternalStructures: function() {
@@ -127,7 +148,7 @@ define([
 		// TODO renombrar
 		_insertItemInDataChart: function(path) {
 
-			var itemIndex = this._timeseriesDefinitionIndexByPath[path];
+			var itemIndex = this._timeseriesDefinitionIndexByParameterPath[path];
 
 			if (itemIndex === undefined) {
 				return false;
@@ -250,7 +271,7 @@ define([
 
 			this._timeseriesDefinitionList = [];
 			this._timeseriesStationList = [];
-			this._timeseriesDefinitionIndexByPath = {};
+			this._timeseriesDefinitionIndexByParameterPath = {};
 			this._timeseriesStationIndexByPath = {};
 		}
 	});

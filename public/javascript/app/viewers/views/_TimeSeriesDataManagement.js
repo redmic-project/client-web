@@ -80,6 +80,7 @@ define([
 				currentEmbeddedContentKey = this._getCurrentContentKey();
 
 			this._prepareDataToInject(data.features);
+
 			if (currentEmbeddedContentKey === embeddedListKey) {
 				this._injectDataToList();
 			} else {
@@ -95,12 +96,26 @@ define([
 
 		_itemAvailable: function(response) {
 
-			this._parseData(response.data.properties);
+			this._publish(this.browserPopup.getChannel('SHOW'));
 
-			this._publish(this.browserPopup.getChannel("SHOW"));
+			var browserPopupData = [],
+				itemProps = response.data.properties;
+
+			var stationPath = itemProps.site.path,
+				stationParsedData = this._getParsedStation(stationPath);
+
+			browserPopupData.push(stationParsedData);
+
+			for (var i = 0; i < itemProps.measurements.length; i++) {
+				var measurement = itemProps.measurements[i],
+					parameterPath = measurement.parameter.path,
+					dataDefinitionParsedData = this._getParsedDataDefinition(parameterPath);
+
+				browserPopupData.push(dataDefinitionParsedData);
+			}
 
 			this._emitEvt('INJECT_DATA', {
-				data: this._getTimeseriesDefinitionList(),
+				data: browserPopupData,
 				target: this.browserPopupTarget
 			});
 		},
@@ -125,17 +140,8 @@ define([
 		_injectDataToList: function() {
 
 			this._emitEvt('INJECT_DATA', {
-				data: lang.clone(this._getTimeseriesDefinitionList()),
+				data: this._getTimeseriesHierarchicalList(),
 				target: this.browserTarget
-			});
-		},
-
-		_getMapData: function() {
-
-			this._emitEvt('ADD_TO_QUERY', {
-				query: {
-					returnFields: this._mapReturnFields
-				}
 			});
 		},
 
@@ -151,6 +157,15 @@ define([
 			} else {
 				this._generateTimeSeriesDataFromSelectedData();
 			}
+		},
+
+		_getMapData: function() {
+
+			this._emitEvt('ADD_TO_QUERY', {
+				query: {
+					returnFields: this._mapReturnFields
+				}
+			});
 		},
 
 		_getListData: function() {

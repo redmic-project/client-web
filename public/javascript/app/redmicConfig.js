@@ -545,7 +545,7 @@ define([], function() {
 			'properties.measurements.unit.id', 'properties.measurements.unit.name',
 			'properties.measurements.dataDefinition.id', 'properties.measurements.dataDefinition.z'
 		],
-		timeSeriesStationsListMap: [
+		timeSeriesStationsMap: [
 			'uuid', 'geometry', 'properties.activityId', 'properties.site.path', 'properties.site.name',
 			'properties.site.code', 'properties.measurements.parameter.id', 'properties.measurements.parameter.name',
 			'properties.measurements.unit.id', 'properties.measurements.unit.name',

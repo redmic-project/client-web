@@ -362,10 +362,8 @@ define([
 			if (!this.browserPopup) {
 				this.browserPopupConfig.parentChannel = this.filterContainer.getChannel();
 
-				this.browserPopup = new declare([
-					ListLayout,
-					ListController
-				]).extend(_ShowInPopup)(this.browserPopupConfig);
+				var browserPopupDefinition = declare([ListLayout, ListController]).extend(_ShowInPopup);
+				this.browserPopup = new browserPopupDefinition(this.browserPopupConfig);
 
 				this._setSubscription({
 					channel : this.browserPopup.getChannel("HIDDEN"),

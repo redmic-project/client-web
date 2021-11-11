@@ -330,18 +330,21 @@ define([
 
 				addedToQueryDfds.push(dfd);
 
-				if (i !== 0) {
-					var prevDfd = addedToQueryDfds[i - 1];
-					prevDfd.then(lang.hitch(this, this._continueBuildQueryAndRequestData, dfd, cat));
-				} else {
-					this._continueBuildQueryAndRequestData(dfd, cat);
+				if (i === definitionIds.length - 1) {
+					dfd.then(lang.hitch(this, function() {
+
+						this._dataRequestInProgress = false;
+					}));
 				}
+
+				if (i === 0) {
+					this._continueBuildQueryAndRequestData(dfd, cat);
+					continue;
+				}
+
+				var prevDfd = addedToQueryDfds[i - 1];
+				prevDfd.then(lang.hitch(this, this._continueBuildQueryAndRequestData, dfd, cat));
 			}
-
-			addedToQueryDfds[addedToQueryDfds.length - 1].then(lang.hitch(this, function() {
-
-				this._dataRequestInProgress = false;
-			}));
 		},
 
 		_continueBuildQueryAndRequestData: function(dfd, cat) {

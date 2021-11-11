@@ -103,11 +103,8 @@ define([
 
 			var itemProps = response.data.properties;
 
-			this._clearTimeseriesInternalStructures();
-			this._parseData(itemProps);
-
 			this._emitEvt('INJECT_DATA', {
-				data: this._getTimeseriesHierarchicalList(),
+				data: this._parseData(itemProps),
 				target: this.browserPopupTarget
 			});
 		},
@@ -117,7 +114,7 @@ define([
 			this._clearTimeseriesInternalStructures();
 
 			for (var i = 0; i < features.length; i++) {
-				this._parseData(features[i].properties);
+				this._parseAndAddTimeseriesData(features[i].properties);
 			}
 		},
 

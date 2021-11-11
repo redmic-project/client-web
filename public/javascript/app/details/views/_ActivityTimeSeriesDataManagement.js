@@ -41,8 +41,13 @@ define([
 
 			this._clear();
 
-			this._parseData(sourceData);
+			this._parseAndAddTimeseriesData(sourceData);
 			this._generateChartsDefinitionDataFromTimeseriesInternalStructures();
+		},
+
+		_parseAndAddTimeseriesData: function(data) {
+
+			this._addSourceDataToTimeseriesInternalStructures(this._parseData(data));
 		},
 
 		_parseData: function(item) {
@@ -73,7 +78,7 @@ define([
 			site.leaves = parameters.length;
 			dataList.push(site);
 
-			this._addSourceDataToTimeseriesInternalStructures(dataList);
+			return dataList;
 		},
 
 		_isInserted: function(data, itemId) {

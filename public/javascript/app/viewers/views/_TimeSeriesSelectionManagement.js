@@ -33,6 +33,7 @@ define([
 
 			aspect.before(this, '_select', lang.hitch(this, this._selectTimeSeriesSelectionManagement));
 			aspect.before(this, '_deselect', lang.hitch(this, this._deselectTimeSeriesSelectionManagement));
+			aspect.before(this, '_clearSelection', lang.hitch(this, this._clearSelectionTimeSeriesSelectionManagement));
 		},
 
 		_setTimeSeriesSelectionManagementOwnCallbacksForEvents: function() {
@@ -50,13 +51,18 @@ define([
 		_selectTimeSeriesSelectionManagement: function(path) {
 
 			this._selected[path] = true;
-			this._insertedInTimeSeriesData = {};
+			this._clearChartsDefinitionData();
 		},
 
 		_deselectTimeSeriesSelectionManagement: function(path) {
 
 			delete this._selected[path];
-			this._insertedInTimeSeriesData = {};
+			this._clearChartsDefinitionData();
+		},
+
+		_clearSelectionTimeSeriesSelectionManagement: function() {
+
+			this._clearChartsDefinitionData();
 		},
 
 		_generateTimeSeriesDataFromSelectedData: function() {

@@ -768,7 +768,7 @@ define([
 
 		_getUnmutableValue: function(value) {
 
-			if (typeof value === 'object' && value && !value.ownChannel) {
+			if (typeof value === 'object' && value && !value.ownChannel && !value.ownerDocument) {
 				return lang.clone(value);
 			}
 

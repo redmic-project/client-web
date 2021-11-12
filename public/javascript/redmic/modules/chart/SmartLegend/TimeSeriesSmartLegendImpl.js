@@ -50,11 +50,13 @@ define([
 
 		_getDataToAddToBrowser: function(data) {
 
-			if (this._currentIndex !== "noGrouped") {
-				return this._removeDefinitionIdsFromPaths(data);
+			var unmutableData = lang.clone(data);
+
+			if (this._currentIndex !== 'noGrouped') {
+				return this._removeDefinitionIdsFromPaths(unmutableData);
 			}
 
-			return data;
+			return unmutableData;
 		},
 
 		_removeDefinitionIdsFromPaths: function(data) {

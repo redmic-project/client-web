@@ -411,10 +411,8 @@ define([
 
 		_addDataToBrowser: function(data) {
 
-			var dataToAdd = this._getDataToAddToBrowser(data) || data;
-
-			this._emitEvt("INJECT_DATA", {
-				data: dataToAdd,
+			this._emitEvt('INJECT_DATA', {
+				data: this._getDataToAddToBrowser(data),
 				target: this._localTarget
 			});
 		},

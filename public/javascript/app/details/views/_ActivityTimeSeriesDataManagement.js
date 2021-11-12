@@ -47,10 +47,10 @@ define([
 
 		_parseAndAddTimeseriesData: function(data) {
 
-			this._addSourceDataToTimeseriesInternalStructures(this._parseData(data));
+			this._addSourceDataToTimeseriesInternalStructures(this._getItemsFromFeatureProperties(data));
 		},
 
-		_parseData: function(item) {
+		_getItemsFromFeatureProperties: function(item) {
 
 			var site = item.site,
 				measurementsSize = item.measurements.length,

@@ -76,12 +76,8 @@ define([
 			}
 
 			if (this._getListDataDfd && !this._getListDataDfd.isFulfilled()) {
-				this._prepareDataToInject(data.features);
-				this._generateTimeSeriesDataFromSelectedData();
-
+				this._buildTimeseriesData(data.features);
 				this._getListDataDfd.resolve();
-				this._getListDataDfd = null;
-
 				return;
 			}
 
@@ -90,8 +86,8 @@ define([
 				currentKey = this._getCurrentContentKey();
 
 			if (currentKey === embeddedListKey) {
-				this._prepareDataToInject(data.features);
-				this._injectDataToList();
+				var itemsFromFeatures = this._getItemsFromFeaturesData(data.features);
+				this._injectDataToList(itemsFromFeatures);
 			} else {
 				this._injectDataToMap(data);
 			}
@@ -101,21 +97,33 @@ define([
 
 			this._publish(this.browserPopup.getChannel('SHOW'));
 
-			var itemProps = response.data.properties;
+			var featureProps = response.data.properties,
+				itemsFromFeature = this._getItemsFromFeatureProperties(featureProps);
 
-			this._emitEvt('INJECT_DATA', {
-				data: this._parseData(itemProps),
-				target: this.browserPopupTarget
-			});
+			this._injectDataToPopupList(itemsFromFeature);
 		},
 
-		_prepareDataToInject: function(features) {
+		_buildTimeseriesData: function(features) {
 
 			this._clearTimeseriesInternalStructures();
 
 			for (var i = 0; i < features.length; i++) {
 				this._parseAndAddTimeseriesData(features[i].properties);
 			}
+		},
+
+		_getItemsFromFeaturesData: function(features) {
+
+			var parsedItems = [];
+
+			for (var i = 0; i < features.length; i++) {
+				var featureProps = features[i].properties,
+					parsedItem = this._getItemsFromFeatureProperties(featureProps);
+
+				parsedItems = parsedItems.concat(parsedItem);
+			}
+
+			return parsedItems;
 		},
 
 		_injectDataToMap: function(data) {
@@ -126,25 +134,35 @@ define([
 			});
 		},
 
-		_injectDataToList: function() {
+		_injectDataToList: function(data) {
 
 			this._emitEvt('INJECT_DATA', {
-				data: this._getTimeseriesHierarchicalList(),
+				data: data,
 				target: this.browserTarget
 			});
 		},
 
-		_prepareTimeSeriesData: function(argument) {
+		_injectDataToPopupList: function(data) {
+
+			this._emitEvt('INJECT_DATA', {
+				data: data,
+				target: this.browserPopupTarget
+			});
+		},
+
+		_prepareTimeSeriesData: function() {
 
 			if (this._showChartIsValid()) {
 				return;
 			}
 
+			var callback = lang.hitch(this, this._generateTimeSeriesDataFromSelectedData);
 			if (this._timeseriesDefinitionListIsEmpty()) {
 				this._getListDataDfd = new Deferred();
+				this._getListDataDfd.then(callback);
 				this._getListData();
 			} else {
-				this._generateTimeSeriesDataFromSelectedData();
+				callback();
 			}
 		},
 

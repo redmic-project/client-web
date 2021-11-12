@@ -20,7 +20,10 @@ define([
 
 			this.config = {
 				ownChannel: 'searchFilterWidget',
-				'class': 'composite'
+				'class': 'composite',
+				actions: {
+					CANCELLED: 'cancelled'
+				}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -41,9 +44,17 @@ define([
 				return;
 			}
 
+			this._subscribe(this.compositeSearch.getChannel('CANCELLED'), lang.hitch(this,
+				this._subCompositeSearchCancelled));
+
 			this._publish(this.compositeSearch.getChannel('SHOW'), {
 				node: this.domNode
 			});
+		},
+
+		_subCompositeSearchCancelled: function() {
+
+			this._publish(this.getChannel('CANCELLED'));
 		},
 
 		_onTargetPropSet: function(evt) {

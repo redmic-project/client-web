@@ -34,7 +34,8 @@ define([
 					CHANGE_FILTER_CHANNEL: "changeFilterChannel",
 					REMEMBER_CURRENT_VALUE: "rememberCurrentValue",
 					HAS_CHANGED: "hasChanged",
-					WAS_CHANGED: "wasChanged"
+					WAS_CHANGED: "wasChanged",
+					CANCELLED: 'cancelled'
 				},
 
 				template: formTemplate
@@ -204,6 +205,8 @@ define([
 		_formCancelled: function() {
 
 			this._resetModel();
+
+			this._publish(this.getChannel('CANCELLED'));
 		},
 
 		_afterHide: function() {

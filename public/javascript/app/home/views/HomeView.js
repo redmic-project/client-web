@@ -185,6 +185,9 @@ define([
 				channel: this._getWidgetInstance('searchBar').getChannel('TOGGLE_ADVANCED_SEARCH'),
 				callback: lang.hitch(this, this._toggleAdvancedSearch)
 			},{
+				channel: this._getWidgetInstance('searchFilter').getChannel('CANCELLED'),
+				callback: lang.hitch(this, this._toggleAdvancedSearch)
+			},{
 				channel: this._getWidgetInstance('stats').getChannel('TOTAL_ACTIVITIES'),
 				callback: lang.hitch(this, this._subStatsTotalActivities)
 			}]);

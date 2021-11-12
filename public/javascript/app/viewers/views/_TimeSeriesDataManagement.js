@@ -160,7 +160,7 @@ define([
 			if (this._timeseriesDefinitionListIsEmpty()) {
 				this._getListDataDfd = new Deferred();
 				this._getListDataDfd.then(callback);
-				this._getListData();
+				this._getTimeseriesData();
 			} else {
 				callback();
 			}
@@ -181,6 +181,13 @@ define([
 				query: {
 					returnFields: this._listDataReturnFields
 				}
+			});
+		},
+
+		_getTimeseriesData: function() {
+
+			this._emitEvt('REQUEST', {
+				target: this.target
 			});
 		}
 	});

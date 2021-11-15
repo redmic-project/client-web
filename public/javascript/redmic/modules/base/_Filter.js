@@ -141,8 +141,8 @@ define([
 
 		_onQueryChannelPropSet: function(evt) {
 
-			this._disconnectFromFilter(obj.oldValue);
-			this._connectToFilter(obj.value);
+			this._disconnectFromFilter(evt.oldValue);
+			this._connectToFilter(evt.value);
 		},
 
 		_disconnectFromFilter: function(oldQueryChannel) {

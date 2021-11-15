@@ -595,7 +595,7 @@ define({
 		, "adquisitionDate": "Acquisition date"
 		, "manufacturedDate": "Manufactured date"
 		, "acronym": "Acronym"
-		, "themes": "Themes"
+		, "themes": "Atlas"
 		, "derivedData": "Derived data"
 		, "maxValue": "Max. value"
 		, "minValue": "Min. value"

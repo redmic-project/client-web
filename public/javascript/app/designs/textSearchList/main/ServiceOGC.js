@@ -28,7 +28,7 @@ define([
 			this.config = {
 				ownChannel: "catalogOGC",
 				perms: null,
-				title: this.i18n.availableThemes
+				title: this.i18n.layersCatalog
 			};
 
 			lang.mixin(this, this.config, args);

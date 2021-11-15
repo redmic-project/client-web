@@ -103,13 +103,13 @@ define([
 
 			this.themesBrowserConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				title: this.i18n.selectedThemes,
+				title: this.i18n.selectedLayers,
 				target: this.localTarget,
 				buttonsInTopZone: true,
 				buttons: {
 					"goToCatalog": {
 						className: "fa-plus",
-						title: this.i18n.goToCatalog
+						title: this.i18n.goToLayersCatalog
 					}
 				},
 				classByList: '.borderList',
@@ -167,7 +167,7 @@ define([
 				buttonsInTopZone: true,
 				buttons: {
 					"backToSelectedLayers": {
-						className: "fa-reply",
+						className: "fa-eye",
 						title: this.i18n.goToSelectedLayers
 					}
 				},

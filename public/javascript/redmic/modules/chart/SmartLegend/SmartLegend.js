@@ -71,7 +71,7 @@ define([
 			var ListDesignDefinition = declare([ListLayout, ListController]);
 			this.chartsList = new ListDesignDefinition({
 				parentChannel: this.getChannel(),
-				title: this.i18n.selectedLayers,
+				title: this.i18n.selectedCharts,
 				target: this._localTarget,
 				buttons: {
 					"iconListMenu": {

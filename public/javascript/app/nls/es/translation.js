@@ -415,12 +415,12 @@ define({
 	, "insertLayersCategoryName": "Inserte el nombre para la categoría de capas"
 	, "category": "Categoría"
 
+	, "selectedCharts": "Gráficas seleccionadas"
 	, "selectedLayers": "Capas seleccionadas"
-	, "selectedThemes": "Temas seleccionados"
-	, "availableThemes": "Temas disponibles"
-	, "goToCatalog": "Ir a los temas disponibles"
-	, "goToSelectedLayers": "Ir a los temas seleccionados"
-	, "addLayersToLoadInMap": "Pulse aquí para añadir temas"
+	, "layersCatalog": "Catálogo de capas"
+	, "goToLayersCatalog": "Ir a catálogo de capas"
+	, "goToSelectedLayers": "Ir a capas seleccionadas"
+	, "addLayersToLoadInMap": "Pulse aquí para añadir capas del catálogo"
 
 	, "seaDepth": "Fondo"
 	, "legalValidity": "Validez legal"

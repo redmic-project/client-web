@@ -415,12 +415,12 @@ define({
 		, "insertLayersCategoryName": "Insert name for the layers category"
 		, "category": "Category"
 
+		, "selectedCharts": "Selected charts"
 		, "selectedLayers": "Selected layers"
-		, "selectedThemes": "Selected themes"
-		, "availableThemes": "Available themes"
-		, "goToCatalog": "Go to available themes"
-		, "goToSelectedLayers": "Ir a los temas seleccionados"
-		, "addLayersToLoadInMap": "Click here to add themes"
+		, "layersCatalog": "Layers catalog"
+		, "goToLayersCatalog": "Go to layers catalog"
+		, "goToSelectedLayers": "Go to selected layers"
+		, "addLayersToLoadInMap": "Click here to add layers from catalog"
 
 		, "seaDepth": "Bottom"
 		, "legalValidity": "Legal validity"

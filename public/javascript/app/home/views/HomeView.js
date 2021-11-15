@@ -210,7 +210,8 @@ define([
 				query: {
 					text: {
 						text: searchDefinition.searchText || null
-					}
+					},
+					sorts: null
 				}
 			});
 		},

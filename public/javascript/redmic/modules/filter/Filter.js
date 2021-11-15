@@ -39,7 +39,7 @@ define([
 					AVAILABLE_FACETS: "availableFacets",
 					RESET: "reset",
 					RESETTED: "resetted",
-					REQUEST_FILTER: "requestFilter",
+					//REQUEST_FILTER: "requestFilter",
 					CHANGED_MODEL: "changedModel",
 					DESERIALIZE: "deserialize",
 					SERIALIZE: "serialize",
@@ -83,9 +83,9 @@ define([
 			},{
 				channel: this.getChannel("REFRESH"),
 				callback: "_subRefresh"
-			},{
+			/*},{
 				channel: this.getChannel("REQUEST_FILTER"),
-				callback: "_subRequestFilter"
+				callback: "_subRequestFilter"*/
 			},{
 				channel: this.getChannel("SERIALIZE"),
 				callback: "_subSerialize"
@@ -309,10 +309,10 @@ define([
 			this._request(req);
 		},
 
-		_subRequestFilter: function(req) {
+		/*_subRequestFilter: function(req) {
 
 			this._request(req);
-		},
+		},*/
 
 		_request: function(req) {
 

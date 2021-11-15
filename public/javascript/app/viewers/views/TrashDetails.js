@@ -158,7 +158,7 @@ define([
 				channel: this.filter.getChannel("CHANGED_MODEL"),
 				callback: "_subChangedModelFilter"
 			},{
-				channel: this.filter.getChannel("REQUEST_FILTER"),
+				channel: this.filter.getChannel("SERIALIZED"),
 				callback: "_subRequestFilter"
 			});
 		},

@@ -125,7 +125,7 @@ define([
 				channel: this.filter.getChannel("CHANGED_MODEL"),
 				callback: "_subChangedModelFilter"
 			},{
-				channel: this.filter.getChannel("REQUEST_FILTER"),
+				channel: this.filter.getChannel("SERIALIZE"),
 				callback: "_subRequestFilter"
 			});
 		},
@@ -208,7 +208,7 @@ define([
 		_subRequestFilter: function(obj) {
 
 			for (var key in this._layerInstances)
-				this._publish(this._layerInstances[key].getChildChannel('filter', "REQUEST_FILTER"), obj);
+				this._publish(this._layerInstances[key].getChildChannel('filter', "SERIALIZE"), obj);
 		},
 
 		_select: function(item) {

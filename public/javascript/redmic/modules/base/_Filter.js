@@ -29,7 +29,7 @@ define([
 				filterActions: {
 					ADDED_TO_QUERY: 'addedToQuery',
 					SERIALIZED: 'serialized',
-					REQUEST_FILTER: 'requestFilter',
+					//REQUEST_FILTER: 'requestFilter',
 					ADD_TO_QUERY: 'addToQuery',
 					REFRESH: 'refresh',
 					UPDATE_TARGET: 'updateTarget'
@@ -43,7 +43,6 @@ define([
 			aspect.before(this, '_beforeInitialize', lang.hitch(this, this._initializeFilter));
 			aspect.after(this, '_defineSubscriptions', lang.hitch(this, this._defineFilterSubscriptions));
 			aspect.after(this, '_definePublications', lang.hitch(this, this._defineFilterPublications));
-			aspect.after(this, '_setOwnCallbacksForEvents', lang.hitch(this, this._setFilterOwnCallbacksForEvents));
 		},
 
 		_mixFilterEventsAndActions: function() {
@@ -86,9 +85,9 @@ define([
 			},{
 				channel: this._buildChannel(queryChannel, this.actions.SERIALIZED),
 				callback: '_subFilterSerialized'
-			},{ // TODO: REQUEST_FILTER parece lo mismo que SERIALIZE, hacer que todo vaya por SERIALIZE
+			/*},{ // TODO: REQUEST_FILTER parece lo mismo que SERIALIZE, hacer que todo vaya por SERIALIZE
 				channel: this._buildChannel(queryChannel, this.actions.REQUEST_FILTER),
-				callback: '_subFilterSerialized'
+				callback: '_subFilterSerialized'*/
 			});
 		},
 
@@ -112,11 +111,6 @@ define([
 				event: 'UPDATE_TARGET',
 				channel: this._buildChannel(queryChannel, this.actions.UPDATE_TARGET)
 			});
-		},
-
-		_setFilterOwnCallbacksForEvents: function() {
-
-			this._onEvt('QUERY_CHANNEL_SET', lang.hitch(this, this._onQueryChannelUpdated));
 		},
 
 		_subAddedToQuery: function(res) {
@@ -145,23 +139,18 @@ define([
 			this._emitEvt('UPDATE_TARGET', obj);
 		},
 
-		_onQueryChannelUpdated: function(obj) {
+		_onQueryChannelPropSet: function(evt) {
 
 			this._disconnectFromFilter(obj.oldValue);
 			this._connectToFilter(obj.value);
-		},
-
-		_onQueryChannelPropSet: function(evt) {
-
-			this._onQueryChannelUpdated(evt);
 		},
 
 		_disconnectFromFilter: function(oldQueryChannel) {
 
 			this._removeSubscriptions([
 				this._buildChannel(oldQueryChannel, this.actions.ADDED_TO_QUERY),
-				this._buildChannel(oldQueryChannel, this.actions.SERIALIZED),
-				this._buildChannel(oldQueryChannel, this.actions.REQUEST_FILTER)
+				this._buildChannel(oldQueryChannel, this.actions.SERIALIZED)/*,
+				this._buildChannel(oldQueryChannel, this.actions.REQUEST_FILTER)*/
 			]);
 			this._removePublications([
 				this._buildChannel(oldQueryChannel, this.actions.ADD_TO_QUERY),

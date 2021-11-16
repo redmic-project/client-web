@@ -2,7 +2,6 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "put-selector/put"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 	, "./_ControllerItfc"
@@ -10,7 +9,6 @@ define([
 	declare
 	, lang
 	, aspect
-	, put
 	, _Module
 	, _Show
 	, _ControllerItfc
@@ -64,39 +62,6 @@ define([
 			this._onEvt("TITLE_CLASS_SELECTOR_SET", lang.hitch(this, this._updateTitleClassSelector));
 			this._onEvt("TITLE_SET", lang.hitch(this, this._updateTitle));
 			this._onEvt("SHOW", lang.hitch(this, this._onControllerShown));
-		},
-
-		_updateTitleClassSelector: function() {
-
-			var node = this._getTitleNode();
-			node && put(node, this.titleClassSelector);
-		},
-
-		_updateTitle: function(title) {
-
-			var titleNode = this._getTitleNode(),
-				titleValue = title || this.title;
-
-			if (!titleNode) {
-				return;
-			}
-
-			put(titleNode, '[title=$]', titleValue);
-			titleNode.innerHTML = titleValue;
-		},
-
-		_setTitle: function(title) {
-
-			if (this.titleSpanNode) {
-				put(this.titleSpanNode, "!");
-			}
-
-			this.titleSpanNode = put(this._titleNode, "span[title=$].titleRedmic", title, title);
-		},
-
-		_getTitleNode: function() {
-
-			return this.titleSpanNode;
 		},
 
 		_resizeControllerAfterShow: function() {

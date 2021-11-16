@@ -3,7 +3,6 @@ define([
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
 	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -19,7 +18,6 @@ define([
 	, Controller
 	, Layout
 	, _AddTitle
-	, _TitleSelection
 	, redmicConfig
 	, declare
 	, lang
@@ -32,7 +30,7 @@ define([
 	, TemplateActivities
 ) {
 
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
+	return declare([Layout, Controller, _Main, _AddTitle], {
 		//	summary:
 		//		Base de vistas detalle.
 

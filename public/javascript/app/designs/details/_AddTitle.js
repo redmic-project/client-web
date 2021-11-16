@@ -5,7 +5,6 @@ define([
 	, "dojo/query"
 	, "put-selector/put"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "RWidgets/Utilities"
 	, "templates/DefaultDetailsTitle"
 ], function (
 	declare
@@ -14,7 +13,6 @@ define([
 	, query
 	, put
 	, TemplateDisplayer
-	, Utilities
 	, TemplateTitle
 ){
 	return declare(null, {
@@ -84,9 +82,9 @@ define([
 
 		_createContainerTitle: function() {
 
-			this.topNode = put("div.infoTitle");
+			this.topNode = put("div.infoTitle.infoTitleBackground");
 
-			this.titleNode = put(this.topNode, "div.infoTitle.infoTitleBackground.title");
+			this.titleNode = put(this.topNode, "div.title");
 
 			if (this.centerTitle) {
 				put(this.titleNode, ".centerTitle");
@@ -111,11 +109,8 @@ define([
 
 			var leftButtons = this._titleLeftButtonsList.concat(this.titleLeftButtonsList || []),
 				rightButtons = this._titleRightButtonsList.concat(this.titleRightButtonsList || []);
-			this._insertButtonsIcons(leftButtons.reverse(), rightButtons.reverse());
 
-			if (this.tabs && this.tabs.length > 0) {
-				this._insertTabs();
-			}
+			this._insertButtonsIcons(leftButtons.reverse(), rightButtons.reverse());
 		},
 
 		_createTitle: function() {
@@ -141,9 +136,11 @@ define([
 				return;
 			}
 
-			this._titleLeftNode = put(this.titleNode, "div.left");
-			this._titleCenterNode = put(this.titleNode, "div.center");
-			this._titleRightNode = put(this.titleNode, "div.right.hidden");
+			this._titleCenterNode = this.titleNode;
+
+			this._titleButtonsNode = put(this.topNode, 'div.buttons')
+			this._titleLeftNode = put(this._titleButtonsNode, "div.left");
+			this._titleRightNode = put(this._titleButtonsNode, "div.right.hidden");
 		},
 
 		_addIdTitle: function() {
@@ -169,63 +166,6 @@ define([
 				node.setAttribute('href', this.pathParent);
 				node.setAttribute('d-state-url', true);
 			}
-		},
-
-		_insertTabs: function() {
-
-			if (this._tabstitleNode) {
-				this._tabstitleNode = put(this._tabstitleNode, "!");
-			}
-
-			this._tabstitleNode = put(this.titleNode, "div.tabs");
-
-			for (var i = 0; i < this.tabs.length; i++) {
-				this._insertTab(this.tabs[i]);
-			}
-		},
-
-		_insertTab: function(tab) {
-
-			if (tab.select || !this._insertTabByCondition(tab)) {
-				return;
-			}
-
-			var tabClass = '.tab.tabSelect',
-				tabTitleKey = tab.title,
-				tabTitleValue = this.i18n[tabTitleKey] || tabTitleKey,
-				tabNode = put(this._tabstitleNode, 'div' + tabClass + ' a', tabTitleValue);
-
-			if (tab.href) {
-				tabNode.setAttribute('href', lang.replace(tab.href, this.data));
-				tabNode.setAttribute('d-state-url', true);
-			}
-		},
-
-		_insertTabByCondition: function(tab) {
-
-			if (tab.condition) {
-				return tab.condition(this.data);
-			}
-
-			var conditionHrefPath = tab.conditionHref,
-				conditionValue = tab.conditionValue,
-				conditionHref;
-
-			if (!conditionHrefPath) {
-				return true;
-			}
-
-			conditionHref = Utilities.getDeepProp(this.data, conditionHrefPath, this.pathSeparator);
-
-			if (conditionValue) {
-				if (conditionHref === conditionValue) {
-					return true;
-				}
-			} else if (conditionHref) {
-				return true;
-			}
-
-			return false;
 		},
 
 		_insertButtonsIcons: function(leftButtons, rightButtons) {

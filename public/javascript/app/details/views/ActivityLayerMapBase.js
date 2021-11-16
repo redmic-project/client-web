@@ -47,7 +47,8 @@ define([
 					terms: {
 						activities: [this.pathVariableId]
 					}
-				}
+				},
+				requesterId: this.getChannel()
 			});
 		},
 

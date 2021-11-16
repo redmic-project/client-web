@@ -549,12 +549,11 @@ define([
 
 			this._disableButtons();
 
-			this._once(this.themesBrowser.getChannel("HIDDEN"),
-				lang.hitch(this, function() {
+			this._once(this.themesBrowser.getChannel("HIDDEN"), lang.hitch(this, function() {
 
-				this._showBrowser(this.catalogView, this._atlasContainer,
-					this.showBrowserAnimationClass, this.hideBrowserAnimationClass);
-				}));
+				this._showBrowser(this.catalogView, this._atlasContainer, this.showBrowserAnimationClass,
+					this.hideBrowserAnimationClass);
+			}));
 
 			this._publish(this.themesBrowser.getChannel("HIDE"));
 

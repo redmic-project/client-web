@@ -1,19 +1,19 @@
 define([
-	"dojo/_base/declare"
-	, "redmic/modules/base/_Filter"
+	'app/designs/textSearchList/_AddFilter'
+	, 'dojo/_base/declare'
 ], function (
-	declare
-	, _Filter
-){
-	return declare(_Filter, {
+	_AddFilter
+	, declare
+) {
+
+	return declare(_AddFilter, {
 		//	summary:
-		//
+		//		Extensión de diseño con módulo browser y search (text y facets) para agregar comunicación con módulo
+		//		filter
 
 		_setQueryChannelInModules: function() {
 
-			this.browserConfig.queryChannel = this.queryChannel;
-
-			this.textSearchConfig.queryChannel = this.queryChannel;
+			this.inherited(arguments);
 
 			this.facetsConfig.queryChannel = this.queryChannel;
 		}

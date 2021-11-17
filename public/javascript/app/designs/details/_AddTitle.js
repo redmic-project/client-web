@@ -138,7 +138,7 @@ define([
 
 			this._titleCenterNode = this.titleNode;
 
-			this._titleButtonsNode = put(this.topNode, 'div.buttons')
+			this._titleButtonsNode = put(this.topNode, 'div.buttons');
 			this._titleLeftNode = put(this._titleButtonsNode, "div.left");
 			this._titleRightNode = put(this._titleButtonsNode, "div.right.hidden");
 		},

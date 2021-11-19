@@ -401,6 +401,9 @@ define([
 			this._preparePublicationsForLayer(layerId);
 			this._doPublicationsForLayer(layerId);
 			this._tryToDrawLayer(this._layers[layerId]);
+
+			// todo
+			//this._emitEvt('LAYER_ADDED', layerId);
 		},
 
 		_doSubscriptionsForLayer: function(layerId) {

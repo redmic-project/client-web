@@ -99,8 +99,13 @@ define([
 		_updateHorizontalLimitsOnLayerHiddenOrUpdated: function(res) {
 
 			var layerId = res.chart,
-				layerLimits = this._layersLimits[layerId],
-				removedMin = layerLimits.xMin,
+				layerLimits = this._layersLimits[layerId];
+
+			if (!layerLimits) {
+				return;
+			}
+
+			var removedMin = layerLimits.xMin,
 				removedMax = layerLimits.xMax,
 				hasToUpdateMin = removedMin === this._temporalAxisDomainLimits.min,
 				hasToUpdateMax = removedMax === this._temporalAxisDomainLimits.max;

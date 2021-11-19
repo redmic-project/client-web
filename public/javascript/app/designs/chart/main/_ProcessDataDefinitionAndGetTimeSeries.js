@@ -38,7 +38,7 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			aspect.after(this, '_setInterval', lang.hitch(this, this._buildQueryAndRequestData));
+			aspect.after(this, '_setInterval', lang.hitch(this, this._prepareChartsRepresentation));
 		},
 
 		_getCategories: function() {
@@ -269,7 +269,6 @@ define([
 			var definitionData = lang.clone(this.chartsData.data.definitions[key]);
 
 			switch (this._interval) {
-
 				case "day":
 					definitionData.timeInterval = 86400;
 					break;
@@ -310,6 +309,15 @@ define([
 						return unit;
 					}
 				}
+			}
+		},
+
+		_prepareChartsRepresentation: function() {
+
+			if (this._addChartLayersWithoutData) {
+				this._addChartLayersWithoutData();
+			} else {
+				this._buildQueryAndRequestData();
 			}
 		},
 

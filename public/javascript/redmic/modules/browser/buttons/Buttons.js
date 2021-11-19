@@ -166,6 +166,29 @@ define([
 		_updateButton: function(item, config, node) {
 
 			this._conditionButton(item, config, node);
+			this._updateToggleState(item, config, node);
+		},
+
+		_updateToggleState: function(item, config, node) {
+
+			var itemState = item.state,
+				stateInItem = itemState !== undefined;
+
+			if (stateInItem) {
+				if (!itemState) {
+					this._updateIconClass(config, node);
+				}
+				return;
+			}
+
+			var configState = config.state,
+				stateInConfig = configState !== undefined;
+
+			if (stateInConfig) {
+				if (!configState) {
+					this._updateIconClass(config, node);
+				}
+			}
 		},
 
 		_conditionButton: function(item, config, node) {
@@ -343,7 +366,7 @@ define([
 				obj.iconNode = node;
 			}
 
-			if (config.state) {
+			if (config.state !== undefined) {
 				obj.state = domClass.contains(node, config.icon);
 			}
 

@@ -51,6 +51,11 @@ define([
 					REMOVE_LAYER: "removeLayer",
 					COPY_CHART_COLOR: "copyChartColor"
 				},
+				actions: {
+					ADD_ENTRY: 'addEntry',
+					ENTRY_ENABLED: 'entryEnabled',
+					ENTRY_DISABLED: 'entryDisabled'
+				},
 
 				idProperty: "path",
 				pathSeparator: ".",
@@ -60,7 +65,8 @@ define([
 				_layerIdByPseudonym: {},
 				_currentData: {},
 				_currentIndex: "noGrouped",
-				_hiddenLayers: {}
+				_hiddenLayers: {},
+				_stateByLayerId: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -100,7 +106,7 @@ define([
 								altIcon: "fa-toggle-off",
 								btnId: "toggleShowLayer",
 								title: "layer",
-								state: true,
+								state: false,
 								returnItem: true,
 								condition: function(item) { return !item.leaves; }
 							/*},{
@@ -150,6 +156,9 @@ define([
 			}
 
 			this.subscriptionsConfig.push({
+				channel : this.getChannel('ADD_ENTRY'),
+				callback: '_subAddEntry'
+			},{
 				channel : this.getChartsContainerChannel("LAYER_ADDED"),
 				callback: "_subLayerAdded"
 			},{
@@ -191,6 +200,12 @@ define([
 		_definePublications: function() {
 
 			this.publicationsConfig.push({
+				event: 'SHOW_LAYER',
+				channel: this.getChannel('ENTRY_ENABLED')
+			},{
+				event: 'HIDE_LAYER',
+				channel: this.getChannel('ENTRY_DISABLED')
+			},{
 				event: 'TEMPLATE_UPDATE_LIST',
 				channel: this.chartsList.getChildChannel("browser", "UPDATE_TEMPLATE")
 			},{
@@ -228,9 +243,18 @@ define([
 			return this.legendNode;
 		},
 
+		_subAddEntry: function(req) {
+
+			var layerId = req.chart;
+			this._stateByLayerId[layerId] = false;
+
+			this._onLayerInfoUpdate(req);
+		},
+
 		_subLayerAdded: function(res) {
 
 			var layerId = res.chart;
+			this._stateByLayerId[layerId] = true;
 
 			this._emitEvt("GET_LAYER_INFO", {
 				layerId: layerId
@@ -249,10 +273,12 @@ define([
 
 		_onLayerInfoUpdate: function(res) {
 
-			var layerId = res.chart;
+			var layerId = res.chart,
+				layerPath = this._pathsByLayerId[layerId];
 
 			this._updateLegendContentWithNewInfo(res);
 			this._deactivateHiddenLayer(this._pathsByLayerId[layerId]);
+			this._activateToggleShowLayerButton(layerPath);
 		},
 
 		_updateLegendContentWithNewInfo: function(res) {
@@ -434,7 +460,9 @@ define([
 			if (this._hiddenLayers[layerId]) {
 				this._deactivateToggleShowLayerButton(layerPath);
 			} else {
-				this._activateToggleShowLayerButton(layerPath);
+				if (this._stateByLayerId[layerId]) {
+					this._activateToggleShowLayerButton(layerPath);
+				}
 			}
 		},
 
@@ -620,7 +648,6 @@ define([
 
 			var pathFromList = obj[this.idProperty],
 				layerId = pathFromList.split(this.pathSeparator).pop(),
-				state = obj.state,
 				propsToPub = {
 					layerId: layerId
 				};
@@ -632,7 +659,10 @@ define([
 
 			var objToPub = this._getPubToLayerObj(propsToPub);
 
-			if (!state) {
+			var prevState = this._stateByLayerId[layerId];
+			this._stateByLayerId[layerId] = !prevState;
+
+			if (prevState) {
 				this._deactivateLayer(objToPub);
 			} else {
 				this._activateLayer(objToPub);

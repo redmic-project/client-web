@@ -158,7 +158,7 @@ define([
 				dataDefinitions: this._parseDataForAggregationTool(this.categories)
 			});
 
-			if (this._chartsContainerIsReady) {
+			if (changeObj.oldValue && this._chartsContainerIsReady) {
 				this._emitEvt('CLEAR_LAYERS');
 				this._interval && this._setInterval(this._interval);
 			}
@@ -254,6 +254,7 @@ define([
 		_setInterval: function(interval) {
 
 			this._interval = interval;
+
 			this._publish(this.chartsContainer.getChannel('INTERVAL_CHANGED'), {
 				interval: interval
 			});
@@ -426,9 +427,9 @@ define([
 
 		_createChartLabel: function(agg) {
 
-			var intervalLabel = this.intervalLabelKey || this._intervalLabelKey;
+			var intervalLabel = this.intervalLabelKey || this._intervalLabelKey || this._interval;
 
-			return this._interval !== 'raw' ? agg + '_by_' + intervalLabel || this._interval : agg;
+			return this._interval !== 'raw' ? agg + '_by_' + intervalLabel : agg;
 		}
 
 	});

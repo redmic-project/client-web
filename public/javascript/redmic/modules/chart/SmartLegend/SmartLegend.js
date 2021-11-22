@@ -66,6 +66,7 @@ define([
 				_currentData: {},
 				_currentIndex: "noGrouped",
 				_hiddenLayers: {},
+				_layerEntries: {},
 				_stateByLayerId: {}
 			};
 
@@ -246,15 +247,25 @@ define([
 		_subAddEntry: function(req) {
 
 			var layerId = req.chart;
+
+			if (this._layerEntries[layerId]) {
+				return;
+			}
+
+			this._layerEntries[layerId] = req;
 			this._stateByLayerId[layerId] = false;
 
-			this._onLayerInfoUpdate(req);
+			this._updateLegendContentWithNewInfo(req);
 		},
 
 		_subLayerAdded: function(res) {
 
 			var layerId = res.chart;
 			this._stateByLayerId[layerId] = true;
+
+			if (this._layerEntries[layerId]) {
+				delete this._layerEntries[layerId];
+			}
 
 			this._emitEvt("GET_LAYER_INFO", {
 				layerId: layerId
@@ -732,6 +743,11 @@ define([
 			this._publish(this.chartsList.getChildChannel("browser", "CLEAR"));
 
 			this._emitEvt("GET_LAYER_INFO");
+
+			for (var layerId in this._layerEntries) {
+				var layerEntryInfo = this._layerEntries[layerId];
+				this._onLayerInfoUpdate(layerEntryInfo);
+			}
 		}
 	});
 });

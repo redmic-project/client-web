@@ -159,9 +159,14 @@ define([
 			});
 
 			if (changeObj.oldValue && this._chartsContainerIsReady) {
-				this._emitEvt('CLEAR_LAYERS');
-				this._interval && this._setInterval(this._interval);
+				this._clearOldChartsData();
 			}
+		},
+
+		_clearOldChartsData: function() {
+
+			this._emitEvt('CLEAR_LAYERS');
+			this._interval && this._setInterval(this._interval);
 		},
 
 		_parseDataForAggregationTool: function() {

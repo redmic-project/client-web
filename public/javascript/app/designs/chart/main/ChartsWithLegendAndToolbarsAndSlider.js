@@ -62,7 +62,7 @@ define([
 
 			for (var i = 0; i < definitionIds.length; i++) {
 				var cat = definitionIds[i];
-				this._addChartLayerWithoutData(cat, 'avg');
+				this._addChartLayerEntry(cat, 'avg');
 				if (i === 0) {
 					var dfd = new Deferred();
 					this._continueBuildQueryAndRequestData(dfd, cat);
@@ -70,7 +70,7 @@ define([
 			}
 		},
 
-		_addChartLayerWithoutData: function(cat, agg) {
+		_addChartLayerEntry: function(cat, agg) {
 
 			var catLayers = this._layers[cat],
 				layerInstance = catLayers && catLayers[agg];
@@ -116,7 +116,11 @@ define([
 
 		_subSmartLegendEntryDisabled: function(res) {
 
-			console.log('disabled de leyenda capa', res);
+			var layerId = res.layerId;
+
+			if (!this._layerHasData[layerId]) {
+				this._layerHasData[layerId] = true;
+			}
 		},
 
 		_removeChartLayer: function(cat, agg) {
@@ -126,6 +130,13 @@ define([
 			delete this._layerHasData[layerId];
 
 			this.inherited(arguments);
+		},
+
+		_clearOldChartsData: function() {
+
+			this.inherited(arguments);
+
+			this._layerHasData = {};
 		}
 	});
 });

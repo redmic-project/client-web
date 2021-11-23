@@ -2,11 +2,13 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, "dojo/Deferred"
 	, "./row/_Buttons"
 ], function(
 	declare
 	, lang
 	, aspect
+	, Deferred
 	, _Buttons
 ){
 	return declare(null, {
@@ -26,7 +28,9 @@ define([
 					BUTTON_EVENT: "btnEvent",
 					CHANGE_ROW_BUTTON_TO_MAIN_CLASS: "changeRowButtonToMainClass",
 					CHANGE_ROW_BUTTON_TO_ALT_CLASS: "changeRowButtonToAltClass"
-				}
+				},
+
+				_dfdChangeButtonClass: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -34,8 +38,9 @@ define([
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixButtonsInRowEventsAndActions));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineButtonsInRowSubscriptions));
 			aspect.after(this, "_definePublications", lang.hitch(this, this._defineButtonsInRowPublications));
-
 			aspect.after(this, "_definitionRow", lang.hitch(this, this._definitionButtonsRow));
+			aspect.after(this, '_addRow', lang.hitch(this, this._buttonsInRowAddRow));
+			aspect.after(this, '_clear', lang.hitch(this, this._buttonsInRowClear));
 		},
 
 		_mixButtonsInRowEventsAndActions: function () {
@@ -97,11 +102,24 @@ define([
 
 			var instance = this._getRowInstance(idProperty);
 
-			if (!instance) {
+			if (instance) {
+				this._publishChangeButtonClass(instance, 'CHANGE_ROW_BUTTON_TO_MAIN_CLASS', req);
+
 				return;
 			}
 
-			this._publish(instance.getChildChannel('buttons', 'CHANGE_ROW_BUTTON_TO_MAIN_CLASS'), req);
+			var layerId = idProperty.split(this.pathSeparator).pop(),
+				dfd = this._dfdChangeButtonClass[layerId];
+
+			if (dfd && !dfd.isFulfilled()) {
+				return;
+			}
+
+			dfd = this._dfdChangeButtonClass[layerId] = new Deferred();
+			dfd.then(lang.hitch(this, function(originalReq, dfdInstance) {
+
+				this._publishChangeButtonClass(dfdInstance, 'CHANGE_ROW_BUTTON_TO_MAIN_CLASS', originalReq);
+			}, req));
 		},
 
 		_subChangeRowButtonToAltClass: function(req) {
@@ -114,16 +132,54 @@ define([
 
 			var instance = this._getRowInstance(idProperty);
 
-			if (!instance) {
+			if (instance) {
+				this._publishChangeButtonClass(instance, 'CHANGE_ROW_BUTTON_TO_ALT_CLASS', req);
+
 				return;
 			}
 
-			this._publish(instance.getChildChannel('buttons', 'CHANGE_ROW_BUTTON_TO_ALT_CLASS'), req);
+			var layerId = idProperty.split(this.pathSeparator).pop(),
+				dfd = this._dfdChangeButtonClass[layerId];
+
+			if (dfd && !dfd.isFulfilled()) {
+				return;
+			}
+
+			dfd = this._dfdChangeButtonClass[layerId] = new Deferred();
+			dfd.then(lang.hitch(this, function(originalReq, dfdInstance) {
+
+				this._publishChangeButtonClass(dfdInstance, 'CHANGE_ROW_BUTTON_TO_ALT_CLASS', originalReq);
+			}, req));
+		},
+
+		_publishChangeButtonClass: function(instance, action, req) {
+
+			this._publish(instance.getChildChannel('buttons', action), req);
 		},
 
 		_definitionButtonsRow: function() {
 
 			this._defRow.push(_Buttons);
+		},
+
+		_buttonsInRowAddRow: function(retValue, args) {
+
+			var idProperty = args[0],
+				instance = this._rows[idProperty].instance,
+				layerId = idProperty.split(this.pathSeparator).pop(),
+				dfd = this._dfdChangeButtonClass[layerId];
+
+			if (dfd && instance) {
+				this._once(instance.getChannel('SHOWN'), lang.hitch(this, function(changeButtonClassDfd, rowInstance) {
+
+					changeButtonClassDfd.resolve(rowInstance);
+				}, dfd, instance));
+			}
+		},
+
+		_buttonsInRowClear: function() {
+
+			this._dfdChangeButtonClass = {};
 		}
 	});
 });

@@ -61,11 +61,18 @@ define([
 			var definitionIds = Object.keys(this.chartsData.definitionIndex);
 
 			for (var i = 0; i < definitionIds.length; i++) {
-				var cat = definitionIds[i];
-				this._addChartLayerEntry(cat, 'avg');
-				if (i === 0) {
-					var dfd = new Deferred();
-					this._continueBuildQueryAndRequestData(dfd, cat);
+				var category = definitionIds[i];
+				this._addChartLayerEntry(category, 'avg');
+
+				var aggregationsInCategory = this._layers[category];
+				for (var aggregation in aggregationsInCategory) {
+					var aggregationLayer = aggregationsInCategory[aggregation],
+						layerId = aggregationLayer.getOwnChannel();
+
+					if (i === 0 || this._layerHasData[layerId]) {
+						var dfd = new Deferred();
+						this._continueBuildQueryAndRequestData(dfd, category);
+					}
 				}
 			}
 		},

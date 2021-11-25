@@ -30,7 +30,8 @@ define([
 					CHANGE_ROW_BUTTON_TO_ALT_CLASS: "changeRowButtonToAltClass"
 				},
 
-				_dfdChangeButtonClass: {}
+				_dfdChangeButtonClass: {},
+				pathSeparator: '.'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -94,36 +95,16 @@ define([
 
 		_subChangeRowButtonToMainClass: function(req) {
 
-			var idProperty = req.idProperty;
-
-			if (!this._isIdProperty(idProperty)) {
-				return;
-			}
-
-			var instance = this._getRowInstance(idProperty);
-
-			if (instance) {
-				this._publishChangeButtonClass(instance, 'CHANGE_ROW_BUTTON_TO_MAIN_CLASS', req);
-
-				return;
-			}
-
-			var layerId = idProperty.split(this.pathSeparator).pop(),
-				dfd = this._dfdChangeButtonClass[layerId];
-
-			if (dfd && !dfd.isFulfilled()) {
-				return;
-			}
-
-			dfd = this._dfdChangeButtonClass[layerId] = new Deferred();
-			dfd.then(lang.hitch(this, function(originalReq, dfdInstance) {
-
-				this._publishChangeButtonClass(dfdInstance, 'CHANGE_ROW_BUTTON_TO_MAIN_CLASS', originalReq);
-			}, req));
+			this._changeRowButtonClass(req, 'CHANGE_ROW_BUTTON_TO_MAIN_CLASS');
 		},
 
 		_subChangeRowButtonToAltClass: function(req) {
 
+			this._changeRowButtonClass(req, 'CHANGE_ROW_BUTTON_TO_ALT_CLASS');
+		},
+
+		_changeRowButtonClass: function(req, action) {
+
 			var idProperty = req.idProperty;
 
 			if (!this._isIdProperty(idProperty)) {
@@ -133,7 +114,7 @@ define([
 			var instance = this._getRowInstance(idProperty);
 
 			if (instance) {
-				this._publishChangeButtonClass(instance, 'CHANGE_ROW_BUTTON_TO_ALT_CLASS', req);
+				this._publishChangeButtonClass(instance, action, req);
 
 				return;
 			}
@@ -148,7 +129,7 @@ define([
 			dfd = this._dfdChangeButtonClass[layerId] = new Deferred();
 			dfd.then(lang.hitch(this, function(originalReq, dfdInstance) {
 
-				this._publishChangeButtonClass(dfdInstance, 'CHANGE_ROW_BUTTON_TO_ALT_CLASS', originalReq);
+				this._publishChangeButtonClass(dfdInstance, action, originalReq);
 			}, req));
 		},
 

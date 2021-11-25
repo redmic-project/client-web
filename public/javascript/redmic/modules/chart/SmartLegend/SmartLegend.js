@@ -284,12 +284,10 @@ define([
 
 		_onLayerInfoUpdate: function(res) {
 
-			var layerId = res.chart,
-				layerPath = this._pathsByLayerId[layerId];
+			var layerId = res.chart;
 
 			this._updateLegendContentWithNewInfo(res);
 			this._deactivateHiddenLayer(this._pathsByLayerId[layerId]);
-			this._activateToggleShowLayerButton(layerPath);
 		},
 
 		_updateLegendContentWithNewInfo: function(res) {
@@ -577,6 +575,10 @@ define([
 				data: this._currentData[layerPath],
 				target: this._localTarget
 			});
+
+			if (this._stateByLayerId[layerId]) {
+				this._activateToggleShowLayerButton(layerPath);
+			}
 		},
 
 		_subChartsListButtonEvent: function(res) {
@@ -634,16 +636,19 @@ define([
 			iconNode.setAttribute("style", "color:" + color);
 			this._changeColorItem.item.color = color;
 
-			// TODO se debe de actualizar, pero el inject lo que hace es eliminar los nodos y regenerarlos, y eso afecta al tooltip
-			/*this._emitEvt("INJECT_ITEM", {
+			this._emitEvt("INJECT_ITEM", {
 				data: this._changeColorItem.item,
 				target: this._localTarget
-			});*/
+			});
 
 			var layerPath = this._changeColorItem[this.idProperty],
 				layerId = layerPath.split(this.pathSeparator).pop();
 
 			this._setLayerColor(layerId, oldColor, color);
+
+			if (this._stateByLayerId[layerId]) {
+				this._activateToggleShowLayerButton(layerPath);
+			}
 		},
 
 		_setLayerColor: function(layerId, oldColor, color) {
@@ -739,14 +744,42 @@ define([
 				template: template
 			});
 
+			var loadedLayerIds = this._getLoadedLayerIds();
+
 			this._currentData = {};
 			this._publish(this.chartsList.getChildChannel("browser", "CLEAR"));
 
 			this._emitEvt("GET_LAYER_INFO");
-
-			for (var layerId in this._layerEntries) {
-				var layerEntryInfo = this._layerEntries[layerId];
+			for (var layerEntryId in this._layerEntries) {
+				var layerEntryInfo = this._layerEntries[layerEntryId];
 				this._onLayerInfoUpdate(layerEntryInfo);
+			}
+
+			this._enablePreviouslySelectedItems(loadedLayerIds);
+		},
+
+		_getLoadedLayerIds: function() {
+
+			var loadedLayerPaths = Object.keys(this._currentData).map(lang.hitch(this, function(layerPath) {
+
+				return layerPath.split(this.pathSeparator).pop();
+			}));
+
+			return loadedLayerPaths.filter(lang.hitch(this, function(layerId) {
+
+				return layerId && isNaN(parseInt(layerId, 10));
+			}));
+		},
+
+		_enablePreviouslySelectedItems: function(layerIds) {
+
+			for (var i = 0; i < layerIds.length; i++) {
+				var layerId = layerIds[i];
+
+				if (this._stateByLayerId[layerId]) {
+					var layerPath = this._pathsByLayerId[layerId];
+					this._activateToggleShowLayerButton(layerPath);
+				}
 			}
 		}
 	});

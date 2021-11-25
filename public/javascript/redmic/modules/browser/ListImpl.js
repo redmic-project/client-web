@@ -46,13 +46,28 @@ define([
 			delete this._rowsOld;
 		},
 
+		_getItemIdProperty: function(item) {
+
+			if (!item) {
+				return;
+			}
+
+			var itemId = item[this.idProperty];
+
+			if (typeof itemId === 'number') {
+				return itemId.toString();
+			}
+
+			return itemId;
+		},
+
 		_rescueOldInstance: function(item) {
 
 			if (!this._rowsOld) {
 				return;
 			}
 
-			var idProperty = item[this.idProperty],
+			var idProperty = this._getItemIdProperty(item),
 				row = this._rowsOld[idProperty],
 				rowInstance = row && row.instance;
 
@@ -72,7 +87,7 @@ define([
 
 			this._rescueOldInstance(item);
 
-			var idProperty = item[this.idProperty],
+			var idProperty = this._getItemIdProperty(item),
 				rowInstance = this._addOrUpdateRow(item),
 				obj = {
 					node: this.rowsContainerNode
@@ -89,7 +104,7 @@ define([
 
 		_addOrUpdateRow: function(item) {
 
-			var idProperty = item[this.idProperty],
+			var idProperty = this._getItemIdProperty(item),
 				rowInstance = this._getRowInstance(idProperty);
 
 			if (!rowInstance) {

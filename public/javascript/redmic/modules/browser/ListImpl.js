@@ -16,7 +16,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				insertInFront: false
+				insertInFront: false,
+				pathProperty: 'path'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -53,6 +54,13 @@ define([
 			}
 
 			var itemId = item[this.idProperty];
+
+			if (itemId === undefined && this.pathProperty) {
+				var itemPath = item[this.pathProperty];
+				if (itemPath) {
+					itemId = itemPath.split(this.pathSeparator).pop();
+				}
+			}
 
 			if (typeof itemId === 'number') {
 				return itemId.toString();

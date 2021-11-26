@@ -53,6 +53,7 @@ define([
 				},
 				actions: {
 					ADD_ENTRY: 'addEntry',
+					REMOVE_ENTRY: 'removeEntry',
 					ENTRY_ENABLED: 'entryEnabled',
 					ENTRY_DISABLED: 'entryDisabled'
 				},
@@ -160,6 +161,9 @@ define([
 				channel : this.getChannel('ADD_ENTRY'),
 				callback: '_subAddEntry'
 			},{
+				channel : this.getChannel('REMOVE_ENTRY'),
+				callback: '_subRemoveEntry'
+			},{
 				channel : this.getChartsContainerChannel("LAYER_ADDED"),
 				callback: "_subLayerAdded"
 			},{
@@ -252,10 +256,38 @@ define([
 				return;
 			}
 
-			this._layerEntries[layerId] = req;
+			this._addEntry(layerId, req);
+		},
+
+		_addEntry: function(layerId, data) {
+
+			this._layerEntries[layerId] = data;
 			this._stateByLayerId[layerId] = false;
 
-			this._updateLegendContentWithNewInfo(req);
+			this._updateLegendContentWithNewInfo(data);
+		},
+
+		_subRemoveEntry: function(req) {
+
+			var layerId = req.chart;
+
+			if (layerId) {
+				this._removeEntry(layerId);
+				return;
+			}
+
+			for (layerId in this._layerEntries) {
+				this._removeEntry(layerId);
+			}
+		},
+
+		_removeEntry: function(layerId) {
+
+			var layerPath = this._pathsByLayerId[layerId];
+			layerPath && this._removeLayerAndUpdateAncestors(layerPath);
+
+			delete this._layerEntries[layerId];
+			delete this._stateByLayerId[layerId];
 		},
 
 		_subLayerAdded: function(res) {

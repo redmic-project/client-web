@@ -102,6 +102,14 @@ define([
 			this._publish(layerInstance.getChannel('GET_INFO'));
 		},
 
+		_addDataToChart: function(chartInstance) {
+
+			this.inherited(arguments);
+
+			var layerId = chartInstance.getOwnChannel();
+			this._layerHasData[layerId] = true;
+		},
+
 		_subSmartLegendEntryEnabled: function(res) {
 
 			var layerId = res.layerId,
@@ -132,7 +140,8 @@ define([
 
 		_removeChartLayer: function(cat, agg) {
 
-			var layerId = this._layers[cat][agg];
+			var layerInstance = this._layers[cat][agg],
+				layerId = layerInstance.getOwnChannel();
 
 			delete this._layerHasData[layerId];
 
@@ -140,6 +149,29 @@ define([
 		},
 
 		_clearOldChartsData: function() {
+
+			for (var layerCategoryId in this._layers) {
+				var layerCategory = this._layers[layerCategoryId],
+					layerAggregationsInCategory = Object.keys(layerCategory);
+
+				for (var i = 0; i < layerAggregationsInCategory.length; i++) {
+					var layerAggregation = layerAggregationsInCategory[i],
+						layerInstance = layerCategory[layerAggregation],
+						layerId = layerInstance.getOwnChannel();
+
+					if (this._layerHasData[layerId]) {
+						continue;
+					}
+
+					this._publish(this._smartLegend.getChannel('REMOVE_ENTRY'), {
+						chart: layerId
+					});
+
+					this._publish(layerInstance.getChannel('DESTROY'));
+
+					delete layerCategory[layerAggregation];
+				}
+			}
 
 			this.inherited(arguments);
 

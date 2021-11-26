@@ -26,7 +26,7 @@ define([
 				layerTarget: redmicConfig.services.atlasLayer,
 				activityCategory: ['ml'],
 				definitionLayer: [WmsLayerImpl],
-				_activityLayers: []
+				_activityLayers: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -72,10 +72,16 @@ define([
 				data: layers
 			});
 
-			this._activityLayers = [];
+			this._activityLayers = {};
 
 			for (var i = 0; i < layers.length; i++) {
-				this._createLayer(layers[i]);
+				var layer = layers[i];
+				this._createLayer(layer);
+
+				if (i === 0) {
+					var layerId = layer.id;
+					this._addMapLayer(layerId);
+				}
 			}
 		},
 
@@ -95,10 +101,44 @@ define([
 				selectorChannel: widgetInstance.getChannel()
 			}, this.layerConfig || {}]);
 
-			var mapLayerInstance = new this._layerDefinition(this.layerConfig);
-			this._activityLayers.push(mapLayerInstance);
+			var mapLayerInstance = new this._layerDefinition(this.layerConfig),
+				mapLayerId = layer.id;
 
-			this._publish(widgetInstance.getChildChannel('map', 'ADD_LAYER'), mapLayerInstance);
+			this._activityLayers[mapLayerId] = mapLayerInstance;
+		},
+
+		_addMapLayer: function(layerId) {
+
+			this.inherited(arguments);
+
+			var widgetInstance = this._getWidgetInstance('geographic');
+
+			if (!widgetInstance) {
+				return;
+			}
+
+			var layerInstance = this._activityLayers[layerId];
+
+			this._publish(widgetInstance.getChildChannel('map', 'ADD_LAYER'), {
+				layer: layerInstance
+			});
+		},
+
+		_removeMapLayer: function(layerId) {
+
+			this.inherited(arguments);
+
+			var widgetInstance = this._getWidgetInstance('geographic');
+
+			if (!widgetInstance) {
+				return;
+			}
+
+			var layerInstance = this._activityLayers[layerId];
+
+			this._publish(widgetInstance.getChildChannel('map', 'REMOVE_LAYER'), {
+				layer: layerInstance
+			});
 		}
 	});
 });

@@ -51,7 +51,19 @@ define([
 						classWindowContent: "view",
 						notTextSearch: true,
 						browserConfig: {
-							template: ActivityLayerList
+							template: ActivityLayerList,
+							rowConfig: {
+								buttonsConfig: {
+									listButton: [{
+										icon: "fa-toggle-on",
+										altIcon: "fa-toggle-off",
+										btnId: "toggleShowLayer",
+										title: "layer",
+										state: false,
+										returnItem: true
+									}]
+								}
+							}
 						}
 					}
 				}
@@ -92,10 +104,56 @@ define([
 			this.targetChange = lang.replace(this.templateTargetChange, {id: this.pathVariableId});
 
 			var widgetInstance = this._getWidgetInstance('geographic');
+
+			if (!this._listeningListButtons) {
+				this._subscribe(widgetInstance.getChildChannel('browser', 'BUTTON_EVENT'), lang.hitch(this,
+					this._subActivityLayersListButtonEvent));
+
+				this._listeningListButtons = true;
+			}
+
 			this._publish(widgetInstance.getChannel("UPDATE_TARGET"), {
 				target: this.targetChange,
 				refresh: true
 			});
+		},
+
+		_subActivityLayersListButtonEvent: function(res) {
+
+			var btnId = res.btnId;
+
+			if (btnId === 'toggleShowLayer') {
+				this._onToggleShowLayer(res);
+			}
+		},
+
+		_onToggleShowLayer: function(obj) {
+
+			if (obj.state) {
+				this._addMapLayer(obj.id);
+			} else {
+				this._removeMapLayer(obj.id);
+			}
+		},
+
+		_updateToggleShowLayerButton: function(layerId, action) {
+
+			var widgetInstance = this._getWidgetInstance('geographic');
+
+			this._publish(widgetInstance.getChildChannel('browser', action), {
+				idProperty: layerId,
+				btnId: 'toggleShowLayer'
+			});
+		},
+
+		_addMapLayer: function(layerId) {
+
+			this._updateToggleShowLayerButton(layerId, 'CHANGE_ROW_BUTTON_TO_MAIN_CLASS');
+		},
+
+		_removeMapLayer: function(layerId) {
+
+			this._updateToggleShowLayerButton(layerId, 'CHANGE_ROW_BUTTON_TO_ALT_CLASS');
 		}
 	});
 });

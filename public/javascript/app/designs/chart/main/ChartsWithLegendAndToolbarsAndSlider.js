@@ -121,11 +121,6 @@ define([
 			}
 
 			var dfd = new Deferred();
-			dfd.then(lang.hitch(this, function(id) {
-
-				this._layerHasData[id] = true;
-			}, layerId));
-
 			this._continueBuildQueryAndRequestData(dfd, dataDefinitionIds);
 		},
 

@@ -95,11 +95,16 @@ define([
 
 			var layerDefinition = this._getLayerDefinitionByProtocol(layer);
 
-			this.layerConfig = this._merge([{
-				layerDefinition: layerDefinition,
-				mapChannel: widgetInstance.getChildChannel('map'),
-				selectorChannel: widgetInstance.getChannel()
-			}, this.layerConfig || {}]);
+			this.layerConfig = this._merge([
+				{
+					mapChannel: widgetInstance.getChildChannel('map'),
+					selectorChannel: widgetInstance.getChannel()
+				},
+				this.layerConfig || {},
+				{
+					layerDefinition: layerDefinition
+				}
+			]);
 
 			var mapLayerInstance = new this._layerDefinition(this.layerConfig),
 				mapLayerId = layer.id;

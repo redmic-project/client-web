@@ -59,7 +59,7 @@ define([
 
 		_setOwnCallbacksForEvents: function() {
 
-			this._onEvt('ANCESTOR_HIDDEN', lang.hitch(this, this._onSelectionManagerAncestorHidden));
+			this._onEvt('ANCESTOR_HIDE', lang.hitch(this, this._onSelectionManagerAncestorHidden));
 		},
 
 		_setConfigurations: function() {

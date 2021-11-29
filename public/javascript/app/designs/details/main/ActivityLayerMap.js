@@ -6,7 +6,6 @@ define([
 	, "app/designs/mapWithSideContent/main/Geographic"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'redmic/modules/map/layer/WmsLayerImpl'
 	, 'templates/ActivityLayerList'
 ], function(
 	_ListenActivityDataAndAccessByActivityCategory
@@ -16,7 +15,6 @@ define([
 	, Geographic
 	, declare
 	, lang
-	, WmsLayerImpl
 	, ActivityLayerList
 ) {
 
@@ -68,20 +66,6 @@ define([
 					}
 				}
 			}, this.widgetConfigs || {}]);
-
-			this.layerConfig = this._merge([{
-				idProperty: 'uuid',
-				parentChannel: this.getChannel()
-			}, this.layerConfig || {}]);
-		},
-
-		_initialize: function() {
-
-			if (!this.definitionLayer) {
-				this.definitionLayer = [WmsLayerImpl];
-			}
-
-			this._layerDefinition = declare(this.definitionLayer);
 		},
 
 		_clearModules: function() {

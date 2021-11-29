@@ -21,8 +21,6 @@ define([
 	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, 'redmic/modules/map/_AtlasLayersManagement'
-	, "redmic/modules/map/layer/_PublishInfo"
-	, "redmic/modules/map/layer/WmsLayerImpl"
 	, "templates/AtlasList"
 	, "templates/LoadingCustom"
 	, "templates/ServiceOGCAtlasList"
@@ -50,8 +48,6 @@ define([
 	, DataDisplayer
 	, TemplateDisplayer
 	, _AtlasLayersManagement
-	, _PublishInfo
-	, WmsLayerImpl
 	, ListTemplate
 	, LoadingCustom
 	, serviceOGCList
@@ -84,8 +80,6 @@ define([
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: ".",
 				parentProperty: "parent",
-				layerIdSeparator: "_",
-				themeSeparator: "-",
 				showBrowserAnimationClass: "animated fadeIn",
 				hideBrowserAnimationClass: "animated fadeOut",
 
@@ -434,32 +428,25 @@ define([
 				return;
 			}
 
-			var itemId = item.id;
+			var itemId = this._getAtlasLayerId(item);
 
 			if (this._layerIdsById[itemId]) {
 				return;
 			}
 
-			var layerId = this._createLayerId(item),
-				layerLabel = item.alias || item.title,
-				layerDefinition = this._getLayerDefinitionByProtocol(item);
+			var layerDefinition = this._getAtlasLayerDefinition(),
+				layerConfiguration = this._getAtlasLayerConfiguration(item),
+				layerLabel = layerConfiguration.layerLabel;
+
+			layerConfiguration.mapChannel = this.getMapChannel();
 
 			var data = {
 				id: itemId,
 				label: layerLabel,
 				originalItem: item,
 				layer: {
-					definition: declare([WmsLayerImpl, _PublishInfo]),
-					props: {
-						parentChannel: this.getChannel(),
-						mapChannel: this.getMapChannel(),
-						layerDefinition: layerDefinition,
-						styleLayer: item.styleLayer,
-						queryable: item.queryable,
-						layerId: layerId,
-						layerLabel: layerLabel,
-						refresh: item.refresh
-					}
+					definition: layerDefinition,
+					props: layerConfiguration
 				}
 			};
 
@@ -633,13 +620,6 @@ define([
 				layerLabel: item.label,
 				order: order
 			});
-		},
-
-		_createLayerId: function(item) {
-
-			var themeInspire = item.themeInspire ? item.themeInspire.code : 'default';
-
-			return themeInspire + this.themeSeparator + item.name + this.layerIdSeparator + item.id;
 		},
 
 		_getLayerInstance: function(id, layerId, definition, props) {

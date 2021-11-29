@@ -1,9 +1,13 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'redmic/modules/map/layer/_PublishInfo'
+	, 'redmic/modules/map/layer/WmsLayerImpl'
 ], function(
 	declare
 	, lang
+	, _PublishInfo
+	, WmsLayerImpl
 ) {
 
 	return declare(null, {
@@ -14,6 +18,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				layerIdSeparator: '_',
+				themeSeparator: '-'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -203,6 +209,45 @@ define([
 			}
 
 			return 'image/jpeg';
+		},
+
+		_getAtlasLayerDefinition: function() {
+
+			return declare([WmsLayerImpl, _PublishInfo]);
+		},
+
+		_getAtlasLayerConfiguration: function(layerItem) {
+
+			var layerId = this._createLayerId(layerItem),
+				layerLabel = this._createLayerLabel(layerItem),
+				layerDefinition = this._getLayerDefinitionByProtocol(layerItem);
+
+			return {
+				parentChannel: this.getChannel(),
+				layerDefinition: layerDefinition,
+				styleLayer: layerItem.styleLayer,
+				queryable: layerItem.queryable,
+				layerId: layerId,
+				layerLabel: layerLabel,
+				refresh: layerItem.refresh
+			};
+		},
+
+		_getAtlasLayerId: function(layerItem) {
+
+			return layerItem && layerItem.id;
+		},
+
+		_createLayerId: function(layerItem) {
+
+			var themeInspire = layerItem.themeInspire ? layerItem.themeInspire.code : 'default';
+
+			return themeInspire + this.themeSeparator + layerItem.name + this.layerIdSeparator + layerItem.id;
+		},
+
+		_createLayerLabel: function(layerItem) {
+
+			return layerItem.alias || layerItem.title;
 		}
 	});
 });

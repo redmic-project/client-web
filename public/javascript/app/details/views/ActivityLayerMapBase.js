@@ -4,14 +4,12 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'redmic/modules/map/_AtlasLayersManagement'
-	, 'redmic/modules/map/layer/WmsLayerImpl'
 ], function(
 	ActivityLayerMap
 	, redmicConfig
 	, declare
 	, lang
 	, _AtlasLayersManagement
-	, WmsLayerImpl
 ) {
 
 	return declare([ActivityLayerMap, _AtlasLayersManagement], {
@@ -25,7 +23,6 @@ define([
 				templateTargetChange: 'activityLayers',
 				layerTarget: redmicConfig.services.atlasLayer,
 				activityCategory: ['ml'],
-				definitionLayer: [WmsLayerImpl],
 				_activityLayers: {}
 			};
 
@@ -64,6 +61,12 @@ define([
 
 		_onLayerActivitiesData: function(resWrapper) {
 
+			var widgetInstance = this._getWidgetInstance('geographic');
+
+			if (!widgetInstance) {
+				return;
+			}
+
 			var data = resWrapper.res.data,
 				layers = data.data || [];
 
@@ -76,7 +79,7 @@ define([
 
 			for (var i = 0; i < layers.length; i++) {
 				var layer = layers[i];
-				this._createLayer(layer);
+				this._createLayer(widgetInstance, layer);
 
 				if (i === 0) {
 					var layerId = layer.id;
@@ -85,29 +88,18 @@ define([
 			}
 		},
 
-		_createLayer: function(layer) {
+		_createLayer: function(widgetInstance, layer) {
 
-			var widgetInstance = this._getWidgetInstance('geographic');
+			var layerDefinition = this._getAtlasLayerDefinition(),
+				layerConfiguration = this._getAtlasLayerConfiguration(layer);
 
-			if (!widgetInstance) {
-				return;
-			}
+			layerConfiguration = this._merge([layerConfiguration, {
+				mapChannel: widgetInstance.getChildChannel('map'),
+				selectorChannel: widgetInstance.getChannel()
+			}]);
 
-			var layerDefinition = this._getLayerDefinitionByProtocol(layer);
-
-			this.layerConfig = this._merge([
-				{
-					mapChannel: widgetInstance.getChildChannel('map'),
-					selectorChannel: widgetInstance.getChannel()
-				},
-				this.layerConfig || {},
-				{
-					layerDefinition: layerDefinition
-				}
-			]);
-
-			var mapLayerInstance = new this._layerDefinition(this.layerConfig),
-				mapLayerId = layer.id;
+			var mapLayerInstance = new layerDefinition(layerConfiguration),
+				mapLayerId = this._getAtlasLayerId(layer);
 
 			this._activityLayers[mapLayerId] = mapLayerInstance;
 		},

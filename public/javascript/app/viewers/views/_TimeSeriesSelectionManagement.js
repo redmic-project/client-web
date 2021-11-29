@@ -88,6 +88,13 @@ define([
 			}
 		},
 
+		_getSelectionIsEmpty: function() {
+
+			var selectedKeys = Object.keys(this._selected);
+
+			return !selectedKeys.length;
+		},
+
 		_showChartIsValid: function() {
 
 			return !!Object.keys(this._insertedInTimeSeriesData).length;

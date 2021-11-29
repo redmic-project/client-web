@@ -152,7 +152,7 @@ define([
 
 		_prepareTimeSeriesData: function() {
 
-			if (this._showChartIsValid()) {
+			if (this._showChartIsValid() || this._getSelectionIsEmpty()) {
 				return;
 			}
 

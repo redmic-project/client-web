@@ -506,7 +506,6 @@ define({
 	, "registerMessage1004": "Error con el registro. Por favor, contacte con el administrador"
 	, "registerMessage1005": "Error con el registro. Por favor, contacte con el administrador"
 	, "redmicInfo": "REDMIC proporciona datos marinos libres y de calidad para la ciencia, el desarrollo tecnológico y en respuesta a las necesidades de la sociedad. Los datos se integran en un repositorio común, maximizando su uso potencial. Cubre las aguas de las Islas Canarias y tiene como objetivo servir, por extensión, a toda la Macaronesia. En construcción. Más información "
-	, "oagInfo": "El OAG – Observatorio Ambiental Granadilla – es una fundación pública estatal creada en 2008 por la Autoridad Portuaria de Santa Cruz de Tenerife y el Gobierno de Canarias. Gestionamos REDMIC y creemos que los datos obtenidos con dinero público deben ponerse a disposición de todas las personas, para que puedan ser usados tanto y tantas veces como sea posible."
 	, "hrefTermCondition": "Leer términos y condiciones"
 	, "termCondition": "Términos y condiciones"
 	, "accountActivated": "Su cuenta se ha activado correctamente, ya puede acceder a REDMIC."
@@ -1020,7 +1019,6 @@ define({
 
 	, "longTermChallenge": "Un reto a largo plazo"
 	, "logicalDataModel": "Modelo lógico de datos"
-	, "systemArchitecture": "Arquitectura del Sistema"
 	, "infoType": "Tipo de información"
 	, "userType": "Tipos de usuario"
 	, "dataPolicy": "Política de datos"

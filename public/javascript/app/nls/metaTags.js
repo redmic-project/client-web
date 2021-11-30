@@ -8,7 +8,7 @@ define({
 				" Especies marinas de la Macaronesia, Biodiversidad marina de la Macaronesia, "+
 				"Fauna marina de la Macaronesia, Habitat marina de Canarias, Habitat marina de la Macaronesia, "+
 				"Repositorio de dastos marinos de Canarias",
-			"author": "Observatorio Ambiental Granadilla (OAG)",
+			"author": "REDMIC",
 			"og:title": "REDMIC, Repositorio de Datos Marinos Integrados de Canarias",
 			"og:description": "REDMIC es una infraestructura de datos marinos de caracter "+
 				"público que ofrece información sobre el medio biofísico marino de Canarias."

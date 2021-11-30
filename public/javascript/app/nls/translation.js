@@ -507,7 +507,6 @@ define({
 		, "registerMessage1004": "Error with registration. Please contact administrator"
 		, "registerMessage1005": "Error with registration. Please contact administrator"
 		, "redmicInfo": "REDMIC provides free open and quality controlled marine data for science, technology development and response to society needs. Data is integrated in a common repository, maximising its potential use. It covers the Canary Islands waters and aims to serve by extension the whole Macaronesia. This portal is still under construction. More information "
-		, "oagInfo": "The OAG  – Granadilla Environmental Observatory –  is a State public foundation established in 2008 by the Port Authority of Santa Cruz de Tenerife and the Canary Islands Government. We manage REDMIC and we believe that data obtained with public money should be made available to all people, so it can be used as much and as many times as possible."
 		, "hrefTermCondition": "Read terms and conditions"
 		, "termCondition": "Terms and conditions"
 		, "accountActivated": "Your account has been successfully activated, you can access to REDMIC."
@@ -1025,7 +1024,6 @@ define({
 
 		, "longTermChallenge": "Long term challenge"
 		, "logicalDataModel": "Logical data model"
-		, "systemArchitecture": "System architecture"
 		, "infoType": "Type information"
 		, "userType": "User type"
 		, "dataPolicy": "Data policy"

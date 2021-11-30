@@ -30,13 +30,10 @@ define([
 
 			this.buttons = this._merge([this.buttons || {}, {
 				cancel: {
-					noActive: true
-				},
-				reset: {
-					zone: "right"
+					disable: true
 				},
 				clear: {
-					zone: "right"
+					zone: 'right'
 				}
 			}]);
 		},

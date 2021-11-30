@@ -32,6 +32,7 @@ define([
 		_afterCreateNodesAndInstance: function() {
 
 			if (this._inputProps.isDisableInput) {
+				this._inputDisabled = this._inputProps.disabled;
 				this._createSwitchDisable();
 			}
 		},
@@ -39,10 +40,8 @@ define([
 		_createSwitchDisable: function() {
 
 			if (this.containerSwitchDisable) {
-
 				this.containerSwitchDisable.onclick = lang.hitch(this, this._onClickSwitchDisable);
-
-				this._inputDisabled ? this._disable() : this._enableButton();
+				this._inputDisabled ? this._disable() : this._enable/*Button*/();
 			}
 		},
 
@@ -71,7 +70,6 @@ define([
 		_enableButton: function() {
 
 			if (this._inputProps.isDisableInput && this.containerSwitchDisable) {
-
 				put(this.containerSwitchDisable, '!fa-toggle-off');
 				put(this.containerSwitchDisable, '.fa-toggle-on');
 				put(this.containerSwitchDisable, '[title=$]', this.i18n.disable);

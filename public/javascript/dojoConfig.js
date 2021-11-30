@@ -108,15 +108,18 @@ dojoConfig = {
 		name: 'json-schema-ref-parser',
 		location: '../json-schema-ref-parser/dist'
 	},{
-		name: 'leaflet-wms',
-		location: '../leaflet-wms/dist'
+		name: 'leaflet-nontiledlayer',
+		location: '../leaflet-nontiledlayer/dist'
+	},{
+		name: 'wicket',
+		location: '../wicket'
 	}],
 
 	map: {
 		'd3Tip/index': {
 			'd3': 'd3/d3.min'
 		},
-		'leaflet-wms/leaflet.wms': {
+		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'L-miniMap/Control.MiniMap.min': {
@@ -124,6 +127,9 @@ dojoConfig = {
 		},
 		'pruneCluster/PruneCluster.amd.min': {
 			'leaflet': 'leaflet/leaflet'
+		},
+		'wicket': {
+			'wicket': 'wicket/wicket'
 		}
 	},
 

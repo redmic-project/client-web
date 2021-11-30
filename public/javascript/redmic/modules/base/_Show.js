@@ -262,39 +262,25 @@ define([
 
 		_restoreOnMeOrAncestorShown: function(response) {
 
-			//this._activeLoadingsPendding();
-
 			this._meOrAncestorShownAlreadyFired = false;
 
 			this._emitEvt('ME_OR_ANCESTOR_HIDDEN');
 		},
 
-		// TODO este método se salta a la torera la acumulación de cargas, no es una solución sino una chapuza
-		// TODO si se detecta alguna carga no resuelta, el problema lo tiene el módulo concreto y habrá que solucionarlo
-		/*_activeLoadingsPendding: function() {
-
-			if (this._activeLoadings) {
-				var counts = this._activeLoadings;
-				for (var i = 0; i < counts; i++) {
-					this._emitEvt('LOADED');
-				}
-			}
-		},*/
-
 		_addClass: function(className) {
 
-			this._changeNodeClasses(this.node, className, ".");
+			this._changeNodeClasses(this._moduleOwnNode, className, '.');
 		},
 
 		_removeClass: function(className) {
 
-			this._changeNodeClasses(this.node, className, "!");
+			this._changeNodeClasses(this._moduleOwnNode, className, '!');
 		},
 
 		_changeNodeClasses: function(node, className, modifier) {
 
 			if (className && node && node.firstChild) {
-				var classes = className.split(" ").join(modifier);
+				var classes = className.split(' ').join(modifier);
 				put(node.firstChild, modifier + classes);
 			}
 		},
@@ -302,7 +288,7 @@ define([
 		_chkModuleCanShow: function(req) {
 
 			var node = req ? req.node : null,
-				data = req ? req.data : null;
+				reqData = req ? req.data : null;
 
 			var chkData = function(data) {
 				if (data) {
@@ -314,21 +300,21 @@ define([
 			};
 
 			if (node) {
-				if (node !== this.currentNode) {
+				if (node !== this._moduleParentNode) {
 					return true;
 				} else {
 					if (!this._getShown()) {
 						return true;
 					} else {
-						return chkData(data);
+						return chkData(reqData);
 					}
 				}
 			} else {
-				if (this.currentNode) {
+				if (this._moduleParentNode) {
 					if (!this._getShown()) {
 						return true;
 					} else {
-						return chkData(data);
+						return chkData(reqData);
 					}
 				}
 			}
@@ -381,18 +367,11 @@ define([
 
 		_show: function(req) {
 
-			var node = req ? req.node : null,
-				data = req ? req.data : null,
+			var data = req ? req.data : null,
 				inFront = req ? req.inFront : null;
 
-			// Si no le pasamos nodo, utiliza el último
-			if (node) {
-				this.currentNode = node;
-			} else {
-				node = this.currentNode;
-			}
-
-			if (!node) {
+			this._moduleParentNode = this._getCurrentParentNode(req);
+			if (!this._moduleParentNode) {
 				return;
 			}
 
@@ -406,25 +385,48 @@ define([
 				this.currentData = null;
 			}
 
-			var nodeToShow = this._getNodeToShow() || this.domNode;
+			this._moduleOwnNode = this._getNodeToShowWrapper();
+			if (!this._moduleOwnNode) {
+				console.error('Node to show not found at module "%s"', this.getChannel());
+				return;
+			}
+
+			this._addToNode(this._moduleParentNode, this._moduleOwnNode, inFront);
+		},
+
+		_getCurrentParentNode: function(req) {
+
+			var parentNode = req ? req.node : null;
+
+			// Si no le pasamos nodo, utiliza el último
+			if (!parentNode) {
+				if (!this._moduleParentNode) {
+					console.error('Tried to show module "%s" with no parent node', this.getChannel());
+				}
+				return this._moduleParentNode;
+			}
+
+			return parentNode.domNode || parentNode;
+		},
+
+		_getNodeToShowWrapper: function() {
+
+			var nodeToShow = this._moduleOwnNode || this._getNodeToShow() || this.domNode;
+
 			if (!nodeToShow) {
 				console.error('Node to show not found at module "%s"', this.getChannel());
 				return;
 			}
 
-			if (node.domNode) {
-				this._addToNode(node.domNode, nodeToShow, inFront);
-			} else {
-				this._addToNode(node, nodeToShow, inFront);
-			}
+			return nodeToShow;
 		},
 
-		_addToNode: function(node, nodeToShow, inFront) {
+		_addToNode: function(parentNode, nodeToShow, inFront) {
 
-			if (inFront && node.firstChild) {
-				this.node = put(node.firstChild, "-", nodeToShow);
+			if (inFront && parentNode.firstChild) {
+				put(parentNode.firstChild, '-', nodeToShow);
 			} else {
-				this.node = put(node, nodeToShow);
+				put(parentNode, nodeToShow);
 			}
 		},
 
@@ -437,13 +439,13 @@ define([
 			this._removeClass(previousAnimationClass);
 
 			if (this._afterAnimationCallback) {
-				this.node.firstChild.removeEventListener('animationend',
+				this._moduleOwnNode.firstChild.removeEventListener('animationend',
 					this._afterAnimationCallback);
 			}
-			this._afterAnimationCallback = lang.hitch(this, function(dfd) {
+			this._afterAnimationCallback = lang.hitch(this, function(nestedDfd) {
 
 				clearTimeout(this._animationSafetyHandler);
-				dfd.resolve();
+				nestedDfd.resolve();
 			}, dfd);
 
 			// Seguro para cuando la animación es nula
@@ -453,7 +455,7 @@ define([
 				dfd.resolve();
 			}), this.animationSafetyTimeout);
 
-			this.node.firstChild.addEventListener('animationend', this._afterAnimationCallback);
+			this._moduleOwnNode.firstChild.addEventListener('animationend', this._afterAnimationCallback);
 
 			this._addClass(currentAnimationClass);
 
@@ -496,7 +498,7 @@ define([
 
 		_continueHide: function(req) {
 
-			if (!this.node) {
+			if (!this._moduleOwnNode) {
 				return;
 			}
 
@@ -521,17 +523,6 @@ define([
 
 		_hide: function(req) {
 
-			if (!this.node) {
-				return;
-			}
-
-			//TODO revisar la manera de guardar el nodo padre y el propio, se esta duplicando en dos variables el del padre
-
-			var node = this._getNodeToShow();
-			if (node) {
-				put(node.domNode || node, "!");
-			}
-
 			this._destroyNode();
 			this._emitHideEventWhenAfterHideIsDone(req);
 		},
@@ -550,7 +541,12 @@ define([
 
 		_destroyNode: function() {
 
-			this.node = null;
+			if (!this._moduleOwnNode) {
+				return;
+			}
+
+			put(this._moduleOwnNode, '!');
+			this._moduleOwnNode = null;
 		},
 
 		_subToggleShow: function(req) {
@@ -576,7 +572,7 @@ define([
 
 		_chkModuleCanResize: function(req) {
 
-			return !!this.node;
+			return !!this._moduleOwnNode;
 		},
 
 		_subResize: function(req) {
@@ -606,9 +602,9 @@ define([
 
 			var evt = {};
 
-			if (this.node) {
-				evt.width = this.node.offsetWidth;
-				evt.height = this.node.offsetHeight;
+			if (this._moduleOwnNode) {
+				evt.width = this._moduleOwnNode.offsetWidth;
+				evt.height = this._moduleOwnNode.offsetHeight;
 			}
 
 			this._emitEvt('RESIZE', evt);
@@ -622,7 +618,7 @@ define([
 		_lock: function() {
 
 			if (!this._lockedContainer) {
-				this._lockedContainer = this._getNodeToShow() || this.domNode;
+				this._lockedContainer = this._getNodeToShowWrapper();
 			}
 
 			this._setLockStatus(true);
@@ -700,7 +696,7 @@ define([
 				this._activeLoadings = 1;
 
 				if (!this._loadingContainer) {
-					this._loadingContainer = this._getNodeToShowLoading() || this._getNodeToShow() || this.domNode;
+					this._loadingContainer = this._getNodeToShowLoading() || this._getNodeToShowWrapper();
 				}
 
 				objToPub.node = this._loadingContainer;
@@ -775,8 +771,6 @@ define([
 		},
 
 		_onModuleHide: function() {
-
-			//this._activeLoadingsPendding();
 
 			this._setShown(false);
 

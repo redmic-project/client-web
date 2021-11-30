@@ -78,8 +78,6 @@ define([
 					'callback': '_saveSelectionButtonCallback',
 					'condition': lang.hitch(this, this._isRegisteredUser)
 				}],
-				indicatorLeft: true,
-				notIndicator: true,
 				classTooltip: 'tooltipButtonMenu tooltipButtonChart'
 			}, this.listMenuSelectionConfig || {}]);
 		},

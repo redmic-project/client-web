@@ -1,7 +1,7 @@
 define([
-	"app/designs/details/main/Species"
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
+	'app/designs/details/main/Species'
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
 ], function(
 	Species
 	, redmicConfig
@@ -9,7 +9,7 @@ define([
 ){
 	return declare(Species, {
 		//	summary:
-		//
+		//		Vista detalle pública de especies
 
 		_setConfigurations: function() {
 
@@ -17,15 +17,6 @@ define([
 				documents: redmicConfig.viewPaths.bibliographyDetails,
 				activities: redmicConfig.viewPaths.activityCatalogDetails
 			};
-
-			this.tabs = [{
-				select: true,
-				title: "seeInfo",
-				href: redmicConfig.viewPaths.speciesCatalogDetails
-			},{
-				title: "location",
-				href: redmicConfig.viewPaths.speciesCatalogLocation
-			}];
 
 			this.pathParent = redmicConfig.viewPaths.speciesCatalog;
 		}

@@ -1,5 +1,5 @@
 define([
-	"app/designs/textSearchFacetsList/_AddComposite"
+	'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -40,6 +40,10 @@ define([
 					valueChanged: lang.hitch(this, this.valueChangedForm)
 				}
 			}, this.compositeConfig || {}]);
+
+			this.textSearchConfig = this._merge([{
+				showExpandIcon: true
+			}, this.textSearchConfig || {}]);
 		},
 
 		_mixAddCompositeTaxonEventsAndActions: function() {

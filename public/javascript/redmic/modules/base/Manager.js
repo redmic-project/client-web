@@ -2,7 +2,6 @@ define([
 	"dijit/form/Button"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/dom-class"
 	, "dojo/topic"
 	, "put-selector/put"
 	, "redmic/base/Credentials"
@@ -13,14 +12,14 @@ function(
 	Button
 	, declare
 	, lang
-	, domClass
 	, topic
 	, put
 	, Credentials
 	, _Module
 	, _Show
-){
-	var obj = declare([_Module, _Show], {
+) {
+
+	return declare([_Module, _Show], {
 		//	summary:
 		//		Este widget reune todos los elementos dinámicos de la barra superior de la aplicación.
 		//	description:
@@ -48,13 +47,6 @@ function(
 					DOWNLOAD_FILE: "downloadFile"
 				},
 				zones: {
-					/*edit: {
-						node: null,
-						align: "left",
-						"class": "div.btnGroup.col-xs-3.col-sm-3.col-md-3.col-lg-3",
-						btns: {
-						}
-					},*/
 					filter: {
 						node: null,
 						align: "right",
@@ -225,21 +217,6 @@ function(
 			}
 		},
 
-		_destroyManager: function() {
-			//	summary:
-			//		Destruye al Manager para que nadie más lo use.
-			//	tags:
-			//		private
-
-			this.handlers.create.remove();
-			this.handlers.location.remove();
-			this.handlers.info.remove();
-
-			this._cleanManager();
-
-			this.destroyRecursive();
-		},
-
 		_createManager: function(showBtn) {
 
 			for (var item in this.zones) {
@@ -273,13 +250,20 @@ function(
 		},
 
 		_chkChangeView: function(data, channel) {
+			// TODO seguro que hay una manera mejor de limpiar Manager, revisar cuando se integre en Topbar
 
 			var namespaceSplitted = this._getNamespaceSplitted(data, channel),
-				action = namespaceSplitted.pop(),
-				subPath = namespaceSplitted.pop();
+				channelLength = namespaceSplitted.length;
 
-			return (action === this.actions.SHOWN) && (namespaceSplitted.length === 1) &&
-				(subPath.indexOf(this.viewSeparator) > -1);
+			// Si el número de eslabones es distinto, la publicación no era de una vista
+			if (channelLength !== 4) {
+				return;
+			}
+
+			var action = namespaceSplitted[channelLength - 1],
+				subPath = namespaceSplitted[channelLength - 2];
+
+			return action === this.actions.SHOWN && subPath.indexOf(this.viewSeparator) !== -1;
 		},
 
 		_subChangeView: function(data, channel) {
@@ -294,8 +278,8 @@ function(
 
 		_getNamespaceSplitted: function(data, channel) {
 
-			var obj = channel || data,
-				namespace = obj.namespace;
+			var channelObj = channel || data,
+				namespace = channelObj.namespace;
 
 			return namespace.split(this.channelSeparator);
 		},
@@ -313,17 +297,6 @@ function(
 		_emitDownloadFile: function(/*String*/ format) {
 
 			this._emitEvt('DOWNLOAD_FILE', {format: format});
-		},
-
-		_getRootChannel: function(/*String*/ channel, /*String?*/ action) {
-
-			if (action) {
-				channel += this.channelSeparator + action;
-			}
-
-			return "app" + this.channelSeparator + channel;
 		}
 	});
-
-	return obj;
 });

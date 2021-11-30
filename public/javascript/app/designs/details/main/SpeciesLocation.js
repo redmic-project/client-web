@@ -3,8 +3,6 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -15,7 +13,6 @@ define([
 	, "redmic/modules/map/layer/_ListenZoom"
 	, "redmic/modules/map/layer/_RadiusOnClick"
 	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
 	, "redmic/modules/map/_PlaceNamesButton"
 	, "templates/SpeciesTitle"
 	, "templates/SpeciesDistributionPopup"
@@ -25,8 +22,6 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, _AddTitle
-	, _TitleSelection
 	, redmicConfig
 	, declare
 	, lang
@@ -37,15 +32,15 @@ define([
 	, _ListenZoom
 	, _RadiusOnClick
 	, LeafletImpl
-	, Map
 	, _PlaceNamesButton
 	, TemplateTitle
 	, citationTemplate
 	, pointTrackingTemplate
-){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection, _LocalSelectionView], {
+) {
+
+	return declare([Layout, Controller, _Main, _LocalSelectionView], {
 		//	summary:
-		//		Vista detalle de Species.
+		//		Vista detalle de localización de especies.
 
 		constructor: function(args) {
 
@@ -53,15 +48,12 @@ define([
 
 			this.config = {
 				_titleRightButtonsList: [],
-				noScroll: true,
 				idProperty: "uuid",
 				propsWidget: {
 					omitTitleBar: true,
 					resizable: false
 				}
 			};
-
-			this.titleRightButtonsList = [];
 
 			lang.mixin(this, this.config, args);
 		},
@@ -76,11 +68,10 @@ define([
 				map: {
 					width: 6,
 					height: 6,
-					showInitially: true,
-					type: declare([LeafletImpl, Map, _PlaceNamesButton]),
+					type: declare([LeafletImpl, _PlaceNamesButton]),
 					props: {
 						title: this.i18n.map,
-						omitTitleCloseButton: true
+						omitContainerSizeCheck: true
 					}
 				}
 			}, this.widgetConfigs || {}]);
@@ -94,10 +85,16 @@ define([
 
 		_afterShow: function(request) {
 
+			var widgetInstance = this._getWidgetInstance('map');
+
+			if (!widgetInstance) {
+				return;
+			}
+
 			if (!this.pruneClusterLayer) {
 				this.pruneClusterLayer = new this._pruneClusterLayerDefinition({
 					parentChannel: this.getChannel(),
-					mapChannel: this._widgets.map.getChannel(),
+					mapChannel: widgetInstance.getChannel(),
 					selectorChannel: this.getChannel(),
 					categoryStyle: "bubbles",
 					getPopupContent: this._getPopupContent,
@@ -116,13 +113,16 @@ define([
 					}
 				});
 
-				this._publish(this._widgets.map.getChannel("ADD_LAYER"), this.pruneClusterLayer);
+				this._publish(widgetInstance.getChannel("ADD_LAYER"), this.pruneClusterLayer);
 			}
-
-			this.startup();
 		},
 
-		_clearModules: function() { },
+		_clearModules: function() {
+
+			this.inherited(arguments);
+
+			this.pruneClusterLayer && this._publish(this.pruneClusterLayer.getChannel('CLEAR'));
+		},
 
 		_refreshModules: function() {
 

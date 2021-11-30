@@ -59,7 +59,6 @@ define([
 					'default': {}
 				},
 				multipleSelected: true,
-				orient: ['below-alt'],
 				classTooltip: "tooltipButtonMenu"
 			}, this.gridSelectionConfig || {}]);
 		},

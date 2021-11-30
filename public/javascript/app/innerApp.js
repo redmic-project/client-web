@@ -4,13 +4,12 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, "dojo/dom-class"
-	, 'dojo/on'
+	, 'dojo/dom-class'
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
-	, 'redmic/modules/selection/Selector'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
 	, 'redmic/modules/notification/Notification'
+	, 'redmic/modules/selection/Selector'
 	, 'redmic/modules/socket/_IngestData'
 	, 'redmic/modules/socket/_Report'
 	, 'redmic/modules/socket/_Worms'
@@ -23,12 +22,11 @@ define([
 	, lang
 	, aspect
 	, domClass
-	, on
 	, put
 	, Credentials
-	, Selector
 	, MainSidebarImpl
 	, Notification
+	, Selector
 	, _IngestData
 	, _Report
 	, _Worms
@@ -47,6 +45,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: this.innerAppOwnChannel,
 				'class': 'mainContainer',
 				reducedWidthClass: 'reducedWidth',
 				contentContainerClass: 'contentContainer',
@@ -176,17 +175,17 @@ define([
 			//		private
 
 			new Selector({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			var userRole = Credentials.get('userRole');
 			if (userRole !== 'ROLE_GUEST') {
 				new Notification({
-					parentChannel: this.ownChannel
+					parentChannel: this.getChannel()
 				});
 
 				new Socket({
-					parentChannel: this.ownChannel
+					parentChannel: this.getChannel()
 				});
 			}
 
@@ -197,16 +196,16 @@ define([
 			}
 
 			new definitionTask({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 
 			this.topbar = new Topbar({
-				parentChannel: this.ownChannel,
+				parentChannel: this.getChannel(),
 				collapseButtonClass: this.collapseButtonClass
 			});
 
 			this.sidebar = new MainSidebarImpl({
-				parentChannel: this.ownChannel
+				parentChannel: this.getChannel()
 			});
 		},
 
@@ -218,13 +217,12 @@ define([
 
 			this._contentContainer = put(this.domNode, 'div.' + this.contentContainerClass);
 
-			put(this.domNode, 'div.' + this.overlaySidebarBackgroundClass);
+			this._overlaySidebarBackground = put(this.domNode, 'div.' + this.overlaySidebarBackgroundClass);
 		},
 
 		_createListeners: function() {
 
-			this._appClickHandler = on.pausable(this.ownerDocumentBody, 'click', lang.hitch(this, this._onAppClicked));
-
+			this._appClickHandler = this._listenGlobalClicks(lang.hitch(this, this._onAppClicked));
 			this._appClickHandler.pause();
 		},
 
@@ -240,11 +238,6 @@ define([
 		},
 
 		_onAppResize: function(evt) {
-
-			// TODO evita que entren instancias viejas (login, logout, login), cuando se destruya bien app, eliminar
-			if (!this.domNode) {
-				return;
-			}
 
 			this._appClickHandler.pause();
 
@@ -287,36 +280,17 @@ define([
 		_onAppHide: function() {
 
 			this._appClickHandler.pause();
-
-			// TODO reemplazo a destroy de todo 'app', eliminar cuando router no comparta canal y destruir solo 'app'
-			this._publish(this.topbar.getChannel('DESTROY'));
-			this._publish(this.sidebar.getChannel('DESTROY'));
-			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.managerChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.taskChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.socketChannel, this.actions.DESTROY));
-			this._publish(this._buildChannel(this.notificationChannel, this.actions.DESTROY));
 		},
 
 		_onAppClicked: function(evt) {
 
-			var clickedNode = evt.target,
-				targets = this._getClickTargets(evt),
-				nodeDoesNotBelongToMainSidebar = targets.indexOf(this.sidebar.domNode) === -1,
-				nodeDoesNotBelongToToggleButton = !this._findCollapseButtonNode(targets).length;
+			var nodeDoesNotBelongToMainSidebar = !this._checkClickBelongsToNode(evt, this.sidebar.domNode),
+				nodeBelongsToSidebarOverlay = this._checkClickBelongsToNode(evt, this._overlaySidebarBackground);
 
-			if (nodeDoesNotBelongToMainSidebar && nodeDoesNotBelongToToggleButton) {
+			if (nodeDoesNotBelongToMainSidebar && nodeBelongsToSidebarOverlay) {
 				this._appClickHandler.pause();
 				this._collapseMainSidebar();
 			}
-		},
-
-		_findCollapseButtonNode: function(nodes) {
-
-			return nodes.filter(lang.hitch(this, function(target) {
-
-				return target && target.classList && target.classList.contains(this.collapseButtonClass);
-			}));
 		}
 	});
 });

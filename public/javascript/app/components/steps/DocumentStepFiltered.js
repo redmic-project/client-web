@@ -90,8 +90,7 @@ define([
 							listButton: [{
 								icon: "fa-file-pdf-o",
 								btnId: "downloadPdf",
-								condition: "url",
-								href: redmicConfig.viewPaths.documentPDF
+								condition: "url"
 							},{
 								icon: "fa-info-circle",
 								btnId: "details",

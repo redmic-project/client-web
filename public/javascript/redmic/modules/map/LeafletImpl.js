@@ -1,78 +1,45 @@
 define([
-	"dijit/registry"
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/_base/kernel"
-	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "dojo/dom-class"
-	, "dojo/on"
 	, "dojo/query"
 	, 'leaflet/leaflet'
-	, 'L-miniMap/Control.MiniMap.min'
 	, "put-selector/put"
-	, "redmic/map/OpenLayers"
-	, "redmic/modules/map/_ListenContainers"
-	, "redmic/modules/map/_OverlayLayersManagement"
 	, "./_LeafletImplItfc"
-
-	, 'awesome-markers/leaflet.awesome-markers.min'
-	, 'L-coordinates/Leaflet.Coordinates-0.1.5.min'
-	, 'L-navBar/Leaflet.NavBar'
-	, 'leaflet-measure/leaflet-measure.min'
+	, './_LeafletWidgetsManagement'
+	, "./_ListenContainers"
+	, "./_OverlayLayersManagement"
+	, "./Map"
 ], function(
-	registry
-	, declare
+	declare
 	, lang
-	, kernel
-	, aspect
 	, Deferred
 	, domClass
-	, on
 	, query
 	, L
-	, MiniMap
 	, put
-	, OpenLayers
+	, _LeafletImplItfc
+	, _LeafletWidgetsManagement
 	, _ListenContainers
 	, _OverlayLayersManagement
-	, _LeafletImplItfc
-){
-	return declare([_LeafletImplItfc, _ListenContainers, _OverlayLayersManagement], {
-		//	summary:
-		//		Implementación de leaflet.
-		//	description:
-		//		Proporciona la fachada para trabajar con leaflet.
+	, Map
+) {
 
-		//	config: Object
-		//		Opciones y asignaciones por defecto.
+	return declare([Map, _LeafletImplItfc, _LeafletWidgetsManagement, _ListenContainers, _OverlayLayersManagement], {
+		//	summary:
+		//		Implementación de mapa Leaflet.
+		//	description:
+		//		Proporciona la fachada para trabajar con Leaflet.
 
 
 		constructor: function(args) {
 
 			this.config = {
-				region: "center",
-
-				extent: [28.5, -16.0],
-				zoom: 7,
-				minZoom: 1,
-				maxZoom: 18,
-				controlLayers: L.control.layers(),
-				coordinatesViewer: true,
-				navBar: true,
-				miniMap: true,
-				scaleBar: true,
-				measureTools: true,
 				queryableClass: "leaflet-queryable",
+				omitContainerSizeCheck: false,
 
-				_mapNodeValidSizeInterval: 100,
-
-				layerTypes: {
-					base: "base",
-					forced: "forced",
-					optional: "optional"
-				},
-				layers: {}
+				_mapNodeValidSizeInterval: 100
 			};
 
 			lang.mixin(this, this.config, args);
@@ -97,9 +64,6 @@ define([
 
 			domClass.remove(this.mapNode, 'leaflet-touch');
 
-			this.controlLayers.addTo(this.map);
-			domClass.add(this.controlLayers._container.firstChild, "fa-globe");
-
 			this._resetMapPosition();
 		},
 
@@ -107,7 +71,7 @@ define([
 
 			this.map.on("layeradd", lang.hitch(this, this._onLayerAdd));
 			this.map.on("layerremove", lang.hitch(this, this._onLayerRemove));
-			this.map.on("baselayerchange", lang.hitch(this, this._groupEventArgs, 'BASE_LAYER_CHANGE'));
+			this.map.on("baselayerchange", lang.hitch(this, this._onBaseLayerChangedFromControl));
 			this.map.on("zoomend", lang.hitch(this, this._groupEventArgs, 'ZOOM_END'));
 			this.map.on("moveend", lang.hitch(this, this._groupEventArgs, 'PAN'));
 			this.map.on("click", lang.hitch(this, this._onMapClick));
@@ -119,10 +83,21 @@ define([
 
 		_onLayerAdd: function(evt) {
 
+			var layer = evt.layer;
+
 			this._emitEvt('LAYER_ADD', {
-				layer: evt.layer,
+				layer: layer,
 				mapInstance: this.map
 			});
+
+			var layerId = layer._leaflet_id;
+			if (this._isBaseLayer(layerId)) {
+				this._emitEvt('BASE_LAYER_CHANGE', {
+					success: true,
+					baseLayer: layer,
+					layerId: layerId
+				});
+			}
 		},
 
 		_onLayerRemove: function(evt) {
@@ -137,6 +112,7 @@ define([
 
 			!this._clickDisabled && this._emitEvt('CLICK', {
 				latLng: evt.latlng,
+				zoom: this.getZoom(),
 				bbox: this.getBounds(),
 				size: this.map.getSize(),
 				containerPoint: evt.containerPoint,
@@ -176,142 +152,41 @@ define([
 
 		_afterShow: function() {
 
+			if (this.omitContainerSizeCheck) {
+				this._onMapNodeValidSize();
+				return;
+			}
+
 			var dfd = new Deferred();
 
 			dfd.then(lang.hitch(this, this._onMapNodeValidSize));
 
-			this._mapNodeValidSizeIntervalHandler = setInterval(lang.hitch(this, function(dfd) {
+			this._mapNodeValidSizeIntervalHandler = setInterval(lang.hitch(this, function(nestedDfd) {
 
 				if (this.mapParentNode.clientHeight) {
 					clearInterval(this._mapNodeValidSizeIntervalHandler);
-					dfd.resolve();
+					nestedDfd.resolve();
 				}
 			}, dfd), this._mapNodeValidSizeInterval);
 
 			return dfd;
 		},
 
+		_afterMapLoaded: function() {
+
+			this._loadBaseLayers();
+			this._loadOptionalLayers();
+			this._addContainerListeners();
+		},
+
 		_onMapNodeValidSize: function() {
 
+			this.invalidateSize();
+
 			if (!this._getPreviouslyShown()) {
+				this._resetMapPosition();
 				this._addMapWidgets();
 			}
-
-			this.invalidateSize();
-		},
-
-		_addMapWidgets: function() {
-
-			this._addCoordinatesViewer();
-			this._addNavBar();
-			this._addMeasureTools();
-			this._addMiniMap();
-
-			this._addScaleBar();
-		},
-
-		_addCoordinatesViewer: function() {
-
-			if (!this.coordinatesViewer) {
-				return;
-			}
-
-			var awesomeIcon = L.AwesomeMarkers.icon({
-				icon: 'bullseye',
-				markerColor: 'darkgreen',
-				prefix: 'fa'
-			});
-
-			L.control.coordinates({
-				position: "bottomleft",
-				enableUserInput: true,
-				decimals: 5,
-				decimalSeperator: ",",
-				useDMS: true,
-				markerProps: {
-					icon: awesomeIcon
-				}
-			}).addTo(this.map);
-		},
-
-		_addNavBar: function() {
-
-			if (!this.navBar) {
-				return;
-			}
-
-			L.control.navbar().addTo(this.map);
-		},
-
-		_addMiniMap: function() {
-
-			if (!this.miniMap) {
-				return;
-			}
-
-			var defaultLayerName = this.baseLayers[this.defaultBaseLayer];
-
-			if (defaultLayerName instanceof Array) {
-				defaultLayerName = defaultLayerName[0];
-			}
-
-			var baseMap = OpenLayers.get(defaultLayerName).instance,
-				miniMapConfig = {
-					position: "topright",
-					collapsedWidth: 28,
-					collapsedHeight: 28,
-					toggleDisplay: true,
-					minimized: true,
-					strings: {
-						showText: this.i18n.miniMapShowText,
-						hideText: this.i18n.miniMapHideText
-					}
-				},
-				miniMap = new MiniMap(baseMap, miniMapConfig);
-
-			miniMap.addTo(this.map);
-
-			// TODO workaround for https://github.com/Norkart/Leaflet-MiniMap/issues/114
-			on(miniMap._miniMap._container, "click", function(evt) { evt.stopPropagation(); });
-
-			this.miniMapInstance = miniMap;
-		},
-
-		_addMeasureTools: function() {
-
-			if (!this.measureTools) {
-				return;
-			}
-
-			var measureConfig = {
-					primaryLengthUnit: 'meters',
-					secondaryLengthUnit: 'kilometers',
-					primaryAreaUnit: 'sqmeters',
-					secondaryAreaUnit: 'hectares',
-					localization: kernel.locale
-				},
-				measure = new L.Control.Measure(measureConfig);
-
-			measure.addTo(this.map);
-
-			this.map.on("measurestart", lang.hitch(this, function() {
-				this._clickDisabled = true;
-			}));
-			this.map.on("measurefinish", lang.hitch(this, function() {
-				this._clickDisabled = false;
-			}));
-		},
-
-		_addScaleBar: function() {
-
-			if (!this.scaleBar) {
-				return;
-			}
-
-			L.control.scale({
-				position: "bottomright",
-				imperial: false
-			}).addTo(this.map);
 		},
 
 		setView: function(latLng, zoomLevel, options) {
@@ -326,7 +201,7 @@ define([
 
 		fitBounds: function(bounds, options) {
 
-			this.map.fitBounds(bounds);
+			this.map.fitBounds(bounds, options || {});
 		},
 
 		setZoom: function(zoomLevel, options) {
@@ -369,16 +244,6 @@ define([
 		removeLayer: function(layer) {
 
 			this.map.removeLayer(layer);
-		},
-
-		bringLayerToFront: function(layer) {
-
-			layer.bringToFront && layer.bringToFront();
-		},
-
-		bringLayerToBack: function(layer) {
-
-			layer.bringToBack && layer.bringToBack();
 		},
 
 		getBounds: function() {

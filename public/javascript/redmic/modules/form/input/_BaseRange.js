@@ -111,7 +111,8 @@ define([
 				props.notIcon = true;
 			}
 
-			this['_' + key + 'Widget'] = new declare([def, _Dependence])(props).placeAt(this.containerInput);
+			var Definition = declare([def, _Dependence]);
+			this['_' + key + 'Widget'] = new Definition(props).placeAt(this.containerInput);
 
 			this._publish(this['_' + key + 'Widget'].getChannel('SHOW'), {
 				node: this.containerInput
@@ -123,14 +124,21 @@ define([
 
 		_subValueChangedWidget: function(key, res) {
 
-			if (res.isValid)
+			if (!this._currentValues) {
+				this._currentValues = {};
+			}
+
+			if (res.isValid) {
 				this._emitEvt('IS_VALID', {
 					propertyName: this.propertyName
 				});
-			else {
+				this._currentValues[key] = res.value;
+			} else {
 				this._isValid = false;
-				this._emitChanged({});
+				delete this._currentValues[key];
 			}
+
+			this._emitChanged(this._currentValues);
 		},
 
 		_enable: function() {

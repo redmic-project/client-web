@@ -51,6 +51,12 @@ define([
 					REMOVE_LAYER: "removeLayer",
 					COPY_CHART_COLOR: "copyChartColor"
 				},
+				actions: {
+					ADD_ENTRY: 'addEntry',
+					REMOVE_ENTRY: 'removeEntry',
+					ENTRY_ENABLED: 'entryEnabled',
+					ENTRY_DISABLED: 'entryDisabled'
+				},
 
 				idProperty: "path",
 				pathSeparator: ".",
@@ -60,7 +66,9 @@ define([
 				_layerIdByPseudonym: {},
 				_currentData: {},
 				_currentIndex: "noGrouped",
-				_hiddenLayers: {}
+				_hiddenLayers: {},
+				_layerEntries: {},
+				_stateByLayerId: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -68,9 +76,10 @@ define([
 
 		_initialize: function() {
 
-			this.chartsList = new declare([ListLayout, ListController])({
+			var ListDesignDefinition = declare([ListLayout, ListController]);
+			this.chartsList = new ListDesignDefinition({
 				parentChannel: this.getChannel(),
-				title: this.i18n.selectedLayers,
+				title: this.i18n.selectedCharts,
 				target: this._localTarget,
 				buttons: {
 					"iconListMenu": {
@@ -99,7 +108,7 @@ define([
 								altIcon: "fa-toggle-off",
 								btnId: "toggleShowLayer",
 								title: "layer",
-								state: true,
+								state: false,
 								returnItem: true,
 								condition: function(item) { return !item.leaves; }
 							/*},{
@@ -114,10 +123,10 @@ define([
 				}
 			});
 
-			this.listMenu = new declare(ListMenu).extend(_ShowInTooltip)({
+			var ListMenuDefinition = declare(ListMenu).extend(_ShowInTooltip);
+			this.listMenu = new ListMenuDefinition({
 				classTooltip: "tooltipButtonMenu tooltipButtonAggrement",
 				parentChannel: this.getChannel(),
-				notIndicator: true,
 				select: {
 					"default": 0
 				},
@@ -133,7 +142,8 @@ define([
 				}]
 			});
 
-			this._colorPicker = new declare(ColorPickerImpl).extend(_ShowInTooltip)({
+			var ColorPickerDefinition = declare(ColorPickerImpl).extend(_ShowInTooltip);
+			this._colorPicker = new ColorPickerDefinition({
 				parentChannel: this.getChannel(),
 				idProperty: this.idProperty,
 				propertyName: "colorPicker",
@@ -148,6 +158,12 @@ define([
 			}
 
 			this.subscriptionsConfig.push({
+				channel : this.getChannel('ADD_ENTRY'),
+				callback: '_subAddEntry'
+			},{
+				channel : this.getChannel('REMOVE_ENTRY'),
+				callback: '_subRemoveEntry'
+			},{
 				channel : this.getChartsContainerChannel("LAYER_ADDED"),
 				callback: "_subLayerAdded"
 			},{
@@ -189,6 +205,12 @@ define([
 		_definePublications: function() {
 
 			this.publicationsConfig.push({
+				event: 'SHOW_LAYER',
+				channel: this.getChannel('ENTRY_ENABLED')
+			},{
+				event: 'HIDE_LAYER',
+				channel: this.getChannel('ENTRY_DISABLED')
+			},{
 				event: 'TEMPLATE_UPDATE_LIST',
 				channel: this.chartsList.getChildChannel("browser", "UPDATE_TEMPLATE")
 			},{
@@ -226,9 +248,56 @@ define([
 			return this.legendNode;
 		},
 
+		_subAddEntry: function(req) {
+
+			var layerId = req.chart;
+
+			if (this._layerEntries[layerId]) {
+				return;
+			}
+
+			this._addEntry(layerId, req);
+		},
+
+		_addEntry: function(layerId, data) {
+
+			this._layerEntries[layerId] = data;
+			this._stateByLayerId[layerId] = false;
+
+			this._updateLegendContentWithNewInfo(data);
+		},
+
+		_subRemoveEntry: function(req) {
+
+			var layerId = req.chart;
+
+			if (layerId) {
+				this._removeEntry(layerId);
+				return;
+			}
+
+			for (layerId in this._layerEntries) {
+				this._removeEntry(layerId);
+			}
+		},
+
+		_removeEntry: function(layerId) {
+
+			var layerPath = this._pathsByLayerId[layerId];
+			layerPath && this._removeLayerAndUpdateAncestors(layerPath);
+
+			delete this._layerEntries[layerId];
+			delete this._stateByLayerId[layerId];
+		},
+
 		_subLayerAdded: function(res) {
 
 			var layerId = res.chart;
+			this._stateByLayerId[layerId] = true;
+
+			if (this._layerEntries[layerId]) {
+				delete this._layerEntries[layerId];
+			}
 
 			this._emitEvt("GET_LAYER_INFO", {
 				layerId: layerId
@@ -237,13 +306,15 @@ define([
 
 		_subGotLayerInfo: function(res) {
 
-			var layerId = res.chart;
-
-			this._updateLegendContentWithNewInfo(res);
-			this._deactivateHiddenLayer(this._pathsByLayerId[layerId]);
+			this._onLayerInfoUpdate(res);
 		},
 
 		_subLayerInfoUpdated: function(res) {
+
+			this._onLayerInfoUpdate(res);
+		},
+
+		_onLayerInfoUpdate: function(res) {
 
 			var layerId = res.chart;
 
@@ -407,8 +478,8 @@ define([
 
 		_addDataToBrowser: function(data) {
 
-			this._emitEvt("INJECT_DATA", {
-				data: data,
+			this._emitEvt('INJECT_DATA', {
+				data: this._getDataToAddToBrowser(data),
 				target: this._localTarget
 			});
 		},
@@ -430,7 +501,9 @@ define([
 			if (this._hiddenLayers[layerId]) {
 				this._deactivateToggleShowLayerButton(layerPath);
 			} else {
-				this._activateToggleShowLayerButton(layerPath);
+				if (this._stateByLayerId[layerId]) {
+					this._activateToggleShowLayerButton(layerPath);
+				}
 			}
 		},
 
@@ -525,15 +598,19 @@ define([
 				return;
 			}
 
-			var itemContentUpdate = {
+			lang.mixin(this._currentData[layerPath], {
 				path: layerPath,
 				label: label
-			};
+			});
 
 			this._emitEvt("INJECT_ITEM", {
-				data: itemContentUpdate,
+				data: this._currentData[layerPath],
 				target: this._localTarget
 			});
+
+			if (this._stateByLayerId[layerId]) {
+				this._activateToggleShowLayerButton(layerPath);
+			}
 		},
 
 		_subChartsListButtonEvent: function(res) {
@@ -591,16 +668,19 @@ define([
 			iconNode.setAttribute("style", "color:" + color);
 			this._changeColorItem.item.color = color;
 
-			// TODO se debe de actualizar, pero el inject lo que hace es eliminar los nodos y regenerarlos, y eso afecta al tooltip
-			/*this._emitEvt("INJECT_ITEM", {
+			this._emitEvt("INJECT_ITEM", {
 				data: this._changeColorItem.item,
 				target: this._localTarget
-			});*/
+			});
 
 			var layerPath = this._changeColorItem[this.idProperty],
 				layerId = layerPath.split(this.pathSeparator).pop();
 
 			this._setLayerColor(layerId, oldColor, color);
+
+			if (this._stateByLayerId[layerId]) {
+				this._activateToggleShowLayerButton(layerPath);
+			}
 		},
 
 		_setLayerColor: function(layerId, oldColor, color) {
@@ -616,7 +696,6 @@ define([
 
 			var pathFromList = obj[this.idProperty],
 				layerId = pathFromList.split(this.pathSeparator).pop(),
-				state = obj.state,
 				propsToPub = {
 					layerId: layerId
 				};
@@ -628,7 +707,10 @@ define([
 
 			var objToPub = this._getPubToLayerObj(propsToPub);
 
-			if (!state) {
+			var prevState = this._stateByLayerId[layerId];
+			this._stateByLayerId[layerId] = !prevState;
+
+			if (prevState) {
 				this._deactivateLayer(objToPub);
 			} else {
 				this._activateLayer(objToPub);
@@ -694,10 +776,43 @@ define([
 				template: template
 			});
 
+			var loadedLayerIds = this._getLoadedLayerIds();
+
 			this._currentData = {};
 			this._publish(this.chartsList.getChildChannel("browser", "CLEAR"));
 
 			this._emitEvt("GET_LAYER_INFO");
+			for (var layerEntryId in this._layerEntries) {
+				var layerEntryInfo = this._layerEntries[layerEntryId];
+				this._onLayerInfoUpdate(layerEntryInfo);
+			}
+
+			this._enablePreviouslySelectedItems(loadedLayerIds);
+		},
+
+		_getLoadedLayerIds: function() {
+
+			var loadedLayerPaths = Object.keys(this._currentData).map(lang.hitch(this, function(layerPath) {
+
+				return layerPath.split(this.pathSeparator).pop();
+			}));
+
+			return loadedLayerPaths.filter(lang.hitch(this, function(layerId) {
+
+				return layerId && isNaN(parseInt(layerId, 10));
+			}));
+		},
+
+		_enablePreviouslySelectedItems: function(layerIds) {
+
+			for (var i = 0; i < layerIds.length; i++) {
+				var layerId = layerIds[i];
+
+				if (this._stateByLayerId[layerId]) {
+					var layerPath = this._pathsByLayerId[layerId];
+					this._activateToggleShowLayerButton(layerPath);
+				}
+			}
 		}
 	});
 });

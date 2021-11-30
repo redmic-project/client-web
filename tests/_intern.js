@@ -3,10 +3,16 @@ module.exports = function(args) {
 	var path = require('path'),
 		dojoConfig = require('./_dojoConfig')(args),
 		browserDojoConfig = JSON.parse(JSON.stringify(dojoConfig)),
+		environments = require('./_environments')(args),
 
 		testsPath = args.testsPath,
 		coverage = args.coverage,
 		reporters = args.reporters,
+
+		seleniumVersion = args.seleniumVersion,
+		chromeVersion = args.chromeVersion,
+		firefoxVersion = args.firefoxVersion,
+
 		ownServerPort = args.ownServerPort,
 		ownSocketPort = args.ownSocketPort,
 		ownTunnelPort = args.ownTunnelPort,
@@ -16,38 +22,54 @@ module.exports = function(args) {
 
 	delete dojoConfig.deps;
 
+	var drivers = [];
+
+	var chromeDriver = {
+		name: 'chrome'
+	};
+
+	if (chromeVersion) {
+		chromeDriver.version = chromeVersion;
+	}
+
+	drivers.push(chromeDriver);
+
+	var firefoxDriver = {
+		name: 'firefox'
+	};
+
+	if (firefoxVersion) {
+		firefoxDriver.version = firefoxVersion;
+	}
+
+	drivers.push(firefoxDriver);
+
+	var tunnelOptions = {
+		port: tunnelPort,
+		drivers: drivers
+	};
+
+	if (seleniumVersion) {
+		tunnelOptions.version = seleniumVersion;
+	}
+
 	var config = {
 		capabilities: {
 			'idle-timeout': 30,
 			fixSessionCapabilities: false
 		},
 
-		environments: [{
-			browserName: 'chrome'
-		/*},{
-			browserName: 'firefox'
-		},{
-			browserName: 'internet explorer'*/
-		}],
+		environments: environments,
 
 		serverPort: ownServerPort,
 		socketPort: socketPort,
 
-		tunnelOptions: {
-			version: '3.12.0',
-			port: tunnelPort,
-			drivers: [{
-				name: 'chrome',
-				version: '2.38'
-			},{
-				name: 'firefox',
-				version: '0.19.1'
-			}]
-		},
+		tunnelOptions: tunnelOptions,
 
-		maxConcurrency: 3,
+		maxConcurrency: 1,
 		defaultTimeout: 250000,
 		leaveRemoteOpen: false,
+		showConfig: false,
 
 		loader: {
 			script: 'dojo',

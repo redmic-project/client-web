@@ -14,7 +14,8 @@ define([
 	, DialogComplex
 	, DialogSimple
 	, put
-){
+) {
+
 	return {
 		//	summary:
 		//		Extensión de módulos mostrables para que lo hagan dentro de un popup.
@@ -55,8 +56,13 @@ define([
 
 			this.popupBody = new ContentPane();
 
-			this.currentNode = this.popupBody.domNode;
-			put(this.currentNode, '.flex');
+			this._moduleParentNode = this.popupBody.domNode;
+			put(this.popupBody.domNode, '.flex');
+		},
+
+		_getCurrentParentNode: function(req) {
+
+			return this._moduleParentNode;
 		},
 
 		_beforeShow: function(req) {
@@ -78,15 +84,15 @@ define([
 
 		_afterShow: function(req) {
 
-			var afterOriginalDfd = function(returnDfd) {
+			var afterOriginalDfd = function(innerReturnDfd) {
 
 				var dfdPopup = this._popupInstance.show();
 
-				dfdPopup.then(lang.hitch(this, function(returnDfd) {
+				dfdPopup.then(lang.hitch(this, function(innerInnerReturnDfd) {
 
 					this._popupInstance.set('centerContent', this.popupBody);
-					returnDfd.resolve();
-				}, returnDfd));
+					innerInnerReturnDfd.resolve();
+				}, innerReturnDfd));
 			};
 
 			var dfd = this.inherited(arguments),

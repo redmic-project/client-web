@@ -1,5 +1,6 @@
 define([
-	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
+	'app/redmicConfig'
+	, 'app/details/views/_ActivityTimeSeriesDataManagement'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -8,7 +9,8 @@ define([
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/search/FacetsImpl"
 ], function(
-	_CompositeInTooltipFromIconKeypad
+	redmicConfig
+	, _ActivityTimeSeriesDataManagement
 	, declare
 	, lang
 	, aspect
@@ -16,8 +18,9 @@ define([
 	, _Filter
 	, _Store
 	, FacetsImpl
-){
-	return declare([_Filter, _CompositeInTooltipFromIconKeypad, _Store], {
+) {
+
+	return declare([_Filter, _Store, _ActivityTimeSeriesDataManagement], {
 		//	summary:
 		//		Extensión para la vista de timeSeries para el manejo de datos.
 		//	description:
@@ -28,20 +31,8 @@ define([
 			this.config = {
 				dataViewEvents: {},
 				dataViewActions: {},
-				_listDataReturnFields: [
-					"uuid", "properties.activityId", "properties.site.path", "properties.site.name",
-					"properties.site.code", "properties.site.id", "properties.measurements.parameter.id",
-					"properties.measurements.parameter.name", "properties.measurements.unit.id",
-					"properties.measurements.unit.name", "properties.measurements.dataDefinition.id",
-					"properties.measurements.dataDefinition.z"
-				],
-				_mapReturnFields: ["uuid", "geometry", "properties.activityId", "properties.site.path",
-					"properties.site.name", "properties.site.code", "properties.measurements.parameter.id",
-					"properties.measurements.parameter.name", "properties.measurements.unit.id",
-					"properties.measurements.unit.name", "properties.measurements.dataDefinition.id"
-				],
-				_dataList: [],
-				_indexDataList: {},
+				_listDataReturnFields: redmicConfig.returnFields.timeSeriesStationsList,
+				_mapReturnFields: redmicConfig.returnFields.timeSeriesStationsMap,
 				_getListDataDfd: null
 			};
 
@@ -57,23 +48,14 @@ define([
 
 			this.facetsConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				aggs: {
-					"properties": {
-						'open': true,
-						"terms": {
-							"field": "properties.measurements.parameter.name",
-							"nested": "properties.measurements",
-							"size": 100
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.timeSeriesStations
 			}, this.facetsConfig || {}]);
 		},
 
 		_initializeDataView: function() {
 
 			this.facetsConfig.queryChannel = this.queryChannel;
-			this.facets = new declare([FacetsImpl])(this.facetsConfig);
+			this.facets = new FacetsImpl(this.facetsConfig);
 		},
 
 		_mixDataViewEventsAndActions: function() {
@@ -93,36 +75,55 @@ define([
 				return;
 			}
 
-			var embeddedButtonKeys = Object.keys(this.embeddedButtons),
-				embeddedListKey = embeddedButtonKeys[1],
-				currentEmbeddedContentKey = this._getCurrentContentKey();
-
-			// TODO hay cosas en el injectDataToList que no son solo para el listado, revisar para no tener que
-			// llamar a este, sino solo a la parte necesaria
-			this._injectDataToList(data.features);
-			if (currentEmbeddedContentKey === embeddedListKey) {
-				//this._injectDataToList(data.features);
-			} else {
-				this._injectDataToMap(data);
+			if (this._getListDataDfd && !this._getListDataDfd.isFulfilled()) {
+				this._buildTimeseriesData(data.features);
+				this._getListDataDfd.resolve();
+				return;
 			}
 
-			if (this._getListDataDfd && !this._getListDataDfd.isFulfilled()) {
-				this._generateTimeSeriesData();
-				this._getListDataDfd.resolve();
-				this._getListDataDfd = null;
+			var embeddedButtonKeys = Object.keys(this.embeddedButtons),
+				embeddedListKey = embeddedButtonKeys[1],
+				currentKey = this._getCurrentContentKey();
+
+			if (currentKey === embeddedListKey) {
+				var itemsFromFeatures = this._getItemsFromFeaturesData(data.features);
+				this._injectDataToList(itemsFromFeatures);
+			} else {
+				this._injectDataToMap(data);
 			}
 		},
 
 		_itemAvailable: function(response) {
 
-			var dataToInject = this._parseData(response.data.properties);
+			this._publish(this.browserPopup.getChannel('SHOW'));
 
-			this._publish(this.browserPopup.getChannel("SHOW"));
+			var featureProps = response.data.properties,
+				itemsFromFeature = this._getItemsFromFeatureProperties(featureProps);
 
-			this._emitEvt('INJECT_DATA', {
-				data: dataToInject,
-				target: this.browserPopupTarget
-			});
+			this._injectDataToPopupList(itemsFromFeature);
+		},
+
+		_buildTimeseriesData: function(features) {
+
+			this._clearTimeseriesInternalStructures();
+
+			for (var i = 0; i < features.length; i++) {
+				this._parseAndAddTimeseriesData(features[i].properties);
+			}
+		},
+
+		_getItemsFromFeaturesData: function(features) {
+
+			var parsedItems = [];
+
+			for (var i = 0; i < features.length; i++) {
+				var featureProps = features[i].properties,
+					parsedItem = this._getItemsFromFeatureProperties(featureProps);
+
+				parsedItems = parsedItems.concat(parsedItem);
+			}
+
+			return parsedItems;
 		},
 
 		_injectDataToMap: function(data) {
@@ -133,70 +134,35 @@ define([
 			});
 		},
 
-		_injectDataToList: function(features) {
-
-			this._dataList = [];
-			this._indexDataList = {};
-
-			for (var i = 0; i < features.length; i++) {
-				this._parseData(features[i].properties);
-			}
+		_injectDataToList: function(data) {
 
 			this._emitEvt('INJECT_DATA', {
-				data: lang.clone(this._dataList),
+				data: data,
 				target: this.browserTarget
 			});
 		},
 
-		_parseData: function(item) {
+		_injectDataToPopupList: function(data) {
 
-			var site = item.site,
-				measurementsSize = item.measurements.length,
-				parameters = [],
-				dataList = [];
-
-			for (var n = 0; n < measurementsSize; n++) {
-				var measurement = item.measurements[n],
-					parameter = measurement.parameter,
-					dataDefinition = measurement.dataDefinition,
- 					index = this._isInserted(dataList, parameter.path);
- 				if (index < 0) {
- 					parameter.leaves = 0;
- 					parameter.dataDefinitions = [dataDefinition];
- 					parameter.unit = measurement.unit.name;
-
- 					parameters.push(parameter);
- 					dataList.push(parameter);
- 				} else {
- 					dataList[index].dataDefinitions.push(dataDefinition);
- 				}
-			}
-
-			site.activityId = item.activityId;
-			site.leaves = parameters.length;
-
-			dataList.push(site);
-			this._addToDataList(dataList);
-
-			return dataList;
+			this._emitEvt('INJECT_DATA', {
+				data: data,
+				target: this.browserPopupTarget
+			});
 		},
 
-		_isInserted: function(data, itemId) {
+		_prepareTimeSeriesData: function() {
 
- 			for (var n = 0; n < data.length; n++) {
- 				if (data[n].path === itemId) {
- 					return n;
- 				}
- 			}
+			if (this._showChartIsValid() || this._getSelectionIsEmpty()) {
+				return;
+			}
 
- 			return -1;
- 		},
-
-		_addToDataList: function(data) {
-
-			for (var i = 0; i < data.length; i++) {
-				this._dataList.push(data[i]);
-				this._indexDataList[data[i].path] = this._dataList.length - 1;
+			var callback = lang.hitch(this, this._generateTimeSeriesDataFromSelectedData);
+			if (this._timeseriesDefinitionListIsEmpty()) {
+				this._getListDataDfd = new Deferred();
+				this._getListDataDfd.then(callback);
+				this._getTimeseriesData();
+			} else {
+				callback();
 			}
 		},
 
@@ -209,25 +175,6 @@ define([
 			});
 		},
 
-		_prepareTimeSeriesData: function(argument) {
-
-			if (!this._showChartIsValid()) {
-
-				if (this._dataListIsEmpty()) {
-
-					this._getListDataDfd = new Deferred();
-					this._getListData();
-				} else {
-					this._generateTimeSeriesData();
-				}
-			}
-		},
-
-		_dataListIsEmpty: function() {
-
-			return (!this._dataList || (this._dataList.length === 0));
-		},
-
 		_getListData: function() {
 
 			this._emitEvt('ADD_TO_QUERY', {
@@ -237,9 +184,11 @@ define([
 			});
 		},
 
-		_getIconKeypadNode: function() {
+		_getTimeseriesData: function() {
 
-			return this._optionNode;
+			this._emitEvt('REQUEST', {
+				target: this.target
+			});
 		}
 	});
 });

@@ -63,7 +63,6 @@ define([
 				},
 				multipleSelected: true,
 				hideOnClickItem: false,
-				indicatorLeft: true,
 				classTooltip: "tooltipButtonMenu"
 			}, this.headerOptionConfig || {}]);
 

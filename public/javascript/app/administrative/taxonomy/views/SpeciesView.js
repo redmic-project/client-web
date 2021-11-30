@@ -6,7 +6,6 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "RWidgets/Button"
-	, "templates/FilterSpeciesForm"
 	, "./_AddCompositeTaxon"
 ], function(
 	alertify
@@ -16,7 +15,6 @@ define([
 	, declare
 	, lang
 	, Button
-	, formTemplate
 	, _AddCompositeTaxon
 ){
 	return declare([SpeciesMain, _AddCompositeTaxon, _EditionWizardView], {

@@ -1,12 +1,14 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/base/_Module"
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Persistence'
-	, "redmic/modules/base/_Store"
-	, "./_ModelItfc"
+	, 'redmic/modules/base/_Store'
+	, './_ModelItfc'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, _Module
 	, _Persistence
@@ -38,7 +40,8 @@ define([
 					VALUE_REINDEXED: "valueReindexed",
 					MODEL_BUILD: "modelBuild",
 					GOT_MODEL_UUID: "gotModelUuid",
-					SAVE_MODEL: 'saveModel'
+					SAVE_MODEL: 'saveModel',
+					GOT_PROPERTY_SCHEMA: "gotPropertySchema"
 				},
 				actions: {
 					SET_PROPERTY_VALUE: "setPropertyValue",
@@ -67,7 +70,9 @@ define([
 					REMEMBER_CURRENT_VALUE: "rememberCurrentValue",
 					MODEL_BUILD: "modelBuild",
 					GET_MODEL_UUID: "getModelUuid",
-					GOT_MODEL_UUID: "gotModelUuid"
+					GOT_MODEL_UUID: "gotModelUuid",
+					GOT_PROPERTY_SCHEMA: "gotPropertySchema",
+					GET_PROPERTY_SCHEMA: "getPropertySchema"
 				},
 				idForGet: '_schema'
 			};
@@ -126,6 +131,9 @@ define([
 			},{
 				channel: this.getChannel('SAVE'),
 				callback: '_subSave'
+			},{
+				channel: this.getChannel("GET_PROPERTY_SCHEMA"),
+				callback: "_subGetPropertySchema"
 			});
 		},
 
@@ -173,6 +181,9 @@ define([
 			},{
 				event: 'SAVE_MODEL',
 				channel: this.getChannel('SAVED')
+			},{
+				event: 'GOT_PROPERTY_SCHEMA',
+				channel: this.getChannel("GOT_PROPERTY_SCHEMA")
 			});
 		},
 
@@ -182,7 +193,9 @@ define([
 
 			if (this.schema) {
 				this._buildModelWithSchema(this.schema);
-			} else {
+			} else if (this.target.indexOf(redmicConfig.apiUrlVariable) !== -1 ||
+				this.target.indexOf('undefined') !== -1) {
+
 				this._emitEvt("GET", {
 					target: this.target,
 					id: this.idForGet,
@@ -296,6 +309,11 @@ define([
 		_subSave: function(req) {
 
 			this._saveModel(req);
+		},
+
+		_subGetPropertySchema: function(req) {
+
+			this._getPropertySchema(req);
 		}
 	});
 });

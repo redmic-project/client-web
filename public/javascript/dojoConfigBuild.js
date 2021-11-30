@@ -11,8 +11,6 @@ dojoConfig = {
 	},{
 		name: 'app',
 		location: '../app'
-
-
 	},{
 		name: 'json-schema-ref-parser',
 		location: '../json-schema-ref-parser'
@@ -31,7 +29,7 @@ dojoConfig = {
 		'd3Tip/index': {
 			'd3': 'd3/d3.min'
 		},
-		'leaflet-wms/leaflet.wms': {
+		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'L-miniMap/Control.MiniMap.min': {
@@ -39,6 +37,9 @@ dojoConfig = {
 		},
 		'pruneCluster/PruneCluster.amd.min': {
 			'leaflet': 'leaflet/leaflet'
+		},
+		'wicket': {
+			'wicket': 'wicket/wicket'
 		}
 	},
 

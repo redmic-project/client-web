@@ -26,32 +26,39 @@ define([
 				containerClass: 'formContainerWithKeypad',
 				buttons: {
 					cancel: {
-						zone: "right",
+						zone: 'left',
 						props: {
-							"class": "danger",
-							label: this.i18n.cancel
+							'class': 'danger',
+							iconClass: 'fa fa-close',
+							label: this.i18n.cancel,
+							showLabel: false
 						}
 					},
 					reset: {
-						noActive: true,
-						zone: "left",
+						zone: 'right',
 						props: {
-							"class": "primary",
-							label: this.i18n.reset
+							'class': 'primary',
+							iconClass: 'fa fa-undo',
+							label: this.i18n.reset,
+							showLabel: false
 						}
 					},
 					clear: {
-						zone: "left",
+						zone: 'left',
 						props: {
-							"class": "warning",
-							label: this.i18n.clear
+							'class': 'warning',
+							iconClass: 'fa fa-trash',
+							label: this.i18n.clear,
+							showLabel: false
 						}
 					},
 					submit: {
-						zone: "right",
+						zone: 'right',
 						props: {
-							"class": "success",
-							label: this.i18n.submit
+							'class': 'success',
+							iconClass: 'fa fa-save',
+							label: this.i18n.submit,
+							showLabel: false
 						}
 					}
 				}

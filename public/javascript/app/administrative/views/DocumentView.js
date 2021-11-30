@@ -64,9 +64,7 @@ define([
 						},{
 							icon: "fa-file-pdf-o",
 							btnId: "downloadPdf",
-							condition: "url",
-							title: "openViewer",
-							href: this.viewPaths.documentPDF
+							condition: "url"
 						}]
 					},
 					shownOptionTemplate: {

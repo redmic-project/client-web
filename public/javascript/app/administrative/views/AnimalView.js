@@ -64,22 +64,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					"sex": {
-						'open': true,
-						"terms": {
-							"field": "sex.name",
-							"size": 20
-						}
-					},
-					"lifeStage": {
-						'open': true,
-						"terms": {
-							"field": "lifeStage.name",
-							"size": 20
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.animal
 			}, this.facetsConfig || {}]);
 		}
 	});

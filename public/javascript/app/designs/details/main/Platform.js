@@ -21,8 +21,7 @@ define([
 ){
 	return declare([_DetailsBase], {
 		//	summary:
-		//		Vista detalle de Organisation.
-
+		//		Vista detalle de plataformas.
 
 		constructor: function(args) {
 
@@ -39,34 +38,34 @@ define([
 		_setMainConfigurations: function() {
 
 			this.widgetConfigs = this._merge([{
-				additionalInfo: {
-					props: {
-						childTabs: [
-							this._configAdditionalInfoActivity(),
-							{
-								title: this.i18n.contacts,
-								type: declare([ListImpl, _Framework]),
-								props: {
-									target: this.contactTarget,
-									template: TemplateContacts,
-									bars: [{
-										instance: Total
-									}]
-								}
-							}
-						]
-					}
-				}
+				contactList: this._contactsConfig()
 			}, this.widgetConfigs || {}]);
 
 			this.inherited(arguments);
+		},
+
+		_contactsConfig: function() {
+
+			return {
+				width: 3,
+				height: 2,
+				type: declare([ListImpl, _Framework]),
+				props: {
+					title: this.i18n.contacts,
+					target: this.contactTarget,
+					template: TemplateContacts,
+					bars: [{
+						instance: Total
+					}]
+				}
+			};
 		},
 
 		_clearModules: function() {
 
 			this.inherited(arguments);
 
-			this._publish(this._widgets.additionalInfo.getChildChannel("childInstances.1", "CLEAR"));
+			this._publish(this._getWidgetInstance('contactList').getChannel('CLEAR'));
 		},
 
 		_itemAvailable: function(res, resWrapper) {

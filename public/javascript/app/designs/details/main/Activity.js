@@ -1,81 +1,72 @@
 define([
-	"app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/layout/TabsDisplayer"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/ActivityInfo"
-	, "templates/ActivityInfoHelp"
-	, "./_ActivityBase"
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/map/_ImportWkt'
+	, 'redmic/modules/map/LeafletImpl'
+	, 'templates/ActivityInfo'
+	, './_ActivityBase'
+	, './_ActivityCategoryWidgets'
 ], function(
 	redmicConfig
 	, declare
 	, lang
-	, TabsDisplayer
-	, TemplateDisplayer
+	, _ImportWkt
+	, LeafletImpl
 	, TemplateInfo
-	, TemplateInfoHelp
 	, _ActivityBase
+	, _ActivityCategoryWidgets
 ) {
 
-	return declare([_ActivityBase], {
+	return declare([_ActivityBase, _ActivityCategoryWidgets], {
 		//	summary:
 		//		Vista detalle de Activity.
 
 		constructor: function(args) {
 
 			this.target = redmicConfig.services.activity;
-			this.reportService = "activity";
+			this.reportService = 'activity';
 			this.ancestorsTarget = redmicConfig.services.activityAncestors;
 
-			this.infoTarget = "infoWidgetTarget";
+			this.infoTarget = 'infoWidgetTarget';
 		},
 
 		_setMainConfigurations: function() {
 
 			this.widgetConfigs = this._merge([{
-				helpText: {
-					width: 6,
-					height: 1,
-					type: TemplateDisplayer,
-					props: {
-						title: this.i18n.dataDownload,
-						template: TemplateInfoHelp,
-						"class": "templateInfo",
-						target: "helpTextActivity"
-					}
-				},
 				info: this._infoConfig({
-					height: 5,
+					height: 4,
 					template: TemplateInfo
 				}),
-				additionalInfo: {
+				spatialExtensionMap: {
 					width: 3,
-					height: 5,
-					type: TabsDisplayer,
+					height: 2,
+					hidden: true,
+					type: declare([LeafletImpl, _ImportWkt]),
 					props: {
-						title: this.i18n.additionalInfo,
-						childTabs: [
-							this._organisationsConfig(),
-							this._platformsConfig(),
-							this._contactsConfig(),
-							this._documentsConfig()
-						]
+						title: this.i18n.spatialExtension,
+						omitContainerSizeCheck: true,
+						maxZoom: 15,
+						coordinatesViewer: false,
+						navBar: false,
+						miniMap: false,
+						scaleBar: false,
+						measureTools: false
 					}
-				}
+				},
+				organisationList: this._organisationsConfig(),
+				platformList: this._platformsConfig(),
+				contactList: this._contactsConfig(),
+				documentList: this._documentsConfig()
 			}, this.widgetConfigs || {}]);
 		},
 
+		_setMainOwnCallbacksForEvents: function() {
+
+			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onActivityDetailsHidden));
+		},
+
 		_refreshModules: function() {
-
-			var object = {};
-
-			object.info = this.i18n.helpTextActivityDetails;
-
-			this._emitEvt('INJECT_ITEM', {
-				data: object,
-				target: "helpTextActivity"
-			});
 
 			this.inherited(arguments);
 		},
@@ -95,13 +86,16 @@ define([
 			});
 
 			this._emitEvt('REQUEST', {
-				method: "POST",
+				method: 'POST',
 				target: ancestorsTarget,
 				action: '_search',
 				query: {
 					returnFields: ['id', 'path', 'name']
 				}
 			});
+
+			this._prepareSpatialExtension();
+			this._prepareActivityCategoryCustomWidgets();
 
 			this.inherited(arguments);
 		},
@@ -119,6 +113,48 @@ define([
 				data: this._activityData,
 				target: this.infoTarget
 			});
+		},
+
+		_prepareSpatialExtension: function() {
+
+			var wkt = this._activityData.spatialExtension;
+			if (!wkt) {
+				return;
+			}
+
+			var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+			this._once(mapInstance.getChannel('BBOX_CHANGED'), lang.hitch(this, this._showSpatialExtension, wkt));
+
+			this._showWidget('spatialExtensionMap');
+		},
+
+		_showSpatialExtension: function(wkt) {
+
+			var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+
+			this._once(mapInstance.getChannel('WKT_ADDED'), lang.hitch(this, function(res) {
+
+				this._lastWktLayer = res.layer;
+			}));
+
+			this._publish(mapInstance.getChannel('ADD_WKT'), {
+				wkt: wkt
+			});
+		},
+
+		_onActivityDetailsHidden: function() {
+
+			if (this._lastWktLayer) {
+				var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+
+				this._publish(mapInstance.getChannel('REMOVE_LAYER'), {
+					layer: this._lastWktLayer
+				});
+			}
+
+			this._hideWidget('spatialExtensionMap');
+
+			this._removeActivityCategoryCustomWidgets();
 		}
 	});
 });

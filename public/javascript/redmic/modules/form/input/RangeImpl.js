@@ -1,11 +1,13 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "redmic/modules/form/input/NumberSpinnerImpl"
 	, "redmic/modules/form/input/NumberTextBoxImpl"
 	, "redmic/modules/form/input/_BaseRange"
 ], function(
 	declare
 	, lang
+	, NumberSpinnerImpl
 	, NumberTextBoxImpl
 	, _BaseRange
 ){
@@ -16,24 +18,39 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				inputDef: NumberTextBoxImpl,
 				_inputProps: {
-
 				},
 				_minInputProps: {
 					inputProps: {
-						intermediateChanges: true
 					}
 				},
 				_maxInputProps: {
 					inputProps: {
-						intermediateChanges: true
 					}
 				},
 				ownChannel: "range"
 			};
 
 			lang.mixin(this, this.config, args);
+
+			if (this.inputProps.useSpinner) {
+				this.inputDef = NumberSpinnerImpl;
+			} else {
+				this.inputDef = NumberTextBoxImpl;
+			}
+
+			var constraints = this.inputProps.constraints;
+			if (constraints) {
+				this._minInputProps.inputProps.constraints = constraints;
+				this._maxInputProps.inputProps.constraints = constraints;
+			}
+
+			if (this.inputProps.minInputProps) {
+				lang.mixin(this._minInputProps.inputProps, this.inputProps.minInputProps);
+			}
+			if (this.inputProps.maxInputProps) {
+				lang.mixin(this._maxInputProps.inputProps, this.inputProps.maxInputProps);
+			}
 		}
 	});
 });

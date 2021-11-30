@@ -350,17 +350,26 @@ define([
 				popup = marker.getPopup();
 			}
 
+			if (!popup.isOpen()) {
+				return;
+			}
+
 			if (!popup.getContent() || popup.getContent() === this.defaultPopupContent) {
 				var popupContent = this.getPopupContent(data);
 				if (popupContent.then) {
-					popupContent.then(lang.hitch(this, function(data, value) {
-						this._markerById[data.feature[this.idProperty]].data.popup = value;
+					popupContent.then(lang.hitch(this, function(popupData, value) {
+
+						this._markerById[popupData.feature[this.idProperty]].data.popup = value;
 						popup.setContent(value);
+						this._emitEvt('POPUP_LOADED', popup);
 					}, data));
 				} else {
 					this._markerById[data.feature[this.idProperty]].data.popup = popupContent;
 					popup.setContent(popupContent);
+					this._emitEvt('POPUP_LOADED', popup);
 				}
+			} else {
+				this._emitEvt('POPUP_LOADED', popup);
 			}
 		},
 

@@ -2,11 +2,11 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
 	fs = require('fs'),
 	path = require('path'),
-	request = require('request');
+	http = require('http'),
+	https = require('https');
 
 var logger, params, version,
 	oauthUrl = process.env.OAUTH_URL,
-	getTokenUrl = oauthUrl + '/token',
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 	production = !!parseInt(process.env.PRODUCTION, 10),
 	apiUrl = process.env.API_URL;
@@ -75,6 +75,11 @@ function onRobotsRequest(req, res) {
 	res.send(fileData);
 }
 
+function onApiRequest(req, res) {
+
+	res.redirect('/404');
+}
+
 function onJqueryRequest(req, res) {
 
 	res.set('Content-Type', 'application/json');
@@ -94,57 +99,61 @@ function onOauthTokenRequest(req, res) {
 		password = body.password,
 		username = body.username,
 
+		getTokenUrl = oauthUrl + '/token',
 		clientCredentials = clientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
-		authorization = 'Basic ' + base64ClientCredentials,
-		bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write',
-
 		options = {
-			url: getTokenUrl,
 			method: 'POST',
-			body: bodyData,
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
-				'Authorization': authorization
+				'Authorization': 'Basic ' + base64ClientCredentials
 			}
-		};
+		},
 
-	request(options, (function(originalRes, err, res, body) {
+		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https,
+		internalReq = reqLibrary.request(getTokenUrl, options, (function(originalRes, internalRes) {
 
-		if (err) {
-			logger.error(err);
-			originalRes.sendStatus(500);
-			return;
-		}
+			var chunks = [];
 
-		originalRes.statusCode = res.statusCode;
-		originalRes.send(body);
+			internalRes.on('data', (function(nestedChunks, chunk) {
+
+				nestedChunks.push(chunk);
+			}).bind(this, chunks));
+
+			internalRes.on('end', (function(nestedOriginalRes, nestedChunks) {
+
+				var content = "";
+				for (var i = 0; i < nestedChunks.length; i++) {
+					content += nestedChunks[i].toString();
+				}
+				nestedOriginalRes.status(this.statusCode).send(content);
+			}).bind(internalRes, originalRes, chunks));
+		}).bind(this, res));
+
+	internalReq.on('error', (function(originalRes, err) {
+
+		logger.error(err);
+		originalRes.sendStatus(500);
 	}).bind(this, res));
+
+	var bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+	internalReq.write(bodyData);
+	internalReq.end();
 }
 
 function exposeRoutes(app) {
 
-	app.get(
-		/^((?!\/(activateAccount|resetting|noSupportBrowser|404|sitemap.xml|robots.txt|node_modules|env|.*\/jquery.js)))(\/.*)$/,
-		onGeneralRequest)
-
-		.get('/env', onEnvRequest)
-
+	app.get('/env', onEnvRequest)
 		.get('/activateAccount/:token', onActivateAccountRequest)
-
 		.get('/noSupportBrowser', onNoSupportBrowserRequest)
-
 		.get('/404', on404Request)
-
 		.get('/sitemap.xml', onSitemapRequest)
-
 		.get('/robots.txt', onRobotsRequest)
-
+		.get(/\/api\/.*/, onApiRequest)
 		.get(/.*\/jquery.js/, onJqueryRequest)
-
+		.get(/.*/, onGeneralRequest)
 		.post('/oauth/token', onOauthTokenRequest)
-
 		.use(onUnknownRequest);
 }
 
@@ -156,7 +165,8 @@ function exposeContents(app, directoryName) {
 	};
 
 	var exposedPath = path.join(__dirname, '..', directoryName),
-		servedPath = express['static'](exposedPath, pathOptions);
+		staticPropName = 'static',
+		servedPath = express[staticPropName](exposedPath, pathOptions);
 
 	app.use(servedPath)
 		.use('/' + directoryName, servedPath);
@@ -171,7 +181,6 @@ function expose(app) {
 	} else {
 		require('./styles')(app);
 		exposeContents(app, 'public');
-		exposeContents(app, 'tests');
 		exposeContents(app, 'node_modules');
 	}
 

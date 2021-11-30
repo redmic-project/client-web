@@ -70,16 +70,16 @@ define([
 
 			var dfd = this._obtainPropertyInstance(key);
 
-			dfd.then(lang.hitch(this, function(value, instance) {
+			dfd.then(lang.hitch(this, function(propValue, instance) {
 
 				if (!instance || !instance.modelInstanceName) {
 					return;
 				}
 
-				if (!value || typeof value !== "object") {
-					instance.set(this.valuePropertyName, value);
+				if (!propValue || typeof propValue !== "object") {
+					instance.set(this.valuePropertyName, propValue);
 				} else {
-					instance.deserialize(value);
+					instance.deserialize(propValue);
 				}
 			}, value));
 		},
@@ -88,10 +88,10 @@ define([
 
 			var dfd = this._obtainPropertyInstance(key);
 
-			dfd.then(lang.hitch(this, function(index, instance) {
+			dfd.then(lang.hitch(this, function(indexToDelete, instance) {
 
 				if (this._isArrayInstance(instance)) {
-					instance.deleteValue(index);
+					instance.deleteValue(indexToDelete);
 				}
 			}, index));
 		},
@@ -112,13 +112,13 @@ define([
 
 			var dfd = this._obtainPropertyInstance(key);
 
-			dfd.then(lang.hitch(this, function(value, instance) {
+			dfd.then(lang.hitch(this, function(valueToAdd, instance) {
 
 				if (!this._isArrayInstance(instance)) {
 					return;
 				}
 
-				instance.addValue(value);
+				instance.addValue(valueToAdd);
 			}, value));
 		},
 
@@ -128,15 +128,15 @@ define([
 				valuePropertyName = req.valueProperty ? req.valueProperty : this.valuePropertyName,
 				dfd = this._obtainPropertyInstance(key);
 
-			dfd.then(lang.hitch(this, function(key, valuePropertyName, instance) {
+			dfd.then(lang.hitch(this, function(propKey, propName, instance) {
 
 				var obj = {
-					propertyName: key,
+					propertyName: propKey,
 					isValid: false
 				};
 
 				if (instance) {
-					obj[valuePropertyName] = instance.get(valuePropertyName);
+					obj[propName] = instance.get(propName);
 					obj.isValid = instance.get("isValid");
 				}
 
@@ -183,11 +183,11 @@ define([
 
 			var keySplit = key.split(this.pathSeparator),
 				dfd = new Deferred(),
-				action = lang.hitch(this, function(keySplit, dfd) {
+				action = lang.hitch(this, function(pathArray, findDfd) {
 
 					this._findPropertyInstance({
-						pathArray: keySplit,
-						dfd: dfd,
+						pathArray: pathArray,
+						dfd: findDfd,
 						ignoreNonexistent: ignoreNonexistent
 					}, this.modelInstance);
 				}, keySplit, dfd);
@@ -233,11 +233,63 @@ define([
 			dfd.resolve(propertyInstance);
 		},
 
+		_obtainPropertySchema: function(key) {
+
+			var keySplit = key.split(this.pathSeparator),
+				dfd = new Deferred(),
+				action = lang.hitch(this, function(propKeySplit, schemaDfd) {
+
+					this._findPropertySchema({
+						pathArray: propKeySplit,
+						dfd: schemaDfd
+					}, this.modelInstance);
+				}, keySplit, dfd);
+
+			this._doActionWhenBuilt(action);
+
+			return dfd;
+		},
+
+		_findPropertySchema: function(obj, propertyInstance) {
+
+			var pathArray = obj.pathArray,
+				dfd = obj.dfd,
+				schema = propertyInstance.get('schema');
+
+			for (var i = 0; i < pathArray.length; i++) {
+				var pathItem = pathArray[i],
+					schemaType = schema.type;
+
+				if (!pathItem.length) {
+					break;
+				}
+
+				if (schemaType === 'object' || (schemaType instanceof Array && schemaType.indexOf('object') !== -1)) {
+					schema = schema.properties;
+				}
+
+				if (pathItem === '{i}' && (schemaType === 'array' || (schemaType instanceof Array && schemaType.indexOf('array') !== -1))) {
+					schema = schema.items;
+				} else {
+					schema = schema[pathItem];
+				}
+
+				if (!schema) {
+					console.error("Tried to get schema of missing property '%s' at model '%s'", pathItem,
+						this.getChannel());
+
+					break;
+				}
+			}
+
+			dfd.resolve(schema);
+		},
+
 		_reset: function(req) {
 
-			var action = lang.hitch(this, function(req) {
+			var action = lang.hitch(this, function(resetReq) {
 
-				this.modelInstance.reset(req.properties);
+				this.modelInstance.reset(resetReq.properties);
 			}, req);
 
 			this._doActionWhenBuilt(action);
@@ -245,9 +297,9 @@ define([
 
 		_clear: function(req) {
 
-			var action = lang.hitch(this, function(req) {
+			var action = lang.hitch(this, function(clearReq) {
 
-				this.modelInstance.clear(req.properties);
+				this.modelInstance.clear(clearReq.properties);
 			}, req);
 
 			this._doActionWhenBuilt(action);
@@ -261,12 +313,16 @@ define([
 				return;
 			}
 
-			this._obtainPropertyInstance(propertyName).then(lang.hitch(this, function(propertyName, instance) {
+			this._obtainPropertyInstance(propertyName).then(lang.hitch(this, function(propName, instance) {
+
+				if (!instance) {
+					return;
+				}
 
 				this._emitEvt('WAS_VALID', {
-					propertyName: propertyName,
+					propertyName: propName,
 					value: instance.get(this.valuePropertyName),	// TODO debe mandar el valor?? creo que no
-					errors: this._lastValidationErrors[propertyName],
+					errors: this._lastValidationErrors[propName],
 					isValid: instance.get("isValid")
 				});
 			}, propertyName));
@@ -303,10 +359,10 @@ define([
 			var key = req.key,
 				dfd = this._obtainPropertyInstance(key);
 
-			dfd.then(lang.hitch(this, function(key, instance) {
+			dfd.then(lang.hitch(this, function(propKey, instance) {
 
 				this._emitEvt('GOT_ID_PROPERTY', {
-					propertyName: key,
+					propertyName: propKey,
 					value: instance.getIdValue()
 				});
 			}, key));
@@ -318,12 +374,26 @@ define([
 				ignoreNonexistent = req.ignoreNonexistent,
 				dfd = this._obtainPropertyInstance(key, ignoreNonexistent);
 
-			dfd.then(lang.hitch(this, function(key, instance) {
+			dfd.then(lang.hitch(this, function(propKey, instance) {
 
 				this._emitEvt('GOT_PROPERTY_INSTANCE', {
 					instance: instance,
 					propertyPath: instance && instance.get("modelPath"),
-					propertyName: key
+					propertyName: propKey
+				});
+			}, key));
+		},
+
+		_getPropertySchema: function(req) {
+
+			var key = req.key || '',
+				dfd = this._obtainPropertySchema(key);
+
+			dfd.then(lang.hitch(this, function(propKey, schema) {
+
+				this._emitEvt('GOT_PROPERTY_SCHEMA', {
+					schema: schema,
+					propertyName: propKey
 				});
 			}, key));
 		},

@@ -5,7 +5,6 @@ module.exports = function(args) {
 
 		_intern = require('./_intern')(args),
 		_functions = require('./_functions'),
-		_headlessConfig = require('./_headlessConfig')(args),
 
 		testsPath = args.testsPath,
 		suitesGroups = args.suitesGroups,	// TODO por ahora no funciona, porque se recorre desde directorio no controlable
@@ -20,9 +19,7 @@ module.exports = function(args) {
 				// Funcionalidades básicas
 				suitesPrefix + 'redmic/base/testRedmicLocalStorage'
 				, suitesPrefix + 'redmic/base/testCredentials'
-
-				// Otros
-				, suitesPrefix + 'redmic/map/testOpenLayers'
+				, suitesPrefix + 'redmic/base/testMediator'
 
 				// Modelos
 				, suitesPrefix + 'app/base/models/attr/testAttr'
@@ -32,11 +29,11 @@ module.exports = function(args) {
 				, suitesPrefix + 'app/base/models/test_Model'
 
 				// Módulos
-				, suitesPrefix + 'redmic/base/testMediator'
 				, suitesPrefix + 'redmic/modules/base/test_Module'
 				, suitesPrefix + 'redmic/modules/store/testRestManager'
 				, suitesPrefix + 'redmic/modules/layout/wizard/testWizard'
 				, suitesPrefix + 'redmic/modules/model/testModelImpl'
+				, suitesPrefix + 'redmic/modules/map/testLeafletImpl'
 				, suitesPrefix + 'redmic/modules/tree/testTree'
 				, suitesPrefix + 'redmic/modules/selection/testSelector'
 				, suitesPrefix + 'redmic/modules/gateway/testGateway'
@@ -52,6 +49,7 @@ module.exports = function(args) {
 				, suitesPrefix + 'redmic/modules/browser/bars/testPagination'
 				, suitesPrefix + 'redmic/modules/browser/bars/testSelectionBox'
 				, suitesPrefix + 'redmic/modules/browser/bars/testTotal'
+				, suitesPrefix + 'redmic/modules/search/testFacetsImpl'
 			],
 
 			// TODO irlos arreglando e incorporando a 'suites'. Borrar 'suitesFAIL' cuando se vacíe
@@ -61,7 +59,6 @@ module.exports = function(args) {
 				, suitesPrefix + 'redmic/modules/form/testForm'
 				, suitesPrefix + 'redmic/modules/search/testSearch'
 				, suitesPrefix + 'redmic/modules/map/testLayersTree'
-				, suitesPrefix + 'redmic/modules/map/testMap'
 				, suitesPrefix + 'redmic/modules/base/testManager'
 				, suitesPrefix + 'redmic/modules/base/testSelectionBox'
 				, suitesPrefix + 'redmic/modules/base/testNotification'
@@ -87,7 +84,7 @@ module.exports = function(args) {
 		config.suites = _functions.getSuites(pathPrefix, suitesGroups);
 	}
 
-	return deepmerge.all([_intern, config, _headlessConfig], {
+	return deepmerge.all([_intern, config], {
 		arrayMerge: function (destinationArray, sourceArray, options) {
 
 			return sourceArray;

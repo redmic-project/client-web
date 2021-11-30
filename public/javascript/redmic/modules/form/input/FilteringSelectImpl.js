@@ -29,7 +29,9 @@ define([
 				idProperty: "id",
 				sizeDefault: 10,
 				target: null,
-				omitLoading: true
+				omitLoading: true,
+				defaultReturnFields: ['id', 'name'],
+				setValueAsObject: false
 			};
 
 			lang.mixin(this, this.config, args);
@@ -52,6 +54,7 @@ define([
 
 			this._inputProps.idProperty = this.idProperty;
 			this.fields = this._inputProps.fields;
+			this.returnFields = this._inputProps.returnFields || this.defaultReturnFields;
 
 			if (this._inputProps.type) {
 				this.type = this._inputProps.type;
@@ -114,8 +117,9 @@ define([
 		_getElasticQuery: function(/*Object*/ query, /*Object*/ options) {
 
 			var queryResult = {
-				"from": options.start ? options.start : 0,
-				"size": options.count ? options.count : this.sizeDefault
+				from: options.start ? options.start : 0,
+				size: options.count ? options.count : this.sizeDefault,
+				returnFields: this.returnFields
 			};
 
 			if (query && query.text) {
@@ -171,7 +175,8 @@ define([
 
 			var obj = {};
 
-			if (value) {
+			// TODO quizá hay que detectar aquí si el modelo requiere objeto o entero, probar
+			if (value && this.setValueAsObject) {
 				obj[this.propertyName] = {};
 				obj[this.propertyName][this.idProperty] = value;
 				obj[this.propertyName][this._inputProps.labelAttr] = this._inputInstance.label;

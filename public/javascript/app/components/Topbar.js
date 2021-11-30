@@ -29,6 +29,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: 'topbar',
 				'class': 'topbar',
 
 				collapseButtonClass: 'collapseSidebarButton',
@@ -100,7 +101,7 @@ define([
 			// TODO integrar manager con topbar, manager está desfasado casi por completo
 			this._manager = new Manager({
 				//parentChannel: this.getChannel()
-				parentChannel: this.parentChannel
+				parentChannel: this.getParentChannel()
 			}, containerNode);
 		},
 
@@ -126,7 +127,7 @@ define([
 
 		_onCollapseClicked: function() {
 
-			this._publish(this._buildChannel(this.rootChannel, 'toggleSidebar'));
+			this._publish(this._buildChannel(this.innerAppChannel, 'toggleSidebar'));
 		}
 	});
 });

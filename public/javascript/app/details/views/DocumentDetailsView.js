@@ -23,16 +23,6 @@ define([
 				activities: redmicConfig.viewPaths.activityDetails
 			};
 
-			this.tabs = [{
-				select: true,
-				title: "seeInfo",
-				href: redmicConfig.viewPaths.documentDetails
-			},{
-				title: "PDF",
-				conditionHref: "url",
-				href: redmicConfig.viewPaths.documentPDF
-			}];
-
 			this.shownOptionInfo = {
 				remark: true
 			};

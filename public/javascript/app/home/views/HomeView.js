@@ -1,81 +1,132 @@
 define([
-	"app/designs/details/Controller"
-	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/InitialTitle"
-	, "templates/InitialInfo"
-	, "redmic/base/Credentials"
-	, "app/home/views/SocialWidget"
-	, "app/home/views/WidgetLastActivity"
-	, "app/home/views/WidgetFavourites"
+	'app/designs/details/Controller'
+	, 'app/designs/details/Layout'
+	, 'app/home/views/ProductWidget'
+	, 'app/home/views/SearchBarWidget'
+	, 'app/home/views/SearchFastFilterWidget'
+	, 'app/home/views/SearchFilterWidget'
+	, 'app/home/views/SearchResultsWidget'
+	, 'app/home/views/SocialWidget'
+	, 'app/home/views/StatsWidget'
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/base/Credentials'
+	, 'redmic/modules/base/_Filter'
+	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
+	, 'templates/InitialInfo'
 ], function(
 	Controller
 	, Layout
-	, _AddTitle
+	, ProductWidget
+	, SearchBarWidget
+	, SearchFastFilterWidget
+	, SearchFilterWidget
+	, SearchResultsWidget
+	, SocialWidget
+	, StatsWidget
 	, redmicConfig
 	, declare
 	, lang
-	, TemplateDisplayer
-	, TemplateTitle
-	, TemplateInfo
 	, Credentials
-	, SocialWidget
-	, WidgetLastActivity
-	, WidgetFavourites
-){
-	return declare([Layout, Controller, _AddTitle], {
+	, _Filter
+	, TemplateDisplayer
+	, TemplateInfo
+) {
+
+	return declare([Layout, Controller, _Filter], {
 		//	summary:
-		//		Vista detalle de Activity.
+		//		Vista inicial de la aplicación.
 
 		constructor: function(args) {
 
 			this.config = {
-				_titleRightButtonsList: [],
-				centerTitle: true,
-				noScroll: true,
+				target: redmicConfig.services.activity,
 				propsWidget: {
-					omitTitleButtons: true
+				},
+				filterConfig: {
+					initQuery: {
+						returnFields: redmicConfig.returnFields.activity,
+						sorts: [{
+							field: 'starred',
+							order: 'DESC'
+						}]
+					}
 				}
 			};
 
-			this.titleWidgetConfig = {
-				template: TemplateTitle,
-				target: "initial_title"
-			};
-
 			this.widgetConfigs = {
-				favourites: {
-					width: 3,
-					height: 4,
-					type: WidgetFavourites,
+				searchBar: {
+					width: 6,
+					height: 1,
+					type: SearchBarWidget,
 					props: {
-						title: this.i18n.favourites,
-						"class": "containerDetails"
+						omitTitleBar: true,
+						resizable: false
 					}
 				},
-				lastActivities: {
-					width: 3,
-					height: 6,
-					type: WidgetLastActivity,
+				searchFilter: {
+					width: 6,
+					height: 3,
+					type: SearchFilterWidget,
+					hidden: true,
 					props: {
-						title: this.i18n.lastActivities,
-						template: TemplateInfo,
-						"class": "containerDetails"
+						omitTitleBar: true
+					}
+				},
+				searchFastFilter: {
+					width: 2,
+					height: 4,
+					type: SearchFastFilterWidget,
+					props: {
+						windowTitle: 'fastFilters',
+						omitTitleCloseButton: true,
+						facetsSearchConfig: {
+							query: {
+								size: 10,
+								sorts: [{
+									field: 'id',
+									order: 'DESC'
+								}]
+							}
+						}
+					}
+				},
+				searchResults: {
+					width: 4,
+					height: 4,
+					type: SearchResultsWidget,
+					props: {
+						queryChannel: 'stub',
+						windowTitle: 'starredActivities',
+						omitTitleCloseButton: true
 					}
 				},
 				info: {
 					width: 3,
-					height: 1,
+					height: 2,
 					type: TemplateDisplayer,
 					props: {
-						title: this.i18n.info,
+						windowTitle: 'info',
 						template: TemplateInfo,
-						"class": "mediumSolidContainer.borderRadiusBottom",
-						target: "initial_info"
+						'class': 'mediumSolidContainer.borderRadiusBottom',
+						target: 'initial_info'
+					}
+				},
+				products: {
+					width: 3,
+					height: 6,
+					type: ProductWidget,
+					props: {
+						windowTitle: 'products'
+					}
+				},
+				stats: {
+					width: 3,
+					height: 3,
+					type: StatsWidget,
+					props: {
+						windowTitle: 'statistics'
 					}
 				},
 				social: {
@@ -83,7 +134,7 @@ define([
 					height: 1,
 					type: SocialWidget,
 					props: {
-						title: this.i18n.followUs
+						windowTitle: 'followUs'
 					}
 				}
 			};
@@ -101,38 +152,112 @@ define([
 
 		_afterShow: function(request) {
 
-			this.startup();
+			if (this._getPreviouslyShown()) {
+				return;
+			}
+
+			this._listenAfterFirstShow();
+			this._publishAfterFirstShow();
+		},
+
+		_listenAfterFirstShow: function() {
+
+			var addedToQueryChannel = this.getChannel('ADDED_TO_QUERY');
+			this._once(addedToQueryChannel, lang.hitch(this, function() {
+
+				this._once(addedToQueryChannel, lang.hitch(this, function() {
+
+					this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), {
+						windowTitle: 'searchResults'
+					});
+				}));
+			}));
+
+			this._listenWidgets();
+		},
+
+		_listenWidgets: function() {
+
+			this._setSubscriptions([{
+				channel: this._getWidgetInstance('searchBar').getChannel('SEARCH_BY_TEXT'),
+				callback: lang.hitch(this, this._onSearchByText)
+			},{
+				channel: this._getWidgetInstance('searchBar').getChannel('TOGGLE_ADVANCED_SEARCH'),
+				callback: lang.hitch(this, this._toggleAdvancedSearch)
+			},{
+				channel: this._getWidgetInstance('searchFilter').getChannel('CANCELLED'),
+				callback: lang.hitch(this, this._toggleAdvancedSearch)
+			},{
+				channel: this._getWidgetInstance('stats').getChannel('TOTAL_ACTIVITIES'),
+				callback: lang.hitch(this, this._subStatsTotalActivities)
+			}]);
+		},
+
+		_publishAfterFirstShow: function() {
+
+			var obj = {
+				queryChannel: this.queryChannel
+			};
+
+			this._publish(this._getWidgetInstance('searchFastFilter').getChannel('SET_PROPS'), obj);
+			this._publish(this._getWidgetInstance('searchFilter').getChannel('SET_PROPS'), obj);
+			this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), obj);
+		},
+
+		_onSearchByText: function(searchDefinition) {
+
+			this._emitEvt('ADD_TO_QUERY', {
+				query: {
+					text: {
+						text: searchDefinition.searchText || null
+					},
+					sorts: null
+				}
+			});
+		},
+
+		_toggleAdvancedSearch: function() {
+
+			if (!this._advancedSearchShown) {
+				this._advancedSearchShown = true;
+				this._showWidget('searchFilter');
+			} else {
+				this._advancedSearchShown = false;
+				this._hideWidget('searchFilter');
+			}
+		},
+
+		_subStatsTotalActivities: function(res) {
+
+			this._publish(this._getWidgetInstance('searchBar').getChannel('SET_PROPS'), {
+				totalActivities: res.value
+			});
 		},
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.info.getChannel("CLEAR"));
+			this._publish(this._getWidgetInstance('info').getChannel('CLEAR'));
 		},
 
 		_refreshModules: function() {
 
-			this._emitEvt('INJECT_ITEM', {
-				data: {},
-				target: "initial_title"
-			});
+			var obj = {
+				info: ''
+			};
 
-			var object = {};
-
-			object.info = "";
-
-			if (Credentials.get("userRole") === "ROLE_GUEST") {
-				object.roleGuest = this.i18n.contentInfo1 + " ";
-				object.roleGuest += this.i18n.visitor;
-				object.roleGuest += this.i18n.contentInfo2;
-				object.register = this.i18n.register.toLowerCase();
-				object.info += this.i18n.contentInfo3;
+			if (Credentials.get('userRole') === 'ROLE_GUEST') {
+				obj.roleGuest = this.i18n.contentInfo1 + ' ';
+				obj.roleGuest += this.i18n.visitor;
+				obj.roleGuest += this.i18n.contentInfo2;
+				obj.register = this.i18n.register.toLowerCase();
+				obj.info += this.i18n.contentInfo3;
 			}
 
-			object.info += this.i18n.contentSend;
+			obj.info += this.i18n.contentSend;
 
 			this._emitEvt('INJECT_ITEM', {
-				data: object,
-				target: "initial_info"
+				data: obj,
+				target: 'initial_info'
 			});
 		}
 	});

@@ -1,7 +1,8 @@
 define([
 	"app/base/views/extensions/_EditionView"
 	, "app/base/views/extensions/_FormInDialogView"
-	,"app/designs/textSearchFacetsList/main/Domain"
+	, "app/designs/textSearchFacetsList/main/Domain"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ActivityTypeList"
@@ -9,6 +10,7 @@ define([
 	_EditionView
 	, _FormInDialogView
 	, DomainMain
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -53,15 +55,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					"activityField": {
-						'open': true,
-						"terms": {
-							"field": "activityField.name",
-							"size": 20
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.activityType
 			}, this.facetsConfig || {}]);
 		}
 	});

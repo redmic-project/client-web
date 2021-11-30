@@ -51,22 +51,28 @@
 
 		<fieldset>
 			<legend>${i18n.filters}</legend>
-			<div data-redmic-type="rangeSlider" class="rangeSlider" data-redmic-props="
+			<div data-redmic-type="range" data-redmic-props="
 				propertyName: 'precisionSlider',
 				label: 'precision',
-				unit: 'm',
-				valueMinMax: [0, 5000],
+				useSpinner: true,
 				isDisableInput: true,
-				disable: true
+				disable: true,
+				constraints: {
+					min: 0,
+					max: 5000
+				}
 			"></div>
 
-			<div data-redmic-type="rangeSlider" class="rangeSlider" data-redmic-props="
+			<div data-redmic-type="range" data-redmic-props="
 				propertyName: 'zSlider',
 				label: 'zDepthAltitude',
-				unit: 'm',
-				valueMinMax: [-5000, 5000],
+				useSpinner: true,
 				isDisableInput: true,
-				disable: true
+				disable: true,
+				constraints: {
+					min: -5000,
+					max: 5000
+				}
 			"></div>
 		</fieldset>
 	</form>

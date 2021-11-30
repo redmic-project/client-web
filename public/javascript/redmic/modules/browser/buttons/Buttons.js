@@ -40,7 +40,7 @@ define([
 				_buttonsOccult: 0,
 				_totalButtons: 0,
 
-				"class": "containerButtons col-xs-3 col-sm-5 col-md-4 col-lg-3 col-xl-2"
+				"class": "containerButtons"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -93,7 +93,7 @@ define([
 
 			for (var i = 0; i < this.listButton.length; i++) {
 				this._createButton(this.listButton[i]);
-				this._totalButtons ++;
+				this._totalButtons++;
 			}
 		},
 
@@ -104,8 +104,6 @@ define([
 
 		_addButton: function(config) {
 
-			var link = null;
-
 			if (config.href) {
 				this._addLinkButton(config);
 			} else {
@@ -115,24 +113,27 @@ define([
 
 		_addLinkButton: function(config) {
 
-			var linkButtonNode = put(this.domNode, "a");
+			var linkButtonNode = put(this.domNode, 'a');
 
 			this._addIconButton(config, linkButtonNode);
 		},
 
-		_addIconButton: function(config, node) {
+		_addIconButton: function(config, parentNode) {
 
 			var icon = config.icon,
-				iconNode,
-				classIcon;
-
-			classIcon = '.' + icon.split('-')[0] + '.iconList.' + icon;
+				iconTitle = config.title,
+				iconClass = '.' + icon.split('-')[0] + '.iconList.' + icon,
+				iconAttr = '';
 
 			if (config.classIcon) {
-				classIcon += "." + config.classIcon;
+				iconClass += '.' + config.iconClass;
 			}
 
-			put(node, 'i' + classIcon);
+			if (iconTitle) {
+				iconAttr += '[title=' + iconTitle + ']';
+			}
+
+			put(parentNode, 'i' + iconClass + iconAttr);
 		},
 
 		_afterShow: function(obj) {
@@ -165,6 +166,29 @@ define([
 		_updateButton: function(item, config, node) {
 
 			this._conditionButton(item, config, node);
+			this._updateToggleState(item, config, node);
+		},
+
+		_updateToggleState: function(item, config, node) {
+
+			var itemState = item.state,
+				stateInItem = itemState !== undefined;
+
+			if (stateInItem) {
+				if (!itemState) {
+					this._updateIconClass(config, node);
+				}
+				return;
+			}
+
+			var configState = config.state,
+				stateInConfig = configState !== undefined;
+
+			if (stateInConfig) {
+				if (!configState) {
+					this._updateIconClass(config, node);
+				}
+			}
 		},
 
 		_conditionButton: function(item, config, node) {
@@ -172,7 +196,7 @@ define([
 			var condition = config.condition;
 
 			if (condition !== undefined && !this._evaluateCondition(item, condition)) {
-				this._buttonsOccult ++;
+				this._buttonsOccult++;
 				this._incorrectConditionButton(item, config, node);
 			} else {
 				this._correctConditionButton(item, config, node);
@@ -196,12 +220,10 @@ define([
 
 			if (href) {
 				this._updateHref(item, config, node);
-			} else {
-				var event = config.event || 'onclick';
-
-				node[event] = lang.hitch(this, this._eventClickButton, config, item, node);
-				node.setAttribute('d-state-url', true);
 			}
+
+			var event = config.event || 'onclick';
+			node[event] = lang.hitch(this, this._eventClickButton, config, item, node);
 		},
 
 		_incorrectConditionButton: function(item, config, node) {
@@ -224,7 +246,9 @@ define([
 			href = lang.replace(href, itemReplace);
 
 			node.setAttribute('href', href);
-			node.setAttribute('d-state-url', true);
+			if (href.indexOf('#') !== 0) {
+				node.setAttribute('d-state-url', true);
+			}
 		},
 
 		_hrefIsMultiple: function(config, item) {
@@ -264,8 +288,7 @@ define([
 
 			this._updateIconClass(config, node);
 
-			var obj = this._getClickButtonReturnObj(config, item, node),
-				idProperty = item[this.idProperty];
+			var obj = this._getClickButtonReturnObj(config, item, node);
 
 			if (config.callback) {
 				obj.callback = config.callback;
@@ -343,7 +366,7 @@ define([
 				obj.iconNode = node;
 			}
 
-			if (config.state) {
+			if (config.state !== undefined) {
 				obj.state = domClass.contains(node, config.icon);
 			}
 

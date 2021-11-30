@@ -6,6 +6,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Store"
+	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/search/FacetsImpl"
 	, "redmic/modules/search/TextImpl"
 	, "./_AddFilter"
@@ -17,6 +18,7 @@ define([
 	, declare
 	, lang
 	, _Store
+	, Pagination
 	, FacetsImpl
 	, TextImpl
 	, _AddFilter
@@ -35,7 +37,13 @@ define([
 				controllerActions: {
 					DOWNLOAD_FILE: "downloadFile",
 					GET_REPORT: "getReport"
-				}
+				},
+				browserBars: [{
+					definition: Pagination,
+					config: {
+						rowPerPage: 25
+					}
+				}]
 			};
 
 			lang.mixin(this, this.config, args);
@@ -85,6 +93,12 @@ define([
 
 			this._publish(this.textSearch.getChannel("SHOW"), {
 				node: this.textSearchNode
+			});
+
+			this._emitEvt('ADD_TO_QUERY', {
+				query: {
+					size: 25
+				}
 			});
 
 			this._publish(this.facets.getChannel("SHOW"), {

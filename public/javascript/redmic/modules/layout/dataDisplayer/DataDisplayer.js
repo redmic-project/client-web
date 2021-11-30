@@ -1,9 +1,9 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "put-selector/put"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
 ], function(
 	declare
 	, lang
@@ -20,30 +20,54 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "dataDisplayer"
+				ownChannel: 'dataDisplayer'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_beforeShow: function(req) {
-
-			var data = req.data || this.data;
+		_setDataToDisplay: function(data) {
 
 			if (!data) {
 				return;
 			}
 
-			if (typeof data === "object") {
+			if (typeof data === 'object') {
 				put(this.domNode, data);
 			} else {
 				this.domNode.innerHTML = data;
 			}
 		},
 
+		_beforeShow: function(req) {
+
+			var data = req.data || this.data;
+
+			this._setDataToDisplay(data);
+		},
+
 		_getNodeToShow: function() {
 
 			return this.domNode;
+		},
+
+		_cleanOldDisplayedData: function(oldData) {
+
+			if (!oldData) {
+				return;
+			}
+
+			if (typeof oldData === 'object') {
+				put(oldData, '!');
+			} else {
+				this.domNode.innerHTML = '';
+			}
+		},
+
+		_onDataPropSet: function(propEvt) {
+
+			this._cleanOldDisplayedData(propEvt.oldValue);
+			this._setDataToDisplay(propEvt.value);
 		}
 	});
 });

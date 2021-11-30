@@ -119,6 +119,18 @@ define([
 		//		los demás).
 		rootChannel: "app",
 
+		//	innerAppOwnChannel: String
+		//		Terminación del canal de comunicación correspondiente al módulo "innerApp", encargado de contener los
+		//		elementos que se encuentran en la parte interna (sidebar, vistas...). Es hijo a su vez de la raíz
+		//		de la aplicación.
+		innerAppOwnChannel: 'innerApp',
+
+		//	outerAppOwnChannel: String
+		//		Terminación del canal de comunicación correspondiente al módulo "outerApp", encargado de contener los
+		//		elementos que se encuentran en la parte externa (login, register...). Es hijo a su vez de la raíz
+		//		de la aplicación.
+		outerAppOwnChannel: 'outerApp',
+
 		//	ownChannel: String
 		//		Canal de comunicación correspondiente al módulo.
 		//	parentChannel: String
@@ -184,21 +196,25 @@ define([
 				_childrenActionDfdsNameSuffix: 'ChildrenActionDfds',
 
 				storeChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.STORE),
-				selectorChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.SELECTOR),
-				managerChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.MANAGER),
 				credentialsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.CREDENTIALS),
 				analyticsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ANALYTICS),
 				moduleStoreChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.MODULE_STORE),
-				taskChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.TASK),
-				socketChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.SOCKET),
 				metaTagsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.META_TAGS),
-				notificationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.NOTIFICATION),
 				loadingChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.LOADING),
 				alertChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT),
 				communicationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION)
 			};
 
 			lang.mixin(this, this.config);
+
+			this.outerAppChannel = this._buildChannel(this.rootChannel, this.outerAppOwnChannel);
+			this.innerAppChannel = this._buildChannel(this.rootChannel, this.innerAppOwnChannel);
+
+			this.selectorChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.SELECTOR);
+			this.managerChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.MANAGER);
+			this.taskChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.TASK);
+			this.socketChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.SOCKET);
+			this.notificationChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.NOTIFICATION);
 
 			aspect.after(this, "_initialize", lang.hitch(this, this._initializeModule));
 			aspect.before(this, "postCreate", lang.hitch(this, this._postCreateMediator));
@@ -273,11 +289,8 @@ define([
 
 		_isGlobalModule: function() {
 
-			if (this.parentChannel === this.rootChannel || this.ownChannel === this.rootChannel) {
-				return true;
-			}
-
-			return false;
+			return this.parentChannel === this.innerAppChannel || this.parentChannel === this.rootChannel ||
+				this.ownChannel === this.rootChannel;
 		},
 
 		_defineInitialSubscriptions: function() {
@@ -720,32 +733,46 @@ define([
 			var propNames = [];
 
 			for (var prop in req) {
-				var value = req[prop];
+				var value = this._getUnmutableValue(req[prop]),
+					oldValue = this[prop];
 
-				if (this._checkPropIsShareable(prop)) {
-					var evtKey = this._createEvent(prop + this.propSetSuffix),
-						methodName = '_on' + Utilities.capitalize(prop) + 'PropSet';
-						oldValue = this[prop],
-						changeObj = {
-							prop: prop,
-							oldValue: oldValue,
-							value: value
-						};
-
-					this[prop] = value;
-
-					this._emitEvt(evtKey, changeObj);
-					this[methodName] && this[methodName](changeObj);
-
-					propNames.push(prop);
-				} else {
-					console.error("Tried to set not settable property '%s' at module '%s'", prop, this.getChannel());
+				if (!this._checkPropIsShareable(prop)) {
+					console.error('Tried to set not settable property "%s" at module "%s"', prop, this.getChannel());
+					continue;
 				}
+
+				if (value === oldValue) {
+					console.warn('Tried to update property "%s" using same value "%s" at module "%s"', prop, value,
+						this.getChannel());
+				}
+
+				this[prop] = value;
+				propNames.push(prop);
+
+				var evtKey = this._createEvent(prop + this.propSetSuffix),
+					methodName = '_on' + Utilities.capitalize(prop) + 'PropSet',
+					changeObj = {
+						prop: prop,
+						oldValue: oldValue,
+						value: value
+					};
+
+				this._emitEvt(evtKey, changeObj);
+				this[methodName] && this[methodName](changeObj);
 			}
 
 			this._emitEvt('PROPS_SET', {
 				propNames: propNames
 			});
+		},
+
+		_getUnmutableValue: function(value) {
+
+			if (typeof value === 'object' && value && !value.ownChannel && !value.ownerDocument) {
+				return lang.clone(value);
+			}
+
+			return value;
 		},
 
 		_subGetProps: function(req) {
@@ -993,6 +1020,7 @@ define([
 		_deleteDuplicatedChannels: function(configArray) {
 
 			configArray = Utilities.uniqBy(configArray, lang.hitch(this, this._isChannelDuplicated));
+			return configArray;
 		},
 
 		_isChannelDuplicated: function(value, index, array) {

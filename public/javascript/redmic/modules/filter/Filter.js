@@ -39,7 +39,7 @@ define([
 					AVAILABLE_FACETS: "availableFacets",
 					RESET: "reset",
 					RESETTED: "resetted",
-					REQUEST_FILTER: "requestFilter",
+					//REQUEST_FILTER: "requestFilter",
 					CHANGED_MODEL: "changedModel",
 					DESERIALIZE: "deserialize",
 					SERIALIZE: "serialize",
@@ -83,9 +83,9 @@ define([
 			},{
 				channel: this.getChannel("REFRESH"),
 				callback: "_subRefresh"
-			},{
+			/*},{
 				channel: this.getChannel("REQUEST_FILTER"),
-				callback: "_subRequestFilter"
+				callback: "_subRequestFilter"*/
 			},{
 				channel: this.getChannel("SERIALIZE"),
 				callback: "_subSerialize"
@@ -162,8 +162,6 @@ define([
 				this._deleteModelSubscriptionAndPublications();
 				this._publish(this.modelInstance.getChannel("DISCONNECT"));
 				delete this.modelInstance;
-
-				isOldModelInstance = true;
 			}
 
 			this.modelInstance = new ModelImpl(this.modelConfig);
@@ -220,7 +218,12 @@ define([
 			}
 
 			if (req.requesterId) {
+				// TODO quizá sería mejor añadir a un array de ids y luego sacarlo, en lugar de pisarlo
 				this.requesterId = req.requesterId;
+			}
+
+			if (query.size === -1) {
+				query.size = null;
 			}
 
 			this._addToQuery(query, !omitRefresh);
@@ -306,10 +309,10 @@ define([
 			this._request(req);
 		},
 
-		_subRequestFilter: function(req) {
+		/*_subRequestFilter: function(req) {
 
 			this._request(req);
-		},
+		},*/
 
 		_request: function(req) {
 

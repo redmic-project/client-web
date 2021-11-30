@@ -1,7 +1,7 @@
 define([
 	"app/designs/base/_Main"
 	, "app/designs/base/_ServiceOGC"
-	, "app/designs/textSearchFacetsList/_AddComposite"
+	, 'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
 	, "app/redmicConfig"
@@ -70,31 +70,12 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs:  {
-					"protocols": {
-						'open': true,
-						"terms": {
-							"field": "protocols.type",
-							"nested": "protocols",
-							"size": 10
-						}
-					},
-					"themeInspire": {
-						'open': true,
-						"terms": {
-							"field": "themeInspire.name",
-							"size": 10
-						}
-					},
-					"keywords": {
-						'open': true,
-						"terms": {
-							"field": "keywords",
-							"size": 10
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.atlasLayer
 			}, this.facetsConfig || {}]);
+
+			this.textSearchConfig = this._merge([{
+				showExpandIcon: true
+			}, this.textSearchConfig || {}]);
 		}
 	});
 });

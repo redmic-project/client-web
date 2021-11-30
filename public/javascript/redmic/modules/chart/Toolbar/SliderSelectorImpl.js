@@ -49,7 +49,6 @@ define([
 					valueDefault: this.value,
 					valueMinMax: this.range
 				},
-				orient: ['below-alt'],
 				classTooltip: 'sliderInput'
 			}, this.sliderConfig || {}]);
 		},

@@ -20,7 +20,8 @@ define([
 				"_getHierarchicalTemplate": {},
 				"_getNonHierarchicalTemplate": {},
 				"_cleanLayerPath": {},
-				"_getPubToLayerObj": {}
+				"_getPubToLayerObj": {},
+				"_getDataToAddToBrowser": {}
 			});
 		}
 	});

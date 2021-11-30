@@ -26,8 +26,7 @@ define([
 				buttonsActions: {
 					BUTTON_EVENT: "btnEvent",
 					BUTTON_EVENT_ROW: "btnEventRow"
-				},
-				templateColClass: ".col-xs-8.col-sm-7.col-md-8.col-lg-9.col-xl-10"
+				}
 			};
 
 			lang.mixin(this, this.config, args);

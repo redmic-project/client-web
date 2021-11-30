@@ -32,9 +32,9 @@ define([
 			this.config = {
 				showTimeout: 500,
 				hideTimeout: 14500,
-				warningText: "<span class='cookies fa fa-exclamation-circle'></span> " + i18n.cookiesWarning +
-					"<a href='https://blog.redmic.es/?page_id=77' target='_blank'>" +
-					i18n.here + "</a>."
+				warningText: '<span class="cookies fa fa-exclamation-circle"></span> ' + i18n.cookiesWarning +
+					'<a href="/terms-and-conditions" d-state-url="true">' +
+					i18n.here + '</a>.'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -91,7 +91,7 @@ define([
 			this._onCookiesAcceptedHandler && this._onCookiesAcceptedHandler.remove();
 			this._cookiesNotificationHandler && this._cookiesNotificationHandler.dismiss();
 
-			if (window.location.hostname.indexOf("redmic.es") > -1) {
+			if (window.location.hostname.indexOf('redmic.es') !== -1) {
 				this._googleAnalytics();
 			}
 		},
@@ -102,22 +102,23 @@ define([
 			//	tags:
 			//		private
 
-			(function(i,s,o,g,r,a,m) {
-				i.GoogleAnalyticsObject = r;
+			var script = document.createElement('script'),
+				gtagId = redmicConfig.googleAnalyticsId;
 
-				i[r] = i[r] || function() {
-					(i[r].q = i[r].q || []).push(arguments);
-				};
-				i[r].l = 1 * new Date();
-				a = s.createElement(o);
-				m = s.getElementsByTagName(o)[0];
-				a.async = 1;
-				a.src = g;
-				m.parentNode.insertBefore(a,m);
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			script.async = true;
+			script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gtagId;
 
-			ga('create', redmicConfig.googleAnalyticsId, 'auto');
-			ga('send', 'pageview');
+			document.head.appendChild(script);
+
+			window.dataLayer = [];
+
+			window.gtag = function() {
+
+				dataLayer.push(arguments);
+			};
+
+			gtag('js', new Date());
+			gtag('config', gtagId);
 		}
 	});
 });

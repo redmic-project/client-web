@@ -32,11 +32,13 @@ define([
 				compositeActions: {
 					CHANGED_MODEL: "changedModel",
 					CHANGE_FILTER_CHANNEL: "changeFilterChannel",
-					REQUEST_FILTER: "requestFilter",
 					REMEMBER_CURRENT_VALUE: "rememberCurrentValue",
 					HAS_CHANGED: "hasChanged",
-					WAS_CHANGED: "wasChanged"
-				}
+					WAS_CHANGED: "wasChanged",
+					CANCELLED: 'cancelled'
+				},
+
+				template: formTemplate
 			};
 
 			lang.mixin(this, this.config, args);
@@ -59,29 +61,18 @@ define([
 					filterSchema: true
 				},
 				buttonsConfig: {
-					reset: {
-						noActive: false
-					},
 					submit: {
 						props: {
 							label: this.i18n.apply
 						}
-					},
-					clear: {
-						noActive: true
-					},
-					cancel: {
-						noActive: false,
-						zone: "left"
 					}
 				},
 				cancel: function() {
 
 					this._emitEvt('CANCELLED');
 				},
-				template: formTemplate,
+				template: this.template,
 				dataTemplate: {
-					formTitle: this.i18n.filters
 				}
 			}, this.formConfig || {}]);
 		},
@@ -141,9 +132,17 @@ define([
 			}]);
 		},
 
+		_onQueryChannelPropSet: function(evt) {
+
+			this._updateFilterChannel(evt.value);
+		},
+
 		_subFilterChangeChannel: function(req) {
 
-			var filterChannel = req.filterChannel;
+			this._updateFilterChannel(req.filterChannel);
+		},
+
+		_updateFilterChannel: function(filterChannel) {
 
 			if (filterChannel && (!this.filterChannel || this.filterChannel !== filterChannel)) {
 				this.filterChannel = filterChannel;
@@ -189,8 +188,8 @@ define([
 				key: 'reset'
 			});
 
-			this._publish(this._buildChannel(this.filterChannel, this.actions.REQUEST_FILTER), {
-				data: data
+			this._publish(this._buildChannel(this.filterChannel, this.actions.ADD_TO_QUERY), {
+				query: data
 			});
 
 			this._submitted = true;
@@ -206,6 +205,8 @@ define([
 		_formCancelled: function() {
 
 			this._resetModel();
+
+			this._publish(this.getChannel('CANCELLED'));
 		},
 
 		_afterHide: function() {

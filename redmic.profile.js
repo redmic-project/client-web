@@ -92,6 +92,9 @@ var profile = {
 		name: 'put-selector',
 		location: 'put-selector'
 	},{
+		name: 'wicket',
+		location: 'wicket'
+	},{
 		name: 'app',
 		location: 'app',
 		resourceTags: {
@@ -138,8 +141,8 @@ var profile = {
 			ignore: ignoreTagger.bind(null, 'leaflet/leaflet')
 		}
 	},{
-		name: 'leaflet-wms',
-		location: 'leaflet-wms/dist',
+		name: 'leaflet-nontiledlayer',
+		location: 'leaflet-nontiledlayer/dist',
 		resourceTags: {
 			amd: amdTagger
 		}
@@ -300,7 +303,7 @@ var profile = {
 		'd3Tip/index': {
 			'd3': 'd3/d3.min'
 		},
-		'leaflet-wms/leaflet.wms': {
+		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'L-miniMap/Control.MiniMap.min': {
@@ -308,6 +311,9 @@ var profile = {
 		},
 		'pruneCluster/PruneCluster.amd.min': {
 			'leaflet': 'leaflet/leaflet'
+		},
+		'wicket': {
+			'wicket': 'wicket/wicket'
 		}
 	},
 
@@ -475,24 +481,11 @@ var viewLayers = {
 	, 'app/details/views/DocumentDetailsView': {}
 	, 'app/details/views/BibliographyDetailsView': {}
 	, 'app/details/views/ContactDetailsView': {}
-	, 'app/details/views/ActivityCatalogInfrastructureMapView': {}
-	, 'app/details/views/ActivityInfrastructureMapView': {}
-	, 'app/details/views/ActivityCatalogAreaMapView': {}
-	, 'app/details/views/ActivityAreaMapView': {}
 	, 'app/details/views/ServiceOGCDetailsView': {}
 	, 'app/details/views/StatisticsDetailsView': {}
 	, 'app/details/views/OrganisationDetailsView': {}
-	, 'app/details/views/BibliographyPDFView': {}
-	, 'app/details/views/DocumentPDFView': {}
-	, 'app/details/views/SpeciesCatalogLocationView': {}
-	, 'app/details/views/SpeciesLocationView': {}
-	, 'app/details/views/ActivityCatalogCitationMapView': {}
 	, 'app/details/views/OrganisationCatalogDetailsView': {}
-	, 'app/details/views/ActivityCitationMapView': {}
-	, 'app/details/views/ActivityTrackingMapView': {}
-	, 'app/details/views/ActivityCatalogTrackingMapView': {}
 	, 'app/details/views/SpeciesCatalogDetailsView': {}
-
 	, 'app/edition/views/ActivityEditionView': {}
 	, 'app/edition/views/DeviceEditionView': {}
 	, 'app/edition/views/DocumentEditionView': {}

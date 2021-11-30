@@ -3,8 +3,8 @@ module.exports = function(grunt) {
 	var directoriesToDelete = [
 		'alertify', 'awesome-markers', 'cbtree', 'd3', 'd3Tip', 'dijit', 'dojo', 'dojox', 'deepmerge', 'dropzone',
 		'dstore', 'handlebars', 'L-areaselect', 'L-coordinates', 'L-draw', 'L-miniMap', 'L-navBar', 'leaflet',
-		'leaflet-measure', 'leaflet-wms', 'mediatorjs', 'moment', 'node-uuid', 'proj4js', 'pruneCluster',
-		'put-selector', 'redmic', 'RWidgets', 'sockjs', 'stompjs', 'templates', 'tv4'
+		'leaflet-measure', 'leaflet-nontiledlayer', 'mediatorjs', 'moment', 'node-uuid', 'proj4js', 'pruneCluster',
+		'put-selector', 'redmic', 'RWidgets', 'sockjs', 'stompjs', 'templates', 'tv4', 'wicket'
 	];
 
 	var recursiveDirectoriesToDelete = [

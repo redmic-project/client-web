@@ -26,7 +26,7 @@ define([
 			lang.mixin(this, this.config, args);
 
 			aspect.after(this, "_setConfigurations", lang.hitch(this, this._setTrackingByFilterConfigurations));
-			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineTrackingByFilterSubscriptions));
+			//aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineTrackingByFilterSubscriptions));
 		},
 
 		_setTrackingByFilterConfigurations: function() {
@@ -38,13 +38,13 @@ define([
 			}, this.filterConfig || {}]);
 		},
 
-		_defineTrackingByFilterSubscriptions: function () {
+		/*_defineTrackingByFilterSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
 				channel: this.filter.getChannel("REQUEST_FILTER"),
 				callback: "_subRequestFilter"
 			});
-		},
+		},*/
 
 		postCreate: function() {
 
@@ -58,10 +58,10 @@ define([
 			this._serializeFilter();
 		},
 
-		_subRequestFilter: function(obj) {
+		/*_subRequestFilter: function(obj) {
 
 			this._serializeFilter();
-		},
+		},*/
 
 		_serializeFilter: function() {
 

@@ -1,12 +1,14 @@
 define([
 	'app/designs/textSearchFacetsList/main/Administrative'
 	, 'app/base/views/extensions/_EditionWizardView'
+	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'templates/DeviceList'
 ], function(
 	AdministrativeMain
 	, _EditionWizardView
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -54,15 +56,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					'deviceType': {
-						'open': true,
-						'terms': {
-							'field': 'deviceType.name',
-							'size': 20
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.device
 			}, this.facetsConfig || {}]);
 		}
 	});

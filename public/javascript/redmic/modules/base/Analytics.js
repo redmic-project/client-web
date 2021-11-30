@@ -191,6 +191,11 @@ define([
 			this._publish(channel);
 		},
 
+		_gtagIsAvailable: function() {
+
+			return typeof gtag !== 'undefined';
+		},
+
 		_trackPageView: function(/*Object*/ pageInfo) {
 			//	summary:
 			//		Permite trakear una página vista en google analytics
@@ -200,8 +205,10 @@ define([
 			//		Puede ser un string con la url de la página o un objeto con más información
 			//		pj. page, title, version...
 
-			if (typeof ga != "undefined") {
-				ga('send', 'pageview', pageInfo);
+			if (this._gtagIsAvailable()) {
+				gtag('event', 'page_view', {
+					page_path: '/' + pageInfo
+				});
 			}
 		},
 
@@ -220,9 +227,12 @@ define([
 			//		Valor del evento
 			//	** label y value son opcionales
 
-			if (typeof ga != "undefined") {
-				ga('send', 'event',
-					eventInfo.category, eventInfo.action, eventInfo.label, eventInfo.value);
+			if (this._gtagIsAvailable()) {
+				gtag('event', eventInfo.action, {
+					event_category: eventInfo.category,
+					event_label: eventInfo.label,
+					value: eventInfo.value
+				});
 			}
 		},
 
@@ -234,8 +244,11 @@ define([
 			//	exceptionInfo
 			//		Objecto con información de la excepción. ej: exDescription, exFatal(boolen)...
 
-			if (typeof ga != "undefined") {
-				ga('send', 'exception', exceptionInfo);
+			if (this._gtagIsAvailable()) {
+				gtag('event', 'exception', {
+					description: exceptionInfo.exDescription,
+					fatal: !!exceptionInfo.exFatal
+				});
 			}
 		}
 	});

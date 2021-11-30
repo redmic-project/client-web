@@ -3,8 +3,6 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/map/layer/PruneClusterLayerImpl"
@@ -15,16 +13,13 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, _AddTitle
-	, _TitleSelection
 	, declare
 	, lang
 	, PruneClusterLayerImpl
 	, _RadiusOnClick
 	, Geographic
 ){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection,
-		_ListenActivityDataAndAccessByActivityCategory], {
+	return declare([Layout, Controller, _Main, _ListenActivityDataAndAccessByActivityCategory], {
 		//	summary:
 		//		Vista detalle de ActivityMap.
 
@@ -37,7 +32,8 @@ define([
 				propsWidget: {
 					omitTitleBar: true,
 					resizable: false
-				}
+				},
+				targetReplaceParameter: 'id'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -45,7 +41,7 @@ define([
 
 		_setMainConfigurations: function() {
 
-			this.targetChange = lang.replace(this.templateTargetChange, {id: this.pathVariableId});
+			this._replacePathVariableIdInTarget();
 
 			this.widgetConfigs = this._merge([{
 				geographic: {
@@ -92,6 +88,14 @@ define([
 			}, this.layerConfig || {}]);
 		},
 
+		_replacePathVariableIdInTarget: function() {
+
+			var replaceObj = {};
+			replaceObj[this.targetReplaceParameter] = this.pathVariableId;
+
+			this.targetChange = lang.replace(this.templateTargetChange, replaceObj);
+		},
+
 		_initialize: function() {
 
 			if (!this.definitionLayer) {
@@ -105,69 +109,67 @@ define([
 			this._layerDefinition = declare(this.definitionLayer);
 		},
 
-		_afterShow: function(request) {
+		_afterShow: function() {
 
-			if (!this.layerInstance) {
-
-				this.layerConfig = this._merge([{
-					mapChannel: this._widgets.geographic.getChildChannel("map"),
-					selectorChannel: this._widgets.geographic.getChannel()
-				}, this.layerConfig || {}]);
-
-				this.layerInstance = new this._layerDefinition(this.layerConfig);
-
-				this._publish(this._widgets.geographic.getChildChannel("map", "ADD_LAYER"), this.layerInstance);
-
-				var widgetInstance = this._widgets.geographic;
-
-				this._publish(
-					widgetInstance.getChildChannel("mapCenteringGateway", "ADD_CHANNELS_DEFINITION"), {
-						channelsDefinition: [{
-							input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
-							output: this.layerInstance.getChannel("SET_CENTER"),
-							subMethod: "setCenter"
-						},{
-							input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
-							output: this.layerInstance.getChannel("ANIMATE_MARKER"),
-							subMethod: "animateMarker"
-						}]
-					}
-				);
+			if (this.layerInstance) {
+				this.startup();
+				return;
 			}
+
+			var widgetInstance = this._getWidgetInstance('geographic');
+
+			this.layerConfig = this._merge([{
+				mapChannel: widgetInstance.getChildChannel("map"),
+				selectorChannel: widgetInstance.getChannel()
+			}, this.layerConfig || {}]);
+
+			this.layerInstance = new this._layerDefinition(this.layerConfig);
+
+			this._publish(widgetInstance.getChildChannel("map", "ADD_LAYER"), this.layerInstance);
+
+			this._publish(widgetInstance.getChildChannel("mapCenteringGateway", "ADD_CHANNELS_DEFINITION"), {
+				channelsDefinition: [{
+					input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
+					output: this.layerInstance.getChannel("SET_CENTER"),
+					subMethod: "setCenter"
+				},{
+					input: widgetInstance.getChildChannel("browser", "BUTTON_EVENT"),
+					output: this.layerInstance.getChannel("ANIMATE_MARKER"),
+					subMethod: "animateMarker"
+				}]
+			});
 
 			this.startup();
 		},
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.geographic.getChannel("CLEAR"));
-			this._publish(this._widgets.geographic.getChannel("REFRESH"));
+			var widgetInstance = this._getWidgetInstance('geographic');
+			this._publish(widgetInstance.getChannel("CLEAR"));
+			this._publish(widgetInstance.getChannel("REFRESH"));
 		},
 
 		_refreshModules: function() {
 
-			this._checkPathVariableId();
+			/*this._checkPathVariableId();
 
 			this._emitEvt('GET', {
 				target: this.target,
 				requesterId: this.ownChannel,
 				id: this.pathVariableId
-			});
+			});*/
 
-			this.targetChange = lang.replace(this.templateTargetChange, {id: this.pathVariableId});
+			this._replacePathVariableIdInTarget();
 
 			this.layerInstance && this._publish(this.layerInstance.getChannel("CHANGE_TARGET"), {
 				target: this.targetChange
 			});
 
-			this._publish(this._widgets.geographic.getChannel("UPDATE_TARGET"), {
+			var widgetInstance = this._getWidgetInstance('geographic');
+			this._publish(widgetInstance.getChannel("UPDATE_TARGET"), {
 				target: this.targetChange,
 				refresh: true
 			});
-		},
-
-		_itemAvailable: function(response) {
-
 		},
 
 		_getPopupContent: function(data) {

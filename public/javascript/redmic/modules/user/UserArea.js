@@ -2,7 +2,6 @@ define([
 	'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/json'
 	, 'put-selector/put'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
@@ -17,7 +16,6 @@ define([
 	redmicConfig
 	, declare
 	, lang
-	, JSON
 	, put
 	, _Module
 	, _Show
@@ -59,6 +57,7 @@ define([
 
 			put(this.domNode, '[title=$]', this.i18n.user);
 			this.iconNode = put(this.domNode, 'i.fa.fa-user');
+			this.listMenuDefinition = declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip);
 
 			var envDfd = window.env;
 			if (!envDfd) {
@@ -67,35 +66,46 @@ define([
 
 			envDfd.then(lang.hitch(this, function(envData) {
 
-				var infoItem = {
-					icon: 'fa-question-circle-o',
-					label: 'whatIsRedmic',
-					href: '/inner-what-is-redmic'
-				};
-
-				var versionItem = {
-					icon: 'fa-code-fork',
-					label: this.i18n.version + ': ' + envData.version,
-					href: this.repositoryUrl,
-					newPage: true
+				this._commonItems = {
+					infoItem: {
+						icon: 'fa-question-circle-o',
+						label: 'whatIsRedmic',
+						href: '/inner-what-is-redmic'
+					},
+					feedbackItem: {
+						icon: 'fa-envelope-o',
+						label: 'feedback',
+						href: '/feedback'
+					},
+					termConditionItem: {
+						icon: 'fa-file-text-o',
+						label: 'termCondition',
+						href: '/terms-and-conditions'
+					},
+					versionItem: {
+						icon: 'fa-code-fork',
+						label: this.i18n.version + ': ' + envData.version,
+						href: this.repositoryUrl,
+						newPage: true
+					}
 				};
 
 				this.target = [this.profileTarget];
 
 				if (this._checkUserIsRegistered()) {
-					this._initializeRegisteredUserArea(infoItem, versionItem);
+					this._initializeRegisteredUserArea();
 
 					this.target.push(this._logoutTarget);
 					// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
 					// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
 					this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
 				} else {
-					this._initializeGuestUserArea(infoItem, versionItem);
+					this._initializeGuestUserArea();
 				}
 			}));
 		},
 
-		_initializeRegisteredUserArea: function(infoItem, versionItem) {
+		_initializeRegisteredUserArea: function() {
 
 			this.topbarMenu = new TemplateDisplayer({
 				parentChannel: this.getChannel(),
@@ -105,7 +115,7 @@ define([
 				target: this.profileTarget
 			});
 
-			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
+			this.listMenu = new this.listMenuDefinition({
 				parentChannel: this.getChannel(),
 				items: [
 					{
@@ -113,13 +123,10 @@ define([
 						label: 'myProfile',
 						href: '/user'
 					},
-					infoItem,
-					{
-						icon: 'fa-file-text-o',
-						label: 'termCondition',
-						href: '/inner-terms-and-conditions'
-					},
-					versionItem,
+					this._commonItems.infoItem,
+					this._commonItems.feedbackItem,
+					this._commonItems.termConditionItem,
+					this._commonItems.versionItem,
 					{
 						icon: 'fa-power-off',
 						label: 'logout',
@@ -129,18 +136,20 @@ define([
 			});
 		},
 
-		_initializeGuestUserArea: function(infoItem, versionItem) {
+		_initializeGuestUserArea: function() {
 
-			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)({
+			this.listMenu = new this.listMenuDefinition({
 				parentChannel: this.getChannel(),
 				items: [
-					infoItem,
+					this._commonItems.infoItem,
 					{
 						icon: 'fa-user-plus',
 						label: 'register',
 						href: '/register'
 					},
-					versionItem,
+					this._commonItems.feedbackItem,
+					this._commonItems.termConditionItem,
+					this._commonItems.versionItem,
 					{
 						icon: 'fa-sign-in',
 						label: 'login',

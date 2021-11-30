@@ -54,6 +54,39 @@ define([
 			put(this.domNode, childNode);
 		},
 
+		_updateTitleClassSelector: function() {
+
+			var node = this._getTitleNode();
+			node && put(node, this.titleClassSelector);
+		},
+
+		_updateTitle: function(title) {
+
+			var titleNode = this._getTitleNode(),
+				titleValue = title || this.title;
+
+			if (!titleNode) {
+				return;
+			}
+
+			put(titleNode, '[title=$]', titleValue);
+			titleNode.innerHTML = titleValue;
+		},
+
+		_setTitle: function(title) {
+
+			if (this.titleSpanNode) {
+				put(this.titleSpanNode, "!");
+			}
+
+			this.titleSpanNode = put(this._titleNode, "span[title=$].designLayoutTitle", title, title);
+		},
+
+		_getTitleNode: function() {
+
+			return this.titleSpanNode;
+		},
+
 		// TODO sustituto de método de dijit, cuando se resuelvan todas las dependencias, eliminar y usar el interno
 		addChild: function(child) {
 

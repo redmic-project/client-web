@@ -9,24 +9,16 @@ define([], function() {
 		'oauthClientId': 'app',
 		'siteKeyReCaptcha': '6LfA6_0SAAAAACT3i8poH1NqztZCtIW1OahT0cXs',
 		'siteKeyForDebugReCaptcha': '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-		'googleAnalyticsId': 'UA-58848624-1'
+		'googleAnalyticsId': 'G-J753HC86F0'
 	};
 
 	retObj.viewPaths = {
 		'activityCatalog': '/catalog/activities-catalog',
 		'activityCatalogDetails': '/catalog/activity-info/{id}',
 		'activityCatalogDetailsRegister': '/catalog/activity-info/{properties.activityId}',
-		'activityCatalogCitationMap': '/catalog/activity-map/{id}',
-		'activityCatalogTrackingMap': '/catalog/activity-tracking/{id}',
-		'activityCatalogInfrastructureMap': '/catalog/activity-infrastructure/{id}',
-		'activityCatalogAreaMap': '/catalog/activity-area/{id}',
 		'activityDetails': '/admin/activity-info/{id}',
 		'activityAdd': '/admin/activity-add/{id}',
 		'activityEdit': '/admin/activity-edit/{id}',
-		'activityCitationMap': '/admin/activity-map/{id}',
-		'activityTrackingMap': '/admin/activity-tracking/{id}',
-		'activityInfrastructureMap': '/admin/activity-infrastructure/{id}',
-		'activityAreaMap': '/admin/activity-area/{id}',
 		'activityCitation': '/data-loader/activity/{id}/citation',
 		'activityInfrastructure': '/data-loader/activity/{id}/infrastructure',
 		'activitySurveyStation': '/data-loader/activity/{id}/survey-station',
@@ -46,7 +38,6 @@ define([], function() {
 		'animalEdit': '/admin/animal-edit/{id}',
 		'animal': '/admin/animal',
 		'bibliographyDetails': '/bibliography/document-info/{id}',
-		'bibliographyPDF': '/bibliography/document-pdf/{id}',
 		'bibliography': '/bibliography',
 		'conditionAdd': '/admin/condition-add/{id}',
 		'conditionEdit': '/admin/condition-edit/{id}',
@@ -61,7 +52,6 @@ define([], function() {
 		'deviceEdit': '/admin/device-edit/{id}',
 		'document': '/admin/document',
 		'documentDetails': '/admin/document-info/{id}',
-		'documentPDF': '/admin/document-pdf/{id}',
 		'documentAdd': '/admin/document-add/{id}',
 		'documentEdit': '/admin/document-edit/{id}',
 		'documentLoad': '/admin/document/load',
@@ -105,15 +95,12 @@ define([], function() {
 
 		'serviceOGCCatalog': '/service-ogc-catalog',
 		'serviceOGCCatalogDetails': '/service-ogc-catalog/service-ogc-info/{id}',
-		'serviceOGCAdd': '/maintenance/service-ogc-add/{id}',
 		'serviceOGCEdit': '/maintenance/service-ogc-edit/{id}',
 		'serviceOGCDetails': '/maintenance/service-ogc-info/{id}',
 		'serviceOGC': '/maintenance/service-ogc',
 		'speciesCatalog': '/catalog/species-catalog',
 		'speciesCatalogDetails': '/catalog/species-info/{id}',
-		'speciesCatalogLocation': '/catalog/species-location/{id}',
 		'speciesDetails': '/admin/species-info/{id}',
-		'speciesLocation': '/admin/species-location/{id}',
 		'speciesAdd': '/admin/species-add/{id}',
 		'speciesEdit': '/admin/species-edit/{id}',
 		'species': '/taxon/species',
@@ -132,6 +119,7 @@ define([], function() {
 		'document': baseUri + 'documents',
 		'accessibility': baseUri + 'accessibilities',
 		'activity': baseUri + 'activities',
+		'activityResource': baseUri + 'activities/resources',
 		'activityProject': baseUri + 'projects/{id}/activities',
 		'activityField': baseUri + 'activityfields',
 		'activityType': baseUri + 'activitytypes',
@@ -271,8 +259,8 @@ define([], function() {
 		'unitType': baseUri + 'unittypes',
 
 		'timeSeries': baseUri + 'timeseries',
-		'timeSeriesTemporalData': baseUri + 'timeseries/temporaldata',
-		'timeSeriesWindRose': baseUri + 'time-series/view/activities/{id}/timeseries/windrose',
+		'timeSeriesTemporalData': baseUri + 'time-series/view/temporaldata',
+		'timeSeriesWindRose': baseUri + 'time-series/view/activities/{id}/windrose',
 
 		'activityOrganisations': baseUri + 'organisations/{id}/activities',
 		'activityPlatforms': baseUri + 'platforms/{id}/activities',
@@ -300,14 +288,14 @@ define([], function() {
 		'activityObjectCollectingSeriesStations': baseUri +
 			'activities/{activityid}/objectcollectingseriesstations',
 
-		'objectCollectingSeries': baseUri + 'objectcollectingseries',
+		'objectCollectingSeries': baseUri + 'time-series/view/objectcollectingseries',
 		'objectCollectingSeriesByDataDefinition': baseUri +
 			'datadefinitions/{datadefinitionid}/objectcollectingseries',
 
 		'objectCollectingSeriesActivities': baseUri + 'objectcollectingseries/activities',
-		'objectCollectingSeriesTemporalData': baseUri + 'objectcollectingseries/temporaldata',
-		'objectCollectingSeriesClassification': baseUri + 'objectcollectingseries/classification',
-		'objectCollectingSeriesClassificationList': baseUri + 'objectcollectingseries/classificationlist',
+		'objectCollectingSeriesTemporalData': baseUri + 'time-series/view/objectcollectingseries/temporaldata',
+		'objectCollectingSeriesClassification': baseUri + 'time-series/view/objectcollectingseries/classification',
+		'objectCollectingSeriesClassificationList': baseUri + 'time-series/view/objectcollectingseries/classificationlist',
 		'convertShapefileToGeoJSON': baseUri + 'utils/geo/convert2geojson',
 
 		'attributesByInfrastructure': baseUri + 'activities/{activityid}/infrastructures/{id}/attributes',
@@ -331,6 +319,233 @@ define([], function() {
 		'platformContactRole': baseUri + 'platformcontactrole',
 		'calibration': baseUri + 'calibration'
 		//	***********************************************************************************
+	};
+
+	retObj.aggregations = {
+		activity: {
+			themeInspire: {
+				terms: {
+					field: 'themeInspire.name'
+				}
+			},
+			activityType: {
+				terms: {
+					field: 'activityType.name'
+				}
+			},
+			territorialScope: {
+				terms: {
+					field: 'scope.name'
+				}
+			}
+		},
+		activityType: {
+			activityField: {
+				terms: {
+					field: 'activityField.name'
+				}
+			}
+		},
+		animal: {
+			sex: {
+				terms: {
+					field: 'sex.name'
+				}
+			},
+			lifeStage: {
+				terms: {
+					field: 'lifeStage.name'
+				}
+			}
+		},
+		atlasLayer: {
+			protocols: {
+				terms: {
+					field: 'protocols.type',
+					nested: 'protocols'
+				}
+			},
+			themeInspire: {
+				terms: {
+					field: 'themeInspire.name'
+				}
+			},
+			keywords: {
+				terms: {
+					field: 'keywords'
+				}
+			}
+		},
+		contact: {
+			organisation: {
+				terms: {
+					field: 'affiliation.name'
+				}
+			}
+		},
+		device: {
+			deviceType: {
+				terms: {
+					field: 'deviceType.name'
+				}
+			}
+		},
+		document: {
+			documentType: {
+				terms: {
+					field: 'documentType.name'
+				}
+			},
+			language: {
+				terms: {
+					field: 'language'
+				}
+			}
+		},
+		metricsDefinition: {
+			metricGroup: {
+				terms: {
+					field: 'metricGroup.name'
+				}
+			}
+		},
+		organisation: {
+			organisationType: {
+				terms: {
+					field: 'organisationType.name'
+				}
+			}
+		},
+		parameter: {
+			parameterType: {
+				terms: {
+					field: 'parameterType.name'
+				}
+			}
+		},
+		platform: {
+			platformType: {
+				terms: {
+					field: 'platformType.name'
+				}
+			}
+		},
+		program: {
+			territorialScope: {
+				terms: {
+					field: 'scope.name'
+				}
+			}
+		},
+		project: {
+			projectGroup: {
+				terms: {
+					field: 'projectGroup.name'
+				}
+			},
+			territorialScope: {
+				terms: {
+					field: 'scope.name'
+				}
+			}
+		},
+		species: {
+			status: {
+				terms: {
+					field: 'status.name'
+				}
+			},
+			origin: {
+				terms: {
+					field: 'peculiarity.origin.name'
+				}
+			},
+			endemicity: {
+				terms: {
+					field: 'peculiarity.endemicity.name'
+				}
+			},
+			permanence: {
+				terms: {
+					field: 'peculiarity.permanence.name'
+				}
+			},
+			ecology: {
+				terms: {
+					field: 'peculiarity.ecology.name'
+				}
+			},
+			trophicRegime: {
+				terms: {
+					field: 'peculiarity.trophicRegime.name'
+				}
+			},
+			interest: {
+				terms: {
+					field: 'peculiarity.interest.name'
+				}
+			},
+			canaryProtection: {
+				terms: {
+					field: 'peculiarity.canaryProtection.name'
+				}
+			},
+			spainProtection: {
+				terms: {
+					field: 'peculiarity.spainProtection.name'
+				}
+			},
+			euProtection: {
+				terms: {
+					field: 'peculiarity.euProtection.name'
+				}
+			}
+		},
+		taxons: {
+			status: {
+				terms: {
+					field: 'status.name'
+				}
+			}
+		},
+		timeSeriesStations: {
+			properties: {
+				terms: {
+					field: 'properties.measurements.parameter.name',
+					nested: 'properties.measurements'
+				}
+			}
+		},
+		unit: {
+			unitType: {
+				terms: {
+					field: 'unitType.name'
+				}
+			}
+		}
+	};
+
+	retObj.returnFields = {
+		activity: [
+			'accessibility', 'activityCategory', 'activityType', 'code', 'endDate', 'id', 'name', 'resources',
+			'starred', 'startDate', 'themeInspire'
+		],
+		document: ['id', 'title', 'author', 'year', 'documentType', 'language', 'url'],
+		organisation: ['id', 'name', 'acronym', 'logo', 'organisationType', 'webpage'],
+		program: ['id', 'name', 'code', 'endDate'],
+		project: ['id', 'name', 'code', 'endDate', 'projectGroup'],
+		species: [
+			'aphia', 'authorship', 'commonName', 'groupIcon', 'id', 'peculiarity.popularNames', 'scientificName',
+			'status'
+		],
+		taxonsTree: ['scientificName', 'rank', 'path', 'leaves'],
+		timeSeriesStationsList: [
+			'properties.activityId', 'properties.site.path', 'properties.site.name', 'properties.site.code',
+			'properties.site.id', 'properties.measurements.parameter.id', 'properties.measurements.parameter.name',
+			'properties.measurements.unit.id', 'properties.measurements.unit.name',
+			'properties.measurements.dataDefinition.id', 'properties.measurements.dataDefinition.z'
+		],
+		timeSeriesStationsMap: ['geometry']
 	};
 
 	retObj.outerPaths = [

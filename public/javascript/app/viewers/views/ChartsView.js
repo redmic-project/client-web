@@ -1,12 +1,12 @@
 define([
 	'alertify/alertify.min'
-	, "app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
 	, "app/designs/embeddedContentWithTopbar/main/EmbeddedContentSelectionInTopbar"
 	, "app/designs/chart/main/_ProcessDataDefinitionAndGetTimeSeries"
 	, "app/designs/chart/main/ChartsWithLegendAndToolbarsAndSlider"
 	, "app/designs/dynamicDualContent/main/FacetsWithDynamicRightContent"
 	, "app/designs/list/Controller"
 	, "app/designs/list/layout/Layout"
+	, 'app/viewers/views/_TimeSeriesDataManagement'
 	, "app/viewers/views/_TimeSeriesSelectionManagement"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
@@ -22,20 +22,19 @@ define([
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
 	, "redmic/modules/map/layer/PruneClusterLayerImpl"
 	, "redmic/modules/map/layer/_Highlightable"
 	, "redmic/modules/map/layer/_Selectable"
 	, "templates/SurveyStationDataList"
 ], function (
 	alertify
-	, _CompositeInTooltipFromIconKeypad
 	, EmbeddedContentSelectionInTopbar
 	, _ProcessDataDefinitionAndGetTimeSeries
 	, ChartsWithLegendAndToolbarsAndSlider
 	, FacetsWithDynamicRightContent
 	, ListController
 	, ListLayout
+	, _TimeSeriesDataManagement
 	, _TimeSeriesSelectionManagement
 	, redmicConfig
 	, declare
@@ -51,13 +50,14 @@ define([
 	, _Framework
 	, SelectionBox
 	, LeafletImpl
-	, Map
 	, PruneClusterLayerImpl
 	, _Highlightable
 	, _Selectable
 	, ListTemplate
 ){
-	return declare([EmbeddedContentSelectionInTopbar, _TimeSeriesSelectionManagement], {
+	return declare([
+		EmbeddedContentSelectionInTopbar, _TimeSeriesDataManagement, _TimeSeriesSelectionManagement
+	], {
 		//	summary:
 		//		Vista de ChartsView.
 
@@ -114,15 +114,7 @@ define([
 				},
 				aggregationToolConfig: {
 					defaultIntervalOptions: []
-				},
-				getIconKeypadNode: lang.hitch(this, function() {
-
-					return this._optionNode;
-				})/*,
-				getIconKeypadNode: function() {
-
-					return this.optionsContainerChartsTopNode;
-				}*/
+				}
 			}, this.chartsConfig || {}]);
 
 			this.filterConfig = this._merge([{
@@ -209,6 +201,7 @@ define([
 			});
 
 			this._showMap("showMap");
+			this._getMapData();
 
 			this._showGuideMessagesHandler = setTimeout(lang.hitch(this, this._showGuideMessagesAtStartup),
 				this._guideMessagesStartupTimeout);
@@ -266,37 +259,36 @@ define([
 
 		_clearSelection: function() {
 
-			this._clearMapLayerSelection(markerId);
+			this._clearMapLayerSelection();
 		},
 
 		_selectMarker: function(markerId) {
 
-			this._publishSelectionToMapLayer('SELECTED', markerId);
+			//this._publishSelectionToMapLayer('SELECTED', markerId);
 		},
 
 		_deselectMarker: function(markerId) {
 
-			this._publishSelectionToMapLayer('DESELECTED', markerId);
+			//this._publishSelectionToMapLayer('DESELECTED', markerId);
 		},
 
 		_clearMapLayerSelection: function() {
 
-			this._publishSelectionToMapLayer('SELECTION_CLEARED');
+			//this._publishSelectionToMapLayer('SELECTION_CLEARED');
 		},
 
 		_publishSelectionToMapLayer: function(action, markerId) {
 
+			// TODO rompe la capa pruneCluster dejando rastros, arreglar
 			var pubBody = {
-				selectionTarget: this._mapLayerSelectionTarget
+				target: this._mapLayerSelectionTarget
 			};
 
 			if (markerId !== undefined) {
 				pubBody.ids = markerId;
 			}
 
-			this._publish(this.getChannel(action), {
-				body: pubBody
-			});
+			this._publish(this.getChannel(action), pubBody);
 		},
 
 		_updateGuideMessagesAfterSelect: function() {
@@ -337,8 +329,6 @@ define([
 
 		_showMap: function(inputKey) {
 
-			this._changeFilterOfNoCharts();
-
 			this._initializeMap();
 
 			this._publish(this.filterContainer.getChannel("SET_PROPS"), {
@@ -349,22 +339,10 @@ define([
 			this._resetMarkerActive();
 		},
 
-		_changeFilterOfNoCharts: function() {
-
-			this.chartContainer && this._publish(this.chartContainer.getChildChannel("iconKeypadComposite", 'HIDE'));
-			this._publish(this.iconKeypadComposite.getChannel('SHOW'));
-		},
-
-		_changeFilterOfCharts: function() {
-
-			this._publish(this.iconKeypadComposite.getChannel('HIDE'));
-			this.chartContainer && this._publish(this.chartContainer.getChildChannel("iconKeypadComposite", 'SHOW'));
-		},
-
 		_initializeMap: function() {
 
 			if (!this.map) {
-				this.map = new declare([LeafletImpl, Map])({
+				this.map = new LeafletImpl({
 					parentChannel: this.filterContainer.getChannel()
 				});
 			}
@@ -385,10 +363,8 @@ define([
 			if (!this.browserPopup) {
 				this.browserPopupConfig.parentChannel = this.filterContainer.getChannel();
 
-				this.browserPopup = new declare([
-					ListLayout,
-					ListController
-				]).extend(_ShowInPopup)(this.browserPopupConfig);
+				var browserPopupDefinition = declare([ListLayout, ListController]).extend(_ShowInPopup);
+				this.browserPopup = new browserPopupDefinition(this.browserPopupConfig);
 
 				this._setSubscription({
 					channel : this.browserPopup.getChannel("HIDDEN"),
@@ -398,8 +374,6 @@ define([
 		},
 
 		_showList: function(inputKey) {
-
-			this._changeFilterOfNoCharts();
 
 			this._initializeList();
 
@@ -413,11 +387,7 @@ define([
 
 			if (!this.browser) {
 				this.browserConfig.parentChannel = this.filterContainer.getChannel();
-
-				this.browser = new declare([
-					ListLayout,
-					ListController
-				])(this.browserConfig);
+				this.browser = new declare([ListLayout, ListController])(this.browserConfig);
 			}
 		},
 
@@ -450,12 +420,9 @@ define([
 
 			this._initializeChart();
 
-			this._changeFilterOfCharts();
-
 			this._embedModule(this.chartContainer, inputKey);
 
 			if (this._updateDataChart) {
-
 				this._publish(this.chartContainer.getChannel("SET_PROPS"), {
 					chartsData: this.seriesData
 				});
@@ -469,8 +436,7 @@ define([
 			if (!this.chartContainer) {
 				this.chartContainer = new declare([
 					ChartsWithLegendAndToolbarsAndSlider,
-					_ProcessDataDefinitionAndGetTimeSeries,
-					_CompositeInTooltipFromIconKeypad
+					_ProcessDataDefinitionAndGetTimeSeries
 				])(this.chartsConfig);
 			}
 		},
@@ -487,23 +453,22 @@ define([
 
 		_clickInMarker: function(obj) {
 
-			var _activeBrowserPopupCopy = this._activeBrowserPopup;
+			var currClickedStationId = obj.data[this.idProperty];
 
-			if (this._activeBrowserPopup) {
-				if (this._activeBrowserPopup === obj.data[this.idProperty]) {
-					this._activeBrowserPopup = false;
+			if (this._lastClickedStationId) {
+				if (currClickedStationId === this._lastClickedStationId) {
+					this._lastClickedStationId = null;
 				}
-
-				this._publish(this.browserPopup.getChannel("HIDE"));
+				this._publish(this.browserPopup.getChannel('HIDE'));
 			}
 
-			if (_activeBrowserPopupCopy !== obj.data[this.idProperty]){
-				this._activeBrowserPopup = obj.data[this.idProperty];
+			if (currClickedStationId !== this._lastClickedStationId) {
+				this._lastClickedStationId = currClickedStationId;
 
 				this._emitEvt('GET', {
 					target: this.target,
 					requesterId: this.getOwnChannel(),
-					id: obj.data[this.idProperty]
+					id: currClickedStationId
 				});
 			}
 		},
@@ -515,13 +480,13 @@ define([
 
 		_resetMarkerActive: function() {
 
-			if (this._activeBrowserPopup) {
+			if (this._lastClickedStationId) {
 				this._publish(this.mapLayerImpl.getChannel("DELETE_HIGHLIGHT_MARKER"), {
-					id: this._activeBrowserPopup
+					id: this._lastClickedStationId
 				});
 			}
 
-			this._activeBrowserPopup = false;
+			this._lastClickedStationId = false;
 		},
 
 		_onViewHidden: function() {

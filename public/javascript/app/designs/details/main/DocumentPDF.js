@@ -1,31 +1,29 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/details/Controller"
-	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/components/PDFViewer/PDFViewer"
+	'app/designs/base/_Main'
+	, 'app/designs/details/Controller'
+	, 'app/designs/details/Layout'
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/components/PDFViewer/PDFViewer'
 ], function(
 	_Main
 	, Controller
 	, Layout
-	, _AddTitle
-	, _TitleSelection
 	, redmicConfig
 	, declare
 	, lang
 	, PDFViewer
-){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
+) {
+
+	return declare([Layout, Controller, _Main], {
 		//	summary:
-		//		Vista detalle de Document.
+		//		Vista detalle de documento PDF.
 
 		constructor: function(args) {
 
 			this.target = redmicConfig.services.document;
+
 			this.config = {
 				noScroll: true,
 				propsWidget: {
@@ -45,15 +43,11 @@ define([
 					height: 6,
 					type: PDFViewer,
 					props: {
-						classWindowContent: "view",
-						title: "PDF"
+						classWindowContent: 'view',
+						title: 'PDF'
 					}
 				}
 			}, this.widgetConfigs || {}]);
-		},
-
-		_clearModules: function() {
-
 		},
 
 		_refreshModules: function() {
@@ -69,12 +63,16 @@ define([
 
 		_itemAvailable: function(item) {
 
-			if (item.data.url)
-				this._publish(this._widgets.pdf.getChannel("LOAD_PDF"), {
-					url: item.data.url
-				});
-			else
-				this._goTo404();
+			var pdfUrl = item.data.url,
+				widgetInstance = this._getWidgetInstance('pdf');
+
+			if (!pdfUrl || !widgetInstance) {
+				return;
+			}
+
+			this._publish(widgetInstance.getChannel('LOAD_PDF'), {
+				url: pdfUrl
+			});
 		}
 	});
 });

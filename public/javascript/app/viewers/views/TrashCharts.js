@@ -178,7 +178,7 @@ define([
 			if (this._lastDataLength && this._lastDataLength > data.length) {
 				for (i = data.length; i < this._lastDataLength; i++) {
 					widgetKey = "multiPieChartContainer" + i;
-					this._hideWidget(widgetKey);
+					this._hideWidget(widgetKey, true);
 					this._disconnectWidget(widgetKey);
 				}
 
@@ -192,7 +192,7 @@ define([
 				for (i = this._lastWidgetsShow.i; i <= this._lastWidgetsShow.size; i++) {
 					widgetKey = "multiPieChartContainer" + i;
 					this._connectWidget(widgetKey);
-					this._showWidget(widgetKey);
+					this._showWidget(widgetKey, true);
 				}
 
 				this._lastWidgetsShow = null;

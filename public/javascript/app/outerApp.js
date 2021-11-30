@@ -6,7 +6,8 @@ define([
 	App
 	, declare
 	, lang
-){
+) {
+
 	return declare(App, {
 		//	Summary:
 		//		Implementación del módulo App, encargada de mostrar las vistas de la parte externa de la aplicación
@@ -14,6 +15,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: this.outerAppOwnChannel,
 				'class': 'outerApp',
 				baseClass: ''
 			};

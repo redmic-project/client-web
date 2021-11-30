@@ -65,8 +65,6 @@ define([
 				},
 				multipleSelected: true,
 				hideOnClickItem: false,
-				notIndicator: true,
-				indicatorLeft: true,
 				classTooltip: "tooltipButtonMenu"
 			}, this.optionConfig || {}]);
 		},

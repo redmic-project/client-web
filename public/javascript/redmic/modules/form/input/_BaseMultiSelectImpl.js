@@ -66,8 +66,6 @@ define([
 				multipleSelected: true,
 				timeClose: 100,
 				hideOnClickItem: false,
-				notIndicator: true,
-				indicatorLeft: true,
 				classTooltip: "tooltipButtonMenu tooltipButtonChart"
 			}, this.optionConfig || {}]);
 		},

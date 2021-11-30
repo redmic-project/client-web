@@ -1,169 +1,119 @@
 define([
 	"app/designs/base/_Main"
-	, "app/designs/details/Controller"
-	, "app/designs/details/Layout"
-	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/map/OpenLayers"
-	, "redmic/modules/browser/_ButtonsInRow"
-	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/browser/bars/Total"
+	, 'redmic/modules/map/_AtlasLayersManagement'
 	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/Map"
 	, "redmic/modules/map/layer/WmsLayerImpl"
-	, "redmic/modules/layout/TabsDisplayer"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "RWidgets/RedmicUtilities"
 	, "templates/ServiceOGCTitle"
 	, "templates/ServiceOGCInfo"
-	, "templates/ServiceOGCImage"
-	, "templates/ServiceOGCActivityList"
+//	, "templates/ServiceOGCImage"
+	, "./_DetailsBase"
 ], function(
 	_Main
-	, Controller
-	, Layout
-	, _AddTitle
-	, _TitleSelection
 	, redmicConfig
 	, declare
 	, lang
-	, OpenLayers
-	, _ButtonsInRow
-	, _Framework
-	, ListImpl
-	, Total
+	, _AtlasLayersManagement
 	, LeafletImpl
-	, Map
 	, WmsLayerImpl
-	, TabsDisplayer
-	, TemplateDisplayer
 	, RedmicUtilities
 	, TemplateTitle
 	, TemplateInfo
-	, TemplateImage
-	, TemplateActivities
-){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
+//	, TemplateImage
+	, _DetailsBase
+) {
+
+	return declare([_DetailsBase, _AtlasLayersManagement], {
 		//	summary:
-		//		Vista detalle de Activity.
+		//		Vista detalle de servicios OGC.
 
 		constructor: function(args) {
 
 			this.atlasTarget = redmicConfig.services.atlasLayer;
 			this.activityTarget = redmicConfig.services.activity;
-			this.target = [this.atlasTarget, this.activityTarget];
+			this.target = this.atlasTarget;
 			this.selectionTarget = redmicConfig.services.atlasLayerSelection;
 
 			this.activityLocalTarget = "activitiesLayer";
 			this.infoLayerTarget = 'infoLayerTarget';
 
 			this.config = {
-				noScroll: true,
-				_titleRightButtonsList: []
+				templateTitle: TemplateTitle,
+				templateInfo: TemplateInfo
 			};
-
-			this.titleRightButtonsList = [];
 
 			lang.mixin(this, this.config, args);
 		},
 
 		_setMainConfigurations: function() {
 
-			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle
-			}, this.titleWidgetConfig || {}]);
+			this.inherited(arguments);
 
-			this.widgetConfigs = this._merge([{
+			this.target.push(this.activityTarget);
+
+			this.widgetConfigs = this._merge([
+				this.widgetConfigs || {},
+				{
 				info: {
+					props: {
+						target: this.infoLayerTarget
+					}
+				},
+				activityList: {
+					height: 3,
+					props: {
+						title: this.i18n.dataSource,
+						target: this.activityLocalTarget
+					}
+				},
+				spatialExtensionMap: {
+					width: 3,
+					height: 3,
+					type: LeafletImpl,
+					props: {
+						title: this.i18n.geograficFrame,
+						omitContainerSizeCheck: true,
+						maxZoom: 15,
+						coordinatesViewer: false,
+						navBar: false,
+						miniMap: false,
+						scaleBar: false,
+						measureTools: false
+					}
+				}/*,
+				legend: {
 					width: 3,
 					height: 6,
 					type: TemplateDisplayer,
 					props: {
-						title: this.i18n.info,
-						template: TemplateInfo,
-						"class": "containerDetails",
-						classEmptyTemplate: "contentListNoData",
-						target: this.infoLayerTarget,
+						title: this.i18n.legend,
+						template: TemplateImage,
+						"class": "imageContainer",
+						target: this.atlasTarget,
 						associatedIds: [this.ownChannel]
 					}
-				},
-				additionalInfo: {
-					width: 3,
-					height: 6,
-					type: TabsDisplayer,
-					props: {
-						title: this.i18n.additionalInfo,
-						childTabs: [{
-							title: this.i18n.dataSource,
-							type: declare([ListImpl, _Framework, _ButtonsInRow]),
-							props: {
-								target: this.activityLocalTarget,
-								template: TemplateActivities,
-								bars: [{
-									instance: Total
-								}],
-								rowConfig: {
-									buttonsConfig: {
-										listButton: [{
-											icon: "fa-info-circle",
-											btnId: "details",
-											title: this.i18n.info,
-											href: this.viewPathsWidgets.activities
-										}]
-									}
-								}
-							}
-						},/*{
-							title: this.i18n.legend,
-							type: TemplateDisplayer,
-							props: {
-								template: TemplateImage,
-								"class": "imageContainer",
-								target: this.atlasTarget,
-								associatedIds: [this.ownChannel]
-							}
-						},*/
-						{
-							title: this.i18n.geograficFrame,
-							type: declare([LeafletImpl, Map]),
-							props: {
-								zoom: 5,
-								extent: [28.5, -17.0]
-							}
-						}]
-					}
-				}
-			}, this.widgetConfigs || {}]);
+				}*/
+			}]);
 		},
 
 		_publishMapBox: function(action, obj) {
 
-			this._publish(this._widgets.additionalInfo.getChildChannel("childInstances.1", action), obj);
+			this._publish(this._getWidgetInstance('spatialExtensionMap').getChannel(action), obj);
 		},
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.info.getChannel("CLEAR"));
-			this._publish(this._widgets.additionalInfo.getChildChannel("childInstances.0", "CLEAR"));
+			this.inherited(arguments);
 
-			if (this.layerPolygon) {
-				this._publishMapBox("REMOVE_LAYER", {
-					layer: this.layerPolygon
-				});
-			}
+			this._publish(this._getWidgetInstance('activityList').getChannel('CLEAR'));
+
+			this._publishMapBox('CLEAR');
 
 			if (this.layer) {
-				this._publishMapBox("REMOVE_LAYER", {
-					layer: this.layer
-				});
-
-				this._publish(this.layer.getChannel("DISCONNECT"));
-
-				this.layer.destroy();
+				this._publish(this.layer.getChannel('DESTROY'));
 			}
 		},
 
@@ -197,6 +147,7 @@ define([
 				target: this.infoLayerTarget
 			});
 
+			this._publishMapBox('CLEAR');
 			this._createMapBoundingLayer(data);
 			this._retrieveLayerActivities(data);
 			this._createMapLayer(data);
@@ -218,11 +169,15 @@ define([
 				}
 			});
 
-			this._publishMapBox("ADD_LAYER", {
+			this._publishMapBox('ADD_LAYER', {
 				layer: this.layerPolygon,
-				layerId: "boundingBox",
+				layerId: 'boundingBox',
 				layerLabel: this.i18n.boundingBox,
 				optional: true
+			});
+
+			this._publishMapBox('FIT_BOUNDS', {
+				bounds: this.layerPolygon.getBounds()
 			});
 		},
 
@@ -249,23 +204,18 @@ define([
 				return;
 			}
 
+			var layerDefinition = this._getLayerDefinitionByProtocol(data);
+
 			this.layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
-				mapChannel: this._widgets.additionalInfo.getChildChannel("childInstances.1"),
-				layer: OpenLayers.build({
-					type: "wms",
-					url: data.urlSource,
-					props: {
-						layers: [data.name],
-						format: "image/png",
-						transparent: true,
-						tiled: true
-					}
-				})
+				mapChannel: this._getWidgetInstance('spatialExtensionMap').getChannel(),
+				layerDefinition: layerDefinition
 			});
 
-			this._publishMapBox("ADD_LAYER", {
-				layer: this.layer
+			this._publishMapBox('ADD_LAYER', {
+				layer: this.layer,
+				layerLabel: data.alias || data.name,
+				optional: true
 			});
 		},
 

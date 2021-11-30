@@ -8,7 +8,6 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "put-selector/put"
-	, "redmic/map/OpenLayers"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_Show"
@@ -21,8 +20,7 @@ define([
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "redmic/modules/map/layer/_PublishInfo"
-	, "redmic/modules/map/layer/WmsLayerImpl"
+	, 'redmic/modules/map/_AtlasLayersManagement'
 	, "templates/AtlasList"
 	, "templates/LoadingCustom"
 	, "templates/ServiceOGCAtlasList"
@@ -37,7 +35,6 @@ define([
 	, lang
 	, Deferred
 	, put
-	, OpenLayers
 	, _Module
 	, _Selection
 	, _Show
@@ -50,15 +47,14 @@ define([
 	, Total
 	, DataDisplayer
 	, TemplateDisplayer
-	, _PublishInfo
-	, WmsLayerImpl
+	, _AtlasLayersManagement
 	, ListTemplate
 	, LoadingCustom
 	, serviceOGCList
 	, templateDetails
 ) {
 
-	return declare([_Module, _Show, _Store, _Selection], {
+	return declare([_Module, _Show, _Store, _Selection, _AtlasLayersManagement], {
 		//	summary:
 		//		Módulo de Atlas.
 		//	description:
@@ -84,8 +80,6 @@ define([
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: ".",
 				parentProperty: "parent",
-				layerIdSeparator: "_",
-				themeSeparator: "-",
 				showBrowserAnimationClass: "animated fadeIn",
 				hideBrowserAnimationClass: "animated fadeOut",
 
@@ -103,13 +97,13 @@ define([
 
 			this.themesBrowserConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				title: this.i18n.selectedThemes,
+				title: this.i18n.selectedLayers,
 				target: this.localTarget,
 				buttonsInTopZone: true,
 				buttons: {
 					"goToCatalog": {
 						className: "fa-plus",
-						title: this.i18n.goToCatalog
+						title: this.i18n.goToLayersCatalog
 					}
 				},
 				classByList: '.borderList',
@@ -167,7 +161,7 @@ define([
 				buttonsInTopZone: true,
 				buttons: {
 					"backToSelectedLayers": {
-						className: "fa-reply",
+						className: "fa-eye",
 						title: this.i18n.goToSelectedLayers
 					}
 				},
@@ -407,21 +401,6 @@ define([
 			this._lastOrder = 0;
 		},
 
-		_isTiled: function(item) {
-
-			var protocols = item.protocols;
-
-			if (item.protocols && item.protocols.length !== 0) {
-				for (var i = 0; i < protocols.length; i++) {
-					if (protocols[i].type === 'WMTS') {
-						return true;
-					}
-				}
-			}
-
-			return false;
-		},
-
 		_errorAvailable: function(error) {
 
 			var patt = new RegExp('_selection');
@@ -449,56 +428,27 @@ define([
 				return;
 			}
 
-			var isTiled = this._isTiled(item),
-				props = {
-					layers: [item.name],
-					transparent: true
-				};
-
-			if (isTiled) {
-				props.tiled = true;
-				props.pane = 'overlayPane';
-			}
-
-			if (item.formats) {
-				if (item.formats.indexOf('image/png') !== -1) {
-					props.format = 'image/png';
-				}
-			}
-
-			var itemId = item.id;
+			var itemId = this._getAtlasLayerId(item);
 
 			if (this._layerIdsById[itemId]) {
 				return;
 			}
 
-			var layerId = this._createLayerId(item),
-				layerLabel = item.alias || item.title,
+			var layerDefinition = this._getAtlasLayerDefinition(),
+				layerConfiguration = this._getAtlasLayerConfiguration(item),
+				layerLabel = layerConfiguration.layerLabel;
 
-				layer = OpenLayers.build({
-					type: isTiled ? "wmts" : "wms",
-					url: item.urlSource,
-					props: props
-				}),
+			layerConfiguration.mapChannel = this.getMapChannel();
 
-				data = {
-					id: itemId,
-					label: layerLabel,
-					originalItem: item,
-					layer: {
-						definition: declare([WmsLayerImpl, _PublishInfo]),
-						props: {
-							parentChannel: this.getChannel(),
-							mapChannel: this.getMapChannel(),
-							layer: layer,
-							styleLayer: item.styleLayer,
-							queryable: item.queryable,
-							layerId: layerId,
-							layerLabel: layerLabel,
-							refresh: item.refresh
-						}
-					}
-				};
+			var data = {
+				id: itemId,
+				label: layerLabel,
+				originalItem: item,
+				layer: {
+					definition: layerDefinition,
+					props: layerConfiguration
+				}
+			};
 
 			this._emitEvt('TRACK', {
 				type: TRACK.type.event,
@@ -586,12 +536,11 @@ define([
 
 			this._disableButtons();
 
-			this._once(this.themesBrowser.getChannel("HIDDEN"),
-				lang.hitch(this, function() {
+			this._once(this.themesBrowser.getChannel("HIDDEN"), lang.hitch(this, function() {
 
-				this._showBrowser(this.catalogView, this._atlasContainer,
-					this.showBrowserAnimationClass, this.hideBrowserAnimationClass);
-				}));
+				this._showBrowser(this.catalogView, this._atlasContainer, this.showBrowserAnimationClass,
+					this.hideBrowserAnimationClass);
+			}));
 
 			this._publish(this.themesBrowser.getChannel("HIDE"));
 
@@ -624,12 +573,6 @@ define([
 			var node = res.iconNode,
 				item = res.item;
 
-			if (node.firstChild) {
-				node = node.firstChild;
-			} else {
-				node = put(node, 'div');
-			}
-
 			item.href = lang.replace(redmicConfig.viewPaths.serviceOGCCatalogDetails, item);
 
 			this._emitEvt('INJECT_ITEM', {
@@ -638,8 +581,7 @@ define([
 			});
 
 			this._publish(this.templateDisplayerDetails.getChannel("SHOW"), {
-				node: node,
-				additionalNode: res.iconNode
+				node: node
 			});
 		},
 
@@ -678,13 +620,6 @@ define([
 				layerLabel: item.label,
 				order: order
 			});
-		},
-
-		_createLayerId: function(item) {
-
-			var themeInspire = item.themeInspire ? item.themeInspire.code : 'default';
-
-			return themeInspire + this.themeSeparator + item.name + this.layerIdSeparator + item.id;
 		},
 
 		_getLayerInstance: function(id, layerId, definition, props) {

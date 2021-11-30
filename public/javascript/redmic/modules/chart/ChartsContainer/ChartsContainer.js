@@ -401,6 +401,9 @@ define([
 			this._preparePublicationsForLayer(layerId);
 			this._doPublicationsForLayer(layerId);
 			this._tryToDrawLayer(this._layers[layerId]);
+
+			// todo
+			//this._emitEvt('LAYER_ADDED', layerId);
 		},
 
 		_doSubscriptionsForLayer: function(layerId) {
@@ -631,7 +634,6 @@ define([
 				this._clearLayer(layerInstance);
 			} else {
 				console.error("Nonexistent chart layer '%s' cannot be removed", layerId);
-				return;
 			}
 		},
 
@@ -643,8 +645,7 @@ define([
 
 		_unbindLayer: function(layerId) {
 
-			var layerInstance = this._layers[layerId],
-				subscriptionsForLayer = this._subscriptionsForLayers[layerId],
+			var subscriptionsForLayer = this._subscriptionsForLayers[layerId],
 				publicationsForLayer = this._publicationsForLayers[layerId];
 
 			if (subscriptionsForLayer) {

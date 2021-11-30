@@ -9,15 +9,13 @@ define([
 ){
 	return declare(null, {
 		//	summary:
-		//		Extensión que genera callback para emitir refresh apartir de la
-		//		primera vez mostrado.
+		//		Extensión que genera callback para emitir refresh apartir de la primera vez mostrado.
 
 		_setControllerOwnCallbacksForEvents: function() {
 
 			this.inherited(arguments);
 
-			this._onEvt('ME_OR_ANCESTOR_HIDDEN',
-				lang.hitch(this, this._onControllerMeOrAncestorHidden));
+			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onControllerMeOrAncestorHidden));
 		},
 
 		_onControllerMeOrAncestorHidden: function() {
@@ -25,25 +23,26 @@ define([
 			this._getPreviouslyShown() && !this._existCallbackMeOrAncestorShown && this._onEvt('ME_OR_ANCESTOR_SHOWN',
 				lang.hitch(this, this._onControllerMeOrAncestorShown));
 
-			if (this.pathVariableId)
+			if (this.pathVariableId) {
 				this.oldPathVariableId = this.pathVariableId;
+			}
 
 			this._existCallbackMeOrAncestorShown = true;
 		},
 
 		_onControllerMeOrAncestorShown: function() {
 
-			var isRefresh = this._getPreviouslyShown();
+			var needToRefresh = this._getPreviouslyShown();
 
 			if (this.pathVariableId && this.oldPathVariableId &&
 				Utilities.isEqual(this.pathVariableId, this.oldPathVariableId)) {
-				isRefresh = false;
+				needToRefresh = false;
 			}
 
-			if (isRefresh) {
-				var obj = {};
-				if (this.initDataRefresh)
-					obj.initData = true;
+			if (needToRefresh) {
+				var obj = {
+					initData: !!this.initDataRefresh
+				};
 
 				this._emitEvt('REFRESH', obj);
 			}

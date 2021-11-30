@@ -92,14 +92,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs: {
-					"status": {
-						'open': true,
-						"terms": {
-							"field": "status.name"
-						}
-					}
-				}
+				aggs: redmicConfig.aggregations.taxons
 			}, this.facetsConfig || {}]);
 		},
 

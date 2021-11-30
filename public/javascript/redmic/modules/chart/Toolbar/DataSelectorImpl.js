@@ -47,8 +47,6 @@ define([
 
 			this.dataSelectorConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				indicatorLeft: true,
-				notIndicator: true,
 				classTooltip: "tooltipButtonMenu tooltipButtonChart",
 				select: {
 					"default": 0

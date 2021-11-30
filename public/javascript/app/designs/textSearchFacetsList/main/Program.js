@@ -1,8 +1,8 @@
 define([
 	"app/designs/base/_Main"
-	, "app/designs/textSearchFacetsList/_AddComposite"
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ProgramList"
@@ -12,9 +12,9 @@ define([
 	, "redmic/modules/browser/bars/Total"
 ], function(
 	_Main
-	, _AddComposite
 	, Controller
 	, Layout
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -23,7 +23,7 @@ define([
 	, Order
 	, Total
 ){
-	return declare([Layout, Controller, _Main, _AddComposite], {
+	return declare([Layout, Controller, _Main], {
 		//	summary:
 		//		Extensión para establecer la configuración de las vistas de program.
 		//	description:
@@ -33,8 +33,7 @@ define([
 
 			this.config = {
 				browserExts: [_Select],
-				title: this.i18n.programs,
-				blockCompositeToUser: true
+				title: this.i18n.programs
 			};
 
 			lang.mixin(this, this.config, args);
@@ -43,7 +42,7 @@ define([
 		_setMainConfigurations: function() {
 
 			this.filterConfig = this._merge([{
-				returnFields: ['id', 'name', 'code', 'endDate']
+				returnFields: redmicConfig.returnFields.program
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
@@ -68,15 +67,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs:  {
-					"territorialScope": {
-						"terms": {
-							"field": "scope.name",
-							"size": 20
-						}
-					}
-				},
-				openFacets: true
+				aggs: redmicConfig.aggregations.program
 			}, this.facetsConfig || {}]);
 		}
 	});

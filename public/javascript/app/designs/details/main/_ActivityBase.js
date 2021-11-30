@@ -3,7 +3,6 @@ define([
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
 	, "app/designs/details/_AddTitle"
-	, "app/designs/details/_TitleSelection"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
@@ -13,20 +12,16 @@ define([
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/layout/TabsDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/ContactSet"
 	, "templates/DocumentList"
 	, "templates/OrganisationSet"
 	, "templates/PlatformSet"
-	, "templates/ActivityInfo"
-	, "templates/ActivityInfoHelp"
 ], function(
 	_Main
 	, Controller
 	, Layout
 	, _AddTitle
-	, _TitleSelection
 	, redmicConfig
 	, declare
 	, lang
@@ -36,23 +31,25 @@ define([
 	, ListImpl
 	, Pagination
 	, Total
-	, TabsDisplayer
 	, TemplateDisplayer
 	, TemplateContacts
 	, TemplateDocuments
 	, TemplateOrganisation
 	, TemplatePlatform
-	, TemplateInfo
-	, TemplateInfoHelp
 ){
-	return declare([Layout, Controller, _Main, _AddTitle, _TitleSelection], {
+	return declare([Layout, Controller, _Main, _AddTitle], {
 		//	summary:
-		//		Vista detalle de Activity.
+		//		Base de vistas detalle de la rama de actividades.
 
 		constructor: function(args) {
 
 			this.config = {
-				noScroll: true,
+				_titleRightButtonsList: [{
+					icon: "fa-print",
+					btnId: "report",
+					title: this.i18n.printToPdf
+				}],
+
 				documentTarget: "documents",
 				contactTarget: "contacts",
 				organisationTarget: "organisations",
@@ -65,9 +62,11 @@ define([
 		_organisationsConfig: function() {
 
 			return {
-				title: this.i18n.organisations,
+				width: 3,
+				height: 2,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
+					title: this.i18n.organisations,
 					target: this.organisationTarget,
 					template: TemplateOrganisation,
 					bars: [{
@@ -91,9 +90,11 @@ define([
 		_platformsConfig: function() {
 
 			return {
-				title: this.i18n.platforms,
+				width: 3,
+				height: 2,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
+					title: this.i18n.platforms,
 					target: this.platformTarget,
 					template: TemplatePlatform,
 					bars: [{
@@ -117,9 +118,11 @@ define([
 		_contactsConfig: function() {
 
 			return {
-				title: this.i18n.contacts,
+				width: 3,
+				height: 2,
 				type: declare([ListImpl, _Framework]),
 				props: {
+					title: this.i18n.contacts,
 					target: this.contactTarget,
 					template: TemplateContacts,
 					bars: [{
@@ -132,9 +135,11 @@ define([
 		_documentsConfig: function() {
 
 			return {
-				title: this.i18n.documents,
+				width: 3,
+				height: 2,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
+					title: this.i18n.documents,
 					target: this.documentTarget,
 					template: TemplateDocuments,
 					bars: [{
@@ -147,7 +152,7 @@ define([
 								btnId: "downloadPdf",
 								title: this.i18n.download,
 								condition: "url",
-								href: redmicConfig.viewPaths.bibliographyPDF
+								href: redmicConfig.viewPaths.bibliographyDetails
 							},{
 								icon: "fa-info-circle",
 								btnId: "details",
@@ -163,9 +168,11 @@ define([
 		_setAdditionalConfig: function(title, template, href) {
 
 			return {
-				title: title,
+				width: 3,
+				height: 2,
 				type: declare([ListImpl, _Framework, _ButtonsInRow, _Filter]),
 				props: {
+					title: title,
 					bars: [{
 						instance: Total
 					},{
@@ -206,13 +213,11 @@ define([
 
 		_clearModules: function() {
 
-			this._publish(this._widgets.info.getChannel("CLEAR"));
-
-			var items = this.widgetConfigs.additionalInfo.props.childTabs.length;
-
-			for (var i = 0; i < items; i++) {
-				this._publish(this._widgets.additionalInfo.getChildChannel("childInstances." + i, "CLEAR"));
-			}
+			this._publish(this._getWidgetInstance('info').getChannel('CLEAR'));
+			this._publish(this._getWidgetInstance('organisationList').getChannel('CLEAR'));
+			this._publish(this._getWidgetInstance('contactList').getChannel('CLEAR'));
+			this._publish(this._getWidgetInstance('platformList').getChannel('CLEAR'));
+			this._publish(this._getWidgetInstance('documentList').getChannel('CLEAR'));
 		},
 
 		_refreshModules: function() {
@@ -233,13 +238,13 @@ define([
 			var target = lang.replace(this._targetListRank, {
 					id: this.pathVariableId
 				}),
-				pathChild = 'childInstances.' + this._indexListRank;
+				widgetInstance = this._getWidgetInstance('additionalInfo');
 
-			this._publish(this._widgets.additionalInfo.getChildChannel(pathChild, "UPDATE_TARGET"), {
+			this._publish(widgetInstance.getChannel("UPDATE_TARGET"), {
 				target: target
 			});
 
-			this._publish(this._widgets.additionalInfo.getChildChannel(pathChild + ".filter", "REFRESH"));
+			this._publish(widgetInstance.getChildChannel("filter", "REFRESH"));
 		},
 
 		_itemAvailable: function(res) {

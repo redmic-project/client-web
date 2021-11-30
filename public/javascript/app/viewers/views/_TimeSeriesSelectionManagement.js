@@ -1,21 +1,20 @@
 define([
-	"app/viewers/views/_SeriesSelectionManagement"
-	, "app/viewers/views/_TimeSeriesDataManagement"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "redmic/modules/base/_Selection"
+	'alertify/alertify.min'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
+	, 'redmic/modules/base/_Selection'
 ], function(
-	_SeriesSelectionManagement
-	, _TimeSeriesDataManagement
+	alertify
 	, declare
 	, lang
 	, aspect
 	, _Selection
-){
-	return declare([_TimeSeriesDataManagement, _SeriesSelectionManagement, _Selection], {
+) {
+
+	return declare(_Selection, {
 		//	summary:
-		//		Extensión para la vista de  para el manejo de seleccionados.
+		//		Extensión para la vista de gráficas para el manejo de seleccionados.
 		//	description:
 		//		Añade funcionalidades de manejo de seleccionados a la vista.
 
@@ -24,103 +23,93 @@ define([
 			this.config = {
 				_selected: {},
 				_insertedInTimeSeriesData: {},
-				pathSeparator: "."
+				maxParams: 10
 			};
 
 			lang.mixin(this, this.config);
 
-			aspect.before(this, "_select", lang.hitch(this, this._selectTimeSeriesSelectionManagement));
-			aspect.before(this, "_deselect", lang.hitch(this, this._deselectTimeSeriesSelectionManagement));
+			aspect.after(this, '_setOwnCallbacksForEvents', lang.hitch(this,
+				this._setTimeSeriesSelectionManagementOwnCallbacksForEvents));
+
+			aspect.before(this, '_select', lang.hitch(this, this._selectTimeSeriesSelectionManagement));
+			aspect.before(this, '_deselect', lang.hitch(this, this._deselectTimeSeriesSelectionManagement));
+			aspect.before(this, '_clearSelection', lang.hitch(this, this._clearSelectionTimeSeriesSelectionManagement));
+		},
+
+		_setTimeSeriesSelectionManagementOwnCallbacksForEvents: function() {
+
+			this._onEvt('HIDE', lang.hitch(this, this._onTimeSeriesSelectionManagementHidden));
 		},
 
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			this._emitEvt("GROUP_SELECTED");
+			this._emitEvt('GROUP_SELECTED');
 		},
 
 		_selectTimeSeriesSelectionManagement: function(path) {
 
 			this._selected[path] = true;
-			this._insertedInTimeSeriesData = {};
+			this._clearChartsDefinitionData();
 		},
 
 		_deselectTimeSeriesSelectionManagement: function(path) {
 
 			delete this._selected[path];
-			this._insertedInTimeSeriesData = {};
+			this._clearChartsDefinitionData();
 		},
 
-		_generateTimeSeriesData: function() {
+		_clearSelectionTimeSeriesSelectionManagement: function() {
 
-			this._clear();
+			this._clearChartsDefinitionData();
+		},
 
-			for (var path in this._selected) {
-				if (path.split(".").length > 2) {
-					this._insertItemInDataChart(path);
+		_generateTimeSeriesDataFromSelectedData: function() {
+
+			this._clearChartsDefinitionData();
+
+			var selectedKeys = Object.keys(this._selected),
+				selectedCount = selectedKeys.length;
+
+			if (selectedCount > this.maxParams) {
+				this._selectionTooBigAlertify = alertify.message(this.i18n.cannotGetDataWithTooBigSelection, 0);
+				selectedCount = this.maxParams;
+			}
+
+			for (var i = 0; i < selectedCount; i++) {
+				var path = selectedKeys[i];
+				if (!this._insertedInTimeSeriesData[path]) {
+					if (this._insertItemInDataChart(path)) {
+						this._updateDataChart = true;
+						this._insertedInTimeSeriesData[path] = true;
+					}
 				}
 			}
 		},
 
-		_insertItemInDataChart: function(path) {
+		_getSelectionIsEmpty: function() {
 
-			if (this._indexDataList[path] !== undefined && !this._insertedInTimeSeriesData[path]) {
+			var selectedKeys = Object.keys(this._selected);
 
-				this._updateDataChart = true;
-				this._insertedInTimeSeriesData[path] = true;
-
-				var item = this._dataList[this._indexDataList[path]],
-					stationId = this._insertStation(this._dataList[this._indexDataList[this._pathParent(path)]]),
-					parameterId = this._insertParameter(item),
-					dataDefinitionIds = this._insertDataDefinitions(item);
-
-				this._insertOrUpdateIndex(stationId, parameterId, dataDefinitionIds);
-			}
-		},
-
-		_pathParent: function(path) {
-
-			var regex = /(.+)\.[0-9]+$/;
-
-			return path.replace(regex, "$1");
-		},
-
-		_insertDataDefinitions: function(item) {
-
-			var ids = {},
-				dataDefinitions = item.dataDefinitions;
-
-			for (var n = 0; n < dataDefinitions.length; n++) {
-
-				if (!ids[dataDefinitions[n].z]) {
-					ids[dataDefinitions[n].z] = [];
-				}
-
-				ids[dataDefinitions[n].z].push(dataDefinitions[n].id);
-
-				if (!this.seriesData.data.definitions[dataDefinitions[n].id]) {
-					var dataDef = lang.clone(dataDefinitions[n]);
-					delete dataDef.id;
-					delete dataDef.unit;
-
-					this.seriesData.data.definitions[dataDefinitions[n].id] = dataDef;
-				}
-			}
-
-			return ids;
+			return !selectedKeys.length;
 		},
 
 		_showChartIsValid: function() {
 
-			return Object.keys(this._insertedInTimeSeriesData).length ? true : false;
+			return !!Object.keys(this._insertedInTimeSeriesData).length;
 		},
 
-		_clear: function() {
+		_onTimeSeriesSelectionManagementHidden: function() {
 
-			this._insertedInTimeSeriesData = {};
+			this._selectionTooBigAlertify && this._selectionTooBigAlertify.dismiss();
+		},
+
+		_clearChartsDefinitionData: function() {
 
 			this.inherited(arguments);
+
+			this._insertedInTimeSeriesData = {};
 		}
 	});
 });

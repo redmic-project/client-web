@@ -36,9 +36,7 @@ define([
 						listButton: [{
 							condition: "url",
 							icon: "fa-file-pdf-o",
-							btnId: "downloadPdf",
-							href: this.viewPaths.bibliographyPDF,
-							title: "openViewer"
+							btnId: "downloadPdf"
 						},{
 							icon: "fa-info-circle",
 							btnId: "details",

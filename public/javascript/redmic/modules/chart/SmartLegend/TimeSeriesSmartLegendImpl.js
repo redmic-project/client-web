@@ -1,7 +1,6 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
 	, "redmic/modules/chart/SmartLegend/SmartLegend"
 	, "RWidgets/Utilities"
 	, "templates/ChartListHierarchical"
@@ -9,12 +8,12 @@ define([
 ], function(
 	declare
 	, lang
-	, aspect
 	, SmartLegend
 	, Utilities
 	, HierarchicalTemplate
 	, NonHierarchicalTemplate
-){
+) {
+
 	return declare(SmartLegend, {
 		//	summary:
 		//		Implementación de SmartLegend para representar información sobre capas basadas en
@@ -32,8 +31,9 @@ define([
 
 		_getAncestorLabel: function(ancestorData) {
 
-			if (Utilities.isValidNumber(ancestorData.z))
+			if (Utilities.isValidNumber(ancestorData.z)) {
 				return ancestorData.z;
+			}
 
 			return ancestorData.name;
 		},
@@ -48,20 +48,20 @@ define([
 			return NonHierarchicalTemplate;
 		},
 
-		_addDataToBrowser: function(data) {
+		_getDataToAddToBrowser: function(data) {
 
-			if (this._currentIndex !== "noGrouped") {
+			var unmutableData = lang.clone(data);
 
-				data = this._removeDefinitionIdsFromPaths(lang.clone(data));
+			if (this._currentIndex !== 'noGrouped') {
+				return this._removeDefinitionIdsFromPaths(unmutableData);
 			}
 
-			this.inherited(arguments);
+			return unmutableData;
 		},
 
 		_removeDefinitionIdsFromPaths: function(data) {
 
 			for (var i = 0; i < data.length; i++) {
-
 				var item = data[i],
 					itemPath = item.path;
 
@@ -76,7 +76,6 @@ define([
 			var pathSplitted = itemPath.split(this.pathSeparator);
 
 			if (pathSplitted.length > this._specificPathLengthLimit) {
-
 				pathSplitted.splice(this._specificPathLengthLimit, 1);
 				return pathSplitted.join(this.pathSeparator);
 			}
@@ -89,7 +88,6 @@ define([
 			var layerId = pubObj.layerId;
 
 			if (this._layerIdByPseudonym[layerId]) {
-
 				var colorIndex = pubObj.layerId.split(this._pseudonymSeparator).pop();
 				pubObj.colorIndex = parseInt(colorIndex, 10);
 				pubObj.layerId = this._layerIdByPseudonym[layerId];

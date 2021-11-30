@@ -192,106 +192,117 @@ define([
 
 			this.inherited(arguments);
 
-			var type, model, label, getModel, props, actions,
-				nodes = query('[data-redmic-type]', this.domNode),
+			var nodes = query('[data-redmic-type]', this.domNode),
 				defsList = [];
 
 			nodes.forEach(function(node) {
 
-				// Si el nodo no tiene atributos, nos vamos
-				if (!node.attributes) {
-					return;
-				}
-
-				// Obtenemos las propiedades definidas desde el nodo
-				type = domAttr.get(node, 'data-redmic-type');
-				model = domAttr.get(node, 'data-redmic-model');
-				props = domAttr.get(node, 'data-redmic-props');
-				actions = domAttr.get(node, 'data-redmic-actions');
-
-				var propertyName, targetProp,
-					actionsToJSON = {},
-					propsInputModule = {};
-
-				// Obtenemos las acciones definidas desde el nodo y transformadas a JSON
-				if (actions) {
-					actionsToJSON = this._stringToJson(actions);
-					// Para cada una de ellas le asignamos la llamada al método
-					for (var key in actionsToJSON) {
-						actionsToJSON[key] = lang.hitch(this, this._callbackWrapper, actionsToJSON[key]);
-					}
-				}
-
-				// Obtenemos las propiedades definidas desde el nodo y transformadas a JSON
-				var propsToJSON = props ? this._stringToJson(props) : {};
-				// Mezclamos las propiedades con las acciones
-				lang.mixin(propsToJSON, actionsToJSON);
-
-				// Obtenemos el modelo con el que sincronizar a partir de la ruta definida desde el nodo
-				if (model) {
-					if (this.modelChannel) {
-						propsInputModule.modelChannel = this.modelChannel;
-					}
-					propertyName = model;
-				} else if (propsToJSON.propertyName) {
-					propertyName = propsToJSON.propertyName;
-				} else {
-					propertyName = propsToJSON.label;
-				}
-
-				// Preparamos los nodos donde se colocarán los elementos del formulario
-				var controlsNode = node,
-					queryNode = query(node),
-					parentInput = null;
-
-				if (queryNode.parent || queryNode.children) {
-					var parentNode = queryNode.parent()[0];
-					// Si es un nodo de primer nivel
-					if (!domAttr.has(parentNode, 'data-redmic-type')) {
-						// Si es un nodo que no tiene hijos, abarca todo el espacio
-						if (queryNode.children().length) { // Si es un nodo que tiene hijos, reservamos sólo una parte
-							this.parentInput = propertyName;
-						}
-					} else {// Si es un nodo hijo (segundo nivel)
-						parentInput = this.parentInput;
-						controlsNode = put(node, '.embedded');
-					}
-				}
-
-				if (propertyName) {
-					targetProp = propertyName.split('/');
-					targetProp = targetProp[targetProp.length - 1];
-				}
-
-				// Procedemos a crear el input
-				var inputWidgetDfd = this._createInput(type, propsToJSON, propertyName, targetProp, propsInputModule);
-
-				defsList.push(inputWidgetDfd);
-
-				inputWidgetDfd && inputWidgetDfd.then(
-					lang.hitch(this, function(controlsNode, propertyName, parentInput, propsToJSON, inputWidget) {
-						var obj = {
-							channel: inputWidget.getChannel(),
-							node: controlsNode,
-							isValid: propsToJSON.required ? false : true
-						};
-
-						if (parentInput) {
-							obj.parent = parentInput;
-						}
-
-						if (propsToJSON.propertyNameDependence) {
-							obj.propertyNameDependence = propsToJSON.propertyNameDependence;
-						}
-
-						this.inputs[propertyName] = obj;
-				}, controlsNode, propertyName, parentInput, propsToJSON));
-
+				this._startupNode(node, defsList);
 			}, this);
 
 			promiseAll(defsList).then(lang.hitch(this, function(results) {
+
 				this.emit('inputs', this.inputs);
 			}));
+		},
+
+		_startupNode: function(node, defsList) {
+
+			// Si el nodo no tiene atributos, nos vamos
+			if (!node.attributes) {
+				return;
+			}
+
+			// Obtenemos las propiedades definidas desde el nodo
+			var type = domAttr.get(node, 'data-redmic-type'),
+				model = domAttr.get(node, 'data-redmic-model'),
+				props = domAttr.get(node, 'data-redmic-props'),
+				actions = domAttr.get(node, 'data-redmic-actions');
+
+			var propertyName, targetProp,
+				actionsToJSON = {},
+				propsInputModule = {};
+
+			// Obtenemos las acciones definidas desde el nodo y transformadas a JSON
+			if (actions) {
+				actionsToJSON = this._stringToJson(actions);
+				// Para cada una de ellas le asignamos la llamada al método
+				for (var key in actionsToJSON) {
+					actionsToJSON[key] = lang.hitch(this, this._callbackWrapper, actionsToJSON[key]);
+				}
+			}
+
+			// Obtenemos las propiedades definidas desde el nodo y transformadas a JSON
+			var propsToJSON = props ? this._stringToJson(props) : {};
+			// Mezclamos las propiedades con las acciones
+			lang.mixin(propsToJSON, actionsToJSON);
+
+			// Obtenemos el modelo con el que sincronizar a partir de la ruta definida desde el nodo
+			if (model) {
+				if (this.modelChannel) {
+					propsInputModule.modelChannel = this.modelChannel;
+				}
+				propertyName = model;
+			} else if (propsToJSON.propertyName) {
+				propertyName = propsToJSON.propertyName;
+			} else {
+				propertyName = propsToJSON.label;
+			}
+
+			// Preparamos los nodos donde se colocarán los elementos del formulario
+			var controlsNode = node,
+				queryNode = query(node),
+				parentInput = null;
+
+			if (queryNode.parent || queryNode.children) {
+				var parentNode = queryNode.parent()[0];
+				// Si es un nodo de primer nivel
+				if (!domAttr.has(parentNode, 'data-redmic-type')) {
+					// Si es un nodo que no tiene hijos, abarca todo el espacio
+					if (queryNode.children().length) { // Si es un nodo que tiene hijos, reservamos sólo una parte
+						this.parentInput = propertyName;
+					}
+				} else {// Si es un nodo hijo (segundo nivel)
+					parentInput = this.parentInput;
+					controlsNode = put(node, '.embedded');
+				}
+			}
+
+			if (propertyName) {
+				targetProp = propertyName.split('/');
+				targetProp = targetProp[targetProp.length - 1];
+			}
+
+			// Procedemos a crear el input
+			var inputWidgetDfd = this._createInput(type, propsToJSON, propertyName, targetProp, propsInputModule);
+			defsList.push(inputWidgetDfd);
+
+			inputWidgetDfd && inputWidgetDfd.then(lang.hitch(this, this._onInputCreated, {
+				controlsNode: controlsNode,
+				propertyName: propertyName,
+				parentInput: parentInput,
+				propsToJSON: propsToJSON
+			}));
+		},
+
+		_onInputCreated: function(args, inputWidget) {
+
+			var inputProps = args.propsToJSON;
+			var obj = {
+				channel: inputWidget.getChannel(),
+				node: args.controlsNode,
+				isValid: inputProps.required ? false : true
+			};
+
+			if (args.parentInput) {
+				obj.parent = args.parentInput;
+			}
+
+			if (inputProps.propertyNameDependence) {
+				obj.propertyNameDependence = inputProps.propertyNameDependence;
+			}
+
+			this.inputs[args.propertyName] = obj;
 		},
 
 		_stringToJson: function(/*String*/ stringToConvert) {
@@ -591,10 +602,6 @@ define([
 			this.inherited(arguments);
 
 			this._chkWidthAndChangeClass();
-
-			/*clearTimeout(this._timeoutHandler);
-
-			this._timeoutHandler = setTimeout(lang.hitch(this, this._chkWidthAndChangeClass), this.timeout);*/
 		},
 
 		_chkWidthAndChangeClass: function() {

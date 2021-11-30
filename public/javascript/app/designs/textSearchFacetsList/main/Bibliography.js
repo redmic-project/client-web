@@ -2,6 +2,7 @@ define([
 	"app/designs/base/_Main"
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
+	, 'app/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/DocumentList"
@@ -13,6 +14,7 @@ define([
 	_Main
 	, Controller
 	, Layout
+	, redmicConfig
 	, declare
 	, lang
 	, templateList
@@ -42,7 +44,7 @@ define([
 		_setMainConfigurations: function() {
 
 			this.filterConfig = this._merge([{
-				returnFields: ['id', 'title', 'author', 'year', 'documentType', 'language', 'url']
+				returnFields: redmicConfig.returnFields.document
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
@@ -67,21 +69,7 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.facetsConfig = this._merge([{
-				aggs:  {
-					"documentType": {
-						"terms": {
-							"field": "documentType.name",
-							"size": 100
-						}
-					},
-	 				"language": {
-	 					"terms": {
-	 						"field": "language",
-							"size": 20
-	 					}
-	 				}
-				},
-				openFacets: true
+				aggs: redmicConfig.aggregations.document
 			}, this.facetsConfig || {}]);
 		}
 	});

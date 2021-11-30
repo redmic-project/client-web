@@ -32,8 +32,6 @@ define([
 					CHANGE: "change"
 				},
 
-				classCols: '.col-xs-12.col-sm-6.col-md-6.col-lg-4',
-
 				classBox: ".boxContainer.borderRadius.mediumSolidContainer",
 
 				_activeBoxKey: null,
@@ -96,7 +94,7 @@ define([
 
 			var config = this.boxes[key];
 
-			var boxNode = put(this._containerItemsNode, 'div.module' + this.classCols),
+			var boxNode = put(this._containerItemsNode, 'div.module'),
 				contentBoxNode = put(boxNode, 'div.button.box.softSolidContainer.colorWhite');
 
 			if (config.icon) {

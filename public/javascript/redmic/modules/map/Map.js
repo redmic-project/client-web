@@ -1,27 +1,26 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/map/OpenLayers"
+	, 'node-uuid/uuid'
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
+	, './_StaticLayersManagement'
 	, "./_MapItfc"
 ], function(
 	declare
 	, lang
-	, OpenLayers
+	, uuid
 	, _Module
 	, _Show
+	, _StaticLayersManagement
 	, _MapItfc
-){
-	return declare([_Module, _MapItfc, _Show], {
-		//	summary:
-		//		Módulo de Map.
-		//	description:
-		//		Permite trabajar con un mapa para representar datos geográficos.
-		//		Escucha y publica a través de Mediator.
+) {
 
-		//	config: Object
-		//		Opciones y asignaciones por defecto.
+	return declare([_Module, _MapItfc, _Show, _StaticLayersManagement], {
+		//	summary:
+		//		Módulo de cliente para visualización de mapas.
+		//	description:
+		//		Permite trabajar con un mapa para representar datos geográficos, en forma de capas superpuestas.
 
 
 		constructor: function(args) {
@@ -29,7 +28,6 @@ define([
 			this.config = {
 				events: {
 					LAYER_ADD: "layerAdd",
-					LAYER_ADD_FAIL: "layerAddFail",
 					LAYER_REMOVE: "layerRemove",
 					LAYER_REMOVE_FAIL: "layerRemoveFail",
 					BASE_LAYER_CHANGE: "baseLayerChange",
@@ -48,8 +46,7 @@ define([
 					LAYER_INFO_FORWARDED: "layerInfoForwarded",
 					LAYER_QUERYING_FORWARDED: "layerQueryingForwarded",
 					LAYER_ADDED_TO_PANE: "layerAddedToPane",
-					LAYER_REMOVED_FROM_PANE: "layerRemovedFromPane"/*,
-					DRAGEND: "dragEnd"*/
+					LAYER_REMOVED_FROM_PANE: "layerRemovedFromPane"
 				},
 
 				actions: {
@@ -69,6 +66,7 @@ define([
 					CENTER_SET: "centerSet",
 					ZOOM_SET: "zoomSet",
 					BBOX_CHANGED: "bBoxChanged",
+					POPUP_OPENED: 'popupOpened',
 					POPUP_CLOSED: "popupClosed",
 					MAP_CLICKED: "mapClicked",
 					CLOSE_POPUP: "closePopup",
@@ -87,18 +85,23 @@ define([
 					LAYER_REMOVED_CONFIRMED: "layerRemovedConfirmed",
 					SET_QUERYABLE_CURSOR: "setQueryableCursor",
 					MAP_SHOWN: "mapShown",
-					MAP_HIDDEN: "mapHidden"
+					MAP_HIDDEN: "mapHidden",
+					CLEAR: 'clear'
 				},
 
 				ownChannel: "map",
 
-				baseLayers: [
-					['eoc-map', 'eoc-overlay'],
-					'topografico',
-					'ortofoto'
-				],
-				defaultBaseLayer: 0,
-				_relatedBaseLayers: {}
+				defaultCenter: [28.3, -16.0],
+				defaultZoom: 7,
+				initialBounds: [[27.3, -18.3], [29.5, -13.1]],
+
+				minZoom: 1,
+				maxZoom: 21,
+
+				_overlayLayers: {},
+				_optionalLayerKeys: [],
+				_baseLayerKeys: [],
+				_baseLayerInstances: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -160,6 +163,9 @@ define([
 			},{
 				channel : this.getChannel("SET_QUERYABLE_CURSOR"),
 				callback: "_subSetQueryableCursor"
+			},{
+				channel : this.getChannel('CLEAR'),
+				callback: '_subClear'
 			});
 		},
 
@@ -168,11 +174,6 @@ define([
 			this.publicationsConfig.push({
 				event: 'LAYER_ADD',
 				channel: this.getChannel("LAYER_ADDED")
-				//callback: "_pubLayerAdded"
-			},{
-				event: 'LAYER_ADD_FAIL',
-				channel: this.getChannel("LAYER_ADDED"),
-				callback: "_pubLayerAddFailed"
 			},{
 				event: 'LAYER_REMOVE',
 				channel: this.getChannel("LAYER_REMOVED"),
@@ -183,8 +184,7 @@ define([
 				callback: "_pubLayerRemoveFailed"
 			},{
 				event: 'BASE_LAYER_CHANGE',
-				channel: this.getChannel("BASE_LAYER_CHANGED"),
-				callback: "_pubBaseLayerChanged"
+				channel: this.getChannel("BASE_LAYER_CHANGED")
 			},{
 				event: 'BASE_LAYER_CHANGE_FAIL',
 				channel: this.getChannel("BASE_LAYER_CHANGED"),
@@ -210,6 +210,9 @@ define([
 				event: 'BBOX_CHANGE',
 				channel: this.getChannel("BBOX_CHANGED"),
 				callback: "_pubBBoxChanged"
+			},{
+				event: 'POPUP_OPEN',
+				channel: this.getChannel('POPUP_OPENED')
 			},{
 				event: 'POPUP_CLOSE',
 				channel: this.getChannel("POPUP_CLOSED")
@@ -237,130 +240,60 @@ define([
 			});
 		},
 
-		_changeBaseLayer: function(layer, layerGroup) {
+		_changeBaseLayer: function(layerId) {
 
-			var layerInstance,
-				layerLabel;
+			if (!layerId || !layerId.length) {
+				this._emitEvt('BASE_LAYER_CHANGE_FAIL', layerId);
+				return;
+			}
 
-			if (typeof layer === "object" && layer instanceof Array) {
-				for (var i = 0; i < layer.length; i++) {
-					this._changeBaseLayer(layer[i], layer);
-				}
-			} else {
-				if (!(layer && layer.length)) {
-					this._emitEvt('BASE_LAYER_CHANGE_FAIL', layer);
+			var layerInstance = this._baseLayerInstances[layerId];
+			if (!layerInstance) {
+				layerInstance = this._createBaseLayer(layerId);
+				if (!layerInstance) {
 					return;
 				}
-
-				var layerIsGroupLeader = layerGroup && layerGroup.indexOf(layer) === 0;
-
-				if (layerIsGroupLeader) {
-					this._relatedBaseLayers[layer] = layerGroup;
-				}
-
-				var layerObj = OpenLayers.get(layer);
-				layerInstance = layerObj.instance;
-				if (layerGroup && !layerIsGroupLeader) {
-					layerLabel = '';
-				} else {
-					layerLabel = layerObj.label;
-				}
 			}
+
+			this._cleanOtherBaseLayers(layerInstance);
+			this.addLayer(layerInstance, layerId);
+			this._setLayerZIndex(layerInstance, 0);
+		},
+
+		_createBaseLayer: function(layerId) {
+
+			var layerInstance = this._getStaticLayerInstance(layerId);
 
 			if (!layerInstance) {
-				this._emitEvt('BASE_LAYER_CHANGE_FAIL', layer);
+				this._emitEvt('BASE_LAYER_CHANGE_FAIL', layerId);
 				return;
 			}
 
-			this._cleanBaseLayers(layerInstance, layerGroup);
-			this._addBaseLayer(layerInstance, layer, layerLabel);
+			this._baseLayerInstances[layerId] = layerInstance;
+
+			var layerLabel = this._getStaticLayerLabel(layerId);
+
+			this._addLayerToSelector(layerInstance, layerLabel);
+
+			return layerInstance;
 		},
 
-		_cleanBaseLayers: function(layer, layerGroup) {
-			// Limpiamos del mapa todas las capas base que no sean la nueva (si estuviera)
+		_cleanOtherBaseLayers: function(layerInstance) {
 
-			for (var key in this.layers) {
-				if (layerGroup && layerGroup.indexOf(key) !== -1) {
-					continue;
-				}
-
-				var layerObj = this.layers[key];
-
-				if (!layerObj || !this._isBaseLayer(layerObj)) {
-					continue;
-				}
-
-				var mapLayer = layerObj.layer;
-				if (this.hasLayer(mapLayer) && mapLayer !== layer) {
-					this.removeLayer(mapLayer);
+			for (var key in this._baseLayerInstances) {
+				var mapLayerInstance = this._baseLayerInstances[key];
+				if (this.hasLayer(mapLayerInstance) && mapLayerInstance !== layerInstance) {
+					this.removeLayer(mapLayerInstance);
 				}
 			}
 		},
 
-		_isBaseLayer: function(layerObj) {
+		_subAddLayer: function(req) {
 
-			return layerObj.type === this.layerTypes.base;
+			this._addMapLayer(req);
 		},
 
-		_isForcedLayer: function(layerObj) {
-
-			return layerObj.type === this.layerTypes.forced;
-		},
-
-		_isOptionalLayer: function(layerObj) {
-
-			return layerObj.type === this.layerTypes.optional;
-		},
-
-		_addBaseLayer: function(layerInstance, layerId, layerLabel) {
-
-			if (!this._existsBaseLayer(layerId)) {
-				this.layers[layerId] = {
-					layer: layerInstance,
-					type: this.layerTypes.base,
-					order: 1
-				};
-				this.addLayer(layerInstance, layerId);
-				this.controlLayers.addBaseLayer(layerInstance, layerLabel);
-			} else {
-				var previousBaseLayer = this._getExistingBaseLayer(layerId);
-				if (previousBaseLayer) {
-					this.addLayer(previousBaseLayer);
-				} else {
-					// Se buscaba una baselayer que no existia anteriormente
-					// TODO esto no debería publicar un BASE_LAYER_CHANGE_FAIL??
-					this._emitEvt('BASE_LAYER_CHANGE', layerInstance);
-				}
-			}
-		},
-
-		_existsBaseLayer: function(layerId) {
-
-			if (this.layers.hasOwnProperty(layerId) && this._isBaseLayer(this.layers[layerId])) {
-				return true;
-			}
-
-			return false;
-		},
-
-		_getExistingBaseLayer: function(layerId) {
-
-			if (!this.controlLayers) {
-				return;
-			}
-
-			var previousBaseLayers = this.controlLayers._layers;
-
-			for (var key in previousBaseLayers) {
-				var baseLayer = previousBaseLayers[key].layer;
-
-				if (baseLayer && baseLayer._leaflet_id === layerId) {
-					return baseLayer;
-				}
-			}
-		},
-
-		_subAddLayer: function(obj) {
+		_addMapLayer: function(obj) {
 
 			var layer = obj.layer;
 
@@ -370,8 +303,8 @@ define([
 			}
 
 			var optional = obj.optional,
-				order = obj.order ? obj.order + 1 : null,
-				layerId = obj.layerId || layer.id || null,
+				order = obj.order,
+				layerId = this._getLayerId(obj) || uuid.v4(),
 				layerLabel = obj.layerLabel || layerId;
 
 			// Si la capa es un módulo
@@ -393,37 +326,53 @@ define([
 
 			this.addLayer(layer, layerId);
 
-			var type;
-
 			if (optional) {
-				type = this.layerTypes.optional;
-				this.controlLayers.addOverlay(layer, layerLabel);
+				this._addLayerToSelector(layer, layerLabel, true);
 			} else {
-				type = this.layerTypes.forced;
+				if (order) {
+					var nextOrder = 0;
+					for (var key in this._overlayLayers) {
+						var overlayLayer = this._overlayLayers[key];
+						if (overlayLayer.optional) {
+							nextOrder++;
+						}
+					}
+					order += nextOrder;
+				}
 			}
 
-			if (!this._hasLayer(layerId)) {
-				this.layers[layerId] = {
-					layer: layer,
-					type: type
+			var overlayLayerObj = this._overlayLayers[layerId];
+
+			if (!overlayLayerObj) {
+				overlayLayerObj = this._overlayLayers[layerId] = {
+					instance: layer,
+					optional: !!optional
 				};
 			} else {
-				this._setLayerZIndex(layer, this.layers[layerId].order);
+				this._setLayerZIndex(layer, overlayLayerObj.order);
 			}
 
 			if (order) {
-				this.layers[layerId].order = order;
+				overlayLayerObj.order = order;
 				this._setLayerZIndex(layer, order);
 			}
 		},
 
-		_hasLayer: function(layerId) {
+		_getLayerId: function(layerObj) {
 
-			if (this.layers.hasOwnProperty(layerId)) {
-				return true;
+			if (!layerObj) {
+				return;
 			}
 
-			return false;
+			if (layerObj.layerId) {
+				return layerObj.layerId;
+			}
+
+			if (layerObj.layer) {
+				return this._getLayerId(layerObj.layer) || layerObj.id;
+			}
+
+			return layerObj._leaflet_id || (layerObj.options && layerObj.options.id);
 		},
 
 		_subRemoveLayer: function(obj) {
@@ -432,13 +381,12 @@ define([
 				keepInstance = obj.keepInstance,
 				layerId;
 
-			if (typeof layer === "object") {
-
-				layerId = obj.layerId;
-
+			if (typeof layer === 'object') {
 				if (layer.isInstanceOf && layer.isInstanceOf(_Module)) {
 					layer = layer.layer;
 				}
+
+				layerId = this._getLayerId(obj);
 
 				// Si no contiene una capa de tipo leaflet (D3, por ejemplo)
 				if (!layer) {
@@ -454,43 +402,58 @@ define([
 
 			if (layerId === undefined) {
 				this.removeLayer(layer);
-			} else if (this._hasLayer(layerId)) {
-				this._removeLayer(layerId, this.layers[layerId], keepInstance);
+			} else if (this._overlayLayers[layerId]) {
+				this._removeMapLayer(layerId, keepInstance);
+			} else if (this._baseLayerInstances[layerId]) {
+				this._removeMapBaseLayer(layerId, keepInstance);
 			} else {
 				this._emitEvt('LAYER_REMOVE_FAIL', layer);
 			}
 		},
 
-		_removeLayer: function(layerId, layerObj, keepInstance) {
+		_removeMapLayer: function(layerId, keepInstance) {
 
-			var layer = layerObj.layer,
+			var layerObj = this._overlayLayers[layerId],
+				layer = layerObj.instance,
 				order = layerObj.order;
 
-			if (!this._isBaseLayer(layerObj) && !keepInstance && order) {
-				for (var key in this.layers) {
-					var layerObject = this.layers[key];
+			if (!keepInstance && order) {
+				for (var key in this._overlayLayers) {
+					var layerObject = this._overlayLayers[key];
 
 					if (layerObject.order > order) {
 						layerObject.order--;
-						this._setLayerZIndex(layerObject.layer, layerObject.order);
+						this._setLayerZIndex(layerObject.instance, layerObject.order);
 					}
 				}
 			}
 
 			if (!keepInstance) {
-				delete this.layers[layerId];
+				delete this._overlayLayers[layerId];
 			}
 
-			if (this._isOptionalLayer(layerObj) || this._isBaseLayer(layerObj)) {
-				this.controlLayers.removeLayer(layer);
+			if (layerObj.optional) {
+				this._removeLayerFromSelector(layer);
 			}
 
 			this.removeLayer(layer);
 		},
 
-		_subChangeBaseLayer: function(request) {
+		_removeMapBaseLayer: function(layerId, keepInstance) {
 
-			this._changeBaseLayer(request.layer);
+			var layerInstance = this._baseLayerInstances[layerId];
+
+			if (!keepInstance) {
+				delete this._baseLayerInstances[layerId];
+			}
+
+			this._removeLayerFromSelector(layerInstance);
+			this.removeLayer(layerInstance);
+		},
+
+		_subChangeBaseLayer: function(req) {
+
+			this._changeBaseLayer(req.layer);
 		},
 
 		_subSetCenter: function(req) {
@@ -575,37 +538,36 @@ define([
 		_subReorderLayers: function(request) {
 
 			var layerId = request.layerId,
-				layerObj = this.layers[layerId],
+				layerObj = this._overlayLayers[layerId],
 				newPosition = request.newPosition + 1,
 				oldPosition = request.oldPosition + 1,
 				diff = newPosition - oldPosition,
 				key, layerObject;
 
 			if (diff < 0) {
-				for (key in this.layers) {
-					layerObject = this.layers[key];
+				for (key in this._overlayLayers) {
+					layerObject = this._overlayLayers[key];
 
 					if (layerObject.order >= newPosition && layerObject.order < oldPosition) {
 						layerObject.order++;
-						this._setLayerZIndex(layerObject.layer, layerObject.order);
+						this._setLayerZIndex(layerObject.instance, layerObject.order);
 					}
 				}
 
 				layerObj.order -= Math.abs(diff);
-				this._setLayerZIndex(layerObj.layer, layerObj.order);
+				this._setLayerZIndex(layerObj.instance, layerObj.order);
 			} else {
-
-				for (key in this.layers) {
-					layerObject = this.layers[key];
+				for (key in this._overlayLayers) {
+					layerObject = this._overlayLayers[key];
 
 					if (layerObject.order <= newPosition && layerObject.order > oldPosition) {
 						layerObject.order--;
-						this._setLayerZIndex(layerObject.layer, layerObject.order);
+						this._setLayerZIndex(layerObject.instance, layerObject.order);
 					}
 				}
 
 				layerObj.order += Math.abs(diff);
-				this._setLayerZIndex(layerObj.layer, layerObj.order);
+				this._setLayerZIndex(layerObj.instance, layerObj.order);
 			}
 		},
 
@@ -638,29 +600,9 @@ define([
 			}
 		},
 
-		_pubLayerAdded: function(channel, evt) {
+		_subClear: function() {
 
-			this._publish(channel, {
-				success: true,
-				layer: evt.layer
-			});
-		},
-
-		_pubLayerAddFailed: function(channel, layer) {
-
-			this._publish(channel, {
-				success: false,
-				errorCode: 1,
-				layer: layer
-			});
-
-			this._emitEvt('ERROR', channel);
-		},
-
-		_pubLayerRemoved: function(channel, evt) {
-
-			evt.success = true;
-			this._publish(channel, evt);
+			this.clear();
 		},
 
 		_pubLayerRemoveFailed: function(channel, layer) {
@@ -670,52 +612,25 @@ define([
 				errorCode: 1,
 				layer: layer
 			});
-
-			this._emitEvt('ERROR', channel);
 		},
 
-		_pubBaseLayerChanged: function(channel, baseLayer) {
+		_pubLayerRemoved: function(channel, evt) {
 
-			var layerInstance = baseLayer.layer || baseLayer,
-				layerId = layerInstance._leaflet_id,
-				relatedLayerIds = this._relatedBaseLayers[layerId];
-
-			if (relatedLayerIds) {
-				this._changeBaseLayer(relatedLayerIds);
-			}
-
-			this.bringLayerToBack(layerInstance);
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.layer,
-					action: TRACK.action.click,
-					label: 'Basemap changed: ' + layerId
-				}
-			});
-
-			this._publish(channel, {
-				success: true,
-				baseLayer: baseLayer
-			});
+			evt.success = true;
+			this._publish(channel, evt);
 		},
 
-		_pubBaseLayerChangeFailed: function(channel, baseLayer) {
+		_pubBaseLayerChangeFailed: function(channel, layerId) {
 
 			this._publish(channel, {
 				success: false,
-				errorCode: 1,
-				baseLayer: baseLayer
+				layerId: layerId
 			});
-
-			this._emitEvt('ERROR', channel);
 		},
 
 		_pubCenterSet: function(channel) {
 
 			this._publish(channel, {
-				success: true,
 				latLng: this.getCenter()
 			});
 		},
@@ -726,7 +641,6 @@ define([
 
 			if (newZoom !== this._zoomValue) {
 				this._publish(channel, {
-					success: true,
 					zoom: evt.target._zoom
 				});
 
@@ -759,33 +673,67 @@ define([
 				bbox1.lat2 === bbox2.lat2 && bbox1.lng2 === bbox2.lng2);
 		},
 
-		_afterMapLoaded: function() {
+		_loadBaseLayers: function() {
 
-			for (var i = 0; i < this.baseLayers.length; i++) {
-				var baseLayer = this.baseLayers[i];
-				this._changeBaseLayer(baseLayer);
+			if (!this._baseLayerKeys.length) {
+				this._baseLayerKeys = this._getBaseLayers();
 			}
-			this._changeBaseLayer(this.baseLayers[this.defaultBaseLayer]);
-			this._addContainerListeners();
+
+			for (var i = 0; i < this._baseLayerKeys.length; i++) {
+				var baseLayerKey = this._baseLayerKeys[i];
+				this._changeBaseLayer(baseLayerKey);
+			}
+			this._changeBaseLayer(this._baseLayerKeys[0]);
+		},
+
+		_loadOptionalLayers: function() {
+
+			if (!this._optionalLayerKeys.length) {
+				this._optionalLayerKeys = this._getOptionalLayers();
+			}
+
+			for (var i = 0; i < this._optionalLayerKeys.length; i++) {
+				var optionalLayerKey = this._optionalLayerKeys[i],
+					layerInstance = this._getStaticLayerInstance(optionalLayerKey);
+
+				this._addMapLayer({
+					layer: layerInstance,
+					layerId: optionalLayerKey,
+					optional: true,
+					order: i + 1
+				});
+			}
+		},
+
+		_isBaseLayer: function(layerId) {
+
+			return this._baseLayerKeys.indexOf(layerId) !== -1;
 		},
 
 		clear: function() {
 
 			this._clearLayers();
-			this._changeBaseLayer(this.baseLayers[this.defaultBaseLayer]);
+			this._changeBaseLayer(this._baseLayerKeys[0]);
+			this._loadOptionalLayers();
 			this._resetMapPosition();
 		},
 
 		_clearLayers: function() {
 
-			for (var key in this.layers) {
-				this._removeLayer(key, this.layers[key]);
+			for (var key in this._overlayLayers) {
+				this._removeMapLayer(key);
 			}
 		},
 
 		_resetMapPosition: function() {
 
-			this.setView(this.extent, this.zoom);
+			if (this._mapPositionAlreadyReset) {
+				this.fitBounds(this.initialBounds, { animate: false });
+				return;
+			}
+
+			this.setView(this.defaultCenter, this.defaultZoom);
+			this._mapPositionAlreadyReset = true;
 		},
 
 		_getShownOrHiddenResponseObject: function() {

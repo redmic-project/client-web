@@ -1,30 +1,30 @@
 define([
-	"app/user/views/_ExternalUserBaseView"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/text!./templates/TermsAndConditions.html"
+	'app/user/views/_ExternalUserBaseView'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/text!./templates/TermsAndConditions.html'
 ], function(
 	_ExternalUserBaseView
 	, declare
 	, lang
 	, template
-){
+) {
+
 	return declare(_ExternalUserBaseView, {
-		// summary:
-		// 	Vista de TermsAndConditions
+		//	summary:
+		//		Vista de TermsAndConditions
 		//
-		// description:
-		// 	Permite ver los términos y condiciones de la plataforma
+		//	description:
+		//		Permite ver los términos y condiciones de la plataforma
 
-
-		constructor: function (args) {
+		constructor: function(args) {
 			this.config = {
-				templateProps:  {
+				templateProps: {
 					templateString: template,
 					i18n: this.i18n,
 					_onCloseTermCondition: this._onCloseTermCondition
 				},
-				ownChannel: "termsAndConditions"
+				ownChannel: 'termsAndConditions'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -38,7 +38,7 @@ define([
 			//		callback private
 			//
 
-			window.location.href = "register";
+			window.history.go(-1);
 		}
 	});
 });

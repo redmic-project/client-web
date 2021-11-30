@@ -8,6 +8,7 @@ define([
 	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Selection'
+	, 'redmic/modules/base/_Show'
 	, 'redmic/modules/base/_ShowInPopup'
 ], function(
 	alertify
@@ -19,10 +20,11 @@ define([
 	, Credentials
 	, _Module
 	, _Selection
+	, _Show
 	, _ShowInPopup
 ) {
 
-	return declare([_Module, _Selection], {
+	return declare([_Module, _Show, _Selection], {
 		//	summary:
 		//		Gestor de selecciones persistentes.
 		//	description:
@@ -53,6 +55,11 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+		},
+
+		_setOwnCallbacksForEvents: function() {
+
+			this._onEvt('ANCESTOR_HIDE', lang.hitch(this, this._onSelectionManagerAncestorHidden));
 		},
 
 		_setConfigurations: function() {
@@ -167,7 +174,10 @@ define([
 		_saveNewSelection: function(selectionId) {
 
 			var promptCbk = lang.hitch(this, this._getSaveParametersAndStore, selectionId),
-				prompt = alertify.prompt(this.i18n.newNameMessage, '', promptCbk);
+				prompt = alertify.prompt(this.i18n.newNameMessage, '', promptCbk, function() {
+
+					this.destroy();
+				});
 
 			prompt.setHeader(this.i18n.saveSelection);
 			this._addSharedCheckbox(prompt);
@@ -186,10 +196,6 @@ define([
 		},
 
 		_addSharedCheckbox: function(prompt) {
-
-			if (this._sharedCheckbox) {
-				return;
-			}
 
 			var promptContent = prompt.elements.content,
 				sharedCheckboxId = this.getOwnChannel() + '-sharedCheckbox';
@@ -225,14 +231,14 @@ define([
 
 			var shareUrl = window.location + '?settings-id=' + res.data[this.idProperty];
 
-			alertify.message('<i class="fa fa-share-alt"></i> ' + this.i18n.copyToClipboard, 0, lang.hitch(this, function(shareUrl) {
+			alertify.message('<i class="fa fa-share-alt"></i> ' + this.i18n.copyToClipboard, 0, lang.hitch(this, function(url) {
 
 				// TODO este mecanismo se debe abstraer para reutilizarlo
 				if (!navigator.clipboard) {
 					console.error('Copy to clipboard failed!');
 					return;
 				}
-				navigator.clipboard.writeText(shareUrl);
+				navigator.clipboard.writeText(url);
 			}, shareUrl));
 		},
 
@@ -249,7 +255,7 @@ define([
 				this.i18n.saveSelection,
 				this.i18n.loseSelectionConfirmationMessage,
 				overwriteCbk,
-				function() {}
+				null
 			).set('labels', {
 				ok: this.i18n.ok,
 				cancel: this.i18n.cancel
@@ -318,6 +324,11 @@ define([
 					id: settingsId
 				});
 			}
+		},
+
+		_onSelectionManagerAncestorHidden: function() {
+
+			this._loadSelection && this._publish(this._loadSelection.getChannel('HIDE'));
 		}
 	});
 });

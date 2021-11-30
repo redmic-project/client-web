@@ -352,7 +352,13 @@ define([
 
 		_parseError: function(res) {
 
-			var response = res.response;
+			var response = res.response,
+				status = response.status;
+
+			// TODO el server expressjs no debería responder con status bueno si le llega la petición a él, revisar
+			if (status < 400) {
+				status = 500;
+			}
 
 			// TODO usar response.data directamente cuando no se envuelva la respuesta con error
 			var data = response.data;
@@ -361,7 +367,7 @@ define([
 			}
 
 			return {
-				status: response.status,
+				status: status,
 				data: data,
 				text: response.text,
 				url: response.url,

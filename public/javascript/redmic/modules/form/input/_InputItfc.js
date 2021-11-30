@@ -17,6 +17,7 @@ define([
 
 			return lang.mixin(this.inherited(arguments), {
 				"_createInputInstance": {},
+				"_createInputNodes": {},
 				"_valueChanged": {},
 				"_submit": {},
 				"_updateIsValid": {},

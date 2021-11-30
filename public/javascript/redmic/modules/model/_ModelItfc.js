@@ -30,7 +30,8 @@ define([
 				"_getPropertyInstance": {},
 				"_getIdPropertyValue": {},
 				"_addValue": {},
-				"_deleteValue": {}
+				"_deleteValue": {},
+				"_getPropertySchema": {}
 			});
 		}
 	});

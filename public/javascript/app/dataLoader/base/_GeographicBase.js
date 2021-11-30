@@ -94,7 +94,6 @@ define([
 			}, this.filterConfig || {}]);
 
 			this.compositeConfig = this._merge([{
-				indicatorLeft: true
 			}, this.compositeConfig || {}]);
 		},
 

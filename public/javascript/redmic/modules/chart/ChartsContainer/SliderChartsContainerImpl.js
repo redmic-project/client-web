@@ -1,14 +1,14 @@
 define([
 	'd3/d3.min'
 	, 'd3Tip/index'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/_base/kernel"
-	, "dojo/aspect"
-	, "dojo/Deferred"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/_base/kernel'
+	, 'dojo/aspect'
+	, 'dojo/Deferred'
 	, 'moment/moment.min'
-	, "redmic/modules/chart/ChartsContainer/_TemporalAxisDrawing"
-	, "./ChartsContainer"
+	, 'redmic/modules/chart/ChartsContainer/_TemporalAxisDrawing'
+	, './ChartsContainer'
 ], function(
 	d3
 	, d3Tip
@@ -20,7 +20,8 @@ define([
 	, moment
 	, _TemporalAxisDrawing
 	, ChartsContainer
-){
+) {
+
 	return declare([ChartsContainer, _TemporalAxisDrawing], {
 		//	summary:
 		//		Implementación de contenedor de capas con slider horizontal.
@@ -62,7 +63,7 @@ define([
 		_defineSliderSubscriptions: function() {
 
 			if (!this.getChartsContainerChannel) {
-				console.error("ChartsContainer channel not defined for slider '%s'", this.getChannel());
+				console.error('ChartsContainer channel not defined for slider "%s"', this.getChannel());
 			}
 
 			this.subscriptionsConfig.push({
@@ -370,6 +371,10 @@ define([
 		},
 
 		_getTooltipContent: function(handleSelector) {
+
+			if (!this._oldTemporalFocus) {
+				return '';
+			}
 
 			var format = kernel.locale === 'en' ? 'MM/DD/YYYY HH:mm:ss' : 'DD/MM/YYYY HH:mm:ss',
 				handleIndex = handleSelector === 'w' ? 0 : 1,

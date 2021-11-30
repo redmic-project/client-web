@@ -1,13 +1,13 @@
 define([
-	"app/viewers/views/_SeriesSelectionManagement"
+	"app/details/views/_ActivityTimeSeriesDataManagement"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(
-	_SeriesSelectionManagement
+	_ActivityTimeSeriesDataManagement
 	, declare
 	, lang
 ){
-	return declare([_SeriesSelectionManagement], {
+	return declare([_ActivityTimeSeriesDataManagement], {
 		//	summary:
 		//		Extensión para el parseo de los datos.
 		//	description:
@@ -25,6 +25,8 @@ define([
 		_generateObjectCollectionSeriesData: function(data) {
 
 			this._clear();
+
+			this.seriesData.data.activityId = data.activityId;
 
 			var stationId = this._insertStation(data.site),
 				measurements = data.measurements;

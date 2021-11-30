@@ -55,8 +55,6 @@ define([
 			this.intervalConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				items: this._generateOptionsIntervalDefault(),
-				indicatorLeft: true,
-				notIndicator: true,
 				classTooltip: "tooltipButtonMenu tooltipButtonChart"
 			}, this.intervalConfig || {}]);
 
@@ -94,8 +92,6 @@ define([
 						4: true*/
 					}
 				},
-				indicatorLeft: true,
-				notIndicator: true,
 				classTooltip: "tooltipButtonMenu tooltipButtonChart"
 			}, this.metricsConfig || {}]);
 		},

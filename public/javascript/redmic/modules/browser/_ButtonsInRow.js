@@ -145,8 +145,17 @@ define([
 
 		_buttonsInRowAddRow: function(retValue, args) {
 
-			var idProperty = args[0],
-				instance = this._rows[idProperty].instance,
+			var idProperty = args[0];
+
+			if (!idProperty) {
+				return;
+			}
+
+			if (typeof idProperty === 'number') {
+				idProperty = idProperty.toString();
+			}
+
+			var instance = this._rows[idProperty].instance,
 				layerId = idProperty.split(this.pathSeparator).pop(),
 				dfd = this._dfdChangeButtonClass[layerId];
 

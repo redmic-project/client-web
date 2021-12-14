@@ -140,7 +140,7 @@ define({
 		, "service-ogc": "OGC services"
 		, "srs": "SRS"
 		, "abstractLayer": "Description"
-		, "styleLayer": "Style layer"
+		, "styleLayer": "Available styles"
 		, "style": "Style"
 		, "addLayers": "Add layers"
 		, "backToMap": "Go back to map"
@@ -1298,6 +1298,10 @@ define({
 
 		, "layerRefreshInterval": "Layer auto-refresh interval"
 		, "layerName": "Layer name"
+		, "queryable": "Queryable"
+		, "sourceInfo": "Information from source"
+		, "attribution": "Attribution"
+		, "shownInAtlas": "Shown in Atlas"
 
 
 		//Para capas que no se pueden cambiar las keys

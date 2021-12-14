@@ -3,12 +3,14 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
 	, 'redmic/modules/map/_AtlasLayersManagement'
 	, "redmic/modules/map/LeafletImpl"
 	, "redmic/modules/map/layer/WmsLayerImpl"
 	, "RWidgets/RedmicUtilities"
 	, "templates/ServiceOGCTitle"
 	, "templates/ServiceOGCInfo"
+	, "templates/ServiceOGCSourceInfo"
 //	, "templates/ServiceOGCImage"
 	, "./_DetailsBase"
 ], function(
@@ -16,12 +18,14 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, TemplateDisplayer
 	, _AtlasLayersManagement
 	, LeafletImpl
 	, WmsLayerImpl
 	, RedmicUtilities
 	, TemplateTitle
 	, TemplateInfo
+	, TemplateSourceInfo
 //	, TemplateImage
 	, _DetailsBase
 ) {
@@ -39,6 +43,7 @@ define([
 
 			this.activityLocalTarget = "activitiesLayer";
 			this.infoLayerTarget = 'infoLayerTarget';
+			this.sourceInfoLayerTarget = 'sourceInfoLayerTarget';
 
 			this.config = {
 				templateTitle: TemplateTitle,
@@ -54,12 +59,25 @@ define([
 
 			this.target.push(this.activityTarget);
 
-			this.widgetConfigs = this._merge([
-				this.widgetConfigs || {},
-				{
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
 				info: {
+					height: 3,
 					props: {
 						target: this.infoLayerTarget
+					}
+				},
+				sourceInfo: {
+					width: 3,
+					height: 6,
+					type: TemplateDisplayer,
+					props: {
+						title: this.i18n.sourceInfo,
+						template: TemplateSourceInfo,
+						target: this.sourceInfoLayerTarget,
+						"class": "containerDetails",
+						classEmptyTemplate: "contentListNoData",
+						associatedIds: [this.ownChannel],
+						shownOption: this.shownOptionInfo
 					}
 				},
 				activityList: {
@@ -145,6 +163,10 @@ define([
 			this._emitEvt('INJECT_ITEM', {
 				data: data,
 				target: this.infoLayerTarget
+			});
+			this._emitEvt('INJECT_ITEM', {
+				data: data,
+				target: this.sourceInfoLayerTarget
 			});
 
 			this._publishMapBox('CLEAR');

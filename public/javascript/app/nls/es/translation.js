@@ -140,7 +140,7 @@ define({
 	, "service-ogc": "Servicios OGC"
 	, "srs": "SRS"
 	, "abstractLayer": "Descripción"
-	, "styleLayer": "Estilo capa"
+	, "styleLayer": "Estilos disponibles"
 	, "style": "Estilo"
 	, "addLayers" : "Añadir capas"
 	, "backToMap" : "Volver al mapa"
@@ -789,7 +789,7 @@ define({
 	, "enable": "Activar"
 	, "disable": "Desactivar"
 	, "enabled": "Activo"
-	, "disabled": "Desactivo"
+	, "disabled": "Desactivado"
 	, "role": "Rol"
 	, "password": "Contraseña"
 	, "confirmPassword": "Confirmar contraseña"
@@ -1294,6 +1294,10 @@ define({
 
 	, "layerRefreshInterval": "Intervalo de auto-actualización de capa"
 	, "layerName": "Nombre de capa"
+	, "queryable": "Consultable"
+	, "sourceInfo": "Información desde la fuente"
+	, "attribution": "Atribución"
+	, "shownInAtlas": "Mostrado en Atlas"
 
 
 	// Para capas que no se pueden cambiar las keys

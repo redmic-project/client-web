@@ -163,7 +163,7 @@ define([
 			return {
 				format: this._getFormatParamValue(atlasLayer, protocol),
 				transparent: true,
-				attribution: atlasLayer.attribution
+				attribution: this._getLayerAttributionValue(atlasLayer)
 			};
 		},
 
@@ -209,6 +209,28 @@ define([
 			}
 
 			return 'image/jpeg';
+		},
+
+		_getLayerAttributionValue: function(atlasLayer) {
+
+			var attribution = atlasLayer.attribution;
+
+			if (typeof attribution === 'string') {
+				return attribution;
+			} else if (attribution && typeof attribution === 'object') {
+				var href = attribution.onlineResource,
+					text = attribution.title;
+
+				if (!text) {
+					return;
+				}
+
+				if (!href) {
+					return text;
+				}
+
+				return '<a href="' + href + '" target="_blank" title="' + href + '">' + text + '</a>';
+			}
 		},
 
 		_getAtlasLayerDefinition: function() {

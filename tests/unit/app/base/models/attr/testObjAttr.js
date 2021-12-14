@@ -1231,7 +1231,7 @@ define([
 						}
 					},
 					name: {
-						type: ["string", "null"],
+						type: "string",
 						"default": "hola"
 					}
 				}
@@ -1544,4 +1544,42 @@ define([
 	};
 
 	registerSuite("ObjAttr with default value tests", specificTests);
+
+	specificProps = {
+		before: function() {
+
+			var dfd = this.async(timeout);
+
+			schema = {
+				type: ['object', 'null'],
+				properties: {
+					name: {
+						type: 'string'
+					}
+				},
+				'default': '{"name": "pepito"}'
+			};
+
+			objAttr = new ObjAttr();
+
+			objAttr.build(schema).then(dfd.callback(function() {}));
+		},
+
+		beforeEach: function() {
+
+			objAttr.reset();
+		}
+	};
+
+	specificTests = {
+		'Should_OmitDefaultValue_When_PropertyIsNullable': function() {
+
+			var serialized = objAttr.serialize();
+
+			assert.deepEqual(serialized, null, 'El valor por defecto se ha asignado aunque la propiedad era anulable');
+		}
+	};
+
+	specificProps.tests = specificTests;
+	registerSuite('ObjAttr with null type and default value', specificProps);
 });

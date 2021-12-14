@@ -687,6 +687,23 @@ define([
 				assert.strictEqual(attr.get("value"), null,
 					"El default se ha añadido al value siendo incorrecto para este tipo");
 			}));
+		},
+
+		'Should_OmitDefaultValue_When_PropertyIsNullable': function() {
+
+			var dfd = this.async(timeout);
+
+			schema = {
+				type: ['number', 'null'],
+				'default': 1
+			};
+
+			attr = new Attr();
+			attr.build(schema).then(dfd.callback(function() {
+
+				assert.strictEqual(attr.get('value'), null,
+					'El valor por defecto se ha asignado aunque la propiedad era anulable');
+			}));
 		}
 	});
 });

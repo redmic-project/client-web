@@ -1,7 +1,9 @@
 define([
 	"app/base/views/extensions/_AddAtlasCategory"
+	, 'app/components/steps/ActivitySetStep'
 	, "app/components/steps/MainDataStep"
 	//, "app/components/steps/MapSelectAreaStep"
+	, "app/components/steps/DownloadsSetStep"
 	, "app/components/steps/ProtocolsSetStep"
 	, "app/components/steps/SelectLayerStep"
 	, "app/designs/edition/Controller"
@@ -11,8 +13,10 @@ define([
 	, "dojo/_base/lang"
 ], function(
 	_AddAtlasCategory
+	, ActivitySetStep
 	, MainDataStep
 	//, MapSelectAreaStep
+	, DownloadsSetStep
 	, ProtocolsSetStep
 	, SelectLayerStep
 	, Controller
@@ -75,6 +79,18 @@ define([
 					definition: ProtocolsSetStep,
 					props: {
 						propertyName: 'protocols'
+					}
+				},{
+					definition: DownloadsSetStep,
+					skippable: true,
+					props: {
+						propertyName: 'downloads'
+					}
+				},{
+					definition: ActivitySetStep,
+					skippable: true,
+					props: {
+						propertyName: 'activities'
 					}
 				}]
 			}, this.editorConfig || {}]);

@@ -1,12 +1,12 @@
 define([
-	"app/base/views/extensions/_EditionFormList"
-	, "app/components/steps/_RememberDeleteItems"
-	, "app/designs/formList/layout/Layout"
-	, "app/designs/formList/main/FormListByStep"
-	, "app/maintenance/models/ProtocolsServiceOGCModel"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "templates/ProtocolsSet"
+	'app/base/views/extensions/_EditionFormList'
+	, 'app/components/steps/_RememberDeleteItems'
+	, 'app/designs/formList/layout/Layout'
+	, 'app/designs/formList/main/FormListByStep'
+	, 'app/maintenance/models/DownloadsServiceOGCModel'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'templates/DownloadsSet'
 ], function (
 	_EditionFormList
 	, _RememberDeleteItems
@@ -16,7 +16,8 @@ define([
 	, declare
 	, lang
 	, TemplateList
-){
+) {
+
 	return declare([Layout, Controller, _EditionFormList, _RememberDeleteItems], {
 		//	summary:
 		//		Step de ServiceOGC.
@@ -24,14 +25,12 @@ define([
 		constructor: function (args) {
 
 			this.config = {
-				// WizardStep params
-				label: this.i18n.protocols,
-				title: this.i18n.protocolsAssociated,
+				label: this.i18n.downloads,
+				title: this.i18n.downloadsAssociated,
 
-				// General params
-				propToRead: "protocols",
+				propToRead: 'downloads',
 
-				ownChannel: "protocolsSetStep"
+				ownChannel: 'downloadsSetStep'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -47,7 +46,7 @@ define([
 
 			this.formConfig = this._merge([{
 				modelSchema: modelSchema,
-				template: "maintenance/views/templates/forms/Protocols"
+				template: 'maintenance/views/templates/forms/Downloads'
 			}, this.formConfig || {}]);
 		}
 	});

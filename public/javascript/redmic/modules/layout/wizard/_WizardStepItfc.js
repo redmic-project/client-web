@@ -28,7 +28,8 @@ define([
 				"getStepResults": {},
 				"_newAdditionalData": {},
 				"_gotIdProperty": {},
-				"_valueChanged": {}
+				"_valueChanged": {},
+				"_onGotPropertySchema": {}
 			});
 		}
 	});

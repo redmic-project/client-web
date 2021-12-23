@@ -3,7 +3,6 @@ define([
 	, 'app/components/steps/_RememberDeleteItems'
 	, 'app/designs/formList/layout/Layout'
 	, 'app/designs/formList/main/FormListByStep'
-	, 'app/maintenance/models/DownloadsServiceOGCModel'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'templates/DownloadsSet'
@@ -12,7 +11,6 @@ define([
 	, _RememberDeleteItems
 	, Layout
 	, Controller
-	, modelSchema
 	, declare
 	, lang
 	, TemplateList
@@ -22,13 +20,14 @@ define([
 		//	summary:
 		//		Step de ServiceOGC.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				label: this.i18n.downloads,
 				title: this.i18n.downloadsAssociated,
 
 				propToRead: 'downloads',
+				_createFormInitial: false,
 
 				ownChannel: 'downloadsSetStep'
 			};
@@ -43,11 +42,29 @@ define([
 					template: TemplateList
 				}
 			}, this.browserConfig || {}]);
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
+			this._emitEvt('GET_PROPERTY_SCHEMA', {
+				key: this.propToRead + '/{i}'
+			});
+		},
+
+		_onGotPropertySchema: function(subSchema) {
 
 			this.formConfig = this._merge([{
-				modelSchema: modelSchema,
+				modelSchema: subSchema,
 				template: 'maintenance/views/templates/forms/Downloads'
 			}, this.formConfig || {}]);
+
+			this._createForm();
+
+			this._emitEvt('SHOW_FORM', {
+				node: this.formNode
+			});
 		}
 	});
 });

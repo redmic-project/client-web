@@ -1,27 +1,26 @@
 define([
-	"app/base/views/extensions/_EditionFormList"
-	, "app/components/steps/_RememberDeleteItems"
-	, "app/designs/formList/layout/Layout"
-	, "app/designs/formList/main/FormListByStep"
-	, "app/maintenance/models/ProtocolsServiceOGCModel"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "templates/ProtocolsSet"
+	'app/base/views/extensions/_EditionFormList'
+	, 'app/components/steps/_RememberDeleteItems'
+	, 'app/designs/formList/layout/Layout'
+	, 'app/designs/formList/main/FormListByStep'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'templates/ProtocolsSet'
 ], function (
 	_EditionFormList
 	, _RememberDeleteItems
 	, Layout
 	, Controller
-	, modelSchema
 	, declare
 	, lang
 	, TemplateList
-){
+) {
+
 	return declare([Layout, Controller, _EditionFormList, _RememberDeleteItems], {
 		//	summary:
 		//		Step de ServiceOGC.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				// WizardStep params
@@ -29,9 +28,10 @@ define([
 				title: this.i18n.protocolsAssociated,
 
 				// General params
-				propToRead: "protocols",
+				propToRead: 'protocols',
+				_createFormInitial: false,
 
-				ownChannel: "protocolsSetStep"
+				ownChannel: 'protocolsSetStep'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -44,11 +44,29 @@ define([
 					template: TemplateList
 				}
 			}, this.browserConfig || {}]);
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
+			this._emitEvt('GET_PROPERTY_SCHEMA', {
+				key: this.propToRead + '/{i}'
+			});
+		},
+
+		_onGotPropertySchema: function(subSchema) {
 
 			this.formConfig = this._merge([{
-				modelSchema: modelSchema,
-				template: "maintenance/views/templates/forms/Protocols"
+				modelSchema: subSchema,
+				template: 'maintenance/views/templates/forms/Protocols'
 			}, this.formConfig || {}]);
+
+			this._createForm();
+
+			this._emitEvt('SHOW_FORM', {
+				node: this.formNode
+			});
 		}
 	});
 });

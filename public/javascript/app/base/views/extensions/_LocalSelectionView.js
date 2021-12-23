@@ -83,9 +83,6 @@ define([
 			},{
 				channel : this.getChannel("DESELECTED"),
 				callback: "_subDeselected"
-			},{
-				channel : this.getChannel("SELECTED_ALL"),
-				callback: "_subSelectedAll"
 			});
 		},
 
@@ -148,11 +145,6 @@ define([
 		_subSelectionCleared: function() {
 
 			this._localSelectionCleared.apply(this, arguments);
-		},
-
-		_subSelectedAll: function() {
-
-			this._localSelectionSelectedAll.apply(this, arguments);
 		}
 	});
 });

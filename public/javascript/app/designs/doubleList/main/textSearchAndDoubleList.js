@@ -72,7 +72,7 @@ define([
 							rowPerPage: this._pageSize
 						}
 					}]
-				},
+				}
 			}, this.browserLeftConfig || {}], {
 				arrayMergingStrategy: 'concatenate'
 			});

@@ -1306,6 +1306,8 @@ define({
 		, "attribution": "Attribution"
 		, "shownInAtlas": "Shown in Atlas"
 
+		, "mapCentering": "Center map on layer"
+
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

@@ -123,7 +123,7 @@ define([
 								condition: "styleLayer"
 							},{
 								icon: "fa-map-marker",
-								title: "map centering",
+								title: 'mapCentering',
 								btnId: "fitBounds",
 								returnItem: true
 							},{

@@ -90,7 +90,7 @@ define([
 					definition: ActivitySetStep,
 					skippable: true,
 					props: {
-						propertyName: 'activities'
+						propertyName: 'relatedActivities'
 					}
 				}]
 			}, this.editorConfig || {}]);

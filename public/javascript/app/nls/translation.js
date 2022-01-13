@@ -1305,6 +1305,7 @@ define({
 		, "sourceInfo": "Information from source"
 		, "attribution": "Attribution"
 		, "shownInAtlas": "Shown in Atlas"
+		, "timeDefinition": "Time range"
 
 		, "mapCentering": "Center map on layer"
 

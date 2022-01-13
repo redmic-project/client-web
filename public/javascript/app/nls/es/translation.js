@@ -1301,6 +1301,7 @@ define({
 	, "sourceInfo": "Información desde la fuente"
 	, "attribution": "Atribución"
 	, "shownInAtlas": "Mostrado en Atlas"
+	, "timeDefinition": "Rango temporal"
 
 	, "mapCentering": "Centrar mapa en capa"
 

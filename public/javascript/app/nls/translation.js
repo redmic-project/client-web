@@ -1306,6 +1306,14 @@ define({
 		, "attribution": "Attribution"
 		, "shownInAtlas": "Shown in Atlas"
 		, "timeDefinition": "Time range"
+		, "timeDimension": "Time dimension"
+		, "elevationDimension": "Elevation dimension"
+		, "availableValues": "Available values"
+		, "defaultValue": "Default value"
+		, "dimensionUnits": "Units"
+		, "allowedValues": "Allowed values"
+		, "dimensionFrom": "From"
+		, "dimensionTo": "To"
 
 		, "mapCentering": "Center map on layer"
 

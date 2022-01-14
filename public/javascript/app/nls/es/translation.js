@@ -1302,6 +1302,14 @@ define({
 	, "attribution": "Atribución"
 	, "shownInAtlas": "Mostrado en Atlas"
 	, "timeDefinition": "Rango temporal"
+	, "timeDimension": "Dimensión temporal"
+	, "elevationDimension": "Dimensión de elevación"
+	, "availableValues": "Valores disponibles"
+	, "defaultValue": "Valor por defecto"
+	, "dimensionUnits": "Unidades"
+	, "allowedValues": "Valores permitidos"
+	, "dimensionFrom": "Desde"
+	, "dimensionTo": "Hasta"
 
 	, "mapCentering": "Centrar mapa en capa"
 

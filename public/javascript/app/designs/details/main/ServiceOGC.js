@@ -205,14 +205,14 @@ define([
 
 		_retrieveLayerActivities: function(data) {
 
-			var activities = data.activities;
+			var activities = data.relatedActivities;
 
 			if (!activities || !activities.length) {
 				return;
 			}
 
 			for (var i = 0; i < activities.length; i++) {
-				var activity = activities[i];
+				var activity = activities[i].activity;
 				this._publish(this._buildChannel(this.storeChannel, this.actions.GET), {
 					target: this.activityTarget,
 					id: activity[this.idProperty]

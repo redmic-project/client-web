@@ -3,6 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'leaflet/leaflet'
 	, 'redmic/modules/map/StaticLayersDefinition'
+	, 'templates/ServiceOGCImage'
 	, './_LayerProtocols'
 	, './MapLayer'
 ], function(
@@ -10,6 +11,7 @@ define([
 	, lang
 	, L
 	, StaticLayersDefinition
+	, ServiceOGCImage
 	, _LayerProtocols
 	, MapLayer
 ) {
@@ -99,20 +101,8 @@ define([
 
 		_getLayerLegend: function(layer) {
 
-			// TODO cuando se defina leyenda en el servicio de atlas, consultar la imagen correspondiente
-			if (0 && this.styleLayer) {
-				this._emitEvt('LAYER_LEGEND',
-					this._getLayerLegendToPublish(this._obtainLegendUrl(this.styleLayer.url)));
-			}
-		},
-
-		_obtainLegendUrl: function(url) {
-
-			var params = {
-				legend_options: 'fontAntiAliasing:true;dpi:100'
-			};
-
-			return this._chkUrlAndAddParams(url, L.Util.getParamString(params));
+			var template = ServiceOGCImage(layer);
+			this._emitEvt('LAYER_LEGEND', this._getLayerLegendToPublish(template));
 		},
 
 		_chkUrlAndAddParams: function(url, paramsStr) {

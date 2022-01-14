@@ -119,8 +119,7 @@ define([
 								icon: "fa-list-alt",
 								btnId: "legend",
 								title: "legend",
-								returnItem: true,
-								condition: "styleLayer"
+								returnItem: true
 							},{
 								icon: "fa-map-marker",
 								title: 'mapCentering',
@@ -499,7 +498,7 @@ define([
 			put(legendContent, "div.layerLegendTitle", layerLabel);
 
 			var legendContentImg = put(legendContent, "div.imageContainer");
-			legendContentImg.innerHTML = "<img src='" + layerLegend + "' />";
+			legendContentImg.innerHTML = layerLegend;
 		},
 
 		_subThemesBrowserDragAndDrop: function(response) {

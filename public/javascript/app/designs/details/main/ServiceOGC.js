@@ -11,7 +11,7 @@ define([
 	, "templates/ServiceOGCTitle"
 	, "templates/ServiceOGCInfo"
 	, "templates/ServiceOGCSourceInfo"
-//	, "templates/ServiceOGCImage"
+	, "templates/ServiceOGCImage"
 	, "./_DetailsBase"
 ], function(
 	_Main
@@ -26,7 +26,7 @@ define([
 	, TemplateTitle
 	, TemplateInfo
 	, TemplateSourceInfo
-//	, TemplateImage
+	, TemplateImage
 	, _DetailsBase
 ) {
 
@@ -101,10 +101,10 @@ define([
 						scaleBar: false,
 						measureTools: false
 					}
-				}/*,
+				},
 				legend: {
 					width: 3,
-					height: 6,
+					height: 4,
 					type: TemplateDisplayer,
 					props: {
 						title: this.i18n.legend,
@@ -113,7 +113,7 @@ define([
 						target: this.atlasTarget,
 						associatedIds: [this.ownChannel]
 					}
-				}*/
+				}
 			}]);
 		},
 

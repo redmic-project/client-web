@@ -247,10 +247,9 @@ define([
 			return {
 				parentChannel: this.getChannel(),
 				layerDefinition: layerDefinition,
-				styleLayer: layerItem.styleLayer,
-				queryable: layerItem.queryable,
 				layerId: layerId,
 				layerLabel: layerLabel,
+				queryable: layerItem.queryable,
 				refresh: layerItem.refresh
 			};
 		},

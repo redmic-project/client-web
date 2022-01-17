@@ -617,6 +617,7 @@ define([
 				layer: layer,
 				layerId: layerId,
 				layerLabel: item.label,
+				atlasItem: item.originalItem,
 				order: order
 			});
 		},

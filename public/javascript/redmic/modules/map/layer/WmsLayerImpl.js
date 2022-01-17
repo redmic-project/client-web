@@ -99,10 +99,13 @@ define([
 			delete this._refreshIntervalHandler;
 		},
 
-		_getLayerLegend: function(layer) {
+		_getLayerLegend: function(extraInfo) {
 
-			var template = ServiceOGCImage(layer);
-			this._emitEvt('LAYER_LEGEND', this._getLayerLegendToPublish(template));
+			var legendElement = ServiceOGCImage({
+				data: extraInfo
+			});
+
+			this._emitEvt('LAYER_LEGEND', this._getLayerLegendToPublish(legendElement));
 		},
 
 		_chkUrlAndAddParams: function(url, paramsStr) {

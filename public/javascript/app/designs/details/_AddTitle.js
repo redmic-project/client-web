@@ -25,6 +25,7 @@ define([
 				_titleLeftButtonsList: [],
 				_titleRightButtonsList: [],
 				tabs: [],
+				hiddenClass: 'hidden',
 				centerTitle: false,
 				pathParent: null,
 				_closeTitle: false,
@@ -140,7 +141,7 @@ define([
 
 			this._titleButtonsNode = put(this.topNode, 'div.buttons');
 			this._titleLeftNode = put(this._titleButtonsNode, "div.left");
-			this._titleRightNode = put(this._titleButtonsNode, "div.right");
+			this._titleRightNode = put(this._titleButtonsNode, "div.right." + this.hiddenClass);
 		},
 
 		_addIdTitle: function() {
@@ -186,6 +187,13 @@ define([
 					put('!', this._titleRightNode.children[i]);
 				}
 			}
+
+			if (rightButtons.length === 0) {
+				put(this._titleRightNode, '.' + this.hiddenClass);
+			} else {
+				put(this._titleRightNode, '!' + this.hiddenClass);
+			}
+
 			for (i = 0; i < rightButtons.length; i++) {
 				this._preInsertIcon(rightButtons[i], this._titleRightNode);
 			}

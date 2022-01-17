@@ -29,7 +29,7 @@ define([
 	, "redmic/modules/browser/bars/Order"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
-	, "redmic/modules/map/Atlas"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/layer/_Editable"
 	, "redmic/modules/map/layer/_RadiusOnSelect"

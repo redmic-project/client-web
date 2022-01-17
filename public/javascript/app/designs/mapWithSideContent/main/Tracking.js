@@ -19,7 +19,7 @@ define([
 	, "redmic/form/FormContainer"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/components/ProgressSlider/ProgressSlider"
-	, "redmic/modules/map/Atlas"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_PublishInfo"
 	, "redmic/modules/map/layer/TrackingLayerImpl"

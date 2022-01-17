@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
-	, 'redmic/modules/map/_AtlasLayersManagement'
+	, 'redmic/modules/atlas/_AtlasLayersManagement'
 	, "redmic/modules/map/LeafletImpl"
 	, "redmic/modules/map/layer/WmsLayerImpl"
 	, "RWidgets/RedmicUtilities"

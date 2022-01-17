@@ -19,7 +19,7 @@ define([
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_GeoJsonParser"
 	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/map/Atlas"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/search/TextImpl"
 	, "templates/CitationList"
 ], function(

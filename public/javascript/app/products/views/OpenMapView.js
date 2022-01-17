@@ -6,7 +6,7 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/map/Atlas"
+	, "redmic/modules/atlas/Atlas"
 ], function(
 	_QueryOnMap
 	, _ShowInPopupResultsFromQueryOnMap

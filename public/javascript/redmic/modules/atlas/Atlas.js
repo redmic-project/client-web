@@ -112,7 +112,7 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: "fa-list-alt",
+								icon: "fa-map-o",
 								btnId: "legend",
 								title: "legend",
 								returnItem: true
@@ -607,7 +607,7 @@ define([
 
 		_createSubsAndPubsForLayer: function(layerInstance) {
 
-			this._createLegendSubAndPubsForLayer(layerInstance);
+			this._createLegendSubsAndPubsForLayer(layerInstance);
 		},
 
 		_deactivateLayer: function(/*Object*/ item, order) {
@@ -630,7 +630,7 @@ define([
 
 		_removeSubsAndPubsForLayer: function(layerInstance) {
 
-			this._removeLegendSubAndPubsForLayer(layerInstance);
+			this._removeLegendSubsAndPubsForLayer(layerInstance);
 
 			this._publish(layerInstance.getChannel('DISCONNECT'));
 		},
@@ -648,7 +648,7 @@ define([
 
 				this._emitEvt('DESELECT', [path]);
 			} else if (btnId === "legend") {
-				this._showLayerLegend(this._createLayerId(item.originalItem));
+				this._showLayerLegend(objReceived);
 			} else if (btnId === "fitBounds") {
 				this._fitBounds(item);
 			}

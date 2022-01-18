@@ -2,14 +2,10 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
-	, 'redmic/modules/base/_ShowInPopup'
-	, 'redmic/modules/layout/dataDisplayer/DataDisplayer'
 ], function(
 	declare
 	, lang
 	, put
-	, _ShowInPopup
-	, DataDisplayer
 ) {
 
 	return declare(null, {
@@ -19,8 +15,9 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				_layersDataContainers: {}, // contenedores de info y legend de las capas
-				_legendInstances: {} // instancias de módulo visualizador de leyendas
+				legendClass: 'legendContainer',
+				_legendByLayerId: {},
+				_legendShownByLayerId: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -28,14 +25,15 @@ define([
 
 		_removeLegendOfRemovedLayer: function(layerId) {
 
-			var infoContainer = this._layersDataContainers[layerId],
-				legendContent = infoContainer ? infoContainer.legend : null;
+			var legend = this._legendByLayerId[layerId];
 
-			legendContent && put('!', legendContent);
-			delete this._layersDataContainers[layerId];
+			if (legend) {
+				put('!', legend);
+				delete this._legendByLayerId[layerId];
+			}
 		},
 
-		_createLegendSubAndPubsForLayer: function(layerInstance) {
+		_createLegendSubsAndPubsForLayer: function(layerInstance) {
 
 			this._setSubscription({
 				channel : layerInstance.getChannel('LAYER_LEGEND'),
@@ -43,7 +41,7 @@ define([
 			});
 		},
 
-		_removeLegendSubAndPubsForLayer: function(layerInstance) {
+		_removeLegendSubsAndPubsForLayer: function(layerInstance) {
 
 			this._removeSubscription(layerInstance.getChannel('LAYER_LEGEND'));
 		},
@@ -51,50 +49,43 @@ define([
 		_subLayerLegend: function(response) {
 
 			var layerId = response.layerId,
-				layerLabel = response.layerLabel,
-				layerLegend = response.legend,
-				container = this._layersDataContainers[layerId];
+				layerLegend = response.legend;
 
-			if (!container) {
-				container = this._layersDataContainers[layerId] = {};
+			if (!this._legendByLayerId[layerId]) {
+				var legend = put('span.' + this.legendClass);
+				legend.innerHTML = layerLegend;
+
+				this._legendByLayerId[layerId] = legend;
 			}
-
-			if (container.legend) {
-				put('!', container.legend);
-			}
-
-			container.legend = put('div.atlasLayerInfoMessage');
-
-			var legendContent = put(container.legend, 'div.layerLegend');
-			put(legendContent, 'div.layerLegendTitle', layerLabel);
-
-			var legendContentImg = put(legendContent, 'div.imageContainer');
-			legendContentImg.innerHTML = layerLegend;
 		},
 
-		_showLayerLegend: function(layerId) {
+		_showLayerLegend: function(browserButtonObj) {
 
-			var container = this._layersDataContainers[layerId],
-				legend = container ? container.legend : null;
+			var container = browserButtonObj.node,
+				legendContainer = container.children[1],
+				item = browserButtonObj.item.originalItem,
+				layerId = this._createLayerId(item),
+				legend = this._legendByLayerId[layerId],
+				legendShown = this._legendShownByLayerId[layerId];
 
-			if (legend) {
-				if (!this._legendInstances[layerId]) {
-					this._legendInstances[layerId] = new declare(DataDisplayer).extend(_ShowInPopup)({
-						parentChannel: this.getChannel(),
-						ownChannel: 'legend' + layerId,
-						title: this.i18n.legend,
-						width: 5,
-						height: 'sm'
-					});
-				}
+			if (legendShown === undefined) {
+				legendShown = this._legendShownByLayerId[layerId] = false;
+			}
 
-				this._publish(this._legendInstances[layerId].getChannel('TOGGLE_SHOW'), {
-					data: legend.innerHTML
-				});
-			} else {
+			if (!legend) {
 				this._emitEvt('COMMUNICATION', {
 					description: this.i18n.noLegendAvailable
 				});
+
+				return;
+			}
+
+			if (!legendShown) {
+				put(legendContainer, legend);
+				this._legendShownByLayerId[layerId] = true;
+			} else {
+				put('!', legend);
+				this._legendShownByLayerId[layerId] = false;
 			}
 		}
 	});

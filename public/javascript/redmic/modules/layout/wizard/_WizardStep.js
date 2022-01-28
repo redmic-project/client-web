@@ -12,7 +12,8 @@ define([
 	, Deferred
 	, ModelImpl
 	, _WizardStepItfc
-){
+) {
+
 	return declare(_WizardStepItfc, {
 		//	summary:
 		//		Extensión para los módulos usados como Step dentro de un Wizard.
@@ -26,12 +27,16 @@ define([
 			DELETE_VALUE: "deleteValue",
 			ADD_VALUE: "addValue",
 			FLUSH: "flush",
+			IS_VALID: 'isValid',
 			GO_FORWARD: "goForward",
 			GET_ID_PROPERTY: "getIdProperty",
 			STEP_SHOWN: "stepShown",
 			GOT_NEXT_STEP: "gotNextStep",
 			GOT_PREV_STEP: "gotPrevStep",
-			BEFORE_GOING_NEXT_STEP_DONE: "beforeGoingNextStepDone"
+			BEFORE_GOING_NEXT_STEP_DONE: "beforeGoingNextStepDone",
+			MODEL_RESET: 'modelReset',
+			MODEL_CLEAR: 'modelClear',
+			GET_PROPERTY_SCHEMA: 'getPropertySchema'
 		},
 
 		wizardStepActions: {
@@ -65,7 +70,11 @@ define([
 			REFRESH_TRACE: "refreshTrace",
 			RESET: "reset",
 			CLEAR: "clear",
-			VALUE_CHANGED: "valueChanged"
+			VALUE_CHANGED: "valueChanged",
+			MODEL_RESET: 'modelReset',
+			MODEL_CLEAR: 'modelClear',
+			GET_PROPERTY_SCHEMA: 'getPropertySchema',
+			GOT_PROPERTY_SCHEMA: 'gotPropertySchema'
 		},
 
 		constructor: function(args) {
@@ -79,7 +88,6 @@ define([
 			}
 
 			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixWizardStepEventsAndActions));
-			aspect.after(this, "_setOwnCallbacksForEvents", lang.hitch(this, this._setWizardStepOwnCallbacksForEvents));
 			aspect.before(this, "_defineSubscriptions", lang.hitch(this, this._defineWizardStepSubscriptions));
 			aspect.before(this, "_definePublications", lang.hitch(this, this._defineWizardStepPublications));
 			aspect.before(this, "_initialize", lang.hitch(this, this._initializeWizardStep));
@@ -93,17 +101,12 @@ define([
 			delete this.wizardStepActions;
 		},
 
-		_setWizardStepOwnCallbacksForEvents: function() {
-
-		},
-
 		_initializeWizardStep: function() {
 
 			if (this.modelChannel) {
 				this._setModelChannel(this.modelChannel);
 				this._setGlobalModelUsed(true);
 			} else if (this.modelTarget || this.modelSchema) {
-
 				this.modelConfig = this._merge([{
 					schema: this.modelSchema,
 					target: this.modelTarget
@@ -114,7 +117,7 @@ define([
 			}
 		},
 
-		_defineWizardStepSubscriptions: function () {
+		_defineWizardStepSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel: this.getChannel("REFRESH_TRACE"),
@@ -239,6 +242,12 @@ define([
 				options: {
 					predicate: lang.hitch(this, this._chkGotIdProperty)
 				}
+			},{
+				channel : this._buildChannel(this.modelChannel, this.actions.GOT_PROPERTY_SCHEMA),
+				callback: '_subGotPropertySchema',
+				options: {
+					predicate: lang.hitch(this, this._chkGotPropertySchema)
+				}
 			}]);
 		},
 
@@ -259,6 +268,18 @@ define([
 			},{
 				event: 'GET_ID_PROPERTY',
 				channel: this._buildChannel(this.modelChannel, this.actions.GET_ID_PROPERTY)
+			},{
+				event: 'IS_VALID',
+				channel: this._buildChannel(this.modelChannel, this.actions.IS_VALID)
+			},{
+				event: 'MODEL_RESET',
+				channel: this._buildChannel(this.modelChannel, this.actions.MODEL_RESET)
+			},{
+				event: 'MODEL_CLEAR',
+				channel: this._buildChannel(this.modelChannel, this.actions.MODEL_CLEAR)
+			},{
+				event: 'GET_PROPERTY_SCHEMA',
+				channel: this._buildChannel(this.modelChannel, this.actions.GET_PROPERTY_SCHEMA)
 			}]);
 		},
 
@@ -275,13 +296,11 @@ define([
 			dfd.then(lang.hitch(this, this._emitEvt, "BEFORE_GOING_NEXT_STEP_DONE"));
 
 			if (this._beforeGoingNextStepDfd) {
-
 				console.error("Tried to do actions before going to next step twice, in '%s' step, at module '%s'",
 					this.stepId, this.getChannel());
 
 				dfd.reject();
 			} else {
-
 				this._beforeGoingNextStepDfd = dfd;
 				this._beforeGoingNextStep();
 			}
@@ -327,7 +346,6 @@ define([
 				};
 
 			if (success) {
-
 				pubObj.stepId = this.stepId;
 
 				this._once(this.getChannel('SHOWN'), lang.hitch(this, this._emitEvt, 'STEP_SHOWN', pubObj));
@@ -337,12 +355,9 @@ define([
 					data: data
 				});
 			} else {
-
 				if (direction === "n") {
-
 					pubObj.stepId = this._getNextStepId(this.stepId, this._getWizardResults());
 				} else if (direction === "p") {
-
 					pubObj.stepId = this._getPrevStepId(this.stepId, this._getWizardResults());
 				}
 
@@ -369,12 +384,13 @@ define([
 
 			var isDfd = stepId && !!stepId.then;
 
-			if (isDfd){
-				stepId.then(lang.hitch(this, function(evtName, stepIdResolved) {
-					this._emitEvt(evtName, { stepId: stepIdResolved });
+			if (isDfd) {
+				stepId.then(lang.hitch(this, function(evt, stepIdResolved) {
+					this._emitEvt(evt, { stepId: stepIdResolved });
 				}, evtName));
-			} else
+			} else {
 				this._emitEvt(evtName, { stepId: stepId });
+			}
 		},
 
 		_subRefreshTrace: function(res) {
@@ -440,22 +456,42 @@ define([
 		_pubNewStatus: function(channel, req) {
 
 			if (this.propertyName && this.modelChannel && this._isValidProperty === undefined) {
-				this._publish(this._buildChannel(this.modelChannel, this.actions.IS_VALID));
+				this._emitEvt('IS_VALID');
 				return;
 			}
 
-			var status = (req && req.status) ? req.status : (!(this.propertyName && this.modelChannel) ||
-				this._isValidProperty) && this.isStepCompleted(this._wizardResults, this.skippable),
+			var step, status, results;
 
-				obj = {
-					step: (req && req.stepId) ? req.stepId : this.stepId,
-					status: status,
-					results: (req && req.results) ? req.results : (status ? this.getStepResults() : null)
-				};
+			if (!req) {
+				req = {};
+			}
+
+			if (req.stepId) {
+				step = req.stepId;
+			} else {
+				step = this.stepId;
+			}
+
+			if (req.status) {
+				status = req.status;
+			} else {
+				status = (!(this.propertyName && this.modelChannel) ||
+				this._isValidProperty) && this.isStepCompleted(this._wizardResults, this.skippable);
+			}
+
+			if (req.results) {
+				results = req.results;
+			} else {
+				results = status ? this.getStepResults() : null;
+			}
 
 			this.statusStep = status;
 
-			this._publish(channel, obj);
+			this._publish(channel, {
+				step: step,
+				status: status,
+				results: results
+			});
 		},
 
 		isStepCompleted: function(results, skippable) {
@@ -478,6 +514,17 @@ define([
 			return req.property === this.propToRead;
 		},
 
+		_chkGotPropertySchema: function(res) {
+
+			var propName = res.propertyName;
+
+			if (!propName || !this.propToRead) {
+				return false;
+			}
+
+			return propName === this.propToRead || propName.indexOf(this.propToRead) === 0;
+		},
+
 		_containedPropertyIsMine: function(obj) {
 
 			return obj[this.propertyName] !== undefined;
@@ -488,19 +535,22 @@ define([
 			this._gotIdProperty(req.value);
 		},
 
+		_subGotPropertySchema: function(res) {
+
+			this._onGotPropertySchema(res.schema);
+		},
+
 		_getNextStepId: function() {
 
 			if (this.getNextStepId) {
 				if (typeof this.getNextStepId === "string") {
-
 					return this.getNextStepId;
 				} else {
-
 					return this.getNextStepId(arguments);
 				}
 			}
 
-			var id = parseInt(this.stepId, 10);
+			var id = parseInt(this.stepId, 10),
 				nextStepId = id + 1;
 
 			return nextStepId.toString();
@@ -511,7 +561,6 @@ define([
 			var ret;
 
 			if (this._wizardStepsTrace) {
-
 				var pos = this._wizardStepsTrace.indexOf(this.stepId);
 				if (pos > 0) {
 					ret = this._wizardStepsTrace[pos - 1];
@@ -536,12 +585,13 @@ define([
 
 		_internalResetStep: function() {
 
-			if (this.modelChannel && this.propertyName) {
-
-				this._publish(this._buildChannel(this.modelChannel, this.actions.RESET), {
-					properties: [this.propertyName]
-				});
+			if (!this.propertyName) {
+				return;
 			}
+
+			this._emitEvt('MODEL_RESET', {
+				properties: [this.propertyName]
+			});
 		},
 
 		_subClear: function() {
@@ -562,12 +612,13 @@ define([
 			this._isCompleted = false;
 			this._results = null;
 
-			if (this.modelChannel && this.propertyName) {
-
-				this._publish(this._buildChannel(this.modelChannel, this.actions.CLEAR), {
-					properties: [this.propertyName]
-				});
+			if (!this.propertyName) {
+				return;
 			}
+
+			this._emitEvt('MODEL_CLEAR', {
+				properties: [this.propertyName]
+			});
 		}
 	});
 });

@@ -111,6 +111,7 @@ define({
 		, "chooseReportTitle": "Choose a title for your report"
 		, "documentsAssociatedSpecies": "Associated documents with the species"
 		, "documentsSelected": "Selected documents"
+		, "activitiesSelected": "Selected activities"
 		, "contactsAssociated": "Associated contacts"
 		, "platformsAssociatedy": "Associated platforms"
 		, "organisationsAssociated": "Associated organisations"
@@ -140,7 +141,7 @@ define({
 		, "service-ogc": "OGC services"
 		, "srs": "SRS"
 		, "abstractLayer": "Description"
-		, "styleLayer": "Style layer"
+		, "styleLayer": "Available styles"
 		, "style": "Style"
 		, "addLayers": "Add layers"
 		, "backToMap": "Go back to map"
@@ -428,6 +429,8 @@ define({
 		, "animalName": "Animal name"
 		, "protocols": "Protocols"
 		, "protocolsAssociated": "Protocols associated"
+		, "downloads": "Downloads"
+		, "downloadsAssociated": "Associated downloads"
 		, "bibliographyForm": "Bibliography"
 		, "levelProtectionForm": "Level of protection"
 		, "nameLayer": "Layer name"
@@ -1298,6 +1301,21 @@ define({
 
 		, "layerRefreshInterval": "Layer auto-refresh interval"
 		, "layerName": "Layer name"
+		, "queryable": "Queryable"
+		, "sourceInfo": "Information from source"
+		, "attribution": "Attribution"
+		, "shownInAtlas": "Shown in Atlas"
+		, "timeDefinition": "Time range"
+		, "timeDimension": "Time dimension"
+		, "elevationDimension": "Elevation dimension"
+		, "availableValues": "Available values"
+		, "defaultValue": "Default value"
+		, "dimensionUnits": "Units"
+		, "allowedValues": "Allowed values"
+		, "dimensionFrom": "From"
+		, "dimensionTo": "To"
+
+		, "mapCentering": "Center map on layer"
 
 
 		//Para capas que no se pueden cambiar las keys

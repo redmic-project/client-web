@@ -19,7 +19,7 @@ define([
 	, "redmic/modules/browser/_Select"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/map/Atlas"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/search/TextImpl"

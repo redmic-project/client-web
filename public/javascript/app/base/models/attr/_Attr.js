@@ -101,6 +101,11 @@ define([
 			this._schema = schema;
 			this._build();
 
+			var propertyType = this._schema.type;
+			if (propertyType instanceof Array && propertyType.indexOf('null') !== -1) {
+				return;
+			}
+
 			this._setDefaultValue();
 		},
 

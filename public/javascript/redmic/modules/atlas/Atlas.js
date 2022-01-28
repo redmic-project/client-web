@@ -11,20 +11,19 @@ define([
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_Show"
-	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/base/_ShowInTooltip"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/browser/_DragAndDrop"
 	, "redmic/modules/browser/_HierarchicalSelect"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, 'redmic/modules/map/_AtlasLayersManagement'
 	, "templates/AtlasList"
 	, "templates/LoadingCustom"
 	, "templates/ServiceOGCAtlasList"
 	, "templates/ServiceOGCAtlasDetails"
+	, './_AtlasLayersManagement'
+	, './_AtlasLegendManagement'
 ], function(
 	alertify
 	, Controller
@@ -38,23 +37,22 @@ define([
 	, _Module
 	, _Selection
 	, _Show
-	, _ShowInPopup
 	, _ShowInTooltip
 	, _Store
 	, _DragAndDrop
 	, _HierarchicalSelect
 	, SelectionBox
 	, Total
-	, DataDisplayer
 	, TemplateDisplayer
-	, _AtlasLayersManagement
 	, ListTemplate
 	, LoadingCustom
 	, serviceOGCList
 	, templateDetails
+	, _AtlasLayersManagement
+	, _AtlasLegendManagement
 ) {
 
-	return declare([_Module, _Show, _Store, _Selection, _AtlasLayersManagement], {
+	return declare([_Module, _Show, _Store, _Selection, _AtlasLayersManagement, _AtlasLegendManagement], {
 		//	summary:
 		//		Módulo de Atlas.
 		//	description:
@@ -83,11 +81,9 @@ define([
 				showBrowserAnimationClass: "animated fadeIn",
 				hideBrowserAnimationClass: "animated fadeOut",
 
-				_layersDataContainers: {}, // contenedores de info y legend de las capas
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				_layerIdsById: {}, // correspondencia entre ids de las capas con sus layerIds
-				_lastOrder: 0, // order de la última capa añadida (para saber donde añadir la siguiente)
-				_legendInstances: {} // instancias de módulo visualizador de leyendas
+				_lastOrder: 0 // order de la última capa añadida (para saber donde añadir la siguiente)
 			};
 
 			lang.mixin(this, this.config, args);
@@ -116,14 +112,13 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: "fa-list-alt",
+								icon: "fa-map-o",
 								btnId: "legend",
 								title: "legend",
-								returnItem: true,
-								condition: "styleLayer"
+								returnItem: true
 							},{
 								icon: "fa-map-marker",
-								title: "map centering",
+								title: 'mapCentering',
 								btnId: "fitBounds",
 								returnItem: true
 							},{
@@ -468,38 +463,11 @@ define([
 			this._activateLayer(data, this._lastOrder);
 		},
 
-		_subLayerRemoved: function(response) {
+		_subLayerRemoved: function(res) {
 
-			var layerId = response.layerId,
-				infoContainer = this._layersDataContainers[layerId],
-				legendContent = infoContainer ? infoContainer.legend : null;
+			var layerId = res.layerId;
 
-			legendContent && put("!", legendContent);
-			delete this._layersDataContainers[layerId];
-		},
-
-		_subLayerLegend: function(response) {
-
-			var layerId = response.layerId,
-				layerLabel = response.layerLabel,
-				layerLegend = response.legend,
-				container = this._layersDataContainers[layerId];
-
-			if (!container) {
-				container = this._layersDataContainers[layerId] = {};
-			}
-
-			if (container.legend) {
-				put("!", container.legend);
-			}
-
-			container.legend = put("div.atlasLayerInfoMessage");
-
-			var legendContent = put(container.legend, "div.layerLegend");
-			put(legendContent, "div.layerLegendTitle", layerLabel);
-
-			var legendContentImg = put(legendContent, "div.imageContainer");
-			legendContentImg.innerHTML = "<img src='" + layerLegend + "' />";
+			this._removeLegendOfRemovedLayer(layerId);
 		},
 
 		_subThemesBrowserDragAndDrop: function(response) {
@@ -618,6 +586,7 @@ define([
 				layer: layer,
 				layerId: layerId,
 				layerLabel: item.label,
+				atlasItem: item.originalItem,
 				order: order
 			});
 		},
@@ -638,10 +607,7 @@ define([
 
 		_createSubsAndPubsForLayer: function(layerInstance) {
 
-			this._setSubscription({
-				channel : layerInstance.getChannel("LAYER_LEGEND"),
-				callback: "_subLayerLegend"
-			});
+			this._createLegendSubsAndPubsForLayer(layerInstance);
 		},
 
 		_deactivateLayer: function(/*Object*/ item, order) {
@@ -664,7 +630,8 @@ define([
 
 		_removeSubsAndPubsForLayer: function(layerInstance) {
 
-			this._removeSubscription(layerInstance.getChannel("LAYER_LEGEND"));
+			this._removeLegendSubsAndPubsForLayer(layerInstance);
+
 			this._publish(layerInstance.getChannel('DISCONNECT'));
 		},
 
@@ -681,7 +648,7 @@ define([
 
 				this._emitEvt('DESELECT', [path]);
 			} else if (btnId === "legend") {
-				this._showLayerLegend(this._createLayerId(item.originalItem));
+				this._showLayerLegend(objReceived);
 			} else if (btnId === "fitBounds") {
 				this._fitBounds(item);
 			}
@@ -717,32 +684,6 @@ define([
 				this._deactivateLayer(item, order);
 			} else {
 				this._activateLayer(item, order);
-			}
-		},
-
-		_showLayerLegend: function(layerId) {
-
-			var container = this._layersDataContainers[layerId],
-				legend = container ? container.legend : null;
-
-			if (legend) {
-				if (!this._legendInstances[layerId]) {
-					this._legendInstances[layerId] = new declare(DataDisplayer).extend(_ShowInPopup)({
-						parentChannel: this.getChannel(),
-						ownChannel: "legend" + layerId,
-						title: this.i18n.legend,
-						width: 5,
-						height: "sm"
-					});
-				}
-
-				this._publish(this._legendInstances[layerId].getChannel("TOGGLE_SHOW"), {
-					data: legend.innerHTML
-				});
-			} else {
-				this._emitEvt('COMMUNICATION', {
-					description: this.i18n.noLegendAvailable
-				});
 			}
 		}
 	});

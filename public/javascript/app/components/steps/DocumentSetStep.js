@@ -42,11 +42,6 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: "fa-file-pdf-o",
-								btnId: "downloadPdf",
-								condition: "url",
-								href: redmicConfig.viewPaths.documentPDF
-							},{
 								icon: "fa-info-circle",
 								btnId: "details",
 								title: "info",

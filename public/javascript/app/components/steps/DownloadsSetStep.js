@@ -5,7 +5,7 @@ define([
 	, 'app/designs/formList/main/FormListByStep'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'templates/ProtocolsSet'
+	, 'templates/DownloadsSet'
 ], function (
 	_EditionFormList
 	, _RememberDeleteItems
@@ -23,15 +23,13 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				// WizardStep params
-				label: this.i18n.protocols,
-				title: this.i18n.protocolsAssociated,
+				label: this.i18n.downloads,
+				title: this.i18n.downloadsAssociated,
 
-				// General params
-				propToRead: 'protocols',
+				propToRead: 'downloads',
 				_createFormInitial: false,
 
-				ownChannel: 'protocolsSetStep'
+				ownChannel: 'downloadsSetStep'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -59,7 +57,7 @@ define([
 
 			this.formConfig = this._merge([{
 				modelSchema: subSchema,
-				template: 'maintenance/views/templates/forms/Protocols'
+				template: 'maintenance/views/templates/forms/Downloads'
 			}, this.formConfig || {}]);
 
 			this._createForm();

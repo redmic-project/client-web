@@ -25,7 +25,7 @@ define([
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/map/Atlas"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_ListenBounds"
 	, "redmic/modules/map/layer/_ListenZoom"

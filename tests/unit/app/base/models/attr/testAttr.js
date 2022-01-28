@@ -1,11 +1,12 @@
 define([
-	"app/base/models/attr/Attr"
-	, "../_ModelTestCommons"
+	'app/base/models/attr/Attr'
+	, '../_ModelTestCommons'
 ], function(
 	Attr
 	, _ModelTestCommons
-){
-	var attr, schema, value, newValue, name, path,
+) {
+
+	var attr, schema, value, newValue, name, path, testStringTypecast,
 		timeout = 100;
 
 	var registerSuite = intern.getInterface('object').registerSuite,
@@ -21,7 +22,7 @@ define([
 			newValue = 5.1;
 
 			schema = {
-				type: ["string", "number"],
+				type: ['number', 'string'],
 				maximum: 10,
 				minimum: 1,
 				maxLength: 10,
@@ -190,6 +191,65 @@ define([
 
 				attr.deserialize(value, true);
 				assert.isFalse(attr.get("hasChanged"), "No se ha reinicializado correctamente el estado de modificación");
+			}
+		}
+	});
+
+	registerSuite('Attr string with typecast tests', {
+		before: function() {
+
+			var dfd = this.async(timeout);
+
+			schema = {
+				type: 'string'
+			};
+
+			name = 'hijo';
+			path = 'padre/';
+
+			attr = new Attr({
+				modelInstanceName: name,
+				modelInstancePath: path
+			});
+			attr.build(schema).then(dfd.callback(function() {}));
+
+			testStringTypecast = function(setValue, expectedValue) {
+
+				assert.isFalse(attr.get('hasChanged'), 'No se ha inicializado correctamente el estado de modificación');
+
+				attr.set('value', setValue);
+
+				assert.isTrue(attr.get('isValid'), 'La validación falla con un valor convertible');
+
+				assert.strictEqual(attr.get('value'), expectedValue,
+					'El getter de value no devuelve el valor seteado convertido');
+			};
+		},
+
+		beforeEach: function() {
+
+			attr.reset();
+		},
+
+		tests: {
+			'Should_SetStringValue_When_IntegerValueIsSetToAStringProperty': function() {
+
+				testStringTypecast(1, '1');
+			},
+
+			'Should_SetStringValue_When_NumberValueIsSetToAStringProperty': function() {
+
+				testStringTypecast(1.25, '1.25');
+			},
+
+			'Should_SetStringValue_When_BooleanTrueValueIsSetToAStringProperty': function() {
+
+				testStringTypecast(true, 'true');
+			},
+
+			'Should_SetStringValue_When_BooleanFalseValueIsSetToAStringProperty': function() {
+
+				testStringTypecast(false, 'false');
 			}
 		}
 	});
@@ -548,144 +608,163 @@ define([
 		}
 	});
 
-	registerSuite("Attr default key tests", {
-		"type string with default": function() {
+	registerSuite('Attr default key tests', {
+		'Should_SetStringDefaultValue_When_ValueIsAString': function() {
 
 			var dfd = this.async(timeout);
 
 			schema = {
-				type: "string",
-				"default": "Hola"
+				type: 'string',
+				'default': 'Hola'
 			};
 
 			attr = new Attr();
 			attr.build(schema).then(dfd.callback(function() {
 
-				assert.isTrue(attr.get("isValid"), "La validación falla con una cadena de texto en un tipo string");
+				assert.isTrue(attr.get('isValid'), 'La validación falla con un valor válido');
+				assert.strictEqual(attr.get('value'), 'Hola',
+					'El valor por defecto no se ha asignado aunque era del tipo adecuado');
 			}));
 		},
 
-		"type integer with default": function() {
+		'Should_SetIntegerDefaultValue_When_ValueIsAnInteger': function() {
 
 			var dfd = this.async(timeout);
 
 			schema = {
-				type: "integer",
-				"default": "1"
+				type: 'integer',
+				'default': 1
 			};
 
 			attr = new Attr();
 			attr.build(schema).then(dfd.callback(function() {
 
-				assert.isTrue(attr.get("isValid"), "La validación falla con un valor entero en un tipo integer");
-				assert.strictEqual(attr.get("value"), 1,
-					"El default no se ha añadido al value siendo correcto para este tipo");
+				assert.isTrue(attr.get('isValid'), 'La validación falla con un valor válido');
+				assert.strictEqual(attr.get('value'), 1,
+					'El valor por defecto no se ha asignado aunque era del tipo adecuado');
 			}));
 		},
 
-		"error type integer with default": function() {
+		'Should_OmitIntegerDefaultValue_When_ValueTypeIsNotInteger': function() {
 
 			var dfd = this.async(timeout);
 
 			schema = {
-				type: "integer",
-				"default": "uno"
+				type: 'integer',
+				'default': 'uno'
 			};
 
 			attr = new Attr();
 
 			attr.build(schema).then(dfd.callback(function() {
 
-				assert.strictEqual(attr.get("value"), null,
-					"El default se ha añadido al value siendo incorrecto para este tipo");
+				assert.strictEqual(attr.get('value'), null,
+					'El valor por defecto se ha asignado aunque no era del tipo adecuado');
 			}));
 		},
 
-		"type number with default": function() {
+		'Should_SetNumberDefaultValue_When_ValueIsANumber': function() {
 
 			var dfd = this.async(timeout);
 
 			schema = {
-				type: "number",
-				"default": "1.25"
+				type: 'number',
+				'default': 1.25
 			};
 
 			attr = new Attr();
 			attr.build(schema).then(dfd.callback(function() {
 
-				assert.isTrue(attr.get("isValid"), "La validación falla con un valor numerico en un tipo number");
-				assert.strictEqual(attr.get("value"), 1.25,
-					"El default no se ha añadido al value siendo correcto para este tipo");
+				assert.isTrue(attr.get('isValid'), 'La validación falla con un valor válido');
+				assert.strictEqual(attr.get('value'), 1.25,
+					'El valor por defecto no se ha asignado aunque era del tipo adecuado');
 			}));
 		},
 
-		"error type number with default": function() {
+		'Should_OmitNumberDefaultValue_When_ValueTypeIsNotNumber': function() {
 
 			var dfd = this.async(timeout);
 
 			schema = {
-				type: "number",
-				"default": "uno"
+				type: 'number',
+				'default': 'uno'
 			};
 
 			attr = new Attr();
 			attr.build(schema).then(dfd.callback(function() {
 
-				assert.strictEqual(attr.get("value"), null,
-					"El default se ha añadido al value siendo incorrecto para este tipo");
+				assert.strictEqual(attr.get('value'), null,
+					'El valor por defecto se ha asignado aunque no era del tipo adecuado');
 			}));
 		},
 
-		"type boolean with default true": function() {
+		'Should_SetBooleanDefaultValue_When_ValueIsTrue': function() {
 
 			var dfd = this.async(timeout);
 
 			schema = {
-				type: "boolean",
-				"default": "true"
+				type: 'boolean',
+				'default': 'true'
 			};
 
 			attr = new Attr();
 			attr.build(schema).then(dfd.callback(function() {
 
-				assert.isTrue(attr.get("isValid"), "La validación falla con 'true' en un tipo boolean");
-				assert.strictEqual(attr.get("value"), true,
-					"El default no se ha añadido al value siendo correcto para este tipo");
+				assert.isTrue(attr.get('isValid'), 'La validación falla con un valor válido');
+				assert.strictEqual(attr.get('value'), true,
+					'El valor por defecto no se ha asignado aunque era del tipo adecuado');
 			}));
 		},
 
-		"type boolean with default false": function() {
+		'Should_SetBooleanDefaultValue_When_ValueIsFalse': function() {
 
 			var dfd = this.async(timeout);
 
 			schema = {
-				type: "boolean",
-				"default": "false"
+				type: 'boolean',
+				'default': 'false'
 			};
 
 			attr = new Attr();
 			attr.build(schema).then(dfd.callback(function() {
 
-				assert.isTrue(attr.get("isValid"), "La validación falla con 'false' en un tipo boolean");
-				assert.strictEqual(attr.get("value"), false,
-					"El default no se ha añadido al value siendo correcto para este tipo");
+				assert.isTrue(attr.get('isValid'), 'La validación falla con un valor válido');
+				assert.strictEqual(attr.get('value'), false,
+					'El valor por defecto no se ha asignado aunque era del tipo adecuado');
 			}));
 		},
 
-		"error type boolean with default": function() {
+		'Should_OmitBooleanDefaultValue_When_ValueTypeIsNotBoolean': function() {
 
 			var dfd = this.async(timeout);
 
 			schema = {
-				type: "number",
-				"default": "uno"
+				type: 'boolean',
+				'default': 'uno'
 			};
 
 			attr = new Attr();
 			attr.build(schema).then(dfd.callback(function() {
 
-				assert.strictEqual(attr.get("value"), null,
-					"El default se ha añadido al value siendo incorrecto para este tipo");
+				assert.strictEqual(attr.get('value'), null,
+					'El valor por defecto se ha asignado aunque no era del tipo adecuado');
+			}));
+		},
+
+		'Should_OmitDefaultValue_When_PropertyIsNullable': function() {
+
+			var dfd = this.async(timeout);
+
+			schema = {
+				type: ['number', 'null'],
+				'default': 1
+			};
+
+			attr = new Attr();
+			attr.build(schema).then(dfd.callback(function() {
+
+				assert.strictEqual(attr.get('value'), null,
+					'El valor por defecto se ha asignado aunque la propiedad era anulable');
 			}));
 		}
 	});

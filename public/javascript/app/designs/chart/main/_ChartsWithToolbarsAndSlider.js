@@ -158,7 +158,7 @@ define([
 				dataDefinitions: this._parseDataForAggregationTool(this.categories)
 			});
 
-			if (changeObj.oldValue && this._chartsContainerIsReady) {
+			if (this._chartsContainerIsReady) {
 				this._clearOldChartsData();
 			}
 		},

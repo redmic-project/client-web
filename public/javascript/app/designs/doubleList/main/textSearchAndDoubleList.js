@@ -36,6 +36,7 @@ define([
 				idProperty: "localId",
 				idPropertySerialize: "id",
 				_totalSelected: 0,
+				_pageSize: 10,
 
 				targetBrowserRight: "browserRight",
 
@@ -54,12 +55,22 @@ define([
 
 		_setMainConfigurations: function() {
 
+			this.filterConfig = this._merge([{
+				initQuery: {
+					size: this._pageSize
+				}
+			}, this.filterConfig || {}]);
+
 			this.browserLeftConfig = this._merge([{
 				idProperty: this.idPropertySerialize,
 				browserConfig: {
 					target: this.target,
 					bars: [{
-						instance: Pagination
+						instance: Pagination,
+						config: {
+							pageSizeOptions: [this._pageSize],
+							rowPerPage: this._pageSize
+						}
 					}]
 				}
 			}, this.browserLeftConfig || {}], {
@@ -80,6 +91,7 @@ define([
 
 		_setQueryChannelInModules: function() {
 
+			this.browserLeftConfig.browserConfig.queryChannel = this.queryChannel;
 			this.textSearchConfig.queryChannel = this.queryChannel;
 		},
 

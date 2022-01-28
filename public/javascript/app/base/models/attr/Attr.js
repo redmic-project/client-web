@@ -113,12 +113,15 @@ define([
 
 			var type = this.get("schema").type;
 
-			if (type === "string" || (type instanceof Array && type.indexOf("string") !== -1)) {
+			if (type === "string" || (type instanceof Array && type.indexOf("string") === 0)) {
 				var format = this.get("schema").format;
-				// Si el valor se espera que sea de tipo temporal (fecha, fecha con hora o duración),
-				// se devuelve procesado
 				if (format && (format === 'date' || format === 'date-time' || format === 'duration')) {
 					return this._getNormalizedTemporalValue(value, format);
+				}
+
+				var valueType = typeof value;
+				if (valueType === 'number' || valueType === 'boolean') {
+					return value.toString();
 				}
 			}
 

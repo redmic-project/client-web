@@ -39,7 +39,8 @@ define([
 				queryableClass: "leaflet-queryable",
 				omitContainerSizeCheck: false,
 
-				_mapNodeValidSizeInterval: 100
+				_mapNodeValidSizeInterval: 100,
+				_infoForAddedLayers: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -83,14 +84,21 @@ define([
 
 		_onLayerAdd: function(evt) {
 
-			var layer = evt.layer;
+			var layer = evt.layer,
+				layerId = layer._leaflet_id;
 
-			this._emitEvt('LAYER_ADD', {
+			var layerAddReq = {
 				layer: layer,
 				mapInstance: this.map
-			});
+			};
 
-			var layerId = layer._leaflet_id;
+			if (this._infoForAddedLayers[layerId]) {
+				layerAddReq.extraInfo = this._infoForAddedLayers[layerId];
+				delete this._infoForAddedLayers[layerId];
+			}
+
+			this._emitEvt('LAYER_ADD', layerAddReq);
+
 			if (this._isBaseLayer(layerId)) {
 				this._emitEvt('BASE_LAYER_CHANGE', {
 					success: true,
@@ -325,6 +333,13 @@ define([
 				layerInstance.setZIndex(zIndex);
 			} else {
 				this._setOverlayLayerZIndex(layerInstance, zIndex);
+			}
+		},
+
+		_prepareInfoForLayerAddedEvent: function(layerId, data) {
+
+			if (data.atlasItem) {
+				this._infoForAddedLayers[layerId] = data.atlasItem;
 			}
 		},
 

@@ -58,7 +58,6 @@ module.exports = function(args) {
 				suitesPrefix + 'redmic/modules/layout/details/testDetails'
 				, suitesPrefix + 'redmic/modules/form/testForm'
 				, suitesPrefix + 'redmic/modules/search/testSearch'
-				, suitesPrefix + 'redmic/modules/map/testLayersTree'
 				, suitesPrefix + 'redmic/modules/base/testManager'
 				, suitesPrefix + 'redmic/modules/base/testSelectionBox'
 				, suitesPrefix + 'redmic/modules/base/testNotification'

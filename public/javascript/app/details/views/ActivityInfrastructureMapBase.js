@@ -51,7 +51,7 @@ define([
 										title: "url"
 									},{
 										icon: "fa-map-marker",
-										title: "map centering",
+										title: 'mapCentering',
 										btnId: "mapCentering",
 										returnItem: true
 									}]

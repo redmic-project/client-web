@@ -138,7 +138,8 @@ define([
 			}));
 
 			this._publish(mapInstance.getChannel('ADD_WKT'), {
-				wkt: wkt
+				wkt: wkt,
+				id: 'spatialExtension'
 			});
 		},
 

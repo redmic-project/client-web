@@ -101,9 +101,9 @@ define([
 		_getWmscLayerDefinition: function(atlasLayer, protocol) {
 
 			var layerProps = {
-				layers: this._getLayersParamValue(atlasLayer, protocol),
 				tiled: true
 			};
+			lang.mixin(layerProps, this._getWmsOrWmscLayerProps(atlasLayer, protocol));
 			lang.mixin(layerProps, this._getCommonLayerProps(atlasLayer, protocol));
 
 			return {
@@ -115,9 +115,8 @@ define([
 
 		_getWmsLayerDefinition: function(atlasLayer, protocol) {
 
-			var layerProps = {
-				layers: this._getLayersParamValue(atlasLayer, protocol)
-			};
+			var layerProps = {};
+			lang.mixin(layerProps, this._getWmsOrWmscLayerProps(atlasLayer, protocol));
 			lang.mixin(layerProps, this._getCommonLayerProps(atlasLayer, protocol));
 
 			return {
@@ -158,21 +157,26 @@ define([
 			return '&';
 		},
 
-		_getCommonLayerProps: function(atlasLayer, protocol) {
+		_getWmsOrWmscLayerProps: function(atlasLayer, protocol) {
 
-			return {
-				format: this._getFormatParamValue(atlasLayer, protocol),
-				transparent: true,
-				attribution: atlasLayer.attribution
+			var layerProps = {
+				layers: this._getLayersParamValue(atlasLayer, protocol)
 			};
+
+			var styles = this._getStylesParamValue(atlasLayer);
+			if (styles) {
+				layerProps.styles = styles;
+			}
+
+			return layerProps;
 		},
 
 		_getLayersParamValue: function(atlasLayer, protocol) {
 
-			var params = protocol.params;
+			var params = protocol.params || protocol.url;
 
 			if (params) {
-				var regex = /layers=([^&]+)&?/ig,
+				var regex = /layers?=([^&]+)&?/ig,
 					regexExecResults = regex.exec(params),
 					layerInParams = regexExecResults && regexExecResults[1];
 
@@ -184,9 +188,23 @@ define([
 			return atlasLayer.name;
 		},
 
+		_getStylesParamValue: function(atlasLayer) {
+
+			return atlasLayer.styles;
+		},
+
+		_getCommonLayerProps: function(atlasLayer, protocol) {
+
+			return {
+				format: this._getFormatParamValue(atlasLayer, protocol),
+				transparent: true,
+				attribution: this._getLayerAttributionValue(atlasLayer)
+			};
+		},
+
 		_getFormatParamValue: function(atlasLayer, protocol) {
 
-			var params = protocol.params,
+			var params = protocol.params || protocol.url,
 				availableFormats = atlasLayer.formats,
 				format;
 
@@ -211,6 +229,28 @@ define([
 			return 'image/jpeg';
 		},
 
+		_getLayerAttributionValue: function(atlasLayer) {
+
+			var attribution = atlasLayer.attribution;
+
+			if (typeof attribution === 'string') {
+				return attribution;
+			} else if (attribution && typeof attribution === 'object') {
+				var href = attribution.onlineResource,
+					text = attribution.title;
+
+				if (!text) {
+					return;
+				}
+
+				if (!href) {
+					return text;
+				}
+
+				return '<a href="' + href + '" target="_blank" title="' + href + '">' + text + '</a>';
+			}
+		},
+
 		_getAtlasLayerDefinition: function() {
 
 			return declare([WmsLayerImpl, _PublishInfo]);
@@ -225,10 +265,9 @@ define([
 			return {
 				parentChannel: this.getChannel(),
 				layerDefinition: layerDefinition,
-				styleLayer: layerItem.styleLayer,
-				queryable: layerItem.queryable,
 				layerId: layerId,
 				layerLabel: layerLabel,
+				queryable: layerItem.queryable,
 				refresh: layerItem.refresh
 			};
 		},

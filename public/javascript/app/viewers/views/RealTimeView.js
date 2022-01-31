@@ -16,7 +16,7 @@ define([
 	, 'redmic/modules/browser/_Framework'
 	, 'redmic/modules/browser/bars/Total'
 	, "redmic/modules/gateway/MapCenteringGatewayImpl"
-	, 'redmic/modules/map/Atlas'
+	, 'redmic/modules/atlas/Atlas'
 	, 'redmic/modules/map/layer/PruneClusterLayerImpl'
 	, 'redmic/modules/search/TextImpl'
 	, 'templates/SurveyStationList'

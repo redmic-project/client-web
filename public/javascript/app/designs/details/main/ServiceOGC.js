@@ -3,26 +3,30 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'redmic/modules/map/_AtlasLayersManagement'
+	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
+	, 'redmic/modules/atlas/_AtlasLayersManagement'
 	, "redmic/modules/map/LeafletImpl"
 	, "redmic/modules/map/layer/WmsLayerImpl"
 	, "RWidgets/RedmicUtilities"
 	, "templates/ServiceOGCTitle"
 	, "templates/ServiceOGCInfo"
-//	, "templates/ServiceOGCImage"
+	, "templates/ServiceOGCSourceInfo"
+	, "templates/ServiceOGCImage"
 	, "./_DetailsBase"
 ], function(
 	_Main
 	, redmicConfig
 	, declare
 	, lang
+	, TemplateDisplayer
 	, _AtlasLayersManagement
 	, LeafletImpl
 	, WmsLayerImpl
 	, RedmicUtilities
 	, TemplateTitle
 	, TemplateInfo
-//	, TemplateImage
+	, TemplateSourceInfo
+	, TemplateImage
 	, _DetailsBase
 ) {
 
@@ -39,6 +43,7 @@ define([
 
 			this.activityLocalTarget = "activitiesLayer";
 			this.infoLayerTarget = 'infoLayerTarget';
+			this.sourceInfoLayerTarget = 'sourceInfoLayerTarget';
 
 			this.config = {
 				templateTitle: TemplateTitle,
@@ -54,12 +59,25 @@ define([
 
 			this.target.push(this.activityTarget);
 
-			this.widgetConfigs = this._merge([
-				this.widgetConfigs || {},
-				{
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
 				info: {
+					height: 3,
 					props: {
 						target: this.infoLayerTarget
+					}
+				},
+				sourceInfo: {
+					width: 3,
+					height: 6,
+					type: TemplateDisplayer,
+					props: {
+						title: this.i18n.sourceInfo,
+						template: TemplateSourceInfo,
+						target: this.sourceInfoLayerTarget,
+						"class": "containerDetails",
+						classEmptyTemplate: "contentListNoData",
+						associatedIds: [this.ownChannel],
+						shownOption: this.shownOptionInfo
 					}
 				},
 				activityList: {
@@ -83,10 +101,10 @@ define([
 						scaleBar: false,
 						measureTools: false
 					}
-				}/*,
+				},
 				legend: {
 					width: 3,
-					height: 6,
+					height: 4,
 					type: TemplateDisplayer,
 					props: {
 						title: this.i18n.legend,
@@ -95,7 +113,7 @@ define([
 						target: this.atlasTarget,
 						associatedIds: [this.ownChannel]
 					}
-				}*/
+				}
 			}]);
 		},
 
@@ -146,6 +164,10 @@ define([
 				data: data,
 				target: this.infoLayerTarget
 			});
+			this._emitEvt('INJECT_ITEM', {
+				data: data,
+				target: this.sourceInfoLayerTarget
+			});
 
 			this._publishMapBox('CLEAR');
 			this._createMapBoundingLayer(data);
@@ -183,14 +205,14 @@ define([
 
 		_retrieveLayerActivities: function(data) {
 
-			var activities = data.activities;
+			var activities = data.relatedActivities;
 
 			if (!activities || !activities.length) {
 				return;
 			}
 
 			for (var i = 0; i < activities.length; i++) {
-				var activity = activities[i];
+				var activity = activities[i].activity;
 				this._publish(this._buildChannel(this.storeChannel, this.actions.GET), {
 					target: this.activityTarget,
 					id: activity[this.idProperty]

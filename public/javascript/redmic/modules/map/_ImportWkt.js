@@ -93,7 +93,11 @@ define([
 				return;
 			}
 
-			newLayer.addTo(this.map);
+			this._addMapLayer({
+				layer: newLayer,
+				optional: true,
+				id: req.id
+			});
 
 			var bounds = newLayer.getBounds();
 			if (this._getShown()) {

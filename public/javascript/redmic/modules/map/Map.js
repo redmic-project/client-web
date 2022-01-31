@@ -302,29 +302,47 @@ define([
 				return;
 			}
 
-			var optional = obj.optional,
-				order = obj.order,
-				layerId = this._getLayerId(obj) || uuid.v4(),
-				layerLabel = obj.layerLabel || layerId;
+			var layerId = this._getLayerId(obj) || uuid.v4(),
+				innerLayer = this._getInnerLayer(layer, layerId);
+
+			if (!innerLayer) {
+				return;
+			}
+
+			this._prepareInfoForLayerAddedEvent(layerId, obj);
+			this.addLayer(innerLayer, layerId);
+			this._manageAddedLayer(innerLayer, layerId, obj);
+		},
+
+		_getInnerLayer: function(layer, layerId) {
+
+			var innerLayer;
 
 			// Si la capa es un módulo
 			if (layer.isInstanceOf && layer.isInstanceOf(_Module)) {
-				layer = layer.layer;
+				innerLayer = layer.layer;
 
-				// Si no contiene una capa de tipo leaflet (D3, por ejemplo)
-				if (layerId && !layer) {
-					this._emitEvt('LAYER_ADD', {
-						layer: obj.layer,
-						mapInstance: this.map
-					});
-				}
+				if (!innerLayer) {
+					// Si no contiene una capa de tipo Leaflet pero sí tiene ID (D3, por ejemplo)
+					if (layerId) {
+						this._emitEvt('LAYER_ADD', {
+							layer: layer,
+							mapInstance: this.map
+						});
+					}
 
-				if (!layer) {
 					return;
 				}
 			}
 
-			this.addLayer(layer, layerId);
+			return innerLayer || layer;
+		},
+
+		_manageAddedLayer: function(layer, layerId, obj) {
+
+			var optional = obj.optional,
+				order = obj.order,
+				layerLabel = obj.layerLabel || layerId;
 
 			if (optional) {
 				this._addLayerToSelector(layer, layerLabel, true);

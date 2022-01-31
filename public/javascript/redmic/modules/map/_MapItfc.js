@@ -33,7 +33,8 @@ define([
 				"_getMapInstance": {},
 				"addButton": {},
 				"_addQueryableCursor": {},
-				"_removeQueryableCursor": {}
+				"_removeQueryableCursor": {},
+				"_prepareInfoForLayerAddedEvent": {}
 			});
 		}
 	});

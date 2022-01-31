@@ -25,6 +25,7 @@ define([
 				_titleLeftButtonsList: [],
 				_titleRightButtonsList: [],
 				tabs: [],
+				hiddenClass: 'hidden',
 				centerTitle: false,
 				pathParent: null,
 				_closeTitle: false,
@@ -140,7 +141,7 @@ define([
 
 			this._titleButtonsNode = put(this.topNode, 'div.buttons');
 			this._titleLeftNode = put(this._titleButtonsNode, "div.left");
-			this._titleRightNode = put(this._titleButtonsNode, "div.right.hidden");
+			this._titleRightNode = put(this._titleButtonsNode, "div.right." + this.hiddenClass);
 		},
 
 		_addIdTitle: function() {
@@ -172,26 +173,35 @@ define([
 
 			var i;
 
-			if (this._titleLeftNode.children.length === 0) {
-				for (i = 0; i < leftButtons.length; i++) {
-					this._preInsertIcon(leftButtons[i], this._titleLeftNode);
+			if (this._titleLeftNode.children.length !== 0) {
+				for (i = 0; i < this._titleLeftNode.children.length; i++) {
+					put('!', this._titleLeftNode.children[i]);
+				}
+			}
+			for (i = 0; i < leftButtons.length; i++) {
+				this._preInsertIcon(leftButtons[i], this._titleLeftNode);
+			}
+
+			if (this._titleRightNode.children.length !== 0) {
+				for (i = 0; i < this._titleRightNode.children.length; i++) {
+					put('!', this._titleRightNode.children[i]);
 				}
 			}
 
-			if (this._titleRightNode.children.length === 0) {
-				if (rightButtons.length !== 0) {
-					this._titleRightNode.setAttribute("class", "right");
-				}
+			if (rightButtons.length === 0) {
+				put(this._titleRightNode, '.' + this.hiddenClass);
+			} else {
+				put(this._titleRightNode, '!' + this.hiddenClass);
+			}
 
-				for (i = 0; i < rightButtons.length; i++) {
-					this._preInsertIcon(rightButtons[i], this._titleRightNode);
-				}
+			for (i = 0; i < rightButtons.length; i++) {
+				this._preInsertIcon(rightButtons[i], this._titleRightNode);
 			}
 		},
 
 		_preInsertIcon: function(buttonProp, node) {
 
-			if ((!buttonProp.condition) || (buttonProp.condition && this.data && this.data[buttonProp.condition])) {
+			if (!buttonProp.condition || (this.data && this.data[buttonProp.condition])) {
 				this._insertIcon(buttonProp, node);
 			}
 		},

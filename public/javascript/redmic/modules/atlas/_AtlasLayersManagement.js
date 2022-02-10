@@ -83,8 +83,8 @@ define([
 		_getTiledLayerDefinition: function(atlasLayer, protocol, /*Boolean?*/ useTms) {
 
 			var layerProps = {
-				updateInterval: 100,
-				keepBuffer: 4,
+				updateInterval: 200,
+				keepBuffer: 2,
 				tileSize: 256,
 				opacity: 1,
 				tms: !!useTms

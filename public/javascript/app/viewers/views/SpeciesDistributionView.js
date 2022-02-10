@@ -163,6 +163,7 @@ define([
 
 				//precision: [0, 5000],
 				confidences: [1, 2, 3, 4],
+				browserPageSize: 25,
 
 				events: {
 					SET_LAYER_PROPS: "setLayerProps"
@@ -190,6 +191,9 @@ define([
 
 			this.filterConfig = this._merge([{
 				target: this.elasticTarget,
+				initQuery: {
+					size: this.browserPageSize
+				},
 				parentChannel: this.getChannel()
 			}, this.filterConfig || {}]);
 
@@ -225,7 +229,10 @@ define([
 				},{
 					instance: SelectionBox
 				},{
-					instance: Pagination
+					instance: Pagination,
+					config: {
+						rowPerPage: this.browserPageSize
+					}
 				}]
 			}, this.browserConfig || {}]);
 

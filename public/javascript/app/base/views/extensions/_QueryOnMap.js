@@ -2,11 +2,10 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "dojo/Deferred"
-	, "dojo/promise/all"
 
 	, "templates/AtlasPrimaryList"
-	, "templates/AtlasSecundaryList"
+	, "templates/AtlasSecondaryList"
+	, "templates/AtlasRedpromarSecondaryList"
 	, "templates/TrackingPrimaryList"
 	, "templates/TrackingSecondaryList"
 	, "templates/SpeciesDistributionPrimaryList"
@@ -15,11 +14,10 @@ define([
 	declare
 	, lang
 	, aspect
-	, Deferred
-	, all
 
 	, AtlasPrimaryList
-	, AtlasSecundaryList
+	, AtlasSecondaryList
+	, AtlasRedpromarSecondaryList
 	, TrackingPrimaryList
 	, TrackingSecondaryList
 	, SpeciesDistributionPrimaryList
@@ -52,6 +50,7 @@ define([
 				},
 
 				layerIdSeparator: "_",
+				layerIdPrefix: "layer-",
 				layerThemeSeparator: "-",
 				typeGroupProperty: "dataType",
 				parentTemplateSuffix: "Parent",
@@ -67,7 +66,7 @@ define([
 					//"el-batimetriaIslasChildren": AtlasBathymetry",
 
 					"defaultParent": AtlasPrimaryList,
-					"defaultChildren": AtlasSecundaryList,
+					"defaultChildren": AtlasSecondaryList,
 
 					"trackingParent": TrackingPrimaryList,
 					"trackingChildren": TrackingSecondaryList,
@@ -76,7 +75,10 @@ define([
 					"taxonDistributionChildren": {
 						"ci": SpeciesDistributionCitation,
 						"at": TrackingSecondaryList
-					}
+					},
+
+					"sd-full_sighting_taxon_yearChildren": AtlasRedpromarSecondaryList,
+					"sd-exotic-species-sightingChildren": AtlasRedpromarSecondaryList
 				}
 			};
 
@@ -182,8 +184,9 @@ define([
 			this._emitEvt('SET_MAP_QUERYABLE_CURSOR', {enable: true});
 
 			var layerId = res.layerId,
-				layerName = layerId.split(this.layerIdSeparator)[0],
-				parentTemplateDefinition = this._getTemplateForLayer(layerName, this.parentTemplateSuffix),
+				layerName = this._getLayerName(layerId);
+
+			var parentTemplateDefinition = this._getTemplateForLayer(layerName, this.parentTemplateSuffix),
 				childrenTemplateDefinition = this._getTemplateForLayer(layerName, this.childrenTemplateSuffix);
 
 			this._emitEvt('ADD_NEW_TEMPLATES', {
@@ -191,6 +194,17 @@ define([
 				parentTemplate: parentTemplateDefinition,
 				childrenTemplate: childrenTemplateDefinition
 			});
+		},
+
+		_getLayerName: function(layerId) {
+
+			var layerIdSplit = layerId.split(this.layerIdSeparator + this.layerIdPrefix);
+
+			if (layerIdSplit.length > 1) {
+				return layerIdSplit[0];
+			}
+
+			return layerId.split(this.layerIdSeparator)[0];
 		},
 
 		_getTemplateForLayer: function(layerName, suffix) {
@@ -259,7 +273,7 @@ define([
 		_loadInfo: function(layerId, layerLabel, layerInfo) {
 
 			var infoData = this._getDataForAddInfo(layerId, layerLabel, layerInfo),
-				typeGroup = layerId.split(this.layerIdSeparator)[0];
+				typeGroup = this._getLayerName(layerId);
 
 			infoData[this.typeGroupProperty] = typeGroup;
 
@@ -283,7 +297,7 @@ define([
 
 		_getDataForAddInfo: function(layerId, layerLabel, data) {
 
-			var layerIdPrefix = layerId.split(this.layerIdSeparator)[0],
+			var layerIdPrefix = this._getLayerName(layerId),
 				method;
 
 			if (layerIdPrefix === "tracking") {
@@ -311,9 +325,9 @@ define([
 
 			return {
 				parent: data,
-				parentName: function(data) {
+				parentName: function(parentData) {
 
-					return "<i>" + data.scientificName + "</i> " + data.authorship;
+					return "<i>" + parentData.scientificName + "</i> " + parentData.authorship;
 				},
 				children: data.citations.concat(data.animalTrackings)
 			};

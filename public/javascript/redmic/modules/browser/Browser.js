@@ -98,7 +98,9 @@ define([
 
 			aspect.after(this, "_updateTemplate", lang.hitch(this, function(originalReturn, originalArgs) {
 
-				this._emitEvt('TEMPLATE_UPDATED', originalArgs[0]);
+				this._emitEvt('TEMPLATE_UPDATED', {
+					template: originalArgs[0]
+				});
 			}));
 		},
 
@@ -299,7 +301,8 @@ define([
 
 			this._configRow(item);
 
-			var rowInstance = new declare(this._defRow)(this.rowConfig);
+			var RowDefinition = declare(this._defRow),
+				rowInstance = new RowDefinition(this.rowConfig);
 
 			this._setRow(idProperty, {
 				instance: rowInstance,

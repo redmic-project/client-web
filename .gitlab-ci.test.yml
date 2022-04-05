@@ -27,7 +27,7 @@
 
 .run-unit-tests:
   extends: .run-pre-build-tests
-  coverage: ^Coverage\s-\s(\d+(?:\.\d+)?%)
+  coverage: '/^Coverage\s-\s(\d+(?:\.\d+)?%)/'
   after_script:
     - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
     - echo "Coverage - ${coverage}%"

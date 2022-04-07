@@ -15,7 +15,7 @@ define([
 
 		timeout = 100,
 
-		getDeepChildrenNumber = function(obj, schema) {
+		getDeepChildrenNumber = function(obj, schemaParam) {
 			//	summary:
 			//		Devuelve el número de propiedades o elementos del object o array proporcionado más, a su vez,
 			//		el número de propiedades o elementos de sus propiedades o items anidados que sean de tipo object
@@ -25,7 +25,11 @@ define([
 
 			for (var key in obj) {
 				var prop = obj[key],
-					subSchema = schema ? (schema.properties ? schema.properties[key] : schema[key]) : null;
+					subSchema;
+
+				if (schemaParam) {
+					subSchema = schemaParam.properties ? schemaParam.properties[key] : schemaParam[key];
+				}
 
 				if (prop && typeof prop === "object" && (prop instanceof Array || (subSchema && !subSchema.url))) {
 					count += getDeepChildrenNumber(prop, subSchema);
@@ -37,14 +41,14 @@ define([
 			return count;
 		},
 
-		getDeepSchemaPropsNumber = function(schema) {
+		getDeepSchemaPropsNumber = function(schemaParam) {
 			//	summary:
 			//		Devuelve el número de propiedades en el schema proporcionado del object más, a su vez, el número
 			//		de propiedades de sus propiedades anidadas que sean de tipo object. Omite la recursividad si
 			//		detecta que llega un schema que no corresponde a un objeto.
 
 			var count = 0,
-				props = schema ? schema.properties : null;
+				props = schemaParam ? schemaParam.properties : null;
 
 			if (!props) {
 				return count;
@@ -63,13 +67,13 @@ define([
 			return count;
 		},
 
-		getInvalidValue = function(value, invalidPropertyValues) {
+		getInvalidValue = function(valueParam, invalidPropertyValuesParam) {
 			//	summary:
 			//		Mezcla el valor válido y las propiedades inválidas proporcionados, para devolver un valor
 			//		inválido apropiado.
 
-			var partialInvalidValue = lang.clone(value);
-			lang.mixin(partialInvalidValue, invalidPropertyValues);
+			var partialInvalidValue = lang.clone(valueParam);
+			lang.mixin(partialInvalidValue, invalidPropertyValuesParam);
 
 			return partialInvalidValue;
 		},
@@ -221,8 +225,9 @@ define([
 
 				var firstInvalidPropertyName = "id",
 					propertyInstance = model.get(firstInvalidPropertyName),
-					propertyValidation = model._globalValidation[firstInvalidPropertyName];
-					propertyValidationErrors = propertyValidation.errors;
+					propertyValidation = model._globalValidation[firstInvalidPropertyName],
+					propertyValidationErrors = propertyValidation.errors,
+					i;
 
 				assert.isDefined(propertyValidation, "No hay errores almacenados para la primera propiedad inválida");
 				assert.isAtLeast(propertyValidationErrors.length, 1,
@@ -262,6 +267,11 @@ define([
 				assert.isUndefined(propertyValidation, "Hay errores almacenados para la propiedad que ya es válida");
 
 				rootValidation = model._globalValidation[model.pathSeparator];
+
+				if (!rootValidation) {
+					return;
+				}
+
 				rootErrors = rootValidation.errors;
 				errorFoundInRoot = false;
 
@@ -402,8 +412,7 @@ define([
 			};
 
 			invalidPropertyValues = {
-				id: "uno",
-				name: 1
+				id: "uno"
 			};
 
 			invalidValue = getInvalidValue(value, invalidPropertyValues);
@@ -796,7 +805,7 @@ define([
 
 			setTimeout(dfd.callback(removeEventListening), timeout - 1);
 
-			model.on('valueAdded', function(obj) {
+			model.on('valueAdded', function() {
 
 				removeEventListening();
 				dfd.reject(new Error('Se ha emitido el evento de item añadido al limpiar el array'));
@@ -967,12 +976,10 @@ define([
 				id: "uno",
 				numberCollection: {
 					integerParts: [{
-						id: "tres",
-						name: 3
+						id: "tres"
 					}],
 					fractionalParts: [{
-						id: "catorce",
-						name: 14
+						id: "catorce"
 					}]
 				}
 			};
@@ -1155,8 +1162,7 @@ define([
 			};
 
 			invalidPropertyValues = {
-				id: "uno",
-				name: 1
+				id: "uno"
 			};
 
 			invalidValue = getInvalidValue(value, invalidPropertyValues);

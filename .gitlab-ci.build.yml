@@ -8,6 +8,8 @@
     - type yarn grunt java
     - yarn install
     - grunt preBuild
+  tags:
+    - custom-runner
   cache:
     paths:
       - node_modules/

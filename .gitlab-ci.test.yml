@@ -1,13 +1,12 @@
 .run-tests:
   extends: .web-build
-  tags:
-    - custom-runner
   cache:
     policy: pull
 
 .run-pre-build-tests:
   extends: .run-tests
   stage: pre-build
+  needs: ["prepare-unbuilt-version"]
   rules:
     - if: $CI_MERGE_REQUEST_ID ||
           $CI_COMMIT_TAG ||

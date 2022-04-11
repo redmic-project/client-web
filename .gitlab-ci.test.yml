@@ -1,5 +1,7 @@
 .run-tests:
   extends: .web-build
+  tags:
+    - custom-runner
   cache:
     policy: pull
 

@@ -132,3 +132,28 @@ grunt test-functional-remote \
   --browser=chrome \
   --headless
 ```
+
+### Ejemplo de ejecución de tests funcionales remotos de servicio local en entorno local
+
+Este caso concreto de entorno de testeo es especial, ya que para que los tests puedan ejecutarse, el servicio a testear debe ser accesible por el navegador remoto, que se ha lanzado en la preparación del entorno Selenium local.
+
+Suponiendo que el servicio a testear se encuentra en `http://localhost`, se debe adaptar la ruta al mismo en los parámetros de testeo para que sea accesible desde dentro del contenedor del navegador, ya que ese *localhost* no es el mismo en la máquina host que dentro del contenedor.
+
+Por suerte, los contenedores funcionando sobre GNU/Linux tienen disponible una dirección IP que corresponde al host en el que se despliegan asignada a la interfaz `docker0`, por defecto `172.17.0.1`. Se puede consultar desde dentro del contenedor (en el nodo de Chrome, por ejemplo) si tiene dicha IP con los comandos:
+
+```sh
+$ docker exec -it selenium-chrome /bin/sh
+
+> ip addr show docker0
+```
+
+Otra solución multiplataforma (a partir de Docker v20.10) a usar esa dirección IP, consiste en añadir el siguiente parámetro al lanzamiento del contenedor del navegador: `--add-host=host.docker.internal:host-gateway`. De esta manera, podríamos acceder al servicio desde dentro del contenedor haciendo referencia a `http://host.docker.internal`, pero como requiere cambios en el lanzamiento de la infraestructura previa, optamos por la primera opción.
+
+Por ejemplo, para lanzar tests funcionales del grupo de suites `common` sobre el servicio arrancado en el host (escuchando en el puerto 80), en navegador Google Chrome (con interfaz):
+
+```sh
+grunt test-functional-remote \
+  --serverUrl="http://172.17.0.1" \
+  --suitesGroups="common" \
+  --browser=chrome
+```

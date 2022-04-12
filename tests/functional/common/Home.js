@@ -15,32 +15,31 @@ define([
 
 		indexPage,
 		tests = {
+			'Should_GoToActivityInfo_When_ClickOnStarredActivitiesLink': function() {
 
-			'Should_GoToValidView_When_ClickOnFavouritesLink': function() {
-
-				var favouriteLinkSelector = 'div.favouritesBoxItems > a.module:first-child',
-					validViewUrlExpr = '\/(?!404)(?!home).*';
-
-				return indexPage
-					.login()
-					.then(Utils.clickElementAndCheckUrl(favouriteLinkSelector, validViewUrlExpr));
-			},
-
-			'Should_GoToActivityInfo_When_ClickOnLastActivitiesLink': function() {
-
-				var lastActivityLinkSelector = 'div.boxItems > div.lastActivityModule:first-child a',
+				var starredActivityLinkSelector = 'div.moduleWindow[id=starredActivities] div.containerButtons > a:first-child',
 					activityInfoUrlExpr = '\/catalog\/activity-info\/[0-9]+';
 
 				return indexPage
 					.login()
-					.then(Utils.clickElementAndCheckUrl(lastActivityLinkSelector, activityInfoUrlExpr));
+					.then(Utils.clickElementAndCheckUrl(starredActivityLinkSelector, activityInfoUrlExpr));
+			},
+
+			'Should_GoToValidView_When_ClickOnProductsLink': function() {
+
+				var productsLinkSelector = 'div.moduleWindow[id=products] div.containerButtons > a:first-child',
+					validViewUrlExpr = '\/(?!404)(?!home).*';
+
+				return indexPage
+					.login()
+					.then(Utils.clickElementAndCheckUrl(productsLinkSelector, validViewUrlExpr));
 			},
 
 			'Should_GoToFeedback_When_ClickOnFeedbackLink': function() {
 
 				var feedbackPageUrl = Config.url.feedback,
-					feedbackLinkSelector = 'div.box a[href="' + feedbackPageUrl + '"]',
-					values = {};
+					feedbackLinkSelector = 'div.moduleWindow[id=info] a[href="' + feedbackPageUrl + '"]',
+					valuesObj = {};
 
 				return indexPage
 					.login()
@@ -48,7 +47,7 @@ define([
 					.then(lang.partial(function(values, array) {
 
 						values.windowHandles = array;
-					}, values))
+					}, valuesObj))
 					.then(Utils.clickElement(feedbackLinkSelector))
 					.getAllWindowHandles()
 					.then(lang.partial(function(values, array) {
@@ -64,7 +63,7 @@ define([
 							.then(Utils.checkLoadingIsGone())
 							.closeCurrentWindow()
 							.switchToWindow(handles[0]);
-					}, values));
+					}, valuesObj));
 			}
 		};
 

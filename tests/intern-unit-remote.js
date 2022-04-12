@@ -5,7 +5,7 @@ module.exports = function(args) {
 		_remote = require('./_remote')(args);
 
 	return deepmerge.all([_internUnit, _remote], {
-		arrayMerge: function (destinationArray, sourceArray, options) {
+		arrayMerge: function (_destinationArray, sourceArray, _options) {
 
 			return sourceArray;
 		}

@@ -67,7 +67,7 @@ define([
 
 			'Should_ShowBadValuesError_When_LoginWithUnregisteredCredentials': function() {
 
-				var errorNotificationSelector = 'div.alertify-notifier div.ajs-error.ajs-visible',
+				var errorNotificationSelector = 'div.alertify-notifier div.ajs-error.ajs-visible:last-child',
 					badPassword = 'badPassword',
 					badUsername = 'pepe@redmic.es';
 

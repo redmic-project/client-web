@@ -149,11 +149,12 @@ $ docker exec -it selenium-chrome /bin/sh
 
 Otra solución multiplataforma (a partir de Docker v20.10) a usar esa dirección IP, consiste en añadir el siguiente parámetro al lanzamiento del contenedor del navegador: `--add-host=host.docker.internal:host-gateway`. De esta manera, podríamos acceder al servicio desde dentro del contenedor haciendo referencia a `http://host.docker.internal`, pero como requiere cambios en el lanzamiento de la infraestructura previa, optamos por la primera opción.
 
-Por ejemplo, para lanzar tests funcionales del grupo de suites `common` sobre el servicio arrancado en el host (escuchando en el puerto 80), en navegador Google Chrome (con interfaz):
+Por ejemplo, para lanzar tests funcionales del grupo de suites `common` sobre el servicio arrancado en el host (escuchando en el puerto 80) con rol de invitado, en navegador Google Chrome (con interfaz):
 
 ```sh
 grunt test-functional-remote \
   --serverUrl="http://172.17.0.1" \
+  --role=guest \
   --suitesGroups="common" \
   --browser=chrome
 ```

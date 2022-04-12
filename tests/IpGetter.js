@@ -1,4 +1,4 @@
-module.exports = function(args) {
+module.exports = function() {
 
 	var os = require('os'),
 		interfaces = os.networkInterfaces(),

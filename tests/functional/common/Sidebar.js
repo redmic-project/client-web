@@ -15,7 +15,7 @@ define([
 		allowedModulesKey = 'REDMIC_allowedModules',
 		credentials = Config.credentials,
 		userRole = credentials.userRole,
-		name = 'Sidebar component as ' + userRole + ' tests';
+		suiteName = 'Sidebar component as ' + userRole + ' tests';
 
 
 	function testPrimaryEntry(url) {
@@ -66,7 +66,7 @@ define([
 
 		return function(allowedModules) {
 
-			var sidebarModules = JSON.parse(allowedModules).filter(function(val, i, arr) {
+			var sidebarModules = JSON.parse(allowedModules).filter(function(val) {
 
 				return !val.hidden;
 			});
@@ -100,16 +100,16 @@ define([
 
 	var registerSuite = intern.getInterface('object').registerSuite;
 
-	registerSuite(name, {
+	registerSuite(suiteName, {
 		Should_BeAbleToNavigateToAllModules_When_ReceiveAllowedModules: function() {
 
 			indexPage = new LoginPage(this);
 
 			return indexPage
 				.login()
-				.then(lang.partial(function(allowedModulesKey) {
+				.then(lang.partial(function(itemKey) {
 
-					return this.session.getLocalStorageItem(allowedModulesKey);
+					return this.session.getLocalStorageItem(itemKey);
 				}, allowedModulesKey))
 				.then(testSidebarEntries())
 				.then(function() {

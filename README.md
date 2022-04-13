@@ -87,6 +87,7 @@ docker run --rm -d \
   -e SE_EVENT_BUS_HOST=selenium-hub \
   -e SE_EVENT_BUS_PUBLISH_PORT=4442 \
   -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
+  -e VNC_NO_PASSWORD=true \
   selenium/node-chrome:99.0
 
 # Lanza un nodo de navegador Firefox
@@ -97,6 +98,7 @@ docker run --rm -d \
   -e SE_EVENT_BUS_HOST=selenium-hub \
   -e SE_EVENT_BUS_PUBLISH_PORT=4442 \
   -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
+  -e VNC_NO_PASSWORD=true \
   selenium/node-firefox:98.0
 ```
 

@@ -38,32 +38,30 @@ define([
 			'Should_GoToFeedback_When_ClickOnFeedbackLink': function() {
 
 				var feedbackPageUrl = Config.url.feedback,
-					feedbackLinkSelector = 'div.moduleWindow[id=info] a[href="' + feedbackPageUrl + '"]',
-					valuesObj = {};
+					feedbackLinkSelector = 'div.moduleWindow[id=info] a[href="' + feedbackPageUrl + '"]';
 
 				return indexPage
 					.login()
 					.getAllWindowHandles()
-					.then(lang.partial(function(values, array) {
+					.then(function(handles) {
 
-						values.windowHandles = array;
-					}, valuesObj))
+						assert.lengthOf(handles, 1, 'Había abierta más de 1 pestaña');
+					})
 					.then(Utils.clickElement(feedbackLinkSelector))
+					.sleep(Config.timeout.shortSleep)
 					.getAllWindowHandles()
-					.then(lang.partial(function(values, array) {
+					.then(function(handles) {
 
-						var handles = values.windowHandles;
-
-						assert.isAbove(array.length, handles.length, 'No se ha abierto ninguna pestaña');
+						assert.lengthOf(handles, 2, 'No se ha abierto ninguna pestaña');
 
 						return this.parent
-							.switchToWindow(array[1])
+							.switchToWindow(handles[handles.length - 1])
 							.sleep(Config.timeout.shortSleep)
 							.then(Utils.checkUrl(feedbackPageUrl))
 							.then(Utils.checkLoadingIsGone())
 							.closeCurrentWindow()
 							.switchToWindow(handles[0]);
-					}, valuesObj));
+					});
 			}
 		};
 

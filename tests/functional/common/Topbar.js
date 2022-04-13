@@ -22,7 +22,6 @@ define([
 		infoLinkSelector = _guestAreaSelector + 'a[href="' + infoPageUrl + '"]',
 
 		registerSuite = intern.getInterface('object').registerSuite,
-		assert = intern.getPlugin('chai').assert;
 
 		tests = {
 			'Should_GoToHomeView_When_ClickOnRedmicLogo': function() {
@@ -57,7 +56,7 @@ define([
 				return indexPage
 					.login()
 					.then(Utils.clickElement(Config.selector.userArea))
-					.then(Utils.clickElementAndCheckUrl(registerLinkSelector, registerPageUrl));
+					.then(Utils.clickElementAndCheckUrl(loginLinkSelector, loginPageUrl));
 			},
 
 			'Should_GoToRegisterView_When_GuestUserClickOnRegisterLink': function() {

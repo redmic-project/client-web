@@ -86,7 +86,7 @@ define([
 
 			'Should_SetImage_When_UploadNewImage': function() {
 
-				var values = {};
+				var valuesObj = {};
 
 				return goToProfile()
 					// recuerda la ruta de la imagen inicial
@@ -95,7 +95,7 @@ define([
 						.then(lang.partial(function(values, src) {
 
 							values.oldValue = src;
-						}, values))
+						}, valuesObj))
 						.end()
 					// edita la imagen
 					.then(setNewProfileImage())
@@ -105,7 +105,7 @@ define([
 						.then(lang.partial(function(values, src) {
 
 							assert.notStrictEqual(src, values.oldValue, 'La imagen no ha cambiado');
-						}, values))
+						}, valuesObj))
 						.end();
 			},
 
@@ -149,7 +149,7 @@ define([
 
 				var editButtonSelector = 'div.infoContainer :nth-child(2) div.rowsContainer :first-child i.fa-edit',
 					textInputSelector = 'div[data-redmic-model="firstName"] div.dijitInputContainer input',
-					values = {
+					valuesObj = {
 						newValue: 'Benancio'
 					};
 
@@ -160,9 +160,9 @@ define([
 							.then(lang.partial(function(values, text) {
 
 								values.oldValue = text;
-							}, values))
+							}, valuesObj))
 							.end()
-						.then(Utils.setInputValue(textInputSelector, values.newValue))
+						.then(Utils.setInputValue(textInputSelector, valuesObj.newValue))
 						.then(Utils.clickElement(Config.selector.saveButton))
 						.end()
 					.then(Utils.checkLoadingIsGone())
@@ -173,13 +173,13 @@ define([
 							.then(lang.partial(function(values, text) {
 
 								assert.strictEqual(text, values.newValue, 'El valor seteado no es el esperado');
-							}, values))
+							}, valuesObj))
 							// restaura el valor original
 							.clearValue()
 							.then(lang.partial(function(values) {
 
 								this.type(values.oldValue);
-							}, values))
+							}, valuesObj))
 							.end()
 						.then(Utils.clickElement(Config.selector.saveButton))
 						.end();
@@ -192,7 +192,7 @@ define([
 					sectorSpanSelector = _sectorRowSelector + 'span.spanTemplate span.name',
 					selectInputSelector = 'div[data-redmic-model="sector"] div.buttonSearch',
 					selectInputValueSelector = 'span[data-redmic-id="10"]',
-					values = {};
+					valuesObj = {};
 
 				return goToProfile()
 					.then(Utils.clickElement(editButtonSelector))
@@ -203,7 +203,7 @@ define([
 						.then(lang.partial(function(values, text) {
 
 							values.newValue = text;
-						}, values))
+						}, valuesObj))
 						.click()
 						.end()
 					.then(Utils.clickElement(Config.selector.saveButton))
@@ -214,7 +214,7 @@ define([
 						.then(lang.partial(function(values, text) {
 
 							assert.strictEqual(text, values.newValue, 'El nuevo valor no coincide con el seleccionado');
-						}, values))
+						}, valuesObj))
 						.end()
 					// restaura el valor original
 					.then(Utils.clickElement(editButtonSelector))

@@ -14,7 +14,7 @@ define([
 
 	return declare(_Page, {
 
-		constructor: function(args) {
+		constructor: function() {
 
 			global.listContainerWithoutLoadingSelector = this._getParentList() +
 				'div.containerList' + Config.selector.notLoading;
@@ -94,7 +94,7 @@ define([
 						.then(function(element) {
 
 							return element._elementId;
-						}, function(element) {
+						}, function() {
 
 							return -1;
 						});
@@ -285,13 +285,13 @@ define([
 
 		setModeToShowAll: function() {
 
-			var selectedOnlyOptionSelector = listModeInputSelectSelector + ' > option[value="all"]';
+			var allOptionSelector = listModeInputSelectSelector + ' > option[value="all"]';
 
 			return function() {
 
 				return this.parent
 					.then(Utils.clickDisplayedElement(listModeInputSelectSelector))
-					.then(Utils.clickDisplayedElement(selectedOnlyOptionSelector))
+					.then(Utils.clickDisplayedElement(allOptionSelector))
 					.then(Utils.checkLoadingIsGone());
 			};
 		},

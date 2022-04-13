@@ -14,24 +14,24 @@ define([
 	, FormPage
 ) {
 
-	var filterContainerSelector = 'div.dijitPopup div.containerContent' +
-			' div.compositeSearchInTooltip div.containerFormAndKeypad ',
+	var filterContainerSelector = 'div.dijitPopup div.tooltipContainer' +
+			' div.compositeSearchInTooltip div.formContainerWithKeypad ',
 		keypadFilterSelector = filterContainerSelector + 'div.keypad ',
 		applyFilterSelector = 'div.right span.success',
-		values = {};
+		valuesObj = {};
 
 	var assert = intern.getPlugin('chai').assert;
 
 	return declare([ListPage, FormPage], {
 
-		constructor: function(args) {
-
-		},
-
 		openFilter: function(buttonSelector) {
 
 			if (!buttonSelector) {
-				buttonSelector = 'div.keypadZone a.iconContainer i.fa-binoculars';
+				var baseTextSearchSelector = 'div.containerTextSearch',
+					outerButtonsSelector = baseTextSearchSelector + ' > div.outerButtons',
+					expandSearchButtonSelector = outerButtonsSelector + ' > i.expandSearchButton';
+
+				buttonSelector = expandSearchButtonSelector;
 			}
 
 			return lang.partial(function(self) {
@@ -42,7 +42,7 @@ define([
 						.then(lang.partial(function(values, idArr) {
 
 							values.oldIds = idArr;
-						}, values))
+						}, valuesObj))
 					.then(Utils.clickDisplayedElement(buttonSelector));
 			}, this);
 		},
@@ -108,7 +108,7 @@ define([
 						if (oldIds.length > 1) {
 							Utils[method](oldIds, idArr, message);
 						}
-					}, values));
+					}, valuesObj));
 			}, this);
 		},
 
@@ -159,12 +159,12 @@ define([
 
 				return this.parent
 					.then(Utils.getFormFieldsProperties(true))
-					.then(lang.partial(function(self, fieldsProperties) {
+					.then(lang.partial(function(innerSelf, fieldsProperties) {
 
 						var parent = this.parent;
 
 						for (var i = 0; i < fieldsProperties.length; i++) {
-							var dataRemidSelector = self._getDataRedmicModelSelector(fieldsProperties[i]),
+							var dataRemidSelector = innerSelf._getDataRedmicModelSelector(fieldsProperties[i]),
 								selector = filterContainerSelector + dataRemidSelector + 'div.containerDisableSwitch';
 
 							parent = parent

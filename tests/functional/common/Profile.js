@@ -54,7 +54,7 @@ define([
 
 			'Should_ShowUserMenu_When_ClickOnUserIcon': function() {
 
-				var userMenuSelector = 'div.dijitPopup.dijitMenuPopup';
+				var userMenuSelector = 'div.dijitPopup.tooltipContainerPopup';
 
 				return indexPage
 					.login()

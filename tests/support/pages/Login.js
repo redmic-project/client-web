@@ -41,7 +41,7 @@ define([
 
 	return declare(_Page, {
 
-		constructor: function(args) {
+		constructor: function() {
 
 			this.remote
 				.setFindTimeout(Config.timeout.findElement)

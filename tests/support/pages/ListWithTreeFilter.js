@@ -1,13 +1,11 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'tests/support/Config'
 	, 'tests/support/pages/List'
 	, 'tests/support/Utils'
 ], function (
 	declare
 	, lang
-	, Config
 	, ListPage
 	, Utils
 ) {
@@ -52,7 +50,7 @@ define([
 						.getVisibleText()
 						.then(function(text) {
 
-							var itemCount = text.replace(/.*\(([0-9]+)\)/g, '$1');
+							var itemCount = text.replace(/.*\((\d+)\)/g, '$1');
 							return parseInt(itemCount, 10);
 						});
 			}, itemPosition || 1);

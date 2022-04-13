@@ -647,7 +647,7 @@ define([
 
 			return lang.partial(function(self) {
 
-				var selectItem = 'div.dijitPopup.dijitMenuPopup table[tabindex="-1"] tr[aria-label="' + value + ' "]';
+				var selectItem = 'div.dijitPopup.tooltipContainerPopup table[tabindex="-1"] tr[aria-label="' + value + ' "]';
 
 				return this.parent
 					.then(self.clickElement(cssSelector + ' td.dijitButtonNode'))
@@ -662,7 +662,7 @@ define([
 
 			return lang.partial(function(self) {
 
-				var selectItem = 'div.dijitPopup.dijitMenuPopup table[tabindex="-1"] tr[tabindex="-1"]';
+				var selectItem = 'div.dijitPopup.tooltipContainerPopup table[tabindex="-1"] tr[tabindex="-1"]';
 
 				return this.parent
 					.then(self.clickElement(cssSelector + ' td.dijitButtonNode'))

@@ -1,21 +1,22 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'tests/support/Config'
 	, 'tests/support/pages/List'
 	, 'tests/support/Utils'
 ], function (
 	declare
 	, lang
-	, Config
 	, ListPage
 	, Utils
 ) {
 
-	var baseTextSearchSelector = 'div.containerTextSearch ',
-		textSearchSelector = baseTextSearchSelector + 'div.textSearch',
-		textSearchInputSelector = textSearchSelector + ' input.inputSearch',
-		buttonSearchSelector = baseTextSearchSelector + 'div.buttonSearch';
+	var baseTextSearchSelector = 'div.containerTextSearch',
+		textSearchSelector = baseTextSearchSelector + ' > div.textSearch',
+		textSearchInputSelector = textSearchSelector + ' > input',
+		innerButtonsSelector = textSearchSelector + ' > div.innerButtons',
+		clearButtonSelector = innerButtonsSelector + ' > i.clearTextButton',
+		outerButtonsSelector = baseTextSearchSelector + ' > div.outerButtons',
+		searchButtonSelector = outerButtonsSelector + ' > i.searchButton';
 
 	var assert = intern.getPlugin('chai').assert;
 
@@ -36,7 +37,7 @@ define([
 
 				return this.parent
 					.then(self.typeInTextSearchInput(value))
-					.then(Utils.clickDisplayedElement(buttonSearchSelector));
+					.then(Utils.clickDisplayedElement(searchButtonSelector));
 			}, this);
 		},
 
@@ -47,7 +48,6 @@ define([
 			return function() {
 
 				return this.parent
-					//.sleep(Config.timeout.shortSleep)
 					.then(Utils.clickDisplayedElement(textSearchFirstSuggestionSelector));
 			};
 		},
@@ -80,12 +80,10 @@ define([
 
 		clearTextSearchInput: function() {
 
-			var textSearchCleanIconSelector = textSearchSelector + ' > i:last-child';
-
 			return function() {
 
 				return this.parent
-					.then(Utils.clickDisplayedElement(textSearchCleanIconSelector));
+					.then(Utils.clickDisplayedElement(clearButtonSelector));
 			};
 		}
 	});

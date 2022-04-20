@@ -223,7 +223,16 @@ define([
 			return Credentials.get('userRole') !== 'ROLE_GUEST';
 		},
 
+		_startLoading: function() {
+
+			this._emitEvt('LOADING', {
+				global: true
+			});
+		},
+
 		_logout: function () {
+
+			this._startLoading();
 
 			if (!Credentials.get('accessToken')) {
 				this._removeUserData();
@@ -242,7 +251,7 @@ define([
 			});
 		},
 
-		_errorAvailable: function(err, status, resWrapper) {
+		_errorAvailable: function(_err, _status, resWrapper) {
 
 			var target = resWrapper.target;
 
@@ -259,6 +268,7 @@ define([
 				}
 			});
 
+			this._startLoading();
 			this._removeUserData();
 		},
 
@@ -272,6 +282,7 @@ define([
 			var target = resWrapper.target;
 
 			if (target === this._logoutTarget) {
+				this._startLoading();
 				this._removeUserData();
 				return;
 			}
@@ -280,11 +291,6 @@ define([
 
 			if (data instanceof Array) {
 				data = data[0];
-			}
-
-			// TODO impide a instancias antiguas romper la ejecución, revisar
-			if (!this.domNode) {
-				return;
 			}
 
 			this._updateUserAreaButton(data);
@@ -303,6 +309,11 @@ define([
 			} else {
 				this.iconNode = put(this.domNode, 'i.fa.fa-user');
 			}
+		},
+
+		_beforeHide: function() {
+
+			this._emitEvt('LOADED');
 		}
 	});
 });

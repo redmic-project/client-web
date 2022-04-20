@@ -30,7 +30,7 @@ define([
 
 			this.config = {
 				ownChannel: "login",
-				templateProps:  {
+				templateProps: {
 					templateString: template,
 					i18n: this.i18n,
 					_onSignIn: lang.partial(this._onSignIn, this),
@@ -76,10 +76,20 @@ define([
 			});
 		},
 
-		_onSignIn: function(self, /*Event*/ evt) {
+		_startLoading: function() {
+
+			this._emitEvt('LOADING');
+		},
+
+		_endLoading: function() {
+
+			this._emitEvt('LOADED');
+		},
+
+		_onSignIn: function(self) {
 			//	Summary:
 			//		Llamado cuando se pulsa el botón para acceder a la plataforma.
-			//      Se realiza una validación del formulario y luego se realiza
+			//		Se realiza una validación del formulario y luego se realiza
 			//		el envío de este.
 			//		*** Se ejecuta en el ámbito del template
 			//
@@ -89,14 +99,21 @@ define([
 
 			self._trackLoginButton('login');
 
-			if (this.loginFormNode.validate() && (values = this.loginFormNode.get("value"))) {
-				this.password.set("value", "");
+			if (this.loginFormNode.validate()) {
+				var values = this.loginFormNode.get('value');
+				if (!values) {
+					return;
+				}
+
+				self._startLoading();
+				this.password.set('value', '');
 				self._getAccessToken(values);
 			}
 		},
 
-		_onGuestAccess: function(evt) {
+		_onGuestAccess: function() {
 
+			this._startLoading();
 			this._trackLoginButton('guest');
 		},
 
@@ -141,13 +158,15 @@ define([
 			});
 		},
 
-		_dataAvailable: function(res, resWrapper) {
+		_dataAvailable: function(res) {
+
+			this._startLoading();
 
 			var accessToken = res.data.access_token;
 			Credentials.set('accessToken', accessToken);
 		},
 
-		_errorAvailable: function(error, status, resWrapper) {
+		_errorAvailable: function(error, _status, resWrapper) {
 
 			var res = resWrapper.res,
 				errorRes = JSON.parse(res.text),
@@ -160,6 +179,11 @@ define([
 			}
 
 			alertify.error(errorMsg);
+		},
+
+		_beforeHide: function() {
+
+			this._endLoading();
 		}
 	});
 });

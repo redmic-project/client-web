@@ -79,7 +79,7 @@ run-remote-unit-tests-firefox:
     expire_in: 1 month
     when: always
     paths:
-      - 'test_reports/test-functional*'
+      - test_reports/test-functional*
 
 run-local-modules-functional-tests:
   extends: .run-pre-build-tests

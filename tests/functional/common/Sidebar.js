@@ -62,7 +62,7 @@ define([
 		};
 	}
 
-	function testSidebarEntries() {
+	function testSidebarEntries(/*Boolean*/ secondaryEntriesFlag) {
 
 		return function(allowedModules) {
 
@@ -82,39 +82,69 @@ define([
 				context = context
 					.then(Utils.checkLoadingIsGone());
 
-				if (path) {
+				if (!secondaryEntriesFlag) {
+					if (!path) {
+						continue;
+					}
 					context = context
 						.then(testPrimaryEntry(name));
-				} else if (innerModules) {
-					context = context
-						.then(testSecondaryEntries(name, innerModules));
+
+					continue;
+				}
+
+				if (!innerModules) {
+					continue;
 				}
 
 				context = context
-					.then(Utils.checkLoadingIsGone());
+					.then(testSecondaryEntries(name, innerModules));
 			}
 
 			return context;
 		};
 	}
 
-	var registerSuite = intern.getInterface('object').registerSuite;
+	function readLocalStorage() {
+
+		return this.session.getLocalStorageItem(allowedModulesKey);
+	}
+
+	function clearLocalStorage() {
+
+		return this.session.clearLocalStorage();
+	}
+
+	var registerSuite = intern.getInterface('object').registerSuite,
+		assert = intern.getPlugin('chai').assert;
 
 	registerSuite(suiteName, {
-		Should_BeAbleToNavigateToAllModules_When_ReceiveAllowedModules: function() {
+		Should_BeAbleToNavigateToSidebarPrimaryModules_When_ReceiveAllowedModules: function() {
 
 			indexPage = new LoginPage(this);
 
 			return indexPage
 				.login()
-				.then(lang.partial(function(itemKey) {
+				.then(readLocalStorage)
+				.then(testSidebarEntries(false))
+				.then(clearLocalStorage, function() {
 
-					return this.session.getLocalStorageItem(itemKey);
-				}, allowedModulesKey))
-				.then(testSidebarEntries())
-				.then(function() {
+					lang.hitch(this, clearLocalStorage)();
+					assert.fail('No se pudo recorrer todos los módulos con entrada primaria');
+				});
+		},
 
-					return this.session.clearLocalStorage();
+		Should_BeAbleToNavigateToSidebarSecondaryModules_When_ReceiveAllowedModules: function() {
+
+			indexPage = new LoginPage(this);
+
+			return indexPage
+				.login()
+				.then(readLocalStorage)
+				.then(testSidebarEntries(true))
+				.then(clearLocalStorage, function() {
+
+					lang.hitch(this, clearLocalStorage)();
+					assert.fail('No se pudo recorrer todos los módulos con entrada secundaria');
 				});
 		}
 	});

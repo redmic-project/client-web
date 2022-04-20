@@ -9,6 +9,7 @@ define([
 	, LoginPage
 	, Utils
 ) {
+
 	var indexPage,
 
 		userImageContainerSelector = 'div.infoContainer div.imageContainerEdit span',
@@ -150,7 +151,7 @@ define([
 				var editButtonSelector = 'div.infoContainer :nth-child(2) div.rowsContainer :first-child i.fa-edit',
 					textInputSelector = 'div[data-redmic-model="firstName"] div.dijitInputContainer input',
 					valuesObj = {
-						newValue: 'Benancio'
+						newValue: Date.now().toString()
 					};
 
 				return goToProfile()
@@ -190,21 +191,57 @@ define([
 				var _sectorRowSelector = 'div.infoContainer :nth-child(2) div.rowsContainer :nth-child(3) ',
 					editButtonSelector = _sectorRowSelector + 'i.fa-edit',
 					sectorSpanSelector = _sectorRowSelector + 'span.spanTemplate span.name',
+					inputElementSelector = 'div[data-redmic-model="sector"] div.containerFilteringSelect input:nth-child(2)',
 					selectInputSelector = 'div[data-redmic-model="sector"] div.buttonSearch',
 					selectInputValueSelector = 'span[data-redmic-id="10"]',
+					selectInputAltValueSelector = 'span[data-redmic-id="11"]',
 					valuesObj = {};
 
 				return goToProfile()
 					.then(Utils.clickElement(editButtonSelector))
 					.then(Utils.checkLoadingIsGone())
+					// obtiene el valor actual
+					.findByCssSelector(inputElementSelector)
+						.then(lang.partial(function(values) {
+
+							this.getProperty('value')
+								.then(lang.partial(function(innerValues, inputValue) {
+
+									innerValues.oldValue = inputValue;
+								}, values));
+						}, valuesObj))
+						.end()
+					// cambia el valor a una opción diferente
 					.then(Utils.clickElement(selectInputSelector))
+					.sleep(Config.timeout.shortSleep)
 					.findByCssSelector(selectInputValueSelector)
 						.getVisibleText()
-						.then(lang.partial(function(values, text) {
+						.then(lang.partial(function(values, text, setContext) {
 
+							// usa el nuevo valor alternativo si ya estaba en el nuevo valor predefinido
+							if (values.oldValue === text) {
+								return this.parent
+									.end()
+									.sleep(Config.timeout.shortSleep)
+									.findByCssSelector(selectInputAltValueSelector)
+										.getVisibleText()
+										.then(lang.partial(function(args, innerText) {
+
+											args.values.newValue = innerText;
+										}, {
+											values,
+											setContext
+										}))
+										.click()
+										.end(2);
+							}
+
+							// usa el nuevo valor predefinido
 							values.newValue = text;
+
+							return this.parent
+								.click();
 						}, valuesObj))
-						.click()
 						.end()
 					.then(Utils.clickElement(Config.selector.saveButton))
 					.then(Utils.checkLoadingIsGone())
@@ -216,7 +253,7 @@ define([
 							assert.strictEqual(text, values.newValue, 'El nuevo valor no coincide con el seleccionado');
 						}, valuesObj))
 						.end()
-					// restaura el valor original
+					// guarda el valor a vacío y lo comprueba
 					.then(Utils.clickElement(editButtonSelector))
 					.then(Utils.checkLoadingIsGone())
 					.then(Utils.clickElement(Config.selector.clearButton))
@@ -226,7 +263,6 @@ define([
 
 			'Should_UpdateUserPassword_When_EditUserPassword': function() {
 
-				// TODO falla en chrome salvo en modo headless (parece problema del driver, navegador o leadfoot)
 				var _sectorRowSelector = 'div.infoContainer :nth-child(2) div.rowsContainer :nth-child(4) ',
 					editButtonSelector = _sectorRowSelector + 'i.fa-edit',
 					newPasswordInputSelector = 'div[data-redmic-model="password"] div.dijitInputContainer input',
@@ -261,5 +297,5 @@ define([
 		},
 
 		tests: tests
-  	});
+	});
 });

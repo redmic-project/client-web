@@ -160,3 +160,15 @@ grunt test-functional-remote \
   --suitesGroups="common" \
   --browser=chrome
 ```
+
+También es posible lanzar estos tests bajo un usuario concreto. Por ejemplo, para lanzar tests funcionales del grupo de suites `common` sobre el servicio arrancado en el host (escuchando en el puerto 80) con rol de administrador, usando el usuario `test@redmic.es` con password `changeMe`, en navegador Mozilla Firefox (con interfaz):
+
+```sh
+grunt test-functional-remote \
+  --serverUrl="http://172.17.0.1" \
+  --role=administrator \
+  --user="test@redmic.es" \
+  --pass="changeMe" \
+  --suitesGroups="common" \
+  --browser=firefox
+```

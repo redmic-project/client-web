@@ -74,9 +74,6 @@ var profile = {
 	},
 
 	packages: [{
-		name: 'dstore',
-		location: 'dstore'
-	},{
 		name: 'dijit',
 		location: 'dijit'
 	},{

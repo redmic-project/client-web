@@ -3,3 +3,4 @@ dist
 test_reports
 .gitmodules.old
 *.tar.gz
+*.log

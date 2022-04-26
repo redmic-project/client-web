@@ -12,9 +12,6 @@ dojoConfig = {
 		name: 'app',
 		location: '../app'
 	},{
-		name: 'dstore',
-		location: '../dstore'
-	},{
 		name: 'put-selector',
 		location: '../put-selector'
 	},{

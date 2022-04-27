@@ -562,6 +562,10 @@ define([
 				attr.set("value", 60000);
 				assert.isTrue(attr.get("isValid"), "La validación falla con un entero que indica milisegundos válido");
 
+				attr.set("value", new Date());
+				assert.isTrue(attr.get("isValid"),
+					"La validación falla con un objeto Date, válido para duraciones contando desde 1970-01-01");
+
 				// Valores no permitidos
 
 				attr.set("value", "p1yt1h");
@@ -594,15 +598,12 @@ define([
 				attr.set("value", dateTimeString);
 				assert.isFalse(attr.get("isValid"),
 					"La validación no falla con un string en formato fecha-hora, inválido para duraciones");
-
-				attr.set("value", new Date());
-				assert.isFalse(attr.get("isValid"), "La validación no falla con un objeto Date, inválido para duraciones");
 			},
 
 			"check invalid set": function() {
 
 				_ModelTestCommons.setAndCheckInvalidValues(attr, [
-					"p1yt1h", "T1H", "P1D1W", "P1HT1Y", "T1HP1Y", -60000, dateString1, dateTimeString, new Date()
+					"p1yt1h", "T1H", "P1D1W", "P1HT1Y", "T1HP1Y", -60000, dateString1, dateTimeString
 				]);
 			}
 		}

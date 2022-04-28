@@ -35,7 +35,7 @@
     "prom-client": "11.5.3",
     "pug": "3.0.2",
     "response-time": "2.3.2",
-    "winston": "2.4.5"
+    "winston": "3.7.2"
   },
   "devDependencies": {
     "alertifyjs": "1.13.1",

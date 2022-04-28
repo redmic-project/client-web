@@ -5,7 +5,8 @@ define([
 	, "redmic/modules/base/_Module"
 	, "redmic/base/Credentials"
 	, 'sockjs/sockjs.min'
-	, 'stompjs/stomp.min'
+
+	, 'stomp-websocket/stomp.min'
 ], function(
 	redmicConfig
 	, declare
@@ -13,8 +14,8 @@ define([
 	, _Module
 	, Credentials
 	, SockJS
-	, StompJS
-){
+) {
+
 	return declare(_Module, {
 		//	Summary:
 		//		Módulo para gestionar la comunicación a través de sockets

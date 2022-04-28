@@ -226,6 +226,13 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@lweller/leaflet-areaselect@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@lweller/leaflet-areaselect/-/leaflet-areaselect-1.3.0.tgz#2b1c207e35c970a378674253f428af367e0a8749"
+  integrity sha512-zdLHwkuARjzHTp+3mdkkpHjbsXwer9HJeZzc5IRgqv9fI3osD0+wwj5GCkefVfF1sAsmcEOm/nGoTSfUXewaug==
+  dependencies:
+    "@types/leaflet" "*"
+
 "@theintern/common@~0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@theintern/common/-/common-0.3.0.tgz#a8351b9ab815fa8b0d846e5373b626994a6e80ad"
@@ -344,6 +351,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/geojson@*":
+  version "7946.0.8"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.8.tgz#30744afdb385e2945e22f3b033f897f76b1f12ca"
+  integrity sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==
+
 "@types/istanbul-lib-coverage@*":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-1.1.0.tgz#2cc2ca41051498382b43157c8227fea60363f94a"
@@ -391,6 +403,13 @@
   integrity sha512-c3mAZEuK0lvBp8tmuL74XRKn1+y2dcwOUpH7x4WrF6gk1GIgiluDRgMYQtw2OFcBvAJWlt6ASU3tSqxp0Uu0Aw==
   dependencies:
     "@types/istanbul-lib-report" "*"
+
+"@types/leaflet@*":
+  version "1.7.9"
+  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.7.9.tgz#7993d34f14cfa88c45b3d490daba39a3a1be9a2b"
+  integrity sha512-H8vPgD49HKzqM41ArHGZM70g/tfhp8W+JcPxfnF+5H/Xvp+xiP+KQOUNWU8U89fqS1Jj3cpRY/+nbnaHFzwnFA==
+  dependencies:
+    "@types/geojson" "*"
 
 "@types/mime@*":
   version "2.0.0"
@@ -3833,10 +3852,6 @@ lead@^1.0.0:
   dependencies:
     flush-write-stream "^1.0.2"
 
-"leaflet-areaselect@https://github.com/heyman/leaflet-areaselect.git#master":
-  version "0.0.0"
-  resolved "https://github.com/heyman/leaflet-areaselect.git#d0910cc4e74b59bbd9eead447d2353c29dfe84b1"
-
 "leaflet-awesome-markers@https://github.com/lennardv2/Leaflet.awesome-markers.git#2.0/develop":
   version "0.0.0"
   resolved "https://github.com/lennardv2/Leaflet.awesome-markers.git#b17993e25db48db7bedd9f613b89d0ac0d733e32"
@@ -3863,7 +3878,7 @@ leaflet-minimap@3.6.1:
   resolved "https://registry.yarnpkg.com/leaflet-minimap/-/leaflet-minimap-3.6.1.tgz#2a43ff3b3d947a45a0acf4bdefc96505b673a6c6"
   integrity sha1-KkP/Oz2UekWgrPS978llBbZzpsY=
 
-"leaflet-navbar@https://github.com/davidchouse/Leaflet.NavBar.git#master":
+"leaflet-navbar@https://github.com/davidchouse/Leaflet.NavBar.git#v1.0.1":
   version "0.0.0"
   resolved "https://github.com/davidchouse/Leaflet.NavBar.git#c913f6ce99a3b204485194265c088edd03ad37a4"
 
@@ -5596,9 +5611,10 @@ statuses@2.0.1:
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
 
-"stompjs@https://github.com/jmesnil/stomp-websocket.git#master":
+stomp-websocket@2.3.4-next:
   version "2.3.4-next"
-  resolved "https://github.com/jmesnil/stomp-websocket.git#3b60a70bdb94ae34e7a2891e5ca8c50ed6e2b751"
+  resolved "https://registry.yarnpkg.com/stomp-websocket/-/stomp-websocket-2.3.4-next.tgz#253b6e5046a55e6c8e09aa60663ca7627531cb1b"
+  integrity sha1-JTtuUEalXmyOCapgZjynYnUxyxs=
   optionalDependencies:
     websocket latest
 
@@ -5875,7 +5891,7 @@ tslib@~2.3.0:
 
 "tv4@https://github.com/geraintluff/tv4.git#master":
   version "1.2.7"
-  resolved "https://github.com/geraintluff/tv4.git#a00bee535ae7498becd53f9a8071c1cc0bdc4359"
+  resolved "https://github.com/geraintluff/tv4.git#e24bd1de933e9f0aae0f0842f0af43191be77427"
 
 type-check@~0.3.2:
   version "0.3.2"

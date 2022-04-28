@@ -90,8 +90,8 @@ dojoConfig = {
 		name: 'sockjs',
 		location: '../sockjs/dist'
 	},{
-		name: 'stompjs',
-		location: '../stompjs/lib'
+		name: 'stomp-websocket',
+		location: '../stomp-websocket/lib'
 	},{
 		name: 'deepmerge',
 		location: '../deepmerge/dist'

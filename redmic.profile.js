@@ -204,10 +204,10 @@ var profile = {
 			ignore: ignoreTagger.bind(null, 'sockjs/sockjs.min')
 		}
 	},{
-		name: 'stompjs',
-		location: 'stompjs/lib',
+		name: 'stomp-websocket',
+		location: 'stomp-websocket/lib',
 		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'stompjs/stomp.min')
+			ignore: ignoreTagger.bind(null, 'stomp-websocket/stomp.min')
 		}
 	},{
 		name: 'alertify',

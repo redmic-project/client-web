@@ -90,7 +90,10 @@ var profile = {
 		location: 'put-selector'
 	},{
 		name: 'wicket',
-		location: 'wicket'
+		location: 'wicket',
+		resourceTags: {
+			amd: amdTagger
+		}
 	},{
 		name: 'app',
 		location: 'app',
@@ -234,10 +237,11 @@ var profile = {
 			ignore: ignoreTagger.bind(null, 'd3Tip/index')
 		}
 	},{
-		name: 'node-uuid',
-		location: 'node-uuid',
+		name: 'uuid',
+		location: 'uuid/dist/umd',
 		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'node-uuid/uuid')
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, 'uuid/uuidv4.min')
 		}
 	},{
 		name: 'proj4js',

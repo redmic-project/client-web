@@ -99,8 +99,8 @@ dojoConfig = {
 		name: 'colorjs',
 		location: '../color-js'
 	},{
-		name: 'node-uuid',
-		location: '../node-uuid'
+		name: 'uuid',
+		location: '../uuid/dist/umd'
 	},{
 		name: 'json-schema-ref-parser',
 		location: '../json-schema-ref-parser/dist'

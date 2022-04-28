@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Evented"
 	, "dojo/topic"
-	, 'node-uuid/uuid'
+	, 'uuid/uuidv4.min'
 	, "RWidgets/Utilities"
 ], function (
 	ObjAttr
@@ -71,7 +71,7 @@ define([
 			//	summary:
 			//		Asigna un nuevo UUID a la instancia.
 
-			this._uuid = uuid.v4();
+			this._uuid = uuid();
 		},
 
 		_modelUuidGetter: function() {
@@ -371,7 +371,7 @@ define([
 
 			while ((results = regExp.exec(path)) !== null) {
 				var pathToArray = results[1],
-					uuid = results[2];
+					itemUuid = results[2];
 
 				if (results.index) {
 					pathToArray = pathToArray.substring(1);
@@ -383,7 +383,7 @@ define([
 					return;
 				}
 
-				var indexForUuid = instance._getItemIndex(uuid);
+				var indexForUuid = instance._getItemIndex(itemUuid);
 
 				if (indexForUuid === -1) {
 					return;

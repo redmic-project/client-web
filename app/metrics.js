@@ -60,7 +60,7 @@ function injectMetricsRoute(app) {
 			(function(response, reason) {
 
 				logger.error(reason);
-				response.end(reason);
+				response.sendStatus(500);
 			}).bind(null, res)
 		);
 	});

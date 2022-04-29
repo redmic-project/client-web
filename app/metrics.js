@@ -5,6 +5,7 @@ var register = promClient.register,
 	counter = promClient.Counter,
 	histogram = promClient.Histogram,
 	summary = promClient.Summary,
+	logger,
 	promPath;
 
 var numOfRequests = new counter({
@@ -47,8 +48,21 @@ function injectMetricsRoute(app) {
 
 	app.get(promPath, function(_req, res) {
 
-		res.set('Content-Type', register.contentType)
-			.end(register.metrics());
+		res.set('Content-Type', register.contentType);
+
+		var metricsPromise = register.metrics();
+
+		metricsPromise.then(
+			(function(response, value) {
+
+				response.end(value);
+			}).bind(null, res),
+			(function(response, reason) {
+
+				logger.error(reason);
+				response.end(reason);
+			}).bind(null, res)
+		);
 	});
 }
 
@@ -62,8 +76,9 @@ function registerMetrics(app) {
 	promClient.collectDefaultMetrics();
 }
 
-module.exports = function(metricsPath) {
+module.exports = function(loggerParameter, metricsPath) {
 
+	logger = loggerParameter;
 	promPath = metricsPath;
 
 	return {

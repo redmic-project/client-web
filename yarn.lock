@@ -4844,10 +4844,10 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.0.tgz#a37d732f4271b4ab1ad070d35508e8290788ffaa"
   integrity sha512-MtEC1TqN0EU5nephaJ4rAtThHtC86dNN9qCuEhtshvpVBkAW5ZO7BASN9REnF9eoXGcRub+pFuKEpOHE+HbEMw==
 
-prom-client@11.5.3:
-  version "11.5.3"
-  resolved "https://registry.yarnpkg.com/prom-client/-/prom-client-11.5.3.tgz#5fedfce1083bac6c2b223738e966d0e1643756f8"
-  integrity sha512-iz22FmTbtkyL2vt0MdDFY+kWof+S9UB/NACxSn2aJcewtw+EERsen0urSkZ2WrHseNdydsvcxCTAnPcSMZZv4Q==
+prom-client@14.0.1:
+  version "14.0.1"
+  resolved "https://registry.yarnpkg.com/prom-client/-/prom-client-14.0.1.tgz#bdd9583e02ec95429677c0e013712d42ef1f86a8"
+  integrity sha512-HxTArb6fkOntQHoRGvv4qd/BkorjliiuO2uSWC2KC17MUTKYttWdDoXX/vxOhQdkoECEM9BBH0pj2l8G8kev6w==
   dependencies:
     tdigest "^0.1.1"
 

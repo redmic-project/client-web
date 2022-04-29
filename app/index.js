@@ -26,7 +26,7 @@ if (cluster && cluster.isMaster) {
 	var express = require('express'),
 		http = require('http'),
 
-		metrics = require('./metrics')('/metrics'),
+		metrics = require('./metrics')(logger, '/metrics'),
 		exposure = require('./exposure')(logger, params, version),
 
 		port = params.port,

@@ -4,18 +4,21 @@ module.exports = function(version) {
 
 	commander
 		.version(version)
-		.option('-b, --use-built', null)
-		.option('-c, --cluster', null)
-		.option('-d, --debug', null)
-		.option('-l, --default-lang <value>', null, 'es')
-		.option('-p, --port <n>', null, 3050)
+		.option('-b, --use-built', 'Run using built resources, instead of requiring each one separately', false)
+		.option('-c, --cluster', 'Run multiple processes in cluster mode, one per CPU core found', false)
+		.option('-d, --debug', 'Run in debug mode, useful to show additional log output', false)
+		.option('-l, --default-lang <value>', 'Set language used by default when none is specified at requests', 'es')
+		.option('-p, --port <n>', 'Set network port used to expose app', 3050)
+		.showSuggestionAfterError()
 		.parse(process.argv);
 
+	var commanderOpts = commander.opts();
+
 	return {
-		useBuilt: commander.useBuilt || false,
-		cluster: commander.cluster || false,
-		debug: commander.debug || false,
-		port: commander.port,
-		lang: commander.defaultLang
+		useBuilt: commanderOpts.useBuilt,
+		cluster: commanderOpts.cluster,
+		debug: commanderOpts.debug,
+		port: commanderOpts.port,
+		lang: commanderOpts.defaultLang
 	};
 };

@@ -11,7 +11,7 @@ var logConsoleTransport = new (winston.transports.Console)({
 		}),
 		winston.format.printf(function(info) {
 
-			return `${info.timestamp} [${info.level}] ${info.message}`;
+			return info.timestamp + ' [' + info.level + '] ' + info.message;
 		})
 	)
 });
@@ -29,7 +29,7 @@ var logger = winston.createLogger({
 function registerLogger(params, app) {
 
 	app.use(morgan('dev', {
-		skip: function(req, res) {
+		skip: function(_req, res) {
 
 			return params.useBuilt ? res.statusCode < 400 : false;
 		},

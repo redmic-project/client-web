@@ -24,7 +24,7 @@ function onGeneralRequest(req, res) {
 	});
 }
 
-function onEnvRequest(req, res) {
+function onEnvRequest(_req, res) {
 
 	res.send({
 		version: version,
@@ -53,13 +53,13 @@ function onNoSupportBrowserRequest(req, res) {
 	});
 }
 
-function on404Request(req, res) {
+function on404Request(_req, res) {
 
 	res.status(404);
 	res.render('404', { useBuilt: params.useBuilt });
 }
 
-function onSitemapRequest(req, res) {
+function onSitemapRequest(_req, res) {
 
 	var fileData = fs.readFileSync('sitemap.xml', 'ascii');
 
@@ -67,7 +67,7 @@ function onSitemapRequest(req, res) {
 	res.send(fileData);
 }
 
-function onRobotsRequest(req, res) {
+function onRobotsRequest(_req, res) {
 
 	var fileData = fs.readFileSync('robots.txt', 'utf8');
 
@@ -75,18 +75,18 @@ function onRobotsRequest(req, res) {
 	res.send(fileData);
 }
 
-function onApiRequest(req, res) {
+function onApiRequest(_req, res) {
 
 	res.redirect('/404');
 }
 
-function onJqueryRequest(req, res) {
+function onJqueryRequest(_req, res) {
 
 	res.set('Content-Type', 'application/json');
 	res.send('{}');
 }
 
-function onUnknownRequest(req, res, next) {
+function onUnknownRequest(_req, res, _next) {
 
 	res.redirect('/404');
 }

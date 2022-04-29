@@ -26,7 +26,7 @@ var responses = new summary({
 });
 
 
-function requestCounters(req, res, next) {
+function requestCounters(req, _res, next) {
 
 	if (req.path !== promPath) {
 		numOfRequests.inc({ method: req.method });
@@ -45,7 +45,7 @@ function responseCounters(req, res, time) {
 
 function injectMetricsRoute(app) {
 
-	app.get(promPath, function(req, res) {
+	app.get(promPath, function(_req, res) {
 
 		res.set('Content-Type', register.contentType)
 			.end(register.metrics());

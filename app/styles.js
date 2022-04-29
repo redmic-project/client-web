@@ -2,10 +2,10 @@ var path = require('path'),
 	nib = require('nib'),
 	stylus = require('stylus');
 
-function compileStylus(str, path) {
+function compileStylus(str, filePath) {
 
 	var style = stylus(str)
-		.set('filename', path)
+		.set('filename', filePath)
 		.set('include css', true)
 		.set('compress', true)
 		.set('resolve url', true)

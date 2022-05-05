@@ -6,8 +6,11 @@ module.exports = function() {
 
 	function pushValidAddress(ipList, addressProps) {
 
-		var addr = addressProps.address;
-		if ('IPv4' !== addressProps.family || addressProps.internal || !localIpExpr.test(addr)) {
+		var addr = addressProps.address,
+			family = addressProps.family,
+			isIpV4 = family === 'IPv4' || family === 4;
+
+		if (!isIpV4 || addressProps.internal || !localIpExpr.test(addr)) {
 			return;
 		}
 		ipList.push(addr);

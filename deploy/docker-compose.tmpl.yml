@@ -8,7 +8,6 @@ services:
       dockerfile: ${DOCKERFILE:-Dockerfile}
       args:
         NODE_IMAGE_TAG:
-        PORT:
         DIRPATH:
     environment:
       OAUTH_URL:

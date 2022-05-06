@@ -405,7 +405,10 @@ define([
 		_removeQueryParametersFromHref: function() {
 
 			var locationObj = getGlobalContext().location,
-				href = locationObj.protocol + '//' + locationObj.hostname + locationObj.pathname + locationObj.hash;
+				locationPort = locationObj.port,
+				isNotStandardPort = locationPort !== '80',
+				hrefPort = isNotStandardPort ? (':' + locationPort) : '',
+				href = locationObj.protocol + '//' + locationObj.hostname + hrefPort + locationObj.pathname + locationObj.hash;
 
 			getGlobalContext().history.replaceState(null, null, href);
 		},

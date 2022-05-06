@@ -296,7 +296,7 @@ var profile = {
 		location: 'handlebars/dist',
 		resourceTags: {
 			amd: amdTagger,
-			ignore: ignoreTagger.bind(null, 'handlebars/handlebars.min')
+			ignore: ignoreTagger.bind(null, 'handlebars/handlebars.runtime.min')
 		}
 	}],
 

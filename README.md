@@ -14,12 +14,18 @@ Una vez clonado el repositorio en el entorno local de desarrollo y satisfechas l
 ```sh
 yarn install
 
-sudo \
-  OAUTH_URL=https://redmic.grafcan.es/api/oauth \
-  OAUTH_CLIENT_SECRET=secretKey \
-  API_URL=https://redmic.grafcan.es/api \
-  PRODUCTION=0 \
-  npm start -- --port=80
+OAUTH_URL=https://redmic.grafcan.es/api/oauth \
+OAUTH_CLIENT_SECRET=secretKey \
+API_URL=https://redmic.grafcan.es/api \
+PRODUCTION=0 \
+npm start -- --port=80
+```
+
+Para poder arrancar usando el puerto 80, es necesario tener los permisos adecuados. Si el comando anterior falla por este motivo, ejecutar una vez lo siguiente para conceder permisos a NodeJS e intentarlo de nuevo:
+
+```sh
+apt-get install libcap2-bin
+setcap cap_net_bind_service=+ep `readlink -f \`which node\``
 ```
 
 Si todo ha ido correctamente, el servicio *REDMIC web* estará accesible en <http://localhost>.

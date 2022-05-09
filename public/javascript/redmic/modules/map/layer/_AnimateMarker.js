@@ -14,8 +14,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				animatedMarkerClass: 'animated',
-				markerAnimationClass: 'bounce'
+				animatedMarkerClass: 'animate__animated',
+				markerAnimationClass: 'animate__flash'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -43,10 +43,9 @@ define([
 
 			animatedContainer.addEventListener('animationend', lang.hitch(this, function(icon, container) {
 
-				delete this._markerAnimationHandler;
 				put(container.parentNode, icon);
 				put('!', container);
-			}, markerIcon, animatedContainer), false);
+			}, markerIcon, animatedContainer));
 		}
 	});
 });

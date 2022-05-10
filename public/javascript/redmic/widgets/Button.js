@@ -90,8 +90,9 @@ define([
 			if (this.href) {
 				this.buttonNode.setAttribute('href', this.href);
 				this.buttonNode.setAttribute('d-state-url', true);
-			} else if (this.onClick)
+			} else if (this.onClick) {
 				this.buttonNode.onclick = this.onClick;
+			}
 
 			if (this.disable) {
 				this._disable();

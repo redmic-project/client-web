@@ -9,7 +9,6 @@ define([
 	, "dijit/Calendar"
 	, "dojo/date/locale"
 	, "dijit/form/DateTextBox"
-	, "dijit/form/ValidationTextBox"
 ], function(
 	declare
 	, _WidgetBase
@@ -21,11 +20,7 @@ define([
 	, Calendar
 	, locale
 	, DateTextBox
-	, ValidationTextBox
 ) {
-	var cleanSpace = function(text) {
-		return text.trim();
-	};
 
 	return declare([_WidgetBase, Evented], {
 
@@ -89,7 +84,7 @@ define([
 
 		_changeRangeDate: function() {
 
-			if (!this.minDate & !this.maxDate) {
+			if (!this.minDate && !this.maxDate) {
 				put(this.removeNode, '.hidden');
 				this.inputNode.value = '';
 			}
@@ -214,7 +209,7 @@ define([
 
 			this.containerInput = put('div.datePicker');
 
-			icon = put(this.containerInput, 'i.fa.fa-calendar.iconCalendar');
+			var icon = put(this.containerInput, 'i.fa.fa-calendar.iconCalendar');
 
 			this.inputNode = put(this.containerInput, "input[type=text]");
 
@@ -315,18 +310,18 @@ define([
 			this.inputTo.watch('value', lang.hitch(this, this._changeInputMax));
 		},
 
-		_isDisableDateMax: function(d) {
+		_isDisableDateMax: function(dParam) {
 
-			var d = new Date(d);
+			var d = new Date(dParam);
 			if (this.minDate)
 				return dojo.date.difference(this.minDate, d) < 0;
 			else
 				return false;
 		},
 
-		_isDisableDateMin: function(d) {
+		_isDisableDateMin: function(dParam) {
 
-			var d = new Date(d);
+			var d = new Date(dParam);
 			if (this.maxDate)
 				return dojo.date.difference(this.maxDate, d) > 0;
 			else

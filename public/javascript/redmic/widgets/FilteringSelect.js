@@ -1,20 +1,18 @@
 define([
 	"dojo/_base/declare"
 	, "dijit/_WidgetBase"
-	, "dijit/registry"
 	, "dojo/_base/lang"
 	, "dojo/Evented"
 	, "put-selector/put"
 	, "dojo/dom-construct"
 	, "dojo/dom-geometry"
-	, "dojo/i18n!./nls/translation"
+	, "dojo/i18n!app/nls/translation"
 	, "dojo/dom-attr"
 	, "dojo/query"
 	, "dojo/on"
 ], function(
 	declare
 	, _WidgetBase
-	, registry
 	, lang
 	, Evented
 	, put
@@ -25,6 +23,7 @@ define([
 	, query
 	, on
 ) {
+
 	var cleanSpace = function(text) {
 
 		if (text && text.length > 0) {
@@ -256,8 +255,8 @@ define([
 
 		_selectCharCorrect: function(keyCode) {
 
-			patron = /[a-zA-Z0-9\s]/;
-			charSeleccionado = String.fromCharCode(keyCode);
+			var patron = /[a-zA-Z0-9\s]/,
+				charSeleccionado = String.fromCharCode(keyCode);
 
 			if ((patron.test(charSeleccionado) && (keyCode !== 9)) || (keyCode === 46) || (keyCode === 8)) {
 				this.focusIn = -1;
@@ -320,7 +319,11 @@ define([
 
 			if (this.boxResultsNode.children.length !== 0) {
 				if ((this.focusIn === -1)) {
-					num == 1 ? this.focusIn = this.boxResultsNode.firstChild : this.focusIn = this.boxResultsNode.lastChild;
+					if (num == 1) {
+						this.focusIn = this.boxResultsNode.firstChild;
+					} else {
+						this.focusIn = this.boxResultsNode.lastChild;
+					}
 				} else {
 					this.focusIn.onblur();
 
@@ -464,13 +467,11 @@ define([
 				this.start = 0;
 			}
 
-			var json = {
+			return {
 				'text': this.textRequest,
 				'start': this.start,
 				'count': this.count
 			};
-
-			return json;
 		},
 
 		_addResults: function(/*JSON*/ Results) {

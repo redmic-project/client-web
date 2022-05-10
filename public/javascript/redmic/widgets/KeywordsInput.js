@@ -13,6 +13,7 @@ define([
 	, Keys
 	, put
 ) {
+
 	var cleanSpace = function(text) {
 		return text.trim();
 	};
@@ -66,14 +67,16 @@ define([
 
 		_initialize: function() {
 
-			if (this._getValue() && this._getValue().length != 0)
+			if (this._getValue() && this._getValue().length != 0) {
 				this._createTagsValue();
+			}
 		},
 
 		_createTagsValue: function() {
 
-			for (var i = 0; i < this._getValue().length; i++)
+			for (var i = 0; i < this._getValue().length; i++) {
 				this._createTag(this._getValue()[i]);
+			}
 		},
 
 		_activeInput: function(e) {
@@ -112,26 +115,29 @@ define([
 
 			if (keyCodeBoolean) {
 				this._completeTag(keyCode);
-				if (keyCode != Keys.TAB)
+				if (keyCode != Keys.TAB) {
 					e.preventDefault();
-				else
+				} else {
 					this._desactiveInput();
-			} else if ((this._selectCharCorrect(keyCode) && this._correctTagNew())|| (this._valueInputNew().length == 0))
+				}
+			} else if ((this._selectCharCorrect(keyCode) && this._correctTagNew())|| (this._valueInputNew().length == 0)) {
 				put(this.ulNode, "!notValid");
-			else
+			} else {
 				put(this.ulNode, ".notValid");
+			}
 		},
 
 		_eventOnKeyUp: function(e) {
 
-			if (this._correctTagNew() || (this._valueInputNew().length == 0))
+			if (this._correctTagNew() || (this._valueInputNew().length == 0)) {
 				this.validate();
+			}
 		},
 
 		_selectCharCorrect: function(keyCode) {
 
-			patron = /[a-zA-Z_áéíóúñ\s]/;
-			charSeleccionado = String.fromCharCode(keyCode);
+			var patron = /[a-zA-Z_áéíóúñ\s]/,
+				charSeleccionado = String.fromCharCode(keyCode);
 
 			return patron.test(charSeleccionado);
 		},
@@ -150,19 +156,24 @@ define([
 
 		_keycodeIsCompleteTag: function(keyCode) {
 
-			if (keyCode)
-				for (var i = 0; i < this.keycodeTagConfirm.length; i++)
-					if (keyCode == this.keycodeTagConfirm[i])
+			if (keyCode) {
+				for (var i = 0; i < this.keycodeTagConfirm.length; i++) {
+					if (keyCode == this.keycodeTagConfirm[i]) {
 						return true;
+					}
+				}
+			}
+
 			return false;
 		},
 
 		_correctTagNew: function(value) {
 
-			if (!value)
+			if (!value) {
 				value = this._valueInputNew();
+			}
 
-			patron = /^[a-zA-Z_áéíóúñ\s]+$/;
+			var patron = /^[a-zA-Z_áéíóúñ\s]+$/;
 
 			return patron.test(value);
 		},
@@ -171,12 +182,13 @@ define([
 
 			var result = false;
 
-			for (var i = 0; i < this.separatorMultipleTag.length; i++)
+			for (var i = 0; i < this.separatorMultipleTag.length; i++) {
 				if (this._valueInputNew().includes(this.separatorMultipleTag[i])) {
 					this._caracterMultipleTag = this.separatorMultipleTag[i];
 					result = true;
 					break;
 				}
+			}
 
 			return result;
 		},
@@ -187,8 +199,9 @@ define([
 			for (var i = 0; i < split.length; i++) {
 				var tag = split[i];
 				if (this._correctTagNew(tag)){
-					if (tag.slice(-1) == " ")
+					if (tag.slice(-1) == " ") {
 						tag = tag.substring(0, tag.length - 1);
+					}
 					this._generateTag(tag);
 				}
 			}
@@ -207,12 +220,14 @@ define([
 
 				this._resetValueInputNew();
 
-				if (!keyCode || keyCode != Keys.TAB)
+				if (!keyCode || keyCode != Keys.TAB) {
 					this._focusNewTag();
+				}
 			} else if (this._isMultipleTag()) {
 				this._generateMultipleTag();
-			} else if (this._valueInputNew().length != 0)
+			} else if (this._valueInputNew().length != 0) {
 				this.validate();
+			}
 		},
 
 		_generateTag: function(value) {
@@ -243,8 +258,9 @@ define([
 		_removeTags: function() {
 
 			if (this._getValue()) {
-				while (this.ulNode.children.length >= 2)
+				while (this.ulNode.children.length >= 2) {
 					this.ulNode.removeChild(this.ulNode.firstChild);
+				}
 				this.set("value", '');
 			}
 		},
@@ -259,17 +275,14 @@ define([
 
 			var posItem = this._existItemInValue(value);
 
-			if (posItem != -1)
+			if (posItem != -1) {
 				this._removeTag(this.ulNode.children[posItem], value);
+			}
 		},
 
 		reset: function() {
 
-			this._removeTags();
-
-			this.validate();
-
-			this._emitOnChange();
+			this._clear();
 		},
 
 		validate: function() {
@@ -301,8 +314,7 @@ define([
 		_getValue: function() {
 
 			if (this.value) {
-				var split = String(this.value).split(this.separateString);
-				return split;
+				return String(this.value).split(this.separateString);
 			}
 
 			return null;
@@ -316,8 +328,9 @@ define([
 
 				this.value = value;
 
-				if (value)
+				if (value) {
 					this._createTagsValue();
+				}
 
 				this._emitOnChange();
 			}
@@ -348,8 +361,9 @@ define([
 
 			if (posItem == -1) {
 				var itemValue = '';
-				if (this.value)
+				if (this.value) {
 					itemValue = this.value + this.separateString;
+				}
 				itemValue += item;
 				this.set('value', itemValue);
 				return true;
@@ -365,10 +379,14 @@ define([
 
 		_existItemInValue: function(item) {
 
-			if (this._getValue())
-				for (var i = 0; i < this._getValue().length; i++)
-					if (this._getValue()[i] === item)
+			if (this._getValue()) {
+				for (var i = 0; i < this._getValue().length; i++) {
+					if (this._getValue()[i] === item) {
 						return i;
+					}
+				}
+			}
+
 			return -1;
 		},
 
@@ -376,13 +394,14 @@ define([
 
 			var posItem = this._existItemInValue(item);
 
-			if (posItem != -1){
+			if (posItem != -1) {
 				var content = '';
 
 				for (var i = 0; i < this._getValue().length; i++) {
 					if (posItem != i) {
-						if (i != 0)
+						if (i != 0) {
 							content += this.separateString;
+						}
 						content += this._getValue()[i];
 					}
 				}

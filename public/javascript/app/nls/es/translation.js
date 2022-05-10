@@ -1313,6 +1313,9 @@ define({
 
 	, "mapCentering": "Centrar mapa en capa"
 
+	, "aboveOptions": "Opciones anteriores"
+	, "moreOptions": "Más opciones"
+
 
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"

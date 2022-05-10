@@ -2,8 +2,9 @@ define([
 	"./Utilities"
 ], function(
 	Utilities
-){
-	var methods = {
+) {
+
+	return {
 
 		getActivityRankByPath: function(/*String*/ path, /*String?*/ pathSeparator) {
 
@@ -25,6 +26,4 @@ define([
 		}
 
 	};
-
-	return methods;
 });

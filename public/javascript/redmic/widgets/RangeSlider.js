@@ -137,11 +137,11 @@ define([
 				return;
 
 			clearTimeout(this._changeValueTimeoutHandler);
-			this._changeValueTimeoutHandler = setTimeout(lang.hitch(this, function(evt) {
+			this._changeValueTimeoutHandler = setTimeout(lang.hitch(this, function(evtParam) {
 				this.setValueTextRangeSlider();
 				this.setValueTextBoxRangeSlider();
-				this._lastValue = evt;
-				this.onChange(this._fixValues(this.rangeSlider.value), evt);
+				this._lastValue = evtParam;
+				this.onChange(this._fixValues(this.rangeSlider.value), evtParam);
 			}, evt), this._changeValueTimeout);
 		},
 

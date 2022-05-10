@@ -6,7 +6,6 @@ define([
 	, "dojo/Evented"
 	, "dojo/query"
 	, "dijit/form/HorizontalSlider"
-	, "dijit/form/HorizontalRule"
 	, "put-selector/put"
 	, "./Button"
 	, "dojo/dom-geometry"
@@ -19,12 +18,12 @@ define([
 	, Evented
 	, query
 	, HorizontalSlider
-	, Rule
 	, put
 	, RButton
 	, domGeometry
 	, moment
 ) {
+
 	return declare([_WidgetBase, Evented], {
 
 		//	summary:
@@ -197,7 +196,7 @@ define([
 
 		_openPopupIntermediateValue: function(evt) {
 
-			this.popupNode.style.top = evt.clientY + 20 + "px"
+			this.popupNode.style.top = evt.clientY + 20 + "px";
 
 			this.popupNode.style.left = evt.clientX - 10 + "px";
 		},
@@ -344,8 +343,8 @@ define([
 
 			this._selectNodeTransition();
 
-			domAttr.set(this.nodeTransition, "style", "transition: width "
-				+ ((this.timeoutValue / 1000)) + "s cubic-bezier(0.0, 0.0, 1, 1) 0s");
+			domAttr.set(this.nodeTransition, "style", "transition: width " +
+				(this.timeoutValue / 1000) + "s cubic-bezier(0.0, 0.0, 1, 1) 0s");
 		},
 
 		_cleanTransition: function() {
@@ -357,9 +356,10 @@ define([
 
 		_selectNodeTransition: function() {
 
-			if (!this.nodeTransition)
-				this.nodeTransition = query("div.dijitSliderBar.dijitSliderBarH.dijitSliderProgressBar.dijitSliderProgressBarH"
-				, this.slider.domNode)[0];
+			if (!this.nodeTransition) {
+				var elementDefinition = "div.dijitSliderBar.dijitSliderBarH.dijitSliderProgressBar.dijitSliderProgressBarH";
+				this.nodeTransition = query(elementDefinition, this.slider.domNode)[0];
+			}
 		},
 
 		_setValueSlider: function(value) {

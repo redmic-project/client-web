@@ -1317,6 +1317,9 @@ define({
 
 		, "mapCentering": "Center map on layer"
 
+		, "aboveOptions": "Previous options"
+		, "moreOptions": "More options"
+
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

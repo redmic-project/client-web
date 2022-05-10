@@ -25,9 +25,7 @@ define([
 		//	returns:
 		//		Booleano que indica si es válido o no.
 
-		if (Object.keys(spatialReferences).indexOf(reference.toString ? reference.toString() : reference) == -1)
-			return false;
-		return true;
+		return Object.keys(spatialReferences).indexOf(reference.toString ? reference.toString() : reference) !== -1;
 	};
 
 	var _isValidValue = function(/*Integer*/ value) {
@@ -40,12 +38,10 @@ define([
 		//	returns:
 		//		Booleano con la respuesta.
 
-		if (value === null || value === undefined || isNaN(value))
-			return false;
-		return true;
+		return value !== null && value !== undefined && !isNaN(value);
 	};
 
-	var conversor = {
+	return {
 		DMS2DD: function(/*Integer*/ degrees, /*Integer*/ minutes, /*Number*/ seconds) {
 			//	summary:
 			//		Convierte de grados, minutos y segundos a grados decimales.
@@ -139,6 +135,4 @@ define([
 			return point;
 		}
 	};
-
-	return conversor;
 });

@@ -38,8 +38,9 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			if (this.groups)
-				this.groups['undefined'] = []
+			if (this.groups) {
+				this.groups.undefined = [];
+			}
 		},
 
 		postCreate: function() {
@@ -51,15 +52,15 @@ define([
 
 			this.containerNode = put(this.domNode, "div.toggleButton");
 			//this.containerNode.setAttribute('data-toggle', 'buttons');
-			for (n in this.listButton) {
+			for (var n in this.listButton) {
 
-				if ((Object.keys(this.listButton[n]).indexOf('id') == -1)
-					&& (Object.keys(this.listButton[n]).indexOf('label') != -1)) {
+				if ((Object.keys(this.listButton[n]).indexOf('id') == -1) &&
+					(Object.keys(this.listButton[n]).indexOf('label') != -1)) {
 					this.listButton[n].id = this.listButton[n].label;
 				}
 
 				if (Object.keys(this.listButton[n]).indexOf('id') != -1) {
-					buttonNode = this._createStructureButton(this.listButton[n]);
+					var buttonNode = this._createStructureButton(this.listButton[n]);
 					this._assignEventsButton(buttonNode, this.listButton[n].id);
 				} else
 					console.log("Not id, not label");
@@ -95,10 +96,10 @@ define([
 
 		_createStructureButton: function(button) {
 
-			buttonNode = put(this.containerNode, "div.button");
+			var buttonNode = put(this.containerNode, "div.button");
 			buttonNode.setAttribute('data-redmic-button-id', button.id);
 			if ((Object.keys(button).indexOf('default') != -1) && (button['default']))
-				this._selectDefault(buttonNode, button.id)
+				this._selectDefault(buttonNode, button.id);
 
 			if ((Object.keys(button).indexOf('icon') != -1))
 				put(buttonNode, "i.fa." + button.icon);
@@ -190,8 +191,8 @@ define([
 			if (group)
 				this._selectedExistInGroup(group);
 			else if (this.groups) {
-				this.groups['undefined'].push(id);
-				this._selectedExistInGroup(this.groups['undefined']);
+				this.groups.undefined.push(id);
+				this._selectedExistInGroup(this.groups.undefined);
 			}
 		},
 

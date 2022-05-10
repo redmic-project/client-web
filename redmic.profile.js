@@ -101,14 +101,14 @@ var profile = {
 			amd: amdTagger
 		}
 	},{
-		name: 'redmic',
-		location: 'redmic',
+		name: 'RWidgets',
+		location: 'redmic/widgets',
 		resourceTags: {
 			amd: amdTagger
 		}
 	},{
-		name: 'RWidgets',
-		location: 'redmic/widgets',
+		name: 'redmic',
+		location: 'redmic',
 		resourceTags: {
 			amd: amdTagger
 		}

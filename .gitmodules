@@ -3,11 +3,6 @@
 	url = ../../third-party/proj4js.git
 	branch = master
 	ignore = dirty
-[submodule "public/javascript/redmic-widgets"]
-	path = public/javascript/redmic-widgets
-	url = ../widgets.git
-	branch = master
-	ignore = dirty
 [submodule "public/stylesheets"]
 	path = public/stylesheets
 	url = ../style.git

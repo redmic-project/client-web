@@ -108,7 +108,7 @@ var profile = {
 		}
 	},{
 		name: 'RWidgets',
-		location: 'redmic-widgets/src/app',
+		location: 'redmic/widgets',
 		resourceTags: {
 			amd: amdTagger
 		}

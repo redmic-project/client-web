@@ -10,7 +10,6 @@
   cache:
     paths:
       - node_modules/
-      - public/javascript/redmic-widgets/node_modules/
       - public/javascript/templates/node_modules/
       - public/stylesheets/node_modules/
 
@@ -27,7 +26,6 @@ prepare-unbuilt-version:
     paths:
       - node_modules/
       - public/javascript/proj4js/dist/proj4.js
-      - public/javascript/redmic-widgets/src/app/
       - public/javascript/templates/dist/
       - public/stylesheets/style.styl
       - public/stylesheets/src/

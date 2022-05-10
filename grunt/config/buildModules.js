@@ -11,9 +11,6 @@ module.exports = function(grunt) {
 			'npm install',
 			'grunt build:dist --force'
 		],
-		'public/javascript/redmic-widgets': preBuildCmds.concat([
-			'grunt addModules buildModules'
-		]),
 		'public/javascript/templates': preBuildCmds.concat([
 			'grunt'
 		]),

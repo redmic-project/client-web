@@ -61,7 +61,7 @@ dojoConfig = {
 		location: '../proj4js/dist'
 	},{
 		name: 'RWidgets',
-		location: '../redmic-widgets/src/app'
+		location: '../redmic/widgets'
 	},{
 		name: 'handlebars',
 		location: '../handlebars/dist'

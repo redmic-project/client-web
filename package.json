@@ -42,7 +42,7 @@
     "cbtree": "https://github.com/pjekel/cbtree.git#master",
     "color-js": "1.0.5",
     "d3": "5.16.0",
-    "d3-tip": "0.7.1",
+    "d3-tip": "0.9.1",
     "deepmerge": "3.3.0",
     "dijit": "1.17.2",
     "dojo": "1.17.2",

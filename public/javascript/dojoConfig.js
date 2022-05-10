@@ -46,7 +46,7 @@ dojoConfig = {
 		location: '../d3/dist'
 	},{
 		name: 'd3Tip',
-		location: '../d3-tip'
+		location: '../d3-tip/dist'
 	},{
 		name: 'tv4',
 		location: '../tv4'
@@ -114,7 +114,8 @@ dojoConfig = {
 
 	map: {
 		'd3Tip/index': {
-			'd3': 'd3/d3.min'
+			'd3-collection': 'd3/d3.min',
+			'd3-selection': 'd3/d3.min'
 		},
 		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'

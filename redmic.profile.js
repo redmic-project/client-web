@@ -231,7 +231,7 @@ var profile = {
 		}
 	},{
 		name: 'd3Tip',
-		location: 'd3-tip',
+		location: 'd3-tip/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'd3Tip/index')

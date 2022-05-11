@@ -74,12 +74,12 @@ define([
 			}
 		},
 
-		_onChartHoleMouseEnter: function(d, i) {
+		_onChartHoleMouseEnter: function() {
 
 			this._showChartHoleBackground(true);
 		},
 
-		_onChartHoleMouseLeave: function(d, i) {
+		_onChartHoleMouseLeave: function() {
 
 			this._showChartHoleBackground(false);
 		},
@@ -89,10 +89,9 @@ define([
 			this._showChartHoleBackground(true);
 		},
 
-		_setChartHoleSize: function(req) {
+		_setChartHoleSize: function() {
 
 			if (this._chartHole) {
-
 				this._resizeChartHoleComponents();
 			}
 		},

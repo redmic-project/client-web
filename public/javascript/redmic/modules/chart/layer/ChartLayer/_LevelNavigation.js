@@ -89,7 +89,9 @@ define([
 			this._zooming = false;
 		},
 
-		_onCategoryMouseUp: function(d) {
+		_onCategoryMouseUp: function(_e, dataWrapper) {
+
+			var d = dataWrapper.data;
 
 			if (this._zooming || this._checkCategoryIsHidden(d)) {
 				return;
@@ -98,7 +100,7 @@ define([
 			this._zoomIn(d);
 		},
 
-		_onButtonIconMouseUp: function(ancestorsData) {
+		_onButtonIconMouseUp: function(_e, ancestorsData) {
 
 			if (this._zooming) {
 				return;

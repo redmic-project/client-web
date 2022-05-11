@@ -234,7 +234,8 @@ define([
 			this._chartSourceHelper.size([2 * Math.PI, this._radius]);
 			this._chartSourceHelper(this._rootData);
 
-			this._categoriesPaths.attr('d', this._chartSource);
+			this._categoriesPaths
+				.attr('d', this._chartSource);
 		},
 
 		_manageSubscriptionsToCategories: function(method) {
@@ -335,7 +336,7 @@ define([
 			return res;
 		},
 
-		_filterToGetChildrenOfCategoryElement: function(index, d, i) {
+		_filterToGetChildrenOfCategoryElement: function(index, d) {
 
 			var oldestAncestor = this._findOldestValidAncestor(d),
 				oldestAncestorIndex = oldestAncestor.parent.children.indexOf(oldestAncestor);

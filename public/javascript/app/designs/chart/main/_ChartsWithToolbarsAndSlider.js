@@ -279,6 +279,7 @@ define([
 		_findAndRemoveUnusedAggregationCharts: function(prevAggs, currAggs) {
 
 			var aggsDiff = prevAggs.filter(lang.partial(function(a, i) {
+
 				return a.indexOf(i) < 0;
 			}, currAggs));
 

@@ -29,7 +29,9 @@ define([
 			var categoriesInDepth = this._categories[depth];
 
 			categoriesInDepth && categoriesInDepth.selectAll("g." + this.sectionClass)
-				.attr("fill", lang.hitch(this, function(d, i) {
+				.attr("fill", lang.hitch(this, function(dataWrapper) {
+
+					var i = dataWrapper.index;
 					return this.color[depth][i];
 				}));
 		},
@@ -45,9 +47,11 @@ define([
 			}
 		},
 
-		_generateColorForChild: function(depth, d, i) {
+		_generateColorForChild: function(depth, dataWrapper) {
 
-			var currentItemParent = d.parent,
+			var d = dataWrapper.data,
+				i = dataWrapper.index,
+				currentItemParent = d.parent,
 				lastGeneratedSiblingColor = this.color[depth][i - 1],
 				color;
 
@@ -69,7 +73,11 @@ define([
 			var priorDepth = depth - 1,
 				priorLevelCategories = this._categories[priorDepth],
 				priorLevelData = priorLevelCategories
-					.selectAll("g." + this.sectionClass).data(),
+					.selectAll("g." + this.sectionClass)
+					.data().map(function(dataWrapper) {
+
+						return dataWrapper.data;
+					}),
 
 				currentItemParentIndex = priorLevelData.indexOf(currentItemParent),
 				parentColor = this.color[priorDepth][currentItemParentIndex];

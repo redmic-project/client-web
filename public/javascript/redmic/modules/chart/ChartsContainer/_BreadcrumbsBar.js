@@ -1,6 +1,6 @@
 define([
 	'd3/d3.min'
-	, 'd3Tip/index'
+	, 'd3Tip/d3-v6-tip.min'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -71,7 +71,7 @@ define([
 
 			this._reserveVerticalSpace({ above: this._bSize.h * 1.5 });
 
-			this.breadcrumbsBarTooltip = d3Tip()
+			this.breadcrumbsBarTooltip = d3Tip.tip()
 				.attr("class", this.chartsTooltipClass)
 				.direction("s");
 
@@ -225,7 +225,7 @@ define([
 				.text(text);
 		},
 
-		_onBreadcrumbMouseEnter: function(self, d) {
+		_onBreadcrumbMouseEnter: function(self, _e, d) {
 
 			var text = d.data[self._breadcrumbsBarCategoryName];
 

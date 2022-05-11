@@ -230,7 +230,7 @@ define([
 				node = evt[1],
 				event = evt[2],
 				itemId = item[this.idProperty],
-				target = event.target || event.srcElement,
+				target = event.target || event.currentTarget,
 				evtToEmit = target.checked ? 'SELECT' : 'DESELECT';
 
 			this._emitEvt(evtToEmit, itemId);

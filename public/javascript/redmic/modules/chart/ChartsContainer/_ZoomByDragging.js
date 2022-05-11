@@ -53,13 +53,13 @@ define([
 				.on("touchstart.zoomByDragging", lang.hitch(this, this._moveStart));
 		},
 
-		_moveStart: function() {
+		_moveStart: function(evt) {
 
 			if (this.zoomRect || this._zoomDisabled) {
 				return;
 			}
 
-			var pos = d3.mouse(this.svg.node());
+			var pos = d3.pointer(evt);
 			this._startX = pos[0];
 
 			if (!this._isValidPosition(this._startX)) {
@@ -111,9 +111,9 @@ define([
 			return this._horizontalTranslate + (this._rightLimit || this._innerWidth);
 		},
 
-		_move: function() {
+		_move: function(evt) {
 
-			var pos = d3.mouse(this.svg.node()),
+			var pos = d3.pointer(evt),
 				currX = pos[0],
 
 				rightLimit = this._getRightLimit(),
@@ -132,9 +132,9 @@ define([
 			this.zoomRect.attr("width", newWidth);
 		},
 
-		_moveEnd: function() {
+		_moveEnd: function(evt) {
 
-			var pos = d3.mouse(this.svg.node());
+			var pos = d3.pointer(evt);
 			if (this._startX !== pos[0]) {
 				this._updateXResolution();
 			}

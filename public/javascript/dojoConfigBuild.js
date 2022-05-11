@@ -26,8 +26,7 @@ dojoConfig = {
 	}],
 
 	map: {
-		'd3Tip/index': {
-			'd3-collection': 'd3/d3.min',
+		'd3Tip/d3-v6-tip.min': {
 			'd3-selection': 'd3/d3.min'
 		},
 		'leaflet-nontiledlayer/NonTiledLayer': {

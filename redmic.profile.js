@@ -231,10 +231,10 @@ var profile = {
 		}
 	},{
 		name: 'd3Tip',
-		location: 'd3-tip/dist',
+		location: 'd3-v6-tip/build',
 		resourceTags: {
 			amd: amdTagger,
-			ignore: ignoreTagger.bind(null, 'd3Tip/index')
+			ignore: ignoreTagger.bind(null, 'd3Tip/d3-v6-tip.min')
 		}
 	},{
 		name: 'uuid',
@@ -301,8 +301,8 @@ var profile = {
 	}],
 
 	map: {
-		'd3Tip/index': {
-			'd3': 'd3/d3.min'
+		'd3Tip/d3-v6-tip.min': {
+			'd3-selection': 'd3/d3.min'
 		},
 		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'

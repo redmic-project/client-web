@@ -51,9 +51,9 @@ define([
 				.duration(this.infoOnLayerEventTransitionDuration)
 				.ease(this.infoOnLayerEventTransitionEase)
 				.attr("opacity", 0)
-				.on("end", lang.hitch(this, function(container) {
+				.on("end", lang.hitch(this, function(containerParam) {
 
-					container.classed(this.hiddenClass, true);
+					containerParam.classed(this.hiddenClass, true);
 				}, container));
 		}
 	});

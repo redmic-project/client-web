@@ -30,7 +30,7 @@ define([
 				];
 
 			if (!targetPath.length) {
-				var eventTarget = event.target || event.srcElement,
+				var eventTarget = event.target || event.currentTarget,
 					eventTargetParent = eventTarget.parentElement;
 
 				targetPath.push(eventTarget, eventTargetParent);

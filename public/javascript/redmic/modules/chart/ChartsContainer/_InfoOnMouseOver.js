@@ -16,7 +16,8 @@ define([
 	, all
 	, Utilities
 	, _InfoTooltipManagement
-){
+) {
+
 	return declare(_InfoTooltipManagement, {
 		//	summary:
 		//		Extensión para mostrar información sobre las gráficas al pasar el cursor sobre
@@ -162,9 +163,9 @@ define([
 			this.infoOnMouseOverArea.classed(this.hiddenClass, true);
 		},
 
-		_onMouseMove: function() {
+		_onMouseMove: function(evt) {
 
-			var mousePos = d3.mouse(this.svg.node());
+			var mousePos = d3.pointer(evt);
 
 			clearTimeout(this._mouseMoveTimeoutHandler);
 			this._mouseMoveTimeoutHandler = setTimeout(lang.hitch(this, this._lookForInfoOnPosition, mousePos),
@@ -198,7 +199,7 @@ define([
 			this._getLayerValueDfds = {};
 			for (var layerId in this._infoOnMouseOverQueryableLayers) {
 				if (!this._hiddenLayers[layerId]) {
-					var layer = this._infoOnMouseOverQueryableLayers[layerId];
+					var layer = this._infoOnMouseOverQueryableLayers[layerId],
 						dfd = new Deferred();
 
 					this._getLayerValueDfds[layerId] = dfd;

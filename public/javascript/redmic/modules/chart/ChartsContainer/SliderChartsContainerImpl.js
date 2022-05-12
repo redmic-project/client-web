@@ -171,7 +171,7 @@ define([
 		_onSliderBrushStart: function(event) {
 
 			var originalEvt = event.sourceEvent,
-				evtNode = originalEvt ? originalEvt.currentTarget : null,
+				evtNode = originalEvt ? originalEvt.currentTarget || originalEvt.target : null,
 				sliderGroup = this.sliderBrushGroup.node();
 
 			this._brushEventFromDescendant = sliderGroup && sliderGroup.contains(evtNode);

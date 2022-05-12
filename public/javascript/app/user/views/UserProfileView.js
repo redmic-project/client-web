@@ -283,14 +283,15 @@ define([
 
 			var formDef = declare([FormContainerImpl, _ListenModelHasChanged, _CreateKeypad]);
 
-			this[obj.label + 'Form'] = instanceForm = new declare(formDef).extend(_Window)(obj.formConfig);
+			var FormDefinition = declare(formDef).extend(_Window);
+			this[obj.label + 'Form'] = instanceForm = new FormDefinition(obj.formConfig);
 
 			this._createSubscriptionsForm(instanceForm, obj);
 		},
 
 		_createSubscriptionsForm: function(instanceForm, obj) {
 
-			this._subscribe(instanceForm.getChannel("CANCELLED"), lang.hitch(this, function(res) {
+			this._subscribe(instanceForm.getChannel("CANCELLED"), lang.hitch(this, function() {
 
 				this._showBoxUser(obj.formConfig.targetSave ? obj.formConfig.targetSave : obj.formConfig.target);
 			}));
@@ -351,14 +352,14 @@ define([
 			this._once(this._widgets.userImage.getChannel("SHOWN"), lang.hitch(this, this._subUserImageShownOnce));
 		},
 
-		_subUserImageShownOnce: function(res) {
+		_subUserImageShownOnce: function() {
 
 			this._nodes.userImage.onclick = lang.hitch(this, this._tryToGoToEditImage);
 		},
 
 		_tryToGoToEditImage: function(evt) {
 
-			var node = evt.target || evt.currentTarget,
+			var node = evt.currentTarget || evt.target,
 				nodeTagName = node.tagName,
 				nodeAttribute = node.getAttribute('data-redmic-id');
 
@@ -383,7 +384,7 @@ define([
 			});
 		},
 
-		_afterShow: function(request) {
+		_afterShow: function() {
 
 			this._setSubscription({
 				channel : this._widgets.userData.getChannel("BUTTON_EVENT"),

@@ -1,7 +1,6 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "RWidgets/Utilities"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_Show"
@@ -9,7 +8,6 @@ define([
 ], function(
 	declare
 	, lang
-	, Utilities
 	, _Module
 	, _Selection
 	, _Show
@@ -25,7 +23,6 @@ define([
 
 		//	config: Object
 		//		Opciones y asignaciones por defecto.
-
 
 		constructor: function(args) {
 
@@ -110,30 +107,28 @@ define([
 
 		_getParentValue: function(item) {
 
-			if (!item[this.idProperty])
+			if (!item[this.idProperty]) {
 				return item[this.parentProperty];
+			}
 
 			var pathSplitted = item[this.idProperty].split(this.pathSeparator),
 				parent;
 
-			if (this.idProperty !== this.idProperty) {
-				parent = pathSplitted[pathSplitted.length - 2];
-				return !isNaN(parent) ? parent : null;
-			} else {
-				pathSplitted.pop();
-				parent = pathSplitted.join(this.pathSeparator);
-				return parent.indexOf(this.pathSeparator) < 0 ? null : parent;
-			}
+			pathSplitted.pop();
+			parent = pathSplitted.join(this.pathSeparator);
+			return parent.indexOf(this.pathSeparator) < 0 ? null : parent;
 		},
 
 		_getLabelValue: function(item) {
 
-			if (typeof this.itemLabel === "function")
+			if (typeof this.itemLabel === "function") {
 				return this.itemLabel(item);
+			}
 
 			if (typeof this.itemLabel === "string") {
-				if (this.itemLabel.indexOf("{") < 0)
+				if (this.itemLabel.indexOf("{") < 0) {
 					return item[this.itemLabel] || item[this.idProperty];
+				}
 				return lang.replace(this.itemLabel, item);
 			}
 
@@ -144,10 +139,7 @@ define([
 
 			var itemId = item[this.idProperty];
 
-			if (this._selection[itemId] || this._isParentItemSelected(item))
-				return true;
-
-			return false;
+			return this._selection[itemId] || this._isParentItemSelected(item);
 		},
 
 		_isParentItemSelected: function(item) {
@@ -155,16 +147,14 @@ define([
 			var parentId = item[this.parentProperty],
 				parentItem = this.getItem(parentId);
 
-			if (parentItem && this.getChecked(parentItem) === true)
-				return true;
-
-			return false;
+			return parentItem && this.getChecked(parentItem) === true;
 		},
 
 		_insertItemIntoStore: function(item) {
 
-			if (!item)
+			if (!item) {
 				return;
+			}
 
 			if (!this.getItem(item[this.idProperty])) {
 				this.putItem(item);
@@ -176,8 +166,9 @@ define([
 			var item = this._obtainItem(itemId);
 			itemId = this._obtainItemId(itemId);
 
-			if (this._selection[itemId])
+			if (this._selection[itemId]) {
 				return;
+			}
 
 			this._selection[itemId] = true;
 
@@ -188,15 +179,19 @@ define([
 
 		_obtainItem: function(itemId) {
 
-			if (typeof itemId === "object")
+			if (typeof itemId === "object") {
 				return itemId;
+			}
+
 			return this.getItem(itemId);
 		},
 
 		_obtainItemId: function(itemId) {
 
-			if (typeof itemId === "object")
+			if (typeof itemId === "object") {
 				return itemId[this.idProperty];
+			}
+
 			return itemId;
 		},
 
@@ -208,15 +203,13 @@ define([
 			delete this._selection[itemId];
 
 			item && this.getChecked(item) && this.setChecked(item, false);
-
-			/*if(!Object.keys(this._selection).length)
-				this._emitEvt('CLEAR_SELECTION');*/
 		},
 
 		_pubRefreshed: function(channel) {
 
 			clearTimeout(this._refreshedPublicationTimeoutHandler);
 			this._refreshedPublicationTimeoutHandler = setTimeout(lang.hitch(this, function() {
+
 				this._publish(channel, {
 					success: true,
 					target: this.target
@@ -227,10 +220,9 @@ define([
 		_checkSelectedOrDeselected: function(evt) {
 
 			var item = evt[0],
-				node = evt[1],
 				event = evt[2],
 				itemId = item[this.idProperty],
-				target = event.target || event.currentTarget,
+				target = event.currentTarget || event.target,
 				evtToEmit = target.checked ? 'SELECT' : 'DESELECT';
 
 			this._emitEvt(evtToEmit, itemId);
@@ -246,8 +238,9 @@ define([
 
 		_clearSelection: function() {
 
-			for (var selectedItemId in this._selection)
+			for (var selectedItemId in this._selection) {
 				this._deselect(selectedItemId);
+			}
 		}
 	});
 });

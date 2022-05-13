@@ -23,6 +23,9 @@ dojoConfig = {
 	},{
 		name: 'colorjs',
 		location: '../colorjs'
+	},{
+		name: 'd3',
+		location: '../d3'
 	}],
 
 	map: {

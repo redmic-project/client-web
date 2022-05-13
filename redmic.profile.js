@@ -12,10 +12,19 @@ var copyOnlyTagger = function(filename, mid) {
 
 var ignoreTagger = function(desiredModuleId, filename, mid) {
 
+	if (desiredModuleId instanceof Array) {
+		return desiredModuleId.indexOf(mid) === -1;
+	}
+
 	return mid !== desiredModuleId;
 };
 
-var profile = {
+var declarativeTagger = function(filename) {
+
+	return /\.htm(l)?$/.test(filename);
+};
+
+var profileObj = {
 	basePath: './public/javascript',
 	releaseDir: '../../dist',
 	releaseName: 'javascript',
@@ -23,8 +32,8 @@ var profile = {
 	layerOptimize: 'closure',
 	optimize: 'closure',
 	optimizeOptions: {
-		languageIn: 'ES5'/*,
-		compilationLevel: 'WHITESPACE_ONLY'*/
+		//languageIn: 'ES5',
+		//compilationLevel: 'WHITESPACE_ONLY'
 	},
 	cssOptimize: 'comments',
 	mini: true,
@@ -35,11 +44,9 @@ var profile = {
 	useSourceMaps: false,
 
 	resourceTags: {
-		amd: amdTagger
+		amd: amdTagger,
+		declarative: declarativeTagger
 	},
-
-	//depsDumpDotFilename: 'redmic.dot',
-	//dotModules: false,
 
 	staticHasFeatures: {
 		'config-deferredInstrumentation': 0,
@@ -226,7 +233,7 @@ var profile = {
 		name: 'd3',
 		location: 'd3/dist',
 		resourceTags: {
-			amd: amdTagger,
+			copyOnly: copyOnlyTagger,
 			ignore: ignoreTagger.bind(null, 'd3/d3.min')
 		}
 	},{
@@ -522,7 +529,7 @@ var viewLayerDefaultConfig = {
 	includeLocales: includeLocales
 };
 
-(function() {
+var profile = (function() {
 
 	for (var viewLayer in viewLayers) {
 		var viewLayerConfig = viewLayers[viewLayer];
@@ -533,8 +540,8 @@ var viewLayerDefaultConfig = {
 			viewLayerConfig[viewLayerConfigProp] = viewLayerConfigValue;
 		}
 
-		profile.layers[viewLayer] = viewLayerConfig;
+		profileObj.layers[viewLayer] = viewLayerConfig;
 	}
 
-	return profile;
+	return profileObj;
 })();

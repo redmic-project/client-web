@@ -42,7 +42,7 @@ dojoConfig = {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'wicket': {
-			'wicket': 'wicket/wicket'
+			'wicket': 'wicket/wicket.min'
 		}
 	},
 

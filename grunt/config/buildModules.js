@@ -7,6 +7,9 @@ module.exports = function(grunt) {
 			'npm install',
 			'grunt build:dist --force'
 		],
+		'public/javascript/wicket': [
+			'npm run build'
+		],
 		'public/javascript/templates': preBuildCmds.concat([
 			'grunt'
 		]),

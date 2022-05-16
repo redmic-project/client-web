@@ -5,6 +5,11 @@ var amdTagger = function(filename, mid) {
 	return /\.js$/.test(filename);
 };
 
+var noAmdTagger = function() {
+
+	return false;
+};
+
 var copyOnlyTagger = function(filename, mid) {
 
 	return true;
@@ -175,7 +180,7 @@ var profileObj = {
 		name: 'L-miniMap',
 		location: 'leaflet-minimap/dist',
 		resourceTags: {
-			amd: amdTagger,
+			amd: noAmdTagger,
 			ignore: ignoreTagger.bind(null, 'L-miniMap/Control.MiniMap.min')
 		}
 	},{
@@ -220,7 +225,7 @@ var profileObj = {
 		name: 'alertify',
 		location: 'alertify/build',
 		resourceTags: {
-			amd: amdTagger,
+			amd: noAmdTagger,
 			ignore: ignoreTagger.bind(null, 'alertify/alertify.min')
 		}
 	},{

@@ -4613,9 +4613,10 @@ pathval@^1.1.1:
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.1.tgz#8534e77a77ce7ac5a2512ea21e0fdb8fcf6c3d8d"
   integrity sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==
 
-"pdfjs@https://github.com/mozilla/pdf.js.git#v2.3.200":
-  version "2.0.0"
-  resolved "https://github.com/mozilla/pdf.js.git#4ae3f9fcf6735748599b1f436a9d5b94bdf2d393"
+pdfjs-dist-viewer-min@2.12.313:
+  version "2.12.313"
+  resolved "https://registry.yarnpkg.com/pdfjs-dist-viewer-min/-/pdfjs-dist-viewer-min-2.12.313.tgz#315deba8ed44442001d3cefc310422fb70b82a40"
+  integrity sha512-Li6SwOH5hj9G4hn7EsepVe/BWy+xKfMRmwJ6EbdIcmFUHDuoB6ISGJNBH7QsYk8fY8mGMZlFzP4B892u59YeGw==
 
 pend@~1.2.0:
   version "1.2.0"

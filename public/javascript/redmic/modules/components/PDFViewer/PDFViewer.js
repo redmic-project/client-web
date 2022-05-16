@@ -18,7 +18,8 @@ define([
 	, put
 	, TemplateAuthFailed
 	, TemplateNoAvailable
-){
+) {
+
 	return declare([_Module, _Show], {
 		//	summary:
 		//		Modulo para visualizar documentos PDF.
@@ -33,6 +34,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				roleGuestActive: false,
 				lastPDF: null,
 				targetAuthFailed: "authFailedInfo",
 				actions: {
@@ -78,7 +80,7 @@ define([
 			}
 		},
 
-		_afterHide: function(req) {
+		_afterHide: function() {
 
 			this._hideTemplateDisplayerPdfError();
 		},
@@ -118,7 +120,6 @@ define([
 		_authChecker: function() {
 
 			if (!this.roleGuestActive && Credentials.get("userRole") === "ROLE_GUEST") {
-
 				if (this.templateDisplayerPdfError) {
 					this._publish(this.templateDisplayerPdfError.getChannel("CHANGE_TEMPLATE"), {
 						template: TemplateAuthFailed
@@ -165,7 +166,9 @@ define([
 		_observerError: function() {
 
 			this.observer = new MutationObserver(lang.hitch(this, function(mutations) {
+
 				mutations.forEach(lang.hitch(this, function() {
+
 					if (this._isErrorPdfViewer()) {
 						this._pdfError();
 						this.observer.disconnect();
@@ -183,11 +186,7 @@ define([
 
 			var node = this._getNodeObserver();
 
-			if (!node || !node.hidden) {
-				return true;
-			}
-
-			return false;
+			return !node || !node.hidden;
 		},
 
 		_getNodeObserver: function() {

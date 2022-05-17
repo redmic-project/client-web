@@ -1,6 +1,6 @@
 var includeLocales = ['es', 'en'];
 
-var amdTagger = function(filename, mid) {
+var amdTagger = function(filename) {
 
 	return /\.js$/.test(filename);
 };
@@ -10,12 +10,12 @@ var noAmdTagger = function() {
 	return false;
 };
 
-var copyOnlyTagger = function(filename, mid) {
+var copyOnlyTagger = function() {
 
 	return true;
 };
 
-var ignoreTagger = function(desiredModuleId, filename, mid) {
+var ignoreTagger = function(desiredModuleId, _filename, mid) {
 
 	if (desiredModuleId instanceof Array) {
 		return desiredModuleId.indexOf(mid) === -1;
@@ -104,7 +104,8 @@ var profileObj = {
 		name: 'wicket',
 		location: 'wicket',
 		resourceTags: {
-			amd: amdTagger
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, ['wicket/wicket.min', 'wicket/wicket-leaflet.min'])
 		}
 	},{
 		name: 'app',
@@ -180,7 +181,7 @@ var profileObj = {
 		name: 'L-miniMap',
 		location: 'leaflet-minimap/dist',
 		resourceTags: {
-			amd: noAmdTagger,
+			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'L-miniMap/Control.MiniMap.min')
 		}
 	},{
@@ -225,7 +226,7 @@ var profileObj = {
 		name: 'alertify',
 		location: 'alertify/build',
 		resourceTags: {
-			amd: noAmdTagger,
+			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'alertify/alertify.min')
 		}
 	},{

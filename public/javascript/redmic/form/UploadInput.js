@@ -12,7 +12,7 @@ define([
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
 
-	, 'dropzone/dropzone.min'
+	, 'dropzone/dropzone-amd-module.min'
 ], function(
 	alertify
 	, redmicConfig
@@ -26,7 +26,8 @@ define([
 	, template
 	, put
 	, Credentials
-){
+) {
+
 	return declare([_WidgetBase, _TemplatedMixin, Evented], {
 		//	summary:
 		//		Widget de subida de ficheros.
@@ -172,17 +173,17 @@ define([
 
 		_addFile: function(file) {
 
-			this._dropzoneDfd.then(lang.hitch(this, function(file, instance) {
+			this._dropzoneDfd.then(lang.hitch(this, function(fileParam, instance) {
 
-				instance.addFile(file);
+				instance.addFile(fileParam);
 			}, file));
 		},
 
 		_removeFile: function(file) {
 
-			this._dropzoneDfd.then(lang.hitch(this, function(file, instance) {
+			this._dropzoneDfd.then(lang.hitch(this, function(fileParam, instance) {
 
-				instance.removeFile(file);
+				instance.removeFile(fileParam);
 			}, file));
 		},
 

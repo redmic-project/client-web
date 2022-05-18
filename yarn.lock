@@ -1576,10 +1576,10 @@ draggabilly@2.4.1:
     get-size "^2.0.2"
     unidragger "^2.4.0"
 
-dropzone@5.4.0:
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-5.4.0.tgz#3290c07f59b189eb5a11e99a58c9b2adae5acfec"
-  integrity sha1-MpDAf1mxietaEemaWMmyra5az+w=
+dropzone@5.9.3:
+  version "5.9.3"
+  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-5.9.3.tgz#b3070ae090fa48cbc04c17535635537ca72d70d6"
+  integrity sha512-Azk8kD/2/nJIuVPK+zQ9sjKMRIpRvNyqn9XwbBHNq+iNuSccbJS6hwm1Woy0pMST0erSo0u4j+KJaodndDk4vA==
 
 duplexer2@~0.1.4:
   version "0.1.4"

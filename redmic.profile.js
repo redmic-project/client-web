@@ -268,7 +268,8 @@ var profileObj = {
 		name: 'dropzone',
 		location: 'dropzone/dist/min',
 		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'dropzone/dropzone.min')
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, 'dropzone/dropzone-amd-module.min')
 		}
 	},{
 		name: 'tv4',

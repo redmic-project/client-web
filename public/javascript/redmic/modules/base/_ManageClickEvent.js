@@ -31,8 +31,10 @@ define([
 				];
 
 			if (!targetPath.length) {
-				var currTargetParent = currTarget.parentElement;
-				targetPath.push(currTarget, currTargetParent);
+				var eventTarget = event.target || event.currentTarget,
+					eventTargetParent = eventTarget.parentElement;
+
+				targetPath.push(eventTarget, eventTargetParent);
 			}
 
 			return targets.concat(targetPath);

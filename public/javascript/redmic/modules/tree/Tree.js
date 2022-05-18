@@ -222,7 +222,7 @@ define([
 			var item = evt[0],
 				event = evt[2],
 				itemId = item[this.idProperty],
-				target = event.currentTarget || event.target,
+				target = event.target || event.currentTarget,
 				evtToEmit = target.checked ? 'SELECT' : 'DESELECT';
 
 			this._emitEvt(evtToEmit, itemId);

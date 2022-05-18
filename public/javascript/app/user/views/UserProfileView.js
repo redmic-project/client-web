@@ -359,7 +359,7 @@ define([
 
 		_tryToGoToEditImage: function(evt) {
 
-			var node = evt.currentTarget || evt.target,
+			var node = evt.target || evt.currentTarget,
 				nodeTagName = node.tagName,
 				nodeAttribute = node.getAttribute('data-redmic-id');
 

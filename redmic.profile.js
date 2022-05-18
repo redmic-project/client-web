@@ -37,8 +37,9 @@ var profileObj = {
 	layerOptimize: 'closure',
 	optimize: 'closure',
 	optimizeOptions: {
-		//languageIn: 'ES5',
-		//compilationLevel: 'WHITESPACE_ONLY'
+		languageIn: 'ECMASCRIPT_2017',
+		languageOut: 'ECMASCRIPT_2015',
+		compilationLevel: 'SIMPLE'
 	},
 	cssOptimize: 'comments',
 	mini: true,

@@ -74,7 +74,7 @@
     "load-grunt-tasks": "5.1.0",
     "mediator-js": "0.11.0",
     "moment": "2.29.3",
-    "nib": "1.1.2",
+    "nib": "1.2.0",
     "uuid": "8.3.2",
     "packery": "2.1.2",
     "pdfjs-dist-viewer-min": "2.12.313",

@@ -1,20 +1,20 @@
 define([
-	'proj4js/proj4'
+	'proj4/proj4'
 ], function(
-	proj4js
-){
+	proj4
+) {
+
 	//	summary:
 	//		Widget para convertir coordenadas de un sistema a otro.
 	//	description:
 	//		Se le pasa una latitud, una longitud, un sistema de coordenadas de origen
 	//		y otro de destino al método 'convert' y devuelve las coordenadas convertidas.
 
-
 	// Espacios de referencia permitidos
 	var spatialReferences = {
-		'4326': "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
+		'4326': null, // definido por defecto en proj4
 		'32628': "+proj=utm +zone=28 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
-		'3857': "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs"
+		'3857': null // definido por defecto en proj4
 	};
 
 	var isValidSpatialReference = function(/*String*/ reference) {
@@ -54,14 +54,16 @@ define([
 			//	returns:
 			//		Valor decimal de la coordenada o null si no es válida.
 
-			if (!_isValidValue(degrees) || !_isValidValue(minutes) || !_isValidValue(seconds))
+			if (!_isValidValue(degrees) || !_isValidValue(minutes) || !_isValidValue(seconds)) {
 				return null;	// return null
+			}
 
 			var dd = Math.abs(degrees) + Math.abs(minutes/60) + Math.abs(seconds/3600),
-				negative = degrees < 0 ? true : false;
+				negative = degrees < 0;
 
-			if (negative)
+			if (negative) {
 				dd = dd * -1;
+			}
 
 			return dd;	// return Number
 		},
@@ -74,11 +76,12 @@ define([
 			//	returns:
 			//		Objeto con el valor en grados, minutos y segundos de la coordenada o null si no es válida.
 
-			if (!_isValidValue(coordinate))
+			if (!_isValidValue(coordinate)) {
 				return null;	// return null
+			}
 
 			var dms = {},
-				negative = coordinate < 0 ? true : false,
+				negative = coordinate < 0,
 				coord = Math.abs(coordinate),
 				components = coord.toString().split("."),
 				integerStr = components[0],
@@ -102,8 +105,9 @@ define([
 				}
 			}
 
-			if (negative)
+			if (negative) {
 				dms.degrees = dms.degrees * -1;
+			}
 
 			return dms;	// return Object
 		},
@@ -123,16 +127,21 @@ define([
 			//		Objeto con las coordenadas convertidas.
 
 			if (!isValidSpatialReference(src) || !isValidSpatialReference(dst) ||
-				!_isValidValue(x) || !_isValidValue(y))
+				!_isValidValue(x) || !_isValidValue(y)) {
 				return null;
+			}
 
-			src = proj4js.defs["EPSG:" + src] = spatialReferences[src];
-			dst = proj4js.defs["EPSG:" + dst] = spatialReferences[dst];
-			var point = proj4js.toPoint([x, y]);
+			var validPrefix = 'EPSG:',
+				validSrc = validPrefix + src,
+				validDst = validPrefix + dst;
 
-			proj4js(src, dst, point);
+			var customSrc = spatialReferences[src],
+				customDst = spatialReferences[dst];
 
-			return point;
+			customSrc && proj4.defs(validSrc, customSrc);
+			customDst && proj4.defs(validDst, customDst);
+
+			return proj4(validSrc, validDst, { x: x, y: y });
 		}
 	};
 });

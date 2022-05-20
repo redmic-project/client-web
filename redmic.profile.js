@@ -262,11 +262,11 @@ var profileObj = {
 			ignore: ignoreTagger.bind(null, 'uuid/uuidv4.min')
 		}
 	},{
-		name: 'proj4js',
-		location: 'proj4js/dist',
+		name: 'proj4',
+		location: 'proj4/dist',
 		resourceTags: {
 			amd: amdTagger,
-			ignore: ignoreTagger.bind(null, 'proj4js/proj4')
+			ignore: ignoreTagger.bind(null, 'proj4/proj4')
 		}
 	},{
 		name: 'dropzone',

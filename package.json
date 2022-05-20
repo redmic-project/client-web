@@ -78,6 +78,7 @@
     "uuid": "8.3.2",
     "packery": "2.1.2",
     "pdfjs-dist-viewer-min": "2.12.313",
+    "proj4": "2.8.0",
     "prunecluster": "https://github.com/pedroetb/PruneCluster.git",
     "put-selector": "0.3.6",
     "sockjs-client": "1.1.4",

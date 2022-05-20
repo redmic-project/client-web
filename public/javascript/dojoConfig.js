@@ -57,8 +57,8 @@ dojoConfig = {
 		name: 'cbtree',
 		location: '../cbtree'
 	},{
-		name: 'proj4js',
-		location: '../proj4js/dist'
+		name: 'proj4',
+		location: '../proj4/dist'
 	},{
 		name: 'RWidgets',
 		location: '../redmic/widgets'

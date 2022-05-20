@@ -26,6 +26,9 @@ dojoConfig = {
 	},{
 		name: 'd3',
 		location: '../d3'
+	},{
+		name: 'leaflet-measure',
+		location: '../leaflet-measure'
 	}],
 
 	map: {

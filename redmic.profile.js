@@ -201,7 +201,11 @@ var profileObj = {
 		name: 'leaflet-measure',
 		location: 'leaflet-measure/dist',
 		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'leaflet-measure/leaflet-measure.min')
+			copyOnly: copyOnlyTagger,
+			ignore: ignoreTagger.bind(null, [
+				'leaflet-measure/leaflet-measure.es',
+				'leaflet-measure/leaflet-measure.en'
+			])
 		}
 	},{
 		name: 'pruneCluster',

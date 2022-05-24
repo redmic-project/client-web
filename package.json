@@ -81,7 +81,7 @@
     "proj4": "2.8.0",
     "prunecluster": "https://github.com/pedroetb/PruneCluster.git",
     "put-selector": "0.3.6",
-    "sockjs-client": "1.1.4",
+    "sockjs-client": "1.6.0",
     "stomp-websocket": "2.3.4-next",
     "stylus": "0.57.0",
     "tv4": "https://github.com/geraintluff/tv4.git#master",

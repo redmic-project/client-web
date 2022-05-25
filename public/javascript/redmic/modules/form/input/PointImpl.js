@@ -26,7 +26,8 @@ define([
 	, NumberSpinnerImpl
 	, ModelImpl
 	, Converter
-){
+) {
+
 	return declare(Input, {
 		//	summary:
 		//		Implementación de input Point.
@@ -139,7 +140,7 @@ define([
 				res), 1);
 		},
 
-		_onInnerModelValueChanged: function(res) {
+		_onInnerModelValueChanged: function() {
 
 			!this._omitNextInnerModelSerialize && this._publish(this._modelInstance.getChannel("SERIALIZE"));
 			this._omitNextInnerModelSerialize = false;
@@ -239,7 +240,7 @@ define([
 			this._showInputs(this._gcInputsInstances);
 		},
 
-		_onGetMapLocationWrapper: function(obj) {
+		_onGetMapLocationWrapper: function() {
 
 			var objSend = {
 				"point": this._lastCoordinates ? [this._lastCoordinates.x, this._lastCoordinates.y] : null,
@@ -459,7 +460,7 @@ define([
 				return [xValue, yValue];
 			}
 
-			var conversion = Converter.convert(inSr, outSr, xValue, yValue);
+			var conversion = Converter.convertCoordinates(inSr, outSr, xValue, yValue);
 
 			if (conversion) {
 				return [conversion.x, conversion.y];
@@ -481,11 +482,7 @@ define([
 				return true;
 			}
 
-			if (Math.abs(v1Dec - v2Dec) > threshold) {
-				return true;
-			}
-
-			return false;
+			return Math.abs(v1Dec - v2Dec) > threshold;
 		}
 	});
 });

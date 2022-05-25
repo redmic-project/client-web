@@ -12,7 +12,8 @@ define([
 	, Utilities
 	, Input
 	, Converter
-){
+) {
+
 	return declare(Input, {
 		//	summary:
 		//		Implementación de input GeographicCoordinate.
@@ -93,7 +94,7 @@ define([
 				sValue = this._sWidget.get(this.valuePropertyName),
 				obj = {};
 
-			obj[this.propertyName] = Converter.DMS2DD(dValue, mValue, sValue);
+			obj[this.propertyName] = Converter.dms2dd(dValue, mValue, sValue);
 
 			this._emitSetValue(obj);
 		},
@@ -128,7 +129,7 @@ define([
 		_valueChanged: function(obj) {
 
 			var value = obj[this.propertyName],
-				translatedObj = Converter.DD2DMS(value);
+				translatedObj = Converter.dd2dms(value);
 
 			if (translatedObj) {
 				this._dWidget.set(this.valuePropertyName, translatedObj.degrees);

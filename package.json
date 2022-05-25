@@ -52,7 +52,7 @@
     "draggabilly": "^2.2.0",
     "dropzone": "^5.4.0",
     "glob": "^7.1.2",
-    "grunt": "^1.0.2",
+    "grunt": "^1.5.3",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-jshint": "^1.1.0",

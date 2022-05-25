@@ -280,7 +280,7 @@ var profileObj = {
 		location: 'tv4',
 		resourceTags: {
 			amd: amdTagger,
-			ignore: ignoreTagger.bind(null, 'tv4/tv4.min')
+			ignore: ignoreTagger.bind(null, 'tv4/tv4')
 		}
 	},{
 		name: 'colorjs',

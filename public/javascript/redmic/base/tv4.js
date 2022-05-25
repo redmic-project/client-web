@@ -3,7 +3,7 @@ define([
 	, 'dojo/has'
 	, 'RWidgets/Utilities'
 	, 'redmic/validation/stringFormats'
-	, 'tv4/tv4.min'
+	, 'tv4/tv4'
 ], function(
 	lang
 	, has

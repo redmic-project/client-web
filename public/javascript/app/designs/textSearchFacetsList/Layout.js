@@ -53,7 +53,9 @@ define([
 					region: "center",
 					tabPosition: "bottom"
 				});
-				this.filter1 = new ContentPane();
+				this.filter1 = new ContentPane({
+					_subnodeCssMouseEvent: function() {}
+				});
 				this.filter2 = new ContentPane();
 
 				this.facetsNode = this.filter1.domNode;

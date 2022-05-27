@@ -59,7 +59,11 @@ define([
 
 			this.inherited(arguments);
 
-			this._evaluateOpenStatus();
+			if (this._toggleNode) {
+				this._evaluateOpenStatus();
+			} else {
+				this._evaluateNumberOfBuckets();
+			}
 
 			var evt = this.open ? 'OPEN' : 'CLOSE';
 			this.emit(this.events[evt], this.label);

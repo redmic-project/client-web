@@ -97,7 +97,29 @@ var profileObj = {
 		location: 'dojox'
 	},{
 		name: 'cbtree',
-		location: 'cbtree'
+		location: 'cbtree',
+		resourceTags: {
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, [
+				'cbtree/Tree',
+				'cbtree/store/ObjectStore',
+				'cbtree/model/ForestStoreModel',
+				'cbtree/model/_base/BaseStoreModel',
+				'cbtree/model/_base/CheckedStoreModel',
+				'cbtree/model/_base/Parents',
+				'cbtree/model/_base/Prologue',
+				'cbtree/errors/createError',
+				'cbtree/errors/CBTErrors',
+				'cbtree/store/Memory',
+				'cbtree/store/Natural',
+				'cbtree/store/Hierarchy',
+				'cbtree/Evented',
+				'cbtree/CheckBox',
+				'cbtree/util/shim/Array',
+				'cbtree/util/QueryEngine',
+				'cbtree/util/IE8_Event'
+			])
+		}
 	},{
 		name: 'put-selector',
 		location: 'put-selector'

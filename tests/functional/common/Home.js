@@ -46,9 +46,10 @@ define([
 					.then(function(handles) {
 
 						assert.lengthOf(handles, 1, 'Había abierta más de 1 pestaña');
+
+						return this.parent;
 					})
 					.then(Utils.clickElement(feedbackLinkSelector))
-					.sleep(Config.timeout.shortSleep)
 					.getAllWindowHandles()
 					.then(function(handles) {
 

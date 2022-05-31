@@ -1,22 +1,45 @@
 define([
-	'dojo/_base/lang'
-	, 'tests/support/pages/Login'
+	'tests/support/pages/Login'
 	, 'tests/support/Config'
 	, 'tests/support/Utils'
 ], function(
-	lang
-	, LoginPage
+	LoginPage
 	, Config
 	, Utils
 ) {
 
 	var indexPage,
 
+		timeout = 300000,
 		allowedModulesKey = 'REDMIC_allowedModules',
 		credentials = Config.credentials,
 		userRole = credentials.userRole,
 		suiteName = 'Sidebar component as ' + userRole + ' tests';
 
+
+	function testPrimaryEntries(name, path) {
+
+		return function() {
+
+			var context = this.parent;
+
+			if (!path) {
+				return context;
+			}
+
+			context = context
+				.then(testPrimaryEntry(name))
+				.then(Utils.checkLoadingIsGone())
+				.then(function() {
+
+					return this.parent
+						.get('home')
+						.then(Utils.checkLoadingIsGone());
+				});
+
+			return context;
+		};
+	}
 
 	function testPrimaryEntry(url) {
 
@@ -34,6 +57,10 @@ define([
 		return function() {
 
 			var context = this.parent;
+
+			if (!innerModules) {
+				return context;
+			}
 
 			for (var i = 0; i < innerModules.length; i++) {
 				var innerModule = innerModules[i],
@@ -62,9 +89,9 @@ define([
 		};
 	}
 
-	function testSidebarEntries(/*Boolean*/ secondaryEntriesFlag) {
+	function testSidebarEntries(/*Boolean*/ secondaryEntriesFlag, dfd) {
 
-		return function(allowedModules) {
+		return (function(allowedModules) {
 
 			var sidebarModules = JSON.parse(allowedModules).filter(function(val) {
 
@@ -83,25 +110,18 @@ define([
 					.then(Utils.checkLoadingIsGone());
 
 				if (!secondaryEntriesFlag) {
-					if (!path) {
-						continue;
-					}
 					context = context
-						.then(testPrimaryEntry(name));
-
-					continue;
+						.then(testPrimaryEntries(name, path));
+				} else {
+					context = context
+						.then(testSecondaryEntries(name, innerModules));
 				}
-
-				if (!innerModules) {
-					continue;
-				}
-
-				context = context
-					.then(testSecondaryEntries(name, innerModules));
 			}
 
+			context = context.then(dfd.callback(function() {}));
+
 			return context;
-		};
+		});
 	}
 
 	function readLocalStorage() {
@@ -114,38 +134,33 @@ define([
 		return this.session.clearLocalStorage();
 	}
 
-	var registerSuite = intern.getInterface('object').registerSuite,
-		assert = intern.getPlugin('chai').assert;
+	var registerSuite = intern.getInterface('object').registerSuite;
 
 	registerSuite(suiteName, {
 		Should_BeAbleToNavigateToSidebarPrimaryModules_When_ReceiveAllowedModules: function() {
 
+			var dfd = this.async(timeout);
+
 			indexPage = new LoginPage(this);
 
 			return indexPage
 				.login()
 				.then(readLocalStorage)
-				.then(testSidebarEntries(false))
-				.then(clearLocalStorage, function() {
-
-					lang.hitch(this, clearLocalStorage)();
-					assert.fail('No se pudo recorrer todos los módulos con entrada primaria');
-				});
-		},
+				.then(testSidebarEntries(false, dfd))
+				.then(clearLocalStorage);
+		}/*,
 
 		Should_BeAbleToNavigateToSidebarSecondaryModules_When_ReceiveAllowedModules: function() {
 
+			var dfd = this.async(timeout);
+
 			indexPage = new LoginPage(this);
 
 			return indexPage
 				.login()
 				.then(readLocalStorage)
-				.then(testSidebarEntries(true))
-				.then(clearLocalStorage, function() {
-
-					lang.hitch(this, clearLocalStorage)();
-					assert.fail('No se pudo recorrer todos los módulos con entrada secundaria');
-				});
-		}
+				.then(testSidebarEntries(true, dfd))
+				.then(clearLocalStorage);
+		}*/
 	});
 });

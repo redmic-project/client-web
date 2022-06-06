@@ -91,7 +91,7 @@ define([
 
 	function testSidebarEntries(/*Boolean*/ secondaryEntriesFlag, dfd) {
 
-		return (function(allowedModules) {
+		return function(allowedModules) {
 
 			var sidebarModules = JSON.parse(allowedModules).filter(function(val) {
 
@@ -121,7 +121,7 @@ define([
 			context = context.then(dfd.callback(function() {}));
 
 			return context;
-		});
+		};
 	}
 
 	function readLocalStorage() {
@@ -148,7 +148,7 @@ define([
 				.then(readLocalStorage)
 				.then(testSidebarEntries(false, dfd))
 				.then(clearLocalStorage);
-		}/*,
+		},
 
 		Should_BeAbleToNavigateToSidebarSecondaryModules_When_ReceiveAllowedModules: function() {
 
@@ -161,6 +161,6 @@ define([
 				.then(readLocalStorage)
 				.then(testSidebarEntries(true, dfd))
 				.then(clearLocalStorage);
-		}*/
+		}
 	});
 });

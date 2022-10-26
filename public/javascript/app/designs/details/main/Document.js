@@ -2,6 +2,7 @@ define([
 	'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'redmic/base/Credentials'
 	, 'templates/DocumentInfo'
 	, './_DetailsBase'
 	, './DocumentPDF'
@@ -9,6 +10,7 @@ define([
 	redmicConfig
 	, declare
 	, lang
+	, Credentials
 	, TemplateInfo
 	, _DetailsBase
 	, DocumentPDF
@@ -73,10 +75,18 @@ define([
 
 			this.inherited(arguments);
 
-			if (resWrapper.target === redmicConfig.services.document) {
-				if (res.data.url) {
-					this._showWidget('pdf');
-				}
+			if (resWrapper.target !== redmicConfig.services.document) {
+				return;
+			}
+
+			var documentData = res.data,
+				pdfUrl = documentData.internalUrl,
+				privatePdf = documentData.privateInternalUrl;
+
+			if (!pdfUrl || (privatePdf && Credentials.get('userRole') !== 'ROLE_ADMINISTRATOR')) {
+				this._hideWidget('pdf');
+			} else {
+				this._showWidget('pdf');
 			}
 		},
 

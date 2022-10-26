@@ -1,14 +1,15 @@
 define([
-	"app/designs/textSearchFacetsList/main/Bibliography"
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
+	'app/designs/textSearchFacetsList/main/Bibliography'
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
 ], function (
 	BibliographyMain
 	, redmicConfig
 	, declare
 	, lang
-){
+) {
+
 	return declare(BibliographyMain, {
 		//	summary:
 		//		Vista de Bibliography.
@@ -19,10 +20,10 @@ define([
 		constructor: function (args) {
 
 			this.config = {
-				mask: {"download":{}},
-				reportService: "document",
+				mask: {'download':{}},
+				reportService: 'document',
 				target: redmicConfig.services.document,
-				ownChannel: "bibliography"
+				ownChannel: 'bibliography'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -34,13 +35,14 @@ define([
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
-							condition: "url",
-							icon: "fa-file-pdf-o",
-							btnId: "downloadPdf"
+							icon: 'fa-external-link',
+							btnId: 'url',
+							condition: this._urlCondition,
+							href: '{url}'
 						},{
-							icon: "fa-info-circle",
-							btnId: "details",
-							title: "info",
+							icon: 'fa-info-circle',
+							btnId: 'details',
+							title: 'info',
 							href: this.viewPaths.bibliographyDetails
 						}]
 					}

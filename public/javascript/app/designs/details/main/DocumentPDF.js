@@ -63,10 +63,11 @@ define([
 
 		_itemAvailable: function(item) {
 
-			var pdfUrl = item.data.url,
+			var documentData = item.data,
+				pdfUrl = documentData.internalUrl,
 				widgetInstance = this._getWidgetInstance('pdf');
 
-			if (!pdfUrl || !widgetInstance) {
+			if (!widgetInstance) {
 				return;
 			}
 

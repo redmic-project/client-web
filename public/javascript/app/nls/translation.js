@@ -1320,6 +1320,11 @@ define({
 		, "aboveOptions": "Previous options"
 		, "moreOptions": "More options"
 
+		, "viewExternalUrl": "View at"
+		, "internalDocument": "Internal document"
+		, "internalUrl": "Internal url"
+		, "privateInternalUrl": "Private internal url"
+
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

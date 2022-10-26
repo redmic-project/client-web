@@ -247,7 +247,11 @@ define([
 
 			node.setAttribute('href', href);
 			if (href.indexOf('#') !== 0) {
-				node.setAttribute('d-state-url', true);
+				if (href.indexOf('http') !== 0) {
+					node.setAttribute('d-state-url', true);
+				} else {
+					node.setAttribute('target', '_blank');
+				}
 			}
 		},
 

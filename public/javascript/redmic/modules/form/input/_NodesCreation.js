@@ -121,7 +121,7 @@ define([
 				finalLabel = this.i18n[label] ? this.i18n[label] : label;
 			}
 
-			if (this._inputProps.required && !this.noRequiredActive) {
+			if (this._inputProps.required) {
 				finalLabel += "*";
 			}
 

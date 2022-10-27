@@ -54,18 +54,43 @@ define([
 
 			this._checkPathVariableId();
 
-			this._emitEvt('GET', {
-				target: this.target,
-				requesterId: this.ownChannel,
-				id: this.pathVariableId
-			});
+			var envDfd = window.env;
+			if (!envDfd) {
+				return;
+			}
+
+			envDfd.then(lang.hitch(this, function(envData) {
+
+				this._envData = envData;
+
+				this._emitEvt('GET', {
+					target: this.target,
+					requesterId: this.ownChannel,
+					id: this.pathVariableId
+				});
+			}));
 		},
 
 		_itemAvailable: function(item) {
 
 			var documentData = item.data,
-				pdfUrl = documentData.internalUrl,
+				pdfUrlProto = documentData.internalUrl.replace('/api', redmicConfig.apiUrlVariable),
+				pdfUrl = redmicConfig.getServiceUrl(pdfUrlProto, this._envData),
 				widgetInstance = this._getWidgetInstance('pdf');
+
+			var callback = lang.hitch(this, this._loadPdfInWidget, pdfUrl);
+
+			if (!widgetInstance) {
+				this._onceEvt('LAYOUT_COMPLETE', callback);
+			} else {
+				callback();
+			}
+		},
+
+		_loadPdfInWidget: function(pdfUrl) {
+
+			var HOSTED_VIEWER_ORIGINS = [null, this._envData.apiUrl];
+			var widgetInstance = this._getWidgetInstance('pdf');
 
 			if (!widgetInstance) {
 				return;

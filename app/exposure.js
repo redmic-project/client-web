@@ -1,11 +1,11 @@
-var express = require('express'),
+let express = require('express'),
 	bodyParser = require('body-parser'),
 	fs = require('fs'),
 	path = require('path'),
 	http = require('http'),
 	https = require('https');
 
-var logger, params, version,
+let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated,
 	oauthUrl = process.env.OAUTH_URL,
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 	production = !!parseInt(process.env.PRODUCTION, 10),
@@ -59,20 +59,91 @@ function on404Request(_req, res) {
 	res.render('404', { useBuilt: params.useBuilt });
 }
 
-function onSitemapRequest(_req, res) {
+function onOwnRequestSuccess(bindParams, internalRes) {
 
-	var fileData = fs.readFileSync('sitemap.xml', 'ascii');
+	let chunks = [];
 
-	res.set('Content-Type', 'text/xml');
-	res.send(fileData);
+	internalRes.on('data', (function(nestedChunks, chunk) {
+
+		nestedChunks.push(chunk);
+	}).bind(this, chunks));
+
+	internalRes.on('end', (function(nestedBindParams, nestedChunks) {
+
+		let originalRes = nestedBindParams.res,
+			internalResCallback = nestedBindParams.cbk,
+			content = "";
+
+		for (let i = 0; i < nestedChunks.length; i++) {
+			content += nestedChunks[i].toString();
+		}
+
+		originalRes.status(this.statusCode).send(content);
+
+		if (internalResCallback) {
+			internalResCallback(content);
+		}
+	}).bind(internalRes, bindParams, chunks));
 }
 
-function onRobotsRequest(_req, res) {
+function onOwnRequestError(bindParams, err) {
 
-	var fileData = fs.readFileSync('robots.txt', 'utf8');
+	let originalRes = bindParams.res,
+		internalErrCallback = bindParams.cbk;
+
+	logger.error(err);
+	originalRes.sendStatus(500);
+
+	if (internalErrCallback) {
+		internalErrCallback(err);
+	}
+}
+
+function onSitemapRequest(_req, res) {
+
+	res.set('Content-Type', 'text/xml');
+
+	let currTimestamp = Date.now();
+
+	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - 300000) {
+		let sitemapUrl = 'https://s3.eu-west-1.amazonaws.com/mediastorage.redmic/public/sitemap.xml';
+
+		let internalReq = https.request(sitemapUrl, onOwnRequestSuccess.bind(this, {
+			res: res,
+			cbk: (content) => sitemapContent = content
+		}));
+
+		internalReq.on('error', onOwnRequestError.bind(this, {
+			res: res,
+			cbk: () => sitemapContent = ''
+		}));
+
+		internalReq.end();
+
+		sitemapLastUpdated = currTimestamp;
+	} else {
+		res.send(sitemapContent);
+	}
+}
+
+function onRobotsRequest(req, res) {
 
 	res.set('Content-Type', 'text/plain');
-	res.send(fileData);
+
+	if (!robotsContent || !robotsContent.length) {
+		robotsContent = 'User-agent: *\n';
+
+		if (production) {
+			let sitemapPath = 'https://' + req.hostname + '/sitemap.xml',
+				sitemapLine = 'Sitemap: ' + sitemapPath;
+
+			robotsContent += 'Allow: /\n\n' + sitemapLine;
+		} else {
+			robotsContent += 'Disallow: /';
+		}
+	}
+
+	res.send(robotsContent);
 }
 
 function onApiRequest(_req, res) {
@@ -80,7 +151,7 @@ function onApiRequest(_req, res) {
 	res.redirect('/404');
 }
 
-function onJqueryRequest(_req, res) {
+function onNullableRequest(_req, res) {
 
 	res.set('Content-Type', 'application/json');
 	res.send('{}');
@@ -93,7 +164,7 @@ function onUnknownRequest(_req, res, _next) {
 
 function onOauthTokenRequest(req, res) {
 
-	var body = req.body,
+	let body = req.body,
 
 		clientId = body.clientid,
 		password = body.password,
@@ -103,41 +174,21 @@ function onOauthTokenRequest(req, res) {
 		clientCredentials = clientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
-		options = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				'Authorization': 'Basic ' + base64ClientCredentials
-			}
-		},
+		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https;
 
-		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https,
-		internalReq = reqLibrary.request(getTokenUrl, options, (function(originalRes, internalRes) {
+	let options = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'Authorization': 'Basic ' + base64ClientCredentials
+		}
+	};
 
-			var chunks = [];
+	let bindParams = {res: res};
+	let internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestSuccess.bind(this, bindParams));
+	internalReq.on('error', onOwnRequestError.bind(this, bindParams));
 
-			internalRes.on('data', (function(nestedChunks, chunk) {
-
-				nestedChunks.push(chunk);
-			}).bind(this, chunks));
-
-			internalRes.on('end', (function(nestedOriginalRes, nestedChunks) {
-
-				var content = "";
-				for (var i = 0; i < nestedChunks.length; i++) {
-					content += nestedChunks[i].toString();
-				}
-				nestedOriginalRes.status(this.statusCode).send(content);
-			}).bind(internalRes, originalRes, chunks));
-		}).bind(this, res));
-
-	internalReq.on('error', (function(originalRes, err) {
-
-		logger.error(err);
-		originalRes.sendStatus(500);
-	}).bind(this, res));
-
-	var bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+	let bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
 	internalReq.write(bodyData);
 	internalReq.end();
 }
@@ -151,7 +202,7 @@ function exposeRoutes(app) {
 		.get('/sitemap.xml', onSitemapRequest)
 		.get('/robots.txt', onRobotsRequest)
 		.get(/\/api\/.*/, onApiRequest)
-		.get(/.*\/jquery.js/, onJqueryRequest)
+		.get(/.*\/jquery.js/, onNullableRequest)
 		.get(/.*/, onGeneralRequest)
 		.post('/oauth/token', onOauthTokenRequest)
 		.use(onUnknownRequest);
@@ -159,12 +210,12 @@ function exposeRoutes(app) {
 
 function exposeContents(app, directoryName) {
 
-	var pathOptions = {
+	let pathOptions = {
 		maxAge: 600000,
 		index: false
 	};
 
-	var exposedPath = path.join(__dirname, '..', directoryName),
+	let exposedPath = path.join(__dirname, '..', directoryName),
 		staticPropName = 'static',
 		servedPath = express[staticPropName](exposedPath, pathOptions);
 

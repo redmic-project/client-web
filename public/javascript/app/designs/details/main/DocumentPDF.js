@@ -74,7 +74,13 @@ define([
 		_itemAvailable: function(item) {
 
 			var documentData = item.data,
-				pdfUrlProto = documentData.internalUrl.replace('/api', redmicConfig.apiUrlVariable),
+				documentInternalUrl = documentData.internalUrl;
+
+			if (!documentInternalUrl) {
+				return;
+			}
+
+			var pdfUrlProto = documentInternalUrl.replace('/api', redmicConfig.apiUrlVariable),
 				pdfUrl = redmicConfig.getServiceUrl(pdfUrlProto, this._envData),
 				widgetInstance = this._getWidgetInstance('pdf');
 

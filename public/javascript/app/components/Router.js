@@ -18,7 +18,7 @@ define([
 	, 'redmic/modules/notification/Alert'
 	, 'redmic/modules/base/Credentials'
 	, 'redmic/modules/base/Analytics'
-	, 'redmic/modules/base/MetaTags'
+	, 'redmic/modules/metaTags/MetaTags'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/base/Loading'

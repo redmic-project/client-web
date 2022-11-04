@@ -2,14 +2,37 @@ doctype html
 
 html
 	head
+		title REDMIC
+
 		meta(charset = 'utf-8')
-		meta(name = 'viewport' content = 'width = device-width, initial-scale = 1')
+		meta(name = 'viewport' content = 'width=device-width, initial-scale=1')
+		meta(name = 'robots' content = 'index, follow')
 
 		script.
-			var lang = '#{lang}';
+			let lang = '#{lang}';
 
-		- var basePath = '/' + (useBuilt ? 'dist' : 'public')
-		- var jsPath = basePath + '/javascript/'
+		-
+			let esLocale = 'es_ES',
+				enLocale = 'en_GB',
+				locale, altLocale1;
+
+			if (lang === 'es') {
+				locale = esLocale;
+				altLocale1 = enLocale;
+			} else if (lang === 'en') {
+				locale = enLocale;
+				altLocale1 = esLocale;
+			}
+
+			let basePath = '/' + (useBuilt ? 'dist' : 'public'),
+				jsPath = basePath + '/javascript/';
+
+		meta(name = 'og:locale' content = locale)
+		meta(name = 'og:locale:alternate' content = altLocale1)
+		meta(name = 'og:type' content = 'website')
+		meta(name = 'og:site_name' content = 'REDMIC')
+		meta(name = 'twitter:card' content = 'summary')
+		meta(name = 'twitter:site' content = '@redmic_project')
 
 		script(src = jsPath + 'dojoConfig.js')
 		script(src = jsPath + 'dojo/dojo.js' data-dojo-config = 'locale:"' + lang + '"')

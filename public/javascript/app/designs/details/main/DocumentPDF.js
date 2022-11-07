@@ -95,7 +95,6 @@ define([
 
 		_loadPdfInWidget: function(pdfUrl) {
 
-			var HOSTED_VIEWER_ORIGINS = [null, this._envData.apiUrl];
 			var widgetInstance = this._getWidgetInstance('pdf');
 
 			if (!widgetInstance) {

@@ -21,26 +21,29 @@ services:
       labels:
         traefik.enable: 'true'
 
-        traefik.http.routers.redmic-web.entrypoints: ${TRAEFIK_ENTRYPOINT}
-        traefik.http.routers.redmic-web.rule: Host(`${PUBLIC_HOSTNAME}`)
         traefik.http.services.redmic-web.loadbalancer.server.port: 3050
-
-        traefik.http.routers.redmic-web-redirect.entrypoints: ${TRAEFIK_ENTRYPOINT}
-        traefik.http.routers.redmic-web-redirect.rule: HostRegexp(`{subdomain:www|es}.${PUBLIC_HOSTNAME}`)
-        traefik.http.middlewares.redmic-web-redirect-regex.redirectregex.regex: ^(.*):\\/\\/\\w+\\.(.*)$$
-        traefik.http.middlewares.redmic-web-redirect-regex.redirectregex.replacement: $$1://$$2
-        traefik.http.middlewares.redmic-web-redirect-regex.redirectregex.permanent: 'true'
-        traefik.http.routers.redmic-web-redirect.middlewares: redmic-web-redirect-regex
-        traefik.http.routers.redmic-web-redirect.service: noop@internal
-
-        traefik.http.routers.redmic-web-en.entrypoints: ${TRAEFIK_ENTRYPOINT}
-        traefik.http.routers.redmic-web-en.rule: Host(`en.${PUBLIC_HOSTNAME}`)
-        traefik.http.middlewares.add-en-language-header.headers.customrequestheaders.content-language: en
-        traefik.http.routers.redmic-web-en.middlewares: add-en-language-header
+        traefik.http.services.redmic-web.loadbalancer.passhostheader: 'false'
 
         traefik.http.middlewares.redmic-web-error-5xx.errors.status: ${TRAEFIK_ERROR_5XX_STATUS:-500-599}
         traefik.http.middlewares.redmic-web-error-5xx.errors.service: ${TRAEFIK_ERROR_5XX_SERVICE:-static-pages}
         traefik.http.middlewares.redmic-web-error-5xx.errors.query: ${TRAEFIK_ERROR_5XX_QUERY:-/web-5xx/}
+
+        traefik.http.routers.redmic-web.entrypoints: ${TRAEFIK_ENTRYPOINT}
+        traefik.http.routers.redmic-web.rule: Host(`${PUBLIC_HOSTNAME}`)
+        traefik.http.routers.redmic-web.middlewares: redmic-web-error-5xx
+
+        traefik.http.routers.redmic-web-es.entrypoints: ${TRAEFIK_ENTRYPOINT}
+        traefik.http.routers.redmic-web-es.rule: Host(`es.${PUBLIC_HOSTNAME}`)
+        traefik.http.middlewares.redmic-web-es-regex.redirectregex.regex: ^(.*):\/\/\w+\.(.*)$$
+        traefik.http.middlewares.redmic-web-es-regex.redirectregex.replacement: $${1}://$${2}
+        traefik.http.middlewares.redmic-web-es-regex.redirectregex.permanent: 'true'
+        traefik.http.routers.redmic-web-es.middlewares: redmic-web-es-regex
+        traefik.http.routers.redmic-web-es.service: noop@internal
+
+        traefik.http.routers.redmic-web-en.entrypoints: ${TRAEFIK_ENTRYPOINT}
+        traefik.http.routers.redmic-web-en.rule: Host(`en.${PUBLIC_HOSTNAME}`)
+        traefik.http.middlewares.add-en-language-header.headers.customrequestheaders.content-language: en
+        traefik.http.routers.redmic-web-en.middlewares: add-en-language-header, redmic-web-error-5xx
       restart_policy:
         delay: ${RESTART_DELAY:-10s}
       update_config:

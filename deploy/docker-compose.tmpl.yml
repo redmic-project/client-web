@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.9'
 
 services:
   web:
@@ -8,7 +8,6 @@ services:
       dockerfile: ${DOCKERFILE:-Dockerfile}
       args:
         NODE_IMAGE_TAG:
-        DIRPATH:
     environment:
       OAUTH_URL:
       OAUTH_CLIENT_SECRET:
@@ -20,18 +19,28 @@ services:
       mode: replicated
       replicas: ${REPLICAS:-1}
       labels:
-        traefik.default.frontend.rule: Host:${PUBLIC_HOSTNAME}
-        traefik.redirect.frontend.rule: HostRegexp:{subdomain:www|es}.${PUBLIC_HOSTNAME}
-        traefik.redirect.frontend.redirect.regex: ^(.*):\\/\\/\\w+\\.(.*)$$
-        traefik.redirect.frontend.redirect.replacement: $$1://$$2
-        traefik.redirect.frontend.redirect.permanent: 'true'
-        traefik.en.frontend.rule: Host:en.${PUBLIC_HOSTNAME}
-        traefik.en.frontend.headers.customRequestHeaders: content-language:en
-        traefik.frontend.errors.5xx.status: ${TRAEFIK_ERROR_5XX_STATUS:-500-599}
-        traefik.frontend.errors.5xx.backend: ${TRAEFIK_ERROR_5XX_BACKEND:-static-pages-static-pages-static-pages}
-        traefik.frontend.errors.5xx.query: ${TRAEFIK_ERROR_5XX_QUERY:-/web-5xx/}
-        traefik.backend: web
-        traefik.port: '${PORT}'
+        traefik.enable: 'true'
+
+        traefik.http.routers.redmic-web.entrypoints: ${TRAEFIK_ENTRYPOINT}
+        traefik.http.routers.redmic-web.rule: Host(`${PUBLIC_HOSTNAME}`)
+        traefik.http.services.redmic-web.loadbalancer.server.port: 3050
+
+        traefik.http.routers.redmic-web-redirect.entrypoints: ${TRAEFIK_ENTRYPOINT}
+        traefik.http.routers.redmic-web-redirect.rule: HostRegexp(`{subdomain:www|es}.${PUBLIC_HOSTNAME}`)
+        traefik.http.middlewares.redmic-web-redirect-regex.redirectregex.regex: ^(.*):\\/\\/\\w+\\.(.*)$$
+        traefik.http.middlewares.redmic-web-redirect-regex.redirectregex.replacement: $$1://$$2
+        traefik.http.middlewares.redmic-web-redirect-regex.redirectregex.permanent: 'true'
+        traefik.http.routers.redmic-web-redirect.middlewares: redmic-web-redirect-regex
+        traefik.http.routers.redmic-web-redirect.service: noop@internal
+
+        traefik.http.routers.redmic-web-en.entrypoints: ${TRAEFIK_ENTRYPOINT}
+        traefik.http.routers.redmic-web-en.rule: Host(`en.${PUBLIC_HOSTNAME}`)
+        traefik.http.middlewares.add-en-language-header.headers.customrequestheaders.content-language: en
+        traefik.http.routers.redmic-web-en.middlewares: add-en-language-header
+
+        traefik.http.middlewares.redmic-web-error-5xx.errors.status: ${TRAEFIK_ERROR_5XX_STATUS:-500-599}
+        traefik.http.middlewares.redmic-web-error-5xx.errors.service: ${TRAEFIK_ERROR_5XX_SERVICE:-static-pages}
+        traefik.http.middlewares.redmic-web-error-5xx.errors.query: ${TRAEFIK_ERROR_5XX_QUERY:-/web-5xx/}
       restart_policy:
         delay: ${RESTART_DELAY:-10s}
       update_config:

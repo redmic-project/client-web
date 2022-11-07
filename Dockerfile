@@ -1,4 +1,4 @@
-ARG NODE_IMAGE_TAG=18.1.0-alpine3.15
+ARG NODE_IMAGE_TAG
 
 FROM node:${NODE_IMAGE_TAG}
 
@@ -13,9 +13,7 @@ HEALTHCHECK --interval=30s --timeout=15s --start-period=1m --retries=3 \
 
 CMD ["app", "-b"]
 
-ARG DIRPATH=/redmic
-
-WORKDIR ${DIRPATH}
+WORKDIR /redmic
 
 ADD dist*.tar.gz ./
 

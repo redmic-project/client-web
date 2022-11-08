@@ -12,6 +12,7 @@ services:
       OAUTH_URL:
       OAUTH_CLIENT_SECRET:
       API_URL:
+      SITEMAP_URL:
     networks:
       traefik-net:
       metric-net:

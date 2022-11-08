@@ -353,17 +353,23 @@ define([
 		_parseError: function(res) {
 
 			var response = res.response,
-				status = response.status;
+				status = response.status,
+				data = response.data,
+				error = res.message;
 
-			// TODO el server expressjs no debería responder con status bueno si le llega la petición a él, revisar
-			if (status < 400) {
-				status = 500;
-			}
+			if (data) {
+				// TODO usar response.data directamente cuando no se envuelva la respuesta con error
+				if (data.error && data.error instanceof Object) {
+					data = data.error;
+				}
 
-			// TODO usar response.data directamente cuando no se envuelva la respuesta con error
-			var data = response.data;
-			if (data && data.error) {
-				data = data.error;
+				if (data.code) {
+					error += ' - ' + data.code;
+				}
+
+				if (data.description) {
+					error += ' - ' + data.description;
+				}
 			}
 
 			return {
@@ -373,7 +379,7 @@ define([
 				url: response.url,
 				getHeader: response.getHeader,
 				options: response.options,
-				error: res.message
+				error: error
 			};
 		},
 

@@ -410,16 +410,10 @@ define([
 
 			var status = response.status,
 				error = response.error,
-				data = response.data,
-				description = error ? error : this.defaultErrorDescription;
-
-			if (data && data.description) {
-				description += ' - ' + data.description;
-			}
+				description = error || this.defaultErrorDescription;
 
 			if (status) {
-				description += ' - ' + status + ' - <a href="/feedback/' + status + '" target="_blank">' +
-					this.i18n.contact + '</a>';
+				description += ' - <a href="/feedback/' + status + '" target="_blank">' + this.i18n.contact + '</a>';
 			}
 
 			this._emitEvt('COMMUNICATION', {

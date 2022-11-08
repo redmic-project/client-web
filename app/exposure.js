@@ -9,7 +9,8 @@ let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated,
 	oauthUrl = process.env.OAUTH_URL,
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 	production = !!parseInt(process.env.PRODUCTION, 10),
-	apiUrl = process.env.API_URL;
+	apiUrl = process.env.API_URL,
+	sitemapUrl = process.env.SITEMAP_URL;
 
 function getLang(req) {
 
@@ -59,7 +60,7 @@ function on404Request(_req, res) {
 	res.render('404', { useBuilt: params.useBuilt });
 }
 
-function onOwnRequestSuccess(bindParams, internalRes) {
+function onOwnRequestResponse(bindParams, internalRes) {
 
 	let chunks = [];
 
@@ -70,33 +71,49 @@ function onOwnRequestSuccess(bindParams, internalRes) {
 
 	internalRes.on('end', (function(nestedBindParams, nestedChunks) {
 
-		let originalRes = nestedBindParams.res,
-			internalResCallback = nestedBindParams.cbk,
-			content = "";
+		let content = "";
 
 		for (let i = 0; i < nestedChunks.length; i++) {
 			content += nestedChunks[i].toString();
 		}
 
-		originalRes.status(this.statusCode).send(content);
+		let originalRes = nestedBindParams.originalRes,
+			onSuccess = nestedBindParams.onSuccess || onOwnRequestSuccess,
+			onError = nestedBindParams.onError || onOwnRequestError,
+			afterResponse = nestedBindParams.afterResponse;
 
-		if (internalResCallback) {
-			internalResCallback(content);
+		if (this.statusCode < 400) {
+			onSuccess.bind(this)(originalRes, content);
+		} else {
+			onError.bind(this)(originalRes, content);
+		}
+
+		if (afterResponse) {
+			afterResponse(this.statusCode, content);
 		}
 	}).bind(internalRes, bindParams, chunks));
 }
 
-function onOwnRequestError(bindParams, err) {
+function onOwnRequestSuccess(originalRes, content) {
 
-	let originalRes = bindParams.res,
-		internalErrCallback = bindParams.cbk;
+	originalRes.status(this.statusCode).send(content);
+
+	let internalUrl = this.req.protocol + '//' + this.req.host + this.req.path,
+		internalRequestMessage = `INTERNAL ${this.req.method} ${internalUrl} ${this.statusCode}`;
+
+	logger.info(internalRequestMessage);
+}
+
+function onOwnRequestError(originalRes, err) {
+
+	originalRes.set('Content-Type', 'application/json');
+
+	originalRes.status(500).send({
+		code: 'Server error',
+		description: 'Something went wrong at server. Please, try again.'
+	});
 
 	logger.error(err);
-	originalRes.sendStatus(500);
-
-	if (internalErrCallback) {
-		internalErrCallback(err);
-	}
 }
 
 function onSitemapRequest(_req, res) {
@@ -106,17 +123,14 @@ function onSitemapRequest(_req, res) {
 	let currTimestamp = Date.now();
 
 	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - 300000) {
-		let sitemapUrl = 'https://s3.eu-west-1.amazonaws.com/mediastorage.redmic/public/sitemap.xml';
+		let afterResponseCallback = (status, content) => status ? sitemapContent = content : sitemapContent = '';
 
-		let internalReq = https.request(sitemapUrl, onOwnRequestSuccess.bind(this, {
-			res: res,
-			cbk: (content) => sitemapContent = content
+		let internalReq = https.request(sitemapUrl, onOwnRequestResponse.bind(this, {
+			originalRes: res,
+			afterResponse: afterResponseCallback
 		}));
 
-		internalReq.on('error', onOwnRequestError.bind(this, {
-			res: res,
-			cbk: () => sitemapContent = ''
-		}));
+		internalReq.on('error', onOwnRequestError.bind(this, res));
 
 		internalReq.end();
 
@@ -164,6 +178,8 @@ function onUnknownRequest(_req, res, _next) {
 
 function onOauthTokenRequest(req, res) {
 
+	res.set('Content-Type', 'application/json');
+
 	let body = req.body,
 
 		clientId = body.clientid,
@@ -184,13 +200,40 @@ function onOauthTokenRequest(req, res) {
 		}
 	};
 
-	let bindParams = {res: res};
-	let internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestSuccess.bind(this, bindParams));
-	internalReq.on('error', onOwnRequestError.bind(this, bindParams));
+	let bindParams = {
+		originalRes: res,
+		onError: onOauthRequestError
+	};
+
+	let internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestResponse.bind(this, bindParams));
+
+	internalReq.on('error', onOauthRequestError.bind(this, res));
 
 	let bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
 	internalReq.write(bodyData);
 	internalReq.end();
+}
+
+function onOauthRequestError(originalRes, err) {
+
+	let error = JSON.parse(err),
+		errorType = error.error,
+		errorDescription = error.error_description;
+
+	if (errorType === 'invalid_grant') {
+		originalRes.set('Content-Type', 'application/json');
+
+		originalRes.status(401).send({
+			code: errorType,
+			description: errorDescription
+		});
+
+		logger.error(err);
+
+		return;
+	}
+
+	onOwnRequestError.bind(this)(originalRes, err);
 }
 
 function exposeRoutes(app) {

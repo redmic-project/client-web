@@ -165,21 +165,6 @@ define([
 			Credentials.set('accessToken', accessToken);
 		},
 
-		_errorAvailable: function(error, _status, resWrapper) {
-
-			var res = resWrapper.res,
-				errorRes = JSON.parse(res.text),
-				errorMsg;
-
-			if (errorRes && errorRes.error_description) {
-				errorMsg = errorRes.error_description;
-			} else {
-				errorMsg = error;
-			}
-
-			alertify.error(errorMsg);
-		},
-
 		_beforeHide: function() {
 
 			this._endLoading();

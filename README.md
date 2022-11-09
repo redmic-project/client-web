@@ -15,8 +15,9 @@ Una vez clonado el repositorio en el entorno local de desarrollo y satisfechas l
 yarn install
 
 OAUTH_URL=https://redmic.grafcan.es/api/oauth \
+OAUTH_CLIENT_ID=app \
 OAUTH_CLIENT_SECRET=secretKey \
-API_URL=https://redmic.grafcan.es/api \
+API_URL=https://api.redmic.grafcan.es/api \
 PRODUCTION=0 \
 npm start -- --port=80
 ```

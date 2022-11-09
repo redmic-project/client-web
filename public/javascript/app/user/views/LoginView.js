@@ -141,10 +141,9 @@ define([
 			//		values private: credenciales para obtener el token
 			//
 
-			var clientId = redmicConfig.oauthClientId,
-				username = values.email,
+			var username = values.email,
 				password = values.password,
-				data = 'clientid=' + clientId + '&username=' + username + '&password=' + password;
+				data = 'username=' + username + '&password=' + password;
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',

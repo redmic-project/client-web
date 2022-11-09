@@ -6,7 +6,6 @@ define([], function() {
 		'numMaxView': 10,
 		'apiVersion': 1,
 		'pathSeparator': '/',
-		'oauthClientId': 'app',
 		'siteKeyReCaptcha': '6LfA6_0SAAAAACT3i8poH1NqztZCtIW1OahT0cXs',
 		'siteKeyForDebugReCaptcha': '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
 		'googleAnalyticsId': 'G-J753HC86F0'

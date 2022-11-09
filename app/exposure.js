@@ -7,6 +7,7 @@ let express = require('express'),
 
 let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated,
 	oauthUrl = process.env.OAUTH_URL,
+	oauthClientId = process.env.OAUTH_CLIENT_ID,
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 	production = !!parseInt(process.env.PRODUCTION, 10),
 	apiUrl = process.env.API_URL,
@@ -177,13 +178,11 @@ function onOauthTokenRequest(req, res) {
 	res.set('Content-Type', 'application/json');
 
 	let body = req.body,
-
-		clientId = body.clientid,
 		password = body.password,
 		username = body.username,
 
 		getTokenUrl = oauthUrl + '/token',
-		clientCredentials = clientId + ':' + oauthClientSecret,
+		clientCredentials = oauthClientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
 		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https;

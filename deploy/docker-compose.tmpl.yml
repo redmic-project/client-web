@@ -10,6 +10,7 @@ services:
         NODE_IMAGE_TAG:
     environment:
       OAUTH_URL:
+      OAUTH_CLIENT_ID:
       OAUTH_CLIENT_SECRET:
       API_URL:
       SITEMAP_URL:

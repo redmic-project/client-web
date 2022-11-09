@@ -113,7 +113,8 @@ function onOwnRequestError(originalRes, err) {
 		description: 'Something went wrong at server. Please, try again.'
 	});
 
-	logger.error(err);
+	let errorMessage = err instanceof Object ? err.toString() : err;
+	logger.error(errorMessage);
 }
 
 function onSitemapRequest(_req, res) {
@@ -123,7 +124,7 @@ function onSitemapRequest(_req, res) {
 	let currTimestamp = Date.now();
 
 	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - 300000) {
-		let afterResponseCallback = (status, content) => status ? sitemapContent = content : sitemapContent = '';
+		let afterResponseCallback = (status, content) => sitemapContent = status ? content : '';
 
 		let internalReq = https.request(sitemapUrl, onOwnRequestResponse.bind(this, {
 			originalRes: res,
@@ -158,11 +159,6 @@ function onRobotsRequest(req, res) {
 	}
 
 	res.send(robotsContent);
-}
-
-function onApiRequest(_req, res) {
-
-	res.redirect('/404');
 }
 
 function onNullableRequest(_req, res) {
@@ -244,7 +240,6 @@ function exposeRoutes(app) {
 		.get('/404', on404Request)
 		.get('/sitemap.xml', onSitemapRequest)
 		.get('/robots.txt', onRobotsRequest)
-		.get(/\/api\/.*/, onApiRequest)
 		.get(/.*\/jquery.js/, onNullableRequest)
 		.get(/.*/, onGeneralRequest)
 		.post('/oauth/token', onOauthTokenRequest)

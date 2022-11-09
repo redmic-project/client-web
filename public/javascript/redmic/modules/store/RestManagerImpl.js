@@ -407,7 +407,6 @@ define([
 
 			// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
 			// privilegios insuficientes)
-			Credentials.set('accessToken', null);
 		},
 
 		_onRequestReachabilityError: function(res) {

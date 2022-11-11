@@ -9,22 +9,26 @@ html
 		meta(name = 'robots' content = 'index, follow')
 
 		script.
-			let lang = '#{lang}';
+			let lang = '#{env.lang}',
+				envApiUrl = '#{env.apiUrl}',
+				envProduction = '#{env.production}',
+				envVersion = '#{env.version}',
+				envDebug = '#{env.debug}';
 
 		-
 			let esLocale = 'es_ES',
 				enLocale = 'en_GB',
 				locale, altLocale1;
 
-			if (lang === 'es') {
+			if (env.lang === 'es') {
 				locale = esLocale;
 				altLocale1 = enLocale;
-			} else if (lang === 'en') {
+			} else if (env.lang === 'en') {
 				locale = enLocale;
 				altLocale1 = esLocale;
 			}
 
-			let basePath = '/' + (useBuilt ? 'dist' : 'public'),
+			let basePath = '/' + (env.useBuilt ? 'dist' : 'public'),
 				jsPath = basePath + '/javascript/';
 
 		meta(name = 'og:locale' content = locale)
@@ -35,7 +39,7 @@ html
 		meta(name = 'twitter:site' content = '@redmic_project')
 
 		script(src = jsPath + 'dojoConfig.js')
-		script(src = jsPath + 'dojo/dojo.js' data-dojo-config = 'locale:"' + lang + '"')
+		script(src = jsPath + 'dojo/dojo.js' data-dojo-config = 'locale:"' + env.lang + '"')
 
 		link(rel='shortcut icon', href=basePath + '/resources/images/favicon.ico')
 
@@ -47,7 +51,7 @@ html
 		block error404
 		block root
 
-if !useBuilt
+if !env.useBuilt
 	link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,600,400')
 	link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Exo+2:700')
 

@@ -10,7 +10,7 @@ define([
 	, lang
 	, request
 	, RedmicLocalStorage
-){
+) {
 
 	return declare(null, {
 
@@ -27,9 +27,7 @@ define([
 
 		_activateAccount: function(data) {
 
-			var target = redmicConfig.getServiceUrl(redmicConfig.services.activateAccount, {
-				apiUrl: this.apiUrl
-			});
+			var target = redmicConfig.getServiceUrl(redmicConfig.services.activateAccount);
 
 			request(target, {
 				handleAs: 'json',

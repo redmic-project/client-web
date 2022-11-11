@@ -39,16 +39,9 @@ define([
 
 		_onNotImplementedMethod: function(method, props) {
 
-			var envDfd = window.env;
-
-			if (!envDfd) {
-				return;
+			if (envDebug === 'true') {
+				this._showNotImplementedMethodWarning(method, props);
 			}
-
-			envDfd.then(lang.hitch(this, function(method, props, env) {
-
-				env.debug && this._showNotImplementedMethodWarning(method, props);
-			}, method, props));
 		},
 
 		_showNotImplementedMethodWarning: function(method, props) {

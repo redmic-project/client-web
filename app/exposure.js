@@ -18,31 +18,29 @@ function getLang(req) {
 	return req && req.headers && req.headers['content-language'] || params.lang;
 }
 
-function onGeneralRequest(req, res) {
+function getEnv(req) {
 
-	res.render('index', {
-		useBuilt: params.useBuilt,
-		lang: getLang(req)
-	});
-}
-
-function onEnvRequest(_req, res) {
-
-	res.send({
+	return {
 		version: version,
 		useBuilt: params.useBuilt,
 		debug: params.debug,
 		apiUrl: apiUrl,
-		production: production
+		production: production,
+		lang: getLang(req)
+	};
+}
+
+function onGeneralRequest(req, res) {
+
+	res.render('index', {
+		env: getEnv(req)
 	});
 }
 
 function onActivateAccountRequest(req, res) {
 
 	res.render('activateAccount', {
-		useBuilt: params.useBuilt,
-		lang: getLang(req),
-		apiUrl: apiUrl,
+		env: getEnv(req),
 		token: req.params.token
 	});
 }
@@ -50,15 +48,16 @@ function onActivateAccountRequest(req, res) {
 function onNoSupportBrowserRequest(req, res) {
 
 	res.render('noSupportBrowser', {
-		useBuilt: params.useBuilt,
-		lang: getLang(req)
+		env: getEnv(req)
 	});
 }
 
-function on404Request(_req, res) {
+function on404Request(req, res) {
 
 	res.status(404);
-	res.render('404', { useBuilt: params.useBuilt });
+	res.render('404', {
+		env: getEnv(req)
+	});
 }
 
 function onOwnRequestResponse(bindParams, internalRes) {
@@ -233,8 +232,7 @@ function onOauthRequestError(originalRes, err) {
 
 function exposeRoutes(app) {
 
-	app.get('/env', onEnvRequest)
-		.get('/activateAccount/:token', onActivateAccountRequest)
+	app.get('/activateAccount/:token', onActivateAccountRequest)
 		.get('/noSupportBrowser', onNoSupportBrowserRequest)
 		.get('/404', on404Request)
 		.get('/sitemap.xml', onSitemapRequest)

@@ -46,7 +46,7 @@ define([
 				timeout: 45000,
 				handleAs: 'json',
 
-				_apiUrl: 'api',
+				_apiUrl: envApiUrl,
 				_filteredUrls: [
 					'token',
 					'reCaptcha',
@@ -66,14 +66,6 @@ define([
 
 			notify('error', lang.hitch(this, this._requestErrorHandler));
 			registry.register(lang.hitch(this, this._preRequestHandler), request);
-
-			var envDfd = window.env;
-			if (envDfd) {
-				envDfd.then(lang.hitch(this, function(envData) {
-
-					this._apiUrl = envData.apiUrl;
-				}));
-			}
 		},
 
 		_getTargetWithEndingSlash: function(target) {

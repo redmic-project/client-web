@@ -2,11 +2,12 @@ extends layout
 
 block root
 	#rootContainer
-	script(type='text/javascript').
+
+	script.
 		require([
 			'app/views/NoSupportBrowser'
 		], function(
 			NoSupportBrowser
-		){
+		) {
 			new NoSupportBrowser().placeAt('rootContainer');
 		});

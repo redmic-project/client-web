@@ -122,14 +122,8 @@ function(
 
 		_checkDomainToAddMessage: function() {
 
-			var envDfd = window.env;
-			if (envDfd) {
-				envDfd.then(lang.hitch(this, function(envData) {
-
-					if (!envData.production) {
-						this._addMessage('.appDev', this.i18n.messageAppDev);
-					}
-				}));
+			if (envProduction === 'false') {
+				this._addMessage('.appDev', this.i18n.messageAppDev);
 			}
 		},
 

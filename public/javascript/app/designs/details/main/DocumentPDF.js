@@ -54,21 +54,11 @@ define([
 
 			this._checkPathVariableId();
 
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
-			}
-
-			envDfd.then(lang.hitch(this, function(envData) {
-
-				this._envData = envData;
-
-				this._emitEvt('GET', {
-					target: this.target,
-					requesterId: this.ownChannel,
-					id: this.pathVariableId
-				});
-			}));
+			this._emitEvt('GET', {
+				target: this.target,
+				requesterId: this.ownChannel,
+				id: this.pathVariableId
+			});
 		},
 
 		_itemAvailable: function(item) {
@@ -81,7 +71,7 @@ define([
 			}
 
 			var pdfUrlProto = documentInternalUrl.replace('/api', redmicConfig.apiUrlVariable),
-				pdfUrl = redmicConfig.getServiceUrl(pdfUrlProto, this._envData),
+				pdfUrl = redmicConfig.getServiceUrl(pdfUrlProto),
 				widgetInstance = this._getWidgetInstance('pdf');
 
 			var callback = lang.hitch(this, this._loadPdfInWidget, pdfUrl);

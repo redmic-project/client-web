@@ -70,18 +70,15 @@ define([
 
 			this.addChild(this.template);
 
-			var envDfd = window.env;
-			if (envDfd) {
-				envDfd.then(lang.hitch(this, this._showVersion));
-			}
+			this._showVersion();
 
 			this.inherited(arguments);
 		},
 
-		_showVersion: function(data) {
+		_showVersion: function() {
 
 			if (this.template.versionNumber) {
-				this.template.versionNumber.innerHTML = data.version;
+				this.template.versionNumber.innerHTML = envVersion;
 			}
 		},
 

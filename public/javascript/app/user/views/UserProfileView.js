@@ -466,24 +466,17 @@ define([
 				dataType: "password"
 			}, "userData");
 
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
+
+			// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
+			// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
+			var userImageBaseTarget = envApiUrl.replace('/api', ''),
+				userImagePath = data.image;
+
+			if (userImagePath) {
+				data.image = userImageBaseTarget + userImagePath;
 			}
 
-			envDfd.then(lang.hitch(this, function(resData, envData) {
-
-				// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
-				// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
-				var userImageBaseTarget = envData.apiUrl.replace('/api', ''),
-					userImagePath = resData.image;
-
-				if (userImagePath) {
-					resData.image = userImageBaseTarget + userImagePath;
-				}
-
-				this._injectItemList(resData, "userImage");
-			}, data));
+			this._injectItemList(data, "userImage");
 		},
 
 		_generateWidgets: function() {

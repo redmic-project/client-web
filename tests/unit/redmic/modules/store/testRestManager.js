@@ -1,15 +1,9 @@
 define([
-	'dojo/_base/declare'
-	, 'dojo/_base/lang'
-	, 'dojo/Deferred'
-	, 'redmic/base/Mediator'
+	'redmic/base/Mediator'
 	, 'redmic/modules/store/RestManagerImpl'
 
 ], function(
-	declare
-	, lang
-	, Deferred
-	, Mediator
+	Mediator
 	, RestManagerImpl
 ) {
 
@@ -31,10 +25,6 @@ define([
 			restManager = new RestManagerImpl({
 				parentChannel: 'app'
 			});
-
-			var envDfd = new Deferred();
-			envDfd.resolve({});
-			window.env = envDfd;
 
 			originalOpenMethod = window.XMLHttpRequest.prototype.open;
 		},

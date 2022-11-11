@@ -74,23 +74,18 @@ define([
 
 		postCreate: function() {
 
-			var envDfd = window.env;
-
-			if (!this.url || !envDfd) {
+			if (!this.url) {
 				console.error('URL not specified for file upload input');
 				return;
 			}
 
 			this._setPreviousProperties();
 
-			envDfd.then(lang.hitch(this, function(envData) {
+			this.url = redmicConfig.getServiceUrl(this.url);
 
-				this.url = redmicConfig.getServiceUrl(this.url, envData);
-
-				this._dropzone = this._getNewInstance();
-				this._listenInstanceEvents(this._dropzone);
-				this._dropzoneDfd.resolve(this._dropzone);
-			}));
+			this._dropzone = this._getNewInstance();
+			this._listenInstanceEvents(this._dropzone);
+			this._dropzoneDfd.resolve(this._dropzone);
 		},
 
 		_setPreviousProperties: function() {

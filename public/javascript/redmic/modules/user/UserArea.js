@@ -59,50 +59,38 @@ define([
 			this.iconNode = put(this.domNode, 'i.fa.fa-user');
 			this.listMenuDefinition = declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip);
 
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
-			}
-
-			envDfd.then(lang.hitch(this, function(envData) {
-
-				this._commonItems = {
-					infoItem: {
-						icon: 'fa-question-circle-o',
-						label: 'whatIsRedmic',
-						href: '/inner-what-is-redmic'
-					},
-					feedbackItem: {
-						icon: 'fa-envelope-o',
-						label: 'feedback',
-						href: '/feedback'
-					},
-					termConditionItem: {
-						icon: 'fa-file-text-o',
-						label: 'termCondition',
-						href: '/terms-and-conditions'
-					},
-					versionItem: {
-						icon: 'fa-code-fork',
-						label: this.i18n.version + ': ' + envData.version,
-						href: this.repositoryUrl,
-						newPage: true
-					}
-				};
-
-				this.target = [this.profileTarget];
-
-				if (this._checkUserIsRegistered()) {
-					this._initializeRegisteredUserArea();
-
-					this.target.push(this._logoutTarget);
-					// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
-					// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
-					this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
-				} else {
-					this._initializeGuestUserArea();
+			this._commonItems = {
+				infoItem: {
+					icon: 'fa-question-circle-o',
+					label: 'whatIsRedmic',
+					href: '/inner-what-is-redmic'
+				},
+				feedbackItem: {
+					icon: 'fa-envelope-o',
+					label: 'feedback',
+					href: '/feedback'
+				},
+				termConditionItem: {
+					icon: 'fa-file-text-o',
+					label: 'termCondition',
+					href: '/terms-and-conditions'
+				},
+				versionItem: {
+					icon: 'fa-code-fork',
+					label: this.i18n.version + ': ' + envVersion,
+					href: this.repositoryUrl,
+					newPage: true
 				}
-			}));
+			};
+
+			this.target = [this.profileTarget];
+
+			if (this._checkUserIsRegistered()) {
+				this._initializeRegisteredUserArea();
+				this.target.push(this._logoutTarget);
+			} else {
+				this._initializeGuestUserArea();
+			}
 		},
 
 		_initializeRegisteredUserArea: function() {
@@ -195,7 +183,9 @@ define([
 			var userImagePath = req.dataCredentials.image;
 
 			if (userImagePath) {
-				req.dataCredentials.image = this._userImageBaseTarget + userImagePath;
+				// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
+				// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
+				req.dataCredentials.image = envApiUrl.replace('/api', '') + userImagePath;
 			}
 
 			this._emitEvt('INJECT_DATA', {

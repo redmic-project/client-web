@@ -24,7 +24,6 @@ services:
         traefik.enable: 'true'
 
         traefik.http.services.redmic-web.loadbalancer.server.port: 3050
-        traefik.http.services.redmic-web.loadbalancer.passhostheader: 'false'
 
         traefik.http.middlewares.redmic-web-error-5xx.errors.status: ${TRAEFIK_ERROR_5XX_STATUS:-500-599}
         traefik.http.middlewares.redmic-web-error-5xx.errors.service: ${TRAEFIK_ERROR_5XX_SERVICE:-static-pages}

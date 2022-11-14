@@ -466,16 +466,6 @@ define([
 				dataType: "password"
 			}, "userData");
 
-
-			// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
-			// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
-			var userImageBaseTarget = envApiUrl.replace('/api', ''),
-				userImagePath = data.image;
-
-			if (userImagePath) {
-				data.image = userImageBaseTarget + userImagePath;
-			}
-
 			this._injectItemList(data, "userImage");
 		},
 

@@ -1,15 +1,17 @@
 define([
-	"dijit/form/Button"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/topic"
-	, "put-selector/put"
-	, "redmic/base/Credentials"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
+	'app/redmicConfig'
+	, 'dijit/form/Button'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/topic'
+	, 'put-selector/put'
+	, 'redmic/base/Credentials'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
 ],
 function(
-	Button
+	redmicConfig
+	, Button
 	, declare
 	, lang
 	, topic
@@ -38,19 +40,19 @@ function(
 			this.config = {
 				// own events
 				events: {
-					UPLOAD_FILE: "uploadFile",
-					DOWNLOAD_FILE: "downloadFile"
+					UPLOAD_FILE: 'uploadFile',
+					DOWNLOAD_FILE: 'downloadFile'
 				},
 				// own actions
 				actions: {
-					UPLOAD_FILE: "uploadFile",
-					DOWNLOAD_FILE: "downloadFile"
+					UPLOAD_FILE: 'uploadFile',
+					DOWNLOAD_FILE: 'downloadFile'
 				},
 				zones: {
 					filter: {
 						node: null,
-						align: "right",
-						"class": "div.btnGroup",
+						align: 'right',
+						'class': 'div.btnGroup',
 						btns: {
 							upload: {
 								node: null,
@@ -58,10 +60,10 @@ function(
 								permission: false,
 								props: {
 									showLabel: false,
-									"class": "primary",
+									'class': 'primary',
 									label: this.i18n.upload,
-									iconClass: "fa-upload",
-									action: "_uploadFile"
+									iconClass: 'fa-upload',
+									action: '_uploadFile'
 								}
 							},
 							download: {
@@ -70,10 +72,10 @@ function(
 								permission: true,
 								props: {
 									showLabel: false,
-									"class": "primary",
+									'class': 'primary',
 									label: this.i18n.createReport,
-									iconClass: "fa-print",
-									action: "_downloadFile"
+									iconClass: 'fa-print',
+									action: '_downloadFile'
 								}
 							}
 						}
@@ -81,8 +83,8 @@ function(
 				},
 				handlers: {},
 				perms: {},
-				ownChannel: "manager",
-				viewSeparator: "/"
+				ownChannel: 'manager',
+				viewSeparator: '/'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -94,7 +96,7 @@ function(
 
 			this.subscriptionsConfig.push({
 				channel: this.getParentChannel(),
-				callback: "_subChangeView",
+				callback: '_subChangeView',
 				options: {
 					predicate: lang.hitch(this, this._chkChangeView)
 				}
@@ -105,24 +107,24 @@ function(
 
 			this.publicationsConfig.push({
 				event: 'UPLOAD_FILE',
-				channel: this.getChannel("UPLOAD_FILE")
+				channel: this.getChannel('UPLOAD_FILE')
 			},{
 				event: 'DOWNLOAD_FILE',
-				channel: this.getChannel("DOWNLOAD_FILE")
+				channel: this.getChannel('DOWNLOAD_FILE')
 			});
 		},
 
 		postCreate: function() {
 
-			this.leftContainer = put(this.domNode, "div.left");
-			this.rightContainer = put(this.domNode, "div.right");
+			this.leftContainer = put(this.domNode, 'div.left');
+			this.rightContainer = put(this.domNode, 'div.right');
 
 			this._checkDomainToAddMessage();
 		},
 
 		_checkDomainToAddMessage: function() {
 
-			if (envProduction === 'false') {
+			if (redmicConfig.getEnvVariableValue('envProduction') === 'false') {
 				this._addMessage('.appDev', this.i18n.messageAppDev);
 			}
 		},
@@ -140,7 +142,7 @@ function(
 			// 	private
 
 			// Eventos procedentes de los módulos
-			this.handlers.create = topic.subscribe("/manager/create", lang.hitch(this, this._createManager));
+			this.handlers.create = topic.subscribe('/manager/create', lang.hitch(this, this._createManager));
 		},
 
 		_findPerms: function(/*String*/ moduleKey) {
@@ -154,7 +156,7 @@ function(
 			//		Permisos del módulo si se encuentra, o 0 si no se encuentra
 
 			// Categorías a las que tiene acceso el usuario
-			var categories = Credentials.get("allowedModules"),
+			var categories = Credentials.get('allowedModules'),
 				moduleKeySplitted = moduleKey.split(this.viewSeparator);
 
 			if (!categories) {
@@ -206,7 +208,7 @@ function(
 					}
 				}
 				// Destruimos la zona
-				zone.node && put(zone.node, "!");
+				zone.node && put(zone.node, '!');
 				zone.node = null;
 			}
 		},
@@ -218,14 +220,14 @@ function(
 				if (!zone.node) {
 					var node = this.rightContainer;
 
-					if (zone.align == "left") {
+					if (zone.align == 'left') {
 						node = this.leftContainer;
 					}
 
-					zone.node = put(node, zone["class"], {});
+					zone.node = put(node, zone['class'], {});
 				}
 				// Si tiene permisos de edición o no es la zona de edición
-				if (this.perms > 0 || item !== "edit") {
+				if (this.perms > 0 || item !== 'edit') {
 					// Elementos tipo botón
 					for (var key2 in zone.btns) {
 						var btn = zone.btns[key2];
@@ -285,7 +287,7 @@ function(
 
 		_downloadFile: function() {
 
-			this._emitDownloadFile("pdf");
+			this._emitDownloadFile('pdf');
 		},
 
 		_emitDownloadFile: function(/*String*/ format) {

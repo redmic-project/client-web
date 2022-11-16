@@ -78,7 +78,7 @@ define([
 				},
 				versionItem: {
 					icon: 'fa-code-fork',
-					label: this.i18n.version + ': ' + envVersion,
+					label: this.i18n.version + ': ' + redmicConfig.getEnvVariableValue('envVersion'),
 					href: this.repositoryUrl,
 					newPage: true
 				}

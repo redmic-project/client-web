@@ -1,5 +1,6 @@
 define([
-	'dojo/_base/declare'
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/request'
 	, 'dojo/request/notify'
@@ -7,7 +8,8 @@ define([
 	, 'redmic/base/Credentials'
 	, './RestManager'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, request
 	, notify
@@ -46,7 +48,7 @@ define([
 				timeout: 45000,
 				handleAs: 'json',
 
-				_apiUrl: envApiUrl,
+				_apiUrl: redmicConfig.getEnvVariableValue('envApiUrl'),
 				_filteredUrls: [
 					'token',
 					'reCaptcha',

@@ -1,21 +1,22 @@
 define([
-	"dijit/_TemplatedMixin"
-	, "dijit/_WidgetBase"
-	, "dijit/_WidgetsInTemplateMixin"
+	'app/redmicConfig'
+	, 'dijit/_TemplatedMixin'
+	, 'dijit/_WidgetBase'
+	, 'dijit/_WidgetsInTemplateMixin'
 	, 'dijit/layout/ContentPane'
-	, "dojo/text!./templates/ExternalUserBase.html"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/_base/kernel"
-	, "put-selector/put"
+	, 'dojo/text!./templates/ExternalUserBase.html'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/_base/kernel'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
 
-	, "dijit/form/Form"
-	, "dijit/form/ValidationTextBox"
-	, "dijit/form/Button"
+	, 'dijit/form/Form'
+	, 'dijit/form/ValidationTextBox'
+	, 'dijit/form/Button'
 ], function(
-	_TemplatedMixin
+	redmicConfig
+	, _TemplatedMixin
 	, _WidgetBase
 	, _WidgetsInTemplateMixin
 	, ContentPane
@@ -23,10 +24,10 @@ define([
 	, declare
 	, lang
 	, kernel
-	, put
 	, _Module
 	, _Show
-){
+) {
+
 	return declare([_Module, _Show, ContentPane], {
 		//	Summary:
 		//		Vista base de aplicación externa
@@ -49,9 +50,9 @@ define([
 					_getManagerNode: this._getManagerNode,
 					_changeLang: this._changeLang
 				},
-				baseClass: "",
+				baseClass: '',
 				replaceReg: /\%\[([^\]]+)\]/g,
-				whatIsRedmicPath: "what-is-redmic"
+				whatIsRedmicPath: 'what-is-redmic'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -78,14 +79,14 @@ define([
 		_showVersion: function() {
 
 			if (this.template.versionNumber) {
-				this.template.versionNumber.innerHTML = envVersion;
+				this.template.versionNumber.innerHTML = redmicConfig.getEnvVariableValue('envVersion');
 			}
 		},
 
 		_changeLang: function(evt) {
 
-			window.location.href = window.location.protocol + "//" + evt.target.dataset.dojoProps + "." +
-				window.location.hostname.replace(kernel.locale + ".", "");
+			window.location.href = window.location.protocol + '//' + evt.target.dataset.dojoProps + '.' +
+				window.location.hostname.replace(kernel.locale + '.', '');
 		},
 
 		_onShowWhatIsRedmic: function(event) {
@@ -98,7 +99,7 @@ define([
 			//
 
 			event.stopPropagation();
-			var path = "what-is-redmic";
+			var path = 'what-is-redmic';
 			if (window.location.href.indexOf(path) < 0) {
 				window.location.href = path;
 			} else {

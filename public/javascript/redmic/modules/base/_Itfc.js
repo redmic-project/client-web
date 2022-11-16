@@ -1,10 +1,13 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Base para todas las interfaces de módulos.
@@ -39,14 +42,14 @@ define([
 
 		_onNotImplementedMethod: function(method, props) {
 
-			if (envDebug === 'true') {
+			if (redmicConfig.getEnvVariableValue('envDebug') === 'true') {
 				this._showNotImplementedMethodWarning(method, props);
 			}
 		},
 
 		_showNotImplementedMethodWarning: function(method, props) {
 
-			console.warn("Not implemented method '%s' at module '%s' with this definition: %O", method,
+			console.warn('Not implemented method "%s" at module "%s" with this definition: %O', method,
 				this.getChannel(), props);
 		}
 	});

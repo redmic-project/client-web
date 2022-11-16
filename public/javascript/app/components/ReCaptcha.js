@@ -43,7 +43,8 @@ define([
 
 			_onLoadReCaptcha = null;
 
-			var siteKey = envProduction === 'true' ? this._siteKey : this._siteKeyForDebug;
+			var isProduction = redmicConfig.getEnvVariableValue('envProduction') === 'true',
+				siteKey = isProduction ? this._siteKey : this._siteKeyForDebug;
 
 			this._instanceId = grecaptcha.render(this.node, {
 				'sitekey': siteKey,

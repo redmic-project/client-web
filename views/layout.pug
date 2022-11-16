@@ -9,16 +9,17 @@ html
 		meta(name = 'robots' content = 'index, follow')
 
 		script.
-			let lang = '#{env.lang}',
+			var lang = '#{env.lang}',
 				envApiUrl = '#{env.apiUrl}',
 				envProduction = '#{env.production}',
 				envVersion = '#{env.version}',
 				envDebug = '#{env.debug}';
 
 		-
-			let esLocale = 'es_ES',
-				enLocale = 'en_GB',
-				locale, altLocale1;
+			const esLocale = 'es_ES',
+				enLocale = 'en_GB';
+
+			let locale, altLocale1;
 
 			if (env.lang === 'es') {
 				locale = esLocale;
@@ -28,7 +29,7 @@ html
 				altLocale1 = esLocale;
 			}
 
-			let basePath = '/' + (env.useBuilt ? 'dist' : 'public'),
+			const basePath = '/' + (env.useBuilt ? 'dist' : 'public'),
 				jsPath = basePath + '/javascript/';
 
 		meta(name = 'og:locale' content = locale)

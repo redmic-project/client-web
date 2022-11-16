@@ -578,7 +578,7 @@ define([], function() {
 		var variableValue;
 
 		try {
-			variableValue = eval(variableName);
+			variableValue = window[variableName];
 		} catch(e) {
 			console.warn('Tried to get undefined global variable "%s"', variableName);
 			variableValue = '';

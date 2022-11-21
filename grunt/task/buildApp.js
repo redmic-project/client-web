@@ -23,11 +23,12 @@ module.exports = function(grunt) {
 				var profile = pkg.dojoBuild,
 					scriptPath = path.join(srcPath, 'dojo/dojo.js'),
 					releaseDir = path.join(rootPath, distPath),
+					nodeParams = ' --optimize_for_size --max_old_space_size=3000 --gc_interval=100 ',
 					buildParams = ' load=build --profile "' + profile + '" --releaseDir "' + releaseDir + '"';
 
 				return [
 					'echo "\nBuilding application with ' + profile + ' to ' + releaseDir + '\n"',
-					'node ' + scriptPath + buildParams,
+					'node' + nodeParams + scriptPath + buildParams,
 					'echo "\nBuild complete"'
 				].join('; ');
 			}

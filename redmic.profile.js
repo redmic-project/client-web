@@ -387,6 +387,18 @@ var profileObj = {
 				, 'dojo/dnd/move'
 				, 'dojo/dnd/autoscroll'
 			]
+		},
+		'redmic/modules/base/_Module': {
+			discard: true,
+			dependencies: [
+				'redmic/modules/base/_Show'
+			]
+		},
+		'redmic/modules/metaTags/MetaTags': {
+			discard: true,
+			dependencies: [
+				'redmic/modules/metaTags/metaTagsContent'
+			]
 		}
 	}
 };
@@ -528,6 +540,7 @@ var viewLayers = {
 	, 'app/details/views/OrganisationDetailsView': {}
 	, 'app/details/views/OrganisationCatalogDetailsView': {}
 	, 'app/details/views/SpeciesCatalogDetailsView': {}
+
 	, 'app/edition/views/ActivityEditionView': {}
 	, 'app/edition/views/DeviceEditionView': {}
 	, 'app/edition/views/DocumentEditionView': {}
@@ -560,7 +573,8 @@ var viewLayers = {
 };
 
 var viewLayerDefaultConfig = {
-	includeLocales: includeLocales
+	includeLocales: includeLocales,
+	layerDependencies: ['redmic/modules/base/_Module', 'redmic/modules/metaTags/MetaTags']
 };
 
 var profile = (function() {

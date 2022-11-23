@@ -389,13 +389,11 @@ var profileObj = {
 			]
 		},
 		'redmic/modules/base/_Module': {
-			discard: true,
 			dependencies: [
 				'redmic/modules/base/_Show'
 			]
 		},
 		'redmic/modules/metaTags/MetaTags': {
-			discard: true,
 			dependencies: [
 				'redmic/modules/metaTags/metaTagsContent'
 			]

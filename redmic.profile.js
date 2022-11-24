@@ -5,11 +5,6 @@ var amdTagger = function(filename) {
 	return /\.js$/.test(filename);
 };
 
-var noAmdTagger = function() {
-
-	return false;
-};
-
 var copyOnlyTagger = function() {
 
 	return true;
@@ -34,8 +29,8 @@ var profileObj = {
 	releaseDir: '../../dist',
 	releaseName: 'javascript',
 	action: 'release',
-	layerOptimize: 'closure',
-	optimize: 'closure',
+	layerOptimize: 'closure.keeplines',
+	optimize: 'closure.keeplines',
 	optimizeOptions: {
 		languageIn: 'ECMASCRIPT_2017',
 		languageOut: 'ECMASCRIPT_2015',
@@ -389,13 +384,9 @@ var profileObj = {
 			]
 		},
 		'redmic/modules/base/_Module': {
+			discard: true,
 			dependencies: [
 				'redmic/modules/base/_Show'
-			]
-		},
-		'redmic/modules/metaTags/MetaTags': {
-			dependencies: [
-				'redmic/modules/metaTags/metaTagsContent'
 			]
 		}
 	}
@@ -572,7 +563,7 @@ var viewLayers = {
 
 var viewLayerDefaultConfig = {
 	includeLocales: includeLocales,
-	layerDependencies: ['redmic/modules/base/_Module', 'redmic/modules/metaTags/MetaTags']
+	layerDependencies: ['redmic/modules/base/_Module']
 };
 
 var profile = (function() {

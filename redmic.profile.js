@@ -29,12 +29,12 @@ var profileObj = {
 	releaseDir: '../../dist',
 	releaseName: 'javascript',
 	action: 'release',
-	layerOptimize: 'closure.keeplines',
-	optimize: 'closure.keeplines',
+	layerOptimize: 'closure',
+	optimize: 'closure',
 	optimizeOptions: {
 		languageIn: 'ECMASCRIPT_2017',
 		languageOut: 'ECMASCRIPT_2015',
-		compilationLevel: 'SIMPLE'
+		compilationLevel: 'SIMPLE_OPTIMIZATIONS'
 	},
 	cssOptimize: 'comments',
 	mini: true,
@@ -43,6 +43,8 @@ var profileObj = {
 	locale: includeLocales[0],
 	localeList: includeLocales.join(','),
 	useSourceMaps: false,
+	buildReportDir: '../..',
+	maxOptimizationProcesses: 1,
 
 	resourceTags: {
 		amd: amdTagger,
@@ -218,7 +220,7 @@ var profileObj = {
 		name: 'leaflet-measure',
 		location: 'leaflet-measure/dist',
 		resourceTags: {
-			copyOnly: copyOnlyTagger,
+			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, [
 				'leaflet-measure/leaflet-measure.es',
 				'leaflet-measure/leaflet-measure.en'
@@ -261,7 +263,7 @@ var profileObj = {
 		name: 'd3',
 		location: 'd3/dist',
 		resourceTags: {
-			copyOnly: copyOnlyTagger,
+			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'd3/d3.min')
 		}
 	},{

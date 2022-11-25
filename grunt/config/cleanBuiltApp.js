@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 		strippedFiles = '*.' + strippedSuffix,
 		uncompressedFiles = '*.' + uncompressedSuffix,
 
-		filesToDelete = [strippedFiles, uncompressedFiles, 'build-report.txt'],
+		filesToDelete = [strippedFiles, uncompressedFiles],
 		filesToKeep = ['dojo/dojo.js', 'dojo/resources/blank.gif', 'dojox/widget/ColorPicker/images/*.png'];
 
 	grunt.config('redmicConfig.resourcesToCleanInBuiltApp', {

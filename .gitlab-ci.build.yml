@@ -49,6 +49,7 @@ prepare-built-version:
     expire_in: 1 month
     paths:
       - dist*.tar.gz
+      - build-report.txt
   rules:
     - if: $CI_MERGE_REQUEST_ID ||
           $CI_PIPELINE_SOURCE == "schedule"

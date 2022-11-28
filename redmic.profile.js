@@ -44,11 +44,22 @@ var profileObj = {
 	localeList: includeLocales.join(','),
 	useSourceMaps: false,
 	buildReportDir: '../..',
-	maxOptimizationProcesses: 1,
+	maxOptimizationProcesses: 2,
 
 	resourceTags: {
 		amd: amdTagger,
 		declarative: declarativeTagger
+	},
+
+	defaultConfig: {
+		hasCache:{
+			'dojo-built': 1,
+			'dojo-loader': 1,
+			'dom': 1,
+			'host-browser': 1,
+			'config-selectorEngine': 'lite'
+		},
+		async: 1
 	},
 
 	staticHasFeatures: {

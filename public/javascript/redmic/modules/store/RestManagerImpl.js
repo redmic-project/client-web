@@ -399,8 +399,14 @@ define([
 
 		_onRequestPermissionError: function(res) {
 
-			// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
-			// privilegios insuficientes)
+			var getTokenTarget = redmicConfig.getServiceUrl(redmicConfig.services.getToken),
+				requestedTarget = res.url;
+
+			if (requestedTarget.indexOf(getTokenTarget) === -1) {
+				// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
+				// privilegios insuficientes)
+				Credentials.set('accessToken', null);
+			}
 		},
 
 		_onRequestReachabilityError: function(res) {

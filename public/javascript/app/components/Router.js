@@ -6,7 +6,6 @@ define([
 	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/Deferred'
 	, 'dojo/dom'
 	, 'dojo/dom-attr'
 	, 'dojo/has'
@@ -18,7 +17,7 @@ define([
 	, 'redmic/modules/notification/Alert'
 	, 'redmic/modules/base/Credentials'
 	, 'redmic/modules/base/Analytics'
-	, 'redmic/modules/base/MetaTags'
+	, 'redmic/modules/metaTags/MetaTags'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/base/Loading'
@@ -32,7 +31,6 @@ define([
 	, redmicConfig
 	, declare
 	, lang
-	, Deferred
 	, dom
 	, domAttr
 	, has
@@ -74,8 +72,6 @@ define([
 			}
 		};
 
-	getGlobalContext().env = new Deferred();
-
 	if (!CheckBrowser.isSupported()) {
 		hideNativeLoadingNode();
 		getGlobalContext().location.href = '/noSupportBrowser';
@@ -83,7 +79,7 @@ define([
 		return;
 	}
 
-	return declare([_Module, _Store], {
+	return declare(_Module, {
 		//	summary:
 		//		Módulo encargado de controlar el acceso a la aplicación.
 		//	description:
@@ -134,7 +130,6 @@ define([
 					HOME: 'home',
 					LOGIN: 'login'
 				},
-				target: '/env',
 				_reconnectTimeout: 10000
 			};
 
@@ -219,8 +214,6 @@ define([
 		},
 
 		postCreate: function() {
-
-			this._getEnv();
 
 			this._emitEvt('GET_CREDENTIALS');
 
@@ -333,29 +326,6 @@ define([
 			this._onRouteChange();
 		},
 
-		_getEnv: function() {
-
-			var envDfd = getGlobalContext().env;
-
-			if (envDfd && !envDfd.isFulfilled()) {
-				this._emitEvt('GET', {
-					target: this.target
-				});
-			}
-		},
-
-		_itemAvailable: function(res) {
-
-			var envDfd = getGlobalContext().env;
-			envDfd.resolve(res.data);
-		},
-
-		_errorAvailable: function(error, status, resWrapper) {
-
-			var envDfd = getGlobalContext().env;
-			envDfd.reject(error);
-		},
-
 		_subCredentialsRemoved: function() {
 
 			delete this._userFound;
@@ -405,7 +375,10 @@ define([
 		_removeQueryParametersFromHref: function() {
 
 			var locationObj = getGlobalContext().location,
-				href = locationObj.protocol + '//' + locationObj.hostname + locationObj.pathname + locationObj.hash;
+				locationPort = locationObj.port,
+				isNotStandardPort = locationPort !== '80',
+				hrefPort = isNotStandardPort ? (':' + locationPort) : '',
+				href = locationObj.protocol + '//' + locationObj.hostname + hrefPort + locationObj.pathname + locationObj.hash;
 
 			getGlobalContext().history.replaceState(null, null, href);
 		},

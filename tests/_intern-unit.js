@@ -84,7 +84,7 @@ module.exports = function(args) {
 	}
 
 	return deepmerge.all([_intern, config], {
-		arrayMerge: function (destinationArray, sourceArray, options) {
+		arrayMerge: function (_destinationArray, sourceArray, _options) {
 
 			return sourceArray;
 		}

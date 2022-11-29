@@ -21,8 +21,7 @@ define([
 			this.config = {
 				propertyName: "name",
 				ownChannel: "checkBox",
-				valuePropertyName: "checked",
-				noRequiredActive: true
+				valuePropertyName: "checked"
 			};
 
 			lang.mixin(this, this.config, args);

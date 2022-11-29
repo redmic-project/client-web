@@ -1,15 +1,15 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/textSearchFacetsList/Controller"
-	, "app/designs/textSearchFacetsList/Layout"
+	'app/designs/base/_Main'
+	, 'app/designs/textSearchFacetsList/Controller'
+	, 'app/designs/textSearchFacetsList/Layout'
 	, 'app/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "templates/DocumentList"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/browser/bars/SelectionBox"
-	, "redmic/modules/browser/bars/Order"
-	, "redmic/modules/browser/bars/Total"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/browser/_Select'
+	, 'redmic/modules/browser/bars/SelectionBox'
+	, 'redmic/modules/browser/bars/Order'
+	, 'redmic/modules/browser/bars/Total'
+	, 'templates/DocumentList'
 ], function (
 	_Main
 	, Controller
@@ -17,15 +17,16 @@ define([
 	, redmicConfig
 	, declare
 	, lang
-	, templateList
 	, _Select
 	, SelectionBox
 	, Order
 	, Total
-){
+	, templateList
+) {
+
 	return declare([Layout, Controller, _Main], {
 		//	summary:
-		//		Vista de Bibliography.
+		//		Base de vista de Bibliography/Document.
 
 		//	title: String
 		//		Título de la vista.
@@ -71,6 +72,11 @@ define([
 			this.facetsConfig = this._merge([{
 				aggs: redmicConfig.aggregations.document
 			}, this.facetsConfig || {}]);
+		},
+
+		_urlCondition: function(item) {
+
+			return !!item.url;
 		}
 	});
 });

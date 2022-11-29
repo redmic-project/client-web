@@ -79,13 +79,13 @@ define([
 
 		getNextStep: function() {
 
-			var submitButtonSelector = wizardNavigationButtonsGroupSelector + ' > span:nth-child(1)',
+			var nextButtonSelector = wizardNavigationButtonsGroupSelector + ' > span:nth-child(1)',
 				disabledClass = 'dijitDisabled';
 
 			return function() {
 
 				return this.parent
-					.findByCssSelector(submitButtonSelector)
+					.findByCssSelector(nextButtonSelector)
 						.getAttribute('class')
 						.then(function(classname) {
 
@@ -96,13 +96,13 @@ define([
 
 		getPrevStep: function() {
 
-			var submitButtonSelector = wizardNavigationButtonsGroupSelector + ' > span:nth-child(2)',
+			var prevButtonSelector = wizardNavigationButtonsGroupSelector + ' > span:nth-child(2)',
 				disabledClass = 'dijitDisabled';
 
 			return function() {
 
 				return this.parent
-					.findByCssSelector(submitButtonSelector)
+					.findByCssSelector(prevButtonSelector)
 						.getAttribute('class')
 						.then(function(classname) {
 
@@ -133,8 +133,7 @@ define([
 			return lang.partial(function(args) {
 
 				var self = args.self,
-					step = args.step,
-					stepPage = self._getStepPage(step);
+					stepPage = self._getStepPage(args.step);
 
 				return this.parent
 					.then(Utils.checkLoadingIsGone())
@@ -151,22 +150,20 @@ define([
 			return lang.partial(function (args) {
 
 				var self = args.self,
-					configSteps = args.configSteps,
-					onlyRequired = args.onlyRequired,
 					parent = this.parent,
 					step;
 
-				for (var i = 0; i < configSteps.length; i++) {
-					step = configSteps[i];
+				for (var i = 0; i < args.configSteps.length; i++) {
+					step = args.configSteps[i];
 
 						var stepPage = self._getStepPage(step);
 
 						parent = parent
 							.then(Utils.checkLoadingIsGone());
 
-						if (!onlyRequired || step.required) {
+						if (!args.onlyRequired || step.required) {
 							parent = parent
-								.then(stepPage.complete(onlyRequired))
+								.then(stepPage.complete(args.onlyRequired))
 								.then(Utils.checkLoadingIsGone());
 						}
 

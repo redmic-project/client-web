@@ -696,7 +696,7 @@ define([
 			}
 		},
 
-		_resize: function(res) {
+		_resize: function() {
 
 			if (!this.svg) {
 				return;

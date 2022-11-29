@@ -242,7 +242,10 @@ define([
 
 		_fillSelectOnListPopupInput: function(parent, fieldProps) {
 
-			var specificListSelector = 'div.dialogSimple div.containerHierarchicalList ';
+			// TODO no se usa por ahora parece, y la implementación era una copia la búsqueda de elementos
+			// de "cargando", que ha sido corregida
+
+			/*var specificListSelector = 'div.dialogSimple div.containerHierarchicalList ';
 
 			function expandItem(args, elements) {
 
@@ -289,7 +292,7 @@ define([
 					}))
 					.setFindTimeout(Config.timeout.findElement)
 					.sleep(Config.timeout.shortSleep);
-			}, this);
+			}, this);*/
 		},
 
 		_fillSwitchWithMapInput: function(parent, fieldProps) {

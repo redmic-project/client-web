@@ -1,46 +1,46 @@
-var express = require('express'),
+let express = require('express'),
 	bodyParser = require('body-parser'),
 	fs = require('fs'),
 	path = require('path'),
 	http = require('http'),
 	https = require('https');
 
-var logger, params, version,
+let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated,
 	oauthUrl = process.env.OAUTH_URL,
+	oauthClientId = process.env.OAUTH_CLIENT_ID,
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 	production = !!parseInt(process.env.PRODUCTION, 10),
-	apiUrl = process.env.API_URL;
+	apiUrl = process.env.API_URL,
+	sitemapUrl = process.env.SITEMAP_URL;
 
 function getLang(req) {
 
 	return req && req.headers && req.headers['content-language'] || params.lang;
 }
 
-function onGeneralRequest(req, res) {
+function getEnv(req) {
 
-	res.render('index', {
-		useBuilt: params.useBuilt,
-		lang: getLang(req)
-	});
-}
-
-function onEnvRequest(req, res) {
-
-	res.send({
+	return {
 		version: version,
 		useBuilt: params.useBuilt,
 		debug: params.debug,
 		apiUrl: apiUrl,
-		production: production
+		production: production,
+		lang: getLang(req)
+	};
+}
+
+function onGeneralRequest(req, res) {
+
+	res.render('index', {
+		env: getEnv(req)
 	});
 }
 
 function onActivateAccountRequest(req, res) {
 
 	res.render('activateAccount', {
-		useBuilt: params.useBuilt,
-		lang: getLang(req),
-		apiUrl: apiUrl,
+		env: getEnv(req),
 		token: req.params.token
 	});
 }
@@ -48,110 +48,196 @@ function onActivateAccountRequest(req, res) {
 function onNoSupportBrowserRequest(req, res) {
 
 	res.render('noSupportBrowser', {
-		useBuilt: params.useBuilt,
-		lang: getLang(req)
+		env: getEnv(req)
 	});
 }
 
 function on404Request(req, res) {
 
 	res.status(404);
-	res.render('404', { useBuilt: params.useBuilt });
+	res.render('404', {
+		env: getEnv(req)
+	});
 }
 
-function onSitemapRequest(req, res) {
+function onOwnRequestResponse(bindParams, internalRes) {
 
-	var fileData = fs.readFileSync('sitemap.xml', 'ascii');
+	let chunks = [];
+
+	internalRes.on('data', (function(nestedChunks, chunk) {
+
+		nestedChunks.push(chunk);
+	}).bind(this, chunks));
+
+	internalRes.on('end', (function(nestedBindParams, nestedChunks) {
+
+		let content = "";
+
+		for (let i = 0; i < nestedChunks.length; i++) {
+			content += nestedChunks[i].toString();
+		}
+
+		let originalRes = nestedBindParams.originalRes,
+			onSuccess = nestedBindParams.onSuccess || onOwnRequestSuccess,
+			onError = nestedBindParams.onError || onOwnRequestError,
+			afterResponse = nestedBindParams.afterResponse;
+
+		if (this.statusCode < 400) {
+			onSuccess.bind(this)(originalRes, content);
+		} else {
+			onError.bind(this)(originalRes, content);
+		}
+
+		if (afterResponse) {
+			afterResponse(this.statusCode, content);
+		}
+	}).bind(internalRes, bindParams, chunks));
+}
+
+function onOwnRequestSuccess(originalRes, content) {
+
+	originalRes.status(this.statusCode).send(content);
+
+	let internalUrl = this.req.protocol + '//' + this.req.host + this.req.path,
+		internalRequestMessage = `INTERNAL ${this.req.method} ${internalUrl} ${this.statusCode}`;
+
+	logger.info(internalRequestMessage);
+}
+
+function onOwnRequestError(originalRes, err) {
+
+	originalRes.set('Content-Type', 'application/json');
+
+	originalRes.status(500).send({
+		code: 'Server error',
+		description: 'Something went wrong at server. Please, try again.'
+	});
+
+	let errorMessage = err instanceof Object ? err.toString() : err;
+	logger.error(errorMessage);
+}
+
+function onSitemapRequest(_req, res) {
 
 	res.set('Content-Type', 'text/xml');
-	res.send(fileData);
+
+	let currTimestamp = Date.now();
+
+	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - 300000) {
+		let afterResponseCallback = (status, content) => sitemapContent = status ? content : '';
+
+		let internalReq = https.request(sitemapUrl, onOwnRequestResponse.bind(this, {
+			originalRes: res,
+			afterResponse: afterResponseCallback
+		}));
+
+		internalReq.on('error', onOwnRequestError.bind(this, res));
+
+		internalReq.end();
+
+		sitemapLastUpdated = currTimestamp;
+	} else {
+		res.send(sitemapContent);
+	}
 }
 
 function onRobotsRequest(req, res) {
 
-	var fileData = fs.readFileSync('robots.txt', 'utf8');
-
 	res.set('Content-Type', 'text/plain');
-	res.send(fileData);
+
+	if (!robotsContent || !robotsContent.length) {
+		robotsContent = 'User-agent: *\n';
+
+		if (production) {
+			let sitemapPath = 'https://' + req.hostname + '/sitemap.xml',
+				sitemapLine = 'Sitemap: ' + sitemapPath;
+
+			robotsContent += 'Allow: /\n\n' + sitemapLine;
+		} else {
+			robotsContent += 'Disallow: /';
+		}
+	}
+
+	res.send(robotsContent);
 }
 
-function onApiRequest(req, res) {
-
-	res.redirect('/404');
-}
-
-function onJqueryRequest(req, res) {
+function onNullableRequest(_req, res) {
 
 	res.set('Content-Type', 'application/json');
 	res.send('{}');
 }
 
-function onUnknownRequest(req, res, next) {
+function onUnknownRequest(_req, res, _next) {
 
 	res.redirect('/404');
 }
 
 function onOauthTokenRequest(req, res) {
 
-	var body = req.body,
+	res.set('Content-Type', 'application/json');
 
-		clientId = body.clientid,
+	let body = req.body,
 		password = body.password,
 		username = body.username,
 
 		getTokenUrl = oauthUrl + '/token',
-		clientCredentials = clientId + ':' + oauthClientSecret,
+		clientCredentials = oauthClientId + ':' + oauthClientSecret,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 
-		options = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				'Authorization': 'Basic ' + base64ClientCredentials
-			}
-		},
+		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https;
 
-		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https,
-		internalReq = reqLibrary.request(getTokenUrl, options, (function(originalRes, internalRes) {
+	let options = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'Authorization': 'Basic ' + base64ClientCredentials
+		}
+	};
 
-			var chunks = [];
+	let bindParams = {
+		originalRes: res,
+		onError: onOauthRequestError
+	};
 
-			internalRes.on('data', (function(nestedChunks, chunk) {
+	let internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestResponse.bind(this, bindParams));
 
-				nestedChunks.push(chunk);
-			}).bind(this, chunks));
+	internalReq.on('error', onOauthRequestError.bind(this, res));
 
-			internalRes.on('end', (function(nestedOriginalRes, nestedChunks) {
-
-				var content = "";
-				for (var i = 0; i < nestedChunks.length; i++) {
-					content += nestedChunks[i].toString();
-				}
-				nestedOriginalRes.status(this.statusCode).send(content);
-			}).bind(internalRes, originalRes, chunks));
-		}).bind(this, res));
-
-	internalReq.on('error', (function(originalRes, err) {
-
-		logger.error(err);
-		originalRes.sendStatus(500);
-	}).bind(this, res));
-
-	var bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+	let bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
 	internalReq.write(bodyData);
 	internalReq.end();
 }
 
+function onOauthRequestError(originalRes, err) {
+
+	let error = JSON.parse(err),
+		errorType = error.error,
+		errorDescription = error.error_description;
+
+	if (errorType === 'invalid_grant') {
+		originalRes.set('Content-Type', 'application/json');
+
+		originalRes.status(401).send({
+			code: errorType,
+			description: errorDescription
+		});
+
+		logger.error(err);
+
+		return;
+	}
+
+	onOwnRequestError.bind(this)(originalRes, err);
+}
+
 function exposeRoutes(app) {
 
-	app.get('/env', onEnvRequest)
-		.get('/activateAccount/:token', onActivateAccountRequest)
+	app.get('/activateAccount/:token', onActivateAccountRequest)
 		.get('/noSupportBrowser', onNoSupportBrowserRequest)
 		.get('/404', on404Request)
 		.get('/sitemap.xml', onSitemapRequest)
 		.get('/robots.txt', onRobotsRequest)
-		.get(/\/api\/.*/, onApiRequest)
-		.get(/.*\/jquery.js/, onJqueryRequest)
+		.get(/.*\/jquery.js/, onNullableRequest)
 		.get(/.*/, onGeneralRequest)
 		.post('/oauth/token', onOauthTokenRequest)
 		.use(onUnknownRequest);
@@ -159,12 +245,12 @@ function exposeRoutes(app) {
 
 function exposeContents(app, directoryName) {
 
-	var pathOptions = {
+	let pathOptions = {
 		maxAge: 600000,
 		index: false
 	};
 
-	var exposedPath = path.join(__dirname, '..', directoryName),
+	let exposedPath = path.join(__dirname, '..', directoryName),
 		staticPropName = 'static',
 		servedPath = express[staticPropName](exposedPath, pathOptions);
 

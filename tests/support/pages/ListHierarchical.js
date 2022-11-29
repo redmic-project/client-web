@@ -1,13 +1,11 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'tests/support/Config'
 	, 'tests/support/pages/List'
 	, 'tests/support/Utils'
 ], function (
 	declare
 	, lang
-	, Config
 	, ListPage
 	, Utils
 ) {
@@ -16,7 +14,7 @@ define([
 
 	return declare(ListPage, {
 
-		constructor: function(args) {
+		constructor: function() {
 
 			global.expandCollapseSelector = 'div.expandCollapse';
 			global.expandSelector = expandCollapseSelector + ' span.fa-caret-right';
@@ -158,8 +156,8 @@ define([
 							var item = items[i];
 
 							parent = parent
-								.then(lang.partial(function(item) {
-									item.click();
+								.then(lang.partial(function(itemElement) {
+									itemElement.click();
 								}, item))
 								.then(Utils.checkLoadingIsGone());
 						}
@@ -172,7 +170,7 @@ define([
 		checkChildrenSelectWithParentSelected: function(numParentList) {
 
 			var parentSelector = listSelector + ' ' + listRowSelector + ':nth-child(' + numParentList + ')',
-				values = {};
+				valuesObj = {};
 
 			return function() {
 
@@ -182,22 +180,20 @@ define([
 							.then(lang.partial(function(values, children) {
 
 								values.children = children.length;
-							}, values))
+							}, valuesObj))
 							.end()
 						.findAllByCssSelector(childrenInParentSelector + '.selectContainerRow')
 							.then(lang.partial(function(values, children) {
 
 								assert.strictEqual(children.length, values.children, 'No se ha deseleccionado la capa');
-							}, values));
+							}, valuesObj));
 			};
 		},
 
 		checkParentMixedWithChildSelected: function(numParentList) {
 
 			var parentSelector = listSelector + ' ' + listRowSelector + ':nth-child(' + numParentList +
-				').category.mixedSelectContainerRow',
-
-				values = {};
+				').category.mixedSelectContainerRow';
 
 			return function() {
 
@@ -209,9 +205,7 @@ define([
 		checkParentSelectWithChildrenSelected: function(numParentList) {
 
 			var parentSelector = listSelector + ' ' + listRowSelector + ':nth-child(' + numParentList +
-				').category.selectContainerRow',
-
-				values = {};
+				').category.selectContainerRow';
 
 			return function() {
 

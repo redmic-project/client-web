@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 			},
 			command: [
 				'version=$(node -p "require(\'./package.json\').version")',
-				'tar -acf dist-v$version.tar.gz dist/ views/ app/ package.json'
+				'tar -acf dist-v$version.tar.gz dist/ views/ app/ package.json yarn.lock'
 			].join('; ')
 		});
 

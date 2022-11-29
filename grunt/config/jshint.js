@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 	grunt.config('jshint', {
 		src: {
 			options: {
-				ignores: ['public/javascript/redmic/store/util/SimpleQueryEngine.js']
+				esversion: 6
 			},
 			files: {
 				src: [

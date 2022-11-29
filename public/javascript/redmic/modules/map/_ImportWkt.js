@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'leaflet/leaflet'
-	, 'wicket/wicket-leaflet'
+	, 'wicket/wicket-leaflet.min'
 ], function(
 	declare
 	, lang

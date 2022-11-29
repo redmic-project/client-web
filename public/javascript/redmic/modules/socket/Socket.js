@@ -5,7 +5,8 @@ define([
 	, "redmic/modules/base/_Module"
 	, "redmic/base/Credentials"
 	, 'sockjs/sockjs.min'
-	, 'stompjs/stomp.min'
+
+	, 'stomp-websocket/stomp.min'
 ], function(
 	redmicConfig
 	, declare
@@ -13,8 +14,8 @@ define([
 	, _Module
 	, Credentials
 	, SockJS
-	, StompJS
-){
+) {
+
 	return declare(_Module, {
 		//	Summary:
 		//		Módulo para gestionar la comunicación a través de sockets
@@ -70,29 +71,21 @@ define([
 
 		_connect: function() {
 
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
-			}
+			console.log('STOMP: Connecting socket');
 
-			envDfd.then(lang.hitch(this, function(envData) {
+			var target = redmicConfig.getServiceUrl(this._socketTarget),
+				url = target + "?access_token=" + Credentials.get("accessToken"),
+				reconnectCbk = lang.hitch(this, this._reconnect);
 
-				console.log('STOMP: Connecting socket');
+			this.socket = new SockJS(url);
+			this.socket.onclose = reconnectCbk;
 
-				var target = redmicConfig.getServiceUrl(this._socketTarget, envData),
-					url = target + "?access_token=" + Credentials.get("accessToken"),
-					reconnectCbk = lang.hitch(this, this._reconnect);
+			this.stompClient = Stomp.over(this.socket);
+			this.stompClient.debug = function() {};
 
-				this.socket = new SockJS(url);
-				this.socket.onclose = reconnectCbk;
-
-				this.stompClient = Stomp.over(this.socket);
-				this.stompClient.debug = function() {};
-
-				this.stompClient.connect({},
-					lang.hitch(this, this._postConnect),
-					reconnectCbk);
-			}));
+			this.stompClient.connect({},
+				lang.hitch(this, this._postConnect),
+				reconnectCbk);
 		},
 
 		_reconnect: function(msg) {

@@ -6,7 +6,6 @@ define([], function() {
 		'numMaxView': 10,
 		'apiVersion': 1,
 		'pathSeparator': '/',
-		'oauthClientId': 'app',
 		'siteKeyReCaptcha': '6LfA6_0SAAAAACT3i8poH1NqztZCtIW1OahT0cXs',
 		'siteKeyForDebugReCaptcha': '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
 		'googleAnalyticsId': 'G-J753HC86F0'
@@ -574,15 +573,27 @@ define([], function() {
 		return this.outerPaths.indexOf(ancestorPath) !== -1;
 	};
 
-	retObj.getServiceUrl = function(serviceName, envData) {
+	retObj.getEnvVariableValue = function(variableName) {
+
+		var variableValue;
+
+		try {
+			variableValue = window[variableName];
+		} catch(e) {
+			console.warn('Tried to get undefined global variable "%s"', variableName);
+			variableValue = '';
+		}
+
+		return variableValue;
+	};
+
+	retObj.getServiceUrl = function(serviceName) {
 
 		if (!serviceName || !serviceName.length) {
 			return;
 		}
 
-		if (!envData || !envData.apiUrl) {
-			return serviceName;
-		}
+		var apiUrl = retObj.getEnvVariableValue('envApiUrl');
 
 		// TODO esto es necesario hasta que todos los lang.replace de rutas se centralicen y se puedan devolver como dfd
 		var undefinedIndex = serviceName.indexOf('undefined');
@@ -590,11 +601,11 @@ define([], function() {
 			console.error('Service URL "%s" contains "undefined", variable replacement went wrong', serviceName);
 			if (undefinedIndex === 0) {
 				console.error('Trying to replace "undefined" with API URL..');
-				return serviceName.replace('undefined', envData.apiUrl);
+				return serviceName.replace('undefined', apiUrl);
 			}
 		}
 
-		return serviceName.replace('{apiUrl}', envData.apiUrl);
+		return serviceName.replace('{apiUrl}', apiUrl);
 	};
 
 	return retObj;

@@ -3,14 +3,15 @@ module.exports = function(grunt) {
 	var srcPath = grunt.config('redmicConfig.srcPath'),
 		distPath = grunt.config('redmicConfig.distPath'),
 		publicPath = srcPath.split('/')[0],
+
 		resourcesPath = 'resources/**',
+
 		stylesPath = publicPath + '/stylesheets',
 		stylesDistPath = stylesPath + '/dist',
 		distStylesSubPath = distPath + '/stylesheets',
 
 		pdfjsPath = '/javascript/pdfjs/',
-		pdfjsBuildPath = 'build/generic/',
-		srcPdfjsPath = publicPath + pdfjsPath + pdfjsBuildPath,
+		srcPdfjsPath = publicPath + pdfjsPath,
 		distPdfjsPath = distPath + pdfjsPath,
 		pdfjsWebName = 'web',
 		pdfjsBuildName = 'build';
@@ -35,12 +36,12 @@ module.exports = function(grunt) {
 		pdfjs: {
 			files: [{
 				cwd: srcPdfjsPath + pdfjsWebName,
-				src: ['v*[^.map]', 'images/*', 'locale/es-ES/*', 'locale/en-GB/*'],
+				src: ['v*[^.map]', 'pdf.viewer.js', 'images/*', 'locale/es-ES/*', 'locale/en-GB/*'],
 				dest: distPdfjsPath + pdfjsWebName,
 				expand: true
 			},{
 				cwd: srcPdfjsPath + pdfjsBuildName,
-				src: '*.js',
+				src: 'pdf.worker.js',
 				dest: distPdfjsPath + pdfjsBuildName,
 				expand: true
 			}]

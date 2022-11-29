@@ -24,7 +24,7 @@ define([
 					label: 'Feedback',
 					icon: 'fa-envelope-o'
 				},{
-					url: 'https://twitter.com/redmic_oag',
+					url: 'https://twitter.com/redmic_project',
 					label: 'Twitter',
 					icon: 'fa-twitter'
 				},{
@@ -32,7 +32,7 @@ define([
 					label: 'LinkedIn',
 					icon: 'fa-linkedin'
 				},{
-					url: 'https://www.youtube.com/channel/UCLyTJ8ryUtq0A-kcxsg4InQ',
+					url: 'https://www.youtube.com/@redmic-project',
 					label: 'YouTube',
 					icon: 'fa-youtube'
 				},{

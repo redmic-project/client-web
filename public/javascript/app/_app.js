@@ -10,7 +10,8 @@ define([
 	, declare
 	, lang
 	, _appItfc
-){
+) {
+
 	return declare([_Module, _Show, _appItfc], {
 		//	Summary:
 		//		Módulo App para gestionar la aplicación
@@ -68,7 +69,7 @@ define([
 			});
 		},
 
-		_onModuleShown: function(moduleKey, res) {
+		_onModuleShown: function(moduleKey) {
 
 			this._emitEvt('MODULE_SHOWN', {
 				key: moduleKey

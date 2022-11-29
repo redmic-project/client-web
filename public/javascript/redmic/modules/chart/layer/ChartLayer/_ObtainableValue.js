@@ -8,7 +8,8 @@ define([
 	, lang
 	, aspect
 	, _ObtainableValueItfc
-){
+) {
+
 	return declare(_ObtainableValueItfc, {
 		//	summary:
 		//		Extensión para devolver el valor que toma una gráfica en una zona concreta.
@@ -62,12 +63,22 @@ define([
 		_subscribeToCategoriesObtainableValue: function(categories) {
 
 			categories
+				.each(function(d, i) {
+
+					this.__data__ = {
+						data: d,
+						index: i
+					};
+				})
 				.on("mouseup.obtainableValue", lang.hitch(this, this._onMouseUpCategory))
 				.on("mouseenter.obtainableValue", lang.hitch(this, this._onMouseEnterCategory))
 				.on("mouseleave.obtainableValue", lang.hitch(this, this._onMouseLeaveCategory));
 		},
 
-		_onMouseUpCategory: function(d, i) {
+		_onMouseUpCategory: function(_e, dataWrapper) {
+
+			var d = dataWrapper.data,
+				i = dataWrapper.index;
 
 			if (!this._checkCategoryIsHidden(d, i)) {
 				this._publishCleanCategoryValue(d, i);
@@ -75,7 +86,10 @@ define([
 			}
 		},
 
-		_onMouseEnterCategory: function(d, i) {
+		_onMouseEnterCategory: function(_e, dataWrapper) {
+
+			var d = dataWrapper.data,
+				i = dataWrapper.index;
 
 			if (!this._checkCategoryIsHidden(d, i)) {
 				this._publishCategoryValue(d, i);
@@ -94,7 +108,10 @@ define([
 			this._emitEvt("GOT_CATEGORY_VALUE", pubObj);
 		},
 
-		_onMouseLeaveCategory: function(d, i) {
+		_onMouseLeaveCategory: function(_e, dataWrapper) {
+
+			var d = dataWrapper.data,
+				i = dataWrapper.index;
 
 			this._publishCleanCategoryValue(d, i);
 		},

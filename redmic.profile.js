@@ -1,21 +1,30 @@
 var includeLocales = ['es', 'en'];
 
-var amdTagger = function(filename, mid) {
+var amdTagger = function(filename) {
 
 	return /\.js$/.test(filename);
 };
 
-var copyOnlyTagger = function(filename, mid) {
+var copyOnlyTagger = function() {
 
 	return true;
 };
 
-var ignoreTagger = function(desiredModuleId, filename, mid) {
+var ignoreTagger = function(desiredModuleId, _filename, mid) {
+
+	if (desiredModuleId instanceof Array) {
+		return desiredModuleId.indexOf(mid) === -1;
+	}
 
 	return mid !== desiredModuleId;
 };
 
-var profile = {
+var declarativeTagger = function(filename) {
+
+	return /\.htm(l)?$/.test(filename);
+};
+
+var profileObj = {
 	basePath: './public/javascript',
 	releaseDir: '../../dist',
 	releaseName: 'javascript',
@@ -23,8 +32,9 @@ var profile = {
 	layerOptimize: 'closure',
 	optimize: 'closure',
 	optimizeOptions: {
-		languageIn: 'ES5'/*,
-		compilationLevel: 'WHITESPACE_ONLY'*/
+		languageIn: 'ECMASCRIPT_2017',
+		languageOut: 'ECMASCRIPT_2015',
+		compilationLevel: 'SIMPLE_OPTIMIZATIONS'
 	},
 	cssOptimize: 'comments',
 	mini: true,
@@ -33,13 +43,13 @@ var profile = {
 	locale: includeLocales[0],
 	localeList: includeLocales.join(','),
 	useSourceMaps: false,
+	buildReportDir: '../..',
+	maxOptimizationProcesses: 2,
 
 	resourceTags: {
-		amd: amdTagger
+		amd: amdTagger,
+		declarative: declarativeTagger
 	},
-
-	//depsDumpDotFilename: 'redmic.dot',
-	//dotModules: false,
 
 	staticHasFeatures: {
 		'config-deferredInstrumentation': 0,
@@ -74,9 +84,6 @@ var profile = {
 	},
 
 	packages: [{
-		name: 'dstore',
-		location: 'dstore'
-	},{
 		name: 'dijit',
 		location: 'dijit'
 	},{
@@ -87,13 +94,39 @@ var profile = {
 		location: 'dojox'
 	},{
 		name: 'cbtree',
-		location: 'cbtree'
+		location: 'cbtree',
+		resourceTags: {
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, [
+				'cbtree/Tree',
+				'cbtree/store/ObjectStore',
+				'cbtree/model/ForestStoreModel',
+				'cbtree/model/_base/BaseStoreModel',
+				'cbtree/model/_base/CheckedStoreModel',
+				'cbtree/model/_base/Parents',
+				'cbtree/model/_base/Prologue',
+				'cbtree/errors/createError',
+				'cbtree/errors/CBTErrors',
+				'cbtree/store/Memory',
+				'cbtree/store/Natural',
+				'cbtree/store/Hierarchy',
+				'cbtree/Evented',
+				'cbtree/CheckBox',
+				'cbtree/util/shim/Array',
+				'cbtree/util/QueryEngine',
+				'cbtree/util/IE8_Event'
+			])
+		}
 	},{
 		name: 'put-selector',
 		location: 'put-selector'
 	},{
 		name: 'wicket',
-		location: 'wicket'
+		location: 'wicket',
+		resourceTags: {
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, ['wicket/wicket.min', 'wicket/wicket-leaflet.min'])
+		}
 	},{
 		name: 'app',
 		location: 'app',
@@ -101,14 +134,14 @@ var profile = {
 			amd: amdTagger
 		}
 	},{
-		name: 'redmic',
-		location: 'redmic',
+		name: 'RWidgets',
+		location: 'redmic/widgets',
 		resourceTags: {
 			amd: amdTagger
 		}
 	},{
-		name: 'RWidgets',
-		location: 'redmic-widgets/src/app',
+		name: 'redmic',
+		location: 'redmic',
 		resourceTags: {
 			amd: amdTagger
 		}
@@ -187,7 +220,11 @@ var profile = {
 		name: 'leaflet-measure',
 		location: 'leaflet-measure/dist',
 		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'leaflet-measure/leaflet-measure.min')
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, [
+				'leaflet-measure/leaflet-measure.es',
+				'leaflet-measure/leaflet-measure.en'
+			])
 		}
 	},{
 		name: 'pruneCluster',
@@ -204,10 +241,10 @@ var profile = {
 			ignore: ignoreTagger.bind(null, 'sockjs/sockjs.min')
 		}
 	},{
-		name: 'stompjs',
-		location: 'stompjs/lib',
+		name: 'stomp-websocket',
+		location: 'stomp-websocket/lib',
 		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'stompjs/stomp.min')
+			ignore: ignoreTagger.bind(null, 'stomp-websocket/stomp.min')
 		}
 	},{
 		name: 'alertify',
@@ -231,36 +268,38 @@ var profile = {
 		}
 	},{
 		name: 'd3Tip',
-		location: 'd3-tip',
+		location: 'd3-v6-tip/build',
 		resourceTags: {
 			amd: amdTagger,
-			ignore: ignoreTagger.bind(null, 'd3Tip/index')
+			ignore: ignoreTagger.bind(null, 'd3Tip/d3-v6-tip.min')
 		}
 	},{
-		name: 'node-uuid',
-		location: 'node-uuid',
-		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'node-uuid/uuid')
-		}
-	},{
-		name: 'proj4js',
-		location: 'proj4js/dist',
+		name: 'uuid',
+		location: 'uuid/dist/umd',
 		resourceTags: {
 			amd: amdTagger,
-			ignore: ignoreTagger.bind(null, 'proj4js/proj4')
+			ignore: ignoreTagger.bind(null, 'uuid/uuidv4.min')
+		}
+	},{
+		name: 'proj4',
+		location: 'proj4/dist',
+		resourceTags: {
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, 'proj4/proj4')
 		}
 	},{
 		name: 'dropzone',
 		location: 'dropzone/dist/min',
 		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'dropzone/dropzone.min')
+			amd: amdTagger,
+			ignore: ignoreTagger.bind(null, 'dropzone/dropzone-amd-module.min')
 		}
 	},{
 		name: 'tv4',
 		location: 'tv4',
 		resourceTags: {
 			amd: amdTagger,
-			ignore: ignoreTagger.bind(null, 'tv4/tv4.min')
+			ignore: ignoreTagger.bind(null, 'tv4/tv4')
 		}
 	},{
 		name: 'colorjs',
@@ -295,13 +334,13 @@ var profile = {
 		location: 'handlebars/dist',
 		resourceTags: {
 			amd: amdTagger,
-			ignore: ignoreTagger.bind(null, 'handlebars/handlebars.min')
+			ignore: ignoreTagger.bind(null, 'handlebars/handlebars.runtime.min')
 		}
 	}],
 
 	map: {
-		'd3Tip/index': {
-			'd3': 'd3/d3.min'
+		'd3Tip/d3-v6-tip.min': {
+			'd3-selection': 'd3/d3.min'
 		},
 		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'
@@ -313,7 +352,7 @@ var profile = {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'wicket': {
-			'wicket': 'wicket/wicket'
+			'wicket': 'wicket/wicket.min'
 		}
 	},
 
@@ -344,6 +383,12 @@ var profile = {
 				, 'dojo/dnd/Mover'
 				, 'dojo/dnd/move'
 				, 'dojo/dnd/autoscroll'
+			]
+		},
+		'redmic/modules/base/_Module': {
+			discard: true,
+			dependencies: [
+				'redmic/modules/base/_Show'
 			]
 		}
 	}
@@ -486,6 +531,7 @@ var viewLayers = {
 	, 'app/details/views/OrganisationDetailsView': {}
 	, 'app/details/views/OrganisationCatalogDetailsView': {}
 	, 'app/details/views/SpeciesCatalogDetailsView': {}
+
 	, 'app/edition/views/ActivityEditionView': {}
 	, 'app/edition/views/DeviceEditionView': {}
 	, 'app/edition/views/DocumentEditionView': {}
@@ -518,10 +564,11 @@ var viewLayers = {
 };
 
 var viewLayerDefaultConfig = {
-	includeLocales: includeLocales
+	includeLocales: includeLocales,
+	layerDependencies: ['redmic/modules/base/_Module']
 };
 
-(function() {
+var profile = (function() {
 
 	for (var viewLayer in viewLayers) {
 		var viewLayerConfig = viewLayers[viewLayer];
@@ -532,8 +579,8 @@ var viewLayerDefaultConfig = {
 			viewLayerConfig[viewLayerConfigProp] = viewLayerConfigValue;
 		}
 
-		profile.layers[viewLayer] = viewLayerConfig;
+		profileObj.layers[viewLayer] = viewLayerConfig;
 	}
 
-	return profile;
+	return profileObj;
 })();

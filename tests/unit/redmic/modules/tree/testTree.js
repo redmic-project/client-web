@@ -145,7 +145,7 @@ define([
 					item,
 					'nodo',
 					{
-						srcElement: {
+						target: {
 							checked: true
 						}
 					}
@@ -228,7 +228,7 @@ define([
 					item,
 					'nodo',
 					{
-						srcElement: {
+						target: {
 							checked: false
 						}
 					}
@@ -611,7 +611,7 @@ define([
 					item,
 					'nodo',
 					{
-						srcElement: {
+						target: {
 							checked: true
 						}
 					}
@@ -718,7 +718,7 @@ define([
 					item,
 					'nodo',
 					{
-						srcElement: {
+						target: {
 							checked: false
 						}
 					}

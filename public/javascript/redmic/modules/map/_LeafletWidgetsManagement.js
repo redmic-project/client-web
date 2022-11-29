@@ -2,6 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/_base/kernel'
+	, 'dojo/Deferred'
 	, 'dojo/dom-class'
 	, 'dojo/on'
 	, 'leaflet/leaflet'
@@ -10,11 +11,11 @@ define([
 	, 'awesome-markers/leaflet.awesome-markers.min'
 	, 'L-coordinates/Leaflet.Coordinates-0.1.5.min'
 	, 'L-navBar/Leaflet.NavBar'
-	, 'leaflet-measure/leaflet-measure.min'
 ], function(
 	declare
 	, lang
 	, kernel
+	, Deferred
 	, domClass
 	, on
 	, L
@@ -55,9 +56,14 @@ define([
 			this._addLayersSelector();
 			this._addCoordinatesViewer();
 			this._addNavBar();
-			this._addMeasureTools();
-			this._addMiniMap();
-			this._addScaleBar();
+
+			var measureToolsDfd = new Deferred();
+			measureToolsDfd.then(lang.hitch(this, function() {
+
+				this._addMiniMap();
+				this._addScaleBar();
+			}));
+			this._addMeasureTools(measureToolsDfd);
 		},
 
 		_addLayersSelector: function() {
@@ -132,29 +138,41 @@ define([
 			this.miniMapInstance = miniMap;
 		},
 
-		_addMeasureTools: function() {
+		_addMeasureTools: function(dfd) {
 
 			if (!this.measureTools) {
+				dfd.resolve();
 				return;
 			}
 
-			var measureConfig = {
-					primaryLengthUnit: 'meters',
-					secondaryLengthUnit: 'kilometers',
-					primaryAreaUnit: 'sqmeters',
-					secondaryAreaUnit: 'hectares',
-					localization: kernel.locale
-				},
-				measure = new L.Control.Measure(measureConfig);
+			var measureToolsPath = 'leaflet-measure/leaflet-measure.' + kernel.locale;
+
+			require([measureToolsPath], lang.hitch(this, this._onMeasureToolsLoaded, dfd));
+
+			this.map.on('measurestart', lang.hitch(this, function() {
+
+				this._clickDisabled = true;
+			}));
+
+			this.map.on('measurefinish', lang.hitch(this, function() {
+
+				this._clickDisabled = false;
+			}));
+		},
+
+		_onMeasureToolsLoaded: function(dfd) {
+
+			var measure = new L.Control.Measure({
+				position: 'topright',
+				primaryLengthUnit: 'meters',
+				secondaryLengthUnit: 'kilometers',
+				primaryAreaUnit: 'sqmeters',
+				secondaryAreaUnit: 'hectares'
+			});
 
 			measure.addTo(this.map);
 
-			this.map.on('measurestart', lang.hitch(this, function() {
-				this._clickDisabled = true;
-			}));
-			this.map.on('measurefinish', lang.hitch(this, function() {
-				this._clickDisabled = false;
-			}));
+			dfd.resolve();
 		},
 
 		_addScaleBar: function() {

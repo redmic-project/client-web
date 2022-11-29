@@ -8,7 +8,7 @@ define([
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/ListImpl"
-	, "templates/AdministrativeStatisticsList"
+	//, "templates/AdministrativeStatisticsList"
 	, "templates/StatisticsTitle"
 ], function(
 	_Main
@@ -20,7 +20,7 @@ define([
 	, lang
 	, _ButtonsInRow
 	, ListImpl
-	, TemplateList
+	//, TemplateList
 	, TemplateTitle
 ){
 	return declare([Layout, Controller, _Main, _AddTitle], {
@@ -61,7 +61,8 @@ define([
 					props: {
 						title: this.i18n.administrative,
 						target: this.targetBrowser,
-						template: TemplateList,
+						//template: TemplateList,
+						template: TemplateTitle,
 						rowConfig: {
 							buttonsConfig: {
 								listButton: [{

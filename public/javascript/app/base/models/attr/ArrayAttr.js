@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "RWidgets/Utilities"
-	, 'node-uuid/uuid'
+	, 'uuid/uuidv4.min'
 	, "./_ComplexAttr"
 ], function (
 	declare
@@ -144,16 +144,16 @@ define([
 			return (Utilities.isValidNumber(index) && index >= 0) ? this._itemIdsByPosition[index] : index;
 		},
 
-		_getItemIndex: function(/*String*/ uuid) {
+		_getItemIndex: function(/*String*/ itemUuid) {
 			//	summary:
 			//		Devuelve el índice que le corresponde dentro del array al UUID especificado.
-			//	uuid:
+			//	itemUuid:
 			//		UUID del elemento cuyo índice es buscado
 			//	returns:
 			//		Índice del elemento dentro del array (o -1 si no se encuentra)
 
 			for (var i = 0; i < this._length; i++) {
-				if (this._itemIdsByPosition[i] === uuid) {
+				if (this._itemIdsByPosition[i] === itemUuid) {
 					return i;
 				}
 			}
@@ -253,7 +253,7 @@ define([
 			//	summary:
 			//		Genera y devuelve un nuevo UUID
 
-			return uuid.v4();	// return String
+			return uuid();	// return String
 		},
 
 		_addValue: function(/*String*/ generatedIndex, /*Integer*/ positionIndex) {
@@ -338,17 +338,17 @@ define([
 			}
 		},
 
-		_buildItems: function(/*Object*/ schema, /*String*/ uuid, /*Integer*/ index) {
+		_buildItems: function(/*Object*/ schema, /*String*/ itemUuid, /*Integer*/ index) {
 			//	summary:
 			//		Constructor de los elementos del array.
 			//	schema:
 			//		Sub-schema con los elementos del array
-			//	uuid:
+			//	itemUuid:
 			//		UUID del elemento que vamos a construir
 			//	index:
 			//		Índice del elemento que vamos a construir
 
-			var props = this._getPropsForNewInstance(uuid, schema),
+			var props = this._getPropsForNewInstance(itemUuid, schema),
 				previousInitValue = this._initValue ? this._initValue[index] : undefined,
 				dfd = new Deferred();
 
@@ -371,10 +371,10 @@ define([
 			return dfd;
 		},
 
-		_getChildIsRequired: function(/*String*/ uuid) {
+		_getChildIsRequired: function(/*String*/ itemUuid) {
 			//	summary:
 			//		Comprueba si un elemento es requerido según el schema de su ancestro.
-			//	uuid:
+			//	itemUuid:
 			//		UUID del elemento que comprobamos.
 			//	returns:
 			//		Estado de requerido del elemento.
@@ -577,18 +577,17 @@ define([
 			//	summary:
 			//		Devuelve si el valor ha cambiado con respecto al original de la instancia.
 
-			var type = this._schema.type;
-
-			if (this._isTypeNull() && !value &&
-				(!initValue || initValue.length === 0)) {
+			if (this._isTypeNull() && !value && (!initValue || initValue.length === 0)) {
 				return false;
-			} else if (!value || !initValue || value.length !== initValue.length) {
+			}
+
+			if (!value || !initValue || value.length !== initValue.length) {
 				return true;
 			}
 
-			var uuid, instance;
-			for (uuid in this._items) {
-				instance = this._items[uuid];
+			var itemUuid, instance;
+			for (itemUuid in this._items) {
+				instance = this._items[itemUuid];
 				if (instance.get && instance.get("hasChanged")) {
 					return true;
 				}

@@ -30,7 +30,7 @@ define([
 
 			this.config = {
 				ownChannel: "login",
-				templateProps:  {
+				templateProps: {
 					templateString: template,
 					i18n: this.i18n,
 					_onSignIn: lang.partial(this._onSignIn, this),
@@ -76,10 +76,20 @@ define([
 			});
 		},
 
-		_onSignIn: function(self, /*Event*/ evt) {
+		_startLoading: function() {
+
+			this._emitEvt('LOADING');
+		},
+
+		_endLoading: function() {
+
+			this._emitEvt('LOADED');
+		},
+
+		_onSignIn: function(self) {
 			//	Summary:
 			//		Llamado cuando se pulsa el botón para acceder a la plataforma.
-			//      Se realiza una validación del formulario y luego se realiza
+			//		Se realiza una validación del formulario y luego se realiza
 			//		el envío de este.
 			//		*** Se ejecuta en el ámbito del template
 			//
@@ -89,14 +99,21 @@ define([
 
 			self._trackLoginButton('login');
 
-			if (this.loginFormNode.validate() && (values = this.loginFormNode.get("value"))) {
-				this.password.set("value", "");
+			if (this.loginFormNode.validate()) {
+				var values = this.loginFormNode.get('value');
+				if (!values) {
+					return;
+				}
+
+				self._startLoading();
+				this.password.set('value', '');
 				self._getAccessToken(values);
 			}
 		},
 
-		_onGuestAccess: function(evt) {
+		_onGuestAccess: function() {
 
+			this._startLoading();
 			this._trackLoginButton('guest');
 		},
 
@@ -124,10 +141,9 @@ define([
 			//		values private: credenciales para obtener el token
 			//
 
-			var clientId = redmicConfig.oauthClientId,
-				username = values.email,
+			var username = values.email,
 				password = values.password,
-				data = 'clientid=' + clientId + '&username=' + username + '&password=' + password;
+				data = 'username=' + username + '&password=' + password;
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
@@ -141,25 +157,17 @@ define([
 			});
 		},
 
-		_dataAvailable: function(res, resWrapper) {
+		_dataAvailable: function(res) {
+
+			this._startLoading();
 
 			var accessToken = res.data.access_token;
 			Credentials.set('accessToken', accessToken);
 		},
 
-		_errorAvailable: function(error, status, resWrapper) {
+		_beforeHide: function() {
 
-			var res = resWrapper.res,
-				errorRes = JSON.parse(res.text),
-				errorMsg;
-
-			if (errorRes && errorRes.error_description) {
-				errorMsg = errorRes.error_description;
-			} else {
-				errorMsg = error;
-			}
-
-			alertify.error(errorMsg);
+			this._endLoading();
 		}
 	});
 });

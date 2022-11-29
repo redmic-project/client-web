@@ -22,7 +22,7 @@ define([], function() {
 			, map: 'div.map.leaflet-container'
 			, fileUploadInput: 'input.dz-hidden-input'
 			, notLoading: ':not([loading="true"])'
-			, loading: '[loading="true"]'
+			, loading: '*[loading="true"]'
 			, pdfViewer: 'div.windowContent object[data]'
 			, okAlertify: 'div.alertify div.ajs-footer button.ajs-ok'
 			, cancelAlertify: 'div.alertify div.ajs-footer button.ajs-cancel'
@@ -38,17 +38,15 @@ define([], function() {
 			, feedback: '/feedback'
 		},
 		timeout: {
-			veryLongFindElement: 70000,
-			longFindElement: 30000,
-			findElement: 5000,
 			shortFindElement: 500,
+			findElement: 5000,
+			longFindElement: 30000,
+			veryLongFindElement: 70000,
 			veryShortSleep: 250,
 			shortSleep: 500,
 			longSleep: 1000,
-			veryLongSleep: 5000
-		},
-		counter: {
-			findLoading: 300
+			veryLongSleep: 5000,
+			loading: 20000
 		}
 	};
 });

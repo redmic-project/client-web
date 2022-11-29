@@ -12,7 +12,7 @@ module.exports = function(args) {
 		};
 
 	return deepmerge(_internFunctional, config, {
-		arrayMerge: function (destinationArray, sourceArray, options) {
+		arrayMerge: function (_destinationArray, sourceArray, _options) {
 
 			return sourceArray;
 		}

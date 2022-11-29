@@ -1,5 +1,5 @@
 define([
-	'd3Tip/index'
+	'd3Tip/d3-v6-tip.min'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -72,7 +72,7 @@ define([
 			this._currentLegendBarHeight = this._legendBarRowHeight;
 			this._reserveHeight(this._legendBarRowHeight * 2);
 
-			this.legendBarTooltip = d3Tip().attr("class", this.chartsTooltipClass);
+			this.legendBarTooltip = d3Tip.tip().attr("class", this.chartsTooltipClass);
 
 			this.svg.call(this.legendBarTooltip);
 		},

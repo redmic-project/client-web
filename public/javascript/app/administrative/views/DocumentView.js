@@ -1,10 +1,10 @@
 define([
-	"app/base/views/extensions/_EditionWizardView"
-	, "app/designs/textSearchFacetsList/main/Bibliography"
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "RWidgets/Button"
+	'app/base/views/extensions/_EditionWizardView'
+	, 'app/designs/textSearchFacetsList/main/Bibliography'
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'RWidgets/Button'
 ], function (
 	_EditionWizardView
 	, BibliographyMain
@@ -12,7 +12,8 @@ define([
 	, declare
 	, lang
 	, Button
-){
+) {
+
 	return declare([BibliographyMain, _EditionWizardView], {
 		//	summary:
 		//		Vista de Document.
@@ -43,28 +44,29 @@ define([
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
-							groupId: "edition",
+							groupId: 'edition',
 							icons: [{
-								icon: "fa-edit",
-								btnId: "edit",
-								title: "edit",
-								option: "default",
+								icon: 'fa-edit',
+								btnId: 'edit',
+								title: 'edit',
+								option: 'default',
 								href: this.viewPaths.documentEdit
 							},{
-								icon: "fa-copy",
-								btnId: "copy",
-								title: "copy",
+								icon: 'fa-copy',
+								btnId: 'copy',
+								title: 'copy',
 								href: this.viewPaths.documentAdd
 							}]
 						},{
-							icon: "fa-info-circle",
-							btnId: "details",
-							title: "info",
-							href: this.viewPaths.documentDetails
+							icon: 'fa-external-link',
+							btnId: 'url',
+							condition: this._urlCondition,
+							href: '{url}'
 						},{
-							icon: "fa-file-pdf-o",
-							btnId: "downloadPdf",
-							condition: "url"
+							icon: 'fa-info-circle',
+							btnId: 'details',
+							title: 'info',
+							href: this.viewPaths.documentDetails
 						}]
 					},
 					shownOptionTemplate: {
@@ -79,8 +81,8 @@ define([
 			this.inherited(arguments);
 
 			this.loadButton = new Button({
-				iconClass: "fa fa-upload",
-				'class': "warning",
+				iconClass: 'fa fa-upload',
+				'class': 'warning',
 				'title': this.i18n.loadDocument,
 				'href': this.loadPath
 			}).placeAt(this.buttonsNode);

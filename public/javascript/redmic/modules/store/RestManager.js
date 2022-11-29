@@ -125,11 +125,6 @@ define([
 
 		_subGet: function(req) {
 
-			this._getEnvironmentData(lang.hitch(this, this._doGet), req);
-		},
-
-		_doGet: function(req) {
-
 			this._emitLoading(req);
 
 			var target = this._getResolvedTarget(req.target);
@@ -164,11 +159,6 @@ define([
 		},
 
 		_subRequest: function(req) {
-
-			this._getEnvironmentData(lang.hitch(this, this._doRequest), req);
-		},
-
-		_doRequest: function(req) {
 
 			this._emitLoading(req);
 
@@ -246,11 +236,6 @@ define([
 
 		_subSave: function(req) {
 
-			this._getEnvironmentData(lang.hitch(this, this._doSave), req);
-		},
-
-		_doSave: function(req) {
-
 			this._emitLoading(req);
 
 			var target = this._getResolvedTarget(req.target);
@@ -303,11 +288,6 @@ define([
 
 		_subRemove: function(req) {
 
-			this._getEnvironmentData(lang.hitch(this, this._doRemove), req);
-		},
-
-		_doRemove: function(req) {
-
 			this._emitLoading(req);
 
 			var target = this._getResolvedTarget(req.target);
@@ -345,31 +325,9 @@ define([
 			});
 		},
 
-		_getEnvironmentData: function(callback, req) {
-
-			if (this._env || !this._targetNeedRedmicPrefixReplacement(req.target)) {
-				callback(req);
-				return;
-			}
-
-			var envDfd = window.env;
-			if (envDfd) {
-				envDfd.then(lang.hitch(this, function(envData) {
-
-					this._env = envData;
-					callback(req);
-				}));
-			}
-		},
-
-		_targetNeedRedmicPrefixReplacement: function(target) {
-
-			return target.indexOf(redmicConfig.apiUrlVariable) !== -1;
-		},
-
 		_getResolvedTarget: function(target) {
 
-			return redmicConfig.getServiceUrl(target, this._env);
+			return redmicConfig.getServiceUrl(target);
 		},
 
 		_emitLoading: function(req) {
@@ -410,16 +368,10 @@ define([
 
 			var status = response.status,
 				error = response.error,
-				data = response.data,
-				description = error ? error : this.defaultErrorDescription;
-
-			if (data && data.description) {
-				description += ' - ' + data.description;
-			}
+				description = error || this.defaultErrorDescription;
 
 			if (status) {
-				description += ' - ' + status + ' - <a href="/feedback/' + status + '" target="_blank">' +
-					this.i18n.contact + '</a>';
+				description += ' - <a href="/feedback/' + status + '" target="_blank">' + this.i18n.contact + '</a>';
 			}
 
 			this._emitEvt('COMMUNICATION', {

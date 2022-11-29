@@ -283,14 +283,15 @@ define([
 
 			var formDef = declare([FormContainerImpl, _ListenModelHasChanged, _CreateKeypad]);
 
-			this[obj.label + 'Form'] = instanceForm = new declare(formDef).extend(_Window)(obj.formConfig);
+			var FormDefinition = declare(formDef).extend(_Window);
+			this[obj.label + 'Form'] = instanceForm = new FormDefinition(obj.formConfig);
 
 			this._createSubscriptionsForm(instanceForm, obj);
 		},
 
 		_createSubscriptionsForm: function(instanceForm, obj) {
 
-			this._subscribe(instanceForm.getChannel("CANCELLED"), lang.hitch(this, function(res) {
+			this._subscribe(instanceForm.getChannel("CANCELLED"), lang.hitch(this, function() {
 
 				this._showBoxUser(obj.formConfig.targetSave ? obj.formConfig.targetSave : obj.formConfig.target);
 			}));
@@ -351,14 +352,14 @@ define([
 			this._once(this._widgets.userImage.getChannel("SHOWN"), lang.hitch(this, this._subUserImageShownOnce));
 		},
 
-		_subUserImageShownOnce: function(res) {
+		_subUserImageShownOnce: function() {
 
 			this._nodes.userImage.onclick = lang.hitch(this, this._tryToGoToEditImage);
 		},
 
 		_tryToGoToEditImage: function(evt) {
 
-			var node = evt.target || evt.srcElement,
+			var node = evt.target || evt.currentTarget,
 				nodeTagName = node.tagName,
 				nodeAttribute = node.getAttribute('data-redmic-id');
 
@@ -383,7 +384,7 @@ define([
 			});
 		},
 
-		_afterShow: function(request) {
+		_afterShow: function() {
 
 			this._setSubscription({
 				channel : this._widgets.userData.getChannel("BUTTON_EVENT"),
@@ -465,24 +466,7 @@ define([
 				dataType: "password"
 			}, "userData");
 
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
-			}
-
-			envDfd.then(lang.hitch(this, function(resData, envData) {
-
-				// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
-				// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
-				var userImageBaseTarget = envData.apiUrl.replace('/api', ''),
-					userImagePath = resData.image;
-
-				if (userImagePath) {
-					resData.image = userImageBaseTarget + userImagePath;
-				}
-
-				this._injectItemList(resData, "userImage");
-			}, data));
+			this._injectItemList(data, "userImage");
 		},
 
 		_generateWidgets: function() {

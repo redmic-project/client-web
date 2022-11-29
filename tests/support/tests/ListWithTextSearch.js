@@ -30,14 +30,14 @@ define([
 				Should_UpdateListContent_When_FilteredByTextSearch: function() {
 
 					var partialTextSearchValue = this.parent.externalContext.config.textSearchValue.slice(-3),
-						values = {};
+						valuesObj = {};
 
 					return this.remote
 						.then(indexPage.getLoadedListRowsTitleText())
 						.then(lang.partial(function(values, textArr) {
 
 							values.oldTitles = textArr;
-						}, values))
+						}, valuesObj))
 						.then(indexPage.setTextSearchInput(partialTextSearchValue))
 						.then(indexPage.getLoadedListRowsTitleText())
 						.then(lang.hitch(this, function(values, textArr) {
@@ -48,13 +48,13 @@ define([
 								Utils.notSameOrderedMembers(oldTitles, textArr,
 									'No se ha actualizado el listado tras filtrar');
 							}
-						}, values));
+						}, valuesObj));
 				},
 
 				Should_NotUpdateListContent_When_FilteredByTextSearchWithRepeatedText: function() {
 
 					var partialTextSearchValue = this.parent.externalContext.config.textSearchValue.slice(-3),
-						values = {};
+						valuesObj = {};
 
 					return this.remote
 						.then(indexPage.getLoadedListRowsTitleText())
@@ -63,20 +63,20 @@ define([
 						.then(lang.partial(function(values, textArr) {
 
 							values.oldTitles = textArr;
-						}, values))
+						}, valuesObj))
 						.then(indexPage.setTextSearchInput(partialTextSearchValue))
 						.then(indexPage.getLoadedListRowsTitleText())
 						.then(lang.hitch(this, function(values, textArr) {
 
 							var oldTitles = values.oldTitles;
 							Utils.sameOrderedMembers(oldTitles, textArr, 'Se ha actualizado el listado tras filtrar');
-						}, values));
+						}, valuesObj));
 				},
 
 				Should_FindMatchingResult_When_FilteredByTextSearchSuggestion: function() {
 
 					var partialTextSearchValue = this.parent.externalContext.config.textSearchValue.slice(0, 3),
-						values = {};
+						valuesObj = {};
 
 					return this.remote
 						.then(indexPage.typeInTextSearchInput(partialTextSearchValue))
@@ -86,7 +86,7 @@ define([
 						.then(lang.partial(function(values, value) {
 
 							values.suggestion = value;
-						}, values))
+						}, valuesObj))
 						.then(indexPage.getListRowHighlightedText(1))
 						.then(lang.partial(function(values, textArr) {
 
@@ -94,20 +94,20 @@ define([
 							for (var i = 0; i < textArr.length; i++) {
 								assert.include(suggestion, textArr[i], 'Se ha encontrado una coincidencia errónea');
 							}
-						}, values));
+						}, valuesObj));
 				},
 
 				Should_CleanDataFilter_When_RemoveTextSearchValue: function() {
 
 					var textSearchValue = this.parent.externalContext.config.textSearchValue,
-						values = {};
+						valuesObj = {};
 
 					return this.remote
 						.then(indexPage.getLoadedListRowsTitleText())
 						.then(lang.partial(function(values, textArr) {
 
 							values.oldTitles = textArr;
-						}, values))
+						}, valuesObj))
 						.then(indexPage.setTextSearchInput(textSearchValue))
 						.then(Utils.checkLoadingIsGone())
 						.then(indexPage.clearTextSearchInput())
@@ -120,7 +120,7 @@ define([
 								Utils.sameOrderedMembers(oldTitles, textArr,
 									'Se ha mantenido el filtro tras limpiarlo');
 							}
-						}, values));
+						}, valuesObj));
 				},
 
 				Should_ShowEmptyMessage_When_FilteredByWrongTextSearchValue: function() {
@@ -136,21 +136,21 @@ define([
 				Should_NotUpdateListContent_When_TypeInTextSearchWithoutPressingEnterKey: function() {
 
 					var partialTextSearchValue = 'texto sin aplicar',
-						values = {};
+						valuesObj = {};
 
 					return this.remote
 						.then(indexPage.getLoadedListRowsTitleText())
 						.then(lang.partial(function(values, textArr) {
 
 							values.oldTitles = textArr;
-						}, values))
+						}, valuesObj))
 						.then(indexPage.typeInTextSearchInput(partialTextSearchValue))
 						.then(indexPage.getLoadedListRowsTitleText())
 						.then(lang.hitch(this, function(values, textArr) {
 
 							Utils.sameOrderedMembers(values.oldTitles, textArr,
 								'Los elementos son los mismos en el listado');
-						}, values));
+						}, valuesObj));
 				}
 			}
 		}

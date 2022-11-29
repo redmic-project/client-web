@@ -92,6 +92,9 @@ module.exports = function(grunt) {
 					cleanFilesCmd += optionPrefix + ' -name "' + file + '" -delete';
 				}
 
+				var appDir = destPath + 'app',
+					cleanUnusedAppFilesCmd = 'find ' + appDir + ' -maxdepth 1 -type f -name "*.js" -delete';
+
 				return [
 					'echo "\nCleaning build and debug resources from built application at ' + destPath + '\n"',
 					keepFilesCmd,
@@ -99,7 +102,8 @@ module.exports = function(grunt) {
 					cleanRecursiveDirsCmd,
 					createDirectoriesToRestoreFilesCmd,
 					restoreFilesCmds.join('; '),
-					cleanFilesCmd
+					cleanFilesCmd,
+					cleanUnusedAppFilesCmd
 				].join('; ');
 			}
 		});

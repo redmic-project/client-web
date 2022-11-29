@@ -3,13 +3,20 @@ var morgan = require('morgan'),
 
 var logConsoleTransport = new (winston.transports.Console)({
 	level: 'silly',
-	colorize: true,
-	timestamp: true,
-	prettyPrint: true,
-	humanReadableUnhandledException: true
+	format: winston.format.combine(
+		winston.format.splat(),
+		winston.format.timestamp(),
+		winston.format.colorize({
+			level: true
+		}),
+		winston.format.printf(function(info) {
+
+			return info.timestamp + ' [' + info.level + '] ' + info.message;
+		})
+	)
 });
 
-var logger = new (winston.Logger)({
+var logger = winston.createLogger({
 	transports: [
 		logConsoleTransport
 	],
@@ -22,7 +29,7 @@ var logger = new (winston.Logger)({
 function registerLogger(params, app) {
 
 	app.use(morgan('dev', {
-		skip: function(req, res) {
+		skip: function(_req, res) {
 
 			return params.useBuilt ? res.statusCode < 400 : false;
 		},

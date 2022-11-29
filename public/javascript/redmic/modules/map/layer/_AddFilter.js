@@ -107,6 +107,8 @@ define([
 
 		_removeSizeQueryParameter: function() {
 
+			// TODO realmente se quiere evitar límites? puede causar fallos en el lado del servicio
+			// preferible mostrar aviso si se llega al límite
 			this._emitEvt('ADD_TO_QUERY', {
 				query: {
 					size: null

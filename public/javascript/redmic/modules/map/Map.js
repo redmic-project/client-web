@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'node-uuid/uuid'
+	, 'uuid/uuidv4.min'
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 	, './_StaticLayersManagement'
@@ -302,7 +302,7 @@ define([
 				return;
 			}
 
-			var layerId = this._getLayerId(obj) || uuid.v4(),
+			var layerId = this._getLayerId(obj) || uuid(),
 				innerLayer = this._getInnerLayer(layer, layerId);
 
 			if (!innerLayer) {

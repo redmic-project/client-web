@@ -1,6 +1,5 @@
 define([
 	"dojo/_base/declare"
-	, "dojo/on"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
@@ -10,7 +9,6 @@ define([
 	, "put-selector/put"
 ], function(
 	declare
-	, on
 	, lang
 	, _Module
 	, _Show
@@ -53,21 +51,23 @@ define([
 				statusNotificationSidebarShown: false,
 				alertWithId: {},
 				items: [{
-						target: "task",
-						icon: "fa-tasks",
-						type: TaskNotification,
-						channel: this.taskChannel
-					}/*, {
-						target: "message",
-						icon: "fa-envelope-o",
-						channel: "",
-						listButton: [{
-							icon: "fa-trash",
-							btnId: "remove",
-							title: "remove",
-							returnItem: true
-						}]
-					}*/]
+					target: "task",
+					icon: "fa-tasks",
+					type: TaskNotification,
+					channel: this.taskChannel
+				}/*, {
+					target: "message",
+					icon: "fa-envelope-o",
+					channel: "",
+					listButton: [{
+						icon: "fa-trash",
+						btnId: "remove",
+						title: "remove",
+						returnItem: true
+					}]
+				}*/],
+				notificationIconClass: 'fa.fa-bell.animate__animated',
+				notificationIconAnimationClass: 'animate__swing'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -119,7 +119,7 @@ define([
 			this.inherited(arguments);
 
 			put(this.domNode, ".notification");
-			this.iconNode = put(this.domNode, "i.fa.fa-bell");
+			this.iconNode = put(this.domNode, 'i.' + this.notificationIconClass);
 			this.spanNode = put(this.domNode, "span.hidden", 0);
 
 			this.iconNode.addEventListener('animationend', lang.hitch(this, this._removeAnimated));
@@ -207,7 +207,7 @@ define([
 				if (!notification.notCount && (!notification.id || !this.alertWithId[notification.id])) {
 					this.alertWithId[notification.id] = notification.type;
 					this._changeCountNotification(true);
-					this.iconNode.classList.add("swing");
+					this.iconNode.classList.add(this.notificationIconAnimationClass);
 				} else {
 					obj.data.notCount = true;
 				}
@@ -221,7 +221,7 @@ define([
 
 		_removeAnimated: function() {
 
-			this.iconNode.classList.remove("swing");
+			this.iconNode.classList.remove(this.notificationIconAnimationClass);
 		},
 
 		_subDecrementCountNotification: function(obj) {

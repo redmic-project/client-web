@@ -12,9 +12,6 @@ dojoConfig = {
 		name: 'app',
 		location: '../app'
 	},{
-		name: 'dstore',
-		location: '../dstore'
-	},{
 		name: 'put-selector',
 		location: '../put-selector'
 	},{
@@ -49,7 +46,7 @@ dojoConfig = {
 		location: '../d3/dist'
 	},{
 		name: 'd3Tip',
-		location: '../d3-tip'
+		location: '../d3-v6-tip/build'
 	},{
 		name: 'tv4',
 		location: '../tv4'
@@ -60,11 +57,11 @@ dojoConfig = {
 		name: 'cbtree',
 		location: '../cbtree'
 	},{
-		name: 'proj4js',
-		location: '../proj4js/dist'
+		name: 'proj4',
+		location: '../proj4/dist'
 	},{
 		name: 'RWidgets',
-		location: '../redmic-widgets/src/app'
+		location: '../redmic/widgets'
 	},{
 		name: 'handlebars',
 		location: '../handlebars/dist'
@@ -93,8 +90,8 @@ dojoConfig = {
 		name: 'sockjs',
 		location: '../sockjs/dist'
 	},{
-		name: 'stompjs',
-		location: '../stompjs/lib'
+		name: 'stomp-websocket',
+		location: '../stomp-websocket/lib'
 	},{
 		name: 'deepmerge',
 		location: '../deepmerge/dist'
@@ -102,8 +99,8 @@ dojoConfig = {
 		name: 'colorjs',
 		location: '../color-js'
 	},{
-		name: 'node-uuid',
-		location: '../node-uuid'
+		name: 'uuid',
+		location: '../uuid/dist/umd'
 	},{
 		name: 'json-schema-ref-parser',
 		location: '../json-schema-ref-parser/dist'
@@ -116,8 +113,8 @@ dojoConfig = {
 	}],
 
 	map: {
-		'd3Tip/index': {
-			'd3': 'd3/d3.min'
+		'd3Tip/d3-v6-tip.min': {
+			'd3-selection': 'd3/d3.min'
 		},
 		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'
@@ -129,7 +126,7 @@ dojoConfig = {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'wicket': {
-			'wicket': 'wicket/wicket'
+			'wicket': 'wicket/wicket.min'
 		}
 	},
 

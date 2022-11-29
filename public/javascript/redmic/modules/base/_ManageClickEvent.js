@@ -25,12 +25,13 @@ define([
 		_getClickTargets: function(event) {
 
 			var targetPath = event.path || (event.composedPath && event.composedPath()) || [],
+				currTarget = event.currentTarget || event.target,
 				targets = [
-					event.currentTarget.activeElement
+					currTarget.activeElement
 				];
 
 			if (!targetPath.length) {
-				var eventTarget = event.target || event.srcElement,
+				var eventTarget = event.target || event.currentTarget,
 					eventTargetParent = eventTarget.parentElement;
 
 				targetPath.push(eventTarget, eventTargetParent);

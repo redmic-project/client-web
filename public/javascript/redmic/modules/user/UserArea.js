@@ -11,6 +11,7 @@ define([
 	, 'redmic/modules/layout/listMenu/ListMenu'
 	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
 	, 'redmic/base/Credentials'
+	, 'templates/UserTopbarImage'
 	, 'templates/UserTopbarMenu'
 ], function(
 	redmicConfig
@@ -25,6 +26,7 @@ define([
 	, ListMenu
 	, TemplateDisplayer
 	, Credentials
+	, TemplateTopbarImage
 	, TemplateTopbarMenu
 ) {
 
@@ -56,53 +58,42 @@ define([
 		_initialize: function() {
 
 			put(this.domNode, '[title=$]', this.i18n.user);
-			this.iconNode = put(this.domNode, 'i.fa.fa-user');
 			this.listMenuDefinition = declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip);
 
-			var envDfd = window.env;
-			if (!envDfd) {
-				return;
+			this._commonItems = {
+				infoItem: {
+					icon: 'fa-question-circle-o',
+					label: 'whatIsRedmic',
+					href: '/inner-what-is-redmic'
+				},
+				feedbackItem: {
+					icon: 'fa-envelope-o',
+					label: 'feedback',
+					href: '/feedback'
+				},
+				termConditionItem: {
+					icon: 'fa-file-text-o',
+					label: 'termCondition',
+					href: '/terms-and-conditions'
+				},
+				versionItem: {
+					icon: 'fa-code-fork',
+					label: this.i18n.version + ': ' + redmicConfig.getEnvVariableValue('envVersion'),
+					href: this.repositoryUrl,
+					newPage: true
+				}
+			};
+
+			this.target = [this.profileTarget];
+
+			if (this._checkUserIsRegistered()) {
+				this._initializeRegisteredUserArea();
+				this.target.push(this._logoutTarget);
+			} else {
+				this._initializeGuestUserArea();
 			}
 
-			envDfd.then(lang.hitch(this, function(envData) {
-
-				this._commonItems = {
-					infoItem: {
-						icon: 'fa-question-circle-o',
-						label: 'whatIsRedmic',
-						href: '/inner-what-is-redmic'
-					},
-					feedbackItem: {
-						icon: 'fa-envelope-o',
-						label: 'feedback',
-						href: '/feedback'
-					},
-					termConditionItem: {
-						icon: 'fa-file-text-o',
-						label: 'termCondition',
-						href: '/terms-and-conditions'
-					},
-					versionItem: {
-						icon: 'fa-code-fork',
-						label: this.i18n.version + ': ' + envData.version,
-						href: this.repositoryUrl,
-						newPage: true
-					}
-				};
-
-				this.target = [this.profileTarget];
-
-				if (this._checkUserIsRegistered()) {
-					this._initializeRegisteredUserArea();
-
-					this.target.push(this._logoutTarget);
-					// TODO se reemplaza la terminación de la ruta al servidor porque las imágenes de los usuarios ya
-					// la contienen. Cuando se corrija esta circunstancia, eliminar el reemplazo
-					this._userImageBaseTarget = envData.apiUrl.replace('/api', '');
-				} else {
-					this._initializeGuestUserArea();
-				}
-			}));
+			this._initializeUserImage();
 		},
 
 		_initializeRegisteredUserArea: function() {
@@ -161,6 +152,20 @@ define([
 			this._showMenu();
 		},
 
+		_initializeUserImage: function() {
+
+			this.topbarImage = new TemplateDisplayer({
+				parentChannel: this.getChannel(),
+				omitLoading: true,
+				template: TemplateTopbarImage,
+				target: this.profileTarget
+			});
+
+			this._publish(this.topbarImage.getChannel('SHOW'), {
+				node: this.domNode
+			});
+		},
+
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
@@ -192,12 +197,6 @@ define([
 
 		_subDataCredentialsGotProps: function(req) {
 
-			var userImagePath = req.dataCredentials.image;
-
-			if (userImagePath) {
-				req.dataCredentials.image = this._userImageBaseTarget + userImagePath;
-			}
-
 			this._emitEvt('INJECT_DATA', {
 				data: req.dataCredentials,
 				target: this.profileTarget
@@ -223,7 +222,16 @@ define([
 			return Credentials.get('userRole') !== 'ROLE_GUEST';
 		},
 
+		_startLoading: function() {
+
+			this._emitEvt('LOADING', {
+				global: true
+			});
+		},
+
 		_logout: function () {
+
+			this._startLoading();
 
 			if (!Credentials.get('accessToken')) {
 				this._removeUserData();
@@ -242,7 +250,7 @@ define([
 			});
 		},
 
-		_errorAvailable: function(err, status, resWrapper) {
+		_errorAvailable: function(_err, _status, resWrapper) {
 
 			var target = resWrapper.target;
 
@@ -259,6 +267,7 @@ define([
 				}
 			});
 
+			this._startLoading();
 			this._removeUserData();
 		},
 
@@ -272,6 +281,7 @@ define([
 			var target = resWrapper.target;
 
 			if (target === this._logoutTarget) {
+				this._startLoading();
 				this._removeUserData();
 				return;
 			}
@@ -282,27 +292,12 @@ define([
 				data = data[0];
 			}
 
-			// TODO impide a instancias antiguas romper la ejecución, revisar
-			if (!this.domNode) {
-				return;
-			}
-
-			this._updateUserAreaButton(data);
 			this._showMenu();
 		},
 
-		_updateUserAreaButton: function(data) {
+		_beforeHide: function() {
 
-			put('!', this.iconNode);
-
-			if (data.image) {
-				var tokenParam = '?access_token=' + Credentials.get('accessToken'),
-					imageUrl = data.image + tokenParam;
-
-				this.iconNode = put(this.domNode, 'img[src=' + imageUrl + ']');
-			} else {
-				this.iconNode = put(this.domNode, 'i.fa.fa-user');
-			}
+			this._emitEvt('LOADED');
 		}
 	});
 });

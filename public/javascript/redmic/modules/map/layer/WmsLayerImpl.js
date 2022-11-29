@@ -220,12 +220,13 @@ define([
 			var getParams = this._obtainCommonGetParams(),
 				posParams = this._obtainPositionGetParams(data.containerPoint, getParams.version),
 				layerProps = altDef.props,
-				layerName = layerProps.layers;
+				layerName = layerProps.layers,
+				layerStyles = layerProps.styles || '';
 
 			lang.mixin(getParams, posParams, {
 				layers: layerName,
 				query_layers: layerName,
-				//styles: TODO,
+				styles: layerStyles,
 				width: data.size.x,
 				height: data.size.y,
 				bbox: data.bbox.toBBoxString()

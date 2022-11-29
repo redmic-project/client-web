@@ -12,7 +12,8 @@ define([
 	, redmicConfig
 	, declare
 	, lang
-){
+) {
+
 	return declare([Layout, Controller], {
 		//	summary:
 		//		Vista de edición de Document.
@@ -20,7 +21,7 @@ define([
 		//		Muestra el wizard para la edición de un Document
 		//
 		//	propsToClean: Array
-		// 		Lista de propiedades a limpiar cuando se realiza una copia.
+		//		Lista de propiedades a limpiar cuando se realiza una copia.
 
 		constructor: function(args) {
 
@@ -50,6 +51,5 @@ define([
 				}]
 			}, this.editorConfig || {}]);
 		}
-
 	});
 });

@@ -90,7 +90,7 @@ define([
 					.then(self._getZoom())
 					.then(function(value) {
 
-						value = value.match(/scale\([0-9]+\)/g)[0];
+						value = value.match(/scale\(\d+\)/g)[0];
 						value = value.replace(/\D/g, '');
 
 						return parseInt(value, 10);
@@ -187,7 +187,7 @@ define([
 			};
 		},
 
-		dragMiniMap: function(baseMap) {
+		dragMiniMap: function() {
 
 			return function() {
 
@@ -222,18 +222,21 @@ define([
 
 		clickMapOnPoint: function(x, y) {
 
-			return lang.partial(function(x, y) {
+			return lang.partial(function(coordsObj) {
 
 				return this.parent
 					.findByCssSelector(Config.selector.map)
-						.then(lang.partial(function(x, y, element) {
+						.then(lang.partial(function(coords, element) {
 
 							return this.parent
-								.moveMouseTo(element, x , y)
+								.moveMouseTo(element, coords.x , coords.y)
 								.clickMouseButton(0);
-						}, x, y))
+						}, coordsObj))
 						.end();
-			}, x, y);
+			}, {
+				x: x,
+				y: y
+			});
 		}
 	});
 });

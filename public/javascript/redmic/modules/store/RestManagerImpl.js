@@ -1,5 +1,6 @@
 define([
-	'dojo/_base/declare'
+	'app/redmicConfig'
+	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/request'
 	, 'dojo/request/notify'
@@ -7,7 +8,8 @@ define([
 	, 'redmic/base/Credentials'
 	, './RestManager'
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, request
 	, notify
@@ -46,7 +48,7 @@ define([
 				timeout: 45000,
 				handleAs: 'json',
 
-				_apiUrl: 'api',
+				_apiUrl: redmicConfig.getEnvVariableValue('envApiUrl'),
 				_filteredUrls: [
 					'token',
 					'reCaptcha',
@@ -66,14 +68,6 @@ define([
 
 			notify('error', lang.hitch(this, this._requestErrorHandler));
 			registry.register(lang.hitch(this, this._preRequestHandler), request);
-
-			var envDfd = window.env;
-			if (envDfd) {
-				envDfd.then(lang.hitch(this, function(envData) {
-
-					this._apiUrl = envData.apiUrl;
-				}));
-			}
 		},
 
 		_getTargetWithEndingSlash: function(target) {
@@ -353,17 +347,23 @@ define([
 		_parseError: function(res) {
 
 			var response = res.response,
-				status = response.status;
+				status = response.status,
+				data = response.data,
+				error = res.message;
 
-			// TODO el server expressjs no debería responder con status bueno si le llega la petición a él, revisar
-			if (status < 400) {
-				status = 500;
-			}
+			if (data) {
+				// TODO usar response.data directamente cuando no se envuelva la respuesta con error
+				if (data.error && data.error instanceof Object) {
+					data = data.error;
+				}
 
-			// TODO usar response.data directamente cuando no se envuelva la respuesta con error
-			var data = response.data;
-			if (data && data.error) {
-				data = data.error;
+				if (data.code) {
+					error += ' - ' + data.code;
+				}
+
+				if (data.description) {
+					error += ' - ' + data.description;
+				}
 			}
 
 			return {
@@ -373,7 +373,7 @@ define([
 				url: response.url,
 				getHeader: response.getHeader,
 				options: response.options,
-				error: res.message
+				error: error
 			};
 		},
 
@@ -399,9 +399,14 @@ define([
 
 		_onRequestPermissionError: function(res) {
 
-			// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
-			// privilegios insuficientes)
-			Credentials.set('accessToken', null);
+			var getTokenTarget = redmicConfig.getServiceUrl(redmicConfig.services.getToken),
+				requestedTarget = res.url;
+
+			if (requestedTarget.indexOf(getTokenTarget) === -1) {
+				// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
+				// privilegios insuficientes)
+				Credentials.set('accessToken', null);
+			}
 		},
 
 		_onRequestReachabilityError: function(res) {

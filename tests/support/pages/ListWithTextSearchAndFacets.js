@@ -2,12 +2,10 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'tests/support/pages/ListWithTextSearch'
-	, 'tests/support/Utils'
 ], function (
 	declare
 	, lang
 	, ListWithTextSearchPage
-	, Utils
 ) {
 
 	var facetsSelector = 'div.facetsZone div.containerFacets',
@@ -53,7 +51,7 @@ define([
 							.getVisibleText()
 							.then(function(text) {
 
-								return text.replace(/\(([0-9]+)\)/g, '$1');
+								return text.replace(/\((\d+)\)/g, '$1');
 							});
 					});
 			}, this);
@@ -97,7 +95,7 @@ define([
 							.getVisibleText()
 							.then(function(text) {
 
-								return text.replace(/\(([0-9]+)\)/g, '$1');
+								return text.replace(/\((\d+)\)/g, '$1');
 							});
 					});
 			}, this);

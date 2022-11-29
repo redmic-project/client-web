@@ -63,10 +63,31 @@ define([
 
 		_itemAvailable: function(item) {
 
-			var pdfUrl = item.data.url,
+			var documentData = item.data,
+				documentInternalUrl = documentData.internalUrl;
+
+			if (!documentInternalUrl) {
+				return;
+			}
+
+			var pdfUrlProto = documentInternalUrl.replace('/api', redmicConfig.apiUrlVariable),
+				pdfUrl = redmicConfig.getServiceUrl(pdfUrlProto),
 				widgetInstance = this._getWidgetInstance('pdf');
 
-			if (!pdfUrl || !widgetInstance) {
+			var callback = lang.hitch(this, this._loadPdfInWidget, pdfUrl);
+
+			if (!widgetInstance) {
+				this._onceEvt('LAYOUT_COMPLETE', callback);
+			} else {
+				callback();
+			}
+		},
+
+		_loadPdfInWidget: function(pdfUrl) {
+
+			var widgetInstance = this._getWidgetInstance('pdf');
+
+			if (!widgetInstance) {
 				return;
 			}
 

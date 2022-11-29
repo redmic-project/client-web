@@ -16,20 +16,4 @@ module.exports = function(grunt) {
 	grunt.config('uglify.dojoConfig', {
 		files: [filesObj]
 	});
-
-	var pdfPath = path.join(destPath, 'pdfjs/'),
-		pdfWebPath = pdfPath + 'web/',
-		pdfBuiltPath = pdfPath + 'build/',
-		pdfFilePath = pdfBuiltPath + 'pdf.js',
-		pdfWorkerFilePath = pdfBuiltPath + 'pdf.worker.js',
-		pdfViewerFilePath = pdfWebPath + 'viewer.js',
-		filesPdfObj = {};
-
-	filesPdfObj[pdfFilePath] = pdfFilePath;
-	filesPdfObj[pdfWorkerFilePath] = pdfWorkerFilePath;
-	filesPdfObj[pdfViewerFilePath] = pdfViewerFilePath;
-
-	grunt.config('uglify.pdfjs', {
-		files: [filesPdfObj]
-	});
 };

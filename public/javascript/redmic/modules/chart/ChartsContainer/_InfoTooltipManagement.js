@@ -1,6 +1,6 @@
 define([
 	'd3/d3.min'
-	, 'd3Tip/index'
+	, 'd3Tip/d3-v6-tip.min'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ChartCategoryTooltip"
@@ -39,7 +39,7 @@ define([
 
 			this.infoOnMouseOverTooltipAnchor = this.infoOnMouseOverArea.append("svg:circle");
 
-			this.infoOnMouseOverTooltip = d3Tip()
+			this.infoOnMouseOverTooltip = d3Tip.tip()
 				.attr("class", this.chartsTooltipClass);
 
 			this.svg.call(this.infoOnMouseOverTooltip);

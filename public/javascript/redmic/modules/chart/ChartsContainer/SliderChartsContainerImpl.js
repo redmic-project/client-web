@@ -1,6 +1,6 @@
 define([
 	'd3/d3.min'
-	, 'd3Tip/index'
+	, 'd3Tip/d3-v6-tip.min'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/_base/kernel'
@@ -108,14 +108,14 @@ define([
 				.attr('rx', 5)
 				.attr('ry', 5);
 
-			this.sliderTooltip = d3Tip()
+			this.sliderTooltip = d3Tip.tip()
 				.attr('class', this.tooltipClass)
 				.offset([-this.sliderTooltipOffset, 0]);
 
 			this.svg.call(this.sliderTooltip);
 		},
 
-		_resizeSlider: function(res) {
+		_resizeSlider: function() {
 
 			if (!this.sliderBrush) {
 				return;
@@ -168,18 +168,18 @@ define([
 			return isNaN(min) || isNaN(max) || min < 0 || max < 0 || max <= min;
 		},
 
-		_onSliderBrushStart: function() {
+		_onSliderBrushStart: function(event) {
 
-			var originalEvt = d3.event.sourceEvent,
-				evtNode = originalEvt ? originalEvt.srcElement : null,
+			var originalEvt = event.sourceEvent,
+				evtNode = originalEvt ? originalEvt.currentTarget || originalEvt.target : null,
 				sliderGroup = this.sliderBrushGroup.node();
 
 			this._brushEventFromDescendant = sliderGroup && sliderGroup.contains(evtNode);
 		},
 
-		_onSliderBrush: function() {
+		_onSliderBrush: function(event) {
 
-			var focus = d3.event.selection;
+			var focus = event.selection;
 
 			if (!focus || !this._brushEventFromDescendant) {
 				return;
@@ -214,15 +214,14 @@ define([
 			this._oldTemporalFocus = temporalRange;
 		},
 
-		_onSliderBrushEnd: function() {
+		_onSliderBrushEnd: function(event) {
 
-			var focus = d3.event.selection;
+			var focus = event.selection;
 			if (focus || !this._oldFocus) {
 				return;
 			}
 
-			var node = this.sliderBrushGroup.node(),
-				mousePos = d3.mouse(node),
+			var mousePos = d3.pointer(event),
 				mouseX = mousePos[0],
 				focusAmplitude = this._oldFocus[1] - this._oldFocus[0];
 
@@ -354,10 +353,10 @@ define([
 			this.sliderBrushGroup.classed(this.hiddenClass, true);
 		},
 
-		_onHandleMouseEnter: function(evt, i, arr) {
+		_onHandleMouseEnter: function(evt) {
 
 			var handleSelector = evt.type,
-				handleNode = arr[i],
+				handleNode = evt.currentTarget,
 				tooltipContent = this._getTooltipContent(handleSelector);
 
 			this._updateTooltip(tooltipContent, handleNode);

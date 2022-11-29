@@ -42,7 +42,7 @@ module.exports = function(args) {
 	global.reportersOutputPath = args.reportersOutputPath;
 
 	return deepmerge.all([_intern, config], {
-		arrayMerge: function (destinationArray, sourceArray, options) {
+		arrayMerge: function (_destinationArray, sourceArray, _options) {
 
 			return sourceArray;
 		}

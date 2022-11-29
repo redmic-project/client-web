@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
 
 	grunt.registerTask('build',
-		['buildStyles', 'copy:resources', 'buildPdfjs', 'buildApp', 'packageApp']);
+		['buildStyles', 'copy:resources', 'copy:pdfjs', 'buildApp', 'packageApp']);
 };

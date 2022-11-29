@@ -12,7 +12,7 @@ define([
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
 
-	, 'dropzone/dropzone.min'
+	, 'dropzone/dropzone-amd-module.min'
 ], function(
 	alertify
 	, redmicConfig
@@ -26,7 +26,8 @@ define([
 	, template
 	, put
 	, Credentials
-){
+) {
+
 	return declare([_WidgetBase, _TemplatedMixin, Evented], {
 		//	summary:
 		//		Widget de subida de ficheros.
@@ -73,23 +74,18 @@ define([
 
 		postCreate: function() {
 
-			var envDfd = window.env;
-
-			if (!this.url || !envDfd) {
+			if (!this.url) {
 				console.error('URL not specified for file upload input');
 				return;
 			}
 
 			this._setPreviousProperties();
 
-			envDfd.then(lang.hitch(this, function(envData) {
+			this.url = redmicConfig.getServiceUrl(this.url);
 
-				this.url = redmicConfig.getServiceUrl(this.url, envData);
-
-				this._dropzone = this._getNewInstance();
-				this._listenInstanceEvents(this._dropzone);
-				this._dropzoneDfd.resolve(this._dropzone);
-			}));
+			this._dropzone = this._getNewInstance();
+			this._listenInstanceEvents(this._dropzone);
+			this._dropzoneDfd.resolve(this._dropzone);
 		},
 
 		_setPreviousProperties: function() {
@@ -172,17 +168,17 @@ define([
 
 		_addFile: function(file) {
 
-			this._dropzoneDfd.then(lang.hitch(this, function(file, instance) {
+			this._dropzoneDfd.then(lang.hitch(this, function(fileParam, instance) {
 
-				instance.addFile(file);
+				instance.addFile(fileParam);
 			}, file));
 		},
 
 		_removeFile: function(file) {
 
-			this._dropzoneDfd.then(lang.hitch(this, function(file, instance) {
+			this._dropzoneDfd.then(lang.hitch(this, function(fileParam, instance) {
 
-				instance.removeFile(file);
+				instance.removeFile(fileParam);
 			}, file));
 		},
 

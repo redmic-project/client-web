@@ -18,7 +18,7 @@ if (cluster && cluster.isMaster) {
 		cluster.fork();
 	}
 
-	cluster.on('exit', function(worker, code, signal) {
+	cluster.on('exit', function(worker, _code, signal) {
 
 		logger.error('worker %i died (%s)', worker.process.pid, signal);
 	});
@@ -26,7 +26,7 @@ if (cluster && cluster.isMaster) {
 	var express = require('express'),
 		http = require('http'),
 
-		metrics = require('./metrics')('/metrics'),
+		metrics = require('./metrics')(logger, '/metrics'),
 		exposure = require('./exposure')(logger, params, version),
 
 		port = params.port,

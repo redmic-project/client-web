@@ -23,11 +23,17 @@ dojoConfig = {
 	},{
 		name: 'colorjs',
 		location: '../colorjs'
+	},{
+		name: 'd3',
+		location: '../d3'
+	},{
+		name: 'leaflet-measure',
+		location: '../leaflet-measure'
 	}],
 
 	map: {
-		'd3Tip/index': {
-			'd3': 'd3/d3.min'
+		'd3Tip/d3-v6-tip.min': {
+			'd3-selection': 'd3/d3.min'
 		},
 		'leaflet-nontiledlayer/NonTiledLayer': {
 			'leaflet': 'leaflet/leaflet'
@@ -39,7 +45,7 @@ dojoConfig = {
 			'leaflet': 'leaflet/leaflet'
 		},
 		'wicket': {
-			'wicket': 'wicket/wicket'
+			'wicket': 'wicket/wicket.min'
 		}
 	},
 

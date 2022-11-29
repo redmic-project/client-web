@@ -110,11 +110,11 @@ define([
 			//	summary:
 			//		Busca el elemento correspondiente al selector especificado y clickea sobre él.
 
-			return lang.partial(function(self, elementSelector) {
+			return lang.partial(function(self, selector) {
 
 				return this.parent
 					.then(self.checkLoadingIsGone())
-					.findByCssSelector(elementSelector)
+					.findByCssSelector(selector)
 						.click();
 			}, this, elementSelector);
 		},
@@ -123,11 +123,11 @@ define([
 			//	summary:
 			//		Busca el elemento mostrado correspondiente al selector especificado y clickea sobre él.
 
-			return lang.partial(function(self, elementSelector) {
+			return lang.partial(function(self, selector) {
 
 				return this.parent
 					.then(self.checkLoadingIsGone())
-					.findDisplayedByCssSelector(elementSelector)
+					.findDisplayedByCssSelector(selector)
 						.click();
 			}, this, elementSelector);
 		},
@@ -647,7 +647,7 @@ define([
 
 			return lang.partial(function(self) {
 
-				var selectItem = 'div.dijitPopup.dijitMenuPopup table[tabindex="-1"] tr[aria-label="' + value + ' "]';
+				var selectItem = 'div.dijitPopup.tooltipContainerPopup table[tabindex="-1"] tr[aria-label="' + value + ' "]';
 
 				return this.parent
 					.then(self.clickElement(cssSelector + ' td.dijitButtonNode'))
@@ -662,7 +662,7 @@ define([
 
 			return lang.partial(function(self) {
 
-				var selectItem = 'div.dijitPopup.dijitMenuPopup table[tabindex="-1"] tr[tabindex="-1"]';
+				var selectItem = 'div.dijitPopup.tooltipContainerPopup table[tabindex="-1"] tr[tabindex="-1"]';
 
 				return this.parent
 					.then(self.clickElement(cssSelector + ' td.dijitButtonNode'))
@@ -773,40 +773,51 @@ define([
 
 		checkLoadingIsGone: function() {
 			//	summary:
-			//		Comprueba que no exista ningún cargando en la aplicación.
+			//		Comprueba que no exista ningún "cargando" en la aplicación.
 			//		Si encuentra alguno, espera hasta que se elimine.
 			//		Si supera el limite de carga devuelve un error.
 
-			function onLoadingItemFound(args, elements) {
+			function onLoadingGone() {
 
-				args.loadingItemsFound++;
-
-				return this
-					.then(lang.hitch(this, seekLoadingItems, args));
+				// Captura error para continuar cuando el "cargando" se ha ido
 			}
 
 			function seekLoadingItems(args) {
 
-				if (args.loadingItemsFound >= Config.counter.findLoading) {
+				var endTimestamp = args.endTimestamp;
 
-					this.setFindTimeout(Config.timeout.findElement);
-					throw new Error('Limite de tiempo de carga superado');
+				if (Date.now() >= endTimestamp) {
+					args.timeoutReached = true;
+					return this;
 				}
 
 				return this
-					.sleep(Config.timeout.veryShortSleep)
-					.findByCssSelector('*' + Config.selector.loading)
-					.then(lang.hitch(this, onLoadingItemFound, args), function() {});
+					.findByCssSelector(Config.selector.loading)
+					.then(
+						lang.hitch(this, seekLoadingItems, args),
+						lang.hitch(this, onLoadingGone)
+					);
+			}
+
+			function afterSoughtLoadingItems(args) {
+
+				if (args.timeoutReached) {
+					assert.fail('Limite de tiempo de carga superado');
+				}
 			}
 
 			return function() {
 
+				var args = {
+					endTimestamp: Date.now() + Config.timeout.loading,
+					timeoutReached: false
+				};
+
 				return this.parent
 					.setFindTimeout(Config.timeout.shortFindElement)
-					.then(lang.hitch(this.parent, seekLoadingItems, {
-						loadingItemsFound: 0
-					}))
-					.setFindTimeout(Config.timeout.findElement);
+					.then(lang.hitch(this.parent, seekLoadingItems, args))
+					.setFindTimeout(Config.timeout.findElement)
+					.then(lang.hitch(this.parent, afterSoughtLoadingItems, args));
 			};
 		},
 

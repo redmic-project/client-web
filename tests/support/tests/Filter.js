@@ -1,14 +1,10 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'tests/support/pages/Filter'
-	, 'tests/support/Utils'
 	, './_Commons'
 ], function (
 	declare
-	, lang
 	, FilterPage
-	, Utils
 	, _Commons
 ) {
 

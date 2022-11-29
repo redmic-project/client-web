@@ -82,7 +82,7 @@ define([
 
 		_setInnerAppOwnCallbacksForEvents: function() {
 
-			this._onEvt('MODULE_SHOWN', lang.hitch(this, this._updateActiveSidebarItem));
+			this._onEvt('MODULE_SHOWN', lang.hitch(this, this._onAppModuleShown));
 			this._onEvt('RESIZE', lang.hitch(this, this._onAppResize));
 		},
 
@@ -114,6 +114,10 @@ define([
 
 		postCreate: function() {
 
+			this._emitEvt('LOADING', {
+				global: true
+			});
+
 			this.inherited(arguments);
 
 			this._publish(this.topbar.getChannel('SHOW'), {
@@ -127,7 +131,7 @@ define([
 			this._evaluateAppSize();
 		},
 
-		_subToggleSidebar: function(req) {
+		_subToggleSidebar: function() {
 
 			domClass.toggle(this.ownerDocumentBody, this.uncollapsedSidebarClass);
 
@@ -149,6 +153,13 @@ define([
 			} else {
 				this._appClickHandler.pause();
 			}
+		},
+
+		_onAppModuleShown: function(evt) {
+
+			this._updateActiveSidebarItem(evt);
+
+			this._emitEvt('LOADED');
 		},
 
 		_updateActiveSidebarItem: function(evt) {
@@ -237,7 +248,7 @@ define([
 			return this._contentContainer;
 		},
 
-		_onAppResize: function(evt) {
+		_onAppResize: function() {
 
 			this._appClickHandler.pause();
 

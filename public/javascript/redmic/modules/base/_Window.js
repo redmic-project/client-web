@@ -114,7 +114,8 @@ define([
 				containerClass += '.' + this.windowResizableClass;
 			}
 
-			this._windowNode = put(node, 'div.' + containerClass);
+			var idParam = '[id="' + this._getWindowTitleIdValue() + '"]';
+			this._windowNode = put(node, 'div.' + containerClass + idParam);
 
 			if (this.resizable) {
 				this._limitMaxHeightToAvailableHeight();
@@ -149,12 +150,10 @@ define([
 		_createWindowContent: function() {
 
 			var contentClass = this.windowContentClass,
-				contentAttr = '',
 				contentHeightReduction = this.titleHeight;
 
 			if (this.omitTitleBar) {
 				contentClass += '.' + this.windowWithoutTitleContentClass;
-				contentAttr += '[id="' + this._getWindowTitleIdValue() + '"]';
 				contentHeightReduction = 0;
 			}
 
@@ -162,7 +161,7 @@ define([
 				contentClass += '.' + this.classWindowContent;
 			}
 
-			this._windowContentNode = put(this._windowNode, 'div.' + contentClass + contentAttr);
+			this._windowContentNode = put(this._windowNode, 'div.' + contentClass);
 
 			var contentHeight = 'calc(100% - ' + contentHeightReduction + 'rem)';
 			domStyle.set(this._windowContentNode, 'height', contentHeight);
@@ -285,7 +284,7 @@ define([
 			return localX >= localWidth && localY >= localHeight;
 		},
 
-		_onWindowResizeProgress: function(self, mutations) {
+		_onWindowResizeProgress: function(self) {
 
 			if (!this.isNotFirstIteration) {
 				this.isNotFirstIteration = true;
@@ -309,7 +308,7 @@ define([
 			}
 		},
 
-		_onWindowUserResizeEnd: function(evt) {
+		_onWindowUserResizeEnd: function() {
 
 			this._windowMutationObserver.disconnect();
 			delete this._windowMutationObserver;
@@ -378,8 +377,6 @@ define([
 
 			var titleTextValue = this._getWindowTitleTextValue(),
 				titleAttr = '[title="' + titleTextValue + '"]';
-
-			put(this._windowTitleNode, '[id="' + this._getWindowTitleIdValue() + '"]');
 
 			this._windowTitleTextNode = put(this._windowTitleNode, 'div.' + this.windowTitleValueClass + titleAttr,
 				titleTextValue);
@@ -639,22 +636,15 @@ define([
 			this.inherited(arguments);
 		},
 
-		_onTitlePropSet: function(evt) {
+		_onTitlePropSet: function() {
 
 			this._updateWindowTitleValue(this.title);
 		},
 
-		_onWindowTitlePropSet: function(evt) {
+		_onWindowTitlePropSet: function() {
 
-			var nodeToUpdate,
-				windowId = this._getWindowTitleIdValue();
-
-			if (this.omitTitleBar) {
-				nodeToUpdate = this._windowContentNode;
-			} else {
-				nodeToUpdate = this._windowTitleNode;
-			}
-			domAttr.set(nodeToUpdate, 'id', windowId);
+			var windowId = this._getWindowTitleIdValue();
+			domAttr.set(this._windowNode, 'id', windowId);
 
 			this._updateWindowTitleValue(this._getWindowTitleTextValue());
 		},

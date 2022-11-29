@@ -15,56 +15,54 @@ define([
 
 		indexPage,
 		tests = {
+			'Should_GoToActivityInfo_When_ClickOnStarredActivitiesLink': function() {
 
-			'Should_GoToValidView_When_ClickOnFavouritesLink': function() {
-
-				var favouriteLinkSelector = 'div.favouritesBoxItems > a.module:first-child',
-					validViewUrlExpr = '\/(?!404)(?!home).*';
-
-				return indexPage
-					.login()
-					.then(Utils.clickElementAndCheckUrl(favouriteLinkSelector, validViewUrlExpr));
-			},
-
-			'Should_GoToActivityInfo_When_ClickOnLastActivitiesLink': function() {
-
-				var lastActivityLinkSelector = 'div.boxItems > div.lastActivityModule:first-child a',
+				var starredActivityLinkSelector = 'div.moduleWindow[id=starredActivities] div.containerButtons > a:first-child',
 					activityInfoUrlExpr = '\/catalog\/activity-info\/[0-9]+';
 
 				return indexPage
 					.login()
-					.then(Utils.clickElementAndCheckUrl(lastActivityLinkSelector, activityInfoUrlExpr));
+					.then(Utils.clickElementAndCheckUrl(starredActivityLinkSelector, activityInfoUrlExpr));
+			},
+
+			'Should_GoToValidView_When_ClickOnProductsLink': function() {
+
+				var productsLinkSelector = 'div.moduleWindow[id=products] div.containerButtons > a:first-child',
+					validViewUrlExpr = '\/(?!404)(?!home).*';
+
+				return indexPage
+					.login()
+					.then(Utils.clickElementAndCheckUrl(productsLinkSelector, validViewUrlExpr));
 			},
 
 			'Should_GoToFeedback_When_ClickOnFeedbackLink': function() {
 
 				var feedbackPageUrl = Config.url.feedback,
-					feedbackLinkSelector = 'div.box a[href="' + feedbackPageUrl + '"]',
-					values = {};
+					feedbackLinkSelector = 'div.moduleWindow[id=info] a[href="' + feedbackPageUrl + '"]';
 
 				return indexPage
 					.login()
 					.getAllWindowHandles()
-					.then(lang.partial(function(values, array) {
+					.then(function(handles) {
 
-						values.windowHandles = array;
-					}, values))
+						assert.lengthOf(handles, 1, 'Había abierta más de 1 pestaña');
+
+						return this.parent;
+					})
 					.then(Utils.clickElement(feedbackLinkSelector))
 					.getAllWindowHandles()
-					.then(lang.partial(function(values, array) {
+					.then(function(handles) {
 
-						var handles = values.windowHandles;
-
-						assert.isAbove(array.length, handles.length, 'No se ha abierto ninguna pestaña');
+						assert.lengthOf(handles, 2, 'No se ha abierto ninguna pestaña');
 
 						return this.parent
-							.switchToWindow(array[1])
+							.switchToWindow(handles[handles.length - 1])
 							.sleep(Config.timeout.shortSleep)
 							.then(Utils.checkUrl(feedbackPageUrl))
 							.then(Utils.checkLoadingIsGone())
 							.closeCurrentWindow()
 							.switchToWindow(handles[0]);
-					}, values));
+					});
 			}
 		};
 

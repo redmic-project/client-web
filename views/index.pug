@@ -6,11 +6,12 @@ block loading
 
 block root
 	#rootContainer
-	script(type='text/javascript').
+
+	script.
 		require([
 			'app/components/Router'
 		], function(
 			Router
-		){
+		) {
 			new Router();
 		});

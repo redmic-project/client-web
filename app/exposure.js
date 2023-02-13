@@ -176,15 +176,11 @@ function onOauthTokenRequest(req, res) {
 
 	res.set('Content-Type', 'application/json');
 
-	let body = req.body,
-		password = body.password,
-		username = body.username,
-
-		getTokenUrl = oauthUrl + '/token',
-		clientCredentials = oauthClientId + ':' + oauthClientSecret,
-		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
-
+	let getTokenUrl = oauthUrl + '/token',
 		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https;
+
+	let clientCredentials = oauthClientId + ':' + oauthClientSecret,
+		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64');
 
 	let options = {
 		method: 'POST',
@@ -203,7 +199,11 @@ function onOauthTokenRequest(req, res) {
 
 	internalReq.on('error', onOauthRequestError.bind(this, res));
 
-	let bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+	let body = req.body,
+		password = encodeURIComponent(body.password),
+		username = encodeURIComponent(body.username),
+		bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+
 	internalReq.write(bodyData);
 	internalReq.end();
 }

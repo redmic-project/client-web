@@ -141,9 +141,10 @@ define([
 			//		values private: credenciales para obtener el token
 			//
 
-			var username = values.email,
-				password = values.password,
-				data = 'username=' + username + '&password=' + password;
+			var data = {
+				username: values.email,
+				password: values.password
+			};
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',

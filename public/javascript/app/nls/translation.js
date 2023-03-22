@@ -1324,6 +1324,7 @@ define({
 		, "internalDocument": "Internal document"
 		, "internalUrl": "Internal url"
 		, "privateInternalUrl": "Private internal url"
+		, "resourceType": "Resource type"
 
 
 		// Meta-tags

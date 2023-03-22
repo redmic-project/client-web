@@ -17,7 +17,7 @@ yarn install
 OAUTH_URL=https://redmic.grafcan.es/api/oauth \
 OAUTH_CLIENT_ID=app \
 OAUTH_CLIENT_SECRET=secretKey \
-API_URL=https://api.redmic.grafcan.es/api \
+API_URL=https://redmic.grafcan.es/api \
 PRODUCTION=0 \
 npm start -- --port=80
 ```

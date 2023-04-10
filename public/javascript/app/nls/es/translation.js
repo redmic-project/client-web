@@ -1318,8 +1318,8 @@ define({
 
 	, "viewExternalUrl": "Ver en"
 	, "internalDocument": "Documento interno"
-	, "internalUrl": "URL interna"
-	, "privateInternalUrl": "URL interna privada"
+	, "internalUrl": "Documento interno"
+	, "privateInternalUrl": "Documento interno privado"
 	, "resourceType": "Tipo de recurso"
 
 

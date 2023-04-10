@@ -1322,8 +1322,8 @@ define({
 
 		, "viewExternalUrl": "View at"
 		, "internalDocument": "Internal document"
-		, "internalUrl": "Internal url"
-		, "privateInternalUrl": "Private internal url"
+		, "internalUrl": "Internal document"
+		, "privateInternalUrl": "Private internal document"
 		, "resourceType": "Resource type"
 
 

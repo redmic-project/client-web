@@ -107,7 +107,7 @@ define([
 			}
 
 			var protocols = '((https?)|(ftp))',
-				textSegment = '\\w\\-.:@%+~#={}',
+				textSegment = '\\w\\-.:,;@%+~#={}',
 				textSegmentPlusParams = textSegment + '?&\\/',
 				regExp = new RegExp('^(' + protocols + ':\\/\\/)?[' + textSegment + ']{2,256}\\.[a-z]{2,6}[' +
 					textSegmentPlusParams + ']*$');

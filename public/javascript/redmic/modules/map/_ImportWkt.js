@@ -93,13 +93,25 @@ define([
 				return;
 			}
 
+			var bounds;
+
+			if (newLayer.getBounds) {
+				bounds = newLayer.getBounds();
+			} else {
+				bounds = newLayer.getLatLng().toBounds(50);
+
+				// TODO borrar cuando autodetección de leaflet funcione (falta barra final)
+				newLayer.setIcon(new L.Icon.Default({
+					imagePath: '/javascript/leaflet/dist/images/'
+				}));
+			}
+
 			this._addMapLayer({
 				layer: newLayer,
 				optional: true,
 				id: req.id
 			});
 
-			var bounds = newLayer.getBounds();
 			if (this._getShown()) {
 				this.fitBounds(bounds);
 			} else {

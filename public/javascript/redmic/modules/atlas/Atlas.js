@@ -73,7 +73,7 @@ define([
 				},
 
 				_itemsSelected: {},
-				localTarget: "local",
+				localTarget: "localAtlas",
 				target: redmicConfig.services.atlasLayer,
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: ".",

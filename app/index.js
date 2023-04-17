@@ -1,10 +1,11 @@
-var packageJson = require('../package.json'),
+let packageJson = require('../package.json'),
 	version = packageJson.version,
 
 	params = require('./params')(version),
 
 	logging = require('./logging'),
 	logger = logging.logger,
+
 	cluster;
 
 if (params.cluster) {
@@ -12,9 +13,9 @@ if (params.cluster) {
 }
 
 if (cluster && cluster.isMaster) {
-	var numCpus = require('os').cpus().length;
+	let numCpus = require('os').cpus().length;
 
-	for (var i = 0; i < numCpus; i++) {
+	for (let i = 0; i < numCpus; i++) {
 		cluster.fork();
 	}
 
@@ -23,20 +24,22 @@ if (cluster && cluster.isMaster) {
 		logger.error('worker %i died (%s)', worker.process.pid, signal);
 	});
 } else {
-	var express = require('express'),
+	let express = require('express'),
 		http = require('http'),
 
 		metrics = require('./metrics')(logger, '/metrics'),
+		prerender = require('./prerender')(logger),
 		exposure = require('./exposure')(logger, params, version),
 
 		port = params.port,
 		debug = params.debug,
 		pid = process.pid;
 
-	var app = express();
+	let app = express();
 
 	logging.registerAppLogger(params, app);
 	metrics.registerAppMetrics(app);
+	prerender.registerAppPrerender(app);
 	exposure.exposeApp(app);
 
 	http.createServer(app).listen(port, function() {

@@ -14,14 +14,16 @@ services:
       OAUTH_CLIENT_SECRET:
       API_URL:
       SITEMAP_URL:
+      PRERENDER_URL:
     networks:
       traefik-net:
       metric-net:
+      prerender-net:
     deploy:
       mode: replicated
       replicas: ${REPLICAS:-1}
       labels:
-        traefik.enable: 'true'
+        traefik.enable: ${TRAEFIK_ENABLE:-true}
 
         traefik.http.services.redmic-web.loadbalancer.server.port: 3050
 
@@ -46,16 +48,16 @@ services:
         traefik.http.middlewares.add-en-language-header.headers.customrequestheaders.content-language: en
         traefik.http.routers.redmic-web-en.middlewares: add-en-language-header, redmic-web-error-5xx
       restart_policy:
-        delay: ${RESTART_DELAY:-10s}
+        delay: ${RESTART_DELAY:-1s}
       update_config:
         delay: ${UPDATE_DELAY:-1m}
       resources:
         limits:
-          cpus: '${RESOURCES_LIMITS_CPUS:-1}'
-          memory: ${RESOURCES_LIMITS_MEMORY:-128M}
+          cpus: '${RESOURCES_LIMITS_CPUS:-2}'
+          memory: ${RESOURCES_LIMITS_MEMORY:-256M}
         reservations:
-          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.001}'
-          memory: ${RESOURCES_RESERVATIONS_MEMORY:-64M}
+          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.1}'
+          memory: ${RESOURCES_RESERVATIONS_MEMORY:-128M}
 
 networks:
   traefik-net:
@@ -66,4 +68,9 @@ networks:
   metric-net:
     name: ${METRIC_NET_NAME:-metric-net}
     driver: ${METRIC_NET_DRIVER:-overlay}
+    external: true
+
+  prerender-net:
+    name: ${PRERENDER_NET_NAME:-prerender-net}
+    driver: ${PRERENDER_NET_DRIVER:-overlay}
     external: true

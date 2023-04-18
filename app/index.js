@@ -1,19 +1,19 @@
-let packageJson = require('../package.json'),
+const packageJson = require('../package.json'),
 	version = packageJson.version,
 
 	params = require('./params')(version),
 
 	logging = require('./logging'),
-	logger = logging.logger,
+	logger = logging.logger;
 
-	cluster;
+let cluster;
 
 if (params.cluster) {
 	cluster = require('cluster');
 }
 
 if (cluster && cluster.isMaster) {
-	let numCpus = require('os').cpus().length;
+	const numCpus = require('os').cpus().length;
 
 	for (let i = 0; i < numCpus; i++) {
 		cluster.fork();
@@ -24,7 +24,7 @@ if (cluster && cluster.isMaster) {
 		logger.error('worker %i died (%s)', worker.process.pid, signal);
 	});
 } else {
-	let express = require('express'),
+	const express = require('express'),
 		http = require('http'),
 
 		metrics = require('./metrics')(logger, '/metrics'),
@@ -33,9 +33,9 @@ if (cluster && cluster.isMaster) {
 
 		port = params.port,
 		debug = params.debug,
-		pid = process.pid;
+		pid = process.pid,
 
-	let app = express();
+		app = express();
 
 	logging.registerAppLogger(params, app);
 	metrics.registerAppMetrics(app);

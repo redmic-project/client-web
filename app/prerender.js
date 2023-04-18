@@ -1,7 +1,7 @@
-let prerenderNode = require('prerender-node'),
-	logger;
+const prerenderNode = require('prerender-node'),
+	prerenderUrl = process.env.PRERENDER_URL;
 
-let prerenderUrl = process.env.PRERENDER_URL;
+let logger;
 
 prerenderNode.set('prerenderServiceUrl', prerenderUrl)
 	.set('afterRender', afterRender);
@@ -9,7 +9,7 @@ prerenderNode.set('prerenderServiceUrl', prerenderUrl)
 function afterRender(err, req, _prerender_res) {
 
 	if (err || !prerenderUrl) {
-		let agent = req.get('User-Agent');
+		const agent = req.get('User-Agent');
 
 		if (!prerenderUrl) {
 			logger.warn('"PRERENDER_URL" is undefined, serving non-static content to bot "%s"', agent);

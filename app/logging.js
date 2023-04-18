@@ -1,7 +1,7 @@
-var morgan = require('morgan'),
+const morgan = require('morgan'),
 	winston = require('winston');
 
-var logConsoleTransport = new (winston.transports.Console)({
+const logConsoleTransport = new (winston.transports.Console)({
 	level: 'silly',
 	format: winston.format.combine(
 		winston.format.splat(),
@@ -16,7 +16,7 @@ var logConsoleTransport = new (winston.transports.Console)({
 	)
 });
 
-var logger = winston.createLogger({
+const logger = winston.createLogger({
 	transports: [
 		logConsoleTransport
 	],

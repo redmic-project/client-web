@@ -1,10 +1,10 @@
-var path = require('path'),
+const path = require('path'),
 	nib = require('nib'),
 	stylus = require('stylus');
 
 function compileStylus(str, filePath) {
 
-	var style = stylus(str)
+	const style = stylus(str)
 		.set('filename', filePath)
 		.set('include css', true)
 		.set('compress', true)
@@ -24,7 +24,7 @@ function compileStylus(str, filePath) {
 
 function generateStylesheets(app) {
 
-	var stylesParentPath = path.join(__dirname, '..', 'public');
+	const stylesParentPath = path.join(__dirname, '..', 'public');
 
 	app.use(stylus.middleware({
 		src: stylesParentPath,

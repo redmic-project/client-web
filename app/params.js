@@ -1,4 +1,4 @@
-let commander = require('commander');
+const commander = require('commander');
 
 module.exports = function(version) {
 
@@ -12,7 +12,7 @@ module.exports = function(version) {
 		.showSuggestionAfterError()
 		.parse(process.argv);
 
-	let commanderOpts = commander.opts();
+	const commanderOpts = commander.opts();
 
 	return {
 		useBuilt: commanderOpts.useBuilt,

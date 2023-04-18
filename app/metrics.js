@@ -1,26 +1,26 @@
-var promClient = require('prom-client'),
+const promClient = require('prom-client'),
 	responseTime = require('response-time');
 
-var register = promClient.register,
+const register = promClient.register,
 	counter = promClient.Counter,
 	histogram = promClient.Histogram,
-	summary = promClient.Summary,
-	logger,
-	promPath;
+	summary = promClient.Summary;
 
-var numOfRequests = new counter({
+let logger, promPath;
+
+const numOfRequests = new counter({
 	name: 'numOfRequests',
 	help: 'Number of requests made',
 	labelNames: ['method']
 });
 
-var pathsTaken = new counter({
+const pathsTaken = new counter({
 	name: 'pathsTaken',
 	help: 'Paths taken in the app',
 	labelNames: ['path']
 });
 
-var responses = new summary({
+const responses = new summary({
 	name: 'responses',
 	help: 'Response time in millis',
 	labelNames: ['method', 'path', 'status']
@@ -50,7 +50,7 @@ function injectMetricsRoute(app) {
 
 		res.set('Content-Type', register.contentType);
 
-		var metricsPromise = register.metrics();
+		const metricsPromise = register.metrics();
 
 		metricsPromise.then(
 			(function(response, value) {

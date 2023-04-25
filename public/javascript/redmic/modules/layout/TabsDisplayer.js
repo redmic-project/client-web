@@ -1,10 +1,10 @@
 define([
-	"dijit/layout/ContentPane"
-	, "dijit/layout/TabContainer"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
+	'dijit/layout/ContentPane'
+	, 'dijit/layout/TabContainer'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
 ], function(
 	ContentPane
 	, TabContainer
@@ -12,36 +12,40 @@ define([
 	, lang
 	, _Module
 	, _Show
-){
+) {
+
 	return declare([_Module, _Show], {
 		//	summary:
-		//		Visualizador de contenido por pestañas.
+		//		Visualizador de contenido por pestañas. Recibe publicaciones de módulos que desean mostrarse como una
+		//		nueva pestaña.
 
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "tabsDisplayer",
-				childTabs: [],
-				childInstances: []
+				ownChannel: 'tabsDisplayer',
+				actions: {
+					'ADD_TAB': 'addTab'
+				},
+
+				_tabContainerClass: 'softSolidContainer borderRadiusBottomTabContainer'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
+		_defineSubscriptions: function() {
+
+			this.subscriptionsConfig.push({
+				channel : this.getChannel("ADD_TAB"),
+				callback: "_subAddTab"
+			});
+		},
+
 		_initialize: function() {
 
 			this._container = new TabContainer({
-				'class': "softSolidContainer borderRadiusBottomTabContainer"
+				'class': this._tabContainerClass
 			});
-
-			for (var i = 0; i < this.childTabs.length; i++) {
-				var childTabConfig = this.childTabs[i],
-					title = childTabConfig.title,
-					instance = this._createChildInstance(childTabConfig);
-
-				this.childInstances.push(instance);
-				this._createTab(title, instance);
-			}
 		},
 
 		_setOwnCallbacksForEvents: function() {
@@ -54,28 +58,26 @@ define([
 			this._container.startup();
 		},
 
-		_createChildInstance: function(childTabConfig) {
+		_subAddTab: function(req) {
 
-			var type = childTabConfig.type,
-				props = childTabConfig.props;
+			var childContainer = this._getTabContainer(req.title),
+				childShowChannel = this._buildChannel(req.channel, this.actions.SHOW);
 
-			props.parentChannel = this.getChannel();
-
-			return new type(props);
+			this._publish(childShowChannel, {
+				node: childContainer
+			});
 		},
 
-		_createTab: function(title, instance) {
+		_getTabContainer: function(title) {
 
 			var node = new ContentPane({
 				title: title,
-				region: "center"
+				region: 'center'
 			});
 
 			this._container.addChild(node);
 
-			this._publish(instance.getChannel("SHOW"), {
-				node: node
-			});
+			return node;
 		},
 
 		_onMeOrAncestorResized: function(req) {

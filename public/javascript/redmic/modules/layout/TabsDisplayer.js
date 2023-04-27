@@ -27,7 +27,7 @@ define([
 					'ADD_TAB': 'addTab'
 				},
 
-				_tabContainerClass: 'softSolidContainer borderRadiusBottomTabContainer'
+				_tabContainerClass: 'fWidth fHeight softSolidContainer borderRadiusBottomTabContainer'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -46,6 +46,8 @@ define([
 			this._container = new TabContainer({
 				'class': this._tabContainerClass
 			});
+
+			this._observeTabs();
 		},
 
 		_setOwnCallbacksForEvents: function() {
@@ -56,6 +58,20 @@ define([
 		postCreate: function() {
 
 			this._container.startup();
+		},
+
+		_observeTabs: function() {
+
+			var childTabsContainer = this._container.domNode.lastElementChild,
+				mutationObserver = new MutationObserver(lang.hitch(this, this._onTabContainerMutation));
+
+			mutationObserver.observe(childTabsContainer, { childList: true });
+		},
+
+		_onTabContainerMutation: function(_mutations, observer) {
+
+			observer.disconnect();
+			this._resizeTabs();
 		},
 
 		_subAddTab: function(req) {

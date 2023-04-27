@@ -3,6 +3,7 @@ define([
 	, 'dijit/layout/TabContainer'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/query'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
 ], function(
@@ -10,6 +11,7 @@ define([
 	, TabContainer
 	, declare
 	, lang
+	, query
 	, _Module
 	, _Show
 ) {
@@ -27,7 +29,8 @@ define([
 					'ADD_TAB': 'addTab'
 				},
 
-				_tabContainerClass: 'fWidth fHeight softSolidContainer borderRadiusBottomTabContainer'
+				_tabContainerClass: 'fWidth fHeight softSolidContainer borderRadiusBottomTabContainer',
+				_tabHandlerQueryDefinition: 'div.dijitTabInner.dijitTabContent.dijitTab'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -76,7 +79,7 @@ define([
 
 		_subAddTab: function(req) {
 
-			var childContainer = this._getTabContainer(req.title),
+			var childContainer = this._getTabNode(req),
 				childShowChannel = this._buildChannel(req.channel, this.actions.SHOW);
 
 			this._publish(childShowChannel, {
@@ -84,16 +87,52 @@ define([
 			});
 		},
 
-		_getTabContainer: function(title) {
+		_getTabNode: function(req) {
 
-			var node = new ContentPane({
-				title: title,
-				region: 'center'
-			});
+			var props = this._getTabProps(req),
+				node = new ContentPane(props);
 
 			this._container.addChild(node);
 
+			this._customizeTab(props);
+
 			return node;
+		},
+
+		_getTabProps: function(req) {
+
+			var props = {
+				region: 'center'
+			};
+
+			props.title = req.title;
+			props.iconClass = req.iconClass;
+			props.tooltip = req.tooltip || props.title;
+			props.showTitle = req.showTitle || !props.iconClass;
+
+			return props;
+		},
+
+		_customizeTab: function(props) {
+
+			if (props.iconClass) {
+				this._addTooltipToIcon(props.tooltip);
+			}
+		},
+
+		_addTooltipToIcon: function(tooltipValue) {
+
+			var tabHandlers = query(this._tabHandlerQueryDefinition, this._container.domNode);
+
+			tabHandlers.forEach(lang.hitch(this, function(tabTooltip, tabHandler) {
+
+				var tabHandlerIcon = tabHandler.firstElementChild,
+					tabHandlerTitle = tabHandlerIcon.nextElementSibling;
+
+				if (tabHandlerTitle.title === tabTooltip) {
+					tabHandlerIcon.title = tabTooltip;
+				}
+			}, tooltipValue));
 		},
 
 		_onMeOrAncestorResized: function(req) {

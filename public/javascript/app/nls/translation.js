@@ -419,9 +419,7 @@ define({
 		, "selectedCharts": "Selected charts"
 		, "selectedLayers": "Selected layers"
 		, "layersCatalog": "Layers catalog"
-		, "goToLayersCatalog": "Go to layers catalog"
-		, "goToSelectedLayers": "Go to selected layers"
-		, "addLayersToLoadInMap": "Click here to add layers from catalog"
+		, "addLayersToLoadInMap": "Add layers from catalog"
 
 		, "seaDepth": "Bottom"
 		, "legalValidity": "Legal validity"

@@ -419,9 +419,7 @@ define({
 	, "selectedCharts": "Gráficas seleccionadas"
 	, "selectedLayers": "Capas seleccionadas"
 	, "layersCatalog": "Catálogo de capas"
-	, "goToLayersCatalog": "Ir a catálogo de capas"
-	, "goToSelectedLayers": "Ir a capas seleccionadas"
-	, "addLayersToLoadInMap": "Pulse aquí para añadir capas del catálogo"
+	, "addLayersToLoadInMap": "Añada capas desde el catálogo"
 
 	, "seaDepth": "Fondo"
 	, "legalValidity": "Validez legal"

@@ -17,6 +17,7 @@ define([
 	, "redmic/modules/browser/_HierarchicalSelect"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Total"
+	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/AtlasList"
 	, "templates/LoadingCustom"
@@ -43,6 +44,7 @@ define([
 	, _HierarchicalSelect
 	, SelectionBox
 	, Total
+	, TabsDisplayer
 	, TemplateDisplayer
 	, ListTemplate
 	, LoadingCustom
@@ -54,9 +56,7 @@ define([
 
 	return declare([_Module, _Show, _Store, _Selection, _AtlasLayersManagement, _AtlasLegendManagement], {
 		//	summary:
-		//		Módulo de Atlas.
-		//	description:
-		//
+		//		Módulo de Atlas, con un catálogo de capas para añadir al mapa y un listado de gestión de las añadidas.
 
 		constructor: function(args) {
 
@@ -65,11 +65,7 @@ define([
 
 				events: {
 					ADD_LAYER: "addLayer",
-					REMOVE_LAYER: "removeLayer",
-					DISABLE_THEMES_BUTTON: "disableThemesButton",
-					ENABLE_THEMES_BUTTON: "enableThemesButton",
-					DISABLE_CATALOG_BUTTON: "disableCatalogButton",
-					ENABLE_CATALOG_BUTTON: "enableCatalogButton"
+					REMOVE_LAYER: "removeLayer"
 				},
 
 				_itemsSelected: {},
@@ -78,8 +74,6 @@ define([
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: ".",
 				parentProperty: "parent",
-				showBrowserAnimationClass: "animated fadeIn",
-				hideBrowserAnimationClass: "animated fadeOut",
 
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				_layerIdsById: {}, // correspondencia entre ids de las capas con sus layerIds
@@ -95,13 +89,6 @@ define([
 				parentChannel: this.getChannel(),
 				title: this.i18n.selectedLayers,
 				target: this.localTarget,
-				buttonsInTopZone: true,
-				buttons: {
-					"goToCatalog": {
-						className: "fa-plus",
-						title: this.i18n.goToLayersCatalog
-					}
-				},
 				classByList: '.borderList',
 				browserExts: [_DragAndDrop],
 				browserConfig: {
@@ -140,8 +127,7 @@ define([
 						definition: LoadingCustom,
 						props: {
 							message: this.i18n.addLayersToLoadInMap,
-							iconClass: "fr fr-layer",
-							clickable: true
+							iconClass: "fr fr-layer"
 						}
 					}
 				}
@@ -153,13 +139,6 @@ define([
 				selectionTarget: this.selectionTarget,
 				target: this.target,
 				perms: this.perms,
-				buttonsInTopZone: true,
-				buttons: {
-					"backToSelectedLayers": {
-						className: "fa-eye",
-						title: this.i18n.goToSelectedLayers
-					}
-				},
 				classByList: '.borderList',
 				browserConfig: {
 					template: serviceOGCList,
@@ -203,11 +182,13 @@ define([
 
 		_initialize: function() {
 
-			this.themesBrowser = new declare([Layout, Controller])(this.themesBrowserConfig);
+			var ThemesBrowser = declare([Layout, Controller]);
+			this.themesBrowser = new ThemesBrowser(this.themesBrowserConfig);
 
 			this.catalogView = new ServiceOGC(this.catalogConfig);
 
-			this.templateDisplayerDetails = new declare(TemplateDisplayer).extend(_ShowInTooltip)(this.detailsConfig);
+			var LayerDetailsTooltip = declare(TemplateDisplayer).extend(_ShowInTooltip);
+			this.templateDisplayerDetails = new LayerDetailsTooltip(this.detailsConfig);
 		},
 
 		_defineSubscriptions: function() {
@@ -226,15 +207,6 @@ define([
 				channel: this.themesBrowser.getChildChannel("browser", "DRAG_AND_DROP"),
 				callback: "_subThemesBrowserDragAndDrop"
 			},{
-				channel: this.themesBrowser.getChildChannel("browser", "NO_DATA_MSG_CLICKED"),
-				callback: "_subThemesBrowserNoDataMsgClicked"
-			},{
-				channel: this.themesBrowser.getChildChannel("iconKeypad", "KEYPAD_INPUT"),
-				callback: "_subThemesBrowserKeypadInput"
-			},{
-				channel: this.catalogView.getChildChannel("iconKeypad", "KEYPAD_INPUT"),
-				callback: "_subCatalogViewKeypadInput"
-			},{
 				channel : this.catalogView.getChildChannel("browser", "BUTTON_EVENT"),
 				callback: "_subCatalogViewButtonEvent"
 			});
@@ -248,18 +220,6 @@ define([
 			},{
 				event: 'REMOVE_LAYER',
 				channel: this.getMapChannel("REMOVE_LAYER")
-			},{
-				event: 'DISABLE_THEMES_BUTTON',
-				channel: this.themesBrowser.getChildChannel("iconKeypad", "DISABLE_BUTTON")
-			},{
-				event: 'ENABLE_THEMES_BUTTON',
-				channel: this.themesBrowser.getChildChannel("iconKeypad", "ENABLE_BUTTON")
-			},{
-				event: 'DISABLE_CATALOG_BUTTON',
-				channel: this.catalogView.getChildChannel("iconKeypad", "DISABLE_BUTTON")
-			},{
-				event: 'ENABLE_CATALOG_BUTTON',
-				channel: this.catalogView.getChildChannel("iconKeypad", "ENABLE_BUTTON")
 			});
 		},
 
@@ -282,7 +242,7 @@ define([
 
 			this._atlasContainer = put('div.atlasContainer');
 
-			this._showBrowser(this.catalogView, this._atlasContainer, null, this.hideBrowserAnimationClass);
+			this._addTabDisplayer();
 		},
 
 		_getNodeToShow: function() {
@@ -290,14 +250,31 @@ define([
 			return this._atlasContainer;
 		},
 
-		_showBrowser: function(instance, node, showAnimationClass, hideAnimationClass) {
+		_addTabDisplayer: function() {
 
-			this._publish(instance.getChannel("SHOW"), {
-				node: node,
-				animation: {
-					showAnimation: showAnimationClass,
-					hideAnimation: hideAnimationClass
-				}
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this._atlasContainer
+			});
+
+			this._addTabs(this._tabsDisplayer.getChannel('ADD_TAB'));
+		},
+
+		_addTabs: function(addTabChannel) {
+
+			this._publish(addTabChannel, {
+				title: this.i18n.layersCatalog,
+				iconClass: 'fa fa-list-ul',
+				channel: this.catalogView.getChannel()
+			});
+
+			this._publish(addTabChannel, {
+				title: this.i18n.selectedLayers,
+				iconClass: 'fa fa-map-o',
+				channel: this.themesBrowser.getChannel()
 			});
 		},
 
@@ -488,52 +465,6 @@ define([
 			});
 		},
 
-		_subThemesBrowserNoDataMsgClicked: function(res) {
-
-			this._goToCatalog();
-		},
-
-		_subThemesBrowserKeypadInput: function(res) {
-
-			if (res.inputKey === "goToCatalog") {
-				this._goToCatalog();
-			}
-		},
-
-		_goToCatalog: function() {
-
-			this._disableButtons();
-
-			this._once(this.themesBrowser.getChannel("HIDDEN"), lang.hitch(this, function() {
-
-				this._showBrowser(this.catalogView, this._atlasContainer, this.showBrowserAnimationClass,
-					this.hideBrowserAnimationClass);
-			}));
-
-			this._publish(this.themesBrowser.getChannel("HIDE"));
-
-			this._once(this.catalogView.getChannel("SHOWN"), lang.hitch(this, this._enableButtons));
-		},
-
-		_disableButtons: function() {
-
-			this._emitEvt('DISABLE_THEMES_BUTTON', { key: "goToCatalog" });
-			this._emitEvt('DISABLE_CATALOG_BUTTON', { key: "backToSelectedLayers" });
-		},
-
-		_enableButtons: function() {
-
-			this._emitEvt('ENABLE_THEMES_BUTTON', { key: "goToCatalog" });
-			this._emitEvt('ENABLE_CATALOG_BUTTON', { key: "backToSelectedLayers" });
-		},
-
-		_subCatalogViewKeypadInput: function(res) {
-
-			if (res.inputKey === "backToSelectedLayers") {
-				this._backToSelectedLayers();
-			}
-		},
-
 		_subCatalogViewButtonEvent: function(res) {
 
 			this._publish(this.templateDisplayerDetails.getChannel("HIDE"));
@@ -551,23 +482,6 @@ define([
 			this._publish(this.templateDisplayerDetails.getChannel("SHOW"), {
 				node: node
 			});
-		},
-
-		_backToSelectedLayers: function() {
-
-			this._disableButtons();
-
-			this._once(this.catalogView.getChannel("HIDDEN"),
-				lang.hitch(this, function() {
-
-				this._showBrowser(this.themesBrowser, this._atlasContainer,
-					this.showBrowserAnimationClass, this.hideBrowserAnimationClass);
-				}));
-
-			this._publish(this.catalogView.getChannel("HIDE"));
-
-			this._once(this.themesBrowser.getChannel("SHOWN"),
-				lang.hitch(this, this._enableButtons));
 		},
 
 		_activateLayer: function(/*Object*/ item, order) {

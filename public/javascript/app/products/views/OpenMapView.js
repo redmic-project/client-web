@@ -1,21 +1,21 @@
 define([
-	"app/base/views/extensions/_QueryOnMap"
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/designs/mapWithSideContent/Controller"
+	"app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/atlas/Atlas"
+	, "redmic/modules/base/_ShowInPopup"
+	, "redmic/modules/mapQuery/QueryOnMap"
 ], function(
-	_QueryOnMap
-	, _ShowInPopupResultsFromQueryOnMap
-	, Controller
+	Controller
 	, Layout
 	, redmicConfig
 	, declare
 	, lang
 	, Atlas
+	, _ShowInPopup
+	, QueryOnMap
 ) {
 
 	return declare([Layout, Controller], {
@@ -47,13 +47,25 @@ define([
 				terms: this.terms,
 				perms: this.perms
 			}, this.atlasConfig || {}]);
+
+			this.queryOnMapConfig = this._merge([{
+				parentChannel: this.getChannel(),
+				title: 'a',
+				width: 5,
+				height: "md"
+			}, this.queryOnMapConfig || {}]);
 		},
 
 		_initialize: function() {
 
-			this.atlasConfig.getMapChannel = lang.hitch(this.map, this.map.getChannel);
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+			this.atlasConfig.getMapChannel = getMapChannel;
+			this.queryOnMapConfig.getMapChannel = getMapChannel;
 
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])(this.atlasConfig);
+			this.atlas = new Atlas(this.atlasConfig);
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup(this.queryOnMapConfig);
 		},
 
 		postCreate: function() {

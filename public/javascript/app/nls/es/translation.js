@@ -420,6 +420,7 @@ define({
 	, "selectedLayers": "Capas seleccionadas"
 	, "layersCatalog": "Catálogo de capas"
 	, "addLayersToLoadInMap": "Añada capas desde el catálogo"
+	, "layersQueryResults": "Resultados de consulta sobre capas"
 
 	, "seaDepth": "Fondo"
 	, "legalValidity": "Validez legal"

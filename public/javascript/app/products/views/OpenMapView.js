@@ -50,7 +50,7 @@ define([
 
 			this.queryOnMapConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				title: 'a',
+				title: this.i18n.layersQueryResults,
 				width: 5,
 				height: "md"
 			}, this.queryOnMapConfig || {}]);

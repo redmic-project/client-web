@@ -2,8 +2,6 @@ define([
 	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
 	, "app/base/views/extensions/_EditionView"
 	, "app/base/views/extensions/_LocalSelectionView"
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/base/views/extensions/_QueryOnMap"
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
@@ -30,11 +28,13 @@ define([
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
 	, "redmic/modules/atlas/Atlas"
+	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/layer/_Editable"
 	, "redmic/modules/map/layer/_RadiusOnSelect"
 	, "redmic/modules/map/layer/_Selectable"
 	, "redmic/modules/map/layer/_SelectOnClick"
+	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
 	, "redmic/view/effects/Animation"
 	, "templates/CitationPopup"
@@ -43,8 +43,6 @@ define([
 	_CompositeInTooltipFromIconKeypad
 	, _EditionView
 	, _LocalSelectionView
-	, _ShowInPopupResultsFromQueryOnMap
-	, _QueryOnMap
 	, _Main
 	, Controller
 	, Layout
@@ -71,11 +69,13 @@ define([
 	, Total
 	, DataDisplayer
 	, Atlas
+	, _ShowInPopup
 	, GeoJsonLayerImpl
 	, _Editable
 	, _RadiusOnSelect
 	, _Selectable
 	, _SelectOnClick
+	, QueryOnMap
 	, TextImpl
 	, Animation
 	, TemplatePopup
@@ -389,10 +389,21 @@ define([
 
 		_createAtlas: function() {
 
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+				getMapChannel: getMapChannel
+			});
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				title: this.i18n.layersQueryResults,
+				width: 5,
+				height: "md"
 			});
 
 			var cp = new ContentPane({

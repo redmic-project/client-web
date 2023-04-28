@@ -1,7 +1,5 @@
 define([
 	"app/base/views/extensions/_LocalSelectionView"
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/base/views/extensions/_QueryOnMap"
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
@@ -20,12 +18,12 @@ define([
 	, "redmic/modules/browser/_GeoJsonParser"
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/atlas/Atlas"
+	, "redmic/modules/base/_ShowInPopup"
+	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
 	, "templates/CitationList"
 ], function(
 	_LocalSelectionView
-	, _ShowInPopupResultsFromQueryOnMap
-	, _QueryOnMap
 	, _Main
 	, Controller
 	, Layout
@@ -44,9 +42,12 @@ define([
 	, _GeoJsonParser
 	, ListImpl
 	, Atlas
+	, _ShowInPopup
+	, QueryOnMap
 	, TextImpl
 	, TemplateList
-){
+) {
+
 	return declare([Layout, Controller, _Main, _Store, _Filter, _LocalSelectionView], {
 		//	summary:
 		//		Vista base para todas las vistas de geográfica.
@@ -228,10 +229,21 @@ define([
 
 		_createAtlas: function() {
 
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+				getMapChannel: getMapChannel
+			});
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				title: this.i18n.layersQueryResults,
+				width: 5,
+				height: "md"
 			});
 
 			var cp = new ContentPane({

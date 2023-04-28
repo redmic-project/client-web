@@ -1,7 +1,5 @@
 define([
 	'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
-	, "app/base/views/extensions/_QueryOnMap"
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
@@ -10,6 +8,7 @@ define([
 	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_ShowInPopup"
@@ -19,17 +18,15 @@ define([
 	, "redmic/modules/browser/_Select"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/layer/_AddFilter"
+	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
 	, "templates/ActivityList"
 	, "templates/FilterForm"
 	, "./TrashDetails"
 ], function(
 	_AddCompositeSearchInTooltipFromTextSearch
-	, _QueryOnMap
-	, _ShowInPopupResultsFromQueryOnMap
 	, Controller
 	, Layout
 	, redmicConfig
@@ -38,6 +35,7 @@ define([
 	, TabContainer
 	, declare
 	, lang
+	, Atlas
 	, _Filter
 	, _Selection
 	, _ShowInPopup
@@ -47,9 +45,9 @@ define([
 	, _Select
 	, SelectionBox
 	, Total
-	, Atlas
 	, GeoJsonLayerImpl
 	, _AddFilter
+	, QueryOnMap
 	, TextImpl
 	, TemplateList
 	, FilterForm
@@ -139,10 +137,21 @@ define([
 			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
 			this.browser = new BrowserDefinition(this.browserConfig);
 
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+				getMapChannel: getMapChannel
+			});
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				title: this.i18n.layersQueryResults,
+				width: 5,
+				height: "md"
 			});
 
 			var TrashDetailsDefinition = declare(TrashDetails).extend(_ShowInPopup);

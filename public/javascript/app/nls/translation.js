@@ -420,6 +420,7 @@ define({
 		, "selectedLayers": "Selected layers"
 		, "layersCatalog": "Layers catalog"
 		, "addLayersToLoadInMap": "Add layers from catalog"
+		, "layersQueryResults": "Layers query results"
 
 		, "seaDepth": "Bottom"
 		, "legalValidity": "Legal validity"

@@ -1,7 +1,5 @@
 define([
 	'alertify/alertify.min'
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/base/views/extensions/_QueryOnMap"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
@@ -26,6 +24,7 @@ define([
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/atlas/Atlas"
+	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_ListenBounds"
 	, "redmic/modules/map/layer/_ListenZoom"
@@ -34,6 +33,7 @@ define([
 	, "redmic/modules/map/layer/GridLayerImpl"
 	, "redmic/modules/map/layer/PruneClusterLayerImpl"
 	, "redmic/modules/map/layer/WmsLayerImpl"
+	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
 	, "redmic/modules/tree/_LazyLoad"
 	, "redmic/modules/tree/_LeafSelection"
@@ -43,8 +43,6 @@ define([
 	, "templates/SpeciesList"
 ], function(
 	alertify
-	, _ShowInPopupResultsFromQueryOnMap
-	, _QueryOnMap
 	, Controller
 	, Layout
 	, redmicConfig
@@ -69,6 +67,7 @@ define([
 	, Pagination
 	, Total
 	, Atlas
+	, _ShowInPopup
 	, _AddFilter
 	, _ListenBounds
 	, _ListenZoom
@@ -77,6 +76,7 @@ define([
 	, GridLayerImpl
 	, PruneClusterLayerImpl
 	, WmsLayerImpl
+	, QueryOnMap
 	, TextImpl
 	, _LazyLoad
 	, _LeafSelection
@@ -85,7 +85,7 @@ define([
 	, TemplatePopup
 	, TemplateList
 ){
-	return declare([Layout, Controller, _Selection, _Store, _Filter, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap], {
+	return declare([Layout, Controller, _Selection, _Store, _Filter], {
 		//	summary:
 		//		Vista de SpeciesDistribution.
 		//	description:
@@ -292,9 +292,25 @@ define([
 						return 1;
 				}
 			}, this.pruneClusterLayerConfig || {}]);
+
+			this.atlasConfig = this._merge([{
+				parentChannel: this.getChannel(),
+				perms: this.perms
+			}, this.atlasConfig || {}]);
+
+			this.queryOnMapConfig = this._merge([{
+				parentChannel: this.getChannel(),
+				typeGroupProperty: this.typeGroupProperty,
+				title: this.i18n.layersQueryResults,
+				width: 5,
+				height: "md"
+			}, this.queryOnMapConfig || {}]);
 		},
 
 		_initialize: function() {
+
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel),
+				mapChannel = getMapChannel();
 
 			this.searchConfig.queryChannel = this.queryChannel;
 			this.textSearch = new TextImpl(this.searchConfig);
@@ -306,13 +322,13 @@ define([
 			var tree = declare([CbtreeImpl, _LazyLoad, _LeafSelection/*, _SelectionBoxTree*/]);
 			this.tree = new tree(this.treeConfig);
 
-			this.d3LayerConfig.mapChannel = this.map.getChannel();
+			this.d3LayerConfig.mapChannel = mapChannel;
 
 			var d3LayerDefinition = declare(declare([GridLayerImpl, _AddFilter, _PublishInfo])
 				.extend(_ListenBounds)).extend(_ListenZoom);
 			this.gridLayer = new d3LayerDefinition(this.d3LayerConfig);
 
-			this.pruneClusterLayerConfig.mapChannel = this.map.getChannel();
+			this.pruneClusterLayerConfig.mapChannel = mapChannel;
 
 			var pruneClusterLayerDef = declare(declare([PruneClusterLayerImpl, _AddFilter, _RadiusOnClick])
 				.extend(_ListenBounds)).extend(_ListenZoom);
@@ -320,33 +336,35 @@ define([
 
 			this.grid5000Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
-				mapChannel: this.map.getChannel(),
+				mapChannel: mapChannel,
 				layerDefinition: 'grid5000m'
 			});
 
 			this.grid1000Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
-				mapChannel: this.map.getChannel(),
+				mapChannel: mapChannel,
 				layerDefinition: 'grid1000m'
 			});
 
 			this.grid500Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
-				mapChannel: this.map.getChannel(),
+				mapChannel: mapChannel,
 				layerDefinition: 'grid500m'
 			});
 
 			this.grid100Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
-				mapChannel: this.map.getChannel(),
+				mapChannel: mapChannel,
 				layerDefinition: 'grid100m'
 			});
 
-			this.atlas = new Atlas({
-				parentChannel: this.getChannel(),
-				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
-			});
+			this.atlasConfig.getMapChannel = getMapChannel;
+			this.queryOnMapConfig.getMapChannel = getMapChannel;
+
+			this.atlas = new Atlas(this.atlasConfig);
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup(this.queryOnMapConfig);
 		},
 
 		_defineSubscriptions: function () {

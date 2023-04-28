@@ -1,7 +1,5 @@
 define([
 	'alertify/alertify.min'
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/base/views/extensions/_QueryOnMap"
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
@@ -20,13 +18,13 @@ define([
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/components/ProgressSlider/ProgressSlider"
 	, "redmic/modules/atlas/Atlas"
+	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_PublishInfo"
 	, "redmic/modules/map/layer/TrackingLayerImpl"
+	, "redmic/modules/mapQuery/QueryOnMap"
 ], function(
 	alertify
-	, _ShowInPopupResultsFromQueryOnMap
-	, _QueryOnMap
 	, _Main
 	, Controller
 	, Layout
@@ -45,12 +43,14 @@ define([
 	, _Store
 	, ProgressSlider
 	, Atlas
+	, _ShowInPopup
 	, _AddFilter
 	, _PublishInfo
 	, TrackingLayerImpl
+	, QueryOnMap
 ) {
 
-	return declare([Layout, Controller, _Main, _Store, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap], {
+	return declare([Layout, Controller, _Main, _Store], {
 		//	summary:
 		//		Vista de Tracking.
 		//	description:
@@ -150,10 +150,22 @@ define([
 				}
 			});
 
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
 			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+				getMapChannel: getMapChannel
+			});
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				typeGroupProperty: this.typeGroupProperty,
+				title: this.i18n.layersQueryResults,
+				width: 5,
+				height: "md"
 			});
 		},
 

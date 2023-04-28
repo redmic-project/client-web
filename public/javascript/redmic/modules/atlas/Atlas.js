@@ -1,28 +1,28 @@
 define([
 	'alertify/alertify.min'
-	,"app/designs/list/Controller"
-	, "app/designs/list/layout/Layout"
-	, "app/designs/textSearchList/main/ServiceOGC"
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/Deferred"
-	, "put-selector/put"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Selection"
-	, "redmic/modules/base/_Show"
-	, "redmic/modules/base/_ShowInTooltip"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/_DragAndDrop"
-	, "redmic/modules/browser/_HierarchicalSelect"
-	, "redmic/modules/browser/bars/SelectionBox"
-	, "redmic/modules/browser/bars/Total"
+	,'app/designs/list/Controller'
+	, 'app/designs/list/layout/Layout'
+	, 'app/designs/textSearchList/main/ServiceOGC'
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'put-selector/put'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Selection'
+	, 'redmic/modules/base/_Show'
+	, 'redmic/modules/base/_ShowInTooltip'
+	, 'redmic/modules/base/_Store'
+	, 'redmic/modules/browser/_DragAndDrop'
+	, 'redmic/modules/browser/_HierarchicalSelect'
+	, 'redmic/modules/browser/bars/SelectionBox'
+	, 'redmic/modules/browser/bars/Total'
 	, 'redmic/modules/layout/TabsDisplayer'
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/AtlasList"
-	, "templates/LoadingCustom"
-	, "templates/ServiceOGCAtlasList"
-	, "templates/ServiceOGCAtlasDetails"
+	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
+	, 'templates/AtlasList'
+	, 'templates/LoadingCustom'
+	, 'templates/ServiceOGCAtlasList'
+	, 'templates/ServiceOGCAtlasDetails'
 	, './_AtlasLayersManagement'
 	, './_AtlasLegendManagement'
 ], function(
@@ -61,19 +61,20 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "atlas",
+				ownChannel: 'atlas',
 
 				events: {
-					ADD_LAYER: "addLayer",
-					REMOVE_LAYER: "removeLayer"
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer'
 				},
 
 				_itemsSelected: {},
-				localTarget: "localAtlas",
+				localTarget: 'localAtlas',
 				target: redmicConfig.services.atlasLayer,
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
-				pathSeparator: ".",
-				parentProperty: "parent",
+				pathSeparator: '.',
+				parentProperty: 'parent',
+				containerClass: 'atlasContainer',
 
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				_layerIdsById: {}, // correspondencia entre ids de las capas con sus layerIds
@@ -99,26 +100,26 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: "fa-map-o",
-								btnId: "legend",
-								title: "legend",
+								icon: 'fa-map-o',
+								btnId: 'legend',
+								title: 'legend',
 								returnItem: true
 							},{
-								icon: "fa-map-marker",
+								icon: 'fa-map-marker',
 								title: 'mapCentering',
-								btnId: "fitBounds",
+								btnId: 'fitBounds',
 								returnItem: true
 							},{
-								icon: "fa-toggle-on",
-								altIcon: "fa-toggle-off",
-								btnId: "addLayer",
-								title: "layer",
+								icon: 'fa-toggle-on',
+								altIcon: 'fa-toggle-off',
+								btnId: 'addLayer',
+								title: 'layer',
 								state: true,
 								returnItem: true
 							},{
-								icon: "fa-trash-o",
-								btnId: "remove",
-								title: "remove",
+								icon: 'fa-trash-o',
+								btnId: 'remove',
+								title: 'remove',
 								returnItem: true
 							}]
 						}
@@ -127,7 +128,7 @@ define([
 						definition: LoadingCustom,
 						props: {
 							message: this.i18n.addLayersToLoadInMap,
-							iconClass: "fr fr-layer"
+							iconClass: 'fr fr-layer'
 						}
 					}
 				}
@@ -146,11 +147,11 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: "fa-info-circle",
-								btnId: "details",
+								icon: 'fa-info-circle',
+								btnId: 'details',
 								style: '[style="position:relative;"]',
-								event: "onmouseover",
-								condition: "urlSource",
+								event: 'onmouseover',
+								condition: 'urlSource',
 								node: true,
 								returnItem: true
 							}]
@@ -174,7 +175,7 @@ define([
 			this.detailsConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				template: templateDetails,
-				target: "tooltipDetails",
+				target: 'tooltipDetails',
 				'class': 'descriptionTooltip',
 				timeClose: 200
 			}, this.atlasConfig || {}]);
@@ -194,21 +195,21 @@ define([
 		_defineSubscriptions: function() {
 
 			if (!this.getMapChannel) {
-				console.error("Map channel not defined for atlas '%s'", this.getChannel());
+				console.error('Map channel not defined for atlas "%s"', this.getChannel());
 			}
 
 			this.subscriptionsConfig.push({
-				channel : this.getMapChannel("LAYER_REMOVED"),
-				callback: "_subLayerRemoved"
+				channel : this.getMapChannel('LAYER_REMOVED'),
+				callback: '_subLayerRemoved'
 			},{
-				channel: this.themesBrowser.getChildChannel("browser", "BUTTON_EVENT"),
-				callback: "_subThemesBrowserButtonEvent"
+				channel: this.themesBrowser.getChildChannel('browser', 'BUTTON_EVENT'),
+				callback: '_subThemesBrowserButtonEvent'
 			},{
-				channel: this.themesBrowser.getChildChannel("browser", "DRAG_AND_DROP"),
-				callback: "_subThemesBrowserDragAndDrop"
+				channel: this.themesBrowser.getChildChannel('browser', 'DRAG_AND_DROP'),
+				callback: '_subThemesBrowserDragAndDrop'
 			},{
-				channel : this.catalogView.getChildChannel("browser", "BUTTON_EVENT"),
-				callback: "_subCatalogViewButtonEvent"
+				channel : this.catalogView.getChildChannel('browser', 'BUTTON_EVENT'),
+				callback: '_subCatalogViewButtonEvent'
 			});
 		},
 
@@ -216,10 +217,10 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'ADD_LAYER',
-				channel: this.getMapChannel("ADD_LAYER")
+				channel: this.getMapChannel('ADD_LAYER')
 			},{
 				event: 'REMOVE_LAYER',
-				channel: this.getMapChannel("REMOVE_LAYER")
+				channel: this.getMapChannel('REMOVE_LAYER')
 			});
 		},
 
@@ -240,7 +241,7 @@ define([
 
 			this.inherited(arguments);
 
-			this._atlasContainer = put('div.atlasContainer');
+			this._atlasContainer = put('div.' + this.containerClass);
 
 			this._addTabDisplayer();
 		},
@@ -325,7 +326,7 @@ define([
 
 		_reportDeselection: function(id) {
 
-			this._publish(this.themesBrowser.getChildChannel("browser", "REMOVE"), {
+			this._publish(this.themesBrowser.getChildChannel('browser', 'REMOVE'), {
 				ids: [id]
 			});
 
@@ -364,7 +365,7 @@ define([
 
 			this._clearSelectionPending = false;
 
-			this._publish(this.themesBrowser.getChildChannel("browser", "CLEAR"));
+			this._publish(this.themesBrowser.getChildChannel('browser', 'CLEAR'));
 
 			for (var key in this._layerIdsById) {
 				this._removeLayerInstance(key);
@@ -458,7 +459,7 @@ define([
 				return;
 			}
 
-			this._publish(this.getMapChannel("REORDER_LAYERS"), {
+			this._publish(this.getMapChannel('REORDER_LAYERS'), {
 				layerId: this._createLayerId(response.item.originalItem),
 				newPosition: response.total - response.indexList,
 				oldPosition: response.total - response.indexOld
@@ -467,7 +468,7 @@ define([
 
 		_subCatalogViewButtonEvent: function(res) {
 
-			this._publish(this.templateDisplayerDetails.getChannel("HIDE"));
+			this._publish(this.templateDisplayerDetails.getChannel('HIDE'));
 
 			var node = res.iconNode,
 				item = res.item;
@@ -476,10 +477,10 @@ define([
 
 			this._emitEvt('INJECT_ITEM', {
 				data: item,
-				target: "tooltipDetails"
+				target: 'tooltipDetails'
 			});
 
-			this._publish(this.templateDisplayerDetails.getChannel("SHOW"), {
+			this._publish(this.templateDisplayerDetails.getChannel('SHOW'), {
 				node: node
 			});
 		},
@@ -554,16 +555,16 @@ define([
 			var btnId = objReceived.btnId,
 				item = objReceived.item;
 
-			if (btnId === "addLayer") {
+			if (btnId === 'addLayer') {
 				this._onAddLayerBrowserButtonClick(objReceived);
-			} else if (btnId === "remove") {
+			} else if (btnId === 'remove') {
 				var parentItem = item.originalItem[this.parentProperty],
 					path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + item.id;
 
 				this._emitEvt('DESELECT', [path]);
-			} else if (btnId === "legend") {
+			} else if (btnId === 'legend') {
 				this._showLayerLegend(objReceived);
-			} else if (btnId === "fitBounds") {
+			} else if (btnId === 'fitBounds') {
 				this._fitBounds(item);
 			}
 		},

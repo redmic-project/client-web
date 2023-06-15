@@ -7,7 +7,6 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
-	, 'put-selector/put'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Selection'
 	, 'redmic/modules/base/_Show'
@@ -17,7 +16,6 @@ define([
 	, 'redmic/modules/browser/_HierarchicalSelect'
 	, 'redmic/modules/browser/bars/SelectionBox'
 	, 'redmic/modules/browser/bars/Total'
-	, 'redmic/modules/layout/TabsDisplayer'
 	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
 	, 'templates/AtlasList'
 	, 'templates/LoadingCustom'
@@ -34,7 +32,6 @@ define([
 	, declare
 	, lang
 	, Deferred
-	, put
 	, _Module
 	, _Selection
 	, _Show
@@ -44,7 +41,6 @@ define([
 	, _HierarchicalSelect
 	, SelectionBox
 	, Total
-	, TabsDisplayer
 	, TemplateDisplayer
 	, ListTemplate
 	, LoadingCustom
@@ -74,7 +70,6 @@ define([
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: '.',
 				parentProperty: 'parent',
-				containerClass: 'atlasContainer',
 
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				_layerIdsById: {}, // correspondencia entre ids de las capas con sus layerIds
@@ -241,9 +236,7 @@ define([
 
 			this.inherited(arguments);
 
-			this._atlasContainer = put('div.' + this.containerClass);
-
-			this._addTabDisplayer();
+			this._addTabs(this.addTabChannel);
 		},
 
 		_getNodeToShow: function() {
@@ -251,20 +244,12 @@ define([
 			return this._atlasContainer;
 		},
 
-		_addTabDisplayer: function() {
-
-			this._tabsDisplayer = new TabsDisplayer({
-				parentChannel: this.getChannel()
-			});
-
-			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
-				node: this._atlasContainer
-			});
-
-			this._addTabs(this._tabsDisplayer.getChannel('ADD_TAB'));
-		},
-
 		_addTabs: function(addTabChannel) {
+
+			if (!addTabChannel) {
+				console.error('Missing channel to add tabs at Atlas module "%s"', this.getChannel());
+				return;
+			}
 
 			this._publish(addTabChannel, {
 				title: this.i18n.layersCatalog,

@@ -8,7 +8,6 @@ define([
 	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
 	, "dijit/layout/StackContainer"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -27,6 +26,7 @@ define([
 	, "redmic/modules/browser/bars/Order"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
+	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
@@ -49,7 +49,6 @@ define([
 	, LayoutContainer
 	, ContentPane
 	, StackContainer
-	, TabContainer
 	, declare
 	, lang
 	, aspect
@@ -68,6 +67,7 @@ define([
 	, Order
 	, Total
 	, DataDisplayer
+	, TabsDisplayer
 	, Atlas
 	, _ShowInPopup
 	, GeoJsonLayerImpl
@@ -198,7 +198,6 @@ define([
 		_setMainOwnCallbacksForEvents: function () {
 
 			this._onEvt('HIDE', lang.hitch(this, this._onHide));
-			this._onEvt('SHOW', lang.hitch(this, this._onGeographicEditorMainShown));
 		},
 
 		_defineMainSubscriptions: function () {
@@ -268,6 +267,7 @@ define([
 			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});
 
 			this._createTabContainers();
+			this._createAtlas();
 
 			this._emitEvt('REFRESH');
 		},
@@ -289,17 +289,18 @@ define([
 
 		_createTabContainers: function() {
 
-			this.tabs = new TabContainer({
-				tabPosition: "top",
-				region: "center",
-				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
 			});
 
-			this.tabs.addChild(this.browserAndEditorNode);
-			this.tabs.addChild(this._createAtlas());
+			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
+			this.tabs = this._tabsDisplayer._container;
 
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
+			this.tabs.addChild(this.browserAndEditorNode);
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
+			});
 		},
 
 		_createTextSearchNode: function() {
@@ -394,7 +395,8 @@ define([
 			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
-				getMapChannel: getMapChannel
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
 			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
@@ -405,17 +407,6 @@ define([
 				width: 5,
 				height: "md"
 			});
-
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:"center"
-			});
-
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
-			});
-
-			return cp;
 		},
 
 		_updateTitle: function(title) {
@@ -656,11 +647,6 @@ define([
 		_getIconKeypadNode: function() {
 
 			return this.textSearchNode.domNode;
-		},
-
-		_onGeographicEditorMainShown: function() {
-
-			this.tabs.resize();
 		}
 	});
 });

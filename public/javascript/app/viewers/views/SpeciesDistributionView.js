@@ -5,7 +5,6 @@ define([
 	, "app/redmicConfig"
 	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -25,6 +24,7 @@ define([
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_ListenBounds"
 	, "redmic/modules/map/layer/_ListenZoom"
@@ -48,7 +48,6 @@ define([
 	, redmicConfig
 	, LayoutContainer
 	, ContentPane
-	, TabContainer
 	, declare
 	, lang
 	, aspect
@@ -68,6 +67,7 @@ define([
 	, Total
 	, Atlas
 	, _ShowInPopup
+	, TabsDisplayer
 	, _AddFilter
 	, _ListenBounds
 	, _ListenZoom
@@ -358,10 +358,13 @@ define([
 				layerDefinition: 'grid100m'
 			});
 
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
+
+			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
 			this.atlasConfig.getMapChannel = getMapChannel;
 			this.queryOnMapConfig.getMapChannel = getMapChannel;
-
-			this.atlas = new Atlas(this.atlasConfig);
 
 			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
 			this._queryOnMap = new QueryOnMapPopup(this.queryOnMapConfig);
@@ -390,11 +393,6 @@ define([
 				event: 'SET_LAYER_PROPS',
 				channel : this.pruneClusterLayer.getChannel("SET_PROPS")
 			});
-		},
-
-		_setOwnCallbacksForEvents: function() {
-
-			this._onEvt('SHOW', lang.hitch(this, this._onShown));
 		},
 
 		postCreate: function() {
@@ -446,25 +444,20 @@ define([
 
 			this._clearAndDisconnectLayer(this.pruneClusterLayer);
 
-			this.tabs = new TabContainer({
-				tabPosition: "top",
-				region: "center",
-				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
-			});
+			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
+			this.tabs = this._tabsDisplayer._container;
 
 			this.tabs.addChild(browserAndSearchContainer);
 			this.tabs.addChild(this.treeNode);
 			this.tabs.addChild(this._createFilterSidebarContent());
-			this.tabs.addChild(this._createAtlas());
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
+
+			this._createAtlas();
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
+			});
 
 			this._emitEvt('REFRESH');
-		},
-
-		_onShown: function() {
-
-			this.tabs.resize();
 		},
 
 		_onChangeSelection: function(response) {
@@ -807,16 +800,7 @@ define([
 
 		_createAtlas: function() {
 
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:"center"
-			});
-
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
-			});
-
-			return cp;
+			this.atlas = new Atlas(this.atlasConfig);
 		},
 
 		_inputsFilterSidebarContent: function(inputs) {

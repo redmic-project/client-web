@@ -5,7 +5,6 @@ define([
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "dijit/layout/LayoutContainer"
 	, "dijit/layout/ContentPane"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -19,6 +18,7 @@ define([
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
 	, "templates/CitationList"
@@ -29,7 +29,6 @@ define([
 	, Layout
 	, LayoutContainer
 	, ContentPane
-	, TabContainer
 	, declare
 	, lang
 	, aspect
@@ -43,6 +42,7 @@ define([
 	, ListImpl
 	, Atlas
 	, _ShowInPopup
+	, TabsDisplayer
 	, QueryOnMap
 	, TextImpl
 	, TemplateList
@@ -158,12 +158,6 @@ define([
 			}
 		},
 
-		_setMainOwnCallbacksForEvents: function() {
-
-			this._onEvt('SHOW', lang.hitch(this, this._onGeographicMainShown));
-			this._onEvt('RESIZE', lang.hitch(this, this._onGeographicMainResized));
-		},
-
 		postCreate: function() {
 
 			this.inherited(arguments);
@@ -175,6 +169,7 @@ define([
 			}
 
 			this._createTabContainers();
+			this._createAtlas();
 		},
 
 		_createTextSearchNode: function() {
@@ -196,7 +191,7 @@ define([
 		_createBrowserNode: function() {
 
 			this.browserAndSearchContainer = new LayoutContainer({
-				title: "<i class='fa fa-table'></i>",
+				title: "<i class='fa fa-table' title='" + this.i18n.data + "'></i>",
 				'class': "marginedContainer noScrolledContainer"
 			});
 
@@ -214,17 +209,18 @@ define([
 
 		_createTabContainers: function() {
 
-			this.tabs = new TabContainer({
-				tabPosition: "top",
-				region: "center",
-				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
 			});
 
-			this.tabs.addChild(this.browserAndSearchContainer);
-			this.tabs.addChild(this._createAtlas());
+			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
+			this.tabs = this._tabsDisplayer._container;
 
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
+			this.tabs.addChild(this.browserAndSearchContainer);
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
+			});
 		},
 
 		_createAtlas: function() {
@@ -234,7 +230,8 @@ define([
 			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
-				getMapChannel: getMapChannel
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
 			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
@@ -245,17 +242,6 @@ define([
 				width: 5,
 				height: "md"
 			});
-
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:"center"
-			});
-
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
-			});
-
-			return cp;
 		},
 
 		_beforeShowMain: function() {
@@ -318,21 +304,6 @@ define([
 			this._publish(channel, {
 				selectionTarget: this._getTarget()
 			});
-		},
-
-		_onGeographicMainShown: function() {
-
-			this._resizeTabs();
-		},
-
-		_onGeographicMainResized: function() {
-
-			this._resizeTabs();
-		},
-
-		_resizeTabs: function() {
-
-			this.tabs.resize();
 		}
 	});
 });

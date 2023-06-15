@@ -4,7 +4,6 @@ define([
 	, 'app/redmicConfig'
 	, 'dijit/layout/LayoutContainer'
 	, 'dijit/layout/ContentPane'
-	, 'dijit/layout/TabContainer'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'redmic/modules/base/_Filter'
@@ -16,6 +15,7 @@ define([
 	, "redmic/modules/gateway/MapCenteringGatewayImpl"
 	, 'redmic/modules/atlas/Atlas'
 	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/layout/TabsDisplayer'
 	, 'redmic/modules/map/layer/PruneClusterLayerImpl'
 	, "redmic/modules/mapQuery/QueryOnMap"
 	, 'redmic/modules/search/TextImpl'
@@ -27,7 +27,6 @@ define([
 	, redmicConfig
 	, LayoutContainer
 	, ContentPane
-	, TabContainer
 	, declare
 	, lang
 	, _Filter
@@ -39,6 +38,7 @@ define([
 	, MapCenteringGatewayImpl
 	, Atlas
 	, _ShowInPopup
+	, TabsDisplayer
 	, PruneClusterLayerImpl
 	, QueryOnMap
 	, TextImpl
@@ -120,34 +120,16 @@ define([
 			}, this.browserConfig || {}]);
 		},
 
-		_setOwnCallbacksForEvents: function() {
-
-			this._onEvt('SHOW', lang.hitch(this, this._onShown));
-		},
-
 		_initialize: function() {
 
 			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new declare([TextImpl])(this.searchConfig);
+			this.textSearch = new TextImpl(this.searchConfig);
 
 			this.browserConfig.queryChannel = this.queryChannel;
 			this.browser = new declare([ListImpl, _Framework, _GeoJsonParser, _ButtonsInRow])(this.browserConfig);
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
-
-			this.atlas = new Atlas({
-				parentChannel: this.getChannel(),
-				perms: this.perms,
-				getMapChannel: getMapChannel
-			});
-
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup({
-				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
-				title: this.i18n.layersQueryResults,
-				width: 5,
-				height: "md"
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
 			});
 
 			this.modelChannel = this.filter.modelChannel;
@@ -195,17 +177,15 @@ define([
 			browserAndSearchContainer.addChild(this.textSearchNode);
 			browserAndSearchContainer.addChild(this.gridNode);
 
-			this.tabs = new TabContainer({
-				tabPosition: 'top',
-				splitter: true,
-				region: 'right',
-				'class': 'softSolidContainer sideTabContainer'
-			});
+			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
+			this.tabs = this._tabsDisplayer._container;
 
 			this.tabs.addChild(browserAndSearchContainer);
-			this.tabs.addChild(this._createAtlas());
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
+			this._createAtlas();
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
+			});
 
 			this._emitEvt('ADD_LAYER', {layer: this._layerInstance});
 
@@ -227,11 +207,6 @@ define([
 			this._emitEvt('REFRESH');
 		},
 
-		_onShown: function() {
-
-			this.tabs.resize();
-		},
-
 		_getPopupContent: function(data) {
 
 			return this.templatePopup({
@@ -242,16 +217,23 @@ define([
 
 		_createAtlas: function() {
 
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:'center'
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
+				parentChannel: this.getChannel(),
+				perms: this.perms,
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			this._publish(this.atlas.getChannel('SHOW'), {
-				node: cp.domNode
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				title: this.i18n.layersQueryResults,
+				width: 5,
+				height: "md"
 			});
-
-			return cp;
 		}
 	});
 });

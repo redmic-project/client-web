@@ -5,12 +5,9 @@ define([
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
 	, "app/redmicConfig"
 	, 'd3/d3.min'
-	, "dijit/layout/ContentPane"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/has"
-	, "dojo/query"
 	, 'moment/moment.min'
 	, "put-selector/put"
 	, "RWidgets/Utilities"
@@ -19,6 +16,7 @@ define([
 	, "redmic/modules/components/ProgressSlider/ProgressSlider"
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_PublishInfo"
 	, "redmic/modules/map/layer/TrackingLayerImpl"
@@ -30,12 +28,9 @@ define([
 	, Layout
 	, redmicConfig
 	, d3
-	, ContentPane
-	, TabContainer
 	, declare
 	, lang
 	, has
-	, query
 	, moment
 	, put
 	, Utilities
@@ -44,6 +39,7 @@ define([
 	, ProgressSlider
 	, Atlas
 	, _ShowInPopup
+	, TabsDisplayer
 	, _AddFilter
 	, _PublishInfo
 	, TrackingLayerImpl
@@ -134,8 +130,6 @@ define([
 		_setMainOwnCallbacksForEvents: function() {
 
 			this.on([this.events.HIDE, this.events.ANCESTOR_HIDE], lang.hitch(this, this._onHide));
-			this._onEvt('SHOW', lang.hitch(this, this._onTrackingMainShown));
-			this._onEvt('RESIZE', lang.hitch(this, this._onTrackingMainResized));
 		},
 
 		_initializeMain: function() {
@@ -150,22 +144,8 @@ define([
 				}
 			});
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
-
-			this.atlas = new Atlas({
-				parentChannel: this.getChannel(),
-				perms: this.perms,
-				getMapChannel: getMapChannel
-			});
-
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup({
-				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
-				typeGroupProperty: this.typeGroupProperty,
-				title: this.i18n.layersQueryResults,
-				width: 5,
-				height: "md"
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
 			});
 		},
 
@@ -225,16 +205,38 @@ define([
 
 		_fillSideContent: function() {
 
-			this.tabContainer = new TabContainer({
-				region: 'center',
-				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
-			});
+			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
+			this.tabContainer = this._tabsDisplayer._container;
 
 			this.tabContainer.addChild(this._createSettings());
-			this.tabContainer.addChild(this._createAtlas());
 
-			this.tabContainer.placeAt(this.contentNode);
-			this.tabContainer.startup();
+			this._createAtlas();
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
+			});
+		},
+
+		_createAtlas: function() {
+
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
+				parentChannel: this.getChannel(),
+				perms: this.perms,
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
+			});
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				typeGroupProperty: this.typeGroupProperty,
+				title: this.i18n.layersQueryResults,
+				width: 5,
+				height: "md"
+			});
 		},
 
 		_createSettings: function() {
@@ -275,20 +277,6 @@ define([
 			} else if (res.name === "interval") {
 				this._changeInterval(res.value);
 			}
-		},
-
-		_createAtlas: function() {
-
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region: "center"
-			});
-
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
-			});
-
-			return cp;
 		},
 
 		_addDataLayer: function(idProperty, item) {
@@ -665,21 +653,6 @@ define([
 			this._emitEvt('PRESS_PROGRESS_BUTTON', {
 				key: "PAUSE"
 			});
-		},
-
-		_onTrackingMainShown: function() {
-
-			this._resizeTabs();
-		},
-
-		_onTrackingMainResized: function() {
-
-			this._resizeTabs();
-		},
-
-		_resizeTabs: function() {
-
-			this.tabContainer.resize();
 		}
 	});
 });

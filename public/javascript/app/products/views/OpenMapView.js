@@ -4,8 +4,10 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, 'put-selector/put'
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/mapQuery/QueryOnMap"
 ], function(
 	Controller
@@ -13,8 +15,10 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, put
 	, Atlas
 	, _ShowInPopup
+	, TabsDisplayer
 	, QueryOnMap
 ) {
 
@@ -34,7 +38,8 @@ define([
 			this.config = {
 				title: this.i18n.map,
 				region: "center",
-				selectionTarget: redmicConfig.services.atlasLayerSelection
+				selectionTarget: redmicConfig.services.atlasLayerSelection,
+				_atlasContainerClass: 'atlasContainer',
 			};
 
 			lang.mixin(this, this.config, args);
@@ -62,6 +67,11 @@ define([
 			this.atlasConfig.getMapChannel = getMapChannel;
 			this.queryOnMapConfig.getMapChannel = getMapChannel;
 
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
+			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+
 			this.atlas = new Atlas(this.atlasConfig);
 
 			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
@@ -72,7 +82,9 @@ define([
 
 			this.inherited(arguments);
 
-			this._publish(this.atlas.getChannel("SHOW"), {
+			put(this.contentNode, '.' + this._atlasContainerClass);
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
 				node: this.contentNode
 			});
 		},

@@ -53,7 +53,7 @@ define([
 						'at': TrackingSecondaryList
 					},
 
-					'sd-full_sighting_taxon_yearChildren': AtlasRedpromarSecondaryList,
+					'sd-sightings-taxon-yearChildren': AtlasRedpromarSecondaryList,
 					'sd-exotic-species-sightingChildren': AtlasRedpromarSecondaryList
 				}
 			};

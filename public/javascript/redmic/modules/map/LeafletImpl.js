@@ -23,10 +23,10 @@ define([
 	, _LeafletWidgetsManagement
 	, _ListenContainers
 	, _OverlayLayersManagement
-	, Map
+	, MapModule
 ) {
 
-	return declare([Map, _LeafletImplItfc, _LeafletWidgetsManagement, _ListenContainers, _OverlayLayersManagement], {
+	return declare([MapModule, _LeafletImplItfc, _LeafletWidgetsManagement, _ListenContainers, _OverlayLayersManagement], {
 		//	summary:
 		//		Implementación de mapa Leaflet.
 		//	description:
@@ -149,6 +149,7 @@ define([
 			}));
 
 			this._onEvt('RESIZE', lang.hitch(this, this.invalidateSize));
+			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this.invalidateSize));
 			this._onEvt('LAYER_ADDED_TO_PANE', lang.hitch(this, this._onLayerAddedToPane));
 			this._onEvt('LAYER_REMOVED_FROM_PANE', lang.hitch(this, this._onLayerRemovedFromPane));
 		},

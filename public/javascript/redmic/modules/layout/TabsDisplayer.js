@@ -56,6 +56,7 @@ define([
 		_setOwnCallbacksForEvents: function() {
 
 			this._onEvt('RESIZE', lang.hitch(this, this._onMeOrAncestorResized));
+			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
 		},
 
 		postCreate: function() {
@@ -136,6 +137,11 @@ define([
 		},
 
 		_onMeOrAncestorResized: function(req) {
+
+			this._resizeTabs();
+		},
+
+		_onMeOrAncestorShown: function(req) {
 
 			this._resizeTabs();
 		},

@@ -253,7 +253,7 @@ define([
 
 			this._publish(addTabChannel, {
 				title: this.i18n.layersCatalog,
-				iconClass: 'fa fa-list-ul',
+				iconClass: 'fr fr-world',
 				channel: this.catalogView.getChannel()
 			});
 

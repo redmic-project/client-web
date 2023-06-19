@@ -114,7 +114,8 @@ define([
 
 			this.formConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				title: this.i18n.settings,
+				//title: this.i18n.settings,
+				iconClass: 'fa fa-cogs',
 				region: "top",
 				i18n: this.i18n,
 				template: "viewers/views/templates/forms/Tracking",

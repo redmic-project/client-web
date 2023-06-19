@@ -1,7 +1,5 @@
 define([
 	"app/redmicConfig"
-	, "dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -17,8 +15,6 @@ define([
 	, "templates/TrackingPlatformList"
 ], function(
 	redmicConfig
-	, BorderContainer
-	, ContentPane
 	, declare
 	, lang
 	, aspect
@@ -157,32 +153,17 @@ define([
 
 			this.inherited(arguments);
 
-			var borderContainer = this._createBrowserWork();
-
-			this.tabContainer.addChild(borderContainer, 0);
-
-			this.tabContainer.selectChild(borderContainer);
+			this._createBrowserWork();
 		},
 
 		_createBrowserWork: function() {
 
-			var browserAndSearchContainer = new BorderContainer({
-				title: this.i18n.Elements,
-				'class': "marginedContainer noScrolledContainer"
+			var addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+			this._publish(addTabChannel, {
+				title: this.i18n.data,
+				iconClass: 'fa fa-table',
+				channel: this.browserWork.getChannel()
 			});
-
-			this.browserWorkNode = new ContentPane({
-				region: "center",
-				'class': 'flexContainer'
-			});
-
-			this._publish(this.browserWork.getChannel("SHOW"), {
-				node: this.browserWorkNode.domNode
-			});
-
-			browserAndSearchContainer.addChild(this.browserWorkNode);
-
-			return browserAndSearchContainer;
 		},
 
 		_cleanElementByActivity: function(activityId) {

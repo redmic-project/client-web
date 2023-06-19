@@ -150,7 +150,8 @@ define([
 		_createBrowserAndSearch: function() {
 
 			var browserAndSearchContainer = new LayoutContainer({
-				title: this.i18n.activities,
+				//title: this.i18n.activities,
+				iconClass: 'fa fa-tasks',
 				'class': "marginedContainer noScrolledContainer"
 			});
 

@@ -152,7 +152,8 @@ define([
 			this.inherited(arguments);
 
 			var browserAndSearchContainer = new LayoutContainer({
-				title: this.i18n.list,
+				iconClass: 'fa fa-table',
+				//title: this.i18n.list,
 				'class': 'marginedContainer noScrolledContainer'
 			});
 

@@ -28,13 +28,9 @@ define([
 
 		_fillSideContent: function() {
 
+			this._createBrowserWork();
+
 			this.inherited(arguments);
-
-			var borderContainer = this._createBrowserWork();
-
-			this.tabContainer.addChild(borderContainer, 0);
-
-			this.tabContainer.selectChild(borderContainer);
 		},
 
 		_dataAvailable: function(items) {

@@ -4,7 +4,6 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "dojo/promise/all"
-	, "put-selector/put"
 	, "redmic/form/FormContainer"
 	, "./Form"
 ], function(
@@ -13,7 +12,6 @@ define([
 	, aspect
 	, Deferred
 	, all
-	, put
 	, FormContainer
 	, Form
 ){

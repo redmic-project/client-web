@@ -164,7 +164,8 @@ define([
 			this.inherited(arguments);
 
 			var browserAndSearchContainer = new LayoutContainer({
-				title: this.i18n.list,
+				iconClass: 'fa fa-tasks',
+				//title: this.i18n.list,
 				'class': "marginedContainer noScrolledContainer"
 			});
 

@@ -400,7 +400,8 @@ define([
 			this.inherited(arguments);
 
 			var browserAndSearchContainer = new LayoutContainer({
-				title: this.i18n.list,
+				//title: this.i18n.list,
+				iconClass: 'fr fr-crab',
 				'class': "marginedContainer noScrolledContainer"
 			});
 
@@ -425,15 +426,6 @@ define([
 			browserAndSearchContainer.addChild(this.textSearchNode);
 			browserAndSearchContainer.addChild(this.gridNode);
 
-			this.treeNode = new ContentPane({
-				title: this.i18n.tree,
-				'class': "scrollWrapper"
-			});
-
-			this._publish(this.tree.getChannel("SHOW"), {
-				node: this.treeNode.domNode
-			});
-
 			this._publish(this.gridLayer.getChannel('SET_PROPS'), {
 				minZoom: this.grid5000MinZoom,
 				currentGridLayer: this.currentGridLayer
@@ -448,7 +440,14 @@ define([
 			this.tabs = this._tabsDisplayer._container;
 
 			this.tabs.addChild(browserAndSearchContainer);
-			this.tabs.addChild(this.treeNode);
+
+			var addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+			this._publish(addTabChannel, {
+				title: this.i18n.tree,
+				iconClass: 'fa fa-sitemap',
+				channel: this.tree.getChannel()
+			});
+
 			this.tabs.addChild(this._createFilterSidebarContent());
 
 			this._createAtlas();
@@ -783,7 +782,8 @@ define([
 			// TODO cambiar por modulo form
 
 			this.formWidget = new FormContainer({
-				title: this.i18n.mode,
+				//title: this.i18n.mode,
+				iconClass: 'fa fa-cogs',
 				region: "center",
 				template: this.formTemplate,
 				parentChannel: this.getChannel(),

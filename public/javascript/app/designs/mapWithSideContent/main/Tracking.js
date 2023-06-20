@@ -11,11 +11,12 @@ define([
 	, 'moment/moment.min'
 	, "put-selector/put"
 	, "RWidgets/Utilities"
-	, "redmic/form/FormContainer"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/components/ProgressSlider/ProgressSlider"
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/form/FormContainerImpl'
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_PublishInfo"
@@ -34,11 +35,12 @@ define([
 	, moment
 	, put
 	, Utilities
-	, FormContainer
 	, _Store
 	, ProgressSlider
 	, Atlas
 	, _ShowInPopup
+	, FormContainerImpl
+	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
 	, _AddFilter
 	, _PublishInfo
@@ -99,7 +101,8 @@ define([
 				_trackingTransitionRate: 900,
 				_layerIdPrefix: "tracking",
 				layerIdSeparator: "_",
-				_deltaProgress: 3600000
+				_deltaProgress: 3600000,
+				formTemplate: 'viewers/views/templates/forms/Tracking'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -114,13 +117,10 @@ define([
 
 			this.formConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				//title: this.i18n.settings,
-				iconClass: 'fa fa-cogs',
-				region: "top",
-				i18n: this.i18n,
-				template: "viewers/views/templates/forms/Tracking",
-				width: 8,
-				loadInputs: lang.hitch(this, this._loadInputsFormAndShow)
+				template: this.formTemplate,
+				formContainerConfig: {
+					loadInputs: lang.hitch(this, this._loadInputsFormAndShow)
+				}
 			}, this.formConfig || {}]);
 
 			this.mapConfig = this._merge([{
@@ -206,10 +206,7 @@ define([
 
 		_fillSideContent: function() {
 
-			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
-			this.tabContainer = this._tabsDisplayer._container;
-
-			this.tabContainer.addChild(this._createSettings());
+			this._createSettingsForm();
 
 			this._createAtlas();
 
@@ -240,15 +237,21 @@ define([
 			});
 		},
 
-		_createSettings: function() {
+		_createSettingsForm: function() {
 
-			// TODO cambiar por modulo form
+			this._settingsForm = new FormContainerImpl(this.formConfig);
 
-			this.formWidget = new FormContainer(this.formConfig);
+			this._settingsFormWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this._settingsForm,
+				title: this.i18n.settings
+			});
 
-			this.formWidget.startup();
-
-			return this.formWidget;
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n.settings,
+				iconClass: 'fa fa-cog',
+				channel: this._settingsFormWithTopbar.getChannel()
+			});
 		},
 
 		_loadInputsFormAndShow: function(inputs) {

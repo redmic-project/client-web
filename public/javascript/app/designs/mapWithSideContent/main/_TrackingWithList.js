@@ -10,6 +10,7 @@ define([
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_MultiTemplate"
 	, "redmic/modules/browser/_Select"
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, "templates/ActivityList"
 	, "templates/AnimalList"
 	, "templates/TrackingPlatformList"
@@ -25,10 +26,12 @@ define([
 	, _Framework
 	, _MultiTemplate
 	, _Select
+	, GenericWithTopbarDisplayerImpl
 	, templateActivityList
 	, templateAnimalList
 	, templatePlatformList
-){
+) {
+
 	return declare(_SelectionBase, {
 		//	summary:
 		//		Vista de Tracking.
@@ -116,9 +119,15 @@ define([
 
 		_initializeTrackingWithList: function() {
 
-			var exts = this.browserWorkBase.concat(this.browserWorkExts);
+			var BrowserDefinition = declare(this.browserWorkBase.concat(this.browserWorkExts));
 
-			this.browserWork = new declare(exts)(this.browserWorkConfig);
+			this.browserWork = new BrowserDefinition(this.browserWorkConfig);
+
+			this._trackingDataBrowserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browserWork,
+				title: this.i18n.Elements
+			});
 		},
 
 		_defineTrackingWithListSubscriptions: function () {
@@ -149,20 +158,13 @@ define([
 			return res.target === this.targetBrowserWork;
 		},
 
-		_fillSideContent: function() {
-
-			this.inherited(arguments);
-
-			this._createBrowserWork();
-		},
-
 		_createBrowserWork: function() {
 
 			var addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
 			this._publish(addTabChannel, {
-				title: this.i18n.data,
-				iconClass: 'fa fa-table',
-				channel: this.browserWork.getChannel()
+				title: this.i18n.Elements,
+				iconClass: 'fr fr-track',
+				channel: this._trackingDataBrowserWithTopbar.getChannel()
 			});
 		},
 

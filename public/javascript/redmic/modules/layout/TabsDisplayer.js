@@ -26,11 +26,13 @@ define([
 			this.config = {
 				ownChannel: 'tabsDisplayer',
 				actions: {
-					'ADD_TAB': 'addTab'
+					'ADD_TAB': 'addTab',
+					'SHOW_TAB': 'showTab'
 				},
 
 				_tabContainerClass: 'fWidth fHeight softSolidContainer borderRadiusBottomTabContainer',
-				_tabHandlerQueryDefinition: 'div.dijitTabInner.dijitTabContent.dijitTab'
+				_tabHandlerQueryDefinition: 'div.dijitTabInner.dijitTabContent.dijitTab',
+				_tabNodesByChannel: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -39,8 +41,11 @@ define([
 		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel : this.getChannel("ADD_TAB"),
-				callback: "_subAddTab"
+				channel : this.getChannel('ADD_TAB'),
+				callback: '_subAddTab'
+			},{
+				channel : this.getChannel('SHOW_TAB'),
+				callback: '_subShowTab'
 			});
 		},
 
@@ -81,11 +86,14 @@ define([
 		_subAddTab: function(req) {
 
 			var childContainer = this._getTabNode(req),
-				childShowChannel = this._buildChannel(req.channel, this.actions.SHOW);
+				childChannel = req.channel,
+				childShowChannel = this._buildChannel(childChannel, this.actions.SHOW);
 
 			this._publish(childShowChannel, {
 				node: childContainer
 			});
+
+			this._tabNodesByChannel[childChannel] = childContainer;
 		},
 
 		_getTabNode: function(req) {
@@ -134,6 +142,19 @@ define([
 					tabHandlerIcon.title = tabTooltip;
 				}
 			}, tooltipValue));
+		},
+
+		_subShowTab: function(req) {
+
+			var childChannel = req.channel,
+				tabNode = this._tabNodesByChannel[childChannel];
+
+			if (!tabNode) {
+				console.error('Tab with channel "%s" not found at module "%s"', childChannel, this.getChannel());
+				return;
+			}
+
+			this._container.selectChild(tabNode);
 		},
 
 		_onMeOrAncestorResized: function(req) {

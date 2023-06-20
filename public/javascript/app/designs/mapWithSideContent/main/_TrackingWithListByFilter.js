@@ -26,13 +26,6 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_fillSideContent: function() {
-
-			this._createBrowserWork();
-
-			this.inherited(arguments);
-		},
-
 		_dataAvailable: function(items) {
 
 			var data = items.data.data;

@@ -3,17 +3,16 @@ define([
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
-	, "dijit/layout/LayoutContainer"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "put-selector/put"
 	, "redmic/base/Credentials"
-	, "redmic/form/FormContainer"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Selection"
+	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/_ButtonsInRow"
@@ -22,9 +21,9 @@ define([
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/atlas/Atlas"
-	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/form/FormContainerImpl'
 	, 'redmic/modules/layout/TabsDisplayer'
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_ListenBounds"
 	, "redmic/modules/map/layer/_ListenZoom"
@@ -46,17 +45,16 @@ define([
 	, Controller
 	, Layout
 	, redmicConfig
-	, LayoutContainer
-	, ContentPane
 	, declare
 	, lang
 	, aspect
 	, Deferred
 	, put
 	, Credentials
-	, FormContainer
+	, Atlas
 	, _Filter
 	, _Selection
+	, _ShowInPopup
 	, _Store
 	, ListImpl
 	, _ButtonsInRow
@@ -65,9 +63,9 @@ define([
 	, SelectionBox
 	, Pagination
 	, Total
-	, Atlas
-	, _ShowInPopup
+	, FormContainerImpl
 	, TabsDisplayer
+	, GenericWithTopbarDisplayerImpl
 	, _AddFilter
 	, _ListenBounds
 	, _ListenZoom
@@ -84,7 +82,8 @@ define([
 	, CbtreeImpl
 	, TemplatePopup
 	, TemplateList
-){
+) {
+
 	return declare([Layout, Controller, _Selection, _Store, _Filter], {
 		//	summary:
 		//		Vista de SpeciesDistribution.
@@ -309,8 +308,27 @@ define([
 
 		_initialize: function() {
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel),
-				mapChannel = getMapChannel();
+			this._createSpeciesCatalog();
+			this._createSpeciesTree();
+			this._createSettingsForm();
+			this._createMapLayers();
+
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
+
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+			this.atlasConfig.getMapChannel = getMapChannel;
+
+			this.queryOnMapConfig.getMapChannel = getMapChannel;
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup(this.queryOnMapConfig);
+		},
+
+		_createSpeciesCatalog: function() {
 
 			this.searchConfig.queryChannel = this.queryChannel;
 			this.textSearch = new TextImpl(this.searchConfig);
@@ -319,8 +337,50 @@ define([
 			var BrowserDefinition = declare([ListImpl, _Framework, _ButtonsInRow, _Select]);
 			this.browser = new BrowserDefinition(this.browserConfig);
 
-			var tree = declare([CbtreeImpl, _LazyLoad, _LeafSelection/*, _SelectionBoxTree*/]);
-			this.tree = new tree(this.treeConfig);
+			this._speciesBrowserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n.speciesCatalogView
+			});
+
+			this._publish(this._speciesBrowserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
+			});
+		},
+
+		_createSpeciesTree: function() {
+
+			var TreeDefinition = declare([CbtreeImpl, _LazyLoad, _LeafSelection/*, _SelectionBoxTree*/]);
+			this.tree = new TreeDefinition(this.treeConfig);
+
+			this._speciesTreeWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.tree,
+				title: this.i18n.taxonTree
+			});
+		},
+
+		_createSettingsForm: function() {
+
+			this._settingsForm = new FormContainerImpl({
+				parentChannel: this.getChannel(),
+				template: this.formTemplate,
+				formContainerConfig: {
+					loadInputs: lang.hitch(this, this._inputsFilterSidebarContent)
+				}
+			});
+
+			this._settingsFormWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this._settingsForm,
+				title: this.i18n.settings
+			});
+		},
+
+		_createMapLayers: function() {
+
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel),
+				mapChannel = getMapChannel();
 
 			this.d3LayerConfig.mapChannel = mapChannel;
 
@@ -357,17 +417,6 @@ define([
 				mapChannel: mapChannel,
 				layerDefinition: 'grid100m'
 			});
-
-			this._tabsDisplayer = new TabsDisplayer({
-				parentChannel: this.getChannel()
-			});
-
-			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
-			this.atlasConfig.getMapChannel = getMapChannel;
-			this.queryOnMapConfig.getMapChannel = getMapChannel;
-
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup(this.queryOnMapConfig);
 		},
 
 		_defineSubscriptions: function () {
@@ -399,33 +448,6 @@ define([
 
 			this.inherited(arguments);
 
-			var browserAndSearchContainer = new LayoutContainer({
-				//title: this.i18n.list,
-				iconClass: 'fr fr-crab',
-				'class': "marginedContainer noScrolledContainer"
-			});
-
-			this.gridNode = new ContentPane({
-				region: "center",
-				'class': 'stretchZone'
-			});
-
-			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.gridNode.domNode
-			});
-
-			this.textSearchNode = new ContentPane({
-				'class': "topZone",
-				region: "top"
-			});
-
-			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.textSearchNode.domNode
-			});
-
-			browserAndSearchContainer.addChild(this.textSearchNode);
-			browserAndSearchContainer.addChild(this.gridNode);
-
 			this._publish(this.gridLayer.getChannel('SET_PROPS'), {
 				minZoom: this.grid5000MinZoom,
 				currentGridLayer: this.currentGridLayer
@@ -436,27 +458,37 @@ define([
 
 			this._clearAndDisconnectLayer(this.pruneClusterLayer);
 
-			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
-			this.tabs = this._tabsDisplayer._container;
+			this._addTabsToSideContent();
+			this._emitEvt('REFRESH');
+		},
 
-			this.tabs.addChild(browserAndSearchContainer);
+		_addTabsToSideContent: function() {
 
 			var addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+
 			this._publish(addTabChannel, {
-				title: this.i18n.tree,
-				iconClass: 'fa fa-sitemap',
-				channel: this.tree.getChannel()
+				title: this.i18n.speciesCatalogView,
+				iconClass: 'fr fr-crab',
+				channel: this._speciesBrowserWithTopbar.getChannel()
 			});
 
-			this.tabs.addChild(this._createFilterSidebarContent());
+			this._publish(addTabChannel, {
+				title: this.i18n.taxonTree,
+				iconClass: 'fa fa-sitemap',
+				channel: this._speciesTreeWithTopbar.getChannel()
+			});
+
+			this._publish(addTabChannel, {
+				title: this.i18n.settings,
+				iconClass: 'fa fa-cog',
+				channel: this._settingsFormWithTopbar.getChannel()
+			});
 
 			this._createAtlas();
 
 			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
 				node: this.contentNode
 			});
-
-			this._emitEvt('REFRESH');
 		},
 
 		_onChangeSelection: function(response) {
@@ -775,27 +807,6 @@ define([
 				parentNode && put(parentNode, "!hidden");
 				this._publish(this._buildChannel(input.channel, this.actions.SHOW), obj);
 			}
-		},
-
-		_createFilterSidebarContent: function() {
-
-			// TODO cambiar por modulo form
-
-			this.formWidget = new FormContainer({
-				//title: this.i18n.mode,
-				iconClass: 'fa fa-cogs',
-				region: "center",
-				template: this.formTemplate,
-				parentChannel: this.getChannel(),
-				width: 8,
-				i18n: this.i18n,
-				loadInputs: lang.hitch(this, this._inputsFilterSidebarContent),
-				isDisableInputs: true
-			});
-
-			this.formWidget.startup();
-
-			return this.formWidget;
 		},
 
 		_createAtlas: function() {

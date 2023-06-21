@@ -2,19 +2,18 @@ define([
 	'app/designs/mapWithSideContent/Controller'
 	, 'app/designs/mapWithSideContent/layout/MapAndContent'
 	, 'app/redmicConfig'
-	, 'dijit/layout/LayoutContainer'
-	, 'dijit/layout/ContentPane'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'redmic/modules/atlas/Atlas'
 	, 'redmic/modules/base/_Filter'
+	, "redmic/modules/base/_ShowInPopup"
 	, 'redmic/modules/browser/ListImpl'
 	, 'redmic/modules/browser/_ButtonsInRow'
 	, 'redmic/modules/browser/_GeoJsonParser'
 	, 'redmic/modules/browser/_Framework'
 	, 'redmic/modules/browser/bars/Total'
 	, "redmic/modules/gateway/MapCenteringGatewayImpl"
-	, 'redmic/modules/atlas/Atlas'
-	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'redmic/modules/layout/TabsDisplayer'
 	, 'redmic/modules/map/layer/PruneClusterLayerImpl'
 	, "redmic/modules/mapQuery/QueryOnMap"
@@ -25,26 +24,26 @@ define([
 	Controller
 	, Layout
 	, redmicConfig
-	, LayoutContainer
-	, ContentPane
 	, declare
 	, lang
+	, Atlas
 	, _Filter
+	, _ShowInPopup
 	, ListImpl
 	, _ButtonsInRow
 	, _GeoJsonParser
 	, _Framework
 	, Total
 	, MapCenteringGatewayImpl
-	, Atlas
-	, _ShowInPopup
+	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
 	, PruneClusterLayerImpl
 	, QueryOnMap
 	, TextImpl
 	, TemplateList
 	, TemplatePopup
-){
+) {
+
 	return declare([Layout, Controller, _Filter], {
 		//	summary:
 		//		Vista de Realtime.
@@ -122,11 +121,7 @@ define([
 
 		_initialize: function() {
 
-			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new TextImpl(this.searchConfig);
-
-			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare([ListImpl, _Framework, _GeoJsonParser, _ButtonsInRow])(this.browserConfig);
+			this._createBrowser();
 
 			this._tabsDisplayer = new TabsDisplayer({
 				parentChannel: this.getChannel()
@@ -147,41 +142,36 @@ define([
 			});
 		},
 
+		_createBrowser: function() {
+
+			this.searchConfig.queryChannel = this.queryChannel;
+			this.textSearch = new TextImpl(this.searchConfig);
+
+			this.browserConfig.queryChannel = this.queryChannel;
+			var BrowserDefinition = declare([ListImpl, _Framework, _GeoJsonParser, _ButtonsInRow]);
+			this.browser = new BrowserDefinition(this.browserConfig);
+
+			this._browserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n['real-time']
+			});
+
+			this._publish(this._browserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
+			});
+		},
+
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			var browserAndSearchContainer = new LayoutContainer({
-				iconClass: 'fa fa-table',
-				//title: this.i18n.list,
-				'class': 'marginedContainer noScrolledContainer'
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n['real-time'],
+				iconClass: 'fa fa-clock-o',
+				channel: this._browserWithTopbar.getChannel()
 			});
 
-			this.gridNode = new ContentPane({
-				region: 'center',
-				'class': 'stretchZone'
-			});
-
-			this._publish(this.browser.getChannel('SHOW'), {
-				node: this.gridNode.domNode
-			});
-
-			this.textSearchNode = new ContentPane({
-				'class': 'topZone',
-				region: 'top'
-			});
-
-			this._publish(this.textSearch.getChannel('SHOW'), {
-				node: this.textSearchNode.domNode
-			});
-
-			browserAndSearchContainer.addChild(this.textSearchNode);
-			browserAndSearchContainer.addChild(this.gridNode);
-
-			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
-			this.tabs = this._tabsDisplayer._container;
-
-			this.tabs.addChild(browserAndSearchContainer);
 			this._createAtlas();
 
 			this._publish(this._tabsDisplayer.getChannel('SHOW'), {

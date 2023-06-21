@@ -157,6 +157,7 @@ define({
 	, "layerImage": "Imagen de la capa"
 	, "noLayerInfo": "La localización pulsada no contiene ninguna información"
 	, "formats": "Formatos"
+	, "geographicData": "Datos geográficos"
 
 	, "inspire-rs": "Sistemas de coordenadas de referencia"
 	, "inspire-gg": "Sistema de cuadrículas geográficas"

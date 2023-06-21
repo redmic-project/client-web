@@ -157,6 +157,7 @@ define({
 		, "layerImage": "Layer image"
 		, "noLayerInfo": "The clicked location does not contain any information"
 		, "formats": "Formats"
+		, "geographicData": "Geographic data"
 
 		, "inspire-rs": "Coordinate reference systems"
 		, "inspire-gg": "Geographical grid systems"

@@ -8,16 +8,17 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
+	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/base/_Store"
-	, "redmic/modules/gateway/MapCenteringGatewayImpl"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_GeoJsonParser"
 	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/atlas/Atlas"
-	, "redmic/modules/base/_ShowInPopup"
+	, "redmic/modules/gateway/MapCenteringGatewayImpl"
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
@@ -32,16 +33,17 @@ define([
 	, declare
 	, lang
 	, aspect
+	, Atlas
 	, _Filter
+	, _ShowInPopup
 	, _Store
-	, MapCenteringGatewayImpl
 	, Total
 	, _ButtonsInRow
 	, _Framework
 	, _GeoJsonParser
 	, ListImpl
-	, Atlas
-	, _ShowInPopup
+	, MapCenteringGatewayImpl
+	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
 	, QueryOnMap
 	, TextImpl
@@ -104,25 +106,44 @@ define([
 
 		_initializeMain: function() {
 
+			this._createBrowser();
+
 			if (!this.notTextSearch) {
-				this.searchConfig.queryChannel = this.queryChannel;
-				this.textSearch = new TextImpl(this.searchConfig);
+				this._createTextSearch();
 			}
 
-			var exts = this.browserExts;
-
-			exts.unshift(ListImpl, _Framework, _ButtonsInRow, _GeoJsonParser);
-
-			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare(exts)(this.browserConfig);
-
-			this._mapCenteringGateway();
-		},
-
-		_mapCenteringGateway: function() {
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
 
 			this.mapCenteringGateway = new MapCenteringGatewayImpl({
 				parentChannel: this.getChannel()
+			});
+		},
+
+		_createBrowser: function() {
+
+			this.browserConfig.queryChannel = this.queryChannel;
+
+			var exts = this.browserExts;
+			exts.unshift(ListImpl, _Framework, _ButtonsInRow, _GeoJsonParser);
+			var BrowserDefinition = declare(exts);
+			this.browser = new BrowserDefinition(this.browserConfig);
+
+			this._browserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n.geographicData
+			});
+		},
+
+		_createTextSearch: function() {
+
+			this.searchConfig.queryChannel = this.queryChannel;
+			this.textSearch = new TextImpl(this.searchConfig);
+
+			this._publish(this._browserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
 			});
 		},
 
@@ -162,61 +183,13 @@ define([
 
 			this.inherited(arguments);
 
-			this._createBrowserNode();
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n.geographicData,
+				iconClass: 'fa fa-table',
+				channel: this._browserWithTopbar.getChannel()
+			});
 
-			if (!this.notTextSearch) {
-				this._createTextSearchNode();
-			}
-
-			this._createTabContainers();
 			this._createAtlas();
-		},
-
-		_createTextSearchNode: function() {
-
-			this.textSearchNode = new ContentPane({
-				'class': "topZone topZoneCitation",
-				region: "top"
-			});
-
-			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.textSearchNode.domNode
-			});
-
-			this.buttonsNode = this.textSearchNode;
-
-			this.browserAndSearchContainer.addChild(this.textSearchNode);
-		},
-
-		_createBrowserNode: function() {
-
-			this.browserAndSearchContainer = new LayoutContainer({
-				title: "<i class='fa fa-table' title='" + this.i18n.data + "'></i>",
-				'class': "marginedContainer noScrolledContainer"
-			});
-
-			this.gridNode = new ContentPane({
-				'class': this.notTextSearch ? 'rightZone' : 'stretchZone',
-				region: "center"
-			});
-
-			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.gridNode.domNode
-			});
-
-			this.browserAndSearchContainer.addChild(this.gridNode);
-		},
-
-		_createTabContainers: function() {
-
-			this._tabsDisplayer = new TabsDisplayer({
-				parentChannel: this.getChannel()
-			});
-
-			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
-			this.tabs = this._tabsDisplayer._container;
-
-			this.tabs.addChild(this.browserAndSearchContainer);
 
 			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
 				node: this.contentNode

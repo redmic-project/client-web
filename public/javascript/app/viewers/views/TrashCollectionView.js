@@ -3,8 +3,6 @@ define([
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
-	, "dijit/layout/LayoutContainer"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/atlas/Atlas"
@@ -17,6 +15,7 @@ define([
 	, "redmic/modules/browser/_Select"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Total"
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/layer/_AddFilter"
@@ -30,8 +29,6 @@ define([
 	, Controller
 	, Layout
 	, redmicConfig
-	, LayoutContainer
-	, ContentPane
 	, declare
 	, lang
 	, Atlas
@@ -44,6 +41,7 @@ define([
 	, _Select
 	, SelectionBox
 	, Total
+	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
 	, GeoJsonLayerImpl
 	, _AddFilter
@@ -52,7 +50,8 @@ define([
 	, TemplateList
 	, FilterForm
 	, TrashDetails
-){
+) {
+
 	return declare([Layout, Controller, _Filter, _AddCompositeSearchInTooltipFromTextSearch, _Selection], {
 		//	summary:
 		//		Vista de TrashCollection.
@@ -130,12 +129,11 @@ define([
 
 		_initialize: function() {
 
-			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new TextImpl(this.searchConfig);
+			this._createBrowser();
 
-			this.browserConfig.queryChannel = this.queryChannel;
-			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
-			this.browser = new BrowserDefinition(this.browserConfig);
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
 
 			var TrashDetailsDefinition = declare(TrashDetails).extend(_ShowInPopup);
 			this.trashDetails = new TrashDetailsDefinition({
@@ -145,6 +143,26 @@ define([
 			this.modelChannel = this.filter.modelChannel;
 		},
 
+		_createBrowser: function() {
+
+			this.searchConfig.queryChannel = this.queryChannel;
+			this.textSearch = new TextImpl(this.searchConfig);
+
+			this.browserConfig.queryChannel = this.queryChannel;
+			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
+			this.browser = new BrowserDefinition(this.browserConfig);
+
+			this._browserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n['trash-collection']
+			});
+
+			this._publish(this._browserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
+			});
+		},
+
 		_setOwnCallbacksForEvents: function() {
 
 			this._onEvt('HIDE', lang.hitch(this, this._onHide));
@@ -152,43 +170,13 @@ define([
 
 		postCreate: function() {
 
-			this.textSearchNode = new ContentPane({
-				'class': "topZone",
-				region: "top"
-			});
-
-			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.textSearchNode.domNode
-			});
-
 			this.inherited(arguments);
 
-			var browserAndSearchContainer = new LayoutContainer({
-				iconClass: 'fa fa-tasks',
-				//title: this.i18n.list,
-				'class': "marginedContainer noScrolledContainer"
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n['trash-collection'],
+				iconClass: 'fa fa-recycle',
+				channel: this._browserWithTopbar.getChannel()
 			});
-
-			this.gridNode = new ContentPane({
-				region: "center",
-				'class': 'stretchZone'
-			});
-
-			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.gridNode.domNode
-			});
-
-			browserAndSearchContainer.addChild(this.textSearchNode);
-			browserAndSearchContainer.addChild(this.gridNode);
-
-			this._tabsDisplayer = new TabsDisplayer({
-				parentChannel: this.getChannel()
-			});
-
-			// TODO acceso a lo bruto, hasta que se simplifique la estructura de contenedores
-			this.tabs = this._tabsDisplayer._container;
-
-			this.tabs.addChild(browserAndSearchContainer);
 
 			this._createAtlas();
 

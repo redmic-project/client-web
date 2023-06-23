@@ -161,6 +161,9 @@ define([
 				},
 				filterConfig: {
 					initQuery: {
+						terms: {
+							atlas: true
+						},
 						size: null,
 						from: null
 					}

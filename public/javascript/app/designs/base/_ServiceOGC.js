@@ -2,10 +2,12 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/store/RequestJoiner/AtlasDataImpl"
+	, 'templates/FilterServiceOGCForm'
 ], function(
 	declare
 	, lang
 	, AtlasDataImpl
+	, FilterServiceOGCForm
 ) {
 
 	return declare(null, {
@@ -17,7 +19,11 @@ define([
 			this.config = {
 				pathProperty: "path",
 				pathSeparator: ".",
-				_atlasDataTarget: 'atlasData'
+				_atlasDataTarget: 'atlasData',
+
+				compositeConfig: {
+					template: FilterServiceOGCForm
+				}
 			};
 
 			lang.mixin(this, this.config, args);

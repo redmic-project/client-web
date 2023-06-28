@@ -25,11 +25,14 @@ define([
 				},
 				actions: {
 					'ADD_CONTENT': 'addContent',
-					'ADD_TOPBAR_CONTENT': 'addTopbarContent'
+					'ADD_TOPBAR_CONTENT': 'addTopbarContent',
+					'REMOVE_TOPBAR_CONTENT': 'removeTopbarContent'
 				},
 
 				layoutClass: 'genericDisplayer',
-				contentClass: 'centerZone'
+				contentClass: 'centerZone',
+				additionalLayoutClasses: null,
+				additionalContentClasses: null,
 			};
 
 			lang.mixin(this, this.config, args);
@@ -45,11 +48,21 @@ define([
 
 		postCreate: function() {
 
-			var ownNode = this._getNodeToShow();
+			var ownNode = this._getNodeToShow(),
+				layoutClasses = this.layoutClass,
+				contentClasses = this.contentClass;
 
-			put(ownNode, '.' + this.layoutClass);
+			if (this.additionalLayoutClasses) {
+				layoutClasses += '.' + this.additionalLayoutClasses;
+			}
 
-			this._contentNode = put(ownNode, 'div.' + this.contentClass);
+			put(ownNode, '.' + layoutClasses);
+
+			if (this.additionalContentClasses) {
+				contentClasses += '.' + this.additionalContentClasses;
+			}
+
+			this._contentNode = put(ownNode, 'div.' + contentClasses);
 
 			if (this.content) {
 				this._addGenericContent(this.content);
@@ -70,27 +83,31 @@ define([
 				return;
 			}
 
-			this._addGenericContent(content);
+			this._addGenericContent(content, req);
 		},
 
-		_addGenericContent: function(content) {
+		_addGenericContent: function(content, req) {
 
 			if (content.getChannel) {
-				this._addModuleContent(content);
+				this._addModuleContent(content, req || {});
 			} else {
 				this._addNodeContent(content);
 			}
 		},
 
-		_addModuleContent: function(contentModule) {
+		_addModuleContent: function(contentModule, req) {
 
 			this._removeOldContent();
 
 			this._oldContentModule = contentModule;
 
-			this._publish(contentModule.getChannel('SHOW'), {
+			var showProps = req.showProps || {};
+
+			var showRequestObj = this._merge([showProps, {
 				node: this._contentNode
-			});
+			}]);
+
+			this._publish(contentModule.getChannel('SHOW'), showRequestObj);
 		},
 
 		_addNodeContent: function(contentNode) {

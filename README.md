@@ -47,7 +47,7 @@ Para permitir el consumo de la aplicación desde clientes que no soportan ejecuc
 
 Esto es útil para clientes como los bots de redes sociales, que necesitan tener la página ya procesada para extraer los diferentes meta-tags asociados. De esta manera, podrán crear enlaces enriquecidos hacia la plataforma cuando los usuarios compartan contenido.
 
-Para activarlo, basta con lanzar previamente el servicio (Prerender)[https://gitlab.com/redmic-project/client/prerender] e indicar dónde está accesible mediante la variable `PRERENDER_URL`. En caso de que el cliente no lo requiera o que no se encuentre el servicio activo, simplemente se responderá con contenido dinámico.
+Para activarlo, basta con lanzar previamente el servicio [Prerender](https://gitlab.com/redmic-project/client/prerender) e indicar dónde está accesible mediante la variable `PRERENDER_URL`. En caso de que el cliente no lo requiera o que no se encuentre el servicio activo, simplemente se responderá con contenido dinámico.
 
 ## Testeo
 

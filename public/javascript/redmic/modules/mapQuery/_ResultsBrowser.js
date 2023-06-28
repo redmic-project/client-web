@@ -1,17 +1,17 @@
 define([
-	'app/designs/primaryAndSecondaryContent/main/HierarchicalLists'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'put-selector/put'
 	, 'redmic/modules/base/_Show'
+	, 'redmic/modules/layout/nestedContent/NestedBrowsersImpl'
 ], function(
-	HierarchicalLists
-	, declare
+	declare
 	, lang
 	, aspect
 	, put
 	, _Show
+	, NestedBrowsersImpl
 ) {
 
 	return declare(_Show, {
@@ -32,7 +32,7 @@ define([
 
 		_initializeResultsBrowser: function() {
 
-			this._layersInfo = new HierarchicalLists({
+			this._layersInfo = new NestedBrowsersImpl({
 				parentChannel: this.getChannel(),
 				typeGroupProperty: this.typeGroupProperty,
 				primaryTitle: this.i18n.presentElements,

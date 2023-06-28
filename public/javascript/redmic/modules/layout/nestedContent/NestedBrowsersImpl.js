@@ -1,26 +1,18 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/primaryAndSecondaryContent/Controller"
-	, "app/designs/primaryAndSecondaryContent/layout/Layout"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "put-selector/put"
-	, "RWidgets/Utilities"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/browser/_ButtonsInRow"
-	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/_MultiTemplate"
-	, "redmic/modules/browser/ListImpl"
-	, "templates/DefaultList"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'redmic/modules/base/_Store'
+	, 'redmic/modules/browser/bars/Total'
+	, 'redmic/modules/browser/_ButtonsInRow'
+	, 'redmic/modules/browser/_Framework'
+	, 'redmic/modules/browser/_MultiTemplate'
+	, 'redmic/modules/browser/ListImpl'
+	, 'templates/DefaultList'
+	, 'RWidgets/Utilities'
+	, './NestedContent'
 ], function (
-	_Main
-	, Controller
-	, Layout
-	, declare
+	declare
 	, lang
-	, put
-	, Utilities
 	, _Store
 	, Total
 	, _ButtonsInRow
@@ -28,8 +20,11 @@ define([
 	, _MultiTemplate
 	, ListImpl
 	, DefaultListTemplate
-){
-	return declare([Layout, Controller, _Main, _Store], {
+	, Utilities
+	, NestedContent
+) {
+
+	return declare([NestedContent, _Store], {
 		//	summary:
 		//		Main de contenido primario y secundario de tipo listado, donde un item del primero despliega sus
 		//		descendientes en el segundo.
@@ -37,27 +32,21 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				idProperty: "id",
-				typeGroupProperty: "category",
-				primaryTarget: "primaryTarget",
-				secondaryTarget: "secondaryTarget",
+				idProperty: 'id',
+				typeGroupProperty: 'category',
+				primaryTarget: 'primaryTarget',
+				secondaryTarget: 'secondaryTarget',
 				primaryListTemplate: null,
 				secondaryListTemplate: null,
 				_defaultTemplate: DefaultListTemplate,
 				_defaultPrimaryListButtons: [{
-					icon: "fa-chevron-right",
-					btnId: "changeToSecondary",
+					icon: 'fa-chevron-right',
+					btnId: 'changeToSecondary',
 					title: 'info',
 					returnItem: true
 				}],
 
 				_defaultSecondaryListButtons: [],
-
-				mainActions: {
-					NEW_DATA: "newData",
-					CLEAR: "clear",
-					ADD_NEW_TEMPLATES: "addNewTemplates"
-				},
 
 				_secondaryTemplatesByTypeGroup: {}
 			};
@@ -65,7 +54,7 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainConfigurations: function() {
+		_setConfigurations: function() {
 
 			var browserConfig = {
 				parentChannel: this.getChannel(),
@@ -79,16 +68,9 @@ define([
 			var primaryListButtons = Utilities.uniq(this._merge([
 				this._defaultPrimaryListButtons,
 				this.primaryListButtons || []
-			], {arrayMergingStrategy: "concatenate"}));
+			], {arrayMergingStrategy: 'concatenate'}));
 
 			primaryListButtons.reverse();
-
-			var secondaryListButtons = Utilities.uniq(this._merge([
-				this._defaultSecondaryListButtons,
-				this.secondaryListButtons || []
-			], {arrayMergingStrategy: "concatenate"}));
-
-			secondaryListButtons.reverse();
 
 			var primaryBrowserConfig = this._merge([{
 				target: this.primaryTarget,
@@ -101,6 +83,13 @@ define([
 			}, browserConfig]);
 
 			this.primaryBrowserConfig = this._merge([primaryBrowserConfig, this.primaryBrowserConfig || {}]);
+
+			var secondaryListButtons = Utilities.uniq(this._merge([
+				this._defaultSecondaryListButtons,
+				this.secondaryListButtons || []
+			], {arrayMergingStrategy: 'concatenate'}));
+
+			secondaryListButtons.reverse();
 
 			var secondaryBrowserConfig = this._merge([{
 				target: this.secondaryTarget,
@@ -115,43 +104,47 @@ define([
 			this.secondaryBrowserConfig = this._merge([secondaryBrowserConfig, this.secondaryBrowserConfig || {}]);
 		},
 
-		_initializeMain: function() {
+		_initialize: function() {
 
-			var exts = [ListImpl, _Framework, _ButtonsInRow, _MultiTemplate];
+			this.inherited(arguments);
 
-			this._primaryContentInstance = new declare(exts)(this.primaryBrowserConfig);
+			var BrowserDefinition = declare([ListImpl, _Framework, _ButtonsInRow, _MultiTemplate]);
+
+			this._primaryContentInstance = new BrowserDefinition(this.primaryBrowserConfig);
 			this.primaryContentChannel = this._primaryContentInstance.getChannel();
 
-			this._secondaryContentInstance = new declare(exts)(this.secondaryBrowserConfig);
+			this._secondaryContentInstance = new BrowserDefinition(this.secondaryBrowserConfig);
 			this.secondaryContentChannel = this._secondaryContentInstance.getChannel();
 		},
 
-		_defineMainSubscriptions: function() {
+		_defineSubscriptions: function() {
+
+			this.inherited(arguments);
 
 			this.subscriptionsConfig.push({
-				channel : this._primaryContentInstance.getChannel("BUTTON_EVENT"),
-				callback: "_subListBtnEvent"
+				channel : this._primaryContentInstance.getChannel('BUTTON_EVENT'),
+				callback: '_subListBtnEvent'
 			},{
-				channel : this._secondaryContentInstance.getChannel("BUTTON_EVENT"),
-				callback: "_subListBtnEvent"
+				channel : this._secondaryContentInstance.getChannel('BUTTON_EVENT'),
+				callback: '_subListBtnEvent'
 			},{
-				channel : this.getChannel("NEW_DATA"),
-				callback: "_subNewData",
+				channel : this.getChannel('NEW_DATA'),
+				callback: '_subNewData',
 				options: {
 					predicate: function(req) { return !!req; }
 				}
 			},{
-				channel : this.getChannel("CLEAR"),
-				callback: "_subClear"
+				channel : this.getChannel('CLEAR'),
+				callback: '_subClear'
 			},{
-				channel : this.getChannel("ADD_NEW_TEMPLATES"),
-				callback: "_subAddNewTemplates"
+				channel : this.getChannel('ADD_NEW_TEMPLATES'),
+				callback: '_subAddNewTemplates'
 			});
 		},
 
 		_subListBtnEvent: function(evt) {
 
-			var callback = "_" + evt.btnId + "Callback";
+			var callback = '_' + evt.btnId + 'Callback';
 			this[callback] && this[callback](evt);
 		},
 
@@ -162,35 +155,35 @@ define([
 
 		_beforeShow: function() {
 
+			this.inherited(arguments);
+
 			this._once(this._primaryContentInstance.getChannel('GOT_DATA'), lang.hitch(this,
 				this._subOnceGetData));
 
-			this._publish(this._primaryContentInstance.getChannel("GET_DATA"));
+			this._publish(this._primaryContentInstance.getChannel('GET_DATA'));
 		},
 
 		_subOnceGetData: function(data) {
 
 			data = data.data;
 
-			this._updateTitle();
+			this._setTitle(this.title);
 
 			if (data.length === 1) {
 				var item = data[0];
 
 				this._changeToSecondaryCallback({
-					btnId: "changeToSecondary",
+					btnId: 'changeToSecondary',
 					id: item[this.idProperty],
 					item: item
 				}, {
-					showAnimation: null
+					showAnimation: null,
+					title: item.parent[item.parentName]
 				});
 			} else {
-				put(this._backButtonNode, "." + this.hiddenClass);
-				put(this._primaryContentNode, "!" + this.hiddenClass);
-				put(this._secondaryContentNode, "." + this.hiddenClass);
+				this._removeBackButton();
 
-				this._showContent(this.primaryContentChannel, {
-					node: this._primaryContentNode,
+				this._showContent(this._primaryContentInstance, {
 					hideAnimation: this.primaryOutClass
 				});
 			}
@@ -208,8 +201,8 @@ define([
 
 		_subClear: function() {
 
-			this._publish(this._primaryContentInstance.getChannel("CLEAR"));
-			this._publish(this._secondaryContentInstance.getChannel("CLEAR"));
+			this._publish(this._primaryContentInstance.getChannel('CLEAR'));
+			this._publish(this._secondaryContentInstance.getChannel('CLEAR'));
 		},
 
 		_subAddNewTemplates: function(req) {
@@ -218,14 +211,14 @@ define([
 				parentTemplate = req.parentTemplate,
 				childrenTemplate = req.childrenTemplate;
 
-			this._publish(this._primaryContentInstance.getChannel("ADD_TEMPLATE"), {
+			this._publish(this._primaryContentInstance.getChannel('ADD_TEMPLATE'), {
 				typeGroup: typeGroup,
 				template: parentTemplate
 			});
 
-			if (typeof childrenTemplate === "object") {
+			if (typeof childrenTemplate === 'object') {
 				for (var key in childrenTemplate) {
-					this._publish(this._secondaryContentInstance.getChannel("ADD_TEMPLATE"), {
+					this._publish(this._secondaryContentInstance.getChannel('ADD_TEMPLATE'), {
 						typeGroup: key,
 						template: childrenTemplate[key]
 					});
@@ -239,16 +232,16 @@ define([
 
 			var typeGroup = itemData.item[this.typeGroupProperty];
 
-			if (!typeGroup || typeof this._secondaryTemplatesByTypeGroup[typeGroup] === "object") {
+			if (!typeGroup || typeof this._secondaryTemplatesByTypeGroup[typeGroup] === 'object') {
 				this._emitInjectData(itemData.item.children);
 			} else {
 				var template = this._secondaryTemplatesByTypeGroup[typeGroup] || this.secondaryListTemplate ||
 					this._defaultTemplate;
 
-				this._once(this._secondaryContentInstance.getChannel("TEMPLATE_UPDATED"), lang.hitch(this,
+				this._once(this._secondaryContentInstance.getChannel('TEMPLATE_UPDATED'), lang.hitch(this,
 					this._emitInjectData, itemData.item.children));
 
-				this._publish(this._secondaryContentInstance.getChannel("UPDATE_TEMPLATE"), {
+				this._publish(this._secondaryContentInstance.getChannel('UPDATE_TEMPLATE'), {
 					template: template
 				});
 			}
@@ -257,7 +250,7 @@ define([
 				parentData = itemData.item.parent,
 				title;
 
-			if (typeof parentName === "function") {
+			if (typeof parentName === 'function') {
 				title = parentName(parentData) || this.title;
 			} else {
 				title = Utilities.getDeepProp(parentData, parentName) || this.title;
@@ -265,7 +258,7 @@ define([
 
 			options = options || { title: title };
 
-			this._changeToSecondary(this.secondaryContentChannel, options);
+			this._changeToSecondary(options);
 		},
 
 		_emitInjectData: function(data) {

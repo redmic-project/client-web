@@ -2,14 +2,12 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, 'put-selector/put'
 	, 'redmic/modules/base/_Show'
 	, 'redmic/modules/layout/nestedContent/NestedBrowsersImpl'
 ], function(
 	declare
 	, lang
 	, aspect
-	, put
 	, _Show
 	, NestedBrowsersImpl
 ) {
@@ -21,7 +19,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				containerClass: 'queryOnMapContainer'
+				'class': 'queryOnMapContainer'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -63,18 +61,10 @@ define([
 
 		postCreate: function() {
 
-			this._layersInfoContainer = put('div.' + this.containerClass);
-		},
-
-		_getNodeToShow: function() {
-
-			return this._layersInfoContainer;
-		},
-
-		_beforeShow: function() {
+			this.inherited(arguments);
 
 			this._publish(this._layersInfo.getChannel('SHOW'), {
-				node: this._layersInfoContainer
+				node: this.domNode
 			});
 		}
 	});

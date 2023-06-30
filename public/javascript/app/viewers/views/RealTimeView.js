@@ -220,10 +220,7 @@ define([
 			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
 			this._queryOnMap = new QueryOnMapPopup({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
-				title: this.i18n.layersQueryResults,
-				width: 5,
-				height: "md"
+				getMapChannel: getMapChannel
 			});
 		}
 	});

@@ -3,8 +3,6 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
-	, "dijit/layout/LayoutContainer"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -28,8 +26,6 @@ define([
 	, _Main
 	, Controller
 	, Layout
-	, LayoutContainer
-	, ContentPane
 	, declare
 	, lang
 	, aspect
@@ -210,10 +206,7 @@ define([
 			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
 			this._queryOnMap = new QueryOnMapPopup({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
-				title: this.i18n.layersQueryResults,
-				width: 5,
-				height: "md"
+				getMapChannel: getMapChannel
 			});
 		},
 

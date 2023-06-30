@@ -299,10 +299,7 @@ define([
 
 			this.queryOnMapConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				typeGroupProperty: this.typeGroupProperty,
-				title: this.i18n.layersQueryResults,
-				width: 5,
-				height: "md"
+				typeGroupProperty: this.typeGroupProperty
 			}, this.queryOnMapConfig || {}]);
 		},
 

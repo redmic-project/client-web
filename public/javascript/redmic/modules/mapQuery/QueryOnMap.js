@@ -39,6 +39,8 @@ define([
 
 				getMapChannel: null,
 
+				title: this.i18n.layersQueryResults,
+
 				_queryableLayersLoaded: 0,
 				_layersWaiting: 0
 			};

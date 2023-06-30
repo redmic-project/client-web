@@ -230,10 +230,7 @@ define([
 			this._queryOnMap = new QueryOnMapPopup({
 				parentChannel: this.getChannel(),
 				getMapChannel: getMapChannel,
-				typeGroupProperty: this.typeGroupProperty,
-				title: this.i18n.layersQueryResults,
-				width: 5,
-				height: "md"
+				typeGroupProperty: this.typeGroupProperty
 			});
 		},
 

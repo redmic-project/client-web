@@ -54,10 +54,7 @@ define([
 			}, this.atlasConfig || {}]);
 
 			this.queryOnMapConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				title: this.i18n.layersQueryResults,
-				width: 5,
-				height: "md"
+				parentChannel: this.getChannel()
 			}, this.queryOnMapConfig || {}]);
 		},
 

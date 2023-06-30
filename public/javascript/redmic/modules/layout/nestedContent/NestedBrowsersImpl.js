@@ -1,7 +1,6 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/browser/bars/Total'
 	, 'redmic/modules/browser/_ButtonsInRow'
 	, 'redmic/modules/browser/_Framework'
@@ -13,7 +12,6 @@ define([
 ], function (
 	declare
 	, lang
-	, _Store
 	, Total
 	, _ButtonsInRow
 	, _Framework
@@ -24,7 +22,7 @@ define([
 	, NestedContent
 ) {
 
-	return declare([NestedContent, _Store], {
+	return declare(NestedContent, {
 		//	summary:
 		//		Main de contenido primario y secundario de tipo listado, donde un item del primero despliega sus
 		//		descendientes en el segundo.
@@ -111,10 +109,8 @@ define([
 			var BrowserDefinition = declare([ListImpl, _Framework, _ButtonsInRow, _MultiTemplate]);
 
 			this._primaryContentInstance = new BrowserDefinition(this.primaryBrowserConfig);
-			this.primaryContentChannel = this._primaryContentInstance.getChannel();
 
 			this._secondaryContentInstance = new BrowserDefinition(this.secondaryBrowserConfig);
-			this.secondaryContentChannel = this._secondaryContentInstance.getChannel();
 		},
 
 		_defineSubscriptions: function() {
@@ -122,6 +118,9 @@ define([
 			this.inherited(arguments);
 
 			this.subscriptionsConfig.push({
+				channel : this._primaryContentInstance.getChannel('GOT_DATA'),
+				callback: '_subPrimaryGotData'
+			},{
 				channel : this._primaryContentInstance.getChannel('BUTTON_EVENT'),
 				callback: '_subListBtnEvent'
 			},{
@@ -153,21 +152,9 @@ define([
 			this._emitInjectItem(req);
 		},
 
-		_beforeShow: function() {
+		_subPrimaryGotData: function(dataWrapper) {
 
-			this.inherited(arguments);
-
-			this._once(this._primaryContentInstance.getChannel('GOT_DATA'), lang.hitch(this,
-				this._subOnceGetData));
-
-			this._publish(this._primaryContentInstance.getChannel('GET_DATA'));
-		},
-
-		_subOnceGetData: function(data) {
-
-			data = data.data;
-
-			this._setTitle(this.title);
+			var data = dataWrapper.data;
 
 			if (data.length === 1) {
 				var item = data[0];
@@ -176,16 +163,9 @@ define([
 					btnId: 'changeToSecondary',
 					id: item[this.idProperty],
 					item: item
-				}, {
-					showAnimation: null,
-					title: item.parent[item.parentName]
 				});
 			} else {
-				this._removeBackButton();
-
-				this._showContent(this._primaryContentInstance, {
-					hideAnimation: this.primaryOutClass
-				});
+				this._changeToPrimary();
 			}
 		},
 
@@ -228,37 +208,36 @@ define([
 			this._secondaryTemplatesByTypeGroup[typeGroup] = childrenTemplate;
 		},
 
-		_changeToSecondaryCallback: function(itemData, options) {
+		_changeToSecondaryCallback: function(itemData) {
 
-			var typeGroup = itemData.item[this.typeGroupProperty];
+			var primaryData = itemData.item;
+
+			this._updateSecondaryTemplate(primaryData);
+
+			var secondaryOptions = {
+				title: this._getSecondaryTitleFromData(primaryData)
+			};
+
+			this._changeToSecondary(secondaryOptions);
+		},
+
+		_updateSecondaryTemplate: function(primaryData) {
+
+			var typeGroup = primaryData[this.typeGroupProperty];
 
 			if (!typeGroup || typeof this._secondaryTemplatesByTypeGroup[typeGroup] === 'object') {
-				this._emitInjectData(itemData.item.children);
+				this._emitInjectData(primaryData.children);
 			} else {
 				var template = this._secondaryTemplatesByTypeGroup[typeGroup] || this.secondaryListTemplate ||
 					this._defaultTemplate;
 
 				this._once(this._secondaryContentInstance.getChannel('TEMPLATE_UPDATED'), lang.hitch(this,
-					this._emitInjectData, itemData.item.children));
+					this._emitInjectData, primaryData.children));
 
 				this._publish(this._secondaryContentInstance.getChannel('UPDATE_TEMPLATE'), {
 					template: template
 				});
 			}
-
-			var parentName = itemData.item.parentName,
-				parentData = itemData.item.parent,
-				title;
-
-			if (typeof parentName === 'function') {
-				title = parentName(parentData) || this.title;
-			} else {
-				title = Utilities.getDeepProp(parentData, parentName) || this.title;
-			}
-
-			options = options || { title: title };
-
-			this._changeToSecondary(options);
 		},
 
 		_emitInjectData: function(data) {
@@ -267,6 +246,21 @@ define([
 				data: data,
 				target: this.secondaryTarget
 			});
+		},
+
+		_getSecondaryTitleFromData: function(primaryData) {
+
+			var parentName = primaryData.parentName,
+				parentData = primaryData.parent,
+				title;
+
+			if (typeof parentName === 'function') {
+				title = parentName(parentData);
+			} else {
+				title = Utilities.getDeepProp(parentData, parentName);
+			}
+
+			return title || this.title;
 		}
 	});
 });

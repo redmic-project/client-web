@@ -118,9 +118,10 @@ define([
 
 			if (!nodeId) {
 				console.error('Received a topbar content node to add without ID at module "%s"', this.getChannel());
-			} else {
-				this._topbarContentNodes[nodeId] = contentParentNode;
+				return;
 			}
+
+			this._topbarContentNodes[nodeId] = contentParentNode;
 
 			put(contentParentNode, contentNode);
 		},

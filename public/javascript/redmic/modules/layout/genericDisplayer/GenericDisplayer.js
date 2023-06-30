@@ -88,6 +88,8 @@ define([
 
 		_addGenericContent: function(content, req) {
 
+			this._removeOldContent();
+
 			if (content.getChannel) {
 				this._addModuleContent(content, req || {});
 			} else {
@@ -96,8 +98,6 @@ define([
 		},
 
 		_addModuleContent: function(contentModule, req) {
-
-			this._removeOldContent();
 
 			this._oldContentModule = contentModule;
 
@@ -111,8 +111,6 @@ define([
 		},
 
 		_addNodeContent: function(contentNode) {
-
-			this._removeOldContent();
 
 			this._oldContentNode = put(this._contentNode, contentNode);
 		},

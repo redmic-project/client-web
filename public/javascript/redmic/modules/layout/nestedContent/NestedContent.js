@@ -114,7 +114,7 @@ define([
 
 		_changeToSecondary: function(args) {
 
-			var title = args.title
+			var title = args.title;
 
 			this._addBackButton();
 

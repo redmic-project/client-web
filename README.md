@@ -49,6 +49,8 @@ Esto es útil para clientes como los bots de redes sociales, que necesitan tener
 
 Para activarlo, basta con lanzar previamente el servicio [Prerender](https://gitlab.com/redmic-project/client/prerender) e indicar dónde está accesible mediante la variable `PRERENDER_URL`. En caso de que el cliente no lo requiera o que no se encuentre el servicio activo, simplemente se responderá con contenido dinámico.
 
+Por defecto, `Prerender` consultará al servicio mediante protocolo HTTP. Si no se permite el acceso y se redirige mediante HTTPS, es necesario fijar el protocolo mediante la variable `PRERENDER_PROTOCOL=https`.
+
 ## Testeo
 
 Se ha preparado una batería de pruebas, tanto unitarias como funcionales, que permiten evaluar el estado del proyecto a medida que se aplican cambios en la base de código.

@@ -2,11 +2,11 @@ define({
 	"default": {
 		"title": "{i18n.metaDefaultTitle}",
 		"description": "{i18n.metaDefaultDescription}.",
-		"image": "https://{hostname}/resources/images/logos/redmic-logo-1200x1200.jpg",
+		"image": "https://{hostname}/resources/images/logos/redmic-logo-og.jpg",
 		"image:alt": "{i18n.metaDefaultImageAlt}.",
 		"image:type": "image/jpeg",
 		"image:width": "1200",
-		"image:height": "1200"
+		"image:height": "630"
 	},
 	"/home": {
 		"title": "{i18n.metaHomeTitle}",

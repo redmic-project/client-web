@@ -1,9 +1,11 @@
 const prerenderNode = require('prerender-node'),
-	prerenderUrl = process.env.PRERENDER_URL;
+	prerenderUrl = process.env.PRERENDER_URL,
+	prerenderProtocol = process.env.PRERENDER_PROTOCOL || 'http';
 
 let logger;
 
 prerenderNode.set('prerenderServiceUrl', prerenderUrl)
+	.set('protocol', prerenderProtocol)
 	.set('afterRender', afterRender);
 
 function afterRender(err, req, _prerender_res) {

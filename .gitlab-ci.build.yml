@@ -25,7 +25,6 @@ prepare-unbuilt-version:
     expire_in: 1 week
     paths:
       - node_modules/
-      - public/javascript/proj4js/dist/proj4.js
       - public/javascript/templates/dist/
       - public/stylesheets/style.styl
       - public/stylesheets/src/

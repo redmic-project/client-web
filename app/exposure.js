@@ -1,17 +1,18 @@
-let express = require('express'),
+const express = require('express'),
 	bodyParser = require('body-parser'),
 	fs = require('fs'),
 	path = require('path'),
 	http = require('http'),
-	https = require('https');
+	https = require('https'),
 
-let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated,
 	oauthUrl = process.env.OAUTH_URL,
 	oauthClientId = process.env.OAUTH_CLIENT_ID,
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 	production = !!parseInt(process.env.PRODUCTION, 10),
 	apiUrl = process.env.API_URL,
 	sitemapUrl = process.env.SITEMAP_URL;
+
+let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated;
 
 function getLang(req) {
 
@@ -77,7 +78,7 @@ function onOwnRequestResponse(bindParams, internalRes) {
 			content += nestedChunks[i].toString();
 		}
 
-		let originalRes = nestedBindParams.originalRes,
+		const originalRes = nestedBindParams.originalRes,
 			onSuccess = nestedBindParams.onSuccess || onOwnRequestSuccess,
 			onError = nestedBindParams.onError || onOwnRequestError,
 			afterResponse = nestedBindParams.afterResponse;
@@ -98,7 +99,7 @@ function onOwnRequestSuccess(originalRes, content) {
 
 	originalRes.status(this.statusCode).send(content);
 
-	let internalUrl = this.req.protocol + '//' + this.req.host + this.req.path,
+	const internalUrl = this.req.protocol + '//' + this.req.host + this.req.path,
 		internalRequestMessage = `INTERNAL ${this.req.method} ${internalUrl} ${this.statusCode}`;
 
 	logger.info(internalRequestMessage);
@@ -113,7 +114,7 @@ function onOwnRequestError(originalRes, err) {
 		description: 'Something went wrong at server. Please, try again.'
 	});
 
-	let errorMessage = err instanceof Object ? err.toString() : err;
+	const errorMessage = err instanceof Object ? err.toString() : err;
 	logger.error(errorMessage);
 }
 
@@ -121,12 +122,12 @@ function onSitemapRequest(_req, res) {
 
 	res.set('Content-Type', 'text/xml');
 
-	let currTimestamp = Date.now();
+	const currTimestamp = Date.now();
 
 	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - 300000) {
-		let afterResponseCallback = (status, content) => sitemapContent = status ? content : '';
+		const afterResponseCallback = (status, content) => sitemapContent = status ? content : '';
 
-		let internalReq = https.request(sitemapUrl, onOwnRequestResponse.bind(this, {
+		const internalReq = https.request(sitemapUrl, onOwnRequestResponse.bind(this, {
 			originalRes: res,
 			afterResponse: afterResponseCallback
 		}));
@@ -149,7 +150,7 @@ function onRobotsRequest(req, res) {
 		robotsContent = 'User-agent: *\n';
 
 		if (production) {
-			let sitemapPath = 'https://' + req.hostname + '/sitemap.xml',
+			const sitemapPath = 'https://' + req.hostname + '/sitemap.xml',
 				sitemapLine = 'Sitemap: ' + sitemapPath;
 
 			robotsContent += 'Allow: /\n\n' + sitemapLine;
@@ -176,17 +177,13 @@ function onOauthTokenRequest(req, res) {
 
 	res.set('Content-Type', 'application/json');
 
-	let body = req.body,
-		password = body.password,
-		username = body.username,
-
-		getTokenUrl = oauthUrl + '/token',
-		clientCredentials = oauthClientId + ':' + oauthClientSecret,
-		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
-
+	const getTokenUrl = oauthUrl + '/token',
 		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https;
 
-	let options = {
+	const clientCredentials = oauthClientId + ':' + oauthClientSecret,
+		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64');
+
+	const options = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
@@ -194,23 +191,27 @@ function onOauthTokenRequest(req, res) {
 		}
 	};
 
-	let bindParams = {
+	const bindParams = {
 		originalRes: res,
 		onError: onOauthRequestError
 	};
 
-	let internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestResponse.bind(this, bindParams));
+	const internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestResponse.bind(this, bindParams));
 
 	internalReq.on('error', onOauthRequestError.bind(this, res));
 
-	let bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+	const body = req.body,
+		password = encodeURIComponent(body.password),
+		username = encodeURIComponent(body.username),
+		bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+
 	internalReq.write(bodyData);
 	internalReq.end();
 }
 
 function onOauthRequestError(originalRes, err) {
 
-	let error = JSON.parse(err),
+	const error = JSON.parse(err),
 		errorType = error.error,
 		errorDescription = error.error_description;
 
@@ -245,12 +246,12 @@ function exposeRoutes(app) {
 
 function exposeContents(app, directoryName) {
 
-	let pathOptions = {
+	const pathOptions = {
 		maxAge: 600000,
 		index: false
 	};
 
-	let exposedPath = path.join(__dirname, '..', directoryName),
+	const exposedPath = path.join(__dirname, '..', directoryName),
 		staticPropName = 'static',
 		servedPath = express[staticPropName](exposedPath, pathOptions);
 

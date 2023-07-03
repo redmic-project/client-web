@@ -3,8 +3,6 @@ define([
 	, "app/designs/mapWithSideContent/main/_TrackingByFilter"
 	, "app/designs/mapWithSideContent/main/_TrackingWithList"
 	, "app/redmicConfig"
-	, "dijit/layout/LayoutContainer"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -20,6 +18,7 @@ define([
 	, "redmic/modules/browser/bars/Pagination"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Total"
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, "redmic/modules/search/TextImpl"
 	, "templates/ActivityList"
 	, "templates/LoadingCustom"
@@ -28,8 +27,6 @@ define([
 	, _TrackingByFilter
 	, _TrackingWithList
 	, redmicConfig
-	, LayoutContainer
-	, ContentPane
 	, declare
 	, lang
 	, aspect
@@ -45,10 +42,12 @@ define([
 	, Pagination
 	, SelectionBox
 	, Total
+	, GenericWithTopbarDisplayerImpl
 	, TextImpl
 	, templateActivityList
 	, LoadingCustom
-){
+) {
+
 	return declare([Tracking, _TrackingWithList, _TrackingByFilter, _Selection], {
 		//	summary:
 		//		Vista de Tracking.
@@ -123,11 +122,27 @@ define([
 
 		_initialize: function() {
 
+			this._createActivityCatalog();
+		},
+
+		_createActivityCatalog: function() {
+
 			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new declare([TextImpl])(this.searchConfig);
+			this.textSearch = new TextImpl(this.searchConfig);
 
 			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare([ListImpl, _Framework, _Select])(this.browserConfig);
+			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
+			this.browser = new BrowserDefinition(this.browserConfig);
+
+			this._activityBrowserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n.activitiesCatalogView
+			});
+
+			this._publish(this._activityBrowserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
+			});
 		},
 
 		_defineSubscriptions: function () {
@@ -140,42 +155,17 @@ define([
 
 		_fillSideContent: function() {
 
+			var addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+
+			this._publish(addTabChannel, {
+				title: this.i18n.activitiesCatalogView,
+				iconClass: 'fa fa-tasks',
+				channel: this._activityBrowserWithTopbar.getChannel()
+			});
+
+			this._createBrowserWork();
+
 			this.inherited(arguments);
-
-			this.borderContainerActivities = this._createBrowserAndSearch();
-
-			this.tabContainer.addChild(this.borderContainerActivities, 0);
-		},
-
-		_createBrowserAndSearch: function() {
-
-			var browserAndSearchContainer = new LayoutContainer({
-				title: this.i18n.activities,
-				'class': "marginedContainer noScrolledContainer"
-			});
-
-			this.gridNode = new ContentPane({
-				region: "center",
-				'class': 'stretchZone'
-			});
-
-			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.gridNode.domNode
-			});
-
-			this.textSearchNode = new ContentPane({
-				'class': "topZone",
-				region: "top"
-			});
-
-			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.textSearchNode.domNode
-			});
-
-			browserAndSearchContainer.addChild(this.textSearchNode);
-			browserAndSearchContainer.addChild(this.gridNode);
-
-			return browserAndSearchContainer;
 		},
 
 		_select: function(item) {
@@ -252,7 +242,9 @@ define([
 
 		_subBrowserWorkNoDataMsgClicked: function(res) {
 
-			this.tabContainer.selectChild(this.borderContainerActivities);
+			this._publish(this._tabsDisplayer.getChannel('SHOW_TAB'), {
+				channel: this._activityBrowserWithTopbar.getChannel()
+			});
 		},
 
 		_beforeShow: function() {

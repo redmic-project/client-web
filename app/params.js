@@ -1,4 +1,4 @@
-var commander = require('commander');
+const commander = require('commander');
 
 module.exports = function(version) {
 
@@ -12,13 +12,13 @@ module.exports = function(version) {
 		.showSuggestionAfterError()
 		.parse(process.argv);
 
-	var commanderOpts = commander.opts();
+	const commanderOpts = commander.opts();
 
 	return {
 		useBuilt: commanderOpts.useBuilt,
 		cluster: commanderOpts.cluster,
 		debug: commanderOpts.debug,
-		port: commanderOpts.port,
-		lang: commanderOpts.defaultLang
+		lang: commanderOpts.defaultLang,
+		port: commanderOpts.port
 	};
 };

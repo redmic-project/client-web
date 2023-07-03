@@ -1,11 +1,13 @@
 define([
 	"app/base/models/_Model"
+	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "./Model"
 ], function(
 	_Model
+	, redmicConfig
 	, declare
 	, lang
 	, Deferred
@@ -57,10 +59,22 @@ define([
 
 		_onValidationErrorsChanged: function(errors) {
 
+			var isValid = this.modelInstance.get('isValid');
+
+			if (redmicConfig.getEnvVariableValue('envDebug') === 'true') {
+				console.warn('Model validation errors', {
+					target: this.target,
+					isValid: isValid,
+					validation: JSON.parse(JSON.stringify(errors)),
+					schema: this.modelInstance.get('schema'),
+					channel: this.getChannel()
+				});
+			}
+
 			this._lastValidationErrors = errors;
 			this._emitEvt('VALIDATION_ERRORS_CHANGED', {
 				errors: errors,
-				isValid: this.modelInstance.get("isValid")
+				isValid: isValid
 			});
 
 			this._getIsValidStatus();

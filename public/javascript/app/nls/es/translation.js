@@ -157,6 +157,7 @@ define({
 	, "layerImage": "Imagen de la capa"
 	, "noLayerInfo": "La localización pulsada no contiene ninguna información"
 	, "formats": "Formatos"
+	, "geographicData": "Datos geográficos"
 
 	, "inspire-rs": "Sistemas de coordenadas de referencia"
 	, "inspire-gg": "Sistema de cuadrículas geográficas"
@@ -419,9 +420,8 @@ define({
 	, "selectedCharts": "Gráficas seleccionadas"
 	, "selectedLayers": "Capas seleccionadas"
 	, "layersCatalog": "Catálogo de capas"
-	, "goToLayersCatalog": "Ir a catálogo de capas"
-	, "goToSelectedLayers": "Ir a capas seleccionadas"
-	, "addLayersToLoadInMap": "Pulse aquí para añadir capas del catálogo"
+	, "addLayersToLoadInMap": "Añada capas desde el catálogo"
+	, "layersQueryResults": "Resultados de consulta sobre capas"
 
 	, "seaDepth": "Fondo"
 	, "legalValidity": "Validez legal"
@@ -663,8 +663,12 @@ define({
 	, "sex": "Sexo"
 	, "shoreline-types": "Nivel del mar"
 	, "scientificName": "Nombre científico"
+	, "scientificname": "Nombre científico"
 	, "scientificNames": "Nombres científicos"
 	, "commonName": "Nombre común"
+	, "scientificcategory": "Categoría científica"
+	, "divulgativecategory": "Categoría divulgativa"
+	, "viewAtRedpromar": "Ver en RedPROMAR"
 	, "worms": "WoRMS"
 	, "listingOrder": "Orden de listado"
 	, "aphia": "Aphia"
@@ -1318,8 +1322,9 @@ define({
 
 	, "viewExternalUrl": "Ver en"
 	, "internalDocument": "Documento interno"
-	, "internalUrl": "URL interna"
-	, "privateInternalUrl": "URL interna privada"
+	, "internalUrl": "Documento interno"
+	, "privateInternalUrl": "Documento interno privado"
+	, "resourceType": "Tipo de recurso"
 
 
 	// Meta-tags

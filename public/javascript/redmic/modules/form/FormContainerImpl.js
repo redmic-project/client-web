@@ -4,7 +4,6 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "dojo/promise/all"
-	, "put-selector/put"
 	, "redmic/form/FormContainer"
 	, "./Form"
 ], function(
@@ -13,7 +12,6 @@ define([
 	, aspect
 	, Deferred
 	, all
-	, put
 	, FormContainer
 	, Form
 ){
@@ -29,6 +27,7 @@ define([
 				target: null,
 				template: null,
 				title: this.i18n.form,
+				'class': 'formContainer',
 				_inputsInfo: {},
 				_inputsChannelsByPropertyName: {},
 				status: false,
@@ -64,7 +63,7 @@ define([
 
 			if (!this.form) {
 				this.form = new FormContainer(this.formContainerConfig);
-				this.form.placeAt(this.domNode);
+				this.form.placeAt(this._getNodeToShow());
 
 				this.form.startup();
 

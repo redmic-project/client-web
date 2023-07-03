@@ -61,7 +61,7 @@ define([
 				idProperty: "path",
 				pathSeparator: ".",
 				_pseudonymSeparator: "_",
-				_localTarget: "local",
+				_localTarget: "localSmartLegend",
 				_pathsByLayerId: {},
 				_layerIdByPseudonym: {},
 				_currentData: {},

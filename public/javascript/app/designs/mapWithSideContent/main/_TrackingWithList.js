@@ -1,7 +1,5 @@
 define([
 	"app/redmicConfig"
-	, "dijit/layout/BorderContainer"
-	, "dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
@@ -12,13 +10,12 @@ define([
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_MultiTemplate"
 	, "redmic/modules/browser/_Select"
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, "templates/ActivityList"
 	, "templates/AnimalList"
 	, "templates/TrackingPlatformList"
 ], function(
 	redmicConfig
-	, BorderContainer
-	, ContentPane
 	, declare
 	, lang
 	, aspect
@@ -29,10 +26,12 @@ define([
 	, _Framework
 	, _MultiTemplate
 	, _Select
+	, GenericWithTopbarDisplayerImpl
 	, templateActivityList
 	, templateAnimalList
 	, templatePlatformList
-){
+) {
+
 	return declare(_SelectionBase, {
 		//	summary:
 		//		Vista de Tracking.
@@ -120,9 +119,15 @@ define([
 
 		_initializeTrackingWithList: function() {
 
-			var exts = this.browserWorkBase.concat(this.browserWorkExts);
+			var BrowserDefinition = declare(this.browserWorkBase.concat(this.browserWorkExts));
 
-			this.browserWork = new declare(exts)(this.browserWorkConfig);
+			this.browserWork = new BrowserDefinition(this.browserWorkConfig);
+
+			this._trackingDataBrowserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browserWork,
+				title: this.i18n.Elements
+			});
 		},
 
 		_defineTrackingWithListSubscriptions: function () {
@@ -153,36 +158,14 @@ define([
 			return res.target === this.targetBrowserWork;
 		},
 
-		_fillSideContent: function() {
-
-			this.inherited(arguments);
-
-			var borderContainer = this._createBrowserWork();
-
-			this.tabContainer.addChild(borderContainer, 0);
-
-			this.tabContainer.selectChild(borderContainer);
-		},
-
 		_createBrowserWork: function() {
 
-			var browserAndSearchContainer = new BorderContainer({
+			var addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+			this._publish(addTabChannel, {
 				title: this.i18n.Elements,
-				'class': "marginedContainer noScrolledContainer"
+				iconClass: 'fr fr-track',
+				channel: this._trackingDataBrowserWithTopbar.getChannel()
 			});
-
-			this.browserWorkNode = new ContentPane({
-				region: "center",
-				'class': 'flexContainer'
-			});
-
-			this._publish(this.browserWork.getChannel("SHOW"), {
-				node: this.browserWorkNode.domNode
-			});
-
-			browserAndSearchContainer.addChild(this.browserWorkNode);
-
-			return browserAndSearchContainer;
 		},
 
 		_cleanElementByActivity: function(activityId) {

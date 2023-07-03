@@ -1,52 +1,51 @@
 define([
 	"app/base/views/extensions/_LocalSelectionView"
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/base/views/extensions/_QueryOnMap"
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
-	, "dijit/layout/LayoutContainer"
-	, "dijit/layout/ContentPane"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
+	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/base/_Store"
-	, "redmic/modules/gateway/MapCenteringGatewayImpl"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_GeoJsonParser"
 	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/atlas/Atlas"
+	, "redmic/modules/gateway/MapCenteringGatewayImpl"
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
+	, 'redmic/modules/layout/TabsDisplayer'
+	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
 	, "templates/CitationList"
 ], function(
 	_LocalSelectionView
-	, _ShowInPopupResultsFromQueryOnMap
-	, _QueryOnMap
 	, _Main
 	, Controller
 	, Layout
-	, LayoutContainer
-	, ContentPane
-	, TabContainer
 	, declare
 	, lang
 	, aspect
+	, Atlas
 	, _Filter
+	, _ShowInPopup
 	, _Store
-	, MapCenteringGatewayImpl
 	, Total
 	, _ButtonsInRow
 	, _Framework
 	, _GeoJsonParser
 	, ListImpl
-	, Atlas
+	, MapCenteringGatewayImpl
+	, GenericWithTopbarDisplayerImpl
+	, TabsDisplayer
+	, QueryOnMap
 	, TextImpl
 	, TemplateList
-){
+) {
+
 	return declare([Layout, Controller, _Main, _Store, _Filter, _LocalSelectionView], {
 		//	summary:
 		//		Vista base para todas las vistas de geográfica.
@@ -103,25 +102,44 @@ define([
 
 		_initializeMain: function() {
 
+			this._createBrowser();
+
 			if (!this.notTextSearch) {
-				this.searchConfig.queryChannel = this.queryChannel;
-				this.textSearch = new TextImpl(this.searchConfig);
+				this._createTextSearch();
 			}
 
-			var exts = this.browserExts;
-
-			exts.unshift(ListImpl, _Framework, _ButtonsInRow, _GeoJsonParser);
-
-			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare(exts)(this.browserConfig);
-
-			this._mapCenteringGateway();
-		},
-
-		_mapCenteringGateway: function() {
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
 
 			this.mapCenteringGateway = new MapCenteringGatewayImpl({
 				parentChannel: this.getChannel()
+			});
+		},
+
+		_createBrowser: function() {
+
+			this.browserConfig.queryChannel = this.queryChannel;
+
+			var exts = this.browserExts;
+			exts.unshift(ListImpl, _Framework, _ButtonsInRow, _GeoJsonParser);
+			var BrowserDefinition = declare(exts);
+			this.browser = new BrowserDefinition(this.browserConfig);
+
+			this._browserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n.geographicData
+			});
+		},
+
+		_createTextSearch: function() {
+
+			this.searchConfig.queryChannel = this.queryChannel;
+			this.textSearch = new TextImpl(this.searchConfig);
+
+			this._publish(this._browserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
 			});
 		},
 
@@ -157,93 +175,39 @@ define([
 			}
 		},
 
-		_setMainOwnCallbacksForEvents: function() {
-
-			this._onEvt('SHOW', lang.hitch(this, this._onGeographicMainShown));
-			this._onEvt('RESIZE', lang.hitch(this, this._onGeographicMainResized));
-		},
-
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			this._createBrowserNode();
-
-			if (!this.notTextSearch) {
-				this._createTextSearchNode();
-			}
-
-			this._createTabContainers();
-		},
-
-		_createTextSearchNode: function() {
-
-			this.textSearchNode = new ContentPane({
-				'class': "topZone topZoneCitation",
-				region: "top"
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n.geographicData,
+				iconClass: 'fa fa-table',
+				channel: this._browserWithTopbar.getChannel()
 			});
 
-			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.textSearchNode.domNode
+			this._createAtlas();
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
 			});
-
-			this.buttonsNode = this.textSearchNode;
-
-			this.browserAndSearchContainer.addChild(this.textSearchNode);
-		},
-
-		_createBrowserNode: function() {
-
-			this.browserAndSearchContainer = new LayoutContainer({
-				title: "<i class='fa fa-table'></i>",
-				'class': "marginedContainer noScrolledContainer"
-			});
-
-			this.gridNode = new ContentPane({
-				'class': this.notTextSearch ? 'rightZone' : 'stretchZone',
-				region: "center"
-			});
-
-			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.gridNode.domNode
-			});
-
-			this.browserAndSearchContainer.addChild(this.gridNode);
-		},
-
-		_createTabContainers: function() {
-
-			this.tabs = new TabContainer({
-				tabPosition: "top",
-				region: "center",
-				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
-			});
-
-			this.tabs.addChild(this.browserAndSearchContainer);
-			this.tabs.addChild(this._createAtlas());
-
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
 		},
 
 		_createAtlas: function() {
 
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:"center"
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel
 			});
-
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
-			});
-
-			return cp;
 		},
 
 		_beforeShowMain: function() {
@@ -306,21 +270,6 @@ define([
 			this._publish(channel, {
 				selectionTarget: this._getTarget()
 			});
-		},
-
-		_onGeographicMainShown: function() {
-
-			this._resizeTabs();
-		},
-
-		_onGeographicMainResized: function() {
-
-			this._resizeTabs();
-		},
-
-		_resizeTabs: function() {
-
-			this.tabs.resize();
 		}
 	});
 });

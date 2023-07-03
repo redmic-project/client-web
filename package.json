@@ -1,13 +1,10 @@
 {
   "name": "redmic",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "author": "REDMIC",
   "homepage": "https://gitlab.com/redmic-project/client/web/blob/master/README.md",
   "description": "Integrated marine data repository of Canary Islands - Client",
   "contributors": [
-    {
-      "name": "Ignacio Lorenzo García"
-    },
     {
       "name": "Pedro E. Trujillo Brito",
       "email": "pedro@redmic.es"
@@ -15,9 +12,6 @@
     {
       "name": "Noel Alonso Expósito",
       "email": "noel@redmic.es"
-    },
-    {
-      "name": "Carlos Alberto González Carballo"
     }
   ],
   "repository": {
@@ -32,10 +26,11 @@
     "commander": "9.2.0",
     "express": "4.18.2",
     "morgan": "1.10.0",
-    "prom-client": "14.0.1",
+    "prom-client": "14.2.0",
     "pug": "3.0.2",
+    "prerender-node": "3.7.0",
     "response-time": "2.3.2",
-    "winston": "3.7.2"
+    "winston": "3.9.0"
   },
   "devDependencies": {
     "alertifyjs": "1.13.1",
@@ -62,7 +57,7 @@
     "handlebars": "4.7.7",
     "intern": "4.10.1",
     "json-schema-ref-parser": "6.1.0",
-    "leaflet": "1.7.1",
+    "leaflet": "1.9.3",
     "@lweller/leaflet-areaselect": "1.3.0",
     "leaflet-awesome-markers": "https://github.com/lennardv2/Leaflet.awesome-markers.git#2.0/develop",
     "leaflet-draw": "1.0.4",

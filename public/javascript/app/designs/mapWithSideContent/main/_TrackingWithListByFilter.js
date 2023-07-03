@@ -26,17 +26,6 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_fillSideContent: function() {
-
-			this.inherited(arguments);
-
-			var borderContainer = this._createBrowserWork();
-
-			this.tabContainer.addChild(borderContainer, 0);
-
-			this.tabContainer.selectChild(borderContainer);
-		},
-
 		_dataAvailable: function(items) {
 
 			var data = items.data.data;

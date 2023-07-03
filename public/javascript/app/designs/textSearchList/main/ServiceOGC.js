@@ -3,7 +3,7 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/base/_ServiceOGC"
 	, "app/designs/textSearchList/Controller"
-	, "app/designs/textSearchList/layout/BasicAndButtonsAndKeypadTopZone"
+	, "app/designs/textSearchList/layout/BasicTopZone"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/HierarchicalImpl"

@@ -2,25 +2,16 @@ define([
 	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
 	, "app/base/views/extensions/_EditionView"
 	, "app/base/views/extensions/_LocalSelectionView"
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/base/views/extensions/_QueryOnMap"
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
-	, "dijit/layout/LayoutContainer"
-	, "dijit/layout/ContentPane"
-	, "dijit/layout/StackContainer"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "RWidgets/Utilities"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
-	, "redmic/modules/form/FormContainerImpl"
-	, "redmic/modules/form/_ListenModelHasChanged"
-	, "redmic/modules/form/_PublicateChanges"
-	, "redmic/modules/form/_CreateKeypad"
-	, "redmic/modules/gateway/MapCenteringGatewayImpl"
+	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_Select"
@@ -28,40 +19,37 @@ define([
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/bars/Order"
 	, "redmic/modules/browser/bars/Total"
+	, "redmic/modules/form/FormContainerImpl"
+	, "redmic/modules/form/_ListenModelHasChanged"
+	, "redmic/modules/form/_PublicateChanges"
+	, "redmic/modules/form/_CreateKeypad"
+	, "redmic/modules/gateway/MapCenteringGatewayImpl"
 	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
-	, "redmic/modules/atlas/Atlas"
+	, 'redmic/modules/layout/TabsDisplayer'
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/layer/_Editable"
 	, "redmic/modules/map/layer/_RadiusOnSelect"
 	, "redmic/modules/map/layer/_Selectable"
 	, "redmic/modules/map/layer/_SelectOnClick"
+	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
-	, "redmic/view/effects/Animation"
 	, "templates/CitationPopup"
 	, "templates/TaxonList"
 ], function(
 	_CompositeInTooltipFromIconKeypad
 	, _EditionView
 	, _LocalSelectionView
-	, _ShowInPopupResultsFromQueryOnMap
-	, _QueryOnMap
 	, _Main
 	, Controller
 	, Layout
-	, LayoutContainer
-	, ContentPane
-	, StackContainer
-	, TabContainer
 	, declare
 	, lang
 	, aspect
 	, Utilities
+	, Atlas
 	, _Filter
-	, FormContainerImpl
-	, _ListenModelHasChanged
-	, _PublicateChanges
-	, _CreateKeypad
-	, MapCenteringGatewayImpl
+	, _ShowInPopup
 	, _ButtonsInRow
 	, _Framework
 	, _Select
@@ -69,18 +57,25 @@ define([
 	, ListImpl
 	, Order
 	, Total
+	, FormContainerImpl
+	, _ListenModelHasChanged
+	, _PublicateChanges
+	, _CreateKeypad
+	, MapCenteringGatewayImpl
 	, DataDisplayer
-	, Atlas
+	, TabsDisplayer
+	, GenericWithTopbarDisplayerImpl
 	, GeoJsonLayerImpl
 	, _Editable
 	, _RadiusOnSelect
 	, _Selectable
 	, _SelectOnClick
+	, QueryOnMap
 	, TextImpl
-	, Animation
 	, TemplatePopup
 	, TemplateList
-){
+) {
+
 	return declare([Layout, Controller, _Main, _Filter, _CompositeInTooltipFromIconKeypad, _EditionView, _LocalSelectionView], {
 		//	summary:
 		//		Vista base para todas las vistas de edición geográfica.
@@ -157,25 +152,13 @@ define([
 
 		_initializeMain: function() {
 
-			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new declare([TextImpl])(this.searchConfig);
+			this._createBrowser();
+			this._createEditor();
+			this._createMapLayer();
 
-			var FormDefinition = declare([FormContainerImpl, _ListenModelHasChanged, _CreateKeypad])
-				.extend(_PublicateChanges);
-
-			this.editor = new FormDefinition(this.formConfig);
-
-			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare([ListImpl, _Framework, _ButtonsInRow, _Select,
-				_GeoJsonParser])(this.browserConfig);
-
-			this.geoJsonLayerConfig.associatedIds = [this.browser.getOwnChannel()];
-			this.geoJsonLayerConfig.mapChannel = this.map.getChannel();
-
-			var geoJsonLayerDefinition = declare([GeoJsonLayerImpl, _Editable, _Selectable, _SelectOnClick,
-				_RadiusOnSelect]);
-
-			this.geoJsonLayer = new geoJsonLayerDefinition(this.geoJsonLayerConfig);
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
 
 			this.dataDisplayer = new DataDisplayer({
 				parentChannel: this.getChannel()
@@ -195,10 +178,52 @@ define([
 			});
 		},
 
+		_createBrowser: function() {
+
+			this.searchConfig.queryChannel = this.queryChannel;
+			this.textSearch = new TextImpl(this.searchConfig);
+
+			this.browserConfig.queryChannel = this.queryChannel;
+			var BrowserDefinition = declare([ListImpl, _Framework, _ButtonsInRow, _Select, _GeoJsonParser]);
+			this.browser = new BrowserDefinition(this.browserConfig);
+
+			this._browserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n.geographicData
+			});
+		},
+
+		_createEditor: function() {
+
+			var FormDefinition = declare([FormContainerImpl, _ListenModelHasChanged, _CreateKeypad])
+				.extend(_PublicateChanges);
+
+			this.editor = new FormDefinition(this.formConfig);
+
+			this._editorWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.editor,
+				title: this.i18n.form
+			});
+
+			this._once(this.editor.getChannel('SHOWN'), lang.hitch(this, this._onceEditorShown));
+		},
+
+		_createMapLayer: function() {
+
+			this.geoJsonLayerConfig.associatedIds = [this.browser.getOwnChannel()];
+			this.geoJsonLayerConfig.mapChannel = this.map.getChannel();
+
+			var geoJsonLayerDefinition = declare([GeoJsonLayerImpl, _Editable, _Selectable, _SelectOnClick,
+				_RadiusOnSelect]);
+
+			this.geoJsonLayer = new geoJsonLayerDefinition(this.geoJsonLayerConfig);
+		},
+
 		_setMainOwnCallbacksForEvents: function () {
 
 			this._onEvt('HIDE', lang.hitch(this, this._onHide));
-			this._onEvt('SHOW', lang.hitch(this, this._onGeographicEditorMainShown));
 		},
 
 		_defineMainSubscriptions: function () {
@@ -255,99 +280,43 @@ define([
 
 		postCreate: function() {
 
-			this._createBrowserAndEditorContainers();
-
-			this._createTextSearchNode();
+			this.buttonsNode = this._getIconKeypadNode();
 
 			this.inherited(arguments);
 
-			this._createBrowserNode();
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n.geographicData,
+				iconClass: 'fa fa-table',
+				channel: this._browserWithTopbar.getChannel()
+			});
 
-			this._createEditorNode();
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n.form,
+				iconClass: 'fa fa-keyboard-o',
+				channel: this._editorWithTopbar.getChannel()
+			});
 
-			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});
+			this._createAtlas();
 
-			this._createTabContainers();
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
+			});
 
-			this._emitEvt('REFRESH');
+			this._emitEvt('ADD_LAYER', {
+				layer: this.geoJsonLayer
+			});
 		},
 
-		_createBrowserAndEditorContainers: function() {
+		_onceEditorShown: function() {
 
-			this.browserAndEditorNode = new declare([StackContainer, Animation])({
-				'class': "marginedContainer noScrolledContainer",
-				title: this.i18n.list,
-				region:"center"
+			var self = this;
+
+			this._publish(this.editor.getChannel("SET_METHOD"), {
+				"onGetMapLocation": function(obj) {
+
+					self[self._isValidGeometry(obj.point) ? "_onMovePoint" : "_onAddPoint"](obj);
+				}
 			});
-
-			this.browserAndSearchContainer = new LayoutContainer({
-				'class': "noScrolledContainer"
-			});
-
-			this.browserAndEditorNode.addChild(this.browserAndSearchContainer);
-		},
-
-		_createTabContainers: function() {
-
-			this.tabs = new TabContainer({
-				tabPosition: "top",
-				region: "center",
-				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
-			});
-
-			this.tabs.addChild(this.browserAndEditorNode);
-			this.tabs.addChild(this._createAtlas());
-
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
-		},
-
-		_createTextSearchNode: function() {
-
-			this.textSearchNode = new ContentPane({
-				'class': "topZone topZoneCitation",
-				region: "top"
-			});
-
-			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.textSearchNode.domNode
-			});
-
-			this.buttonsNode = this.textSearchNode;
-
-			this.browserAndSearchContainer.addChild(this.textSearchNode);
-		},
-
-		_createBrowserNode: function() {
-
-			this.gridNode = new ContentPane({
-				'class': 'stretchZone',
-				region: "center"
-			});
-
-			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.gridNode.domNode
-			});
-
-			this.browserAndSearchContainer.addChild(this.gridNode);
-		},
-
-		_createEditorNode: function() {
-
-			this.editorNode = new ContentPane({
-				'class': "scrollWrapper"
-			});
-
-			this._once(this.editor.getChannel('SHOWN'), lang.hitch(this, function() {
-				var self = this;
-				this._publish(this.editor.getChannel("SET_METHOD"), {
-					"onGetMapLocation": function(obj) {
-						self[self._isValidGeometry(obj.point) ? "_onMovePoint" : "_onAddPoint"](obj);
-					}
-				});
-			}));
-
-			this.browserAndEditorNode.addChild(this.editorNode);
 		},
 
 		_beforeShowMain: function() {
@@ -359,6 +328,10 @@ define([
 			this._publish(this.map.getChannel("SET_CENTER_AND_ZOOM"), {
 				center: [28.5, -16.0],
 				zoom: 7
+			});
+
+			this._publish(this._browserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
 			});
 
 			this._emitEvt('REFRESH');
@@ -389,22 +362,20 @@ define([
 
 		_createAtlas: function() {
 
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
 				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:"center"
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel
 			});
-
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
-			});
-
-			return cp;
 		},
 
 		_updateTitle: function(title) {
@@ -413,6 +384,8 @@ define([
 				node: this.topbarNode,
 				data: title
 			});
+
+			this._publish(this._tabsDisplayer.getChannel('RESIZE'));
 		},
 
 		_isValidCoordinate: function(value) {
@@ -510,11 +483,7 @@ define([
 
 			var activityId = this.pathVariableId;
 
-			if (!(activityId && activityId.length)) {
-				return false;
-			}
-
-			return true;
+			return !!(activityId && activityId.length);
 		},
 
 		_subFormHidden: function() {
@@ -532,19 +501,12 @@ define([
 
 		_changeTabForList: function() {
 
-			this._changeTab(this.browserAndSearchContainer, this.i18n.list);
+			this._showBrowserTab();
 		},
 
 		_changeTabForForm: function() {
 
-			this._changeTab(this.editorNode, this.i18n.form);
-		},
-
-		_changeTab: function(container, title) {
-
-			this.browserAndEditorNode.set('title', title);
-
-			this.browserAndEditorNode.selectChild(container);
+			this._showEditorTab();
 		},
 
 		_subFormChanged: function(change) {
@@ -561,7 +523,7 @@ define([
 
 		_coordinatesChanged: function(value) {
 
-			channel = this.geoJsonLayer.getChannel("MOVE");
+			var channel = this.geoJsonLayer.getChannel("MOVE");
 
 			this._publish(channel, {
 				lng: value[0]
@@ -581,12 +543,21 @@ define([
 
 		_onHide: function() {
 
-			this.browserAndEditorNode.selectChild(this.browserAndSearchContainer);
+			this._showBrowserTab();
 		},
 
-		_getNodeForForm: function () {
+		_showBrowserTab: function() {
 
-			return this.editorNode.domNode;
+			this._publish(this._tabsDisplayer.getChannel('SHOW_TAB'), {
+				channel: this._browserWithTopbar.getChannel()
+			});
+		},
+
+		_showEditorTab: function() {
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW_TAB'), {
+				channel: this._editorWithTopbar.getChannel()
+			});
 		},
 
 		_subListBtnEvent: function(evt) {
@@ -642,14 +613,16 @@ define([
 			return results;
 		},
 
-		_getIconKeypadNode: function() {
+		_getNodeForForm: function() {
 
-			return this.textSearchNode.domNode;
+			// TODO acceso a lo bruto, remodelar extensiones de vistas para hacer las cositas bien
+			return this._editorWithTopbar._contentNode;
 		},
 
-		_onGeographicEditorMainShown: function() {
+		_getIconKeypadNode: function() {
 
-			this.tabs.resize();
+			// TODO acceso a lo bruto, remodelar extensiones de vistas para hacer las cositas bien
+			return this._browserWithTopbar._topbarNode;
 		}
 	});
 });

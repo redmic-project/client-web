@@ -43,14 +43,15 @@ define([
 		_onNotImplementedMethod: function(method, props) {
 
 			if (redmicConfig.getEnvVariableValue('envDebug') === 'true') {
-				this._showNotImplementedMethodWarning(method, props);
+				// TODO demasiado ruido y no aporta casi nada, quitar si no se echa en falta
+				//this._showNotImplementedMethodWarning(method, props);
 			}
 		},
 
 		_showNotImplementedMethodWarning: function(method, props) {
 
 			console.warn('Not implemented method "%s" at module "%s" with this definition: %O', method,
-				this.getChannel(), props);
+				this.getChannel(), JSON.parse(JSON.stringify(props)));
 		}
 	});
 });

@@ -17,7 +17,7 @@ yarn install
 OAUTH_URL=https://redmic.grafcan.es/api/oauth \
 OAUTH_CLIENT_ID=app \
 OAUTH_CLIENT_SECRET=secretKey \
-API_URL=https://api.redmic.grafcan.es/api \
+API_URL=https://redmic.grafcan.es/api \
 PRODUCTION=0 \
 npm start -- --port=80
 ```
@@ -40,6 +40,14 @@ Para facilitar las tareas repetitivas, se han creado una serie de tareas ejecuta
 Para optimizar la ejecución es necesario realizar un proceso de "compilación" de la aplicación.
 
 Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/dojo-compile>.
+
+## Páginas estáticas
+
+Para permitir el consumo de la aplicación desde clientes que no soportan ejecución Javascript, existe una funcionalidad de pre-renderizado de las páginas, que sólo actúa cuando se identifica a este tipo de clientes.
+
+Esto es útil para clientes como los bots de redes sociales, que necesitan tener la página ya procesada para extraer los diferentes meta-tags asociados. De esta manera, podrán crear enlaces enriquecidos hacia la plataforma cuando los usuarios compartan contenido.
+
+Para activarlo, basta con lanzar previamente el servicio [Prerender](https://gitlab.com/redmic-project/client/prerender) e indicar dónde está accesible mediante la variable `PRERENDER_URL`. En caso de que el cliente no lo requiera o que no se encuentre el servicio activo, simplemente se responderá con contenido dinámico.
 
 ## Testeo
 

@@ -1,50 +1,49 @@
 define([
-	"app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/base/views/extensions/_QueryOnMap"
-	, 'app/designs/mapWithSideContent/Controller'
+	'app/designs/mapWithSideContent/Controller'
 	, 'app/designs/mapWithSideContent/layout/MapAndContent'
 	, 'app/redmicConfig'
-	, 'dijit/layout/LayoutContainer'
-	, 'dijit/layout/ContentPane'
-	, 'dijit/layout/TabContainer'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'redmic/modules/atlas/Atlas'
 	, 'redmic/modules/base/_Filter'
+	, "redmic/modules/base/_ShowInPopup"
 	, 'redmic/modules/browser/ListImpl'
 	, 'redmic/modules/browser/_ButtonsInRow'
 	, 'redmic/modules/browser/_GeoJsonParser'
 	, 'redmic/modules/browser/_Framework'
 	, 'redmic/modules/browser/bars/Total'
 	, "redmic/modules/gateway/MapCenteringGatewayImpl"
-	, 'redmic/modules/atlas/Atlas'
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
+	, 'redmic/modules/layout/TabsDisplayer'
 	, 'redmic/modules/map/layer/PruneClusterLayerImpl'
+	, "redmic/modules/mapQuery/QueryOnMap"
 	, 'redmic/modules/search/TextImpl'
 	, 'templates/SurveyStationList'
 	, 'templates/SurveyStationPopup'
 ], function(
-	_ShowInPopupResultsFromQueryOnMap
-	, _QueryOnMap
-	, Controller
+	Controller
 	, Layout
 	, redmicConfig
-	, LayoutContainer
-	, ContentPane
-	, TabContainer
 	, declare
 	, lang
+	, Atlas
 	, _Filter
+	, _ShowInPopup
 	, ListImpl
 	, _ButtonsInRow
 	, _GeoJsonParser
 	, _Framework
 	, Total
 	, MapCenteringGatewayImpl
-	, Atlas
+	, GenericWithTopbarDisplayerImpl
+	, TabsDisplayer
 	, PruneClusterLayerImpl
+	, QueryOnMap
 	, TextImpl
 	, TemplateList
 	, TemplatePopup
-){
+) {
+
 	return declare([Layout, Controller, _Filter], {
 		//	summary:
 		//		Vista de Realtime.
@@ -120,23 +119,12 @@ define([
 			}, this.browserConfig || {}]);
 		},
 
-		_setOwnCallbacksForEvents: function() {
-
-			this._onEvt('SHOW', lang.hitch(this, this._onShown));
-		},
-
 		_initialize: function() {
 
-			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new declare([TextImpl])(this.searchConfig);
+			this._createBrowser();
 
-			this.browserConfig.queryChannel = this.queryChannel;
-			this.browser = new declare([ListImpl, _Framework, _GeoJsonParser, _ButtonsInRow])(this.browserConfig);
-
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
-				parentChannel: this.getChannel(),
-				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
 			});
 
 			this.modelChannel = this.filter.modelChannel;
@@ -154,47 +142,41 @@ define([
 			});
 		},
 
+		_createBrowser: function() {
+
+			this.searchConfig.queryChannel = this.queryChannel;
+			this.textSearch = new TextImpl(this.searchConfig);
+
+			this.browserConfig.queryChannel = this.queryChannel;
+			var BrowserDefinition = declare([ListImpl, _Framework, _GeoJsonParser, _ButtonsInRow]);
+			this.browser = new BrowserDefinition(this.browserConfig);
+
+			this._browserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n['real-time']
+			});
+
+			this._publish(this._browserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
+			});
+		},
+
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			var browserAndSearchContainer = new LayoutContainer({
-				title: this.i18n.list,
-				'class': 'marginedContainer noScrolledContainer'
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n['real-time'],
+				iconClass: 'fa fa-clock-o',
+				channel: this._browserWithTopbar.getChannel()
 			});
 
-			this.gridNode = new ContentPane({
-				region: 'center',
-				'class': 'stretchZone'
+			this._createAtlas();
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
 			});
-
-			this._publish(this.browser.getChannel('SHOW'), {
-				node: this.gridNode.domNode
-			});
-
-			this.textSearchNode = new ContentPane({
-				'class': 'topZone',
-				region: 'top'
-			});
-
-			this._publish(this.textSearch.getChannel('SHOW'), {
-				node: this.textSearchNode.domNode
-			});
-
-			browserAndSearchContainer.addChild(this.textSearchNode);
-			browserAndSearchContainer.addChild(this.gridNode);
-
-			this.tabs = new TabContainer({
-				tabPosition: 'top',
-				splitter: true,
-				region: 'right',
-				'class': 'softSolidContainer sideTabContainer'
-			});
-
-			this.tabs.addChild(browserAndSearchContainer);
-			this.tabs.addChild(this._createAtlas());
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
 
 			this._emitEvt('ADD_LAYER', {layer: this._layerInstance});
 
@@ -216,11 +198,6 @@ define([
 			this._emitEvt('REFRESH');
 		},
 
-		_onShown: function() {
-
-			this.tabs.resize();
-		},
-
 		_getPopupContent: function(data) {
 
 			return this.templatePopup({
@@ -231,16 +208,20 @@ define([
 
 		_createAtlas: function() {
 
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:'center'
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
+				parentChannel: this.getChannel(),
+				perms: this.perms,
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			this._publish(this.atlas.getChannel('SHOW'), {
-				node: cp.domNode
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel
 			});
-
-			return cp;
 		}
 	});
 });

@@ -1,56 +1,54 @@
 define([
 	'alertify/alertify.min'
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/base/views/extensions/_QueryOnMap"
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
 	, "app/redmicConfig"
 	, 'd3/d3.min'
-	, "dijit/layout/ContentPane"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/has"
-	, "dojo/query"
 	, 'moment/moment.min'
 	, "put-selector/put"
 	, "RWidgets/Utilities"
-	, "redmic/form/FormContainer"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/components/ProgressSlider/ProgressSlider"
 	, "redmic/modules/atlas/Atlas"
+	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/form/FormContainerImpl'
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
+	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/map/layer/_AddFilter"
 	, "redmic/modules/map/layer/_PublishInfo"
 	, "redmic/modules/map/layer/TrackingLayerImpl"
+	, "redmic/modules/mapQuery/QueryOnMap"
 ], function(
 	alertify
-	, _ShowInPopupResultsFromQueryOnMap
-	, _QueryOnMap
 	, _Main
 	, Controller
 	, Layout
 	, redmicConfig
 	, d3
-	, ContentPane
-	, TabContainer
 	, declare
 	, lang
 	, has
-	, query
 	, moment
 	, put
 	, Utilities
-	, FormContainer
 	, _Store
 	, ProgressSlider
 	, Atlas
+	, _ShowInPopup
+	, FormContainerImpl
+	, GenericWithTopbarDisplayerImpl
+	, TabsDisplayer
 	, _AddFilter
 	, _PublishInfo
 	, TrackingLayerImpl
+	, QueryOnMap
 ) {
 
-	return declare([Layout, Controller, _Main, _Store, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap], {
+	return declare([Layout, Controller, _Main, _Store], {
 		//	summary:
 		//		Vista de Tracking.
 		//	description:
@@ -103,7 +101,8 @@ define([
 				_trackingTransitionRate: 900,
 				_layerIdPrefix: "tracking",
 				layerIdSeparator: "_",
-				_deltaProgress: 3600000
+				_deltaProgress: 3600000,
+				formTemplate: 'viewers/views/templates/forms/Tracking'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -118,12 +117,10 @@ define([
 
 			this.formConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				title: this.i18n.settings,
-				region: "top",
-				i18n: this.i18n,
-				template: "viewers/views/templates/forms/Tracking",
-				width: 8,
-				loadInputs: lang.hitch(this, this._loadInputsFormAndShow)
+				template: this.formTemplate,
+				formContainerConfig: {
+					loadInputs: lang.hitch(this, this._loadInputsFormAndShow)
+				}
 			}, this.formConfig || {}]);
 
 			this.mapConfig = this._merge([{
@@ -134,8 +131,6 @@ define([
 		_setMainOwnCallbacksForEvents: function() {
 
 			this.on([this.events.HIDE, this.events.ANCESTOR_HIDE], lang.hitch(this, this._onHide));
-			this._onEvt('SHOW', lang.hitch(this, this._onTrackingMainShown));
-			this._onEvt('RESIZE', lang.hitch(this, this._onTrackingMainResized));
 		},
 
 		_initializeMain: function() {
@@ -150,10 +145,8 @@ define([
 				}
 			});
 
-			this.atlas = new Atlas({
-				parentChannel: this.getChannel(),
-				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
 			});
 		},
 
@@ -213,27 +206,49 @@ define([
 
 		_fillSideContent: function() {
 
-			this.tabContainer = new TabContainer({
-				region: 'center',
-				'class': "mediumSolidContainer sideTabContainer borderRadiusTabContainer"
+			this._createSettingsForm();
+
+			this._createAtlas();
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
 			});
-
-			this.tabContainer.addChild(this._createSettings());
-			this.tabContainer.addChild(this._createAtlas());
-
-			this.tabContainer.placeAt(this.contentNode);
-			this.tabContainer.startup();
 		},
 
-		_createSettings: function() {
+		_createAtlas: function() {
 
-			// TODO cambiar por modulo form
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
 
-			this.formWidget = new FormContainer(this.formConfig);
+			this.atlas = new Atlas({
+				parentChannel: this.getChannel(),
+				perms: this.perms,
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
+			});
 
-			this.formWidget.startup();
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				typeGroupProperty: this.typeGroupProperty
+			});
+		},
 
-			return this.formWidget;
+		_createSettingsForm: function() {
+
+			this._settingsForm = new FormContainerImpl(this.formConfig);
+
+			this._settingsFormWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this._settingsForm,
+				title: this.i18n.settings
+			});
+
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n.settings,
+				iconClass: 'fa fa-cog',
+				channel: this._settingsFormWithTopbar.getChannel()
+			});
 		},
 
 		_loadInputsFormAndShow: function(inputs) {
@@ -263,20 +278,6 @@ define([
 			} else if (res.name === "interval") {
 				this._changeInterval(res.value);
 			}
-		},
-
-		_createAtlas: function() {
-
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region: "center"
-			});
-
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
-			});
-
-			return cp;
 		},
 
 		_addDataLayer: function(idProperty, item) {
@@ -653,21 +654,6 @@ define([
 			this._emitEvt('PRESS_PROGRESS_BUTTON', {
 				key: "PAUSE"
 			});
-		},
-
-		_onTrackingMainShown: function() {
-
-			this._resizeTabs();
-		},
-
-		_onTrackingMainResized: function() {
-
-			this._resizeTabs();
-		},
-
-		_resizeTabs: function() {
-
-			this.tabContainer.resize();
 		}
 	});
 });

@@ -1,27 +1,26 @@
 define([
 	'alertify/alertify.min'
-	,"app/designs/list/Controller"
-	, "app/designs/list/layout/Layout"
-	, "app/designs/textSearchList/main/ServiceOGC"
-	, "app/redmicConfig"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/Deferred"
-	, "put-selector/put"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Selection"
-	, "redmic/modules/base/_Show"
-	, "redmic/modules/base/_ShowInTooltip"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/_DragAndDrop"
-	, "redmic/modules/browser/_HierarchicalSelect"
-	, "redmic/modules/browser/bars/SelectionBox"
-	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
-	, "templates/AtlasList"
-	, "templates/LoadingCustom"
-	, "templates/ServiceOGCAtlasList"
-	, "templates/ServiceOGCAtlasDetails"
+	,'app/designs/list/Controller'
+	, 'app/designs/list/layout/Layout'
+	, 'app/designs/textSearchList/main/ServiceOGC'
+	, 'app/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Selection'
+	, 'redmic/modules/base/_Show'
+	, 'redmic/modules/base/_ShowInTooltip'
+	, 'redmic/modules/base/_Store'
+	, 'redmic/modules/browser/_DragAndDrop'
+	, 'redmic/modules/browser/_HierarchicalSelect'
+	, 'redmic/modules/browser/bars/SelectionBox'
+	, 'redmic/modules/browser/bars/Total'
+	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
+	, 'templates/AtlasList'
+	, 'templates/LoadingCustom'
+	, 'templates/ServiceOGCAtlasList'
+	, 'templates/ServiceOGCAtlasDetails'
 	, './_AtlasLayersManagement'
 	, './_AtlasLegendManagement'
 ], function(
@@ -33,7 +32,6 @@ define([
 	, declare
 	, lang
 	, Deferred
-	, put
 	, _Module
 	, _Selection
 	, _Show
@@ -54,32 +52,24 @@ define([
 
 	return declare([_Module, _Show, _Store, _Selection, _AtlasLayersManagement, _AtlasLegendManagement], {
 		//	summary:
-		//		Módulo de Atlas.
-		//	description:
-		//
+		//		Módulo de Atlas, con un catálogo de capas para añadir al mapa y un listado de gestión de las añadidas.
 
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "atlas",
+				ownChannel: 'atlas',
 
 				events: {
-					ADD_LAYER: "addLayer",
-					REMOVE_LAYER: "removeLayer",
-					DISABLE_THEMES_BUTTON: "disableThemesButton",
-					ENABLE_THEMES_BUTTON: "enableThemesButton",
-					DISABLE_CATALOG_BUTTON: "disableCatalogButton",
-					ENABLE_CATALOG_BUTTON: "enableCatalogButton"
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer'
 				},
 
 				_itemsSelected: {},
-				localTarget: "local",
+				localTarget: 'localAtlas',
 				target: redmicConfig.services.atlasLayer,
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
-				pathSeparator: ".",
-				parentProperty: "parent",
-				showBrowserAnimationClass: "animated fadeIn",
-				hideBrowserAnimationClass: "animated fadeOut",
+				pathSeparator: '.',
+				parentProperty: 'parent',
 
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				_layerIdsById: {}, // correspondencia entre ids de las capas con sus layerIds
@@ -95,13 +85,6 @@ define([
 				parentChannel: this.getChannel(),
 				title: this.i18n.selectedLayers,
 				target: this.localTarget,
-				buttonsInTopZone: true,
-				buttons: {
-					"goToCatalog": {
-						className: "fa-plus",
-						title: this.i18n.goToLayersCatalog
-					}
-				},
 				classByList: '.borderList',
 				browserExts: [_DragAndDrop],
 				browserConfig: {
@@ -112,26 +95,26 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: "fa-map-o",
-								btnId: "legend",
-								title: "legend",
+								icon: 'fa-map-o',
+								btnId: 'legend',
+								title: 'legend',
 								returnItem: true
 							},{
-								icon: "fa-map-marker",
+								icon: 'fa-map-marker',
 								title: 'mapCentering',
-								btnId: "fitBounds",
+								btnId: 'fitBounds',
 								returnItem: true
 							},{
-								icon: "fa-toggle-on",
-								altIcon: "fa-toggle-off",
-								btnId: "addLayer",
-								title: "layer",
+								icon: 'fa-toggle-on',
+								altIcon: 'fa-toggle-off',
+								btnId: 'addLayer',
+								title: 'layer',
 								state: true,
 								returnItem: true
 							},{
-								icon: "fa-trash-o",
-								btnId: "remove",
-								title: "remove",
+								icon: 'fa-trash-o',
+								btnId: 'remove',
+								title: 'remove',
 								returnItem: true
 							}]
 						}
@@ -140,8 +123,7 @@ define([
 						definition: LoadingCustom,
 						props: {
 							message: this.i18n.addLayersToLoadInMap,
-							iconClass: "fr fr-layer",
-							clickable: true
+							iconClass: 'fr fr-layer'
 						}
 					}
 				}
@@ -153,13 +135,6 @@ define([
 				selectionTarget: this.selectionTarget,
 				target: this.target,
 				perms: this.perms,
-				buttonsInTopZone: true,
-				buttons: {
-					"backToSelectedLayers": {
-						className: "fa-eye",
-						title: this.i18n.goToSelectedLayers
-					}
-				},
 				classByList: '.borderList',
 				browserConfig: {
 					template: serviceOGCList,
@@ -167,11 +142,11 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: "fa-info-circle",
-								btnId: "details",
+								icon: 'fa-info-circle',
+								btnId: 'details',
 								style: '[style="position:relative;"]',
-								event: "onmouseover",
-								condition: "urlSource",
+								event: 'onmouseover',
+								condition: 'urlSource',
 								node: true,
 								returnItem: true
 							}]
@@ -186,6 +161,9 @@ define([
 				},
 				filterConfig: {
 					initQuery: {
+						terms: {
+							atlas: true
+						},
 						size: null,
 						from: null
 					}
@@ -195,7 +173,7 @@ define([
 			this.detailsConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				template: templateDetails,
-				target: "tooltipDetails",
+				target: 'tooltipDetails',
 				'class': 'descriptionTooltip',
 				timeClose: 200
 			}, this.atlasConfig || {}]);
@@ -203,40 +181,33 @@ define([
 
 		_initialize: function() {
 
-			this.themesBrowser = new declare([Layout, Controller])(this.themesBrowserConfig);
+			var ThemesBrowser = declare([Layout, Controller]);
+			this.themesBrowser = new ThemesBrowser(this.themesBrowserConfig);
 
 			this.catalogView = new ServiceOGC(this.catalogConfig);
 
-			this.templateDisplayerDetails = new declare(TemplateDisplayer).extend(_ShowInTooltip)(this.detailsConfig);
+			var LayerDetailsTooltip = declare(TemplateDisplayer).extend(_ShowInTooltip);
+			this.templateDisplayerDetails = new LayerDetailsTooltip(this.detailsConfig);
 		},
 
 		_defineSubscriptions: function() {
 
 			if (!this.getMapChannel) {
-				console.error("Map channel not defined for atlas '%s'", this.getChannel());
+				console.error('Map channel not defined for atlas "%s"', this.getChannel());
 			}
 
 			this.subscriptionsConfig.push({
-				channel : this.getMapChannel("LAYER_REMOVED"),
-				callback: "_subLayerRemoved"
+				channel : this.getMapChannel('LAYER_REMOVED'),
+				callback: '_subLayerRemoved'
 			},{
-				channel: this.themesBrowser.getChildChannel("browser", "BUTTON_EVENT"),
-				callback: "_subThemesBrowserButtonEvent"
+				channel: this.themesBrowser.getChildChannel('browser', 'BUTTON_EVENT'),
+				callback: '_subThemesBrowserButtonEvent'
 			},{
-				channel: this.themesBrowser.getChildChannel("browser", "DRAG_AND_DROP"),
-				callback: "_subThemesBrowserDragAndDrop"
+				channel: this.themesBrowser.getChildChannel('browser', 'DRAG_AND_DROP'),
+				callback: '_subThemesBrowserDragAndDrop'
 			},{
-				channel: this.themesBrowser.getChildChannel("browser", "NO_DATA_MSG_CLICKED"),
-				callback: "_subThemesBrowserNoDataMsgClicked"
-			},{
-				channel: this.themesBrowser.getChildChannel("iconKeypad", "KEYPAD_INPUT"),
-				callback: "_subThemesBrowserKeypadInput"
-			},{
-				channel: this.catalogView.getChildChannel("iconKeypad", "KEYPAD_INPUT"),
-				callback: "_subCatalogViewKeypadInput"
-			},{
-				channel : this.catalogView.getChildChannel("browser", "BUTTON_EVENT"),
-				callback: "_subCatalogViewButtonEvent"
+				channel : this.catalogView.getChildChannel('browser', 'BUTTON_EVENT'),
+				callback: '_subCatalogViewButtonEvent'
 			});
 		},
 
@@ -244,22 +215,10 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'ADD_LAYER',
-				channel: this.getMapChannel("ADD_LAYER")
+				channel: this.getMapChannel('ADD_LAYER')
 			},{
 				event: 'REMOVE_LAYER',
-				channel: this.getMapChannel("REMOVE_LAYER")
-			},{
-				event: 'DISABLE_THEMES_BUTTON',
-				channel: this.themesBrowser.getChildChannel("iconKeypad", "DISABLE_BUTTON")
-			},{
-				event: 'ENABLE_THEMES_BUTTON',
-				channel: this.themesBrowser.getChildChannel("iconKeypad", "ENABLE_BUTTON")
-			},{
-				event: 'DISABLE_CATALOG_BUTTON',
-				channel: this.catalogView.getChildChannel("iconKeypad", "DISABLE_BUTTON")
-			},{
-				event: 'ENABLE_CATALOG_BUTTON',
-				channel: this.catalogView.getChildChannel("iconKeypad", "ENABLE_BUTTON")
+				channel: this.getMapChannel('REMOVE_LAYER')
 			});
 		},
 
@@ -280,9 +239,7 @@ define([
 
 			this.inherited(arguments);
 
-			this._atlasContainer = put('div.atlasContainer');
-
-			this._showBrowser(this.catalogView, this._atlasContainer, null, this.hideBrowserAnimationClass);
+			this._addTabs(this.addTabChannel);
 		},
 
 		_getNodeToShow: function() {
@@ -290,14 +247,23 @@ define([
 			return this._atlasContainer;
 		},
 
-		_showBrowser: function(instance, node, showAnimationClass, hideAnimationClass) {
+		_addTabs: function(addTabChannel) {
 
-			this._publish(instance.getChannel("SHOW"), {
-				node: node,
-				animation: {
-					showAnimation: showAnimationClass,
-					hideAnimation: hideAnimationClass
-				}
+			if (!addTabChannel) {
+				console.error('Missing channel to add tabs at Atlas module "%s"', this.getChannel());
+				return;
+			}
+
+			this._publish(addTabChannel, {
+				title: this.i18n.layersCatalog,
+				iconClass: 'fr fr-world',
+				channel: this.catalogView.getChannel()
+			});
+
+			this._publish(addTabChannel, {
+				title: this.i18n.selectedLayers,
+				iconClass: 'fa fa-map-o',
+				channel: this.themesBrowser.getChannel()
 			});
 		},
 
@@ -348,7 +314,7 @@ define([
 
 		_reportDeselection: function(id) {
 
-			this._publish(this.themesBrowser.getChildChannel("browser", "REMOVE"), {
+			this._publish(this.themesBrowser.getChildChannel('browser', 'REMOVE'), {
 				ids: [id]
 			});
 
@@ -387,7 +353,7 @@ define([
 
 			this._clearSelectionPending = false;
 
-			this._publish(this.themesBrowser.getChildChannel("browser", "CLEAR"));
+			this._publish(this.themesBrowser.getChildChannel('browser', 'CLEAR'));
 
 			for (var key in this._layerIdsById) {
 				this._removeLayerInstance(key);
@@ -481,62 +447,16 @@ define([
 				return;
 			}
 
-			this._publish(this.getMapChannel("REORDER_LAYERS"), {
+			this._publish(this.getMapChannel('REORDER_LAYERS'), {
 				layerId: this._createLayerId(response.item.originalItem),
 				newPosition: response.total - response.indexList,
 				oldPosition: response.total - response.indexOld
 			});
 		},
 
-		_subThemesBrowserNoDataMsgClicked: function(res) {
-
-			this._goToCatalog();
-		},
-
-		_subThemesBrowserKeypadInput: function(res) {
-
-			if (res.inputKey === "goToCatalog") {
-				this._goToCatalog();
-			}
-		},
-
-		_goToCatalog: function() {
-
-			this._disableButtons();
-
-			this._once(this.themesBrowser.getChannel("HIDDEN"), lang.hitch(this, function() {
-
-				this._showBrowser(this.catalogView, this._atlasContainer, this.showBrowserAnimationClass,
-					this.hideBrowserAnimationClass);
-			}));
-
-			this._publish(this.themesBrowser.getChannel("HIDE"));
-
-			this._once(this.catalogView.getChannel("SHOWN"), lang.hitch(this, this._enableButtons));
-		},
-
-		_disableButtons: function() {
-
-			this._emitEvt('DISABLE_THEMES_BUTTON', { key: "goToCatalog" });
-			this._emitEvt('DISABLE_CATALOG_BUTTON', { key: "backToSelectedLayers" });
-		},
-
-		_enableButtons: function() {
-
-			this._emitEvt('ENABLE_THEMES_BUTTON', { key: "goToCatalog" });
-			this._emitEvt('ENABLE_CATALOG_BUTTON', { key: "backToSelectedLayers" });
-		},
-
-		_subCatalogViewKeypadInput: function(res) {
-
-			if (res.inputKey === "backToSelectedLayers") {
-				this._backToSelectedLayers();
-			}
-		},
-
 		_subCatalogViewButtonEvent: function(res) {
 
-			this._publish(this.templateDisplayerDetails.getChannel("HIDE"));
+			this._publish(this.templateDisplayerDetails.getChannel('HIDE'));
 
 			var node = res.iconNode,
 				item = res.item;
@@ -545,29 +465,12 @@ define([
 
 			this._emitEvt('INJECT_ITEM', {
 				data: item,
-				target: "tooltipDetails"
+				target: 'tooltipDetails'
 			});
 
-			this._publish(this.templateDisplayerDetails.getChannel("SHOW"), {
+			this._publish(this.templateDisplayerDetails.getChannel('SHOW'), {
 				node: node
 			});
-		},
-
-		_backToSelectedLayers: function() {
-
-			this._disableButtons();
-
-			this._once(this.catalogView.getChannel("HIDDEN"),
-				lang.hitch(this, function() {
-
-				this._showBrowser(this.themesBrowser, this._atlasContainer,
-					this.showBrowserAnimationClass, this.hideBrowserAnimationClass);
-				}));
-
-			this._publish(this.catalogView.getChannel("HIDE"));
-
-			this._once(this.themesBrowser.getChannel("SHOWN"),
-				lang.hitch(this, this._enableButtons));
 		},
 
 		_activateLayer: function(/*Object*/ item, order) {
@@ -640,16 +543,16 @@ define([
 			var btnId = objReceived.btnId,
 				item = objReceived.item;
 
-			if (btnId === "addLayer") {
+			if (btnId === 'addLayer') {
 				this._onAddLayerBrowserButtonClick(objReceived);
-			} else if (btnId === "remove") {
+			} else if (btnId === 'remove') {
 				var parentItem = item.originalItem[this.parentProperty],
 					path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + item.id;
 
 				this._emitEvt('DESELECT', [path]);
-			} else if (btnId === "legend") {
+			} else if (btnId === 'legend') {
 				this._showLayerLegend(objReceived);
-			} else if (btnId === "fitBounds") {
+			} else if (btnId === 'fitBounds') {
 				this._fitBounds(item);
 			}
 		},

@@ -786,6 +786,7 @@ define([
 
 			this._destroyNode();
 			this._setShown(false);
+			this._setPreviouslyShown(false);
 		},
 
 		_getStartupStatus: function() {

@@ -77,12 +77,17 @@ define([
 			this.inherited(arguments);
 
 			if (this.iconKeypadComposite) {
-				this.keypadZoneNode = put(this._getIconKeypadNode(), 'div.keypadZone');
-
-				this._publish(this.iconKeypadComposite.getChannel('SHOW'), {
-					node: this.keypadZoneNode
-				});
+				this._showIconKeypadComposite(this.iconKeypadComposite);
 			}
+		},
+
+		_showIconKeypadComposite: function(instance) {
+
+			this.keypadZoneNode = put(this._getIconKeypadNode(), 'div.keypadZone');
+
+			this._publish(instance.getChannel('SHOW'), {
+				node: this.keypadZoneNode
+			});
 		},
 
 		_subKeypadInputComposite: function(res) {

@@ -1,15 +1,11 @@
 define([
 	'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
-	, "app/base/views/extensions/_QueryOnMap"
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
-	, "dijit/layout/LayoutContainer"
-	, "dijit/layout/ContentPane"
-	, "dijit/layout/TabContainer"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Selection"
 	, "redmic/modules/base/_ShowInPopup"
@@ -19,25 +15,23 @@ define([
 	, "redmic/modules/browser/_Select"
 	, "redmic/modules/browser/bars/SelectionBox"
 	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/atlas/Atlas"
+	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
+	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/map/layer/GeoJsonLayerImpl"
 	, "redmic/modules/map/layer/_AddFilter"
+	, "redmic/modules/mapQuery/QueryOnMap"
 	, "redmic/modules/search/TextImpl"
 	, "templates/ActivityList"
 	, "templates/FilterForm"
 	, "./TrashDetails"
 ], function(
 	_AddCompositeSearchInTooltipFromTextSearch
-	, _QueryOnMap
-	, _ShowInPopupResultsFromQueryOnMap
 	, Controller
 	, Layout
 	, redmicConfig
-	, LayoutContainer
-	, ContentPane
-	, TabContainer
 	, declare
 	, lang
+	, Atlas
 	, _Filter
 	, _Selection
 	, _ShowInPopup
@@ -47,14 +41,17 @@ define([
 	, _Select
 	, SelectionBox
 	, Total
-	, Atlas
+	, GenericWithTopbarDisplayerImpl
+	, TabsDisplayer
 	, GeoJsonLayerImpl
 	, _AddFilter
+	, QueryOnMap
 	, TextImpl
 	, TemplateList
 	, FilterForm
 	, TrashDetails
-){
+) {
+
 	return declare([Layout, Controller, _Filter, _AddCompositeSearchInTooltipFromTextSearch, _Selection], {
 		//	summary:
 		//		Vista de TrashCollection.
@@ -132,17 +129,10 @@ define([
 
 		_initialize: function() {
 
-			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new TextImpl(this.searchConfig);
+			this._createBrowser();
 
-			this.browserConfig.queryChannel = this.queryChannel;
-			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
-			this.browser = new BrowserDefinition(this.browserConfig);
-
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])({
-				parentChannel: this.getChannel(),
-				perms: this.perms,
-				getMapChannel: lang.hitch(this.map, this.map.getChannel)
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
 			});
 
 			var TrashDetailsDefinition = declare(TrashDetails).extend(_ShowInPopup);
@@ -153,51 +143,46 @@ define([
 			this.modelChannel = this.filter.modelChannel;
 		},
 
+		_createBrowser: function() {
+
+			this.searchConfig.queryChannel = this.queryChannel;
+			this.textSearch = new TextImpl(this.searchConfig);
+
+			this.browserConfig.queryChannel = this.queryChannel;
+			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
+			this.browser = new BrowserDefinition(this.browserConfig);
+
+			this._browserWithTopbar = new GenericWithTopbarDisplayerImpl({
+				parentChannel: this.getChannel(),
+				content: this.browser,
+				title: this.i18n['trash-collection']
+			});
+
+			this._publish(this._browserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
+				content: this.textSearch
+			});
+		},
+
 		_setOwnCallbacksForEvents: function() {
 
 			this._onEvt('HIDE', lang.hitch(this, this._onHide));
-			this._onEvt('SHOW', lang.hitch(this, this._onShown));
 		},
 
 		postCreate: function() {
 
-			this.textSearchNode = new ContentPane({
-				'class': "topZone",
-				region: "top"
-			});
-
-			this._publish(this.textSearch.getChannel("SHOW"), {
-				node: this.textSearchNode.domNode
-			});
-
 			this.inherited(arguments);
 
-			var browserAndSearchContainer = new LayoutContainer({
-				title: this.i18n.list,
-				'class': "marginedContainer noScrolledContainer"
+			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
+				title: this.i18n['trash-collection'],
+				iconClass: 'fa fa-recycle',
+				channel: this._browserWithTopbar.getChannel()
 			});
 
-			this.gridNode = new ContentPane({
-				region: "center",
-				'class': 'stretchZone'
-			});
+			this._createAtlas();
 
-			this._publish(this.browser.getChannel("SHOW"), {
-				node: this.gridNode.domNode
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
 			});
-
-			browserAndSearchContainer.addChild(this.textSearchNode);
-			browserAndSearchContainer.addChild(this.gridNode);
-
-			this.tabs = new TabContainer({
-				tabPosition: "top",
-				region: "center",
-				'class': "softSolidContainer sideTabContainer"
-			});
-			this.tabs.addChild(browserAndSearchContainer);
-			this.tabs.addChild(this._createAtlas());
-			this.tabs.placeAt(this.contentNode);
-			this.tabs.startup();
 		},
 
 		_subChangedModelFilter: function(obj) {
@@ -299,21 +284,20 @@ define([
 
 		_createAtlas: function() {
 
-			var cp = new ContentPane({
-				title: this.i18n.themes,
-				region:"center"
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlas = new Atlas({
+				parentChannel: this.getChannel(),
+				perms: this.perms,
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			this._publish(this.atlas.getChannel("SHOW"), {
-				node: cp.domNode
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel
 			});
-
-			return cp;
-		},
-
-		_onShown: function() {
-
-			this.tabs.resize();
 		},
 
 		_onHide: function() {

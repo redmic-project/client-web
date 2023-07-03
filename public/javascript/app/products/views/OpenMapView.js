@@ -1,21 +1,25 @@
 define([
-	"app/base/views/extensions/_QueryOnMap"
-	, "app/base/views/extensions/_ShowInPopupResultsFromQueryOnMap"
-	, "app/designs/mapWithSideContent/Controller"
+	"app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, 'put-selector/put'
 	, "redmic/modules/atlas/Atlas"
+	, "redmic/modules/base/_ShowInPopup"
+	, 'redmic/modules/layout/TabsDisplayer'
+	, "redmic/modules/mapQuery/QueryOnMap"
 ], function(
-	_QueryOnMap
-	, _ShowInPopupResultsFromQueryOnMap
-	, Controller
+	Controller
 	, Layout
 	, redmicConfig
 	, declare
 	, lang
+	, put
 	, Atlas
+	, _ShowInPopup
+	, TabsDisplayer
+	, QueryOnMap
 ) {
 
 	return declare([Layout, Controller], {
@@ -34,7 +38,8 @@ define([
 			this.config = {
 				title: this.i18n.map,
 				region: "center",
-				selectionTarget: redmicConfig.services.atlasLayerSelection
+				selectionTarget: redmicConfig.services.atlasLayerSelection,
+				_atlasContainerClass: 'atlasContainer',
 			};
 
 			lang.mixin(this, this.config, args);
@@ -47,20 +52,36 @@ define([
 				terms: this.terms,
 				perms: this.perms
 			}, this.atlasConfig || {}]);
+
+			this.queryOnMapConfig = this._merge([{
+				parentChannel: this.getChannel()
+			}, this.queryOnMapConfig || {}]);
 		},
 
 		_initialize: function() {
 
-			this.atlasConfig.getMapChannel = lang.hitch(this.map, this.map.getChannel);
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+			this.atlasConfig.getMapChannel = getMapChannel;
+			this.queryOnMapConfig.getMapChannel = getMapChannel;
 
-			this.atlas = new declare([Atlas, _QueryOnMap, _ShowInPopupResultsFromQueryOnMap])(this.atlasConfig);
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
+			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+
+			this.atlas = new Atlas(this.atlasConfig);
+
+			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
+			this._queryOnMap = new QueryOnMapPopup(this.queryOnMapConfig);
 		},
 
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			this._publish(this.atlas.getChannel("SHOW"), {
+			put(this.contentNode, '.' + this._atlasContainerClass);
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
 				node: this.contentNode
 			});
 		},

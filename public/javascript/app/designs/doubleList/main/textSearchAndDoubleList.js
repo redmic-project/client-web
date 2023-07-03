@@ -218,7 +218,9 @@ define([
 				return;
 			}
 
-			if (!data) {
+			var dataOnlyHasIdProperty = Object.values(data || {}).toString() === idProperty;
+
+			if (!data || dataOnlyHasIdProperty) {
 				this._subscriptionItemAvailableOnce = this._subscribe(
 					this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
 					lang.hitch(this, this._itemAvailableOnce, generatedId)

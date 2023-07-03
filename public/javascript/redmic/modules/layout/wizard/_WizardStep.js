@@ -1,12 +1,14 @@
 define([
-	"dojo/_base/declare"
+	"app/redmicConfig"
+	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "redmic/modules/model/ModelImpl"
 	, "./_WizardStepItfc"
 ], function(
-	declare
+	redmicConfig
+	, declare
 	, lang
 	, aspect
 	, Deferred
@@ -445,12 +447,23 @@ define([
 		_evaluateValidationErrors: function(obj) {
 
 			var errors = obj.errors || {},
-				isValidProperty = this._isValidProperty;
+				propErrors = errors[this.propertyName],
+				oldIsValidProperty = this._isValidProperty;
 
-			this._isValidProperty = !(errors[this.propertyName]);
+			this._isValidProperty = !propErrors;
 
-			if (isValidProperty !== this._isValidProperty)
+			if (redmicConfig.getEnvVariableValue('envDebug') === 'true') {
+				console.warn('Wizard step validation', {
+					property: this.propertyName,
+					isValid: this._isValidProperty,
+					validation: JSON.parse(JSON.stringify(propErrors || {})),
+					channel: this.getChannel()
+				});
+			}
+
+			if (oldIsValidProperty !== this._isValidProperty) {
 				this._emitEvt('REFRESH_STATUS');
+			}
 		},
 
 		_pubNewStatus: function(channel, req) {

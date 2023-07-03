@@ -6,18 +6,12 @@
   "description": "Integrated marine data repository of Canary Islands - Client",
   "contributors": [
     {
-      "name": "Ignacio Lorenzo García"
-    },
-    {
       "name": "Pedro E. Trujillo Brito",
       "email": "pedro@redmic.es"
     },
     {
       "name": "Noel Alonso Expósito",
       "email": "noel@redmic.es"
-    },
-    {
-      "name": "Carlos Alberto González Carballo"
     }
   ],
   "repository": {

@@ -842,6 +842,7 @@ define({
 	, "modeLabel": "Contenido de la cuadrícula"
 	, "pressHere": "Pulse aquí"
 	, "successResetting": "Recuperación de contraseña realizada con éxito"
+	, "stac-browser": "STAC"
 
 	, "monday": "lunes"
 	, "mondayShort": "lun"
@@ -1400,6 +1401,7 @@ define({
 	, "metaConfirmRecoverPasswordTitle": "Crear nueva contraseña"
 	, "metaConfirmRecoverPasswordDescription": "Utilidad de asignación de nueva contraseña para usuarios registrados en REDMIC que lo han solicitado"
 
+	, "missingEmbeddedContent": "Contenido incrustado no disponible"
 
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"

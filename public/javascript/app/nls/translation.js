@@ -847,6 +847,7 @@ define({
 		, "noCita": "No citations for this grid size"
 		, "pressHere": "Press here"
 		, "successResetting": "Password recovery completed successfully"
+		, "stac-browser": "STAC"
 
 		, "monday": "Monday"
 		, "mondayShort": "Mon"
@@ -1404,6 +1405,7 @@ define({
 		, "metaConfirmRecoverPasswordTitle": "Create new password"
 		, "metaConfirmRecoverPasswordDescription": "Utility for assigning a new password for users registered in REDMIC who have requested it"
 
+		, "missingEmbeddedContent": "Not available embedded content"
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

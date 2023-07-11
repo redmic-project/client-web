@@ -19,7 +19,7 @@ define([
 	, "redmic/modules/map/_PlaceNamesButton"
 	, "templates/RealTimeInfo"
 	, "templates/SitePopup"
-	, "templates/SurveyStationDashboard"
+	, "templates/DefaultEmbeddedContent"
 ], function(
 	_Main
 	, MultiWindRoseChartWithToolbar
@@ -41,7 +41,7 @@ define([
 	, _PlaceNamesButton
 	, RealTimeInfo
 	, SitePopupTemplate
-	, SurveyStationDashboardTemplate
+	, EmbeddedContentTemplate
 ){
 	return declare([Layout, Controller, _Main, _AddBasicTitle], {
 		//	summary:
@@ -643,7 +643,7 @@ define([
 					type: TemplateDisplayer,
 					props: {
 						title: this.i18n.dashboard,
-						template: SurveyStationDashboardTemplate,
+						template: EmbeddedContentTemplate,
 						target: this.dashboardTarget
 					}
 				},
@@ -695,7 +695,7 @@ define([
 		_refreshChildrenDataModules: function() {
 
 			this._publish(this._widgets.dashboard.getChannel('CHANGE_TEMPLATE'), {
-				template: SurveyStationDashboardTemplate
+				template: EmbeddedContentTemplate
 			});
 		},
 
@@ -787,7 +787,9 @@ define([
 
 			this._emitEvt('INJECT_ITEM', {
 				data: {
-					url: this.dashboardUrl
+					objectType: 'text/html',
+					url: this.dashboardUrl,
+					className: 'kibana-dashboard'
 				},
 				target: this.dashboardTarget
 			});

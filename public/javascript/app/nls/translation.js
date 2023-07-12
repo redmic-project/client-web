@@ -847,7 +847,7 @@ define({
 		, "noCita": "No citations for this grid size"
 		, "pressHere": "Press here"
 		, "successResetting": "Password recovery completed successfully"
-		, "stac-browser": "STAC"
+		, "stac-browser": "Remote sensing (STAC)"
 
 		, "monday": "Monday"
 		, "mondayShort": "Mon"
@@ -1374,6 +1374,8 @@ define({
 		, "metaViewerRealTimeDescription": "Station viewer that provides realtime data on the marine environment"
 		, "metaViewerRealTimeDashboardIdTitle": "Realtime data from the station"
 		, "metaViewerRealTimeDashboardIdDescription": "Viewer of the data produced by the station"
+		, "metaViewerStacBrowserTitle": "Remote sensing catalog (STAC)"
+		, "metaViewerStacBrowserDescription": "Viewer for spatio-temporal assets catalog (STAC), integrating STAC browser tool to serve mostly remote sensing content obtained from satellites"
 		, "metaAtlasTitle": "Atlas"
 		, "metaAtlasDescription": "Marine Atlas of the Canary Islands, with a selection of georeferenced marine data layers of public interest, grouped by theme"
 		, "metaServiceOgcCatalogTitle": "OGC service catalog"

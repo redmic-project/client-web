@@ -43,15 +43,15 @@ define([
 				template: EmbeddedContentTemplate,
 				target: this._templateDisplayerTarget
 			});
+
+			this._publish(this._templateDisplayer.getChannel('SHOW'), {
+				node: this._getNodeToShow()
+			});
 		},
 
 		postCreate: function() {
 
 			this.inherited(arguments);
-
-			this._publish(this._templateDisplayer.getChannel('SHOW'), {
-				node: this._getNodeToShow()
-			});
 
 			this._updateEmbeddedContent(this.embeddedContentUrl);
 		},
@@ -68,5 +68,9 @@ define([
 			});
 		},
 
+		_onEmbeddedContentUrlPropSet: function(evt) {
+
+			this._updateEmbeddedContent(evt.value);
+		}
 	});
 });

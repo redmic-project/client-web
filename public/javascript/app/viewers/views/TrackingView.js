@@ -163,8 +163,6 @@ define([
 				channel: this._activityBrowserWithTopbar.getChannel()
 			});
 
-			this._createBrowserWork();
-
 			this.inherited(arguments);
 		},
 

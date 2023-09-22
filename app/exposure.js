@@ -12,7 +12,7 @@ const express = require('express'),
 	apiUrl = process.env.API_URL,
 	sitemapUrl = process.env.SITEMAP_URL;
 
-let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated;
+let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated, externalRequest;
 
 function getLang(req) {
 
@@ -61,63 +61,6 @@ function on404Request(req, res) {
 	});
 }
 
-function onOwnRequestResponse(bindParams, internalRes) {
-
-	let chunks = [];
-
-	internalRes.on('data', (function(nestedChunks, chunk) {
-
-		nestedChunks.push(chunk);
-	}).bind(this, chunks));
-
-	internalRes.on('end', (function(nestedBindParams, nestedChunks) {
-
-		let content = "";
-
-		for (let i = 0; i < nestedChunks.length; i++) {
-			content += nestedChunks[i].toString();
-		}
-
-		const originalRes = nestedBindParams.originalRes,
-			onSuccess = nestedBindParams.onSuccess || onOwnRequestSuccess,
-			onError = nestedBindParams.onError || onOwnRequestError,
-			afterResponse = nestedBindParams.afterResponse;
-
-		if (this.statusCode < 400) {
-			onSuccess.bind(this)(originalRes, content);
-		} else {
-			onError.bind(this)(originalRes, content);
-		}
-
-		if (afterResponse) {
-			afterResponse(this.statusCode, content);
-		}
-	}).bind(internalRes, bindParams, chunks));
-}
-
-function onOwnRequestSuccess(originalRes, content) {
-
-	originalRes.status(this.statusCode).send(content);
-
-	const internalUrl = this.req.protocol + '//' + this.req.host + this.req.path,
-		internalRequestMessage = `INTERNAL ${this.req.method} ${internalUrl} ${this.statusCode}`;
-
-	logger.info(internalRequestMessage);
-}
-
-function onOwnRequestError(originalRes, err) {
-
-	originalRes.set('Content-Type', 'application/json');
-
-	originalRes.status(500).send({
-		code: 'Server error',
-		description: 'Something went wrong at server. Please, try again.'
-	});
-
-	const errorMessage = err instanceof Object ? err.toString() : err;
-	logger.error(errorMessage);
-}
-
 function onSitemapRequest(_req, res) {
 
 	res.set('Content-Type', 'text/xml');
@@ -127,12 +70,12 @@ function onSitemapRequest(_req, res) {
 	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - 300000) {
 		const afterResponseCallback = (status, content) => sitemapContent = status ? content : '';
 
-		const internalReq = https.request(sitemapUrl, onOwnRequestResponse.bind(this, {
+		const internalReq = https.request(sitemapUrl, externalRequest.onOwnRequestResponse.bind(this, {
 			originalRes: res,
 			afterResponse: afterResponseCallback
 		}));
 
-		internalReq.on('error', onOwnRequestError.bind(this, res));
+		internalReq.on('error', externalRequest.onOwnRequestError.bind(this, res));
 
 		internalReq.end();
 
@@ -196,7 +139,8 @@ function onOauthTokenRequest(req, res) {
 		onError: onOauthRequestError
 	};
 
-	const internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestResponse.bind(this, bindParams));
+	const internalReq = reqLibrary.request(getTokenUrl, options, externalRequest.onOwnRequestResponse.bind(this,
+		bindParams));
 
 	internalReq.on('error', onOauthRequestError.bind(this, res));
 
@@ -228,7 +172,7 @@ function onOauthRequestError(originalRes, err) {
 		return;
 	}
 
-	onOwnRequestError.bind(this)(originalRes, err);
+	externalRequest.onOwnRequestError.bind(this)(originalRes, err);
 }
 
 function exposeRoutes(app) {
@@ -282,6 +226,8 @@ module.exports = function(loggerParameter, paramsParameter, versionParameter) {
 	logger = loggerParameter;
 	params = paramsParameter;
 	version = versionParameter;
+
+	externalRequest = require('./externalRequest')(logger);
 
 	return {
 		exposeApp: expose

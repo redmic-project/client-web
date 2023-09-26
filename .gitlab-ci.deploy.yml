@@ -1,0 +1,9 @@
+.deploy:
+  variables:
+    STACK: client
+  environment:
+    url: https://${PUBLIC_HOSTNAME}
+
+deploy-support-branch-development:
+  variables:
+    VERSION: ${CI_COMMIT_SHORT_SHA}

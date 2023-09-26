@@ -13,6 +13,7 @@ include:
     file: '/deployment-custom-image.yml'
   - local: '/.gitlab-ci.build.yml'
   - local: '/.gitlab-ci.test.yml'
+  - local: '/.gitlab-ci.deploy.yml'
 
 stages:
   - pre-build
@@ -23,9 +24,3 @@ stages:
   - post-package
   - deploy
   - test-deploy
-
-.deploy:
-  variables:
-    STACK: client
-  environment:
-    url: https://${PUBLIC_HOSTNAME}

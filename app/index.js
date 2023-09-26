@@ -1,5 +1,5 @@
 const packageJson = require('../package.json'),
-	version = packageJson.version,
+	version = process.env.VERSION || packageJson.version,
 
 	params = require('./params')(version),
 

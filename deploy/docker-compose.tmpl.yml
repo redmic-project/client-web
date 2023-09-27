@@ -16,6 +16,7 @@ services:
       SITEMAP_URL:
       PRERENDER_URL:
       PRERENDER_PROTOCOL:
+      VERSION:
     networks:
       traefik-net:
       metric-net:

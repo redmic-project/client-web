@@ -44,7 +44,7 @@ if (cluster && cluster.isMaster) {
 
 	http.createServer(app).listen(port, function() {
 
-		logger.verbose('REDMIC v%s (PID %i)', version, pid);
+		logger.verbose('REDMIC %s (PID %i)', version, pid);
 		logger.verbose('Listening on port %d (PID %i)', port, pid);
 		debug && logger.verbose('Debug mode enabled (PID %i)', pid);
 	});

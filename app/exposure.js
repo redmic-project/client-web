@@ -90,15 +90,22 @@ function onRobotsRequest(req, res) {
 	res.set('Content-Type', 'text/plain');
 
 	if (!robotsContent || !robotsContent.length) {
-		robotsContent = 'User-agent: *\n';
+		const userAgentLine = 'User-agent: *\n';
+
+		robotsContent = userAgentLine;
 
 		if (production) {
-			const sitemapPath = 'https://' + req.hostname + '/sitemap.xml',
+			const apiPath = '/api',
+				disallowApiLine = 'Disallow: ' + apiPath + '\n',
+				allowAllLine = 'Allow: /\n',
+				sitemapPath = 'https://' + req.hostname + '/sitemap.xml',
 				sitemapLine = 'Sitemap: ' + sitemapPath;
 
-			robotsContent += 'Allow: /\n\n' + sitemapLine;
+			robotsContent += disallowApiLine + allowAllLine + '\n' + sitemapLine;
 		} else {
-			robotsContent += 'Disallow: /';
+			const disallowAllLine = 'Disallow: /';
+
+			robotsContent += disallowAllLine;
 		}
 	}
 

@@ -13,6 +13,7 @@ services:
       OAUTH_CLIENT_ID:
       OAUTH_CLIENT_SECRET:
       API_URL:
+      CONFIG_URL:
       SITEMAP_URL:
       PRERENDER_URL:
       PRERENDER_PROTOCOL:

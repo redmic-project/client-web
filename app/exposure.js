@@ -1,6 +1,5 @@
 const express = require('express'),
 	bodyParser = require('body-parser'),
-	fs = require('fs'),
 	path = require('path'),
 	http = require('http'),
 	https = require('https'),
@@ -10,9 +9,14 @@ const express = require('express'),
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 	production = !!parseInt(process.env.PRODUCTION, 10),
 	apiUrl = process.env.API_URL,
-	sitemapUrl = process.env.SITEMAP_URL;
+	configUrl = process.env.CONFIG_URL,
+	sitemapUrl = process.env.SITEMAP_URL,
 
-let logger, params, version, robotsContent, sitemapContent, sitemapLastUpdated, externalRequest;
+	configExpirationMs = 3600000,
+	sitemapExpirationMs = 36000000;
+
+let logger, params, version, robotsContent, configContent, configLastUpdated, sitemapContent, sitemapLastUpdated,
+	externalRequest;
 
 function getLang(req) {
 
@@ -61,13 +65,39 @@ function on404Request(req, res) {
 	});
 }
 
+function onConfigRequest(req, res) {
+
+	res.set('Content-Type', 'application/json');
+
+	const currTimestamp = Date.now();
+
+	if (!configContent || !configContent.length || req.forceRefresh ||
+		configLastUpdated < currTimestamp - configExpirationMs) {
+
+		const afterResponseCallback = (status, content) => configContent = status ? content : '';
+
+		const internalReq = https.request(configUrl, externalRequest.onOwnRequestResponse.bind(this, {
+			originalRes: res,
+			afterResponse: afterResponseCallback
+		}));
+
+		internalReq.on('error', externalRequest.onOwnRequestError.bind(this, res));
+
+		internalReq.end();
+
+		configLastUpdated = currTimestamp;
+	} else {
+		res.send(configContent);
+	}
+}
+
 function onSitemapRequest(_req, res) {
 
 	res.set('Content-Type', 'text/xml');
 
 	const currTimestamp = Date.now();
 
-	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - 300000) {
+	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - sitemapExpirationMs) {
 		const afterResponseCallback = (status, content) => sitemapContent = status ? content : '';
 
 		const internalReq = https.request(sitemapUrl, externalRequest.onOwnRequestResponse.bind(this, {
@@ -187,6 +217,7 @@ function exposeRoutes(app) {
 	app.get('/activateAccount/:token', onActivateAccountRequest)
 		.get('/noSupportBrowser', onNoSupportBrowserRequest)
 		.get('/404', on404Request)
+		.get('/config', onConfigRequest)
 		.get('/sitemap.xml', onSitemapRequest)
 		.get('/robots.txt', onRobotsRequest)
 		.get(/.*\/jquery.js/, onNullableRequest)

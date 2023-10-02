@@ -395,7 +395,7 @@ var profileObj = {
 };
 
 var viewLayers = {
-	'app/components/Router': {}
+	'redmic/modules/app/App': {}
 
 	, 'app/views/404': {}
 	, 'app/views/ActivateAccount': {}

@@ -1,11 +1,11 @@
 define([
-	'app/_app'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'redmic/modules/app/_app'
 ], function(
-	App
-	, declare
+	declare
 	, lang
+	, App
 ) {
 
 	return declare(App, {

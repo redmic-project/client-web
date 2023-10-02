@@ -90,6 +90,7 @@ define([
 		//		Estructura para almacenar los ownChannel de los módulos que se instancian
 		//		globalmente.
 		globalOwnChannels: {
+			ROUTER: "router",
 			STORE: "data",
 			SELECTOR: "selection",
 			MANAGER: "manager",
@@ -195,6 +196,7 @@ define([
 				_childrenActionsAllowedToListen: ['CONNECTED', 'DISCONNECTED', 'DESTROYED'],
 				_childrenActionDfdsNameSuffix: 'ChildrenActionDfds',
 
+				routerChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ROUTER),
 				storeChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.STORE),
 				credentialsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.CREDENTIALS),
 				analyticsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ANALYTICS),

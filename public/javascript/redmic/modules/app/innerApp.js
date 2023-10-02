@@ -1,13 +1,13 @@
 define([
-	'app/_app'
-	, 'app/components/Topbar'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'dojo/dom-class'
 	, 'put-selector/put'
 	, 'redmic/base/Credentials'
+	, 'redmic/modules/app/_app'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
+	, 'redmic/modules/components/Topbar'
 	, 'redmic/modules/notification/Notification'
 	, 'redmic/modules/selection/Selector'
 	, 'redmic/modules/socket/_IngestData'
@@ -16,15 +16,15 @@ define([
 	, 'redmic/modules/socket/Socket'
 	, 'redmic/modules/socket/Task'
 ], function(
-	App
-	, Topbar
-	, declare
+	declare
 	, lang
 	, aspect
 	, domClass
 	, put
 	, Credentials
+	, App
 	, MainSidebarImpl
+	, Topbar
 	, Notification
 	, Selector
 	, _IngestData

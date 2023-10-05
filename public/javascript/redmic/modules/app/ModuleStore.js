@@ -27,6 +27,9 @@ define([
 		//		Mantiene varios módulos precargados y va limpiando los más antiguos al
 		//		alcanzar el límite máximo de instancias.
 
+		//	maxInstances: Integer
+		//		Número máximo de módulos de vistas instanciados, para destruir los más antiguos cuando se alcance el
+		//		límite establecido.
 		//	moduleStore: Object
 		//		Almacén con los módulos en los que el usuario tiene permisos
 		//	parameterRegExp: RegExp
@@ -51,6 +54,8 @@ define([
 				},
 				// mediator params
 				ownChannel: "moduleStore",
+
+				maxInstances: 10,
 
 				viewSeparator: "/",
 
@@ -376,7 +381,7 @@ define([
 			});
 
 			// Si no hemos llegado al límite, no limpiamos
-			if (instantiatedModules.length <= redmicConfig.numMaxView) {
+			if (instantiatedModules.length <= this.maxInstances) {
 				return;
 			}
 

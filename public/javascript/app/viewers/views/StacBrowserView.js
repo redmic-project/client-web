@@ -48,7 +48,7 @@ define([
 
 			this._publish(this.getChannel('SET_PROPS'), {
 				embeddedContentUrl: configValue
-			})
+			});
 		}
 	});
 });

@@ -30,7 +30,7 @@ define([
 
 		_setOwnCallbacksForEvents: function() {
 
-			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig))
+			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
 		},
 
 		postCreate: function() {

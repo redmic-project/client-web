@@ -171,6 +171,8 @@ define([
 
 		_errorAvailable: function(err) {
 
+			this._gettingExternalConfig = false;
+
 			this._emitEvt('REQUEST_FAILED', err);
 		}
 	});

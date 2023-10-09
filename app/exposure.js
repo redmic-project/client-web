@@ -71,7 +71,7 @@ function onConfigRequest(req, res) {
 
 	const currTimestamp = Date.now();
 
-	if (!configContent || !configContent.length || req.forceRefresh ||
+	if (!configContent || !configContent.length || req.query.forceRefresh ||
 		configLastUpdated < currTimestamp - configExpirationMs) {
 
 		const afterResponseCallback = (status, content) => configContent = status ? content : '';

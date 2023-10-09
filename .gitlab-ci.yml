@@ -1,6 +1,9 @@
 include:
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
+    file: '/scanning/dependency-scanning.yml'
+  - project: 'redmic-project/gitlab-ci-templates'
+    ref: master
     file: '/license-listing.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
@@ -16,6 +19,7 @@ include:
   - local: '/.gitlab-ci.deploy.yml'
 
 stages:
+  - test
   - pre-build
   - build
   - license-list

@@ -4,9 +4,6 @@ include:
     file: '/scanning/dependency-scanning.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
-    file: '/license-listing.yml'
-  - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
     file: '/packaging.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
@@ -20,7 +17,6 @@ include:
 
 stages:
   - test
-  - license-list
   - pre-build
   - build
   - pre-package
@@ -28,3 +24,6 @@ stages:
   - post-package
   - deploy
   - test-deploy
+
+variables:
+  DS_MAX_DEPTH: 1

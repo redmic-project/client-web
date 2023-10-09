@@ -39,7 +39,7 @@ define([
 
 			this._emitEvt('GET_EXTERNAL_CONFIG', {
 				propertyName: this.embeddedContentUrlPropertyName
-			})
+			});
 		},
 
 		_onGotExternalConfig: function(evt) {

@@ -55,12 +55,11 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-
-			this._setRouterListeners();
 		},
 
 		_initialize: function() {
 
+			this._setRouterListeners();
 		},
 
 		_defineSubscriptions: function() {
@@ -250,7 +249,7 @@ define([
 				hrefPort = isNotStandardPort ? (':' + locationPort) : '',
 				href = locationObj.protocol + '//' + locationObj.hostname + hrefPort + locationObj.pathname + locationObj.hash;
 
-				this.globalContext.history.replaceState(null, null, href);
+			this.globalContext.history.replaceState(null, null, href);
 		}
 	});
 });

@@ -19,6 +19,7 @@ define([
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/base/Loading'
+	, 'redmic/modules/components/ExternalConfig'
 	, 'redmic/modules/store/RestManagerImpl'
 	, 'templates/LoadingCustom'
 ], function(
@@ -42,6 +43,7 @@ define([
 	, _Module
 	, _Store
 	, Loading
+	, ExternalConfig
 	, RestManagerImpl
 	, LoadingCustomTemplate
 ) {
@@ -87,6 +89,8 @@ define([
 		//		Instancia del módulo de control de rutas de acceso.
 		//	_credentials: Object
 		//		Instancia del módulo de control de permisos y accesos de usuario.
+		//	_externalConfig: Object
+		//		Instancia del módulo de obtención de configuración externa, del lado del servidor.
 		//	_moduleStore: Object
 		//		Instancia del módulo de control de los módulos vista a los que el usuario puede acceder.
 		//	_loading: Object
@@ -118,18 +122,18 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-
-			this._router = new Router({
-				parentChannel: this.getChannel(),
-				globalContext: getGlobalContext()
-			});
-
-			new CookieLoader();
 		},
 
 		_initialize: function() {
 
 			var parentChannel = this.getChannel();
+
+			this._router = new Router({
+				parentChannel: parentChannel,
+				globalContext: getGlobalContext()
+			});
+
+			new CookieLoader();
 
 			new RestManagerImpl({
 				parentChannel: parentChannel
@@ -152,6 +156,10 @@ define([
 			});
 
 			this._credentials = new Credentials({
+				parentChannel: parentChannel
+			});
+
+			this._externalConfig = new ExternalConfig({
 				parentChannel: parentChannel
 			});
 
@@ -202,8 +210,6 @@ define([
 		postCreate: function() {
 
 			this._emitEvt('GET_CREDENTIALS');
-
-			this.inherited(arguments);
 		},
 
 		_subCredentialsRemoved: function() {

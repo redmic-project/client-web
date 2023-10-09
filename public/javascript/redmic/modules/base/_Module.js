@@ -95,6 +95,7 @@ define([
 			SELECTOR: "selection",
 			MANAGER: "manager",
 			CREDENTIALS: "credentials",
+			EXTERNAL_CONFIG: "externalConfig",
 			ANALYTICS: "analytics",
 			MODULE_STORE: "moduleStore",
 			TASK: "task",
@@ -157,6 +158,8 @@ define([
 		//		Sufijo aplicado al nombre del atributo que almacena los deferred para esperar por publicaciones por
 		//		parte de los hijos.
 
+		//	routerChannel: String
+		//		Nombre del canal por donde se van a gestionar los cambios de ruta.
 		//	storeChannel: String
 		//		Nombre del canal por donde se van a recibir los datos.
 		//	selectorChannel: String
@@ -908,11 +911,7 @@ define([
 
 		_checkPropIsShareable: function(propName) {
 
-			if (propName.length && propName[0] !== "_") {
-				return true;
-			}
-
-			return false;
+			return propName.length && propName[0] !== "_";
 		},
 
 		_replaceSubscriptions: function(oldSubscriptions, newSubscriptions) {

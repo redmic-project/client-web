@@ -10,18 +10,20 @@ define([
 	, Evented
 	, has
 	, RedmicLocalStorage
-){
+) {
+
 	var Credentials = declare(Evented, {
 		//	summary:
 		//		Almacén de las credenciales del usuario.
 		//	description:
+		//		TODO: ahora mismo, este componente hace más que trabajar con credenciales, remodelado pendiente!
 		//		Engloba los datos de acceso del usuario actual y permite interactuar con ellos.
 		//		Listo para importar y usar, con instancia persistente (sólo se crea una vez).
 
 		//	validProps: Array
 		//		Propiedades permitidas para el control del usuario.
 		validProps: ['accessToken', 'userId', 'userName', 'userEmail', 'userRole', 'allowedModules', 'cookiesAccepted',
-			'selectIds'],
+			'selectIds', 'externalConfig', 'externalConfigTimestamp'],
 
 
 		constructor: function(args) {

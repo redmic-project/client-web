@@ -250,6 +250,7 @@ define([], function() {
 		'themes': baseUri + 'themes',
 		'thematicType': baseUri + 'thematictypes',
 		'getToken': '/oauth/token',
+		'getExternalConfig': '/config',
 		'logout': baseUri + 'oauth/token/revoke',
 		'unit': baseUri + 'units',
 		'unitType': baseUri + 'unittypes',

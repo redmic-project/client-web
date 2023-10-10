@@ -32,16 +32,17 @@ function onOwnRequestResponse(bindParams, internalRes) {
 		const originalRes = nestedBindParams.originalRes,
 			onSuccess = nestedBindParams.onSuccess || onOwnRequestSuccess,
 			onError = nestedBindParams.onError || onOwnRequestError,
-			afterResponse = nestedBindParams.afterResponse;
+			afterResponse = nestedBindParams.afterResponse,
+			successful = this.statusCode < 400;
 
-		if (this.statusCode < 400) {
+		if (successful) {
 			onSuccess.bind(this)(originalRes, content);
 		} else {
 			onError.bind(this)(originalRes, content);
 		}
 
 		if (afterResponse) {
-			afterResponse(this.statusCode, content);
+			afterResponse(successful, content);
 		}
 	}).bind(internalRes, bindParams, chunks));
 }
@@ -132,13 +133,21 @@ function onConfigRequest(req, res) {
 
 	res.set('Content-Type', 'application/json');
 
-	const currTimestamp = Date.now();
-
 	if (!configContent || !configContent.length || req.query.forceRefresh ||
-		configLastUpdated < currTimestamp - configExpirationMs) {
+		configLastUpdated < Date.now() - configExpirationMs) {
 
-		const afterResponseCallback = (status, content) => configContent = status ? content : '',
-			reqLibrary = configUrl.indexOf('https') === -1 ? http : https;
+		const afterResponseCallback = (successful, content) => {
+
+			if (!successful) {
+				configContent = '';
+				return;
+			}
+
+			configContent = content;
+			configLastUpdated = Date.now();
+		};
+
+		const reqLibrary = configUrl.indexOf('https') === -1 ? http : https;
 
 		const internalReq = reqLibrary.request(configUrl, onOwnRequestResponse.bind(this, {
 			originalRes: res,
@@ -148,8 +157,6 @@ function onConfigRequest(req, res) {
 		internalReq.on('error', onOwnRequestError.bind(this, res));
 
 		internalReq.end();
-
-		configLastUpdated = currTimestamp;
 	} else {
 		res.send(configContent);
 	}
@@ -159,11 +166,19 @@ function onSitemapRequest(_req, res) {
 
 	res.set('Content-Type', 'text/xml');
 
-	const currTimestamp = Date.now();
+	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < Date.now() - sitemapExpirationMs) {
+		const afterResponseCallback = (successful, content) => {
 
-	if (!sitemapContent || !sitemapContent.length || sitemapLastUpdated < currTimestamp - sitemapExpirationMs) {
-		const afterResponseCallback = (status, content) => sitemapContent = status ? content : '',
-			reqLibrary = sitemapUrl.indexOf('https') === -1 ? http : https;
+			if (!successful) {
+				sitemapContent = '';
+				return;
+			}
+
+			sitemapContent = content;
+			sitemapLastUpdated = Date.now();
+		};
+
+		const reqLibrary = sitemapUrl.indexOf('https') === -1 ? http : https;
 
 		const internalReq = reqLibrary.request(sitemapUrl, onOwnRequestResponse.bind(this, {
 			originalRes: res,
@@ -173,8 +188,6 @@ function onSitemapRequest(_req, res) {
 		internalReq.on('error', onOwnRequestError.bind(this, res));
 
 		internalReq.end();
-
-		sitemapLastUpdated = currTimestamp;
 	} else {
 		res.send(sitemapContent);
 	}

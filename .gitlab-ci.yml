@@ -11,12 +11,13 @@ include:
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
     file: '/deployment-custom-image.yml'
-  - local: '/.gitlab-ci.build.yml'
+  - local: '/.gitlab-ci.scan.yml'
   - local: '/.gitlab-ci.test.yml'
+  - local: '/.gitlab-ci.build.yml'
+  - local: '/.gitlab-ci.package.yml'
   - local: '/.gitlab-ci.deploy.yml'
 
 stages:
-  - test
   - pre-build
   - build
   - pre-package
@@ -24,7 +25,3 @@ stages:
   - post-package
   - deploy
   - test-deploy
-
-variables:
-  DS_MAX_DEPTH: 0
-  DS_REMEDIATE: 'false'

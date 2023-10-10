@@ -18,6 +18,7 @@ prepare-unbuilt-version:
   stage: pre-build
   script:
     - grunt preBuild
+  dependencies: []
   tags:
     - custom-runner
   artifacts:

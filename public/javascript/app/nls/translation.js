@@ -1408,6 +1408,10 @@ define({
 		, "metaConfirmRecoverPasswordDescription": "Utility for assigning a new password for users registered in REDMIC who have requested it"
 
 		, "missingEmbeddedContent": "Not available embedded content"
+		, "activityEmbeddedContents": "Embedded contents"
+		, "associatedEmbeddedContents": "Associated embedded contents"
+		, "embeddedContent": "Embedded content"
+		, "embeddedContentPlaceHolder": "HTML content to embed"
 
 		//Para capas que no se pueden cambiar las keys
 		, "descript_1": "Description"

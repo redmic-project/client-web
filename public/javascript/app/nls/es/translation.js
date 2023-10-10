@@ -1404,6 +1404,10 @@ define({
 	, "metaConfirmRecoverPasswordDescription": "Utilidad de asignación de nueva contraseña para usuarios registrados en REDMIC que lo han solicitado"
 
 	, "missingEmbeddedContent": "Contenido incrustado no disponible"
+	, "activityEmbeddedContents": "Contenidos incrustados"
+	, "associatedEmbeddedContents": "Contenidos incrustados asociados"
+	, "embeddedContent": "Contenido incrustado"
+	, "embeddedContentPlaceHolder": "Contenido HTML a incrustar"
 
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"

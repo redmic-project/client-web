@@ -204,7 +204,7 @@ define([
 					height: 6,
 					type: GenericDisplayer,
 					props: {
-						title: this.i18n.activityEmbeddedContent + ' #' + i,
+						title: this.i18n.activityEmbeddedContent + ' #' + (i + 1),
 						content: embeddedContentParentNode.firstChild
 					}
 				};

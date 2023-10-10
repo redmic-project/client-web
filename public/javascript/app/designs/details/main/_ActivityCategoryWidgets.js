@@ -7,6 +7,7 @@ define([
 	, 'app/details/views/ActivityInfrastructureMapBase'
 	, 'app/details/views/ActivityLayerMapBase'
 	, 'dojo/_base/declare'
+	, 'redmic/modules/layout/genericDisplayer/GenericDisplayer'
 ], function(
 	ActivityTrackingMap
 	, ActivityAreaMapBase
@@ -16,6 +17,7 @@ define([
 	, ActivityInfrastructureMapBase
 	, ActivityLayerMapBase
 	, declare
+	, GenericDisplayer
 ) {
 
 	return declare(null, {
@@ -43,6 +45,8 @@ define([
 				widgetKey = this._prepareAreaActivityWidgets();
 			} else if (activityCategory === 'ft') {
 				widgetKey = this._prepareFixedTimeseriesActivityWidgets();
+			} else if (activityCategory === 'ec') {
+				widgetKey = this._prepareEmbeddedContentsActivityWidgets();
 			}
 
 			if (widgetKey) {
@@ -181,6 +185,37 @@ define([
 			this._addWidget(chartKey, chartConfig);
 
 			return [mapKey, chartKey];
+		},
+
+		_prepareEmbeddedContentsActivityWidgets: function() {
+
+			var embeddedContents = this._activityData.embeddedContents,
+				keys = [];
+
+			for (var i = 0; i < embeddedContents.length; i++) {
+				var embeddedContentObj = embeddedContents[i],
+					embeddedContentValue = embeddedContentObj.embeddedContent,
+					embeddedContentParentNode = document.createElement('object');
+
+				embeddedContentParentNode.innerHTML = embeddedContentValue;
+
+				var config = {
+					width: 6,
+					height: 6,
+					type: GenericDisplayer,
+					props: {
+						title: this.i18n.activityEmbeddedContent + ' #' + i,
+						content: embeddedContentParentNode.firstChild
+					}
+				};
+
+				var key = 'activityEmbeddedContent' + i;
+				keys.push(key);
+
+				this._addWidget(key, config);
+			}
+
+			return keys;
 		},
 
 		_removeActivityCategoryCustomWidgets: function() {

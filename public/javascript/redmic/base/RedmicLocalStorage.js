@@ -1,16 +1,15 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/Evented"
-	, "dojo/json"
-	, "dojo/on"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/Evented'
+	, 'dojo/on'
 ], function(
 	declare
 	, lang
 	, Evented
-	, JSON
 	, on
-){
+) {
+
 	var RedmicLocalStorage = declare(Evented, {
 		//	summary:
 		//		Widget envoltorio de localStorage de HTML5.
@@ -20,16 +19,15 @@ define([
 
 		//	_prefix: String
 		//		Prefijo que se coloca a todas las propiedades almacenadas.
-		_prefix: "REDMIC_",
-
+		_prefix: 'REDMIC_',
 
 		constructor: function(args) {
 
 			// Detecta cambio remoto
-			on(window, "storage", lang.hitch(this, function(evt) {
+			on(window, 'storage', lang.hitch(this, function(evt) {
 
 				if (!evt.oldValue && !evt.newValue && (!evt.key || !evt.key.length)) {
-					this.emit("cleared");
+					this.emit('cleared');
 					return;
 				}
 
@@ -37,13 +35,13 @@ define([
 				var key = this._getKeyWithoutPrefix(evt.key);
 
 				if (evt.newValue) {
-					this.emit("changed:" + key, {
+					this.emit('changed:' + key, {
 						key: key,
 						value: evt.newValue,
 						oldValue: evt.oldValue
 					});
 				} else {
-					this.emit("removed:" + key);
+					this.emit('removed:' + key);
 				}
 			}));
 		},
@@ -57,8 +55,13 @@ define([
 			//		Valor a asignar al elemento.
 
 			// Si se le pasa un objeto, se serializa a string antes
-			if (value && typeof value === "object") {
+			if (value && typeof value === 'object') {
 				value = JSON.stringify(value);
+			}
+
+			// Si se le pasa un número, se convierte a string antes
+			if (value !== undefined && value !== null && typeof value === 'number') {
+				value = value.toString();
 			}
 
 			// Si el value es nulo o sin longitud, se borra la clave
@@ -67,14 +70,9 @@ define([
 				return;
 			}
 
-			// OJO esto es provisional, hasta que funcione setItem en IE
-			try {
-				localStorage.setItem(this._prefix + key, value);
-			} catch (e) {
-				localStorage[this._prefix + key] = value;
-			}
+			localStorage.setItem(this._prefix + key, value);
 
-			this.emit("changed:" + key, {
+			this.emit('changed:' + key, {
 				key: key,
 				value: value
 			});
@@ -111,7 +109,7 @@ define([
 
 			localStorage.removeItem(this._prefix + key);
 
-			this.emit("removed:" + key);
+			this.emit('removed:' + key);
 		},
 
 		clear: function() {
@@ -125,7 +123,7 @@ define([
 				this.removeItem(redmicKeys[i]);
 			}
 
-			this.emit("cleared");
+			this.emit('cleared');
 		},
 
 		length: function() {
@@ -193,7 +191,7 @@ define([
 			//	returns:
 			//		String de la clave de la propiedad limpia.
 
-			return key.replace(this._prefix, "");	// return String
+			return key.replace(this._prefix, '');	// return String
 		}
 
 	});

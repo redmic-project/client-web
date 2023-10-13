@@ -1,7 +1,7 @@
 include:
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
-    file: '/license-listing.yml'
+    file: '/scanning/dependency-scanning.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
     file: '/packaging.yml'
@@ -11,21 +11,17 @@ include:
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
     file: '/deployment-custom-image.yml'
-  - local: '/.gitlab-ci.build.yml'
+  - local: '/.gitlab-ci.scan.yml'
   - local: '/.gitlab-ci.test.yml'
+  - local: '/.gitlab-ci.build.yml'
+  - local: '/.gitlab-ci.package.yml'
+  - local: '/.gitlab-ci.deploy.yml'
 
 stages:
   - pre-build
   - build
-  - license-list
   - pre-package
   - package
   - post-package
   - deploy
   - test-deploy
-
-.deploy:
-  variables:
-    STACK: client
-  environment:
-    url: https://${PUBLIC_HOSTNAME}

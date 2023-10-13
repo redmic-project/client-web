@@ -42,7 +42,7 @@ define([
 		_defineListenQueryParamsSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel: this._buildChannel(this.rootChannel, this.actions.GOT_QUERY_PARAMS),
+				channel: this._buildChannel(this.routerChannel, this.actions.GOT_QUERY_PARAMS),
 				callback: '_subGotQueryParams',
 				options: {
 					predicate: lang.hitch(this, this._chkRequesterIsMe)
@@ -54,7 +54,7 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'GET_QUERY_PARAMS',
-				channel: this._buildChannel(this.rootChannel, this.actions.GET_QUERY_PARAMS),
+				channel: this._buildChannel(this.routerChannel, this.actions.GET_QUERY_PARAMS),
 				callback: '_pubGetQueryParams'
 			});
 		},

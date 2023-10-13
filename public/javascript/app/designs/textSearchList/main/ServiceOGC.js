@@ -51,13 +51,6 @@ define([
 			this.browserBase.shift();
 
 			this.browserBase.unshift(HierarchicalImpl);
-		},
-
-		postCreate: function() {
-
-			this.inherited(arguments);
-
-			this._emitEvt('REFRESH');
 		}
 	});
 });

@@ -154,7 +154,6 @@ define([
 		_createModelInstance: function() {
 
 			if (!this._getTarget()) {
-				//console.error("Nor target specified for model at form module '%s'", this.getChannel());
 				return false;
 			}
 

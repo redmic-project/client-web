@@ -1,18 +1,16 @@
 define([
-	'app/innerApp'
-	, 'app/outerApp'
-	, 'app/components/CookieLoader'
-	, 'app/components/ModuleStore'
+	'app/components/CookieLoader'
 	, 'app/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/dom'
-	, 'dojo/dom-attr'
 	, 'dojo/has'
-	, 'dojo/io-query'
-	, 'dojo/mouse'
 	, 'put-selector/put'
 	, 'redmic/base/CheckBrowser'
+	, 'redmic/modules/app/innerApp'
+	, 'redmic/modules/app/ModuleStore'
+	, 'redmic/modules/app/outerApp'
+	, 'redmic/modules/app/Router'
 	, 'redmic/modules/notification/CommunicationCenter'
 	, 'redmic/modules/notification/Alert'
 	, 'redmic/modules/base/Credentials'
@@ -21,23 +19,22 @@ define([
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/base/Loading'
+	, 'redmic/modules/components/ExternalConfig'
 	, 'redmic/modules/store/RestManagerImpl'
 	, 'templates/LoadingCustom'
 ], function(
-	InnerApp
-	, OuterApp
-	, CookieLoader
-	, ModuleStore
+	CookieLoader
 	, redmicConfig
 	, declare
 	, lang
 	, dom
-	, domAttr
 	, has
-	, ioQuery
-	, mouse
 	, put
 	, CheckBrowser
+	, InnerApp
+	, ModuleStore
+	, OuterApp
+	, Router
 	, CommunicationCenter
 	, Alert
 	, Credentials
@@ -46,31 +43,32 @@ define([
 	, _Module
 	, _Store
 	, Loading
+	, ExternalConfig
 	, RestManagerImpl
 	, LoadingCustomTemplate
 ) {
 
 	var rootNode = dom.byId('rootContainer'),
-		nativeLoadingNode = dom.byId('loadingContainer'),
+		nativeLoadingNode = dom.byId('loadingContainer');
 
-		getGlobalContext = function() {
+	var getGlobalContext = function() {
 
-			if (has('host-browser')) {
-				return window;
-			} else if (has('host-node')) {
-				return global;
-			} else {
-				console.error('Environment not supported');
-			}
-		},
+		if (has('host-browser')) {
+			return window;
+		} else if (has('host-node')) {
+			return global;
+		} else {
+			console.error('Environment not supported');
+		}
+	};
 
-		hideNativeLoadingNode = function() {
+	var hideNativeLoadingNode = function() {
 
-			if (nativeLoadingNode) {
-				put('!', nativeLoadingNode);
-				nativeLoadingNode = undefined;
-			}
-		};
+		if (nativeLoadingNode) {
+			put('!', nativeLoadingNode);
+			nativeLoadingNode = undefined;
+		}
+	};
 
 	if (!CheckBrowser.isSupported()) {
 		hideNativeLoadingNode();
@@ -81,18 +79,18 @@ define([
 
 	return declare(_Module, {
 		//	summary:
-		//		Módulo encargado de controlar el acceso a la aplicación.
+		//		Módulo encargado de gestionar los componentes principales de la aplicación.
 		//	description:
-		//		Escucha las rutas accedidas por el usuario. Diferencia entre los destinos pertenecientes a la parte
-		//		externa (antes de obtener permisos) y a la parte interna (después de identificarse, aunque sea como
-		//		usuario invitado). Maneja las instancias de layout de aplicación y de los módulos cargados dentro de
-		//		dichos layouts.
+		//		Crea las instancias de los módulos que componen a la aplicación y coordina su funcionamiento. Maneja
+		//		los accesos a las partes interna y externa, junto con los cambios de contenido principal a medida que el
+		//		usuario navega por la aplicación.
 
-		//	paths: Object
-		//		Constantes de rutas base
-
+		//	_router: Object
+		//		Instancia del módulo de control de rutas de acceso.
 		//	_credentials: Object
 		//		Instancia del módulo de control de permisos y accesos de usuario.
+		//	_externalConfig: Object
+		//		Instancia del módulo de obtención de configuración externa, del lado del servidor.
 		//	_moduleStore: Object
 		//		Instancia del módulo de control de los módulos vista a los que el usuario puede acceder.
 		//	_loading: Object
@@ -106,8 +104,6 @@ define([
 		//		Clave del módulo actual dentro de moduleStore.
 		//	_prevModuleKey: String
 		//		Clave del módulo antiguo dentro de moduleStore.
-		//	_userFound: Boolean
-		//		Indica si hay presente algún token de usuario.
 
 		constructor: function(args) {
 
@@ -116,62 +112,63 @@ define([
 				events: {
 					GET_CREDENTIALS: 'getCredentials',
 					GET_MODULE: 'getModule',
-					GET_QUERY_PARAMS: 'getQueryParams',
 					CLEAR_MODULE: 'clearModule'
 				},
 				actions: {
-					GET_QUERY_PARAMS: 'getQueryParams',
-					GOT_QUERY_PARAMS: 'gotQueryParams'
+					CHANGE_MODULE: 'changeModule'
 				},
 
-				paths: {
-					ERROR: '/404',
-					ROOT: '/',
-					HOME: 'home',
-					LOGIN: 'login'
-				},
 				_reconnectTimeout: 10000
 			};
 
 			lang.mixin(this, this.config, args);
-
-			new CookieLoader();
-
-			this._setRouterListeners();
 		},
 
 		_initialize: function() {
 
+			var parentChannel = this.getChannel();
+
+			this._router = new Router({
+				parentChannel: parentChannel,
+				globalContext: getGlobalContext()
+			});
+
+			new CookieLoader();
+
 			new RestManagerImpl({
-				parentChannel: this.getChannel()
+				parentChannel: parentChannel
 			});
 
 			new CommunicationCenter({
-				parentChannel: this.getChannel()
+				parentChannel: parentChannel
 			});
 
 			new Alert({
-				parentChannel: this.getChannel()
+				parentChannel: parentChannel
 			});
 
 			new Analytics({
-				parentChannel: this.getChannel()
+				parentChannel: parentChannel
 			});
 
 			new MetaTags({
-				parentChannel: this.getChannel()
+				parentChannel: parentChannel
 			});
 
 			this._credentials = new Credentials({
-				parentChannel: this.getChannel()
+				parentChannel: parentChannel
+			});
+
+			this._externalConfig = new ExternalConfig({
+				parentChannel: parentChannel
 			});
 
 			this._moduleStore = new ModuleStore({
-				parentChannel: this.getChannel()
+				parentChannel: parentChannel
 			});
 
 			this._loading = new Loading({
-				parentChannel: this.getChannel(),
+				parentChannel: parentChannel,
 				globalNode: rootNode
 			});
 		},
@@ -179,6 +176,9 @@ define([
 		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
+				channel : this.getChannel('CHANGE_MODULE'),
+				callback: '_subChangeModule'
+			},{
 				channel : this._credentials.getChannel('AVAILABLE'),
 				callback: '_subAvailableCredentials'
 			},{
@@ -190,9 +190,6 @@ define([
 			},{
 				channel : this._moduleStore.getChannel('AVAILABLE_MODULE'),
 				callback: '_subAvailableModule'
-			},{
-				channel : this.getChannel('GET_QUERY_PARAMS'),
-				callback: '_subGetQueryParams'
 			});
 		},
 
@@ -207,135 +204,26 @@ define([
 			},{
 				event: 'CLEAR_MODULE',
 				channel: this._moduleStore.getChannel('CLEAR_MODULE')
-			},{
-				event: 'GET_QUERY_PARAMS',
-				channel: this.getChannel('GOT_QUERY_PARAMS')
 			});
 		},
 
 		postCreate: function() {
 
 			this._emitEvt('GET_CREDENTIALS');
-
-			this.inherited(arguments);
-		},
-
-		_setRouterListeners: function() {
-			//	summary:
-			//		Prepara la escucha en toda la aplicación de los eventos requeridos para controlar la navegación en
-			//		una sola página
-			//	tags:
-			//		private
-
-			var gCtx = getGlobalContext(),
-				dCtx = gCtx.document,
-				listenMethod, eventPrefix;
-
-			if (gCtx.addEventListener) {
-				listenMethod = dCtx.addEventListener;
-				eventPrefix = '';
-			} else {
-				listenMethod = dCtx.attachEvent;
-				eventPrefix = 'on';
-			}
-
-			listenMethod.call(dCtx, eventPrefix + 'click', lang.hitch(this, this._evaluateClickEvt));
-			listenMethod.call(gCtx, eventPrefix + 'popstate', lang.hitch(this, this._evaluatePopStateEvt));
-		},
-
-		_evaluateClickEvt: function(evt) {
-			//	summary:
-			//		Recibe eventos de click y, en caso de detectar un enlace de navegación interno, lo captura
-			//	tags:
-			//		private
-
-			var event = evt || getGlobalContext().event,
-				targets = this._getClickTargets(event);
-
-			for (var i = 0; i < targets.length; i++) {
-				var target = targets[i],
-					targetIsNotAppHref = !target || target.nodeName !== 'A' || !domAttr.get(target, 'd-state-url');
-
-				if (targetIsNotAppHref) {
-					continue;
-				}
-
-				this._handleAppHref(event, target);
-				break;
-			}
-		},
-
-		_handleAppHref: function(event, target) {
-
-			var url = target.pathname + target.search + target.hash;
-
-			if (mouse.isMiddle(event)) {
-				var gCtx = getGlobalContext(),
-					newPageUrl = target.protocol + '//' + target.hostname + url;
-
-				gCtx.open(newPageUrl, '_blank');
-			} else {
-				this._addHistory(url);
-				this._onRouteChange();
-			}
-
-			if (event.preventDefault) {
-				event.preventDefault();
-			} else {
-				event.returnValue = false;
-			}
-		},
-
-		_addHistory: function(value) {
-
-			getGlobalContext().history.pushState(null, null, value);
-		},
-
-		_onRouteChange: function() {
-
-			var locationObj = getGlobalContext().location,
-				locationPath = locationObj.pathname,
-				route = locationPath.substr(1),
-				routeIsEmpty = !route || route === '' || route === this.paths.ROOT,
-				loginWasSuccessful = route === this.paths.LOGIN && this._userFound;
-
-			if (routeIsEmpty || loginWasSuccessful) {
-				route = this.paths.HOME;
-				this._addHistory(route);
-			}
-
-			var locationQuery = locationObj.search;
-
-			this._handleQueryParameters(locationQuery.substr(1));
-
-			var routeChanged = this._changeModule(route);
-			if (routeChanged) {
-				this._emitEvt('TRACK', {
-					type: TRACK.type.page,
-					info: route + locationQuery
-				});
-			}
-		},
-
-		_evaluatePopStateEvt: function(evt) {
-			//	summary:
-			//		Recibe eventos de popstate para navegar por la aplicación usando los botones de retroceder/avanzar
-			//	tags:
-			//		private
-
-			this._onRouteChange();
 		},
 
 		_subCredentialsRemoved: function() {
 
-			delete this._userFound;
-			getGlobalContext().location.href = this.paths.ROOT;
+			this._publish(this._router.getChannel('GO_TO_ROOT_ROUTE'), {
+				userGone: true
+			});
 		},
 
 		_subAvailableCredentials: function(res) {
 
-			this._userFound = res.found;
-			this._onRouteChange();
+			this._publish(this._router.getChannel('EVALUATE_ROUTE'), {
+				userFound: res.found
+			});
 		},
 
 		_subCredentialsRequestFailed: function() {
@@ -345,6 +233,20 @@ define([
 			}
 
 			setTimeout(lang.hitch(this, this._emitEvt, 'GET_CREDENTIALS'), this._reconnectTimeout);
+		},
+
+		_subChangeModule: function(req) {
+
+			var route = req.route,
+				locationQuery = req.locationQuery,
+				routeChanged = this._changeModule(route);
+
+			if (routeChanged) {
+				this._emitEvt('TRACK', {
+					type: TRACK.type.page,
+					info: route + locationQuery
+				});
+			}
 		},
 
 		_showReconnectingMessage: function() {
@@ -358,29 +260,6 @@ define([
 			this._reconnectingMessageNode.innerHTML = template;
 
 			hideNativeLoadingNode();
-		},
-
-		_handleQueryParameters: function(queryString) {
-
-			this._currentQueryParams = this._getQueryParameters(queryString);
-
-			this._removeQueryParametersFromHref();
-		},
-
-		_getQueryParameters: function(queryString) {
-
-			return ioQuery.queryToObject(queryString);
-		},
-
-		_removeQueryParametersFromHref: function() {
-
-			var locationObj = getGlobalContext().location,
-				locationPort = locationObj.port,
-				isNotStandardPort = locationPort !== '80',
-				hrefPort = isNotStandardPort ? (':' + locationPort) : '',
-				href = locationObj.protocol + '//' + locationObj.hostname + hrefPort + locationObj.pathname + locationObj.hash;
-
-			getGlobalContext().history.replaceState(null, null, href);
 		},
 
 		_changeModule: function(route) {
@@ -446,7 +325,7 @@ define([
 			//		private
 
 			if (!instance || !instance.getChannel) {
-				getGlobalContext().location.href = this.paths.ERROR;
+				this._publish(this._router.getChannel('GO_TO_ERROR_ROUTE'), {});
 				return;
 			}
 
@@ -460,14 +339,6 @@ define([
 			this._publish(this._currLayoutInstance.getChannel('SHOW_MODULE'), {
 				moduleKey: this._currModuleKey,
 				moduleInstance: instance
-			});
-		},
-
-		_subGetQueryParams: function(req) {
-
-			this._emitEvt('GET_QUERY_PARAMS', {
-				requesterId: req.requesterId,
-				queryParams: this._currentQueryParams || {}
 			});
 		},
 

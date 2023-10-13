@@ -206,6 +206,8 @@ define([
 
 		_fillSideContent: function() {
 
+			this._createBrowserWork();
+
 			this._createSettingsForm();
 
 			this._createAtlas();

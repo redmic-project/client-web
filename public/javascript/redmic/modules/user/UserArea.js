@@ -192,7 +192,7 @@ define([
 				dataCredentials: true
 			});
 
-			put(this.listMenu.domNode.firstChild, '-', this.topbarMenu.container);
+			put(this.listMenu.domNode.firstChild, '-', this.topbarMenu.domNode);
 		},
 
 		_subDataCredentialsGotProps: function(req) {

@@ -842,6 +842,7 @@ define({
 	, "modeLabel": "Contenido de la cuadrícula"
 	, "pressHere": "Pulse aquí"
 	, "successResetting": "Recuperación de contraseña realizada con éxito"
+	, "stac-browser": "Teledetección (STAC)"
 
 	, "monday": "lunes"
 	, "mondayShort": "lun"
@@ -1369,6 +1370,8 @@ define({
 	, "metaViewerRealTimeDescription": "Visor de estaciones que proveen datos en tiempo real sobre el entorno marino"
 	, "metaViewerRealTimeDashboardIdTitle": "Datos en tiempo real de la estación"
 	, "metaViewerRealTimeDashboardIdDescription": "Visor de los datos producidos por la estación"
+	, "metaViewerStacBrowserTitle": "Catálogo de teledetección (STAC)"
+	, "metaViewerStacBrowserDescription": "Visor de catálogo de recursos espacio-temporales (STAC), integrando la herramienta STAC browser para ofrecer contenido generado mayormente por teledetección desde satélites"
 	, "metaAtlasTitle": "Atlas"
 	, "metaAtlasDescription": "Atlas marino de Canarias, con una selección de capas de datos marinos georeferenciados de interés público, agrupadas por temáticas"
 	, "metaServiceOgcCatalogTitle": "Catálogo de servicios OGC"
@@ -1400,6 +1403,11 @@ define({
 	, "metaConfirmRecoverPasswordTitle": "Crear nueva contraseña"
 	, "metaConfirmRecoverPasswordDescription": "Utilidad de asignación de nueva contraseña para usuarios registrados en REDMIC que lo han solicitado"
 
+	, "missingEmbeddedContent": "Contenido incrustado no disponible"
+	, "activityEmbeddedContents": "Contenidos incrustados"
+	, "associatedEmbeddedContents": "Contenidos incrustados asociados"
+	, "embeddedContent": "Contenido incrustado"
+	, "embeddedContentPlaceHolder": "Contenido HTML a incrustar"
 
 	// Para capas que no se pueden cambiar las keys
 	, "descript_1": "Descripción"

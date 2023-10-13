@@ -2,6 +2,7 @@ define([
 	"app/maintenance/domains/admin/views/ActivityTypesView"
 	, "app/components/steps/ContactSetStep"
 	, "app/components/steps/DocumentSetStep"
+	, "app/components/steps/EmbeddedContentSetStep"
 	, "app/components/steps/MainDataStep"
 	, "app/components/steps/OrganisationSetStep"
 	, "app/components/steps/PlatformSetStep"
@@ -16,6 +17,7 @@ define([
 	ActivityType
 	, ContactSetStep
 	, DocumentSetStep
+	, EmbeddedContentSetStep
 	, ActivityMainDataStep
 	, OrganisationSetStep
 	, PlatformSetStep
@@ -99,6 +101,12 @@ define([
 					definition: ResourceSetStep,
 					props: {
 						propertyName: 'resources'
+					},
+					skippable: true
+				},{
+					definition: EmbeddedContentSetStep,
+					props: {
+						propertyName: 'embeddedContents'
 					},
 					skippable: true
 				}]

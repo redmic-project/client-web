@@ -1,22 +1,21 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "put-selector/put"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
-	, "redmic/modules/base/_Store"
-	, "templates/LoadingEmpty"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+	, 'redmic/modules/base/_Module'
+	, 'redmic/modules/base/_Show'
+	, 'redmic/modules/base/_Store'
+	, 'templates/LoadingEmpty'
 ], function(
 	declare
 	, lang
-	, aspect
 	, put
 	, _Module
 	, _Show
 	, _Store
 	, TemplateEmpty
-){
+) {
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Cargador de plantillas.
@@ -27,14 +26,14 @@ define([
 
 			this.config = {
 				actions: {
-					CLEAR: "clear",
-					CHANGE_TEMPLATE: "changeTemplate",
-					UPDATED: "updated"
+					CLEAR: 'clear',
+					CHANGE_TEMPLATE: 'changeTemplate',
+					UPDATED: 'updated'
 				},
 				events: {
-					UPDATE: "update"
+					UPDATE: 'update'
 				},
-				ownChannel: "templateDisplayer",
+				ownChannel: 'templateDisplayer',
 				data: {},
 				containerClass: 'templateDisplayer'
 			};
@@ -53,16 +52,19 @@ define([
 			}
 
 			this._emptyTemplate = TemplateEmpty(obj);
+
+			this._prepareNodes();
+			this._setContent(this._loadedTemplate);
 		},
 
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this.getChannel("CHANGE_TEMPLATE"),
-				callback: "_subChangeTemplate"
+				channel : this.getChannel('CHANGE_TEMPLATE'),
+				callback: '_subChangeTemplate'
 			},{
-				channel : this.getChannel("CLEAR"),
-				callback: "_subClear"
+				channel : this.getChannel('CLEAR'),
+				callback: '_subClear'
 			});
 		},
 
@@ -70,18 +72,19 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'UPDATE',
-				channel: this.getChannel("UPDATED")
+				channel: this.getChannel('UPDATED')
 			});
 		},
 
-		postCreate: function() {
+		_prepareNodes: function() {
 
-			this.inherited(arguments);
+			var node = this._getNodeToShow(),
+				customClass = this['class'];
 
-			this.container = put('div.' + this.containerClass);
+			put(node, '.' + this.containerClass);
 
-			if (this['class']) {
-				put(this.container, "." + this['class']);
+			if (customClass) {
+				put(node, '.' + customClass);
 			}
 
 			if (this.template) {
@@ -89,8 +92,6 @@ define([
 			} else {
 				this._loadedTemplate = this._emptyTemplate;
 			}
-
-			this._setContent(this._loadedTemplate);
 		},
 
 		_loadTemplate: function(template, data) {
@@ -132,7 +133,9 @@ define([
 
 		_setContent: function(content) {
 
-			this.container.innerHTML = content;
+			var node = this._getNodeToShow();
+
+			node.innerHTML = content;
 
 			this._emitEvt('UPDATE', {
 				data: this.data
@@ -141,23 +144,26 @@ define([
 
 		_dataAvailable: function(response) {
 
-			this.data = response.data[0] ? response.data[0] : response.data;
-
-			this._loadedTemplate = this._loadTemplate(this.template, this.data);
-			this._setContent(this._loadedTemplate);
+			var data = response.data[0] ? response.data[0] : response.data;
+			this._updateData(data);
 		},
 
 		_itemAvailable: function(response) {
 
-			this.data = response.data;
+			var data = response.data;
+			this._updateData(data);
+		},
 
-			this._loadedTemplate = this._loadTemplate(this.template, this.data);
+		_updateData: function(data) {
+
+			this.data = data;
+			this._loadedTemplate = this._loadTemplate(this.template, data);
 			this._setContent(this._loadedTemplate);
 		},
 
 		_getNodeToShow: function() {
 
-			return this.container;
+			return this.domNode;
 		}
 	});
 });

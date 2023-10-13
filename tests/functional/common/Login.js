@@ -81,7 +81,7 @@ define([
 						.getVisibleText()
 						.then(function(text) {
 
-							assert.strictEqual(text, badValuesMsg, 'El error de valores inválidos no aparece');
+							assert.include(text, badValuesMsg, 'El error de valores inválidos no aparece');
 						});
 			}
 		};

@@ -84,6 +84,10 @@ define({
 		"title": "{i18n.metaViewerRealTimeDashboardIdTitle} '{properties.site.name}'",
 		"description": "{i18n.metaViewerRealTimeDashboardIdDescription} '{properties.site.name}'. {properties.site.description}."
 	},
+	"/viewer/stac-browser": {
+		"title": "{i18n.metaViewerStacBrowserTitle}",
+		"description": "{i18n.metaViewerStacBrowserDescription}."
+	},
 	"/atlas": {
 		"title": "{i18n.metaAtlasTitle}",
 		"description": "{i18n.metaAtlasDescription}."

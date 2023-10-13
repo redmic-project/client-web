@@ -97,19 +97,15 @@ define([
 
 			var ret = this.inherited(arguments);
 
-			delete ret.filterConfig;
-
-			lang.mixin(this._lastDataFilter, {
+			this._lastDataFilter = this._merge([this._lastDataFilter, {
 				terms: {
 					zoomLevel: this._currentZoomLevel
 				}
-			});
+			}, this.filterConfig.initQuery || {}]);
 
-			lang.mixin(ret, {
-				filterConfig: {
-					initQuery: this._lastDataFilter
-				}
-			});
+			ret.filterConfig = {
+				initQuery: this._lastDataFilter
+			};
 
 			return ret;
 		},

@@ -204,12 +204,12 @@ define([
 					height: 6,
 					type: GenericDisplayer,
 					props: {
-						title: this.i18n.activityEmbeddedContent + ' #' + (i + 1),
+						title: this.i18n.embeddedContent + ' #' + (i + 1),
 						content: embeddedContentParentNode.firstChild
 					}
 				};
 
-				var key = 'activityEmbeddedContent' + i;
+				var key = 'embeddedContent' + i;
 				keys.push(key);
 
 				this._addWidget(key, config);

@@ -4,6 +4,14 @@
   environment:
     url: https://${PUBLIC_HOSTNAME}
 
+.deploy-development:
+  variables:
+    COMPOSE_FILE: compose.tmpl.yaml:compose.dev.yaml
+
+.deploy-production:
+  variables:
+    COMPOSE_FILE: compose.tmpl.yaml:compose.prod.yaml
+
 deploy-support-branch-development:
   variables:
     DD_VERSION: ${CI_COMMIT_SHORT_SHA}

@@ -4,6 +4,3 @@ lint-dockerfile:
 
 .docker-build:
   dependencies: ["prepare-built-version"]
-  variables:
-    COMPOSE_PROJECT_DIRECTORY: build
-    COMPOSE_FILE_NAME: compose.yaml

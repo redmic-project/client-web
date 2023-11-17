@@ -74,6 +74,12 @@ function onOauthTokenRequest(req, res) {
 
 	res.set('Content-Type', 'application/json');
 
+	if (!oauthUrl || !oauthUrl.length) {
+		logger.error('Missing OAuth URL, set it using OAUTH_URL environment variable');
+		res.send('{}');
+		return;
+	}
+
 	const getTokenUrl = oauthUrl + '/token',
 		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https;
 
@@ -147,6 +153,12 @@ function onConfigRequest(req, res) {
 			configLastUpdated = Date.now();
 		};
 
+		if (!configUrl || !configUrl.length) {
+			logger.error('Missing config URL, set it using CONFIG_URL environment variable');
+			res.send('{}');
+			return;
+		}
+
 		const reqLibrary = configUrl.indexOf('https') === -1 ? http : https;
 
 		const internalReq = reqLibrary.request(configUrl, onOwnRequestResponse.bind(this, {
@@ -177,6 +189,16 @@ function onSitemapRequest(_req, res) {
 			sitemapContent = content;
 			sitemapLastUpdated = Date.now();
 		};
+
+		if (!sitemapUrl || !sitemapUrl.length) {
+			logger.error('Missing sitemap URL, set it using SITEMAP_URL environment variable');
+
+			const emptySitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset ' +
+				'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"/>'
+
+			res.send(emptySitemap);
+			return;
+		}
 
 		const reqLibrary = sitemapUrl.indexOf('https') === -1 ? http : https;
 

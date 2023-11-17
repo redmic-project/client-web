@@ -3,7 +3,7 @@ include:
     ref: master
     file: '/scanning/dependency-scanning.yml'
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
+    ref: dev
     file: '/packaging.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master

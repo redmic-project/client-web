@@ -1,6 +1,2 @@
-lint-dockerfile:
-  variables:
-    DOCKERFILE_PATH: build/Dockerfile
-
 .docker-build:
   dependencies: ["prepare-built-version"]

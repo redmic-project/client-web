@@ -32,7 +32,6 @@ define([
 					PUT_META_TAGS: 'putMetaTags'
 				},
 
-				nativeTitleSuffix: 'REDMIC',
 				ogTitleLimit: 60,
 				twitterTitleLimit: 70,
 				ogDescriptionLimit: 200,
@@ -41,6 +40,12 @@ define([
 				_headNode: document.getElementsByTagName('head')[0],
 				_defaultKey: 'default'
 			};
+
+			if (args && args.ecomarcan) {
+				this.config.nativeTitleSuffix = 'ECOMARCAN';
+			} else {
+				this.config.nativeTitleSuffix = 'REDMIC';
+			}
 
 			lang.mixin(this, this.config, args);
 		},

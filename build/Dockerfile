@@ -25,3 +25,9 @@ RUN node -e 'const fs = require("fs"); \
 	yarn cache clean && \
 	yarn autoclean --init && yarn autoclean --force && \
 	rm -f yarn.lock .yarnclean
+
+ARG VERSION
+
+LABEL version=${VERSION}
+
+RUN echo "${VERSION}" > /version

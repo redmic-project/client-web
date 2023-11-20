@@ -28,6 +28,6 @@ RUN node -e 'const fs = require("fs"); \
 
 ARG VERSION
 
-LABEL version=${VERSION}
+LABEL version="${VERSION}"
 
 RUN echo "${VERSION}" > /version

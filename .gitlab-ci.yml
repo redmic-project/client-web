@@ -1,15 +1,15 @@
 include:
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
+    ref: dev
     file: '/scanning/dependency-scanning.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: dev
     file: '/packaging.yml'
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
+    ref: dev
     file: '/deployment.yml'
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
+    ref: dev
     file: '/deployment-custom-image.yml'
   - local: '/.gitlab-ci.scan.yml'
   - local: '/.gitlab-ci.test.yml'

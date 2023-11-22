@@ -1,16 +1,16 @@
 include:
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: dev
+    ref: master
     file: '/scanning/dependency-scanning.yml'
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: dev
-    file: '/packaging.yml'
+    ref: master
+    file: '/packaging-docker/docker-build.yml'
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: dev
-    file: '/deployment.yml'
+    ref: master
+    file: '/deployment-service/docker-deploy.yml'
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: dev
-    file: '/deployment-custom-image.yml'
+    ref: master
+    file: '/deployment-service/custom-image.yml'
   - local: '/.gitlab-ci.scan.yml'
   - local: '/.gitlab-ci.test.yml'
   - local: '/.gitlab-ci.build.yml'

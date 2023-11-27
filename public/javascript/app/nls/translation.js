@@ -1331,6 +1331,7 @@ define({
 		, "privateInternalUrl": "Private internal document"
 		, "resourceType": "Resource type"
 
+		, "selectFeatureOnMap": "Click on any element of the map to get information"
 
 		// Meta-tags
 		, "metaDefaultTitle": "Repositorio de Datos Marinos Integrados de Canarias"

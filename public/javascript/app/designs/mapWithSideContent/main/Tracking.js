@@ -14,7 +14,6 @@ define([
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/components/ProgressSlider/ProgressSlider"
 	, "redmic/modules/atlas/Atlas"
-	, "redmic/modules/base/_ShowInPopup"
 	, 'redmic/modules/form/FormContainerImpl'
 	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'redmic/modules/layout/TabsDisplayer'
@@ -38,7 +37,6 @@ define([
 	, _Store
 	, ProgressSlider
 	, Atlas
-	, _ShowInPopup
 	, FormContainerImpl
 	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
@@ -228,10 +226,10 @@ define([
 				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup({
+			this._queryOnMap = new QueryOnMap({
 				parentChannel: this.getChannel(),
 				getMapChannel: getMapChannel,
+				tabsDisplayerChannel: this._tabsDisplayer.getChannel(),
 				typeGroupProperty: this.typeGroupProperty
 			});
 		},

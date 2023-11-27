@@ -293,10 +293,10 @@ define([
 				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup({
+			this._queryOnMap = new QueryOnMap({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel
+				getMapChannel: getMapChannel,
+				tabsDisplayerChannel: this._tabsDisplayer.getChannel()
 			});
 		},
 

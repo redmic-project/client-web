@@ -37,6 +37,11 @@ define([
 					SHOW_LAYERS_INFO: 'showLayersInfo'
 				},
 
+				_tabsDisplayerActions: {
+					ADD_TAB: 'addTab',
+					SHOW_TAB: 'showTab'
+				},
+
 				getMapChannel: null,
 
 				title: this.i18n.layersQueryResults,
@@ -104,6 +109,53 @@ define([
 				this.events.HIDE,
 				this.events.ANCESTOR_HIDE
 			], lang.hitch(this, this.emit, this.events.HIDE_LAYERS_INFO));
+
+			this._onEvt('SHOW_LAYERS_INFO', lang.hitch(this, this._tryToFocusOwnTab));
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
+			this._tryToAddOwnTab();
+		},
+
+		_tryToAddOwnTab: function() {
+
+			var tabsChannel = this.tabsDisplayerChannel;
+			if (!tabsChannel) {
+				console.warn('QueryOnMap "%s" tried to add itself as a tab, but no TabsDisplayer channel was found',
+					this.getChannel());
+
+				this._onEvt('SHOW_LAYERS_INFO', lang.hitch(this, this.getChannel, 'SHOW'));
+
+				return;
+			}
+
+			this._publish(this._buildChannel(tabsChannel, this._tabsDisplayerActions.ADD_TAB), {
+				title: this.i18n.layersQueryResults,
+				iconClass: 'fa fa-info',
+				channel: this.getChannel()
+			});
+		},
+
+		_tryToFocusOwnTab: function() {
+
+			var tabsChannel = this.tabsDisplayerChannel;
+			if (!tabsChannel) {
+				console.warn('QueryOnMap "%s" tried to focus own tab, but no TabsDisplayer channel was found',
+					this.getChannel());
+
+				return;
+			}
+
+			if (!this._showTabChannel) {
+				this._showTabChannel = this._buildChannel(tabsChannel, this._tabsDisplayerActions.SHOW_TAB);
+			}
+
+			this._publish(this._showTabChannel, {
+				channel: this.getChannel()
+			});
 		},
 
 		_chkLayerIsQueryable: function(res) {

@@ -1914,14 +1914,6 @@ flagged-respawn@^1.0.1:
   resolved "https://registry.yarnpkg.com/flagged-respawn/-/flagged-respawn-1.0.1.tgz#e7de6f1279ddd9ca9aac8a5971d618606b3aab41"
   integrity sha512-lNaHNVymajmk0OJMBn8fVUAU1BtDeKIqKoVhk4xAALB57aALg6b4W0MfJ/cUE0g9YBXy5XhSlPIpYIJ7HaY/3Q==
 
-flopmang@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/flopmang/-/flopmang-1.0.0.tgz#22c82f12b537d5d440d5f0ad87ac39109ff31e26"
-  integrity sha512-WQsI7/o5g8NC/VCKbAJQcxSm77k1hd5beC0qikWOvz9iDqwKiwB0xfSGIgAOpHck00enCiJKUrzsGN775FQzdw==
-  dependencies:
-    underscore "^1.9.1"
-    underscore.string "^3.3.5"
-
 fn.name@1.x.x:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/fn.name/-/fn.name-1.1.0.tgz#26cad8017967aea8731bc42961d04a3d5988accc"
@@ -2158,18 +2150,6 @@ grunt-contrib-uglify@5.2.2:
     maxmin "^3.0.0"
     uglify-js "^3.16.1"
     uri-path "^1.0.0"
-
-grunt-force-task@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/grunt-force-task/-/grunt-force-task-3.0.0.tgz#c0a9e7f91a201d05a48b30ef1d429e6832f2b78a"
-  integrity sha512-S1cMHjC5b9moXmMk541swE4jal8tZVREKWzjt3a+OlhTY+7RNTjkq6CRYheCMARQjXvyNzCDZsnDk57oNwJXlw==
-
-grunt-git@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/grunt-git/-/grunt-git-1.1.1.tgz#50c315e6647ec77c841c387f6ad050a49a415f10"
-  integrity sha512-PiqCEuh3K9H+BheQozaQ8LCoO1hjS6MzQuany4IpIY4A/d/U9omQdpI70asf+bWeCU3eQTI2wEk8vqeG5Ktzvg==
-  dependencies:
-    flopmang "^1.0.0"
 
 grunt-known-options@~2.0.0:
   version "2.0.0"
@@ -4200,18 +4180,13 @@ unc-path-regex@^0.1.2:
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
   integrity sha1-5z3T17DXxe2G+6xrCufYxqadUPo=
 
-underscore.string@^3.3.5, underscore.string@~3.3.5:
+underscore.string@~3.3.5:
   version "3.3.6"
   resolved "https://registry.yarnpkg.com/underscore.string/-/underscore.string-3.3.6.tgz#ad8cf23d7423cb3b53b898476117588f4e2f9159"
   integrity sha512-VoC83HWXmCrF6rgkyxS9GHv8W9Q5nhMKho+OadDJGzL2oDYbYEppBaCMH6pFlwLeqj2QS+hhkw2kpXkSdD1JxQ==
   dependencies:
     sprintf-js "^1.1.1"
     util-deprecate "^1.0.2"
-
-underscore@^1.9.1:
-  version "1.13.3"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.3.tgz#54bc95f7648c5557897e5e968d0f76bc062c34ee"
-  integrity sha512-QvjkYpiD+dJJraRA8+dGAU4i7aBbb2s0S3jA45TFOvg2VgqvdCDd/3N6CqA8gluk1W91GLoXg5enMUx560QzuA==
 
 unidragger@^2.4.0:
   version "2.4.0"

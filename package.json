@@ -80,7 +80,7 @@
     "tv4": "1.3.0",
     "wicket": "1.3.8"
   },
-  "files": ["app", "views", "dist"],
+  "files": ["views", "dist"],
   "engines": {
     "node": ">=16.0",
     "npm": ">=8.19"

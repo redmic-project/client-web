@@ -127,10 +127,7 @@ function(
 
 			var logosContainer = put(this.leftContainer, 'div.gobcan-logos');
 
-			put(logosContainer, 'img[src=resources/images/logos/logo-gobcan-1.png]');
-			put(logosContainer, 'img[src=resources/images/logos/logo-gobcan-2.png]');
-			put(logosContainer, 'img[src=resources/images/logos/logo-gobcan-3.png]');
-			put(logosContainer, 'img[src=resources/images/logos/logo-gobcan-4.png]');
+			put(logosContainer, 'img[src=resources/images/logos/gobcan-logos.png]');
 		},
 
 		_checkDomainToAddMessage: function() {

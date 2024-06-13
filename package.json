@@ -1,9 +1,9 @@
 {
   "name": "@redmic-project/web",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "author": "REDMIC",
   "homepage": "https://gitlab.com/redmic-project/client/web/blob/master/README.md",
-  "description": "Integrated marine data repository of Canary Islands - Client",
+  "description": "REDMIC web application",
   "contributors": [
     {
       "name": "Pedro E. Trujillo Brito",

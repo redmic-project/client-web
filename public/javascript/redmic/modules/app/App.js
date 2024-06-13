@@ -107,6 +107,10 @@ define([
 
 		constructor: function(args) {
 
+			// TODO medida temporal de comienzo de migración de identidad
+			var currDomain = getGlobalContext().location.hostname,
+				ecomarcanDomainPattern = /.*ecomarcan\..+/;
+
 			this.config = {
 				ownChannel: this.rootChannel,
 				events: {
@@ -118,7 +122,8 @@ define([
 					CHANGE_MODULE: 'changeModule'
 				},
 
-				_reconnectTimeout: 10000
+				_reconnectTimeout: 10000,
+				_ecomarcan: ecomarcanDomainPattern.test(currDomain)
 			};
 
 			lang.mixin(this, this.config, args);
@@ -152,7 +157,8 @@ define([
 			});
 
 			new MetaTags({
-				parentChannel: parentChannel
+				parentChannel: parentChannel,
+				ecomarcan: this._ecomarcan
 			});
 
 			this._credentials = new Credentials({
@@ -365,7 +371,8 @@ define([
 			this._deleteLayout();
 
 			this._currLayoutInstance = new InnerApp({
-				parentChannel: this.getChannel()
+				parentChannel: this.getChannel(),
+				ecomarcan: this._ecomarcan
 			});
 
 			this._setCurrentLayout(this._currLayoutInstance);
@@ -383,7 +390,8 @@ define([
 			this._deleteLayout();
 
 			this._currLayoutInstance = new OuterApp({
-				parentChannel: this.getChannel()
+				parentChannel: this.getChannel(),
+				ecomarcan: this._ecomarcan
 			});
 
 			this._setCurrentLayout(this._currLayoutInstance);

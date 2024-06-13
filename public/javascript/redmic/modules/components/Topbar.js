@@ -36,9 +36,14 @@ define([
 
 				logoClass: 'topbarLogo',
 				logoHref: '/home',
-				logoImgSrc: '/resources/images/logos/logo.svg',
-				logoTextContent: 'REDMIC'
+				logoImgSrc: '/resources/images/logos/logo.svg'
 			};
+
+			if (args && args.ecomarcan) {
+				this.config.logoTextContent = 'ECOMARCAN';
+			} else {
+				this.config.logoTextContent = 'REDMIC';
+			}
 
 			lang.mixin(this, this.config, args);
 		},

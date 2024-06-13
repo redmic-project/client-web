@@ -6,7 +6,6 @@ define([
 	, 'dojo/_base/lang'
 	, 'redmic/modules/atlas/Atlas'
 	, 'redmic/modules/base/_Filter'
-	, "redmic/modules/base/_ShowInPopup"
 	, 'redmic/modules/browser/ListImpl'
 	, 'redmic/modules/browser/_ButtonsInRow'
 	, 'redmic/modules/browser/_GeoJsonParser'
@@ -28,7 +27,6 @@ define([
 	, lang
 	, Atlas
 	, _Filter
-	, _ShowInPopup
 	, ListImpl
 	, _ButtonsInRow
 	, _GeoJsonParser
@@ -217,10 +215,10 @@ define([
 				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup({
+			this._queryOnMap = new QueryOnMap({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel
+				getMapChannel: getMapChannel,
+				tabsDisplayerChannel: this._tabsDisplayer.getChannel()
 			});
 		}
 	});

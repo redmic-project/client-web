@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 	});
 
 	// Lee los ficheros con configuraciones para las tareas a ejecutar (propias o de terceros)
-	glob.sync('./grunt/config/*.js').forEach(function(file) {
+	glob.globSync('./grunt/config/*.js').forEach(function(file) {
 
 		require(path.resolve(file))(grunt);
 	});

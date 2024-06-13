@@ -1,8 +1,18 @@
-const packageJson = require('../package.json'),
-	version = process.env.VERSION || packageJson.version,
+let version;
 
-	params = require('./params')(version),
+try {
+	const fs = require('fs');
 
+	version = fs.readFileSync('/version', {
+		encoding: 'utf8'
+	}).trim();
+} catch (e) {
+	const packageJson = require('../package.json');
+
+	version = packageJson.version;
+}
+
+const params = require('./params')(version),
 	logging = require('./logging'),
 	logger = logging.logger;
 

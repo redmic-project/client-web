@@ -1,0 +1,9 @@
+services:
+  web:
+    image: ${IMAGE_NAME:-registry.gitlab.com/redmic-project/client/web}:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: ${DOCKERFILE:-build/Dockerfile}
+      args:
+        NODE_IMAGE_TAG:
+        VERSION:

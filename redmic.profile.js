@@ -552,7 +552,7 @@ var viewLayers = {
 	, 'app/edition/views/LoadDataToActivityEditionView': {}
 	, 'app/edition/views/LoadDataDocumentEditionView': {}
 
-	, 'app/dataLoader/citation/views/CitationView': {}
+	/*, 'app/dataLoader/citation/views/CitationView': {}
 	, 'app/dataLoader/surveyParameters/views/SurveyStationView': {}
 	, 'app/dataLoader/surveyParameters/views/ObjectCollectionView': {}
 	, 'app/dataLoader/surveyParameters/views/SurveyStationSeriesDataView': {}
@@ -561,7 +561,7 @@ var viewLayers = {
 	, 'app/dataLoader/tracking/views/TrackingDataView': {}
 	, 'app/dataLoader/infrastructure/views/InfrastructureView': {}
 	, 'app/dataLoader/infrastructure/views/InfrastructureAttributesView': {}
-	, 'app/dataLoader/areas/views/AreaView': {}
+	, 'app/dataLoader/areas/views/AreaView': {}*/
 };
 
 var viewLayerDefaultConfig = {

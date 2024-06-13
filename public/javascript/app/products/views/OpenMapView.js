@@ -6,7 +6,6 @@ define([
 	, "dojo/_base/lang"
 	, 'put-selector/put'
 	, "redmic/modules/atlas/Atlas"
-	, "redmic/modules/base/_ShowInPopup"
 	, 'redmic/modules/layout/TabsDisplayer'
 	, "redmic/modules/mapQuery/QueryOnMap"
 ], function(
@@ -17,7 +16,6 @@ define([
 	, lang
 	, put
 	, Atlas
-	, _ShowInPopup
 	, TabsDisplayer
 	, QueryOnMap
 ) {
@@ -60,19 +58,26 @@ define([
 
 		_initialize: function() {
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
-			this.atlasConfig.getMapChannel = getMapChannel;
-			this.queryOnMapConfig.getMapChannel = getMapChannel;
-
 			this._tabsDisplayer = new TabsDisplayer({
 				parentChannel: this.getChannel()
 			});
+
+			this._createAtlas();
+		},
+
+		_createAtlas: function() {
+
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this.atlasConfig.getMapChannel = getMapChannel;
 			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
 
 			this.atlas = new Atlas(this.atlasConfig);
 
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup(this.queryOnMapConfig);
+			this.queryOnMapConfig.getMapChannel = getMapChannel;
+			this.queryOnMapConfig.tabsDisplayerChannel = this._tabsDisplayer.getChannel();
+
+			this._queryOnMap = new QueryOnMap(this.queryOnMapConfig);
 		},
 
 		postCreate: function() {

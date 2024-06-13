@@ -8,7 +8,6 @@ define([
 	, "dojo/aspect"
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
-	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/browser/_ButtonsInRow"
@@ -31,7 +30,6 @@ define([
 	, aspect
 	, Atlas
 	, _Filter
-	, _ShowInPopup
 	, _Store
 	, Total
 	, _ButtonsInRow
@@ -203,10 +201,10 @@ define([
 				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup({
+			this._queryOnMap = new QueryOnMap({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel
+				getMapChannel: getMapChannel,
+				tabsDisplayerChannel: this._tabsDisplayer.getChannel()
 			});
 		},
 

@@ -119,7 +119,15 @@ function(
 			this.leftContainer = put(this.domNode, 'div.left');
 			this.rightContainer = put(this.domNode, 'div.right');
 
+			this._addGobCanLogos();
 			this._checkDomainToAddMessage();
+		},
+
+		_addGobCanLogos: function() {
+
+			var logosContainer = put(this.leftContainer, 'div.gobcan-logos');
+
+			put(logosContainer, 'img[src=/resources/images/logos/gobcan-logos.png]');
 		},
 
 		_checkDomainToAddMessage: function() {

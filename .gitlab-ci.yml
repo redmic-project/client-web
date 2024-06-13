@@ -4,13 +4,13 @@ include:
     file: '/scanning/dependency-scanning.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
-    file: '/packaging.yml'
+    file: '/packaging-docker/docker-build.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
-    file: '/deployment.yml'
+    file: '/deployment-service/docker-deploy.yml'
   - project: 'redmic-project/gitlab-ci-templates'
     ref: master
-    file: '/deployment-custom-image.yml'
+    file: '/deployment-service/custom-image.yml'
   - local: '/.gitlab-ci.scan.yml'
   - local: '/.gitlab-ci.test.yml'
   - local: '/.gitlab-ci.build.yml'

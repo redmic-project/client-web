@@ -1,13 +1,6 @@
-version: '3.9'
-
 services:
   web:
     image: ${IMAGE_NAME:-registry.gitlab.com/redmic-project/client/web}:${IMAGE_TAG:-latest}
-    build:
-      context: ..
-      dockerfile: ${DOCKERFILE:-Dockerfile}
-      args:
-        NODE_IMAGE_TAG:
     environment:
       OAUTH_URL:
       OAUTH_CLIENT_ID:
@@ -17,11 +10,12 @@ services:
       SITEMAP_URL:
       PRERENDER_URL:
       PRERENDER_PROTOCOL:
-      VERSION:
     networks:
       traefik-net:
       metric-net:
       prerender-net:
+    healthcheck:
+      disable: ${HEALTHCHECK_DISABLE:-false}
     deploy:
       mode: replicated
       replicas: ${REPLICAS:-1}
@@ -35,11 +29,11 @@ services:
         traefik.http.middlewares.redmic-web-error-5xx.errors.query: ${TRAEFIK_ERROR_5XX_QUERY:-/web-5xx/}
 
         traefik.http.routers.redmic-web.entrypoints: ${TRAEFIK_ENTRYPOINT}
-        traefik.http.routers.redmic-web.rule: Host(`${PUBLIC_HOSTNAME}`)
+        traefik.http.routers.redmic-web.rule: Host(`${PUBLIC_HOSTNAME}`, `${ALT_TRAEFIK_DOMAIN}`)
         traefik.http.routers.redmic-web.middlewares: redmic-web-error-5xx
 
         traefik.http.routers.redmic-web-es.entrypoints: ${TRAEFIK_ENTRYPOINT}
-        traefik.http.routers.redmic-web-es.rule: Host(`es.${PUBLIC_HOSTNAME}`)
+        traefik.http.routers.redmic-web-es.rule: Host(`es.${PUBLIC_HOSTNAME}`, `es.${ALT_TRAEFIK_DOMAIN}`)
         traefik.http.middlewares.redmic-web-es-regex.redirectregex.regex: ^(.*):\/\/\w+\.(.*)$$
         traefik.http.middlewares.redmic-web-es-regex.redirectregex.replacement: $${1}://$${2}
         traefik.http.middlewares.redmic-web-es-regex.redirectregex.permanent: 'true'
@@ -47,7 +41,7 @@ services:
         traefik.http.routers.redmic-web-es.service: noop@internal
 
         traefik.http.routers.redmic-web-en.entrypoints: ${TRAEFIK_ENTRYPOINT}
-        traefik.http.routers.redmic-web-en.rule: Host(`en.${PUBLIC_HOSTNAME}`)
+        traefik.http.routers.redmic-web-en.rule: Host(`en.${PUBLIC_HOSTNAME}`, `en.${ALT_TRAEFIK_DOMAIN}`)
         traefik.http.middlewares.add-en-language-header.headers.customrequestheaders.content-language: en
         traefik.http.routers.redmic-web-en.middlewares: add-en-language-header, redmic-web-error-5xx
       restart_policy:

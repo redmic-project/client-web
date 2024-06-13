@@ -11,7 +11,6 @@ define([
 	, "RWidgets/Utilities"
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
-	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
 	, "redmic/modules/browser/_Select"
@@ -49,7 +48,6 @@ define([
 	, Utilities
 	, Atlas
 	, _Filter
-	, _ShowInPopup
 	, _ButtonsInRow
 	, _Framework
 	, _Select
@@ -371,10 +369,10 @@ define([
 				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup({
+			this._queryOnMap = new QueryOnMap({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel
+				getMapChannel: getMapChannel,
+				tabsDisplayerChannel: this._tabsDisplayer.getChannel()
 			});
 		},
 

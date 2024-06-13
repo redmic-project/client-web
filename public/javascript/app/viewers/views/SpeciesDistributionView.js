@@ -12,7 +12,6 @@ define([
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Selection"
-	, "redmic/modules/base/_ShowInPopup"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/browser/ListImpl"
 	, "redmic/modules/browser/_ButtonsInRow"
@@ -54,7 +53,6 @@ define([
 	, Atlas
 	, _Filter
 	, _Selection
-	, _ShowInPopup
 	, _Store
 	, ListImpl
 	, _ButtonsInRow
@@ -320,9 +318,7 @@ define([
 			this.atlasConfig.getMapChannel = getMapChannel;
 
 			this.queryOnMapConfig.getMapChannel = getMapChannel;
-
-			var QueryOnMapPopup = declare(QueryOnMap).extend(_ShowInPopup);
-			this._queryOnMap = new QueryOnMapPopup(this.queryOnMapConfig);
+			this.queryOnMapConfig.tabsDisplayerChannel = this._tabsDisplayer.getChannel();
 		},
 
 		_createSpeciesCatalog: function() {
@@ -809,6 +805,7 @@ define([
 		_createAtlas: function() {
 
 			this.atlas = new Atlas(this.atlasConfig);
+			this._queryOnMap = new QueryOnMap(this.queryOnMapConfig);
 		},
 
 		_inputsFilterSidebarContent: function(inputs) {

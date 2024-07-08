@@ -99,11 +99,6 @@ define([
 				bounds = newLayer.getBounds();
 			} else {
 				bounds = newLayer.getLatLng().toBounds(50);
-
-				// TODO borrar cuando autodetección de leaflet funcione (falta barra final)
-				newLayer.setIcon(new L.Icon.Default({
-					imagePath: '/javascript/leaflet/dist/images/'
-				}));
 			}
 
 			this._addMapLayer({

@@ -48,7 +48,7 @@ define([
 
 		_initialize: function() {
 
-			L.Icon.Default.imagePath = "/javascript/leaflet/dist/images";
+			L.Icon.Default.imagePath = "/javascript/leaflet/dist/images/";
 
 			this.mapParentNode = put("div.map");
 			this.mapNode = put(this.mapParentNode, "div.map");

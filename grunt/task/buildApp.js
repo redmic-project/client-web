@@ -45,12 +45,14 @@ module.exports = function(grunt) {
 					recursiveDirectoriesToClean = resourcesToClean.recursiveDirectories,
 					filesToClean = resourcesToClean.files,
 
-					keepFilesCmd = 'mv',
+					createDirectoriesToKeepFilesCmd = 'mkdir -p',
 					createDirectoriesToRestoreFilesCmd = 'mkdir -p',
+					keepFilesCmds = [],
 					restoreFilesCmds = [],
 					cleanDirectoriesCmd = 'rm -rf',
 					cleanRecursiveDirsCmd = 'find ' + destPath + ' -type d',
 					cleanFilesCmd = 'find ' + destPath + ' -type f',
+					temporalBasePath = path.join(destPath, '.temp'),
 					i;
 
 				for (i = 0; i < filesToKeep.length; i++) {
@@ -58,16 +60,23 @@ module.exports = function(grunt) {
 						fileName = path.basename(fileToKeep),
 						filePath = path.dirname(fileToKeep),
 						absoluteFileName = path.join(destPath, fileToKeep),
-						absoluteFilePath = path.join(destPath, filePath),
-						absoluteTemporalFileName = path.join(destPath, fileName),
-						restoreCmd = 'mv ' + absoluteTemporalFileName + ' ' + absoluteFilePath;
+						absoluteFilePath = path.join(destPath, filePath);
 
-					keepFilesCmd += ' ' + absoluteFileName;
 					createDirectoriesToRestoreFilesCmd += ' ' + absoluteFilePath;
 
+					var absoluteTemporalPath = path.join(temporalBasePath, i.toString(), filePath),
+						absoluteTemporalFileName = path.join(absoluteTemporalPath, fileName);
+
+					createDirectoriesToKeepFilesCmd += ' ' + absoluteTemporalPath;
+
+					var keepCmd = 'mv ' + absoluteFileName + ' ' + absoluteTemporalPath,
+						restoreCmd = 'mv ' + absoluteTemporalFileName + ' ' + absoluteFilePath;
+
+					keepFilesCmds.push(keepCmd);
 					restoreFilesCmds.push(restoreCmd);
 				}
-				keepFilesCmd += ' ' + destPath;
+
+				restoreFilesCmds.push('rm -r ' + temporalBasePath);
 
 				for (i = 0; i < directoriesToClean.length; i++) {
 					var directory = directoriesToClean[i];
@@ -97,7 +106,8 @@ module.exports = function(grunt) {
 
 				return [
 					'echo "\nCleaning build and debug resources from built application at ' + destPath + '\n"',
-					keepFilesCmd,
+					createDirectoriesToKeepFilesCmd,
+					keepFilesCmds.join('; '),
 					cleanDirectoriesCmd,
 					cleanRecursiveDirsCmd,
 					createDirectoriesToRestoreFilesCmd,

@@ -10,6 +10,10 @@ module.exports = function(grunt) {
 		stylesDistPath = stylesPath + '/dist',
 		distStylesSubPath = distPath + '/stylesheets',
 
+		leafletPath = '/javascript/leaflet/',
+		srcLeafletPath = publicPath + leafletPath,
+		distLeafletPath = distPath + leafletPath,
+
 		pdfjsPath = '/javascript/pdfjs/',
 		srcPdfjsPath = publicPath + pdfjsPath,
 		distPdfjsPath = distPath + pdfjsPath,
@@ -30,6 +34,14 @@ module.exports = function(grunt) {
 				cwd: stylesDistPath,
 				src: '**',
 				dest: distStylesSubPath,
+				expand: true
+			}]
+		},
+		leaflet: {
+			files: [{
+				cwd: srcLeafletPath,
+				src: ['dist/images/marker-*.png'],
+				dest: distLeafletPath,
 				expand: true
 			}]
 		},

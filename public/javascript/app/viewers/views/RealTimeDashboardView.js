@@ -7,6 +7,8 @@ define([
 	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, "dojo/Deferred"
+	, 'redmic/modules/base/_ExternalConfig'
 	, "redmic/modules/chart/ChartsContainer/_AngularAxisWithGridDrawing"
 	, "redmic/modules/chart/ChartsContainer/_InfoOnEmptyData"
 	, "redmic/modules/chart/ChartsContainer/_InfoOnMouseOver"
@@ -29,6 +31,8 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, Deferred
+	, _ExternalConfig
 	, _AngularAxisWithGridDrawing
 	, _InfoOnEmptyData
 	, _InfoOnMouseOver
@@ -42,8 +46,9 @@ define([
 	, RealTimeInfo
 	, SitePopupTemplate
 	, EmbeddedContentTemplate
-){
-	return declare([Layout, Controller, _Main, _AddBasicTitle], {
+) {
+
+	return declare([Layout, Controller, _Main, _AddBasicTitle, _ExternalConfig], {
 		//	summary:
 		//		Vista detalle de datos en tiempo real, dashboards.
 
@@ -58,568 +63,24 @@ define([
 				platformInfoTarget: 'platformInfo',
 				dashboardTarget: 'realTimeDashboard',
 
-				// TODO esta información provendrá de un servicio en el futuro, siguiendo este formato
-				_timeSeriesDashboardSettings: {
-					'839c02ed-dc2c-4b5e-9100-8c9d88542152': {
-						panels: [{
-							type: 'windRose',
-							query: {
-								terms: {
-									dataDefinition: {
-										direction: [19],
-										speed: [20]
-									}
-								}
-							}
-						}]
-					},
-					'27bad38e-ee75-4fdc-82c9-dfe3d421e677': {
-						panels: [{
-							type: 'windRose',
-							query: {
-								terms: {
-									dataDefinition: {
-										direction: [15],
-										speed: [18]
-									}
-								}
-							}
-						}]
-					},
-					"0c6fc82e-cb39-4668-b732-047b14ecdfc0": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												845
-											],
-											"speed": [
-												844
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"2d2b3b42-3223-4290-804c-cbffab6e9689": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												758
-											],
-											"speed": [
-												757
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"bbb1e80c-11f8-4dea-be8a-81fa190f4ec0": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												956
-											],
-											"speed": [
-												955
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"ab233bc3-bdb1-4396-a8d5-1b50915d42ab": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												836
-											],
-											"speed": [
-												835
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"7f9945f7-5691-4307-9b34-bdc39abadb6f": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												889
-											],
-											"speed": [
-												890
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"8adce85f-00c8-464a-b5e5-1baf1082dea0": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												912
-											],
-											"speed": [
-												911
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"63bb4ef8-8066-40b8-badb-9d596a3733d7": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												921
-											],
-											"speed": [
-												920
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"1fba2156-74e9-4fe4-a7a6-d9c346ab63ba": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												946
-											],
-											"speed": [
-												947
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"3b9faf21-826c-449a-aa21-d3f1030f847e": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												775
-											],
-											"speed": [
-												776
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"4451fe86-9b43-4df8-b2f9-88f8688a4072": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												753
-											],
-											"speed": [
-												752
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"146c5133-1e36-4088-8daf-7ebdc9d3d0c1": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												747
-											],
-											"speed": [
-												746
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"b4181ed9-f90f-454b-8d5e-e59481f645ea": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [],
-											"speed": []
-										}
-									}
-								}
-							}
-						]
-					},
-					"2a1d5746-e7c0-4847-afb1-37dfa106c5a9": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												764
-											],
-											"speed": [
-												763
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"d4ec21c5-a80d-48f3-9152-43cbc277217a": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												1043
-											],
-											"speed": [
-												1042
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"bbfa1aec-3c16-4bbb-8621-b1675bc2d1c1": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												770
-											],
-											"speed": [
-												769
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"c6539063-30ab-4aa1-8eff-f7f065da7232": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												899
-											],
-											"speed": [
-												898
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"17e04f7b-8295-4095-9488-d2b61408c0ae": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												1021
-											],
-											"speed": [
-												1020
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"2383c489-41e4-4037-bb45-d49fe4aebae2": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												1010
-											],
-											"speed": [
-												1009
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"8b9ffedc-a511-4e59-bf45-3dc5e2963832": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												967
-											],
-											"speed": [
-												966
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"72a17192-3a03-4564-ac2d-e163f81baf9e": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												976
-											],
-											"speed": [
-												975
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"45f4e3fd-264b-41a2-83c1-52f7a4a9ac5c": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												1034
-											],
-											"speed": [
-												1033
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"9d9cddc6-f0a6-4749-97a5-778daf4af95d": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												1058
-											],
-											"speed": [
-												1057
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"acfe67e6-de22-4d7c-9d48-377f3348b30e": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												1001
-											],
-											"speed": [
-												1000
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"27cea414-c9ee-446a-ad09-a98fab82d452": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												819
-											],
-											"speed": [
-												818
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"6c1a04d9-c538-4efc-98d3-924103a1f38b": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												870
-											],
-											"speed": [
-												869
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"f7738bec-9ea8-4f37-8afb-2b7a88de2a04": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												985
-											],
-											"speed": [
-												984
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"2fbab8eb-328d-45c1-b658-b6d4b451e271": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												930
-											],
-											"speed": [
-												929
-											]
-										}
-									}
-								}
-							}
-						]
-					},
-					"7a072033-a592-4a45-b8a9-ea2cd7bafa14": {
-						"panels": [
-							{
-								"type": "windRose",
-								"query": {
-									"terms": {
-										"dataDefinition": {
-											"direction": [
-												857
-											],
-											"speed": [
-												856
-											]
-										}
-									}
-								}
-							}
-						]
-					}
-				}
+				externalConfigPropName: 'timeSeriesDashboardSettings'
 			};
 
 			lang.mixin(this, this.config, args);
 
 			this.target = [this.timeSeriesStationsTarget, this.activityTarget];
+		},
+
+		_setOwnCallbacksForEvents: function() {
+
+			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
+		},
+
+		_onGotExternalConfig: function(evt) {
+
+			var configValue = evt[this.externalConfigPropName];
+
+			this._externalConfigDfd.resolve(configValue);
 		},
 
 		_setMainConfigurations: function() {
@@ -676,7 +137,13 @@ define([
 
 		postCreate: function() {
 
+			this._externalConfigDfd = new Deferred();
+
 			this.inherited(arguments);
+
+			this._emitEvt('GET_EXTERNAL_CONFIG', {
+				propertyName: this.externalConfigPropName
+			});
 		},
 
 		_refreshModules: function() {
@@ -726,7 +193,9 @@ define([
 
 			var measurementData = itemData.properties.measurements;
 
-			measurementData && this._manageMeasurementData(measurementData);
+			if (measurementData && this._externalConfigDfd) {
+				this._externalConfigDfd.then(lang.hitch(this, this._manageMeasurementData, measurementData));
+			}
 
 			var activityId = itemData.properties.activityId;
 
@@ -795,9 +264,9 @@ define([
 			});
 		},
 
-		_manageMeasurementData: function(data) {
+		_manageMeasurementData: function(data, externalConfigPropValue) {
 
-			var dashboardSettings = this._timeSeriesDashboardSettings[this.pathVariableId];
+			var dashboardSettings = externalConfigPropValue[this.pathVariableId];
 
 			var windRosePanelConfigs = dashboardSettings.panels.filter(function(panelConfig) {
 

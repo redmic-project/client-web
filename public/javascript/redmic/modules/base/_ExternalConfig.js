@@ -2,10 +2,12 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
+	, 'RWidgets/Utilities'
 ], function(
 	declare
 	, lang
 	, aspect
+	, Utilities
 ) {
 
 	return declare(null, {
@@ -97,7 +99,7 @@ define([
 
 			if (configProp) {
 				configToEmit = {};
-				configToEmit[configProp] = config[configProp];
+				configToEmit[configProp] = Utilities.getDeepProp(config, configProp);
 			} else {
 				configToEmit = config;
 			}

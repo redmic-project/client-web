@@ -21,6 +21,9 @@ dojoConfig = {
 		name: 'redmic',
 		location: '../redmic'
 	},{
+		name: 'src',
+		location: '../src'
+	},{
 		name: 'dropzone',
 		location: '../dropzone/dist/min'
 	},{

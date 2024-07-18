@@ -32,16 +32,16 @@ define([
 		_setMainConfigurations: function() {
 
 			this.widgetConfigs = this._merge([{
-				info: this._infoConfig({
+				info: this._getInfoConfig({
 					template: TemplateInfo
 				}),
-				additionalInfo: this._setAdditionalConfig(this.i18n.activities, TemplateActivities,
+				childActivitiesOrProjects: this._getChildActivitiesOrProjectsConfig(this.i18n.activities, TemplateActivities,
 					this.viewPathsWidgets.activities
 				),
-				organisationList: this._organisationsConfig(),
-				platformList: this._platformsConfig(),
-				contactList: this._contactsConfig(),
-				documentList: this._documentsConfig()
+				organisationList: this._getOrganisationsConfig(),
+				platformList: this._getPlatformsConfig(),
+				contactList: this._getContactsConfig(),
+				documentList: this._getDocumentsConfig()
 			}, this.widgetConfigs || {}]);
 		}
 	});

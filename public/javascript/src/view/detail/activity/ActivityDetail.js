@@ -1,74 +1,66 @@
 define([
 	'app/redmicConfig'
+	, 'app/designs/details/main/_ActivityBase'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/map/_ImportWkt'
-	, 'redmic/modules/map/LeafletImpl'
+	, 'redmic/modules/base/_ExternalConfig'
+	, 'src/view/detail/activity/_ActivityLayoutWidget'
 	, 'templates/ActivityInfo'
-	, './_ActivityBase'
-	, './_ActivityCategoryWidgets'
 ], function(
 	redmicConfig
+	, _ActivityBase
 	, declare
 	, lang
-	, _ImportWkt
-	, LeafletImpl
+	, _ExternalConfig
+	, _ActivityLayoutWidget
 	, TemplateInfo
-	, _ActivityBase
-	, _ActivityCategoryWidgets
 ) {
 
-	return declare([_ActivityBase, _ActivityCategoryWidgets], {
+	return declare([_ActivityBase, _ActivityLayoutWidget, _ExternalConfig], {
 		//	summary:
-		//		Vista detalle de Activity.
+		//		Layout para detalle de actividad con metadatos.
 
 		constructor: function(args) {
 
-			this.target = redmicConfig.services.activity;
-			this.reportService = 'activity';
-			this.ancestorsTarget = redmicConfig.services.activityAncestors;
+			this.config = {
+				target: redmicConfig.services.activity,
+				reportService: 'activity',
+				ancestorsTarget: redmicConfig.services.activityAncestors,
+				infoTarget: 'infoWidgetTarget',
+				externalConfigPropName: 'detailLayouts.activity'
+			};
 
-			this.infoTarget = 'infoWidgetTarget';
+			lang.mixin(this, this.config, args);
 		},
 
 		_setMainConfigurations: function() {
 
 			this.widgetConfigs = this._merge([{
-				info: this._infoConfig({
+				info: this._getInfoConfig({
 					height: 4,
 					template: TemplateInfo
 				}),
-				spatialExtensionMap: {
-					width: 3,
-					height: 2,
-					hidden: true,
-					type: declare([LeafletImpl, _ImportWkt]),
-					props: {
-						title: this.i18n.spatialExtension,
-						omitContainerSizeCheck: true,
-						maxZoom: 15,
-						coordinatesViewer: false,
-						navBar: false,
-						miniMap: false,
-						scaleBar: false,
-						measureTools: false
-					}
-				},
-				organisationList: this._organisationsConfig(),
-				platformList: this._platformsConfig(),
-				contactList: this._contactsConfig(),
-				documentList: this._documentsConfig()
+				spatialExtensionMap: this._getSpatialExtensionMapConfig(),
+				organisationList: this._getOrganisationsConfig(),
+				platformList: this._getPlatformsConfig(),
+				contactList: this._getContactsConfig(),
+				documentList: this._getDocumentsConfig()
 			}, this.widgetConfigs || {}]);
 		},
 
 		_setMainOwnCallbacksForEvents: function() {
 
+			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onActivityDetailsHidden));
 		},
 
-		_refreshModules: function() {
+		_onGotExternalConfig: function(evt) {
 
-			this.inherited(arguments);
+			var configValue = evt[this.externalConfigPropName];
+
+			this._publish(this.getChannel('SET_PROPS'), {
+				detailLayouts: configValue
+			});
 		},
 
 		_itemAvailable: function(res) {
@@ -95,7 +87,12 @@ define([
 			});
 
 			this._prepareSpatialExtension();
-			this._prepareActivityCategoryCustomWidgets();
+
+			this._emitEvt('GET_EXTERNAL_CONFIG', {
+				propertyName: this.externalConfigPropName
+			});
+
+			this._prepareCustomWidgets();
 
 			this.inherited(arguments);
 		},
@@ -155,7 +152,7 @@ define([
 
 			this._hideWidget('spatialExtensionMap');
 
-			this._removeActivityCategoryCustomWidgets();
+			this._removeCustomWidgets();
 		}
 	});
 });

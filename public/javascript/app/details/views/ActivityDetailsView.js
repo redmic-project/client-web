@@ -1,14 +1,14 @@
 define([
-	'app/designs/details/main/Activity'
-	, 'app/redmicConfig'
+	'app/redmicConfig'
 	, 'dojo/_base/declare'
+	, 'src/view/detail/activity/ActivityDetail'
 ], function(
-	Activity
-	, redmicConfig
+	redmicConfig
 	, declare
+	, ActivityDetail
 ) {
 
-	return declare(Activity, {
+	return declare(ActivityDetail, {
 		//	summary:
 		//
 

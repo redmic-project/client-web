@@ -38,13 +38,13 @@ define([
 		_setMainConfigurations: function() {
 
 			this.widgetConfigs = this._merge([{
-				contactList: this._contactsConfig()
+				contactList: this._getContactsConfig()
 			}, this.widgetConfigs || {}]);
 
 			this.inherited(arguments);
 		},
 
-		_contactsConfig: function() {
+		_getContactsConfig: function() {
 
 			return {
 				width: 3,

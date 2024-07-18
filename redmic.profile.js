@@ -146,6 +146,12 @@ var profileObj = {
 			amd: amdTagger
 		}
 	},{
+		name: 'src',
+		location: 'src',
+		resourceTags: {
+			amd: amdTagger
+		}
+	},{
 		name: 'mediatorjs',
 		location: 'mediatorjs',
 		resourceTags: {

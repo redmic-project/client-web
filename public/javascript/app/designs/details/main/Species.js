@@ -4,9 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/browser/bars/Total"
-	, "templates/DocumentList"
+	, 'src/view/detail/_WidgetDefinition'
 	, "templates/LoadingCustom"
 	, "templates/SpeciesInfo"
 	, "templates/SpeciesTitle"
@@ -18,9 +16,7 @@ define([
 	, lang
 	, _ButtonsInRow
 	, _Framework
-	, ListImpl
-	, Total
-	, TemplateDocuments
+	, _WidgetDefinition
 	, TemplateCustom
 	, TemplateInfo
 	, TemplateTitle
@@ -28,7 +24,7 @@ define([
 	, SpeciesLocation
 ) {
 
-	return declare([_DetailsBase], {
+	return declare([_DetailsBase, _WidgetDefinition], {
 		//	summary:
 		//		Vista detalle de especies.
 
@@ -62,6 +58,18 @@ define([
 				target: this.titleWidgetTarget
 			}, this.titleWidgetConfig || {}]);
 
+			var documentListConfig = this._merge([
+				this._getDocumentsConfig(),
+				{
+					props: {
+						noDataMessage: TemplateCustom({
+							message: this.i18n.noAssociatedDocuments,
+							iconClass: "fr fr-no-data"
+						})
+					}
+				}
+			]);
+
 			this.widgetConfigs = this._merge([
 				this.widgetConfigs || {},
 				{
@@ -74,7 +82,7 @@ define([
 					activityList: {
 						height: 3
 					},
-					documentList: this._documentsConfig(),
+					documentList: documentListConfig,
 					map: {
 						width: 6,
 						height: 4,
@@ -86,43 +94,6 @@ define([
 					}
 				}
 			]);
-		},
-
-		_documentsConfig: function() {
-
-			return {
-				width: 3,
-				height: 2,
-				type: declare([ListImpl, _Framework, _ButtonsInRow]),
-				props: {
-					title: this.i18n.documents,
-					target: this.documentTarget,
-					template: TemplateDocuments,
-					bars: [{
-						instance: Total
-					}],
-					rowConfig: {
-						buttonsConfig: {
-							listButton: [{
-								icon: "fa-file-pdf-o",
-								btnId: "downloadPdf",
-								title: this.i18n.download,
-								condition: "url",
-								href: redmicConfig.viewPaths.bibliographyDetails
-							},{
-								icon: "fa-info-circle",
-								btnId: "details",
-								title: this.i18n.info,
-								href: this.viewPathsWidgets.documents
-							}]
-						}
-					},
-					noDataMessage: TemplateCustom({
-						message: this.i18n.noAssociatedDocuments,
-						iconClass: "fr fr-no-data"
-					})
-				}
-			};
 		},
 
 		_clearModules: function() {

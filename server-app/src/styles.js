@@ -24,7 +24,7 @@ function compileStylus(str, filePath) {
 
 function generateStylesheets(app) {
 
-	const stylesParentPath = path.join(__dirname, '../..', 'public');
+	const stylesParentPath = path.join(__dirname, '../..', 'client-app');
 
 	app.use(stylus.middleware({
 		src: stylesParentPath,

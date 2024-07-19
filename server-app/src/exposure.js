@@ -129,7 +129,7 @@ function expose(app) {
 		exposeContents(app, 'dist');
 	} else {
 		require('./styles')(app);
-		exposeContents(app, 'public');
+		exposeContents(app, 'client-app');
 		exposeContents(app, 'node_modules');
 	}
 

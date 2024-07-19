@@ -1,10 +1,10 @@
-[submodule "public/stylesheets"]
-	path = public/stylesheets
+[submodule "client-app/stylesheets"]
+	path = client-app/stylesheets
 	url = ../style.git
 	branch = master
 	ignore = dirty
-[submodule "public/javascript/templates"]
-	path = public/javascript/templates
+[submodule "client-app/javascript/templates"]
+	path = client-app/javascript/templates
 	url = ../templates.git
 	branch = master
 	ignore = dirty

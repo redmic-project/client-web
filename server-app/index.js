@@ -7,13 +7,13 @@ try {
 		encoding: 'utf8'
 	}).trim();
 } catch (e) {
-	const packageJson = require('../../package.json');
+	const packageJson = require('../package.json');
 
 	version = packageJson.version;
 }
 
-const params = require('./params')(version),
-	logging = require('./logging'),
+const params = require('./src/params')(version),
+	logging = require('./src/logging'),
 	logger = logging.logger;
 
 let cluster;
@@ -37,9 +37,9 @@ if (cluster && cluster.isMaster) {
 	const express = require('express'),
 		http = require('http'),
 
-		metrics = require('./metrics')(logger, '/metrics'),
-		prerender = require('./prerender')(logger),
-		exposure = require('./exposure')(logger, params, version),
+		metrics = require('./src/metrics')(logger, '/metrics'),
+		prerender = require('./src/prerender')(logger),
+		exposure = require('./src/exposure')(logger, params, version),
 
 		port = params.port,
 		debug = params.debug,

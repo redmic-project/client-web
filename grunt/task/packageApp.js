@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 			},
 			command: [
 				'version=$(node -p "require(\'./package.json\').version")',
-				'tar -acf dist-v$version.tar.gz dist/ views/ app/ package.json yarn.lock README.md LICENSE'
+				'tar -acf dist-v$version.tar.gz dist/ server-app/ package.json yarn.lock README.md LICENSE'
 			].join('; ')
 		});
 

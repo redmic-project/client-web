@@ -4,6 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "templates/ProjectInfo"
 	, "templates/ProjectList"
+	, 'src/view/detail/_WidgetDefinition'
 	, "./_ActivityBase"
 ], function(
 	redmicConfig
@@ -11,9 +12,10 @@ define([
 	, lang
 	, TemplateInfo
 	, TemplateProjects
+	, _WidgetDefinition
 	, _ActivityBase
 ){
-	return declare([_ActivityBase], {
+	return declare([_ActivityBase, _WidgetDefinition], {
 		//	summary:
 		//		Vista detalle de Program.
 

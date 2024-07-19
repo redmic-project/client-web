@@ -7,7 +7,7 @@ try {
 		encoding: 'utf8'
 	}).trim();
 } catch (e) {
-	const packageJson = require('../package.json');
+	const packageJson = require('../../package.json');
 
 	version = packageJson.version;
 }

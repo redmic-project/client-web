@@ -20,7 +20,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node server-app/src"
   },
   "dependencies": {
     "commander": "11.1.0",
@@ -85,7 +85,7 @@
     "node": ">=16.0",
     "npm": ">=8.19"
   },
-  "main": "app",
+  "main": "server-app/src",
   "license": "AGPL-3.0-or-later",
   "dojoBuild": "redmic.profile.js"
 }

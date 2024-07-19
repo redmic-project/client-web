@@ -3,34 +3,22 @@ define([
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
 	, "app/designs/details/_AddTitle"
-	, "app/redmicConfig"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/_ButtonsInRow"
-	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
+	, 'src/view/detail/_WidgetDefinition'
 	, "templates/ActivityList"
 ], function(
 	_Main
 	, Controller
 	, Layout
 	, _AddTitle
-	, redmicConfig
 	, declare
 	, lang
-	, _ButtonsInRow
-	, _Framework
-	, _Select
-	, ListImpl
-	, Total
-	, TemplateDisplayer
+	, _WidgetDefinition
 	, TemplateActivities
 ) {
 
-	return declare([Layout, Controller, _Main, _AddTitle], {
+	return declare([Layout, Controller, _Main, _AddTitle, _WidgetDefinition], {
 		//	summary:
 		//		Base de vistas detalle.
 
@@ -52,50 +40,17 @@ define([
 			}
 
 			this.widgetConfigs = this._merge([{
-				info: {
-					width: 3,
-					height: 6,
-					type: TemplateDisplayer,
-					props: {
-						title: this.i18n.info,
-						template: this.templateInfo,
-						"class": "containerDetails",
-						classEmptyTemplate: "contentListNoData",
-						target: this.target[0],
-						associatedIds: [this.ownChannel],
-						shownOption: this.shownOptionInfo
-					}
-				},
-				activityList: this._configAdditionalInfoActivity()
-			}, this.widgetConfigs || {}]);
-		},
-
-		_configAdditionalInfoActivity: function() {
-
-			return {
-				type: declare([ListImpl, _Framework, _ButtonsInRow, _Select]),
-				width: 3,
-				height: 2,
-				props: {
+				info: this._getInfoConfig({
+					template: this.templateInfo,
+					target: this.target[0]
+				}),
+				activityList: this._getActivitiesOrProjectsConfig({
 					title: this.i18n.activities,
-					selectionTarget: redmicConfig.services.activity,
 					target: this.activityTarget,
 					template: TemplateActivities,
-					bars: [{
-						instance: Total
-					}],
-					rowConfig: {
-						buttonsConfig: {
-							listButton: [{
-								icon: "fa-info-circle",
-								btnId: "details",
-								title: this.i18n.info,
-								href: this.viewPathsWidgets.activities
-							}]
-						}
-					}
-				}
-			};
+					href: this.viewPathsWidgets.activities
+				})
+			}, this.widgetConfigs || {}]);
 		},
 
 		_clearModules: function() {

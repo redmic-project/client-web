@@ -4,7 +4,6 @@ define([
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_Framework"
-	, 'src/view/detail/_WidgetDefinition'
 	, "templates/LoadingCustom"
 	, "templates/SpeciesInfo"
 	, "templates/SpeciesTitle"
@@ -16,7 +15,6 @@ define([
 	, lang
 	, _ButtonsInRow
 	, _Framework
-	, _WidgetDefinition
 	, TemplateCustom
 	, TemplateInfo
 	, TemplateTitle
@@ -24,7 +22,7 @@ define([
 	, SpeciesLocation
 ) {
 
-	return declare([_DetailsBase, _WidgetDefinition], {
+	return declare([_DetailsBase], {
 		//	summary:
 		//		Vista detalle de especies.
 

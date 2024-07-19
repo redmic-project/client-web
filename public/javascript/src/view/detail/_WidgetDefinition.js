@@ -9,6 +9,7 @@ define([
 	, 'app/details/views/ActivityLayerMapBase'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'redmic/base/Credentials'
 	, 'redmic/modules/base/_Filter'
 	, 'redmic/modules/browser/_ButtonsInRow'
 	, 'redmic/modules/browser/_Framework'
@@ -34,6 +35,7 @@ define([
 	, ActivityLayerMapBase
 	, declare
 	, lang
+	, Credentials
 	, _Filter
 	, _ButtonsInRow
 	, _Framework
@@ -66,7 +68,7 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_getOrganisationsConfig: function() {
+		_getOrganisationsConfig: function(config) {
 
 			return {
 				width: 3,
@@ -94,7 +96,7 @@ define([
 			};
 		},
 
-		_getPlatformsConfig: function() {
+		_getPlatformsConfig: function(config) {
 
 			return {
 				width: 3,
@@ -122,7 +124,7 @@ define([
 			};
 		},
 
-		_getContactsConfig: function() {
+		_getContactsConfig: function(config) {
 
 			return {
 				width: 3,
@@ -139,7 +141,7 @@ define([
 			};
 		},
 
-		_getDocumentsConfig: function() {
+		_getDocumentsConfig: function(config) {
 
 			return {
 				width: 3,
@@ -172,27 +174,38 @@ define([
 			};
 		},
 
-		_getChildActivitiesOrProjectsConfig: function(title, template, href) {
+		_getActivitiesOrProjectsConfig: function(config) {
 
 			return {
 				width: 3,
 				height: 2,
 				type: declare([ListImpl, _Framework, _ButtonsInRow, _Filter]),
 				props: {
-					title: title,
+					title: config.title,
 					bars: [{
 						instance: Total
 					},{
 						instance: Pagination
 					}],
-					template: template,
+					target: config.target,
+					template: config.template,
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.info,
-								href: href
+								href: config.href,
+								condition: function(item) {
+
+									var accessibilityId = item && item.accessibility && item.accessibility.id,
+										browseableAccesibilities = [2], // libre
+										accessibilityIsBrowseable = accessibilityId &&
+											browseableAccesibilities.indexOf(accessibilityId) !== -1,
+										userRoleIsAdmin = Credentials.get('userRole') === 'ROLE_ADMINISTRATOR';
+
+									return accessibilityIsBrowseable || userRoleIsAdmin;
+								}
 							}]
 						}
 					}
@@ -200,25 +213,25 @@ define([
 			};
 		},
 
-		_getInfoConfig: function(obj) {
+		_getInfoConfig: function(config) {
 
 			return {
-				width: obj.width || 3,
-				height: obj.height || 6,
+				width: config.width || 3,
+				height: config.height || 6,
 				type: TemplateDisplayer,
 				props: {
 					title: this.i18n.info,
-					template: obj.template,
+					template: config.template,
 					'class': 'containerDetails',
 					classEmptyTemplate: 'contentListNoData',
-					target: this.infoTarget || this.target,
+					target: config.target || this.infoTarget || this.target,
 					associatedIds: [this.ownChannel],
 					shownOption: this.shownOptionInfo
 				}
 			};
 		},
 
-		_getSpatialExtensionMapConfig: function(obj) {
+		_getSpatialExtensionMapConfig: function(config) {
 
 			return {
 				width: 3,
@@ -238,7 +251,7 @@ define([
 			};
 		},
 
-		_getActivityCitationConfig: function() {
+		_getActivityCitationConfig: function(config) {
 
 			return {
 				width: 6,
@@ -251,7 +264,7 @@ define([
 			};
 		},
 
-		_getActivityMapLayerConfig: function() {
+		_getActivityMapLayerConfig: function(config) {
 
 			return {
 				width: 6,
@@ -264,7 +277,7 @@ define([
 			};
 		},
 
-		_getActivityTrackingConfig: function() {
+		_getActivityTrackingConfig: function(config) {
 
 			return {
 				width: 6,
@@ -277,7 +290,7 @@ define([
 			};
 		},
 
-		_getActivityInfrastructureConfig: function() {
+		_getActivityInfrastructureConfig: function(config) {
 
 			return {
 				width: 6,
@@ -290,7 +303,7 @@ define([
 			};
 		},
 
-		_getActivityAreaConfig: function() {
+		_getActivityAreaConfig: function(config) {
 
 			return {
 				width: 6,
@@ -303,7 +316,7 @@ define([
 			};
 		},
 
-		_getActivityFixedTimeseriesMapConfig: function() {
+		_getActivityFixedTimeseriesMapConfig: function(config) {
 
 			return {
 				width: 6,

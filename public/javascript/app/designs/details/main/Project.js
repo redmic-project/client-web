@@ -37,9 +37,11 @@ define([
 				info: this._getInfoConfig({
 					template: TemplateInfo
 				}),
-				childActivitiesOrProjects: this._getChildActivitiesOrProjectsConfig(this.i18n.activities, TemplateActivities,
-					this.viewPathsWidgets.activities
-				),
+				childActivitiesOrProjects: this._getActivitiesOrProjectsConfig({
+					title: this.i18n.activities,
+					template: TemplateActivities,
+					href: this.viewPathsWidgets.activities
+				}),
 				organisationList: this._getOrganisationsConfig(),
 				platformList: this._getPlatformsConfig(),
 				contactList: this._getContactsConfig(),

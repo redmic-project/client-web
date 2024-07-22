@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
-	var srcPath = grunt.config('redmicConfig.srcPath');
+	var srcPath = grunt.config('redmicConfig.srcPath'),
+		testPath = grunt.config('redmicConfig.testPath');
 
 	grunt.config('jshint', {
 		src: {
@@ -16,13 +17,13 @@ module.exports = function(grunt) {
 				]
 			}
 		},
-		tests: {
+		test: {
 			options: {
 				esversion: 6,
-				ignores: ['tests/sockTest/*.js']
+				ignores: [testPath + '/sockTest/*.js']
 			},
 			files: {
-				src: ['tests/**/*.js']
+				src: [testPath + '/**/*.js']
 			}
 		},
 		options: {

@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 
 			rootPath = grunt.config('redmicConfig.rootPath'),
 			srcPath = grunt.config('redmicConfig.srcPath'),
-			testsPath = 'client-app/tests',
+			testPath = grunt.config('redmicConfig.testPath'),
 			outputPath = 'test_reports',
 
 			ownServerHost = grunt.option('ownServerHost') || '',
@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 
 			configPath = path.join(rootPath, outputPath, configDirName),
 			reportersOutputPath = path.join(rootPath, outputPath, currOutputDirName),
-			absoluteTestsPath = path.join(rootPath, testsPath),
+			absoluteTestsPath = path.join(rootPath, testPath),
 			userDataDir = outputPath + '/' + configDirName;
 
 		grunt.file['delete'](configPath);
@@ -93,7 +93,7 @@ module.exports = function(grunt) {
 
 			testParams = {
 				srcPath: srcPath,
-				testsPath: testsPath,
+				testsPath: testPath,
 				ownServerPort: ownServerPort,
 				ownSocketPort: ownSocketPort,
 				ownTunnelPort: ownTunnelPort,

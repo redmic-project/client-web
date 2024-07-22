@@ -3,8 +3,8 @@
 	url = ../style.git
 	branch = master
 	ignore = dirty
-[submodule "client-app/javascript/templates"]
-	path = client-app/javascript/templates
+[submodule "client-app/deps/templates"]
+	path = client-app/deps/templates
 	url = ../templates.git
 	branch = master
 	ignore = dirty

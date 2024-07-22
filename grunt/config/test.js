@@ -48,8 +48,7 @@ module.exports = function(grunt) {
 
 		if (!coverage && coverage === undefined) {
 			coverage = [
-				path.join(srcPath, 'app', '**', '*.js'),
-				path.join(srcPath, 'redmic', '**', '*.js')
+				path.join(srcPath, '**', '*.js')
 			];
 		}
 

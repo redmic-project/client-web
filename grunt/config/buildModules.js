@@ -3,14 +3,14 @@ module.exports = function(grunt) {
 	var preBuildCmds = ['yarn install'];
 
 	grunt.config('redmicConfig.buildModules', {
-		'client-app/javascript/pruneCluster': [
+		'client-app/deps/pruneCluster': [
 			'npm install',
 			'grunt build:dist --force'
 		],
-		'client-app/javascript/wicket': [
+		'client-app/deps/wicket': [
 			'npm run build'
 		],
-		'client-app/javascript/templates': preBuildCmds.concat([
+		'client-app/deps/templates': preBuildCmds.concat([
 			'grunt'
 		]),
 		'client-app/stylesheets': preBuildCmds.concat([

@@ -9,8 +9,7 @@ module.exports = function(grunt) {
 			},
 			files: {
 				src: [
-					srcPath + '/app/**/*.js'
-					, srcPath + '/redmic/**/*.js'
+					srcPath + '/**/*.js'
 					, 'server-app/**/*.js'
 					, 'grunt/**/*.js'
 					, '*.js'

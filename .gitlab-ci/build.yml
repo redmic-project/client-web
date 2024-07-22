@@ -10,7 +10,7 @@
   cache:
     paths:
       - node_modules/
-      - client-app/javascript/templates/node_modules/
+      - client-app/deps/templates/node_modules/
       - client-app/stylesheets/node_modules/
 
 prepare-unbuilt-version:
@@ -26,7 +26,7 @@ prepare-unbuilt-version:
     expire_in: 1 week
     paths:
       - node_modules/
-      - client-app/javascript/templates/dist/
+      - client-app/deps/templates/dist/
       - client-app/stylesheets/style.styl
       - client-app/stylesheets/src/
       - client-app/stylesheets/submodules/

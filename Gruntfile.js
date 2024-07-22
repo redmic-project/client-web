@@ -12,7 +12,8 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		redmicConfig: {
 			rootPath: __dirname,
-			srcPath: 'client-app/javascript',
+			srcPath: 'client-app/src',
+			depsPath: 'client-app/deps',
 			distPath: 'dist',
 			destDir: 'javascript'
 		},

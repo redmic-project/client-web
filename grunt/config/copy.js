@@ -10,11 +10,11 @@ module.exports = function(grunt) {
 		stylesDistPath = stylesPath + '/dist',
 		distStylesSubPath = distPath + '/stylesheets',
 
-		leafletPath = '/javascript/leaflet/',
+		leafletPath = '/deps/leaflet/',
 		srcLeafletPath = publicPath + leafletPath,
 		distLeafletPath = distPath + leafletPath,
 
-		pdfjsPath = '/javascript/pdfjs/',
+		pdfjsPath = '/deps/pdfjs/',
 		srcPdfjsPath = publicPath + pdfjsPath,
 		distPdfjsPath = distPath + pdfjsPath,
 		pdfjsWebName = 'web',

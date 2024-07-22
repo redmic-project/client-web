@@ -10,8 +10,8 @@
   cache:
     paths:
       - node_modules/
-      - public/javascript/templates/node_modules/
-      - public/stylesheets/node_modules/
+      - client-app/javascript/templates/node_modules/
+      - client-app/stylesheets/node_modules/
 
 prepare-unbuilt-version:
   extends: .web-build
@@ -26,10 +26,10 @@ prepare-unbuilt-version:
     expire_in: 1 week
     paths:
       - node_modules/
-      - public/javascript/templates/dist/
-      - public/stylesheets/style.styl
-      - public/stylesheets/src/
-      - public/stylesheets/submodules/
+      - client-app/javascript/templates/dist/
+      - client-app/stylesheets/style.styl
+      - client-app/stylesheets/src/
+      - client-app/stylesheets/submodules/
   rules:
     - if: $CI_MERGE_REQUEST_ID ||
           $CI_COMMIT_TAG ||

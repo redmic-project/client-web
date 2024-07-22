@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 
 			rootPath = grunt.config('redmicConfig.rootPath'),
 			srcPath = grunt.config('redmicConfig.srcPath'),
-			testsPath = 'tests',
+			testsPath = 'client-app/tests',
 			outputPath = 'test_reports',
 
 			ownServerHost = grunt.option('ownServerHost') || '',

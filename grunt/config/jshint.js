@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 				src: [
 					srcPath + '/app/**/*.js'
 					, srcPath + '/redmic/**/*.js'
-					, 'app/**/*.js'
+					, 'server-app/**/*.js'
 					, 'grunt/**/*.js'
 					, '*.js'
 				]

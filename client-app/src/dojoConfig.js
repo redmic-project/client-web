@@ -10,7 +10,7 @@ dojoConfig = {
 		location: '../dojox'
 	},{
 		name: 'app',
-		location: '../app'
+		location: '../../src/app'
 	},{
 		name: 'put-selector',
 		location: '../put-selector'
@@ -19,10 +19,10 @@ dojoConfig = {
 		location: '../alertify/build'
 	},{
 		name: 'redmic',
-		location: '../redmic'
+		location: '../../src/redmic'
 	},{
 		name: 'src',
-		location: '../src'
+		location: '../../src/src'
 	},{
 		name: 'dropzone',
 		location: '../dropzone/dist/min'
@@ -64,7 +64,7 @@ dojoConfig = {
 		location: '../proj4/dist'
 	},{
 		name: 'RWidgets',
-		location: '../redmic/widgets'
+		location: '../../src/redmic/widgets'
 	},{
 		name: 'handlebars',
 		location: '../handlebars/dist'

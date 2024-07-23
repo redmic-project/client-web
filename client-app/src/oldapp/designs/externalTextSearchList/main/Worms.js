@@ -6,8 +6,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/base/_Persistence"
+	, "src/component/browser/bars/Total"
+	, "src/component/base/_Persistence"
 	, "templates/WormsList"
 ], function (
 	_Main

@@ -2,8 +2,8 @@ define([
 	'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/_ButtonsInRow"
-	, "redmic/modules/browser/_Framework"
+	, "src/component/browser/_ButtonsInRow"
+	, "src/component/browser/_Framework"
 	, "templates/LoadingCustom"
 	, "templates/SpeciesInfo"
 	, "templates/SpeciesTitle"

@@ -1,9 +1,9 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/notification/CommunicationCenter"
-	, "redmic/modules/notification/Alert"
-	, "redmic/modules/notification/Notification"
+	, "src/component/notification/CommunicationCenter"
+	, "src/component/notification/Alert"
+	, "src/component/notification/Notification"
 	, "src/utils/Mediator"
 ], function(
 	declare

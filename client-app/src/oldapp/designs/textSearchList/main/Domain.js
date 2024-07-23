@@ -8,9 +8,9 @@ define([
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, "redmic/modules/browser/bars/Order"
-	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/browser/bars/Total"
+	, "src/component/browser/bars/Order"
+	, "src/component/browser/bars/Pagination"
+	, "src/component/browser/bars/Total"
 	, 'templates/DomainList'
 ], function(
 	_EditionView

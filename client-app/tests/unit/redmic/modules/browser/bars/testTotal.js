@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "src/utils/Mediator"
-	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/browser/ListImpl"
+	, "src/component/browser/bars/Total"
+	, "src/component/browser/ListImpl"
 	, "templates/DomainList"
 ], function(
 	declare

@@ -1,9 +1,9 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_ShowInPopup"
-	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/browser/_Table"
+	, "src/component/base/_ShowInPopup"
+	, "src/component/browser/ListImpl"
+	, "src/component/browser/_Table"
 	, "RWidgets/Button"
 ], function (
 	declare

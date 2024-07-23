@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, "redmic/modules/browser/HierarchicalImpl"
+	, "src/component/browser/HierarchicalImpl"
 ], function(
 	DomainMain
 	, declare

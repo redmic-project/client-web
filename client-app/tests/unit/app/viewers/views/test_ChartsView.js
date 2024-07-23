@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/date/stamp"
 	, "app/viewers/views/ChartsView"
-	, "redmic/modules/store/MasterStore"
+	, "src/component/store/MasterStore"
 	, "src/utils/Mediator"
 ], function(
 	declare

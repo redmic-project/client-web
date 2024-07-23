@@ -391,10 +391,10 @@ var profileObj = {
 				, 'dojo/dnd/autoscroll'
 			]
 		},
-		'redmic/modules/base/_Module': {
+		'src/component/base/_Module': {
 			discard: true,
 			dependencies: [
-				'redmic/modules/base/_Show'
+				'src/component/base/_Show'
 			]
 		}
 	}
@@ -572,7 +572,7 @@ var viewLayers = {
 
 var viewLayerDefaultConfig = {
 	includeLocales: includeLocales,
-	layerDependencies: ['redmic/modules/base/_Module']
+	layerDependencies: ['src/component/base/_Module']
 };
 
 var profile = (function() {

@@ -6,7 +6,7 @@ define([
 	, "dojo/Deferred"
 	, "dojo/promise/all"
 	, "dojo/store/Memory"
-	, "redmic/modules/base/_Module"
+	, "src/component/base/_Module"
 ], function(
 	_View
 	, redmicConfig

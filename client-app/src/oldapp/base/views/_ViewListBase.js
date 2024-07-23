@@ -1,6 +1,6 @@
 define([
-	"redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
+	"src/component/base/_Module"
+	, "src/component/base/_Show"
 	, "app/base/views/Module"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"

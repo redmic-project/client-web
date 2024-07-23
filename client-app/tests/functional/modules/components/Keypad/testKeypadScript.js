@@ -1,8 +1,8 @@
 require([
 	'dojo/_base/declare'
 	, 'dojo/dom'
-	, 'redmic/modules/components/Keypad/TrizoneKeypadImpl'
-	, 'redmic/modules/components/Keypad/Keypad'
+	, 'src/component/components/Keypad/TrizoneKeypadImpl'
+	, 'src/component/components/Keypad/Keypad'
 ], function(
 	declare
 	, dom

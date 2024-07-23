@@ -9,12 +9,12 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
-	, "redmic/modules/map/layer/_Selectable"
-	, "redmic/modules/map/layer/_SelectOnClick"
-	, "redmic/modules/map/layer/GeoJsonLayerImpl"
+	, "src/component/browser/_Select"
+	, "src/component/browser/bars/Pagination"
+	, "src/component/layout/dataDisplayer/DataDisplayer"
+	, "src/component/map/layer/_Selectable"
+	, "src/component/map/layer/_SelectOnClick"
+	, "src/component/map/layer/GeoJsonLayerImpl"
 	//, "RWidgets/Utilities"
 ], function(
 	_CompositeInTooltipFromIconKeypad

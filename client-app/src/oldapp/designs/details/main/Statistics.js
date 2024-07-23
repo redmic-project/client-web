@@ -6,8 +6,8 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/_ButtonsInRow"
-	, "redmic/modules/browser/ListImpl"
+	, "src/component/browser/_ButtonsInRow"
+	, "src/component/browser/ListImpl"
 	//, "templates/AdministrativeStatisticsList"
 	, "templates/StatisticsTitle"
 ], function(

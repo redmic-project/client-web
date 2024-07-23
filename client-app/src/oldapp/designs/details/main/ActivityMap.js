@@ -5,8 +5,8 @@ define([
 	, "app/designs/details/Layout"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/map/layer/PruneClusterLayerImpl"
-	, "redmic/modules/map/layer/_RadiusOnClick"
+	, "src/component/map/layer/PruneClusterLayerImpl"
+	, "src/component/map/layer/_RadiusOnClick"
 	, "app/designs/mapWithSideContent/main/Geographic"
 ], function(
 	_ListenActivityDataAndAccessByActivityCategory

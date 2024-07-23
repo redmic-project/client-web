@@ -5,8 +5,8 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/bars/Order"
-	, "redmic/modules/browser/bars/Total"
+	, "src/component/browser/bars/Order"
+	, "src/component/browser/bars/Total"
 ], function(
 	_Main
 	, Controller

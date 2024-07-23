@@ -4,10 +4,10 @@ define([
 	, "app/designs/list/layout/Layout"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
-	, "redmic/modules/browser/bars/Total"
+	, "src/component/base/_Store"
+	, "src/component/base/_Module"
+	, "src/component/base/_Show"
+	, "src/component/browser/bars/Total"
 	, "app/base/views/extensions/_LocalSelectionView"
 ], function (
 	_Controller

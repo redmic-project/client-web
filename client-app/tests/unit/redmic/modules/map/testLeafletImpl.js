@@ -1,6 +1,6 @@
 define([
 	'src/utils/Mediator'
-	, 'redmic/modules/map/LeafletImpl'
+	, 'src/component/map/LeafletImpl'
 ], function(
 	Mediator
 	, LeafletImpl

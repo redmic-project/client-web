@@ -1,9 +1,9 @@
 define([
 	'dojo/_base/declare'
 	, 'src/utils/Mediator'
-	, 'redmic/modules/tree/_LazyLoad'
-	, 'redmic/modules/tree/_LeafSelection'
-	, 'redmic/modules/tree/CbtreeImpl'
+	, 'src/component/tree/_LazyLoad'
+	, 'src/component/tree/_LeafSelection'
+	, 'src/component/tree/CbtreeImpl'
 ], function(
 	declare
 	, Mediator

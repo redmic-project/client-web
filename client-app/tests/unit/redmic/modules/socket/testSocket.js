@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/Deferred"
 	, "src/utils/Mediator"
-	, "redmic/modules/base/Socket"
+	, "src/component/base/Socket"
 ], function(
 	declare
 	, Deferred

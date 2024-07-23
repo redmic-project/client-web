@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/form/input/SelectImpl"
-	, "redmic/modules/layout/dataDisplayer/DataDisplayer"
+	, "src/component/form/input/SelectImpl"
+	, "src/component/layout/dataDisplayer/DataDisplayer"
 	, "put-selector/put"
 ], function(
 	_ProcessInterval

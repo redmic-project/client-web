@@ -6,12 +6,12 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "RWidgets/Utilities"
-	, 'redmic/modules/base/_ListenQueryParams'
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/base/_Persistence"
-	, "redmic/modules/layout/wizard/Wizard"
-	, "redmic/modules/layout/wizard/_StepNavigation"
-	, "redmic/modules/layout/wizard/_StepBreadcrumbs"
+	, 'src/component/base/_ListenQueryParams'
+	, "src/component/base/_Store"
+	, "src/component/base/_Persistence"
+	, "src/component/layout/wizard/Wizard"
+	, "src/component/layout/wizard/_StepNavigation"
+	, "src/component/layout/wizard/_StepBreadcrumbs"
 ], function(
 	_EditionCommons
 	, _Controller

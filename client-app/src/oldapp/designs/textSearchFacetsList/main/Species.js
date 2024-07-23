@@ -6,13 +6,13 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/SpeciesList"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/browser/bars/SelectionBox"
-	, "redmic/modules/browser/bars/Order"
-	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/tree/_HierarchicalFilter"
-	, "redmic/modules/tree/_LazyLoad"
-	, "redmic/modules/tree/CbtreeImpl"
+	, "src/component/browser/_Select"
+	, "src/component/browser/bars/SelectionBox"
+	, "src/component/browser/bars/Order"
+	, "src/component/browser/bars/Total"
+	, "src/component/tree/_HierarchicalFilter"
+	, "src/component/tree/_LazyLoad"
+	, "src/component/tree/CbtreeImpl"
 ], function(
 	_Main
 	, Controller

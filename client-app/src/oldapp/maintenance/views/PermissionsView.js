@@ -5,10 +5,10 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/_Select"
-	//, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/browser/bars/Total"
+	, "src/component/base/_Store"
+	, "src/component/browser/_Select"
+	//, "src/component/browser/bars/Pagination"
+	, "src/component/browser/bars/Total"
 	, "templates/PermissionsList"
 ], function(
 	_EditionWizardView

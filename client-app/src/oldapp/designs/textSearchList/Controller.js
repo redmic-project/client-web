@@ -4,8 +4,8 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/search/TextImpl"
+	, "src/component/browser/bars/Pagination"
+	, "src/component/search/TextImpl"
 	, "./_AddFilter"
 ], function (
 	_Browser

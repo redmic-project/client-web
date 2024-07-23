@@ -12,8 +12,8 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/utils/Credentials'
-	, 'redmic/modules/base/_Filter'
-	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
+	, 'src/component/base/_Filter'
+	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
 	, 'templates/InitialInfo'
 ], function(
 	Controller

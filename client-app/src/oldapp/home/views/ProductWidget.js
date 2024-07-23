@@ -1,11 +1,11 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/base/_Module'
-	, 'redmic/modules/base/_Show'
-	, 'redmic/modules/base/_Store'
-	, 'redmic/modules/browser/_ButtonsInRow'
-	, 'redmic/modules/browser/ListImpl'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
+	, 'src/component/browser/_ButtonsInRow'
+	, 'src/component/browser/ListImpl'
 	, 'templates/ProductList'
 ], function(
 	declare

@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/components/Keypad/TrizoneKeypadImpl"
+	, "src/component/components/Keypad/TrizoneKeypadImpl"
 ], function(
 	LayoutContainer
 	, ContentPane

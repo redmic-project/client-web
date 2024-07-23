@@ -1,6 +1,6 @@
 define([
 	'dojo/_base/declare'
-	, 'redmic/modules/base/_Filter'
+	, 'src/component/base/_Filter'
 ], function (
 	declare
 	, _Filter

@@ -1,8 +1,8 @@
 require([
 	'dojo/_base/declare'
 	, 'dojo/dom'
-	, 'redmic/modules/form/_CreateInternalKeypad'
-	, 'redmic/modules/form/FormContainerImpl'
+	, 'src/component/form/_CreateInternalKeypad'
+	, 'src/component/form/FormContainerImpl'
 	, 'tests/support/resources/DomainModel'
 ], function(
 	declare

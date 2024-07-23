@@ -2,8 +2,8 @@ define([
 	'app/designs/base/_Controller'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/base/_Store'
-	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
+	, 'src/component/base/_Store'
+	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
 	, 'templates/DefaultEmbeddedContent'
 ], function (
 	_Controller

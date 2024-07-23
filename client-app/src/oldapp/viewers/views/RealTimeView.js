@@ -4,19 +4,19 @@ define([
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/atlas/Atlas'
-	, 'redmic/modules/base/_Filter'
-	, 'redmic/modules/browser/ListImpl'
-	, 'redmic/modules/browser/_ButtonsInRow'
-	, 'redmic/modules/browser/_GeoJsonParser'
-	, 'redmic/modules/browser/_Framework'
-	, 'redmic/modules/browser/bars/Total'
-	, "redmic/modules/gateway/MapCenteringGatewayImpl"
-	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, 'redmic/modules/layout/TabsDisplayer'
-	, 'redmic/modules/map/layer/PruneClusterLayerImpl'
-	, "redmic/modules/mapQuery/QueryOnMap"
-	, 'redmic/modules/search/TextImpl'
+	, 'src/component/atlas/Atlas'
+	, 'src/component/base/_Filter'
+	, 'src/component/browser/ListImpl'
+	, 'src/component/browser/_ButtonsInRow'
+	, 'src/component/browser/_GeoJsonParser'
+	, 'src/component/browser/_Framework'
+	, 'src/component/browser/bars/Total'
+	, "src/component/gateway/MapCenteringGatewayImpl"
+	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
+	, 'src/component/layout/TabsDisplayer'
+	, 'src/component/map/layer/PruneClusterLayerImpl'
+	, "src/component/mapQuery/QueryOnMap"
+	, 'src/component/search/TextImpl'
 	, 'templates/SurveyStationList'
 	, 'templates/SurveyStationPopup'
 ], function(

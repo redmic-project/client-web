@@ -7,7 +7,7 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_ShowInPopup"
+	, "src/component/base/_ShowInPopup"
 	, "templates/DataDefinitionList"
 ], function (
 	_EditionFormList

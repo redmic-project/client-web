@@ -5,10 +5,10 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/browser/bars/SelectionBox"
-	, "redmic/modules/browser/bars/Order"
-	, "redmic/modules/browser/bars/Total"
+	, "src/component/browser/_Select"
+	, "src/component/browser/bars/SelectionBox"
+	, "src/component/browser/bars/Order"
+	, "src/component/browser/bars/Total"
 ], function(
 	_Main
 	, Controller

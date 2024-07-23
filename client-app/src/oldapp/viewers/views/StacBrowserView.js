@@ -3,7 +3,7 @@ define([
 	, 'app/designs/embeddedContent/Layout'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/base/_ExternalConfig'
+	, 'src/component/base/_ExternalConfig'
 ], function(
 	Controller
 	, Layout

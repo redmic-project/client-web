@@ -3,10 +3,10 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
-	, 'redmic/modules/atlas/_AtlasLayersManagement'
-	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/layer/WmsLayerImpl"
+	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
+	, 'src/component/atlas/_AtlasLayersManagement'
+	, "src/component/map/LeafletImpl"
+	, "src/component/map/layer/WmsLayerImpl"
 	, "RWidgets/RedmicUtilities"
 	, "templates/ServiceOGCTitle"
 	, "templates/ServiceOGCInfo"

@@ -7,9 +7,9 @@ define([
 	, "put-selector/put"
 	, "src/utils/Mediator"
 	, "redmic/dialog/LockDialogImpl"
-	, "redmic/modules/form/FormContainerImpl"
-	, "redmic/modules/form/UploadFileImpl"
-	, "redmic/modules/form/form/FormContainer"
+	, "src/component/form/FormContainerImpl"
+	, "src/component/form/UploadFileImpl"
+	, "src/component/form/form/FormContainer"
 ], function(
 	_Persistent
 	, Model

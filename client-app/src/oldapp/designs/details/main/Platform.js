@@ -2,9 +2,9 @@ define([
 	'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/browser/bars/Total"
+	, "src/component/browser/_Framework"
+	, "src/component/browser/ListImpl"
+	, "src/component/browser/bars/Total"
 	, "templates/ContactSet"
 	, "templates/PlatformInfo"
 	, "./_DetailsBase"

@@ -7,7 +7,7 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/layout/wizard/_CompleteBySelection"
+	, "src/component/layout/wizard/_CompleteBySelection"
 ], function(
 	MetricGroup
 	, DeviceView

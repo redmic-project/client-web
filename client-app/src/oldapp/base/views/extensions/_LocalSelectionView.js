@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/base/_SelectionBase"
-	, "redmic/modules/gateway/LocalSelectorGatewayImpl"
+	, "src/component/base/_SelectionBase"
+	, "src/component/gateway/LocalSelectorGatewayImpl"
 ], function (
 	_LocalSelectionViewItfc
 	, declare

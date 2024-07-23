@@ -2,8 +2,8 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, 'redmic/modules/base/_ListenQueryParams'
-	, 'redmic/modules/base/_Selection'
+	, 'src/component/base/_ListenQueryParams'
+	, 'src/component/base/_Selection'
 ], function(
 	declare
 	, lang

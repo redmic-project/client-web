@@ -6,8 +6,8 @@ define([
 	, "app/designs/list/layout/Layout"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Show"
-	, "redmic/modules/base/_Store"
+	, "src/component/base/_Show"
+	, "src/component/base/_Store"
 ], function (
 	_AddForm
 	, _Controller

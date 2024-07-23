@@ -8,10 +8,10 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/query"
 	, "dojo/text!./templates/Register.html"
-	, "redmic/modules/form/FormContainerImpl"
-	, "redmic/modules/form/_ListenModelHasChanged"
-	, "redmic/modules/form/_PublicateChanges"
-	, "redmic/modules/model/ModelImpl"
+	, "src/component/form/FormContainerImpl"
+	, "src/component/form/_ListenModelHasChanged"
+	, "src/component/form/_PublicateChanges"
+	, "src/component/model/ModelImpl"
 ], function(
 	alertify
 	, ReCaptcha

@@ -7,9 +7,9 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "RWidgets/Utilities"
-	, "redmic/modules/base/_Filter"
-	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/search/TextImpl"
+	, "src/component/base/_Filter"
+	, "src/component/browser/bars/Pagination"
+	, "src/component/search/TextImpl"
 ], function (
 	_SelectInDoubleList
 	, _RememberDeleteItems

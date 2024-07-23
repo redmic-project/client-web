@@ -4,11 +4,11 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'moment/moment.min'
-	, "redmic/modules/chart/ChartsContainer/_InfoOnMouseOver"
-	, "redmic/modules/chart/ChartsContainer/_LegendBar"
-	, "redmic/modules/chart/ChartsContainer/_TemporalAxisWithGridDrawing"
-	, "redmic/modules/chart/ChartsContainer/_VerticalAxesWithGridDrawing"
-	, "redmic/modules/chart/ChartsContainer/_ZoomByDragging"
+	, "src/component/chart/ChartsContainer/_InfoOnMouseOver"
+	, "src/component/chart/ChartsContainer/_LegendBar"
+	, "src/component/chart/ChartsContainer/_TemporalAxisWithGridDrawing"
+	, "src/component/chart/ChartsContainer/_VerticalAxesWithGridDrawing"
+	, "src/component/chart/ChartsContainer/_ZoomByDragging"
 	, "templates/DataDefinitionObjectCollectingLabelColumn"
 ], function(
 	_SeriesDataView

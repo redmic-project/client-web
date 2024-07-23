@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/store/RequestJoiner/AtlasDataImpl"
+	, "src/component/store/RequestJoiner/AtlasDataImpl"
 	, 'templates/FilterServiceOGCForm'
 ], function(
 	declare

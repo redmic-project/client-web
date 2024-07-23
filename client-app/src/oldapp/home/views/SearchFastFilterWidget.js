@@ -2,9 +2,9 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/base/_Module'
-	, 'redmic/modules/base/_Show'
-	, 'redmic/modules/search/FacetsImpl'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/search/FacetsImpl'
 ], function(
 	redmicConfig
 	, declare

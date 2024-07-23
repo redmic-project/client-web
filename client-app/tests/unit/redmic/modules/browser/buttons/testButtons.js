@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "src/utils/Mediator"
-	, "redmic/modules/browser/buttons/_GroupButtons"
-	, "redmic/modules/browser/buttons/Buttons"
+	, "src/component/browser/buttons/_GroupButtons"
+	, "src/component/browser/buttons/Buttons"
 ], function(
 	declare
 	, lang

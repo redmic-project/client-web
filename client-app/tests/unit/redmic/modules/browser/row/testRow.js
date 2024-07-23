@@ -3,11 +3,11 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "src/utils/Mediator"
-	, "redmic/modules/browser/row/_Buttons"
-	, "redmic/modules/browser/row/_Hierarchical"
-	, "redmic/modules/browser/row/_HierarchicalSelect"
-	, "redmic/modules/browser/row/_Select"
-	, "redmic/modules/browser/row/Row"
+	, "src/component/browser/row/_Buttons"
+	, "src/component/browser/row/_Hierarchical"
+	, "src/component/browser/row/_HierarchicalSelect"
+	, "src/component/browser/row/_Select"
+	, "src/component/browser/row/Row"
 	, "templates/DomainList"
 ], function(
 	declare

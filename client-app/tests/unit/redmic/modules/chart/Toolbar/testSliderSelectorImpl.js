@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
 	, 'src/utils/Mediator'
-	, 'redmic/modules/chart/Toolbar/SliderSelectorImpl'
+	, 'src/component/chart/Toolbar/SliderSelectorImpl'
 ], function(
 	declare
 	, lang

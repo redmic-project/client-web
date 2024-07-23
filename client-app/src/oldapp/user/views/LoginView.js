@@ -6,7 +6,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/text!./templates/Login.html"
 	, "src/utils/Credentials"
-	, 'redmic/modules/base/_Store'
+	, 'src/component/base/_Store'
 ], function(
 	alertify
 	, _ExternalUserBaseView

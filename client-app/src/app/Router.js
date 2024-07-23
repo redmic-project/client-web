@@ -4,8 +4,8 @@ define([
 	, 'dojo/dom-attr'
 	, 'dojo/io-query'
 	, 'dojo/mouse'
-	, 'redmic/modules/base/_Module'
-	, 'redmic/modules/base/_Store'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Store'
 ], function(
 	declare
 	, lang

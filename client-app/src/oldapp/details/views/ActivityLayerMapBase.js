@@ -3,7 +3,7 @@ define([
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/atlas/_AtlasLayersManagement'
+	, 'src/component/atlas/_AtlasLayersManagement'
 ], function(
 	ActivityLayerMap
 	, redmicConfig

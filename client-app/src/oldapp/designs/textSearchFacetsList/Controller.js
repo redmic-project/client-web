@@ -5,10 +5,10 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/search/FacetsImpl"
-	, "redmic/modules/search/TextImpl"
+	, "src/component/base/_Store"
+	, "src/component/browser/bars/Pagination"
+	, "src/component/search/FacetsImpl"
+	, "src/component/search/TextImpl"
 	, "./_AddFilter"
 ], function (
 	_OnShownAndRefresh

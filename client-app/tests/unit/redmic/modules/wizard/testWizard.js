@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "src/utils/Mediator"
-	, "redmic/modules/wizard/Wizard"
-	, "redmic/modules/wizard/FacetsWizardImpl"
+	, "src/component/wizard/Wizard"
+	, "src/component/wizard/FacetsWizardImpl"
 ], function(
 	declare
 	, lang

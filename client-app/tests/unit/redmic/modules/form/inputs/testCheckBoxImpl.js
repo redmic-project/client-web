@@ -2,9 +2,9 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "src/utils/Mediator"
-	, "redmic/modules/model/ModelImpl"
-	, "redmic/modules/form/inputs/CheckBoxImpl"
-	, "tests/redmic/modules/model/SupportModel"
+	, "src/component/model/ModelImpl"
+	, "src/component/form/inputs/CheckBoxImpl"
+	, "tests/src/component/model/SupportModel"
 ], function(
 	declare
 	, lang

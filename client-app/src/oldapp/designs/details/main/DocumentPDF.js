@@ -5,7 +5,7 @@ define([
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/components/PDFViewer/PDFViewer'
+	, 'src/component/components/PDFViewer/PDFViewer'
 ], function(
 	_Main
 	, Controller

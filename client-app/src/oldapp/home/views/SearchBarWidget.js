@@ -2,11 +2,11 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/base/_Filter'
-	, 'redmic/modules/base/_Module'
-	, 'redmic/modules/base/_Show'
-	, 'redmic/modules/layout/dataDisplayer/DataDisplayer'
-	, 'redmic/modules/search/TextImpl'
+	, 'src/component/base/_Filter'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/layout/dataDisplayer/DataDisplayer'
+	, 'src/component/search/TextImpl'
 ], function(
 	redmicConfig
 	, declare

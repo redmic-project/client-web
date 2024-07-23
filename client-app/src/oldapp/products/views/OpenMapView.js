@@ -5,9 +5,9 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'put-selector/put'
-	, "redmic/modules/atlas/Atlas"
-	, 'redmic/modules/layout/TabsDisplayer'
-	, "redmic/modules/mapQuery/QueryOnMap"
+	, "src/component/atlas/Atlas"
+	, 'src/component/layout/TabsDisplayer'
+	, "src/component/mapQuery/QueryOnMap"
 ], function(
 	Controller
 	, Layout

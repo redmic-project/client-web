@@ -1,6 +1,6 @@
 require([
 	'dojo/dom'
-	, 'redmic/modules/search/FacetsImpl'
+	, 'src/component/search/FacetsImpl'
 ], function(
 	dom
 	, FacetsImpl

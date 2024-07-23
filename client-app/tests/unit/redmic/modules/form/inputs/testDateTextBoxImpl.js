@@ -2,9 +2,9 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "src/utils/Mediator"
-	, "redmic/modules/model/ModelImpl"
-	, "redmic/modules/form/inputs/DateTextBoxImpl"
-	, "tests/redmic/modules/model/SupportModel"
+	, "src/component/model/ModelImpl"
+	, "src/component/form/inputs/DateTextBoxImpl"
+	, "tests/src/component/model/SupportModel"
 	, "moment"
 ], function(
 	declare

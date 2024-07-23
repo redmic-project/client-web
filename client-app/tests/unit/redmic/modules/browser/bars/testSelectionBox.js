@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "src/utils/Mediator"
-	, "redmic/modules/browser/bars/SelectionBox"
+	, "src/component/browser/bars/SelectionBox"
 ], function(
 	declare
 	, lang

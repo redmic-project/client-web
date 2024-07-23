@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
-	, "redmic/modules/components/Keypad/IconKeypadImpl"
+	, "src/component/components/Keypad/IconKeypadImpl"
 ], function (
 	_Controller
 	, declare

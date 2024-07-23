@@ -8,8 +8,8 @@ define([
 	, 'draggabilly/draggabilly.pkgd.min'
 	, 'packery/packery.pkgd.min'
 	, "put-selector/put"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/base/_Window"
+	, "src/component/base/_Store"
+	, "src/component/base/_Window"
 	, "./_ControllerItfc"
 ], function(
 	_Controller

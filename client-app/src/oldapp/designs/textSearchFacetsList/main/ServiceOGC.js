@@ -7,8 +7,8 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/HierarchicalImpl"
-	, "redmic/modules/browser/bars/Order"
+	, "src/component/browser/HierarchicalImpl"
+	, "src/component/browser/bars/Order"
 	, "templates/ServiceOGCList"
 ], function(
 	_Main

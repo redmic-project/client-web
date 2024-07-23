@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Itfc"
+	, "src/component/base/_Itfc"
 ], function(
 	declare
 	, lang

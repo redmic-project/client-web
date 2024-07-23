@@ -4,7 +4,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'put-selector/put'
-	, 'redmic/modules/components/Keypad/IconKeypadImpl'
+	, 'src/component/components/Keypad/IconKeypadImpl'
 ], function(
 	_CompositeSearchInTooltip
 	, declare

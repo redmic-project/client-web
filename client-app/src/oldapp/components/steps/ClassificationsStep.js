@@ -5,9 +5,9 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/layout/wizard/_CompleteBySelection"
+	, "src/component/browser/_Select"
+	, "src/component/browser/bars/Pagination"
+	, "src/component/layout/wizard/_CompleteBySelection"
 	, "templates/DomainList"
 ], function(
 	_AddFilter

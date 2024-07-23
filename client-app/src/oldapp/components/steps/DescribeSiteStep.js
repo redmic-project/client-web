@@ -6,10 +6,10 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_ShowInPopup"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/components/Keypad/TrizoneKeypadImpl"
-	, "redmic/modules/form/FormContainerImpl"
+	, "src/component/base/_ShowInPopup"
+	, "src/component/base/_Store"
+	, "src/component/components/Keypad/TrizoneKeypadImpl"
+	, "src/component/form/FormContainerImpl"
 	, "RWidgets/Utilities"
 	, "put-selector/put"
 ], function (

@@ -2,7 +2,7 @@ define([
 	"app/components/viewCustomization/addGeomSite/views/_BaseGeometryForm"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/map/layer/DrawingLayerImpl"
+	, "src/component/map/layer/DrawingLayerImpl"
 ], function (
 	_BaseGeometryForm
 	, declare

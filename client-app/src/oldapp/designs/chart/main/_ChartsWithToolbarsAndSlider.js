@@ -4,13 +4,13 @@ define([
 	, 'app/designs/chart/main/_ChartsWithToolbarsAndSliderItfc'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/chart/ChartsContainer/_InfoOnEmptyData'
-	, 'redmic/modules/chart/ChartsContainer/_LayerColorSelection'
-	, 'redmic/modules/chart/ChartsContainer/SliderChartsContainerImpl'
-	, 'redmic/modules/chart/layer/ChartLayer/_QueryableValue'
-	, 'redmic/modules/chart/layer/ChartLayer/LinearChartImpl'
-	, 'redmic/modules/chart/Toolbar/AggregationToolImpl'
-	, 'redmic/modules/chart/Toolbar/GridManagementImpl'
+	, 'src/component/chart/ChartsContainer/_InfoOnEmptyData'
+	, 'src/component/chart/ChartsContainer/_LayerColorSelection'
+	, 'src/component/chart/ChartsContainer/SliderChartsContainerImpl'
+	, 'src/component/chart/layer/ChartLayer/_QueryableValue'
+	, 'src/component/chart/layer/ChartLayer/LinearChartImpl'
+	, 'src/component/chart/Toolbar/AggregationToolImpl'
+	, 'src/component/chart/Toolbar/GridManagementImpl'
 ], function(
 	_Main
 	, Controller

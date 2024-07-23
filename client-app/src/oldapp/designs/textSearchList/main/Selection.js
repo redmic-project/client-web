@@ -6,8 +6,8 @@ define([
 	, "app/designs/textSearchList/layout/BasicTopZone"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/base/_Persistence"
+	, "src/component/base/_Store"
+	, "src/component/base/_Persistence"
 	, "templates/SelectionList"
 ], function(
 	alertify

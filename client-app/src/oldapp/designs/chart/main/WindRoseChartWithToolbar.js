@@ -4,10 +4,10 @@ define([
 	, "app/designs/chart/layout/TopContent"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/chart/layer/ChartLayer/WindRoseChartImpl"
-	, "redmic/modules/chart/layer/ChartLayer/_ObtainableValue"
-	, "redmic/modules/chart/Toolbar/DataSelectorImpl"
-	, "redmic/modules/chart/Toolbar/GridManagementImpl"
+	, "src/component/chart/layer/ChartLayer/WindRoseChartImpl"
+	, "src/component/chart/layer/ChartLayer/_ObtainableValue"
+	, "src/component/chart/Toolbar/DataSelectorImpl"
+	, "src/component/chart/Toolbar/GridManagementImpl"
 	, "RWidgets/Utilities"
 ], function (
 	_Main

@@ -4,10 +4,10 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "src/utils/Mediator"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
-	, "redmic/modules/layout/wizard/_StepNavigation"
-	, "redmic/modules/layout/wizard/Wizard"
+	, "src/component/base/_Module"
+	, "src/component/base/_Show"
+	, "src/component/layout/wizard/_StepNavigation"
+	, "src/component/layout/wizard/Wizard"
 ], function(
 	ContentPane
 	, declare

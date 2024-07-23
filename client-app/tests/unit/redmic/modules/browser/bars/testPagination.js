@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "src/utils/Mediator"
-	, "redmic/modules/browser/bars/Pagination"
+	, "src/component/browser/bars/Pagination"
 	, "templates/DomainList"
 ], function(
 	declare

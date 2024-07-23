@@ -5,7 +5,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/base/_ShowInPopup"
+	, "src/component/base/_ShowInPopup"
 ], function(
 	MainDataStep
 	, Worms

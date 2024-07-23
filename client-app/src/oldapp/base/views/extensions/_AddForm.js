@@ -2,9 +2,9 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/form/_CreateKeypad"
-	, "redmic/modules/form/FormContainerImpl"
-	, "redmic/modules/form/_ListenModelHasChanged"
+	, "src/component/form/_CreateKeypad"
+	, "src/component/form/FormContainerImpl"
+	, "src/component/form/_ListenModelHasChanged"
 
 	, "./_AddFormItfc"
 ], function (

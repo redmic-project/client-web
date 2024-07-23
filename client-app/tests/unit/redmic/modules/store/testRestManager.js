@@ -1,6 +1,6 @@
 define([
 	'src/utils/Mediator'
-	, 'redmic/modules/store/RestManagerImpl'
+	, 'src/component/store/RestManagerImpl'
 
 ], function(
 	Mediator

@@ -2,8 +2,8 @@ define([
 	"app/components/steps/_MainData"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/form/FormContainerImpl"
-	, "redmic/modules/form/_PublicateChanges"
+	, "src/component/form/FormContainerImpl"
+	, "src/component/form/_PublicateChanges"
 ], function (
 	_MainData
 	, declare

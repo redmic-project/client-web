@@ -5,9 +5,9 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/Deferred"
-	, "redmic/modules/base/_Filter"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/search/FacetsImpl"
+	, "src/component/base/_Filter"
+	, "src/component/base/_Store"
+	, "src/component/search/FacetsImpl"
 ], function(
 	redmicConfig
 	, _ActivityTimeSeriesDataManagement

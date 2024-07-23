@@ -3,7 +3,7 @@ define([
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/map/_LeafletDraw"
+	, "src/component/map/_LeafletDraw"
 ], function(
 	Controller
 	, Layout

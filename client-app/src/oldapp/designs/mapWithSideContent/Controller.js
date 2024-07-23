@@ -2,8 +2,8 @@ define([
 	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/map/LeafletImpl"
-	, "redmic/modules/map/_PlaceNamesButton"
+	, "src/component/map/LeafletImpl"
+	, "src/component/map/_PlaceNamesButton"
 ], function (
 	_Controller
 	, declare

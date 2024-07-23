@@ -4,8 +4,8 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/DeferredList'
 	, 'src/utils/Mediator'
-	, 'redmic/modules/gateway/_GatewayItfc'
-	, 'redmic/modules/gateway/Gateway'
+	, 'src/component/gateway/_GatewayItfc'
+	, 'src/component/gateway/Gateway'
 ], function(
 	declare
 	, lang

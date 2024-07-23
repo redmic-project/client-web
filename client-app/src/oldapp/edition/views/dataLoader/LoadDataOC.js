@@ -14,8 +14,8 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/layout/wizard/_CompleteBySelection"
+	, "src/component/browser/_Select"
+	, "src/component/layout/wizard/_CompleteBySelection"
 	, "templates/DomainList"
 ], function(
 	_LocalSelectionView

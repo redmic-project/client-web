@@ -7,10 +7,10 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'moment/moment.min'
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/_EditionTable"
-	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/browser/bars/Total"
+	, "src/component/base/_Store"
+	, "src/component/browser/_EditionTable"
+	, "src/component/browser/bars/Pagination"
+	, "src/component/browser/bars/Total"
 ], function(
 	_CompositeInTooltipFromIconKeypad
 	, _AddFilter

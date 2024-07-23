@@ -2,8 +2,8 @@ define([
 	"dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
+	, "src/component/base/_Module"
+	, "src/component/base/_Show"
 	, "put-selector/put"
 ], function (
 	ContentPane

@@ -14,7 +14,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
+	, "src/component/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/ActivityCategoriesNoExist"
 ], function(
 	SelectActivityCategoryStep

@@ -6,9 +6,9 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/browser/_Select"
+	, "src/component/base/_Store"
+	, "src/component/browser/ListImpl"
+	, "src/component/browser/_Select"
 	, "templates/ServiceOGCAtlasList"
 ], function(
 	_AddTextSearchInput

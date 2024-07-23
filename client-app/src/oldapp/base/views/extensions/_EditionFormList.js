@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/base/_Store"
+	, "src/component/base/_Store"
 ], function(
 	_Edition
 	, declare

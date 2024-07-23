@@ -2,7 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/utils/Mediator'
-	, 'redmic/modules/selection/Selector'
+	, 'src/component/selection/Selector'
 ], function(
 	declare
 	, lang

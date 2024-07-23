@@ -2,8 +2,8 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, 'redmic/modules/form/FormContainerImpl'
-	, 'redmic/modules/form/_PublicateChanges'
+	, 'src/component/form/FormContainerImpl'
+	, 'src/component/form/_PublicateChanges'
 	, './_AddTextSearchInputItfc'
 ], function(
 	declare

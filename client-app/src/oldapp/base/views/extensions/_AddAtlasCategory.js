@@ -2,11 +2,11 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, "redmic/modules/base/_Persistence"
-	, 'redmic/modules/form/FormContainerImpl'
-	, "redmic/modules/form/_ListenModelHasChanged"
-	, 'redmic/modules/form/_PublicateChanges'
-	, "redmic/modules/form/_ShowInDialog"
+	, "src/component/base/_Persistence"
+	, 'src/component/form/FormContainerImpl'
+	, "src/component/form/_ListenModelHasChanged"
+	, 'src/component/form/_PublicateChanges'
+	, "src/component/form/_ShowInDialog"
 ], function(
 	declare
 	, lang

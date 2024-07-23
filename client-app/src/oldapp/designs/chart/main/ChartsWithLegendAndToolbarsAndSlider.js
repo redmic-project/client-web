@@ -4,7 +4,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
-	, 'redmic/modules/chart/SmartLegend/TimeSeriesSmartLegendImpl'
+	, 'src/component/chart/SmartLegend/TimeSeriesSmartLegendImpl'
 ], function (
 	SideAndTopAndBottomContent
 	, _ChartsWithToolbarsAndSlider

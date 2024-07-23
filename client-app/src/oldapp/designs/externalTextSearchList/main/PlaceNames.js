@@ -7,9 +7,9 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "templates/PlaceNamesList"
-	, "redmic/modules/browser/bars/Pagination"
-	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/map/layer/GeoJsonLayerImpl"
+	, "src/component/browser/bars/Pagination"
+	, "src/component/browser/bars/Total"
+	, "src/component/map/layer/GeoJsonLayerImpl"
 	, "RWidgets/Button"
 ], function(
 	_Main

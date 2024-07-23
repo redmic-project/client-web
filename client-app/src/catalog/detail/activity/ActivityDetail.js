@@ -3,7 +3,7 @@ define([
 	, 'app/designs/details/main/_ActivityBase'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/base/_ExternalConfig'
+	, 'src/component/base/_ExternalConfig'
 	, 'src/catalog/detail/activity/_ActivityLayoutWidget'
 	, 'templates/ActivityInfo'
 ], function(

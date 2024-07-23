@@ -4,8 +4,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
+	, "src/component/base/_Module"
+	, "src/component/base/_Show"
 ], function (
 	_AddForm
 	, ContentPane

@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/browser/_Select"
+	, "src/component/browser/_Select"
 ], function(
 	_LocalSelectionView
 	, declare

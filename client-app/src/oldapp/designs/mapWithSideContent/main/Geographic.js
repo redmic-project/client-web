@@ -6,19 +6,19 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/atlas/Atlas"
-	, "redmic/modules/base/_Filter"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/bars/Total"
-	, "redmic/modules/browser/_ButtonsInRow"
-	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/_GeoJsonParser"
-	, "redmic/modules/browser/ListImpl"
-	, "redmic/modules/gateway/MapCenteringGatewayImpl"
-	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, 'redmic/modules/layout/TabsDisplayer'
-	, "redmic/modules/mapQuery/QueryOnMap"
-	, "redmic/modules/search/TextImpl"
+	, "src/component/atlas/Atlas"
+	, "src/component/base/_Filter"
+	, "src/component/base/_Store"
+	, "src/component/browser/bars/Total"
+	, "src/component/browser/_ButtonsInRow"
+	, "src/component/browser/_Framework"
+	, "src/component/browser/_GeoJsonParser"
+	, "src/component/browser/ListImpl"
+	, "src/component/gateway/MapCenteringGatewayImpl"
+	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
+	, 'src/component/layout/TabsDisplayer'
+	, "src/component/mapQuery/QueryOnMap"
+	, "src/component/search/TextImpl"
 	, "templates/CitationList"
 ], function(
 	_LocalSelectionView

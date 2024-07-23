@@ -2,9 +2,9 @@ define([
 	"dojo/_base/declare"
 	, "put-selector/put"
 	, "src/utils/Mediator"
-	, "redmic/modules/search/Search"
-	, "redmic/modules/search/TextSearchImpl"
-	, "redmic/modules/search/MapSearchImpl"
+	, "src/component/search/Search"
+	, "src/component/search/TextSearchImpl"
+	, "src/component/search/MapSearchImpl"
 ], function(
 	declare
 	, put

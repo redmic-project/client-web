@@ -7,12 +7,12 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'moment/moment.min'
-	, 'redmic/modules/base/_Store'
-	, 'redmic/modules/chart/layer/ChartLayer/WindRoseChartImpl'
-	, 'redmic/modules/chart/layer/ChartLayer/_ObtainableValue'
-	, 'redmic/modules/chart/Toolbar/DateFilterImpl'
-	, 'redmic/modules/chart/Toolbar/GridManagementImpl'
-	, 'redmic/modules/chart/Toolbar/SliderSelectorImpl'
+	, 'src/component/base/_Store'
+	, 'src/component/chart/layer/ChartLayer/WindRoseChartImpl'
+	, 'src/component/chart/layer/ChartLayer/_ObtainableValue'
+	, 'src/component/chart/Toolbar/DateFilterImpl'
+	, 'src/component/chart/Toolbar/GridManagementImpl'
+	, 'src/component/chart/Toolbar/SliderSelectorImpl'
 ], function (
 	_Main
 	, Controller

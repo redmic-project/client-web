@@ -9,9 +9,9 @@ define([
 	, "dojo/query"
 	, "dojo/text!./templates/Feedback.html"
 	, "src/utils/Credentials"
-	, "redmic/modules/form/FormContainerImpl"
-	, "redmic/modules/form/_ListenModelHasChanged"
-	, "redmic/modules/model/ModelImpl"
+	, "src/component/form/FormContainerImpl"
+	, "src/component/form/_ListenModelHasChanged"
+	, "src/component/model/ModelImpl"
 ], function(
 	alertify
 	, ReCaptcha

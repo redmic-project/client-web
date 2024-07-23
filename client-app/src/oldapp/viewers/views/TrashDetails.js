@@ -10,12 +10,12 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, 'moment/moment.min'
-	, "redmic/modules/base/_Filter"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/HierarchicalImpl"
-	, "redmic/modules/browser/_DataTypeParser"
-	, "redmic/modules/browser/_HierarchicalTable"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
+	, "src/component/base/_Filter"
+	, "src/component/base/_Store"
+	, "src/component/browser/HierarchicalImpl"
+	, "src/component/browser/_DataTypeParser"
+	, "src/component/browser/_HierarchicalTable"
+	, "src/component/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/LoadingEmpty"
 ], function(
 	DynamicContentController

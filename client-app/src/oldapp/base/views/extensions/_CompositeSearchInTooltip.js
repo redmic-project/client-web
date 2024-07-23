@@ -2,10 +2,10 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, 'redmic/modules/base/_ShowInTooltip'
-	, 'redmic/modules/base/_ShowOnEvt'
-	, 'redmic/modules/search/CompositeImpl'
-	, 'redmic/modules/search/_HideFormByAction'
+	, 'src/component/base/_ShowInTooltip'
+	, 'src/component/base/_ShowOnEvt'
+	, 'src/component/search/CompositeImpl'
+	, 'src/component/search/_HideFormByAction'
 ], function(
 	declare
 	, lang

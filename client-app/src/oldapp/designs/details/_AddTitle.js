@@ -4,7 +4,7 @@ define([
 	, "dojo/aspect"
 	, "dojo/query"
 	, "put-selector/put"
-	, "redmic/modules/layout/templateDisplayer/TemplateDisplayer"
+	, "src/component/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/DefaultDetailsTitle"
 ], function (
 	declare

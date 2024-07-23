@@ -7,8 +7,8 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"
 	, "src/utils/Mediator"
-	, "redmic/modules/base/Selector"
-	, "redmic/modules/store/MasterStore"
+	, "src/component/base/Selector"
+	, "src/component/store/MasterStore"
 ], function(
 	Model
 	, _View

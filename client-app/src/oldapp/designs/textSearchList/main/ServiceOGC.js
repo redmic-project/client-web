@@ -6,7 +6,7 @@ define([
 	, "app/designs/textSearchList/layout/BasicTopZone"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/browser/HierarchicalImpl"
+	, "src/component/browser/HierarchicalImpl"
 	, "templates/ServiceOGCList"
 ], function(
 	_OnShownAndRefresh

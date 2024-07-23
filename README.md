@@ -65,7 +65,7 @@ Como ejemplo de ejecución de tests locales (unitarios y funcionales), veamos lo
 
 ```sh
 grunt test-unit-local \
-  --suites=tests/unit/redmic/modules/model/testModelImpl \
+  --suites=tests/unit/src/component/model/testModelImpl \
   --browser=chrome \
   --headless \
   --coverage=false
@@ -137,7 +137,7 @@ Como ejemplo de ejecución de tests remotos (unitarios y funcionales), pero apun
 
 ```sh
 grunt test-unit-remote \
-  --suites=tests/unit/redmic/modules/model/testModelImpl \
+  --suites=tests/unit/src/component/model/testModelImpl \
   --browser=firefox \
   --headless \
   --coverage=false

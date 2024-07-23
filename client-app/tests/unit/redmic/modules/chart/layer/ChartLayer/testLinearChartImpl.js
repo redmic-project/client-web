@@ -3,8 +3,8 @@ define([
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
 	, 'src/utils/Mediator'
-	, 'redmic/modules/chart/ChartsContainer/InfoChartsContainerImpl'
-	, 'redmic/modules/chart/layer/ChartLayer/LinearChartImpl'
+	, 'src/component/chart/ChartsContainer/InfoChartsContainerImpl'
+	, 'src/component/chart/layer/ChartLayer/LinearChartImpl'
 ], function(
 	declare
 	, lang

@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/map/layer/GeoJsonLayerImpl"
-	, "redmic/modules/map/layer/_Editable"
+	, "src/component/map/layer/GeoJsonLayerImpl"
+	, "src/component/map/layer/_Editable"
 ], function (
 	_BaseGeometryForm
 	, declare

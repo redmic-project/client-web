@@ -5,8 +5,8 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/dom-class"
 	, 'put-selector/put'
-	, "redmic/modules/base/_Module"
-	, "redmic/modules/base/_Show"
+	, "src/component/base/_Module"
+	, "src/component/base/_Show"
 ], function (
 	_AddForm
 	, _AddSelectInput

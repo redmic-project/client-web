@@ -8,7 +8,7 @@ define([
 	, "dojo/_base/lang"
 	, "templates/DocumentList"
 	, "templates/SpeciesFilter"
-	, "redmic/modules/form/input/FilteringSelectImpl"
+	, "src/component/form/input/FilteringSelectImpl"
 	, "templates/LoadingCustom"
 ], function (
 	_SelectInDoubleList

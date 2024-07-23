@@ -4,11 +4,11 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/SpeciesDistributionPopup"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/browser/_Select"
-	, "redmic/modules/map/layer/GeoJsonLayerImpl"
-	, "redmic/modules/map/layer/_Selectable"
-	, "redmic/modules/map/layer/_SelectOnClick"
+	, "src/component/base/_Store"
+	, "src/component/browser/_Select"
+	, "src/component/map/layer/GeoJsonLayerImpl"
+	, "src/component/map/layer/_Selectable"
+	, "src/component/map/layer/_SelectOnClick"
 ], function (
 	Geographic
 	, redmicConfig

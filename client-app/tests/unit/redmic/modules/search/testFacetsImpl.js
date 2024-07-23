@@ -1,6 +1,6 @@
 define([
 	'src/utils/Mediator'
-	, 'redmic/modules/search/FacetsImpl'
+	, 'src/component/search/FacetsImpl'
 ], function(
 	Mediator
 	, FacetsImpl

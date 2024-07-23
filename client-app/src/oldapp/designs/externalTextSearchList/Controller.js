@@ -3,8 +3,8 @@ define([
 	, "app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/search/TextImpl"
+	, "src/component/base/_Store"
+	, "src/component/search/TextImpl"
 ], function (
 	_Browser
 	, _Controller

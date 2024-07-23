@@ -2,7 +2,7 @@ define([
 	"app/designs/base/_Controller"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/modules/chart/ChartsContainer/InfoChartsContainerImpl"
+	, "src/component/chart/ChartsContainer/InfoChartsContainerImpl"
 ], function (
 	_Controller
 	, declare

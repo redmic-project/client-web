@@ -2,8 +2,8 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/base/_Persistence"
+	, "src/component/base/_Store"
+	, "src/component/base/_Persistence"
 	, "app/base/views/extensions/_Edition"
 	, "RWidgets/Button"
 ], function(

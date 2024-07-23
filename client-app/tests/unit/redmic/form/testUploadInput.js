@@ -2,7 +2,7 @@ define([
 	'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/on'
-	, 'redmic/modules/form/form/UploadInput'
+	, 'src/component/form/form/UploadInput'
 ], function(
 	lang
 	, Deferred

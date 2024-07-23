@@ -5,7 +5,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
-	, "redmic/modules/browser/bars/Pagination"
+	, "src/component/browser/bars/Pagination"
 	, "put-selector/put"
 ], function(
 	_ActivityClosed

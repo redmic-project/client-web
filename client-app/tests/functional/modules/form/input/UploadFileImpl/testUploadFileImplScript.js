@@ -2,7 +2,7 @@ require([
 	'dojo/_base/declare'
 	, 'dojo/Deferred'
 	, 'dojo/dom'
-	, 'redmic/modules/form/input/UploadFileImpl'
+	, 'src/component/form/input/UploadFileImpl'
 ], function(
 	declare
 	, Deferred

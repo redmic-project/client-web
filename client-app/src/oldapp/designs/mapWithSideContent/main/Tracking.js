@@ -11,16 +11,16 @@ define([
 	, 'moment/moment.min'
 	, "put-selector/put"
 	, "RWidgets/Utilities"
-	, "redmic/modules/base/_Store"
-	, "redmic/modules/components/ProgressSlider/ProgressSlider"
-	, "redmic/modules/atlas/Atlas"
-	, 'redmic/modules/form/FormContainerImpl'
-	, 'redmic/modules/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, 'redmic/modules/layout/TabsDisplayer'
-	, "redmic/modules/map/layer/_AddFilter"
-	, "redmic/modules/map/layer/_PublishInfo"
-	, "redmic/modules/map/layer/TrackingLayerImpl"
-	, "redmic/modules/mapQuery/QueryOnMap"
+	, "src/component/base/_Store"
+	, "src/component/components/ProgressSlider/ProgressSlider"
+	, "src/component/atlas/Atlas"
+	, 'src/component/form/FormContainerImpl'
+	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
+	, 'src/component/layout/TabsDisplayer'
+	, "src/component/map/layer/_AddFilter"
+	, "src/component/map/layer/_PublishInfo"
+	, "src/component/map/layer/TrackingLayerImpl"
+	, "src/component/mapQuery/QueryOnMap"
 ], function(
 	alertify
 	, _Main

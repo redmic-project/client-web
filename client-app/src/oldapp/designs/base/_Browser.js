@@ -2,10 +2,10 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/modules/components/Keypad/IconKeypadImpl"
-	, "redmic/modules/browser/_ButtonsInRow"
-	, "redmic/modules/browser/_Framework"
-	, "redmic/modules/browser/ListImpl"
+	, "src/component/components/Keypad/IconKeypadImpl"
+	, "src/component/browser/_ButtonsInRow"
+	, "src/component/browser/_Framework"
+	, "src/component/browser/ListImpl"
 ], function (
 	declare
 	, lang

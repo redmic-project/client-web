@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
-	, 'redmic/modules/base/_Module'
+	, 'src/component/base/_Module'
 	, 'src/utils/Mediator'
 
 ], function(

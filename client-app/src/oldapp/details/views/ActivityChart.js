@@ -7,10 +7,10 @@ define([
 	, 'app/details/views/_ActivityTimeSeriesDataManagement'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/chart/ChartsContainer/_InfoOnMouseOver'
-	, 'redmic/modules/chart/ChartsContainer/_TemporalAxisWithGridDrawing'
-	, 'redmic/modules/chart/ChartsContainer/_VerticalAxesWithGridDrawing'
-	, 'redmic/modules/chart/ChartsContainer/_ZoomByDragging'
+	, 'src/component/chart/ChartsContainer/_InfoOnMouseOver'
+	, 'src/component/chart/ChartsContainer/_TemporalAxisWithGridDrawing'
+	, 'src/component/chart/ChartsContainer/_VerticalAxesWithGridDrawing'
+	, 'src/component/chart/ChartsContainer/_ZoomByDragging'
 ], function(
 	_Main
 	, _ProcessDataDefinitionAndGetTimeSeries

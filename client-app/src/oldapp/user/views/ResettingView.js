@@ -5,7 +5,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/text!./templates/Resetting.html"
-	, 'redmic/modules/base/_Store'
+	, 'src/component/base/_Store'
 ], function(
 	alertify
 	, _ExternalUserBaseView

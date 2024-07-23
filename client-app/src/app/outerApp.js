@@ -1,7 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/modules/app/_app'
+	, 'src/app/_app'
 ], function(
 	declare
 	, lang

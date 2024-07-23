@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/dom-class"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 	, "src/component/browser/_ButtonsInRow"
 	, "src/component/browser/_Framework"
 	, "src/component/browser/_GeoJsonParser"

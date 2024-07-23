@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/layout/wizard/_StepNavigation"

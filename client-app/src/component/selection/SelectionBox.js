@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'put-selector/put'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 	, 'src/component/base/_ListenQueryParams'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'

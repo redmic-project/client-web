@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/DeferredList'
-	, 'src/utils/Mediator'
+	, 'src/util/Mediator'
 	, 'src/component/gateway/_GatewayItfc'
 	, 'src/component/gateway/Gateway'
 ], function(

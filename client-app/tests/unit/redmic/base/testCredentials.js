@@ -1,6 +1,6 @@
 define([
-	"src/utils/Credentials"
-	, "src/utils/RedmicLocalStorage"
+	"src/util/Credentials"
+	, "src/util/RedmicLocalStorage"
 ], function(
 	Credentials
 	, RedmicLocalStorage

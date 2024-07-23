@@ -4,7 +4,7 @@ define([
 	, 'dojo/aspect'
 	, 'dojo/dom-class'
 	, 'put-selector/put'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 	, 'src/app/_app'
 	, 'src/component/components/Sidebar/MainSidebarImpl'
 	, 'src/component/components/Topbar'

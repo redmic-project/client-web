@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "src/component/base/_Module"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 	, 'sockjs/sockjs.min'
 
 	, 'stomp-websocket/stomp.min'

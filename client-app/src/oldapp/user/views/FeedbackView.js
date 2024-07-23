@@ -8,7 +8,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/query"
 	, "dojo/text!./templates/Feedback.html"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 	, "src/component/form/FormContainerImpl"
 	, "src/component/form/_ListenModelHasChanged"
 	, "src/component/model/ModelImpl"

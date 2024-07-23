@@ -9,7 +9,7 @@ define([
 	, "app/user/models/UserSectorModel"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 	, "src/component/base/_Window"
 	, "src/component/base/_Persistence"
 	, "src/component/browser/_ButtonsInRow"

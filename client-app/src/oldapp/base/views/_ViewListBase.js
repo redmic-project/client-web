@@ -6,7 +6,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "put-selector/put"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 ], function (
 	_Module
 	, _Show

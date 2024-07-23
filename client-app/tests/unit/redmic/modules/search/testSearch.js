@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "put-selector/put"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 	, "src/component/search/Search"
 	, "src/component/search/TextSearchImpl"
 	, "src/component/search/MapSearchImpl"

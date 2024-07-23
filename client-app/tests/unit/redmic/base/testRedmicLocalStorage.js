@@ -1,5 +1,5 @@
 define([
-	"src/utils/RedmicLocalStorage"
+	"src/util/RedmicLocalStorage"
 ], function(
 	RedmicLocalStorage
 ){

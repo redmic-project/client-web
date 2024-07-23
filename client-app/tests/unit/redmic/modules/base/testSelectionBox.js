@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "put-selector/put"
 	, "src/component/base/SelectionBox"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 ], function(
 	declare
 	, lang

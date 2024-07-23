@@ -9,7 +9,7 @@ define([
 	, 'app/details/views/ActivityLayerMapBase'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 	, 'src/component/base/_Filter'
 	, 'src/component/browser/_ButtonsInRow'
 	, 'src/component/browser/_Framework'

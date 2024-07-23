@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "src/component/notification/Notification"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 ], function(
 	declare
 	, lang

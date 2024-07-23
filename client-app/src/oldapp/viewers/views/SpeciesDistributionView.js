@@ -8,7 +8,7 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "put-selector/put"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 	, "src/component/atlas/Atlas"
 	, "src/component/base/_Filter"
 	, "src/component/base/_Selection"

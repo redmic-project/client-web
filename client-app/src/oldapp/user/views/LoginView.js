@@ -5,7 +5,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/text!./templates/Login.html"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 	, 'src/component/base/_Store'
 ], function(
 	alertify

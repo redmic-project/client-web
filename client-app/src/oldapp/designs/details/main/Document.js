@@ -2,7 +2,7 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 	, 'templates/DocumentInfo'
 	, './_DetailsBase'
 	, './DocumentPDF'

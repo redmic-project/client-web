@@ -10,7 +10,7 @@ dojoConfig = {
 		location: '../../src/redmic'
 	},{
 		name: 'RWidgets',
-		location: '../../src/utils/widgets'
+		location: '../../src/util/widgets'
 	},{
 		name: 'dojo',
 		location: '../dojo'

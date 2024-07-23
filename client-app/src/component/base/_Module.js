@@ -10,7 +10,7 @@ define([
 	, "dojo/on"
 	, "dojo/promise/all"
 	, "RWidgets/Utilities"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 	, "./_ChkCollection"
 	, "./_CommunicationCenter"
 	, "./_ManageClickEvent"

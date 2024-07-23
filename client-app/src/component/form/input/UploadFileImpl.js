@@ -3,10 +3,10 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/on'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 	, 'src/component/form/form/UploadInput'
 	, 'src/component/form/input/Input'
-	, 'src/utils/stringFormats'
+	, 'src/util/stringFormats'
 	, 'RWidgets/Utilities'
 ], function(
 	declare

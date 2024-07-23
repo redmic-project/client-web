@@ -10,7 +10,7 @@ define([
 	, 'src/component/base/_Store'
 	, 'src/component/layout/listMenu/ListMenu'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 	, 'templates/UserTopbarImage'
 	, 'templates/UserTopbarMenu'
 ], function(

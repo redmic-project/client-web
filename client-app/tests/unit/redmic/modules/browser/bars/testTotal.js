@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 	, "src/component/browser/bars/Total"
 	, "src/component/browser/ListImpl"
 	, "templates/DomainList"

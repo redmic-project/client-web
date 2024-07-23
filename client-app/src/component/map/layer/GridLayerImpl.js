@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, 'leaflet/leaflet'
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 	, "src/component/filter/Filter"
 	, "./MapLayer"
 ], function(

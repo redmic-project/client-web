@@ -5,7 +5,7 @@ define([
 	, "src/component/base/_Module"
 	, "src/component/base/_Store"
 	, "src/component/base/_Selection"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 ], function(
 	declare
 	, lang

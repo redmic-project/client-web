@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 	, "src/component/browser/row/_Buttons"
 	, "src/component/browser/row/_Hierarchical"
 	, "src/component/browser/row/_HierarchicalSelect"

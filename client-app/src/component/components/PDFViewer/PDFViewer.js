@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/layout/templateDisplayer/TemplateDisplayer"

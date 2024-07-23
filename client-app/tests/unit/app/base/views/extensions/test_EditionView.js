@@ -6,7 +6,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 	, "src/component/base/Selector"
 	, "src/component/store/MasterStore"
 ], function(

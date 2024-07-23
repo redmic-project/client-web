@@ -4,7 +4,7 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
 	, 'src/component/base/_Module'
-	, 'src/utils/Mediator'
+	, 'src/util/Mediator'
 
 ], function(
 	declare

@@ -4,7 +4,7 @@ define([
 	, "src/component/notification/CommunicationCenter"
 	, "src/component/notification/Alert"
 	, "src/component/notification/Notification"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 ], function(
 	declare
 	, lang

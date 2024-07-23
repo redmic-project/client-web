@@ -2,7 +2,7 @@ define([
 	'alertify/alertify.min'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/selection/SelectionBox"

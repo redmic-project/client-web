@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/Deferred"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 	, "src/component/base/Socket"
 ], function(
 	declare

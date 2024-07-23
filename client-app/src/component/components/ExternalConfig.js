@@ -4,7 +4,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 ], function(
 	redmicConfig
 	, declare

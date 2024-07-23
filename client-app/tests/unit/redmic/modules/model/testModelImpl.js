@@ -1,6 +1,6 @@
 define([
 	'dojo/_base/declare'
-	, 'src/utils/Mediator'
+	, 'src/util/Mediator'
 	, 'src/component/model/ModelImpl'
 ], function(
 	declare

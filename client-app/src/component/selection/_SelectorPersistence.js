@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Persistence'
 	, 'src/component/base/_Store'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 ], function(
 	declare
 	, lang

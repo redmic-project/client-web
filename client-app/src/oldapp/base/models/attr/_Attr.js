@@ -5,7 +5,7 @@ define([
 	, "dojo/Stateful"
 	, "dojo/topic"
 	, "json-schema-ref-parser/ref-parser.min"
-	, "src/utils/tv4"
+	, "src/util/tv4"
 ], function(
 	declare
 	, lang

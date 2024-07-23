@@ -135,7 +135,7 @@ var profileObj = {
 		}
 	},{
 		name: 'RWidgets',
-		location: 'src/utils/widgets',
+		location: 'src/util/widgets',
 		resourceTags: {
 			amd: amdTagger
 		}

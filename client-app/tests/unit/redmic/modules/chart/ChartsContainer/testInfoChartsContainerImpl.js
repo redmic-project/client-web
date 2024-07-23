@@ -4,7 +4,7 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
 	, 'put-selector/put'
-	, 'src/utils/Mediator'
+	, 'src/util/Mediator'
 	, 'src/component/chart/ChartsContainer/InfoChartsContainerImpl'
 	, 'src/component/chart/layer/ChartLayer/LinearChartImpl'
 ], function(

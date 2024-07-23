@@ -4,7 +4,7 @@ define([
 	, "dojo/date/stamp"
 	, "app/viewers/views/ChartsView"
 	, "src/component/store/MasterStore"
-	, "src/utils/Mediator"
+	, "src/util/Mediator"
 ], function(
 	declare
 	, lang

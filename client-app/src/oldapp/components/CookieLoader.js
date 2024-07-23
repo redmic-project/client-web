@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"
-	, "src/utils/Credentials"
+	, "src/util/Credentials"
 ], function(
 	alertify
 	, redmicConfig

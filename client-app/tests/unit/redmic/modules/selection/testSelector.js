@@ -1,7 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/utils/Mediator'
+	, 'src/util/Mediator'
 	, 'src/component/selection/Selector'
 ], function(
 	declare

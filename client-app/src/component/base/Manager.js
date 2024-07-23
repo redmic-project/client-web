@@ -5,7 +5,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/topic'
 	, 'put-selector/put'
-	, 'src/utils/Credentials'
+	, 'src/util/Credentials'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 ],

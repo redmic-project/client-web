@@ -1,5 +1,17 @@
 dojoConfig = {
 	packages: [{
+		name: 'src',
+		location: '../../src'
+	},{
+		name: 'app',
+		location: '../../src/app'
+	},{
+		name: 'redmic',
+		location: '../../src/redmic'
+	},{
+		name: 'RWidgets',
+		location: '../../src/redmic/widgets'
+	},{
 		name: 'dojo',
 		location: '../dojo'
 	},{
@@ -9,20 +21,11 @@ dojoConfig = {
 		name: 'dojox',
 		location: '../dojox'
 	},{
-		name: 'app',
-		location: '../../src/app'
-	},{
 		name: 'put-selector',
 		location: '../put-selector'
 	},{
 		name: 'alertify',
 		location: '../alertify/build'
-	},{
-		name: 'redmic',
-		location: '../../src/redmic'
-	},{
-		name: 'src',
-		location: '../../src/src'
 	},{
 		name: 'dropzone',
 		location: '../dropzone/dist/min'
@@ -62,9 +65,6 @@ dojoConfig = {
 	},{
 		name: 'proj4',
 		location: '../proj4/dist'
-	},{
-		name: 'RWidgets',
-		location: '../../src/redmic/widgets'
 	},{
 		name: 'handlebars',
 		location: '../handlebars/dist'

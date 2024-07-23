@@ -3,14 +3,14 @@ dojoConfig = {
 	extraLocale: ['en'],
 
 	packages: [{
+		name: 'app',
+		location: '../app'
+	},{
 		name: 'dojo',
 		location: '../dojo'
 	},{
 		name: 'dojox',
 		location: '../dojox'
-	},{
-		name: 'app',
-		location: '../app'
 	},{
 		name: 'json-schema-ref-parser',
 		location: '../json-schema-ref-parser'

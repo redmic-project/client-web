@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 			rootPath: __dirname,
 			srcPath: 'client-app/src',
 			depsPath: 'client-app/deps',
-			testPath: 'client-app/tests',
+			testPath: 'client-app/test',
 			distPath: 'dist',
 			destDir: 'javascript'
 		},

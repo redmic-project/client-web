@@ -5,11 +5,11 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"
 	, "put-selector/put"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/dialog/LockDialogImpl"
 	, "redmic/modules/form/FormContainerImpl"
 	, "redmic/modules/form/UploadFileImpl"
-	, "redmic/form/FormContainer"
+	, "redmic/modules/form/form/FormContainer"
 ], function(
 	_Persistent
 	, Model

@@ -6,7 +6,7 @@ define([
 	, 'dojo/dom'
 	, 'dojo/has'
 	, 'put-selector/put'
-	, 'redmic/base/CheckBrowser'
+	, 'src/app/CheckBrowser'
 	, 'src/app/innerApp'
 	, 'src/app/ModuleStore'
 	, 'src/app/outerApp'

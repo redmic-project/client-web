@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Evented'
 	, 'dojo/has'
-	, 'redmic/base/RedmicLocalStorage'
+	, 'src/utils/RedmicLocalStorage'
 ], function(
 	declare
 	, lang

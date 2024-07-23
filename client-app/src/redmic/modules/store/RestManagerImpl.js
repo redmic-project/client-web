@@ -5,7 +5,7 @@ define([
 	, 'dojo/request'
 	, 'dojo/request/notify'
 	, 'dojo/request/registry'
-	, 'redmic/base/Credentials'
+	, 'src/utils/Credentials'
 	, './RestManager'
 ], function(
 	redmicConfig

@@ -4,7 +4,7 @@ define([
 	, "dojo/date/stamp"
 	, "app/viewers/views/ChartsView"
 	, "redmic/modules/store/MasterStore"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 ], function(
 	declare
 	, lang

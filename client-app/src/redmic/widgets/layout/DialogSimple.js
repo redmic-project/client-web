@@ -2,7 +2,7 @@ define([
 	'dijit/registry'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/layout/_DialogBase'
+	, 'RWidgets/layout/_DialogBase'
 ], function(
 	registry
 	, declare

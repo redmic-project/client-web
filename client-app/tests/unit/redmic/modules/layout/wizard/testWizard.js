@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 	, "redmic/modules/layout/wizard/_StepNavigation"

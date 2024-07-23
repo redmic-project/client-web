@@ -5,7 +5,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/text!./templates/Login.html"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 	, 'redmic/modules/base/_Store'
 ], function(
 	alertify

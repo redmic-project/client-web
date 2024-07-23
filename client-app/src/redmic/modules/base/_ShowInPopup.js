@@ -3,8 +3,8 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
-	, 'redmic/layout/DialogComplex'
-	, 'redmic/layout/DialogSimple'
+	, 'RWidgets/layout/DialogComplex'
+	, 'RWidgets/layout/DialogSimple'
 	, 'put-selector/put'
 ], function(
 	ContentPane

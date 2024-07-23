@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/browser/row/_Buttons"
 	, "redmic/modules/browser/row/_Hierarchical"
 	, "redmic/modules/browser/row/_HierarchicalSelect"

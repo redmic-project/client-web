@@ -1,5 +1,5 @@
 define([
-	'redmic/base/Mediator'
+	'src/utils/Mediator'
 	, 'redmic/modules/store/RestManagerImpl'
 
 ], function(

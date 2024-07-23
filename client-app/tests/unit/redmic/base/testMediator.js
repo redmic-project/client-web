@@ -1,5 +1,5 @@
 define([
-	"redmic/base/Mediator"
+	"src/utils/Mediator"
 ], function(
 	Mediator
 ){

@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "RWidgets/Utilities"
-	, "redmic/form/Select"
+	, "redmic/modules/form/form/Select"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/form/input/Input"
 ], function(

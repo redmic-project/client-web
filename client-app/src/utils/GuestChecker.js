@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 ], function(
 	alertify
 	, declare

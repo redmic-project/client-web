@@ -8,7 +8,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/query"
 	, "dojo/text!./templates/Feedback.html"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 	, "redmic/modules/form/FormContainerImpl"
 	, "redmic/modules/form/_ListenModelHasChanged"
 	, "redmic/modules/model/ModelImpl"

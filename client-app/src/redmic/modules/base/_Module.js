@@ -10,7 +10,7 @@ define([
 	, "dojo/on"
 	, "dojo/promise/all"
 	, "RWidgets/Utilities"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "./_ChkCollection"
 	, "./_CommunicationCenter"
 	, "./_ManageClickEvent"

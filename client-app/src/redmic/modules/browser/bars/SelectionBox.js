@@ -2,7 +2,7 @@ define([
 	'alertify/alertify.min'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Show"
 	, "redmic/modules/selection/SelectionBox"

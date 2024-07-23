@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/browser/buttons/_GroupButtons"
 	, "redmic/modules/browser/buttons/Buttons"
 ], function(

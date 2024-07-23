@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'redmic/modules/base/_Persistence'
 	, 'redmic/modules/base/_Store'
-	, 'redmic/base/Credentials'
+	, 'src/utils/Credentials'
 ], function(
 	declare
 	, lang

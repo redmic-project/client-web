@@ -1,6 +1,6 @@
 define([
 	'dojo/_base/declare'
-	, 'redmic/base/Mediator'
+	, 'src/utils/Mediator'
 	, 'redmic/modules/model/ModelImpl'
 ], function(
 	declare

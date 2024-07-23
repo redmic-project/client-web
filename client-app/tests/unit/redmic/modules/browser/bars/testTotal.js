@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/browser/bars/Total"
 	, "redmic/modules/browser/ListImpl"
 	, "templates/DomainList"

@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/model/ModelImpl"
 	, "redmic/modules/form/inputs/CheckBoxImpl"
 	, "tests/redmic/modules/model/SupportModel"

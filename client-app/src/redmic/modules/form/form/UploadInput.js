@@ -10,7 +10,7 @@ define([
 	, 'dojo/i18n!./nls/UploadInput'
 	, 'dojo/text!./templates/UploadInput.html'
 	, 'put-selector/put'
-	, 'redmic/base/Credentials'
+	, 'src/utils/Credentials'
 
 	, 'dropzone/dropzone-amd-module.min'
 ], function(

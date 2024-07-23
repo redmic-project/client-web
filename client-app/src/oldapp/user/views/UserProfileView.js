@@ -9,7 +9,7 @@ define([
 	, "app/user/models/UserSectorModel"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 	, "redmic/modules/base/_Window"
 	, "redmic/modules/base/_Persistence"
 	, "redmic/modules/browser/_ButtonsInRow"

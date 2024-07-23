@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Module"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 	, 'sockjs/sockjs.min'
 
 	, 'stomp-websocket/stomp.min'

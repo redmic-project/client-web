@@ -3,10 +3,10 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/on'
-	, 'redmic/base/Credentials'
-	, 'redmic/form/UploadInput'
+	, 'src/utils/Credentials'
+	, 'redmic/modules/form/form/UploadInput'
 	, 'redmic/modules/form/input/Input'
-	, 'redmic/validation/stringFormats'
+	, 'src/utils/stringFormats'
 	, 'RWidgets/Utilities'
 ], function(
 	declare

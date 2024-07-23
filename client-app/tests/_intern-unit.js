@@ -40,7 +40,7 @@ module.exports = function(args) {
 				, suitesPrefix + 'redmic/modules/chart/ChartsContainer/testInfoChartsContainerImpl'
 				, suitesPrefix + 'redmic/modules/chart/layer/ChartLayer/testLinearChartImpl'
 				, suitesPrefix + 'redmic/modules/chart/Toolbar/testSliderSelectorImpl'
-				, suitesPrefix + 'redmic/form/testUploadInput'
+				, suitesPrefix + 'redmic/modules/form/form/testUploadInput'
 				, suitesPrefix + 'redmic/modules/browser/testListImpl'
 				, suitesPrefix + 'redmic/modules/browser/testHierarchicalImpl'
 				, suitesPrefix + 'redmic/modules/browser/row/testRow'

@@ -6,7 +6,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/base/Selector"
 	, "redmic/modules/store/MasterStore"
 ], function(

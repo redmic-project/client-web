@@ -5,7 +5,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/topic'
 	, 'put-selector/put'
-	, 'redmic/base/Credentials'
+	, 'src/utils/Credentials'
 	, 'redmic/modules/base/_Module'
 	, 'redmic/modules/base/_Show'
 ],

@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/request'
-	, 'redmic/base/RedmicLocalStorage'
+	, 'src/utils/RedmicLocalStorage'
 ], function(
 	redmicConfig
 	, declare

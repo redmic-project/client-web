@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/DeferredList'
-	, 'redmic/base/Mediator'
+	, 'src/utils/Mediator'
 	, 'redmic/modules/gateway/_GatewayItfc'
 	, 'redmic/modules/gateway/Gateway'
 ], function(

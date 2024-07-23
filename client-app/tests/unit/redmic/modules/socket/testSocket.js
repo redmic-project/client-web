@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/Deferred"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/base/Socket"
 ], function(
 	declare

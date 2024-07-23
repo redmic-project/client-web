@@ -5,7 +5,7 @@ define([
 	, "dojo/dom-class"
 	, "dojo/Stateful"
 	, "put-selector/put"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 ], function(
 	_WidgetBase
 	, declare

@@ -4,7 +4,7 @@ define([
 	, "redmic/modules/notification/CommunicationCenter"
 	, "redmic/modules/notification/Alert"
 	, "redmic/modules/notification/Notification"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 ], function(
 	declare
 	, lang

@@ -2,7 +2,7 @@ define([
 	'dojo/_base/lang'
 	, 'dojo/has'
 	, 'RWidgets/Utilities'
-	, 'redmic/validation/stringFormats'
+	, 'src/utils/stringFormats'
 	, 'tv4/tv4'
 ], function(
 	lang

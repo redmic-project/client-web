@@ -4,7 +4,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
-	, 'redmic/form/UploadInput'
+	, 'redmic/modules/form/form/UploadInput'
 	, 'redmic/modules/form/input/Input'
 ], function(
 	redmicConfig

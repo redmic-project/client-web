@@ -10,7 +10,7 @@ define([
 	, 'redmic/modules/base/_Store'
 	, 'redmic/modules/layout/listMenu/ListMenu'
 	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
-	, 'redmic/base/Credentials'
+	, 'src/utils/Credentials'
 	, 'templates/UserTopbarImage'
 	, 'templates/UserTopbarMenu'
 ], function(

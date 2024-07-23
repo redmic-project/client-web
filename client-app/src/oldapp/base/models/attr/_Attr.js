@@ -5,7 +5,7 @@ define([
 	, "dojo/Stateful"
 	, "dojo/topic"
 	, "json-schema-ref-parser/ref-parser.min"
-	, "redmic/base/tv4"
+	, "src/utils/tv4"
 ], function(
 	declare
 	, lang

@@ -4,7 +4,7 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
 	, 'redmic/modules/base/_Module'
-	, 'redmic/base/Mediator'
+	, 'src/utils/Mediator'
 
 ], function(
 	declare

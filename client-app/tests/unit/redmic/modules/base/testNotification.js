@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/Notification"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 ], function(
 	declare
 	, lang

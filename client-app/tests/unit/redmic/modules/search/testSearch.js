@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "put-selector/put"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/search/Search"
 	, "redmic/modules/search/TextSearchImpl"
 	, "redmic/modules/search/MapSearchImpl"

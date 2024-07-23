@@ -5,7 +5,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/query'
 	, 'put-selector/put'
-	, 'redmic/layout/_DialogBase'
+	, 'RWidgets/layout/_DialogBase'
 ], function(
 	ContentPane
 	, registry

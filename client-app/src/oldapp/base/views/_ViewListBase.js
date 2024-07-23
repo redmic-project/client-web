@@ -6,7 +6,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "put-selector/put"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 ], function (
 	_Module
 	, _Show

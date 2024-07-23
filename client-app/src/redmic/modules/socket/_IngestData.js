@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 ], function(
 	redmicConfig
 	, declare

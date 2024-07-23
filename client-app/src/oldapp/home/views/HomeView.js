@@ -11,7 +11,7 @@ define([
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'redmic/base/Credentials'
+	, 'src/utils/Credentials'
 	, 'redmic/modules/base/_Filter'
 	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'
 	, 'templates/InitialInfo'

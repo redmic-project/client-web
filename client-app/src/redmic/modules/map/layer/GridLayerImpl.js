@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, 'leaflet/leaflet'
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 	, "redmic/modules/filter/Filter"
 	, "./MapLayer"
 ], function(

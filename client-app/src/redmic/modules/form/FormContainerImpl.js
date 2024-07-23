@@ -4,7 +4,7 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "dojo/promise/all"
-	, "redmic/form/FormContainer"
+	, "redmic/modules/form/form/FormContainer"
 	, "./Form"
 ], function(
 	declare

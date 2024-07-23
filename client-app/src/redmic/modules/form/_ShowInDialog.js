@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, 'put-selector/put'
-	, "redmic/layout/DialogComplex"
+	, "RWidgets/layout/DialogComplex"
 	, "redmic/modules/form/_CreateKeypad"
 ], function(
 	ContentPane

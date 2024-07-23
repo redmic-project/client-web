@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/dom-class"
-	, "redmic/base/Mediator"
+	, "src/utils/Mediator"
 	, "redmic/modules/browser/_ButtonsInRow"
 	, "redmic/modules/browser/_DragAndDrop"
 	, "redmic/modules/browser/_EditionTable"

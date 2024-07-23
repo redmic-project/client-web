@@ -8,7 +8,7 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "put-selector/put"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 	, "redmic/modules/atlas/Atlas"
 	, "redmic/modules/base/_Filter"
 	, "redmic/modules/base/_Selection"

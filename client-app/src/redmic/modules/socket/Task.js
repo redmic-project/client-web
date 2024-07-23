@@ -5,7 +5,7 @@ define([
 	, "redmic/modules/base/_Module"
 	, "redmic/modules/base/_Store"
 	, "redmic/modules/base/_Selection"
-	, "redmic/base/Credentials"
+	, "src/utils/Credentials"
 ], function(
 	declare
 	, lang

@@ -4,7 +4,7 @@ define([
 	, 'dojo/aspect'
 	, 'dojo/dom-class'
 	, 'put-selector/put'
-	, 'redmic/base/Credentials'
+	, 'src/utils/Credentials'
 	, 'src/app/_app'
 	, 'redmic/modules/components/Sidebar/MainSidebarImpl'
 	, 'redmic/modules/components/Topbar'

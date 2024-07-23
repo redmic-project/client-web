@@ -1,6 +1,6 @@
 define([
 	'dojo/_base/declare'
-	, 'redmic/base/Mediator'
+	, 'src/utils/Mediator'
 	, 'redmic/modules/tree/_LazyLoad'
 	, 'redmic/modules/tree/_LeafSelection'
 	, 'redmic/modules/tree/CbtreeImpl'

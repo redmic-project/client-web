@@ -5,7 +5,7 @@ define([
 	, "app/designs/details/_AddTitle"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'src/view/detail/_WidgetDefinition'
+	, 'src/catalog/detail/_WidgetDefinition'
 	, "templates/ActivityList"
 ], function(
 	_Main

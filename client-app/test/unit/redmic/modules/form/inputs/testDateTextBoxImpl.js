@@ -4,7 +4,7 @@ define([
 	, "src/util/Mediator"
 	, "src/component/model/ModelImpl"
 	, "src/component/form/inputs/DateTextBoxImpl"
-	, 'test/src/component/model/SupportModel"
+	, 'test/src/component/model/SupportModel'
 	, "moment"
 ], function(
 	declare

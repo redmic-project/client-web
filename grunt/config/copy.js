@@ -1,7 +1,11 @@
 module.exports = function(grunt) {
 
-	var srcPath = grunt.config('redmicConfig.srcPath'),
+	var path = require('path'),
+
+		srcPath = grunt.config('redmicConfig.srcPath'),
+		depsPath = grunt.config('redmicConfig.depsPath'),
 		distPath = grunt.config('redmicConfig.distPath'),
+		destDir = grunt.config('redmicConfig.destDir'),
 		publicPath = srcPath.split('/')[0],
 
 		resourcesPath = 'resources/**',
@@ -10,13 +14,13 @@ module.exports = function(grunt) {
 		stylesDistPath = stylesPath + '/dist',
 		distStylesSubPath = distPath + '/stylesheets',
 
-		leafletPath = '/deps/leaflet/',
-		srcLeafletPath = publicPath + leafletPath,
-		distLeafletPath = distPath + leafletPath,
+		leafletPath = 'leaflet',
+		srcLeafletPath = path.join(depsPath, leafletPath),
+		distLeafletPath = path.join(distPath, destDir, leafletPath),
 
-		pdfjsPath = '/deps/pdfjs/',
-		srcPdfjsPath = publicPath + pdfjsPath,
-		distPdfjsPath = distPath + pdfjsPath,
+		pdfjsPath = 'pdfjs',
+		srcPdfjsPath = path.join(depsPath, pdfjsPath),
+		distPdfjsPath = path.join(distPath, destDir, pdfjsPath),
 		pdfjsWebName = 'web',
 		pdfjsBuildName = 'build';
 
@@ -47,14 +51,14 @@ module.exports = function(grunt) {
 		},
 		pdfjs: {
 			files: [{
-				cwd: srcPdfjsPath + pdfjsWebName,
+				cwd: path.join(srcPdfjsPath, pdfjsWebName),
 				src: ['v*[^.map]', 'pdf.viewer.js', 'images/*', 'locale/es-ES/*', 'locale/en-GB/*'],
-				dest: distPdfjsPath + pdfjsWebName,
+				dest: path.join(distPdfjsPath, pdfjsWebName),
 				expand: true
 			},{
-				cwd: srcPdfjsPath + pdfjsBuildName,
+				cwd: path.join(srcPdfjsPath, pdfjsBuildName),
 				src: 'pdf.worker.js',
-				dest: distPdfjsPath + pdfjsBuildName,
+				dest: path.join(distPdfjsPath, pdfjsBuildName),
 				expand: true
 			}]
 		}

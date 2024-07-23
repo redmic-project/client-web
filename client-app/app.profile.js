@@ -25,9 +25,9 @@ var declarativeTagger = function(filename) {
 };
 
 var profileObj = {
-	basePath: './src',
-	releaseDir: '../../dist',
-	releaseName: 'src',
+	basePath: '.',
+	releaseDir: '../dist',
+	releaseName: 'javascript',
 	action: 'release',
 	layerOptimize: 'closure',
 	optimize: 'closure',
@@ -85,16 +85,16 @@ var profileObj = {
 
 	packages: [{
 		name: 'dijit',
-		location: 'dijit'
+		location: 'deps/dijit'
 	},{
 		name: 'dojo',
-		location: 'dojo'
+		location: 'deps/dojo'
 	},{
 		name: 'dojox',
-		location: 'dojox'
+		location: 'deps/dojox'
 	},{
 		name: 'cbtree',
-		location: 'cbtree',
+		location: 'deps/cbtree',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, [
@@ -119,112 +119,112 @@ var profileObj = {
 		}
 	},{
 		name: 'put-selector',
-		location: 'put-selector'
+		location: 'deps/put-selector'
 	},{
 		name: 'wicket',
-		location: 'wicket',
+		location: 'deps/wicket',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, ['wicket/wicket.min', 'wicket/wicket-leaflet.min'])
 		}
 	},{
 		name: 'app',
-		location: 'app',
+		location: 'src/app',
 		resourceTags: {
 			amd: amdTagger
 		}
 	},{
 		name: 'RWidgets',
-		location: 'redmic/widgets',
+		location: 'src/redmic/widgets',
 		resourceTags: {
 			amd: amdTagger
 		}
 	},{
 		name: 'redmic',
-		location: 'redmic',
+		location: 'src/redmic',
 		resourceTags: {
 			amd: amdTagger
 		}
 	},{
 		name: 'src',
-		location: 'src',
+		location: 'src/src',
 		resourceTags: {
 			amd: amdTagger
 		}
 	},{
 		name: 'mediatorjs',
-		location: 'mediatorjs',
+		location: 'deps/mediatorjs',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'mediatorjs/mediator.min')
 		}
 	},{
 		name: 'moment',
-		location: 'moment/min',
+		location: 'deps/moment/min',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'moment/moment.min')
 		}
 	},{
 		name: 'deepmerge',
-		location: 'deepmerge/dist',
+		location: 'deps/deepmerge/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'deepmerge/umd')
 		}
 	},{
 		name: 'leaflet',
-		location: 'leaflet/dist',
+		location: 'deps/leaflet/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'leaflet/leaflet')
 		}
 	},{
 		name: 'leaflet-nontiledlayer',
-		location: 'leaflet-nontiledlayer/dist',
+		location: 'deps/leaflet-nontiledlayer/dist',
 		resourceTags: {
 			amd: amdTagger
 		}
 	},{
 		name: 'awesome-markers',
-		location: 'leaflet-awesome-markers/dist',
+		location: 'deps/leaflet-awesome-markers/dist',
 		resourceTags: {
 			ignore: ignoreTagger.bind(null, 'awesome-markers/leaflet.awesome-markers.min')
 		}
 	},{
 		name: 'L-coordinates',
-		location: 'leaflet-coordinates/dist',
+		location: 'deps/leaflet-coordinates/dist',
 		resourceTags: {
 			ignore: ignoreTagger.bind(null, 'L-coordinates/Leaflet.Coordinates-0.1.5.min')
 		}
 	},{
 		name: 'L-draw',
-		location: 'leaflet-draw/dist',
+		location: 'deps/leaflet-draw/dist',
 		resourceTags: {
 			ignore: ignoreTagger.bind(null, 'L-draw/leaflet.draw')
 		}
 	},{
 		name: 'L-miniMap',
-		location: 'leaflet-minimap/dist',
+		location: 'deps/leaflet-minimap/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'L-miniMap/Control.MiniMap.min')
 		}
 	},{
 		name: 'L-navBar',
-		location: 'leaflet-navbar/src',
+		location: 'deps/leaflet-navbar/src',
 		resourceTags: {
 			ignore: ignoreTagger.bind(null, 'L-navBar/Leaflet.NavBar')
 		}
 	},{
 		name: 'L-areaselect',
-		location: 'leaflet-areaselect/src',
+		location: 'deps/leaflet-areaselect/src',
 		resourceTags: {
 			ignore: ignoreTagger.bind(null, 'L-areaselect/leaflet-areaselect')
 		}
 	},{
 		name: 'leaflet-measure',
-		location: 'leaflet-measure/dist',
+		location: 'deps/leaflet-measure/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, [
@@ -234,110 +234,110 @@ var profileObj = {
 		}
 	},{
 		name: 'pruneCluster',
-		location: 'pruneCluster/dist',
+		location: 'deps/pruneCluster/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'pruneCluster/PruneCluster.amd.min')
 		}
 	},{
 		name: 'sockjs',
-		location: 'sockjs/dist',
+		location: 'deps/sockjs/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'sockjs/sockjs.min')
 		}
 	},{
 		name: 'stomp-websocket',
-		location: 'stomp-websocket/lib',
+		location: 'deps/stomp-websocket/lib',
 		resourceTags: {
 			ignore: ignoreTagger.bind(null, 'stomp-websocket/stomp.min')
 		}
 	},{
 		name: 'alertify',
-		location: 'alertify/build',
+		location: 'deps/alertify/build',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'alertify/alertify.min')
 		}
 	},{
 		name: 'templates',
-		location: 'templates/dist',
+		location: 'deps/templates/dist',
 		resourceTags: {
 			amd: amdTagger
 		}
 	},{
 		name: 'd3',
-		location: 'd3/dist',
+		location: 'deps/d3/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'd3/d3.min')
 		}
 	},{
 		name: 'd3Tip',
-		location: 'd3-v6-tip/build',
+		location: 'deps/d3-v6-tip/build',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'd3Tip/d3-v6-tip.min')
 		}
 	},{
 		name: 'uuid',
-		location: 'uuid/dist/umd',
+		location: 'deps/uuid/dist/umd',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'uuid/uuidv4.min')
 		}
 	},{
 		name: 'proj4',
-		location: 'proj4/dist',
+		location: 'deps/proj4/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'proj4/proj4')
 		}
 	},{
 		name: 'dropzone',
-		location: 'dropzone/dist/min',
+		location: 'deps/dropzone/dist/min',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'dropzone/dropzone-amd-module.min')
 		}
 	},{
 		name: 'tv4',
-		location: 'tv4',
+		location: 'deps/tv4',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'tv4/tv4')
 		}
 	},{
 		name: 'colorjs',
-		location: 'color-js',
+		location: 'deps/color-js',
 		resourceTags: {
 			copyOnly: copyOnlyTagger,
 			ignore: ignoreTagger.bind(null, 'colorjs/color')
 		}
 	},{
 		name: 'json-schema-ref-parser',
-		location: 'json-schema-ref-parser/dist',
+		location: 'deps/json-schema-ref-parser/dist',
 		resourceTags: {
 			copyOnly: copyOnlyTagger,
 			ignore: ignoreTagger.bind(null, 'json-schema-ref-parser/ref-parser.min')
 		}
 	},{
 		name: 'packery',
-		location: 'packery/dist',
+		location: 'deps/packery/dist',
 		resourceTags: {
 			copyOnly: copyOnlyTagger,
 			ignore: ignoreTagger.bind(null, 'packery/packery.pkgd.min')
 		}
 	},{
 		name: 'draggabilly',
-		location: 'draggabilly/dist',
+		location: 'deps/draggabilly/dist',
 		resourceTags: {
 			copyOnly: copyOnlyTagger,
 			ignore: ignoreTagger.bind(null, 'draggabilly/draggabilly.pkgd.min')
 		}
 	},{
 		name: 'handlebars',
-		location: 'handlebars/dist',
+		location: 'deps/handlebars/dist',
 		resourceTags: {
 			amd: amdTagger,
 			ignore: ignoreTagger.bind(null, 'handlebars/handlebars.runtime.min')

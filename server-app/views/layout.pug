@@ -29,7 +29,9 @@ html
 				altLocale1 = esLocale;
 			}
 
-			const basePath = '/' + (env.useBuilt ? 'dist' : 'client-app');
+			const basePath = '/' + (env.useBuilt ? 'dist' : 'client-app'),
+				dojoConfigPath = basePath + '/' + (env.useBuilt ? 'javascript' : 'src') + '/dojoConfig.js',
+				dojoJsPath = basePath + '/' + (env.useBuilt ? 'javascript' : 'deps') + '/dojo/dojo.js';
 
 		meta(name = 'og:locale' content = locale)
 		meta(name = 'og:locale:alternate' content = altLocale1)
@@ -38,8 +40,8 @@ html
 		meta(name = 'twitter:card' content = 'summary')
 		meta(name = 'twitter:site' content = '@redmic_project')
 
-		script(src = basePath + '/src/dojoConfig.js')
-		script(src = basePath + '/deps/dojo/dojo.js' data-dojo-config = 'locale:"' + env.lang + '"')
+		script(src = dojoConfigPath)
+		script(src = dojoJsPath data-dojo-config = 'locale:"' + env.lang + '"')
 
 		link(rel='shortcut icon', href=basePath + '/resources/images/favicon.ico')
 

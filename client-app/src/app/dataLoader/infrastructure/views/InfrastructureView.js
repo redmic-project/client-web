@@ -1,6 +1,6 @@
 define([
 	"app/dataLoader/base/_GeographicBase"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"

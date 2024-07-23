@@ -3,7 +3,7 @@ define([
 	,'app/designs/list/Controller'
 	, 'app/designs/list/layout/Layout'
 	, 'app/designs/textSearchList/main/ServiceOGC'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'

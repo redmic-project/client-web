@@ -2,7 +2,7 @@ define([
 	"app/designs/base/_Main"
 	, "app/designs/textSearchFacetsList/Controller"
 	, "app/designs/textSearchFacetsList/Layout"
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ProgramList"

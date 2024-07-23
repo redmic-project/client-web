@@ -1,6 +1,6 @@
 define([
 	"app/designs/details/main/Organisation"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 ], function(
 	Organisation

@@ -1,6 +1,6 @@
 define([
 	"app/base/models/_Model"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"

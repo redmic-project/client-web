@@ -2,7 +2,7 @@ define([
 	"app/base/views/extensions/_AddSelectInput"
 	, "app/designs/formList/layout/LayoutWithTopForm"
 	, "app/designs/formList/Controller"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'moment/moment.min'

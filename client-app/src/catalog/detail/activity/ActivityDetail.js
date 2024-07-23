@@ -1,5 +1,5 @@
 define([
-	'app/redmicConfig'
+	'src/redmicConfig'
 	, 'app/designs/details/main/_ActivityBase'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'

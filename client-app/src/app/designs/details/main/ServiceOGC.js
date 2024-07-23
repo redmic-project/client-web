@@ -1,6 +1,6 @@
 define([
 	"app/designs/base/_Main"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'redmic/modules/layout/templateDisplayer/TemplateDisplayer'

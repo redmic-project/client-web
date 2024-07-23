@@ -1,5 +1,5 @@
 define([
-	"app/redmicConfig"
+	'src/redmicConfig'
 ], function (
 	redmicConfig
 ){

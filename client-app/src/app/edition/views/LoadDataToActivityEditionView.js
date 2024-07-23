@@ -10,7 +10,7 @@ define([
 	, "app/edition/views/dataLoader/LoadDataFT"
 	, "app/edition/views/dataLoader/LoadDataOC"
 	, "app/edition/views/dataLoader/LoadDataTR"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"

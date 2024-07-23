@@ -3,7 +3,7 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, 'd3/d3.min'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"

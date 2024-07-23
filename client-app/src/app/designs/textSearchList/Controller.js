@@ -1,7 +1,7 @@
 define([
 	"app/designs/base/_Browser"
 	, "app/designs/base/_Controller"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/bars/Pagination"

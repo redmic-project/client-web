@@ -8,7 +8,7 @@ define([
 	, 'app/home/views/SearchResultsWidget'
 	, 'app/home/views/SocialWidget'
 	, 'app/home/views/StatsWidget'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'redmic/base/Credentials'

@@ -1,7 +1,7 @@
 define([
 	'alertify/alertify.min'
 	, "app/user/views/_ExternalUserBaseView"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/text!./templates/ConfirmResetting.html"

@@ -3,7 +3,7 @@ define([
 	, "app/components/steps/_MainData"
 	, "app/components/viewCustomization/describeSite/views/_AdditionalKeyGetter"
 	, "app/components/viewCustomization/describeSite/views/SelectStationByActivity"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_ShowInPopup"

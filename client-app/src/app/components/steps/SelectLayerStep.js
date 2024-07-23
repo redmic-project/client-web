@@ -3,7 +3,7 @@ define([
 	, "app/base/views/extensions/_LocalSelectionView"
 	, "app/designs/list/layout/ListWithTopContent"
 	, "app/designs/list/Controller"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Store"

@@ -1,6 +1,6 @@
 define([
 	'app/designs/details/main/ActivityLayerMap'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'redmic/modules/atlas/_AtlasLayersManagement'

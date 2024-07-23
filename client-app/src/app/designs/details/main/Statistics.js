@@ -3,7 +3,7 @@ define([
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
 	, "app/designs/details/_AddTitle"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/_ButtonsInRow"

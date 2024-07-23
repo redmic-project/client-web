@@ -1,6 +1,6 @@
 define([
 	"app/designs/textSearchFacetsList/main/Activity"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function (

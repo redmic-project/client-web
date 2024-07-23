@@ -9,7 +9,7 @@ define([
 	, "app/designs/list/Controller"
 	, "app/designs/list/layout/Layout"
 	, "app/details/views/_ActivityTimeSeriesDataManagement"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"

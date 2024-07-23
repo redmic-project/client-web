@@ -1,7 +1,7 @@
 define([
 	'app/designs/mapWithSideContent/Controller'
 	, 'app/designs/mapWithSideContent/layout/MapAndContent'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'redmic/modules/atlas/Atlas'

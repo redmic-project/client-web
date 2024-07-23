@@ -1,7 +1,7 @@
 define([
 	"app/base/views/extensions/_EditionWizardView"
 	, "app/base/views/extensions/_FormInDialogView"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"

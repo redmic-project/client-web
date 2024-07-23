@@ -3,7 +3,7 @@ define([
 	, "app/designs/list/_AddFilter"
 	, "app/designs/list/Controller"
 	, "app/designs/list/layout/Layout"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'moment/moment.min'

@@ -2,7 +2,7 @@ define([
 	"app/base/views/extensions/_EditionWizardView"
 	, "app/designs/list/Controller"
 	, "app/designs/list/layout/Layout"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_Store"

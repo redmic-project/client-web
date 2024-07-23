@@ -4,7 +4,7 @@ define([
 	, "app/designs/chart/main/MultiPieChartWithToolbar"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "app/viewers/views/_ObjectCollectionSeriesSelectionManagement"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"

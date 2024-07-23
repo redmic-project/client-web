@@ -1,6 +1,6 @@
 define([
 	"app/dataLoader/surveyParameters/views/_SeriesDataView"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'moment/moment.min'

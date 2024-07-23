@@ -1,6 +1,6 @@
 define([
 	'app/designs/details/main/Species'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 ], function(
 	Species

@@ -5,7 +5,7 @@ define([
 	, "app/viewers/views/TrashCharts"
 	, "app/viewers/views/TrashInfo"
 	, "app/viewers/views/_SelectTimeInterval"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"

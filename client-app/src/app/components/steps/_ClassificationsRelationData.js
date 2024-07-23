@@ -1,6 +1,6 @@
 define([
 	"app/designs/formList/main/_RequestAndParseData"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "RWidgets/Utilities"

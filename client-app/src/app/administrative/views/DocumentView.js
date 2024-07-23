@@ -1,7 +1,7 @@
 define([
 	'app/base/views/extensions/_EditionWizardView'
 	, 'app/designs/textSearchFacetsList/main/Bibliography'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'RWidgets/Button'

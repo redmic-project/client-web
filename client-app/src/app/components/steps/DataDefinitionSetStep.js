@@ -4,7 +4,7 @@ define([
 	, "app/designs/formList/main/FormListByStep"
 	, "app/designs/formList/layout/Layout"
 	, "app/edition/views/ParameterEditionView"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_ShowInPopup"

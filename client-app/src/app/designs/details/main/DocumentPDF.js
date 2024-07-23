@@ -2,7 +2,7 @@ define([
 	'app/designs/base/_Main'
 	, 'app/designs/details/Controller'
 	, 'app/designs/details/Layout'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'redmic/modules/components/PDFViewer/PDFViewer'

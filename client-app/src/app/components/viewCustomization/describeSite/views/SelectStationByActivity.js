@@ -1,7 +1,7 @@
 define([
 	"app/base/views/extensions/_LocalSelectionView"
 	, "app/designs/mapWithSideContent/main/FilterAndGeographic"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/SurveyStationList"

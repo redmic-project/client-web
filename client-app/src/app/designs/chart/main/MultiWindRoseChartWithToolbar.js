@@ -2,7 +2,7 @@ define([
 	'app/designs/base/_Main'
 	, 'app/designs/chart/Controller'
 	, 'app/designs/chart/layout/TopContent'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'd3/d3.min'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'

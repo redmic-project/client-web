@@ -8,7 +8,7 @@ define([
 	, "app/designs/list/layout/Layout"
 	, 'app/viewers/views/_TimeSeriesDataManagement'
 	, "app/viewers/views/_TimeSeriesSelectionManagement"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/base/_ShowInPopup"

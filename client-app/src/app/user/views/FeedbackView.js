@@ -3,7 +3,7 @@ define([
 	, 'app/components/ReCaptcha'
 	, "app/user/models/FeedbackModel"
 	, "app/user/views/_ExternalUserBaseView"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/query"

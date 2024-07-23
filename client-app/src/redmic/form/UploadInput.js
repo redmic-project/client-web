@@ -1,6 +1,6 @@
 define([
 	'alertify/alertify.min'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, 'dijit/_TemplatedMixin'
 	, 'dijit/_WidgetBase'
 	, 'dojo/_base/declare'

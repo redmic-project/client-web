@@ -1,6 +1,6 @@
 define([
 	'alertify/alertify.min'
-	, 'app/redmicConfig'
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"

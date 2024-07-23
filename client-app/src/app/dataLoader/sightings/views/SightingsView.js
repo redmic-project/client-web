@@ -1,7 +1,7 @@
 define([
 	"app/dataLoader/sightings/models/SightingsModel"
 	, "app/designs/mapWithSideContent/main/GeographicEditor"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ],

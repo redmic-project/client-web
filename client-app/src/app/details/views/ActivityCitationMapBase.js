@@ -1,6 +1,6 @@
 define([
 	"app/designs/details/main/ActivityMap"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/SpeciesDistributionPopup"

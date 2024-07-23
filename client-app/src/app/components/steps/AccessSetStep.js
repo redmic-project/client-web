@@ -2,7 +2,7 @@ define([
 	"app/maintenance/models/AccessModel"
 	, "app/designs/formList/layout/Layout"
 	, "app/designs/formList/main/FormListByStep"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"

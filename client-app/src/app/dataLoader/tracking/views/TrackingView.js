@@ -4,7 +4,7 @@ define([
 	, "app/base/views/extensions/_ListenActivityDataAndAccessByActivityCategory"
 	, "app/designs/mapWithSideContent/main/Tracking"
 	, "app/designs/mapWithSideContent/main/_TrackingWithListByFilter"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "put-selector/put"

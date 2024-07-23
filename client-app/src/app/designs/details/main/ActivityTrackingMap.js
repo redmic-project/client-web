@@ -5,7 +5,7 @@ define([
 	, "app/designs/details/Layout"
 	, "app/designs/mapWithSideContent/main/Tracking"
 	, "app/designs/mapWithSideContent/main/_TrackingWithListByFilter"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(

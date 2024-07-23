@@ -2,7 +2,7 @@ define([
 	"app/designs/mapWithSideContent/main/Tracking"
 	, "app/designs/mapWithSideContent/main/_TrackingByFilter"
 	, "app/designs/mapWithSideContent/main/_TrackingWithList"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"

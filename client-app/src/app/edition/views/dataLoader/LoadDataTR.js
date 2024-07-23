@@ -7,7 +7,7 @@ define([
 	, "app/designs/list/Controller"
 	, "app/designs/list/layout/Layout"
 	, "app/edition/views/dataLoader/_BaseLoadDataToActivityEdition"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/_Select"

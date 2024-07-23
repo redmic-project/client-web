@@ -1,5 +1,5 @@
 define([
-	'app/redmicConfig'
+	'src/redmicConfig'
 	, 'app/designs/details/main/ActivityTrackingMap'
 	, 'app/details/views/ActivityAreaMapBase'
 	, 'app/details/views/ActivityCitationMapBase'

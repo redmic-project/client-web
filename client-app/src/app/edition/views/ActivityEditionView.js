@@ -9,7 +9,7 @@ define([
 	, "app/components/steps/ResourceSetStep"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/layout/wizard/_CompleteBySelection"

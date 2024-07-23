@@ -4,7 +4,7 @@ define([
 	, "app/designs/base/_Main"
 	, "app/designs/textSearchList/Controller"
 	, "app/designs/textSearchList/layout/BasicAndButtonsTopZone"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "redmic/modules/browser/_Select"

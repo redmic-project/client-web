@@ -1,6 +1,6 @@
 define([
 	"app/designs/details/main/Program"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 ], function(
 	Program

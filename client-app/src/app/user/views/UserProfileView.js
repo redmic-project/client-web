@@ -1,7 +1,7 @@
 define([
 	"app/designs/details/Controller"
 	, "app/designs/details/Layout"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "app/user/models/PasswordModel"
 	, "app/user/models/UserImageModel"
 	, "app/user/models/UserNameModel"

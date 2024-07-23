@@ -4,7 +4,7 @@ define([
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
 	, "app/maintenance/models/PermissionsModel"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function(

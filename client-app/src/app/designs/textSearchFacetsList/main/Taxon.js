@@ -4,7 +4,7 @@ define([
 	, "app/designs/textSearchFacetsList/Layout"
 	, "app/base/views/extensions/_EditionView"
 	, "app/base/views/extensions/_FormInDialogView"
-	, "app/redmicConfig"
+	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/SpeciesList"

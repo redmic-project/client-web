@@ -135,7 +135,7 @@ var profileObj = {
 		}
 	},{
 		name: 'RWidgets',
-		location: 'src/redmic/widgets',
+		location: 'src/utils/widgets',
 		resourceTags: {
 			amd: amdTagger
 		}

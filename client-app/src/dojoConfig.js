@@ -7,7 +7,7 @@ dojoConfig = {
 		location: '../../src/oldapp'
 	},{
 		name: 'redmic',
-		location: '../../src/redmic'
+		location: '../../src/component'
 	},{
 		name: 'RWidgets',
 		location: '../../src/util/widgets'

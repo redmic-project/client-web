@@ -1,7 +1,7 @@
 define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
-	, 'src/view/detail/activity/ActivityDetail'
+	, 'src/catalog/detail/activity/ActivityDetail'
 ], function(
 	redmicConfig
 	, declare

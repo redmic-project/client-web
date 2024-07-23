@@ -129,7 +129,7 @@ var profileObj = {
 		}
 	},{
 		name: 'app',
-		location: 'src/app',
+		location: 'src/oldapp',
 		resourceTags: {
 			amd: amdTagger
 		}
@@ -147,7 +147,7 @@ var profileObj = {
 		}
 	},{
 		name: 'src',
-		location: 'src/src',
+		location: 'src',
 		resourceTags: {
 			amd: amdTagger
 		}

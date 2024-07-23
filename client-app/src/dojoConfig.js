@@ -4,7 +4,7 @@ dojoConfig = {
 		location: '../../src'
 	},{
 		name: 'app',
-		location: '../../src/app'
+		location: '../../src/oldapp'
 	},{
 		name: 'redmic',
 		location: '../../src/redmic'

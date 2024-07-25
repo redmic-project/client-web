@@ -141,7 +141,7 @@ var profileObj = {
 		}
 	},{
 		name: 'redmic',
-		location: 'src/redmic',
+		location: 'src/component',
 		resourceTags: {
 			amd: amdTagger
 		}

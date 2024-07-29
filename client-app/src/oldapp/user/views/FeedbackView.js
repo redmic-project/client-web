@@ -1,6 +1,6 @@
 define([
 	'alertify/alertify.min'
-	, 'app/components/ReCaptcha'
+	, 'src/util/ReCaptcha'
 	, "app/user/models/FeedbackModel"
 	, "app/user/views/_ExternalUserBaseView"
 	, 'src/redmicConfig'

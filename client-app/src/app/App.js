@@ -1,12 +1,12 @@
 define([
-	'app/components/CookieLoader'
-	, 'src/redmicConfig'
+	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/dom'
 	, 'dojo/has'
 	, 'put-selector/put'
 	, 'src/app/CheckBrowser'
+	, 'src/app/CookieLoader'
 	, 'src/app/innerApp'
 	, 'src/app/ModuleStore'
 	, 'src/app/outerApp'
@@ -23,14 +23,14 @@ define([
 	, 'src/component/store/RestManagerImpl'
 	, 'templates/LoadingCustom'
 ], function(
-	CookieLoader
-	, redmicConfig
+	redmicConfig
 	, declare
 	, lang
 	, dom
 	, has
 	, put
 	, CheckBrowser
+	, CookieLoader
 	, InnerApp
 	, ModuleStore
 	, OuterApp

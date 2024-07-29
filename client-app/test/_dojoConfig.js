@@ -25,7 +25,7 @@ module.exports = function(args) {
 
 	dojoConfig.packages.push({
 		name: 'test',
-		location: '../../../test'
+		location: '../../test'
 	});
 
 	return dojoConfig;

@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 		'alertify', 'awesome-markers', 'cbtree', 'd3Tip', 'dijit', 'dojo', 'dojox', 'deepmerge', 'dropzone',
 		'handlebars', 'L-areaselect', 'L-coordinates', 'L-draw', 'L-miniMap', 'L-navBar', 'leaflet',
 		'leaflet-nontiledlayer', 'mediatorjs', 'moment', 'uuid', 'proj4', 'pruneCluster', 'put-selector',
-		'redmic', 'RWidgets', 'sockjs', 'stomp-websocket', 'src', 'templates', 'tv4', 'wicket'
+		'RWidgets', 'sockjs', 'stomp-websocket', 'templates', 'tv4', 'wicket'
 	];
 
 	var recursiveDirectoriesToDelete = [

@@ -1,5 +1,5 @@
 define([
-	'app/base/models/attr/Attr'
+	'src/component/model/model/attr/Attr'
 	, '../_ModelTestCommons'
 ], function(
 	Attr

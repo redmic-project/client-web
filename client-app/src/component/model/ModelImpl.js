@@ -1,5 +1,5 @@
 define([
-	"app/base/models/_Model"
+	"src/component/model/model/_Model"
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"

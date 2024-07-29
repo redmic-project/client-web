@@ -1,5 +1,5 @@
 define([
-	"app/base/models/attr/ArrayAttr"
+	"src/component/model/model/attr/ArrayAttr"
 	, "dojo/_base/lang"
 	, "../_ModelTestCommons"
 ], function(

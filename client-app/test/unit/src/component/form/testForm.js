@@ -1,5 +1,5 @@
 define([
-	"app/base/models/_Persistent"
+	"src/component/model/model/_Persistent"
 	, "app/administrative/domains/models/CountryModel"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"

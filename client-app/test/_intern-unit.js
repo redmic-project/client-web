@@ -22,11 +22,11 @@ module.exports = function(args) {
 				, suitesPrefix + 'redmic/base/testMediator'
 
 				// Modelos
-				, suitesPrefix + 'app/base/models/attr/testAttr'
-				, suitesPrefix + 'app/base/models/attr/testRelationAttr'
-				, suitesPrefix + 'app/base/models/attr/testObjAttr'
-				, suitesPrefix + 'app/base/models/attr/testArrayAttr'
-				, suitesPrefix + 'app/base/models/test_Model'
+				, suitesPrefix + 'src/component/model/model/attr/testAttr'
+				, suitesPrefix + 'src/component/model/model/attr/testRelationAttr'
+				, suitesPrefix + 'src/component/model/model/attr/testObjAttr'
+				, suitesPrefix + 'src/component/model/model/attr/testArrayAttr'
+				, suitesPrefix + 'src/component/model/model/test_Model'
 
 				// Módulos
 				, suitesPrefix + 'src/component/base/test_Module'

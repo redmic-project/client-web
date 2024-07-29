@@ -1,5 +1,5 @@
 define([
-	"app/base/models/attr/RelationAttr"
+	"src/component/model/model/attr/RelationAttr"
 	, "../_ModelTestCommons"
 ], function(
 	RelationAttr

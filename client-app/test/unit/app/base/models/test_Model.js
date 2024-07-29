@@ -1,5 +1,5 @@
 define([
-	"app/base/models/_Model"
+	"src/component/model/model/_Model"
 	, "dojo/_base/lang"
 	, "RWidgets/Utilities"
 ], function(

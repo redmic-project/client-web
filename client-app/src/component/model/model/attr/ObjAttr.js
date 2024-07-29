@@ -1,11 +1,11 @@
 define([
-	"app/base/models/attr/ArrayAttr"
-	, "app/base/models/attr/Attr"
-	, "app/base/models/attr/RelationAttr"
+	"src/component/model/model/attr/ArrayAttr"
+	, "src/component/model/model/attr/Attr"
+	, "src/component/model/model/attr/RelationAttr"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "RWidgets/Utilities"
-	, "./_ComplexAttr"
+	, "src/component/model/model/attr/_ComplexAttr"
 ], function(
 	ArrayAttr
 	, Attr

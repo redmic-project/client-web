@@ -1,5 +1,5 @@
 define([
-	"app/base/models/attr/Attr"
+	"src/component/model/model/attr/Attr"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 ], function (

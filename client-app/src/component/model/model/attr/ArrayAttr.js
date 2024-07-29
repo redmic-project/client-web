@@ -4,7 +4,7 @@ define([
 	, "dojo/Deferred"
 	, "RWidgets/Utilities"
 	, 'uuid/uuidv4.min'
-	, "./_ComplexAttr"
+	, "src/component/model/model/attr/_ComplexAttr"
 ], function (
 	declare
 	, lang
@@ -402,7 +402,7 @@ define([
 
 			this._buildItem({
 				name: "_requiredObjAttr",
-				path: "app/base/models/attr/ObjAttr"
+				path: "src/component/model/model/attr/ObjAttr"
 			}, schema, props, dfd);
 		},
 
@@ -434,7 +434,7 @@ define([
 
 			this._buildItem({
 				name: "_requiredRelationAttr",
-				path: "app/base/models/attr/RelationAttr"
+				path: "src/component/model/model/attr/RelationAttr"
 			}, schema, props, dfd);
 		},
 
@@ -450,7 +450,7 @@ define([
 
 			this._buildItem({
 				name: "_requiredAttr",
-				path: "app/base/models/attr/Attr"
+				path: "src/component/model/model/attr/Attr"
 			}, schema, props, dfd);
 		},
 

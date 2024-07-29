@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'moment/moment.min'
-	, "./_Attr"
+	, "src/component/model/model/attr/_Attr"
 ], function(
 	declare
 	, lang

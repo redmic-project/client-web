@@ -27,7 +27,7 @@ module.exports = function(args) {
 		}
 
 		var defaultFunctionalSuites = _functions.getSuites(pathPrefix, suitesLimitedByRole),
-			excludePattern = '!' + path.join(pathPrefix, 'modules', '**');
+			excludePattern = '!' + path.join(pathPrefix, 'component', '**');
 
 		defaultFunctionalSuites.push(excludePattern);
 		config.functionalSuites = defaultFunctionalSuites;

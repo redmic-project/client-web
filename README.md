@@ -65,7 +65,7 @@ Como ejemplo de ejecución de tests locales (unitarios y funcionales), veamos lo
 
 ```sh
 grunt test-unit-local \
-  --suites=test/unit/src/component/model/testModelImpl \
+  --suites=test/unit/component/model/testModelImpl \
   --browser=chrome \
   --headless \
   --coverage=false
@@ -75,7 +75,7 @@ grunt test-unit-local \
 
 ```sh
 grunt test-functional-local \
-  --functionalSuites=test/functional/modules/**/!(*Script).js \
+  --functionalSuites=client-app/test/functional/component/**/!(*Script).js \
   --browser=chrome
 ```
 
@@ -137,7 +137,7 @@ Como ejemplo de ejecución de tests remotos (unitarios y funcionales), pero apun
 
 ```sh
 grunt test-unit-remote \
-  --suites=test/unit/src/component/model/testModelImpl \
+  --suites=test/unit/component/model/testModelImpl \
   --browser=firefox \
   --headless \
   --coverage=false
@@ -147,7 +147,7 @@ grunt test-unit-remote \
 
 ```sh
 grunt test-functional-remote \
-  --functionalSuites=test/functional/modules/**/!(*Script).js \
+  --functionalSuites=client-app/test/functional/component/**/!(*Script).js \
   --browser=chrome \
   --headless
 ```

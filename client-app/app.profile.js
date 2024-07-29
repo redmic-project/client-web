@@ -44,7 +44,7 @@ var profileObj = {
 	localeList: includeLocales.join(','),
 	useSourceMaps: false,
 	buildReportDir: '../..',
-	maxOptimizationProcesses: 2,
+	maxOptimizationProcesses: 1,
 
 	resourceTags: {
 		amd: amdTagger,

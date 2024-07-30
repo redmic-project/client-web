@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 		'client-app/deps/templates': preBuildCmds.concat([
 			'grunt'
 		]),
-		'client-app/stylesheets': preBuildCmds.concat([
+		'client-app/style': preBuildCmds.concat([
 			'grunt addModules buildModules'
 		])
 	});

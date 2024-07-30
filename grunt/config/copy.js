@@ -10,9 +10,9 @@ module.exports = function(grunt) {
 
 		resourcesPath = 'resources/**',
 
-		stylesPath = publicPath + '/stylesheets',
+		stylesPath = publicPath + '/style',
 		stylesDistPath = stylesPath + '/dist',
-		distStylesSubPath = distPath + '/stylesheets',
+		distStylesSubPath = distPath + '/style',
 
 		leafletPath = 'leaflet',
 		srcLeafletPath = path.join(depsPath, leafletPath),

@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 
 		var srcPath = grunt.config('redmicConfig.srcPath'),
 			publicPath = srcPath.split('/')[0],
-			stylesPath = publicPath + '/stylesheets';
+			stylesPath = publicPath + '/style';
 
 		grunt.config('shell.buildStyles', {
 			options: {

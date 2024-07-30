@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 
 			rootPath = grunt.config('redmicConfig.rootPath'),
 			srcPath = grunt.config('redmicConfig.srcPath'),
-			depsPath = grunt.config('redmicConfig.depsPath'),
+			depPath = grunt.config('redmicConfig.depPath'),
 			testPath = grunt.config('redmicConfig.testPath'),
 			outputPath = 'test_reports',
 
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
 			testUnitRemotePath = path.join(absoluteTestsPath, 'intern-unit-remote'),
 			testFunctionalLocalPath = path.join(absoluteTestsPath, 'intern-functional-local'),
 			testFunctionalRemotePath = path.join(absoluteTestsPath, 'intern-functional-remote'),
-			dojoCommonBaseUrl = path.join(' ', depsPath, '*').trim(),
+			dojoCommonBaseUrl = path.join(' ', depPath, '*').trim(),
 
 			ipGetterPath = path.join(absoluteTestsPath, 'IpGetter'),
 			IpGetter = require(ipGetterPath)(),

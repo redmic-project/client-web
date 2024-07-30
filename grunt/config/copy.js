@@ -3,7 +3,7 @@ module.exports = function(grunt) {
 	var path = require('path'),
 
 		srcPath = grunt.config('redmicConfig.srcPath'),
-		depsPath = grunt.config('redmicConfig.depsPath'),
+		depPath = grunt.config('redmicConfig.depPath'),
 		distPath = grunt.config('redmicConfig.distPath'),
 		destDir = grunt.config('redmicConfig.destDir'),
 		publicPath = srcPath.split('/')[0],
@@ -15,11 +15,11 @@ module.exports = function(grunt) {
 		distStylesSubPath = distPath + '/style',
 
 		leafletPath = 'leaflet',
-		srcLeafletPath = path.join(depsPath, leafletPath),
+		srcLeafletPath = path.join(depPath, leafletPath),
 		distLeafletPath = path.join(distPath, destDir, leafletPath),
 
 		pdfjsPath = 'pdfjs',
-		srcPdfjsPath = path.join(depsPath, pdfjsPath),
+		srcPdfjsPath = path.join(depPath, pdfjsPath),
 		distPdfjsPath = path.join(distPath, destDir, pdfjsPath),
 		pdfjsWebName = 'web',
 		pdfjsBuildName = 'build';

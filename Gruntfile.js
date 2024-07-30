@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 		redmicConfig: {
 			rootPath: __dirname,
 			srcPath: 'client-app/src',
-			depsPath: 'client-app/deps',
+			depPath: 'client-app/dep',
 			testPath: 'client-app/test',
 			distPath: 'dist',
 			destDir: 'javascript'

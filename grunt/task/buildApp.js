@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 		var path = require('path'),
 
 			rootPath = grunt.config('redmicConfig.rootPath'),
-			depsPath = grunt.config('redmicConfig.depsPath'),
+			depPath = grunt.config('redmicConfig.depPath'),
 			distPath = grunt.config('redmicConfig.distPath'),
 			destDir = grunt.config('redmicConfig.destDir'),
 			resourcesToClean = grunt.config('redmicConfig.resourcesToCleanInBuiltApp'),
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
 			command: function() {
 
 				var profile = pkg.dojoBuild,
-					scriptPath = path.join(depsPath, 'dojo/dojo.js'),
+					scriptPath = path.join(depPath, 'dojo/dojo.js'),
 					releaseDir = path.join(rootPath, distPath),
 					nodeParams = ' --optimize_for_size --max_old_space_size=3000 --gc_interval=100 ',
 					buildParams = ' load=build --profile "' + profile + '" --releaseDir "' + releaseDir + '"';

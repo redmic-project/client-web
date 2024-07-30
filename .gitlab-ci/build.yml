@@ -29,7 +29,7 @@ prepare-unbuilt-version:
       - client-app/dep/templates/dist/
       - client-app/style/style.styl
       - client-app/style/src/
-      - client-app/style/submodules/
+      - client-app/style/dep/
   rules:
     - if: $CI_MERGE_REQUEST_ID ||
           $CI_COMMIT_TAG ||

@@ -11,7 +11,7 @@ EXPOSE 3050
 HEALTHCHECK --interval=30s --timeout=15s --start-period=1m --retries=3 \
 	CMD wget --spider -q http://localhost:3050 || exit 1
 
-CMD ["app", "-b"]
+CMD ["server-app", "-b"]
 
 WORKDIR /redmic
 

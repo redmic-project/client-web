@@ -1,5 +1,5 @@
-[submodule "client-app/stylesheets"]
-	path = client-app/stylesheets
+[submodule "client-app/style"]
+	path = client-app/style
 	url = ../style.git
 	branch = master
 	ignore = dirty

@@ -54,7 +54,7 @@ define([
 			//		Código HTML de la etiqueta de la capa.
 
 			var title = this.i18n[layerId] || layerId,
-				thumbPath = '/resources/images/map/layer-' + layerId + '.png',
+				thumbPath = '/res/images/map/layer-' + layerId + '.png',
 				thumbAttr = 'style=background-image:url(' + thumbPath + ')',
 				outerContainer = put('div.sharpContainer.layerThumbnailContainer.relativeContainer[' + thumbAttr + ']'),
 				innerContainerClass = '.wrapContainer.hardTranslucentContainer.absoluteContainer.thumbCaption';

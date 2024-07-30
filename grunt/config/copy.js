@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 		destDir = grunt.config('redmicConfig.destDir'),
 		publicPath = srcPath.split('/')[0],
 
-		resourcesPath = 'resources/**',
+		resourcesPath = 'res/**',
 
 		stylesPath = publicPath + '/style',
 		stylesDistPath = stylesPath + '/dist',

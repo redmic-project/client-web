@@ -2,7 +2,7 @@ define({
 	"default": {
 		"title": "{i18n.metaDefaultTitle}",
 		"description": "{i18n.metaDefaultDescription}.",
-		"image": "https://{hostname}/resources/images/logos/redmic-logo-og.jpg",
+		"image": "https://{hostname}/res/images/logos/redmic-logo-og.jpg",
 		"image:alt": "{i18n.metaDefaultImageAlt}.",
 		"image:type": "image/jpeg",
 		"image:width": "1200",

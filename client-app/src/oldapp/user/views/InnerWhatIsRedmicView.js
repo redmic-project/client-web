@@ -55,7 +55,7 @@ define([
 					title: this.i18n.logicalDataModel,
 					type: PDFViewer,
 					props: {
-						urlPdf: '/resources/documents/ModeloLogico.pdf',
+						urlPdf: '/res/documents/ModeloLogico.pdf',
 						roleGuestActive: true
 					}
 				},{

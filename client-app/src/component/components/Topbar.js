@@ -36,7 +36,7 @@ define([
 
 				logoClass: 'topbarLogo',
 				logoHref: '/home',
-				logoImgSrc: '/resources/images/logos/logo.svg'
+				logoImgSrc: '/res/images/logos/logo.svg'
 			};
 
 			if (args && args.ecomarcan) {

@@ -13,9 +13,9 @@ HEALTHCHECK --interval=30s --timeout=15s --start-period=1m --retries=3 \
 
 CMD ["server-app", "-b"]
 
-WORKDIR /redmic
+ADD redmic-project-web-*.tgz /
 
-ADD dist*.tar.gz ./
+WORKDIR /package
 
 RUN node -e 'const fs = require("fs"); \
 		const pkg = JSON.parse(fs.readFileSync("./package.json", "utf-8")); \

@@ -8,10 +8,7 @@ module.exports = function(grunt) {
 			options: {
 				stdout: true
 			},
-			command: [
-				'version=$(node -p "require(\'./package.json\').version")',
-				'tar -acf dist-v$version.tar.gz dist/ server-app/ package.json yarn.lock README.md LICENSE'
-			].join('; ')
+			command: 'npm pack'
 		});
 
 		grunt.task.run(['shell:packageApp']);

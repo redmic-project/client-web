@@ -3,6 +3,5 @@ dist
 test_reports
 .gitmodules.old
 build-report.txt
-*.tar.gz
 *.tgz
 *.log

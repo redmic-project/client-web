@@ -90,7 +90,7 @@ run-local-modules-functional-tests:
     - npm start &
     - >
       grunt test-functional-local
-      --functionalSuites=client-app/test/functional/modules/**/!\(*Script\).js
+      --functionalSuites=client-app/test/functional/component/**/!\(*Script\).js
       --headless
       --browser=${TEST_BROWSER}
       --seleniumVersion=${LOCAL_SELENIUM_VERSION}
@@ -106,7 +106,7 @@ run-local-modules-functional-tests:
     - npm start &
     - >
       grunt test-functional-remote
-      --functionalSuites=client-app/test/functional/modules/**/!\(*Script\).js
+      --functionalSuites=client-app/test/functional/component/**/!\(*Script\).js
       --headless
       --browser=${TEST_BROWSER}
       --ownServerHost="${TEST_OWN_SERVER_HOST}"

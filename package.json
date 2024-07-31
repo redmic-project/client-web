@@ -20,7 +20,13 @@
   },
   "private": true,
   "scripts": {
-    "start": "node server-app"
+    "preinstall": "type grunt",
+    "install": "grunt preBuild",
+    "start": "node server-app",
+    "prepack": "type grunt",
+    "prepare": "grunt build",
+    "pretest": "type grunt",
+    "test": "grunt test"
   },
   "dependencies": {
     "commander": "11.1.0",

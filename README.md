@@ -9,10 +9,10 @@ Cliente web de REDMIC.
 
 ## Entorno de desarrollo
 
-Una vez clonado el repositorio en el entorno local de desarrollo y satisfechas las dependencias base del sistema, es posible instalar las dependencias necesarias que define el proyecto y arrancar el servicio:
+Una vez clonado el repositorio del proyecto en el entorno local de desarrollo y satisfechas las dependencias base del sistema (`npm/Node.js`, `grunt-cli` y `Yarn`), es posible instalar sus dependencias y arrancar el servicio en modo de desarrollo:
 
 ```sh
-yarn install
+npm run install
 
 OAUTH_URL=https://redmic.grafcan.es/api/oauth \
 OAUTH_CLIENT_ID=app \
@@ -33,11 +33,22 @@ Si todo ha ido correctamente, el servicio *REDMIC web* estará accesible en <htt
 
 Es posible personalizar los puntos de conexión hacia la parte servidora y otros ajustes, según se necesite.
 
-Para facilitar las tareas repetitivas, se han creado una serie de tareas ejecutables mediante **Grunt**. Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/grunt>.
+Para facilitar las tareas repetitivas, se han creado una serie de tareas ejecutables mediante **Grunt**, que a su vez se referencian desde comandos de **npm**. Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/grunt>.
 
 ## Compilación
 
 Para optimizar la ejecución es necesario realizar un proceso de "compilación" de la aplicación.
+
+Se puede generar la salida compilada simplemente lanzando los siguientes comandos (cuidado, es un proceso pesado):
+
+```sh
+npm run install
+npm pack
+```
+
+> Internamente se lanzarán otros comandos orquestados mediante **Grunt** (que también podrían ejecutarse de manera concreta si fuera necesario).
+
+Esto generará un directorio con el código compilado de salida (`dist/`) junto con un fichero comprimido que contiene dicha salida y otros recursos necesarios para lanzar la aplicación (`redmic-project-web-<version>.tgz`).
 
 Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/dojo-compile>.
 
@@ -54,6 +65,15 @@ Por defecto, `Prerender` consultará al servicio mediante protocolo HTTP. Si no 
 ## Testeo
 
 Se ha preparado una batería de pruebas, tanto unitarias como funcionales, que permiten evaluar el estado del proyecto a medida que se aplican cambios en la base de código.
+
+Se puede comenzar la ejecución de tests lanzando los siguientes comandos:
+
+```sh
+npm run install
+npm test
+```
+
+> Internamente se lanzarán otros comandos orquestados mediante **Grunt** (que también podrían ejecutarse de manera concreta si fuera necesario).
 
 Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/test-main>.
 

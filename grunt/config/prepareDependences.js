@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 			stdout: true
 		},
 		command: [
-			'yarn install --prod=false'
+			'yarn install --prod=false --ignore-optional --ignore-scripts'
 		].join('; ')
 	});
 };

@@ -56,6 +56,7 @@ define([
 			this.map = L.map(this.mapNode, {
 				crs: L.CRS.EPSG4326,
 				doubleClickZoom: false,
+				zoomControl: false,
 				minZoom: this.minZoom,
 				maxZoom: this.maxZoom,
 				attributionControl: true,

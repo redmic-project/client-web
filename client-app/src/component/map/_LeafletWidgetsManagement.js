@@ -10,7 +10,7 @@ define([
 
 	, 'awesome-markers/leaflet.awesome-markers.min'
 	, 'L-coordinates/Leaflet.Coordinates-0.1.5.min'
-	, 'L-navBar/Leaflet.NavBar'
+	, 'L-navBar/index'
 ], function(
 	declare
 	, lang
@@ -31,6 +31,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
+				zoomControl: true,
 				layersSelector: true,
 				coordinatesViewer: true,
 				navBar: true,
@@ -53,6 +54,7 @@ define([
 
 		_addMapWidgets: function() {
 
+			this._addZoomControl();
 			this._addLayersSelector();
 			this._addCoordinatesViewer();
 			this._addNavBar();
@@ -64,6 +66,18 @@ define([
 				this._addScaleBar();
 			}));
 			this._addMeasureTools(measureToolsDfd);
+		},
+
+		_addZoomControl: function() {
+
+			if (!this.zoomControl) {
+				return;
+			}
+
+			L.control.zoom({
+				zoomInTitle: this.i18n.leafletZoomInButton,
+				zoomOutTitle: this.i18n.leafletZoomOutButton
+			}).addTo(this.map);
 		},
 
 		_addLayersSelector: function() {
@@ -106,7 +120,11 @@ define([
 				return;
 			}
 
-			L.control.navbar().addTo(this.map);
+			L.control.navbar({
+				homeTitle: this.i18n.leafletHomeButton,
+				forwardTitle: this.i18n.leafletForwardButton,
+				backTitle: this.i18n.leafletBackButton
+			}).addTo(this.map);
 		},
 
 		_addMiniMap: function() {

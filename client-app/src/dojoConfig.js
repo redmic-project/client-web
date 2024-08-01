@@ -40,7 +40,7 @@ dojoConfig = {
 		location: '../leaflet-coordinates/dist'
 	},{
 		name: 'L-navBar',
-		location: '../leaflet-navbar/src'
+		location: '../leaflet-nav'
 	},{
 		name: 'L-areaselect',
 		location: '../leaflet-areaselect/src'
@@ -67,7 +67,7 @@ dojoConfig = {
 		location: '../handlebars/dist'
 	},{
 		name: 'awesome-markers',
-		location: '../leaflet-awesome-markers/dist'
+		location: '../leaflet.awesome-markers/dist'
 	},{
 		name: 'pruneCluster',
 		location: '../pruneCluster/dist'

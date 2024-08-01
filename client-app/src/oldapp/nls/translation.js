@@ -1333,6 +1333,12 @@ define({
 
 		, "selectFeatureOnMap": "Click on any element of the map to get information"
 
+		, "leafletZoomInButton": "Zoom in"
+		, "leafletZoomOutButton": "Zoom out"
+		, "leafletHomeButton": "Go to initial location"
+		, "leafletForwardButton": "Go forward in location history"
+		, "leafletBackButton": "Go back in location history"
+
 		// Meta-tags
 		, "metaDefaultTitle": "Repositorio de Datos Marinos Integrados de Canarias"
 		, "metaDefaultDescription": "REDMIC is a public marine data infrastructure that offers information on the marine biophysical environment of the Canary Islands"

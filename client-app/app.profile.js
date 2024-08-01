@@ -181,7 +181,7 @@ var profileObj = {
 		}
 	},{
 		name: 'awesome-markers',
-		location: 'dep/leaflet-awesome-markers/dist',
+		location: 'dep/leaflet.awesome-markers/dist',
 		resourceTags: {
 			ignore: ignoreTagger.bind(null, 'awesome-markers/leaflet.awesome-markers.min')
 		}
@@ -206,9 +206,9 @@ var profileObj = {
 		}
 	},{
 		name: 'L-navBar',
-		location: 'dep/leaflet-navbar/src',
+		location: 'dep/leaflet-nav',
 		resourceTags: {
-			ignore: ignoreTagger.bind(null, 'L-navBar/Leaflet.NavBar')
+			ignore: ignoreTagger.bind(null, 'L-navBar/index')
 		}
 	},{
 		name: 'L-areaselect',

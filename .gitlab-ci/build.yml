@@ -6,6 +6,7 @@
     WEB_BUILD_IMAGE_TAG: latest
   before_script:
     - type npm
+    - npm -v
     - npm run install
   cache:
     paths:
@@ -16,6 +17,8 @@
 prepare-unbuilt-version:
   extends: .web-build
   stage: pre-build
+  script:
+    - node -v
   dependencies: []
   tags:
     - custom-runner

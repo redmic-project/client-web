@@ -1,2 +1,3 @@
 *
 !redmic-project-web-*.tgz
+!package-lock.json

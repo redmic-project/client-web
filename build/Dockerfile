@@ -17,14 +17,11 @@ ADD redmic-project-web-*.tgz /
 
 WORKDIR /package
 
-RUN node -e 'const fs = require("fs"); \
-		const pkg = JSON.parse(fs.readFileSync("./package.json", "utf-8")); \
-		delete pkg.devDependencies; \
-		fs.writeFileSync("./package.json", JSON.stringify(pkg), "utf-8");' && \
-	yarn install --production --ignore-optional --ignore-scripts && \
-	yarn cache clean && \
-	yarn autoclean --init && yarn autoclean --force && \
-	rm -f yarn.lock .yarnclean
+COPY package-lock.json .
+
+RUN npm install --ignore-scripts && \
+	npm cache clean --force && \
+	rm -f package-lock.json
 
 ARG VERSION
 

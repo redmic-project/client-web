@@ -9,10 +9,10 @@ Cliente web de REDMIC.
 
 ## Entorno de desarrollo
 
-Una vez clonado el repositorio del proyecto en el entorno local de desarrollo y satisfechas las dependencias base del sistema (`npm/Node.js`, `grunt-cli` y `Yarn`), es posible instalar sus dependencias y arrancar el servicio en modo de desarrollo:
+Una vez clonado el repositorio del proyecto en el entorno local de desarrollo y satisfechas las dependencias base del sistema (`npm/Node.js` y `grunt-cli`), es posible instalar sus dependencias y arrancar el servicio en modo de desarrollo:
 
 ```sh
-npm run install
+npm install
 
 OAUTH_URL=https://redmic.grafcan.es/api/oauth \
 OAUTH_CLIENT_ID=app \
@@ -42,7 +42,7 @@ Para optimizar la ejecución es necesario realizar un proceso de "compilación" 
 Se puede generar la salida compilada simplemente lanzando los siguientes comandos (cuidado, es un proceso pesado):
 
 ```sh
-npm run install
+npm install
 npm pack
 ```
 
@@ -69,7 +69,7 @@ Se ha preparado una batería de pruebas, tanto unitarias como funcionales, que p
 Se puede comenzar la ejecución de tests lanzando los siguientes comandos:
 
 ```sh
-npm run install
+npm install
 npm test
 ```
 

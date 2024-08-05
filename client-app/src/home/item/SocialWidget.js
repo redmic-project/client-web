@@ -1,12 +1,10 @@
 define([
-	'app/home/views/_DashboardItem'
-	, 'app/base/views/Module'
+	'src/home/item/_DashboardItem'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
 ], function(
 	_DashboardItem
-	, Module
 	, declare
 	, lang
 	, put

@@ -1,5 +1,4 @@
 const express = require('express'),
-	bodyParser = require('body-parser'),
 	path = require('path'),
 
 	production = !!parseInt(process.env.PRODUCTION, 10),
@@ -123,7 +122,7 @@ function exposeContents(app, directoryName) {
 
 function expose(app) {
 
-	app.use(bodyParser.urlencoded({ extended: false }));
+	app.use(express.urlencoded({ extended: false }));
 
 	if (params.useBuilt) {
 		exposeContents(app, 'dist');

@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "templates/ActivityList"
 	, "templates/ProjectInfo"
-	, 'src/catalog/detail/_WidgetDefinition'
+	, 'src/detail/_WidgetDefinition'
 	, "./_ActivityBase"
 ], function(
 	redmicConfig

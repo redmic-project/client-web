@@ -1,6 +1,6 @@
 define([
 	'dojo/_base/declare'
-	, 'src/catalog/detail/_WidgetDefinition'
+	, 'src/detail/_WidgetDefinition'
 ], function(
 	declare
 	, _WidgetDefinition

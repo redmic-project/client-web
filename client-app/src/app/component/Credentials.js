@@ -1,16 +1,16 @@
 define([
-	'src/redmicConfig'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
+	, 'src/redmicConfig'
 	, 'src/util/Credentials'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, lang
 	, _Module
 	, _Store
+	, redmicConfig
 	, Credentials
 ) {
 

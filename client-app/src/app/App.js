@@ -1,6 +1,5 @@
 define([
-	'src/redmicConfig'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/dom'
 	, 'dojo/has'
@@ -8,6 +7,7 @@ define([
 	, 'src/app/component/Analytics'
 	, 'src/app/component/CheckBrowser'
 	, 'src/app/component/CookieLoader'
+	, 'src/app/component/Credentials'
 	, 'src/app/component/ExternalConfig'
 	, 'src/app/component/layout/InnerLayoutImpl'
 	, 'src/app/component/layout/OuterLayoutImpl'
@@ -17,14 +17,13 @@ define([
 	, 'src/app/component/Router'
 	, 'src/component/notification/CommunicationCenter'
 	, 'src/component/notification/Alert'
-	, 'src/component/base/Credentials'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
 	, 'src/component/store/RestManagerImpl'
+	, 'src/redmicConfig'
 	, 'templates/LoadingCustom'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, lang
 	, dom
 	, has
@@ -32,6 +31,7 @@ define([
 	, Analytics
 	, CheckBrowser
 	, CookieLoader
+	, Credentials
 	, ExternalConfig
 	, InnerLayoutImpl
 	, OuterLayoutImpl
@@ -41,10 +41,10 @@ define([
 	, Router
 	, CommunicationCenter
 	, Alert
-	, Credentials
 	, _Module
 	, _Store
 	, RestManagerImpl
+	, redmicConfig
 	, LoadingCustomTemplate
 ) {
 

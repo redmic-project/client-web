@@ -5,9 +5,9 @@ define([
 	, 'dojo/dom-class'
 	, 'put-selector/put'
 	, 'src/util/Credentials'
-	, 'src/app/_app'
-	, 'src/component/components/Sidebar/MainSidebarImpl'
-	, 'src/component/components/Topbar'
+	, 'src/app/component/layout/Layout'
+	, 'src/app/component/sidebar/MainSidebarImpl'
+	, 'src/app/component/Topbar'
 	, 'src/component/notification/Notification'
 	, 'src/component/selection/Selector'
 	, 'src/component/socket/_IngestData'
@@ -20,7 +20,7 @@ define([
 	, domClass
 	, put
 	, Credentials
-	, App
+	, Layout
 	, MainSidebarImpl
 	, Topbar
 	, Notification
@@ -30,9 +30,10 @@ define([
 	, Task
 ) {
 
-	return declare(App, {
+	return declare(Layout, {
 		//	Summary:
-		//		Implementación del módulo App, encargada de mostrar las vistas de la parte interna de la aplicación
+		//		Implementación del componente Layout, encargada de mostrar las vistas de la parte interna de la
+		//		aplicación.
 		//
 		//	Description:
 		//		Inicialmente, crea los módulos y estructuras necesarias para la parte interna de la app. También se

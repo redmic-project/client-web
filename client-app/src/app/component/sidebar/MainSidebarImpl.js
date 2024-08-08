@@ -1,13 +1,9 @@
 define([
 	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "src/component/components/Sidebar/_Secondary"
-	, "src/component/components/Sidebar/Sidebar"
+	, "src/app/component/sidebar/_Secondary"
+	, "src/app/component/sidebar/Sidebar"
 ], function(
 	declare
-	, lang
-	, aspect
 	, _Secondary
 	, Sidebar
 ) {

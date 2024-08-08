@@ -2,14 +2,14 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/query'
+	, 'src/app/component/meta/metaTagsContent'
 	, 'src/component/base/_Module'
-	, './metaTagsContent'
 ], function(
 	declare
 	, lang
 	, query
-	, _Module
 	, metaTagsContent
+	, _Module
 ) {
 
 	return declare(_Module, {

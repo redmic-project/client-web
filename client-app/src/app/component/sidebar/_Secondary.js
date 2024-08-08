@@ -1,6 +1,5 @@
 define([
-	"dijit/registry"
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/dom-class"
@@ -10,8 +9,7 @@ define([
 	, "dojo/NodeList-dom"
 	, "dojo/NodeList-traverse"
 ], function(
-	registry
-	, declare
+	declare
 	, lang
 	, aspect
 	, domClass

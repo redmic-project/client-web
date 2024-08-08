@@ -5,21 +5,21 @@ define([
 	, 'dojo/dom'
 	, 'dojo/has'
 	, 'put-selector/put'
-	, 'src/app/CheckBrowser'
-	, 'src/app/CookieLoader'
-	, 'src/app/innerApp'
-	, 'src/app/ModuleStore'
-	, 'src/app/outerApp'
-	, 'src/app/Router'
+	, 'src/app/component/Analytics'
+	, 'src/app/component/CheckBrowser'
+	, 'src/app/component/CookieLoader'
+	, 'src/app/component/ExternalConfig'
+	, 'src/app/component/layout/InnerLayoutImpl'
+	, 'src/app/component/layout/OuterLayoutImpl'
+	, 'src/app/component/Loading'
+	, 'src/app/component/meta/MetaTags'
+	, 'src/app/component/ModuleStore'
+	, 'src/app/component/Router'
 	, 'src/component/notification/CommunicationCenter'
 	, 'src/component/notification/Alert'
 	, 'src/component/base/Credentials'
-	, 'src/component/base/Analytics'
-	, 'src/component/metaTags/MetaTags'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
-	, 'src/component/base/Loading'
-	, 'src/component/components/ExternalConfig'
 	, 'src/component/store/RestManagerImpl'
 	, 'templates/LoadingCustom'
 ], function(
@@ -29,21 +29,21 @@ define([
 	, dom
 	, has
 	, put
+	, Analytics
 	, CheckBrowser
 	, CookieLoader
-	, InnerApp
+	, ExternalConfig
+	, InnerLayoutImpl
+	, OuterLayoutImpl
+	, Loading
+	, MetaTags
 	, ModuleStore
-	, OuterApp
 	, Router
 	, CommunicationCenter
 	, Alert
 	, Credentials
-	, Analytics
-	, MetaTags
 	, _Module
 	, _Store
-	, Loading
-	, ExternalConfig
 	, RestManagerImpl
 	, LoadingCustomTemplate
 ) {
@@ -97,7 +97,7 @@ define([
 		//		Instancia del módulo para gestionar el nodo cargando desde cualquier módulo.
 
 		//	_currLayoutInstance: Object
-		//		Instancia del layout de aplicación actual (innerApp o outerApp).
+		//		Instancia del componente de layout de aplicación actual (InnerLayoutImpl o OuterLayoutImpl).
 		//	_currModuleInstance: Object
 		//		Instancia del módulo que está activado actualmente.
 		//	_currModuleKey: String
@@ -370,7 +370,7 @@ define([
 
 			this._deleteLayout();
 
-			this._currLayoutInstance = new InnerApp({
+			this._currLayoutInstance = new InnerLayoutImpl({
 				parentChannel: this.getChannel(),
 				ecomarcan: this._ecomarcan
 			});
@@ -389,7 +389,7 @@ define([
 
 			this._deleteLayout();
 
-			this._currLayoutInstance = new OuterApp({
+			this._currLayoutInstance = new OuterLayoutImpl({
 				parentChannel: this.getChannel(),
 				ecomarcan: this._ecomarcan
 			});

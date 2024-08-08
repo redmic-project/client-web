@@ -1,23 +1,22 @@
 define([
-	'src/component/base/_Module'
-	, 'src/component/base/_Show'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, './_appItfc'
+	, 'src/app/component/layout/_LayoutItfc'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
 ], function(
-	_Module
-	, _Show
-	, declare
+	declare
 	, lang
-	, _appItfc
+	, _LayoutItfc
+	, _Module
+	, _Show
 ) {
 
-	return declare([_Module, _Show, _appItfc], {
+	return declare([_Module, _Show, _LayoutItfc], {
 		//	Summary:
-		//		Módulo App para gestionar la aplicación
-		//
+		//		Componente de layout para estructurar la aplicación, tanto a nivel interno como externo.
 		//	Description:
-		//		Recibe módulos desde Router, pertenecientes a la parte externa o interna, para mostrar en pantalla
+		//		Recibe órdenes para mostrar en pantalla los diferentes módulos de la aplicación.
 
 		constructor: function(args) {
 

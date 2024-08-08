@@ -1,16 +1,17 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/app/_app'
+	, 'src/app/component/layout/Layout'
 ], function(
 	declare
 	, lang
-	, App
+	, Layout
 ) {
 
-	return declare(App, {
+	return declare(Layout, {
 		//	Summary:
-		//		Implementación del módulo App, encargada de mostrar las vistas de la parte externa de la aplicación
+		//		Implementación del componente Layout, encargada de mostrar las vistas de la parte externa de la
+		//		aplicación.
 
 		constructor: function(args) {
 

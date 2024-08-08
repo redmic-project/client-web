@@ -11,8 +11,6 @@ define([
 	, 'src/component/notification/Notification'
 	, 'src/component/selection/Selector'
 	, 'src/component/socket/_IngestData'
-	, 'src/component/socket/_Report'
-	, 'src/component/socket/_Worms'
 	, 'src/component/socket/Socket'
 	, 'src/component/socket/Task'
 ], function(
@@ -28,8 +26,6 @@ define([
 	, Notification
 	, Selector
 	, _IngestData
-	, _Report
-	, _Worms
 	, Socket
 	, Task
 ) {
@@ -200,13 +196,13 @@ define([
 				});
 			}
 
-			var definitionTask = declare([Task, _Report, _Worms]);
+			var TaskDefinition = Task;
 
 			if (userRole === 'ROLE_ADMINISTRATOR' || userRole === 'ROLE_OAG') {
-				definitionTask = declare([definitionTask, _IngestData]);
+				TaskDefinition = declare([TaskDefinition, _IngestData]);
 			}
 
-			new definitionTask({
+			new TaskDefinition({
 				parentChannel: this.getChannel()
 			});
 

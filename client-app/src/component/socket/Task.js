@@ -5,6 +5,8 @@ define([
 	, "src/component/base/_Module"
 	, "src/component/base/_Store"
 	, "src/component/base/_Selection"
+	, 'src/component/socket/_Report'
+	, 'src/component/socket/_Worms'
 	, "src/util/Credentials"
 ], function(
 	declare
@@ -13,9 +15,11 @@ define([
 	, _Module
 	, _Store
 	, _Selection
+	, _Report
+	, _Worms
 	, Credentials
 ){
-	return declare([_Module, _AuthFirewall, _Store, _Selection], {
+	return declare([_Module, _AuthFirewall, _Store, _Selection, _Report, _Worms], {
 		//	Summary:
 		//		Módulo para gestionar la ejecución de tareas en segundo plano via sockets
 

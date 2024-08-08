@@ -1,16 +1,16 @@
 define([
 	'alertify/alertify.min'
-	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
+	, 'src/redmicConfig'
 	, "src/util/Credentials"
 ], function(
 	alertify
-	, redmicConfig
 	, declare
 	, lang
 	, aspect
+	, redmicConfig
 	, Credentials
 ){
 	return declare(null, {
@@ -32,14 +32,14 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			this.reportBaseTarget = this.baseTarget + "report/";
-
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setReportConfigurations));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineReportSubscriptions));
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixReportEventsAndActions));
 		},
 
 		_setReportConfigurations: function() {
+
+			this.reportBaseTarget = this.baseTarget + "report/";
 
 			this.socketChannels = this._merge([{
 				reportStatus: {
@@ -59,9 +59,12 @@ define([
 
 		_defineReportSubscriptions: function () {
 
+			var commonOpts = this._getSubCommonOpts();
+
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("GET_REPORT"),
-				callback: "_subGetReport"
+				callback: "_subGetReport",
+				options: commonOpts
 			});
 		},
 

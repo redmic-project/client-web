@@ -1,9 +1,13 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/util/Credentials'
+	, 'src/util/GuestChecker'
 ], function(
 	declare
 	, lang
+	, Credentials
+	, GuestChecker
 ) {
 
 	return declare(null, {
@@ -125,6 +129,15 @@ define([
 		_chkSuccessfulStatus: function(status) {
 
 			return status >= 200 && status < 400;
+		},
+
+		_chkUserIsNotGuest: function() {
+
+			var userIsGuest = Credentials.get("userRole") === "ROLE_GUEST";
+
+			userIsGuest && GuestChecker.protectFromGuests();
+
+			return !userIsGuest;
 		}
 	});
 });

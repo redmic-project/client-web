@@ -1,7 +1,6 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "src/component/base/_AuthFirewall"
 	, "src/component/base/_Module"
 	, "src/component/base/_Store"
 	, "src/component/base/_Selection"
@@ -11,7 +10,6 @@ define([
 ], function(
 	declare
 	, lang
-	, _AuthFirewall
 	, _Module
 	, _Store
 	, _Selection
@@ -19,7 +17,7 @@ define([
 	, _Worms
 	, Credentials
 ){
-	return declare([_Module, _AuthFirewall, _Store, _Selection, _Report, _Worms], {
+	return declare([_Module, _Store, _Selection, _Report, _Worms], {
 		//	Summary:
 		//		Módulo para gestionar la ejecución de tareas en segundo plano via sockets
 
@@ -57,11 +55,11 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-
-			this.baseSubscriptionsTarget = '/user/' + Credentials.get("userId");
 		},
 
 		_setConfigurations: function() {
+
+			this.baseSubscriptionsTarget = '/user/' + Credentials.get("userId");
 
 			this.socketChannels = this._merge([{
 				getTasks: {
@@ -73,21 +71,28 @@ define([
 
 		_defineSubscriptions: function () {
 
+			var commonOpts = this._getSubCommonOpts();
+
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("REFRESH_STATUS"),
-				callback: "_subRefreshStatus"
+				callback: "_subRefreshStatus",
+				options: commonOpts
 			},{
 				channel: this.getChannel("SOCKET_CONNECT"),
-				callback: "_subSocketConnect"
+				callback: "_subSocketConnect",
+				options: commonOpts
 			},{
 				channel : this.getChannel("BUTTON_EVENT"),
-				callback: "_subButtonEvent"
+				callback: "_subButtonEvent",
+				options: commonOpts
 			},{
 				channel : this.getChannel("REMOVE"),
-				callback: "_subRemove"
+				callback: "_subRemove",
+				options: commonOpts
 			},{
 				channel : this.getChannel("ALL_TASK"),
-				callback: "_subAllTask"
+				callback: "_subAllTask",
+				options: commonOpts
 			});
 		},
 
@@ -100,6 +105,13 @@ define([
 				event: 'GENERATE_NEW_SUBSCRIPTIONS',
 				channel: this._buildChannel(this.socketChannel, this.actions.GENERATE_NEW_SUBSCRIPTIONS)
 			});
+		},
+
+		_getSubCommonOpts: function() {
+
+			return {
+				predicate: lang.hitch(this, this._chkUserIsNotGuest)
+			};
 		},
 
 		_subRefreshStatus: function() {

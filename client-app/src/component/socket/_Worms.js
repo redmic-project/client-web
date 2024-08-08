@@ -1,15 +1,11 @@
 define([
-	'src/redmicConfig'
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "src/util/Credentials"
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, lang
 	, aspect
-	, Credentials
 ){
 	return declare(null, {
 		//	Summary:
@@ -27,14 +23,14 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			this.wormsBaseTarget = this.baseTarget + "wormstoredmic/";
-
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setWormsConfigurations));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineWormsSubscriptions));
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixWormsEventsAndActions));
 		},
 
 		_setWormsConfigurations: function() {
+
+			this.wormsBaseTarget = this.baseTarget + "wormstoredmic/";
 
 			this.socketChannels = this._merge([{
 				ingestStatus: {
@@ -53,9 +49,12 @@ define([
 
 		_defineWormsSubscriptions: function () {
 
+			var commonOpts = this._getSubCommonOpts();
+
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("WORMS_RUN"),
-				callback: "_subWormsRun"
+				callback: "_subWormsRun",
+				options: commonOpts
 			});
 		},
 

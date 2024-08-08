@@ -1,15 +1,13 @@
 define([
-	'src/redmicConfig'
-	, "dojo/_base/declare"
+	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "src/util/Credentials"
+	, 'src/redmicConfig'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, lang
 	, aspect
-	, Credentials
+	, redmicConfig
 ){
 	return declare(null, {
 		//	Summary:
@@ -30,14 +28,14 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			this.ingestBaseTarget = this.baseTarget + "ingest/";
-
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setIngestDataConfigurations));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineIngestDataSubscriptions));
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixIngestDataEventsAndActions));
 		},
 
 		_setIngestDataConfigurations: function() {
+
+			this.ingestBaseTarget = this.baseTarget + "ingest/";
 
 			this.socketChannels = this._merge([{
 				ingestStatus: {
@@ -56,15 +54,20 @@ define([
 
 		_defineIngestDataSubscriptions: function () {
 
+			var commonOpts = this._getSubCommonOpts();
+
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("INGEST_DATA_RUN"),
-				callback: "_subIngestDataRun"
+				callback: "_subIngestDataRun",
+				options: commonOpts
 			},{
 				channel : this.getChannel("INGEST_DATA_RESUME"),
-				callback: "_subIngestDataResume"
+				callback: "_subIngestDataResume",
+				options: commonOpts
 			},{
 				channel : this.getChannel("INGEST_DATA_STOP"),
-				callback: "_subIngestDataStop"
+				callback: "_subIngestDataStop",
+				options: commonOpts
 			});
 		},
 

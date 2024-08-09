@@ -10,6 +10,8 @@ define([
 	, "put-selector/put"
 	, "src/component/base/_Store"
 	, "src/component/base/_Window"
+	, 'src/util/Credentials'
+	, 'src/util/GuestChecker'
 	, "./_ControllerItfc"
 ], function(
 	_Controller
@@ -23,6 +25,8 @@ define([
 	, put
 	, _Store
 	, _Window
+	, Credentials
+	, GuestChecker
 	, _ControllerItfc
 ) {
 
@@ -444,6 +448,12 @@ define([
 
 		_reportClicked: function() {
 			// TODO: eso es para casos concretos, debería separarse
+
+			// TODO abstraer para hacerlo implícitamente
+			if (Credentials.userIsGuest()) {
+				GuestChecker.protectFromGuests();
+				return;
+			}
 
 			this._publish(this._buildChannel(this.taskChannel, this.actions.GET_REPORT), {
 				target: this.selectionTarget ? this.selectionTarget : this.target,

@@ -54,20 +54,15 @@ define([
 
 		_defineIngestDataSubscriptions: function () {
 
-			var commonOpts = this._getSubCommonOpts();
-
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("INGEST_DATA_RUN"),
-				callback: "_subIngestDataRun",
-				options: commonOpts
+				callback: "_subIngestDataRun"
 			},{
 				channel : this.getChannel("INGEST_DATA_RESUME"),
-				callback: "_subIngestDataResume",
-				options: commonOpts
+				callback: "_subIngestDataResume"
 			},{
 				channel : this.getChannel("INGEST_DATA_STOP"),
-				callback: "_subIngestDataStop",
-				options: commonOpts
+				callback: "_subIngestDataStop"
 			});
 		},
 

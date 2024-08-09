@@ -186,8 +186,7 @@ define([
 				parentChannel: this.getChannel()
 			});
 
-			var userRole = Credentials.get('userRole');
-			if (userRole !== 'ROLE_GUEST') {
+			if (!Credentials.userIsGuest()) {
 				new Notification({
 					parentChannel: this.getChannel()
 				});
@@ -195,17 +194,17 @@ define([
 				new Socket({
 					parentChannel: this.getChannel()
 				});
+
+				var TaskDefinition = Task;
+
+				if (Credentials.userIsEditor()) {
+					TaskDefinition = declare([TaskDefinition, _IngestData]);
+				}
+
+				new TaskDefinition({
+					parentChannel: this.getChannel()
+				});
 			}
-
-			var TaskDefinition = Task;
-
-			if (userRole === 'ROLE_ADMINISTRATOR' || userRole === 'ROLE_OAG') {
-				TaskDefinition = declare([TaskDefinition, _IngestData]);
-			}
-
-			new TaskDefinition({
-				parentChannel: this.getChannel()
-			});
 
 			this.topbar = new Topbar({
 				parentChannel: this.getChannel(),

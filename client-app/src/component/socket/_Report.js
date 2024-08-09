@@ -59,12 +59,9 @@ define([
 
 		_defineReportSubscriptions: function () {
 
-			var commonOpts = this._getSubCommonOpts();
-
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("GET_REPORT"),
-				callback: "_subGetReport",
-				options: commonOpts
+				callback: "_subGetReport"
 			});
 		},
 

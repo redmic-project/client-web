@@ -71,28 +71,21 @@ define([
 
 		_defineSubscriptions: function () {
 
-			var commonOpts = this._getSubCommonOpts();
-
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("REFRESH_STATUS"),
-				callback: "_subRefreshStatus",
-				options: commonOpts
+				callback: "_subRefreshStatus"
 			},{
 				channel: this.getChannel("SOCKET_CONNECT"),
-				callback: "_subSocketConnect",
-				options: commonOpts
+				callback: "_subSocketConnect"
 			},{
 				channel : this.getChannel("BUTTON_EVENT"),
-				callback: "_subButtonEvent",
-				options: commonOpts
+				callback: "_subButtonEvent"
 			},{
 				channel : this.getChannel("REMOVE"),
-				callback: "_subRemove",
-				options: commonOpts
+				callback: "_subRemove"
 			},{
 				channel : this.getChannel("ALL_TASK"),
-				callback: "_subAllTask",
-				options: commonOpts
+				callback: "_subAllTask"
 			});
 		},
 
@@ -105,13 +98,6 @@ define([
 				event: 'GENERATE_NEW_SUBSCRIPTIONS',
 				channel: this._buildChannel(this.socketChannel, this.actions.GENERATE_NEW_SUBSCRIPTIONS)
 			});
-		},
-
-		_getSubCommonOpts: function() {
-
-			return {
-				predicate: lang.hitch(this, this._chkUserIsNotGuest)
-			};
 		},
 
 		_subRefreshStatus: function() {

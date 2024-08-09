@@ -9,6 +9,8 @@ define([
 	, "src/component/browser/bars/Pagination"
 	, "src/component/search/FacetsImpl"
 	, "src/component/search/TextImpl"
+	, 'src/util/Credentials'
+	, 'src/util/GuestChecker'
 	, "./_AddFilter"
 ], function (
 	_OnShownAndRefresh
@@ -21,6 +23,8 @@ define([
 	, Pagination
 	, FacetsImpl
 	, TextImpl
+	, Credentials
+	, GuestChecker
 	, _AddFilter
 ){
 	return declare([_Controller, _Browser, _Store, _AddFilter, _OnShownAndRefresh], {
@@ -107,6 +111,12 @@ define([
 		},
 
 		_subDownloadFile: function(request) {
+
+			// TODO abstraer para hacerlo implícitamente
+			if (Credentials.userIsGuest()) {
+				GuestChecker.protectFromGuests();
+				return;
+			}
 
 			this._emitEvt('DOWNLOAD_FILE', {
 				target: this.selectionTarget ? this.selectionTarget : this.target,

@@ -49,12 +49,9 @@ define([
 
 		_defineWormsSubscriptions: function () {
 
-			var commonOpts = this._getSubCommonOpts();
-
 			this.subscriptionsConfig.push({
 				channel : this.getChannel("WORMS_RUN"),
-				callback: "_subWormsRun",
-				options: commonOpts
+				callback: "_subWormsRun"
 			});
 		},
 

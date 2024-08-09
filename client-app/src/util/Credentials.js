@@ -112,6 +112,18 @@ define([
 			//		Objeto a emitir.
 
 			this.emit(name, obj);
+		},
+
+		userIsGuest: function() {
+
+			return this.get('userRole') === 'ROLE_GUEST';
+		},
+
+		userIsEditor: function() {
+
+			var userRole = this.get('userRole');
+
+			return userRole === 'ROLE_ADMINISTRATOR' || userRole === 'ROLE_OAG';
 		}
 	});
 

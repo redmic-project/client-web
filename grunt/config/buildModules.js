@@ -6,9 +6,9 @@ module.exports = function(grunt) {
 		'client-app/dep/pruneCluster': preBuildCmds.concat([
 			'grunt build:dist --force'
 		]),
-		'client-app/dep/wicket': [
+		'client-app/dep/wicket': preBuildCmds.concat([
 			'npm run build'
-		],
+		]),
 		'client-app/dep/templates': preBuildCmds.concat([
 			'grunt build'
 		]),

@@ -10,7 +10,6 @@ define([
 	, 'src/app/component/Topbar'
 	, 'src/component/notification/Notification'
 	, 'src/component/selection/Selector'
-	, 'src/component/socket/_IngestData'
 	, 'src/component/socket/Socket'
 	, 'src/component/socket/Task'
 ], function(
@@ -25,7 +24,6 @@ define([
 	, Topbar
 	, Notification
 	, Selector
-	, _IngestData
 	, Socket
 	, Task
 ) {
@@ -195,13 +193,7 @@ define([
 					parentChannel: this.getChannel()
 				});
 
-				var TaskDefinition = Task;
-
-				if (Credentials.userIsEditor()) {
-					TaskDefinition = declare([TaskDefinition, _IngestData]);
-				}
-
-				new TaskDefinition({
+				new Task({
 					parentChannel: this.getChannel()
 				});
 			}

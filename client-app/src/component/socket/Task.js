@@ -4,6 +4,7 @@ define([
 	, "src/component/base/_Module"
 	, "src/component/base/_Store"
 	, "src/component/base/_Selection"
+	, 'src/component/socket/_IngestData'
 	, 'src/component/socket/_Report'
 	, 'src/component/socket/_Worms'
 	, "src/util/Credentials"
@@ -13,11 +14,12 @@ define([
 	, _Module
 	, _Store
 	, _Selection
+	, _IngestData
 	, _Report
 	, _Worms
 	, Credentials
 ){
-	return declare([_Module, _Store, _Selection, _Report, _Worms], {
+	return declare([_Module, _Store, _Selection, _Report, _Worms, _IngestData], {
 		//	Summary:
 		//		Módulo para gestionar la ejecución de tareas en segundo plano via sockets
 

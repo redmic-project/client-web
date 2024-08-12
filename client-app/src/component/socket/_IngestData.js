@@ -3,11 +3,13 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, 'src/redmicConfig'
+	, 'src/util/Credentials'
 ], function(
 	declare
 	, lang
 	, aspect
 	, redmicConfig
+	, Credentials
 ){
 	return declare(null, {
 		//	Summary:
@@ -15,6 +17,10 @@ define([
 		//	Description:
 
 		constructor: function(args) {
+
+			if (!Credentials.userIsEditor()) {
+				return;
+			}
 
 			this.config = {
 				// own actions

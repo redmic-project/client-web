@@ -51,7 +51,7 @@ define([
 		_initialize: function() {
 
 			var useBuilt = (/true/i).test(redmicConfig.getEnvVariableValue('envUseBuilt'));
-			L.Icon.Default.imagePath = '/' + (useBuilt ? 'js' : 'dep') + '/leaflet/dist/images/';
+			L.Icon.Default.imagePath = '/' + (useBuilt ? 'dist/js' : 'dep') + '/leaflet/dist/images/';
 
 			this.mapParentNode = put("div.map");
 			this.mapNode = put(this.mapParentNode, "div.map");

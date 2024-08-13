@@ -101,7 +101,7 @@ define([
 				this.lastPDF = url;
 
 				var useBuilt = (/true/i).test(redmicConfig.getEnvVariableValue('envUseBuilt')),
-					path = '/' + (useBuilt ? 'js' : 'dep') + '/pdfjs/web/viewer.html?file=' + url;
+					path = '/' + (useBuilt ? 'dist/js' : 'dep') + '/pdfjs/web/viewer.html?file=' + url;
 
 				if (!this.roleGuestActive) {
 					path += '?access_token%3D' + Credentials.get("accessToken");

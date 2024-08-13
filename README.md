@@ -48,7 +48,7 @@ npm pack
 
 > Internamente se lanzarán otros comandos orquestados mediante **Grunt** (que también podrían ejecutarse de manera concreta si fuera necesario).
 
-Esto generará un directorio con el código compilado de salida (`dist/`) junto con un fichero comprimido que contiene dicha salida y otros recursos necesarios para lanzar la aplicación (`redmic-project-web-<version>.tgz`).
+Esto generará un directorio con el código compilado de salida (`client-app/dist/`) junto con un fichero comprimido que contiene dicha salida y otros recursos necesarios para lanzar la aplicación (`redmic-project-web-<version>.tgz`).
 
 Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/dojo-compile>.
 

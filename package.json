@@ -84,7 +84,7 @@
     "tv4": "1.3.0",
     "wicket": "1.3.8"
   },
-  "files": ["server-app", "dist"],
+  "files": ["server-app", "client-app/dist", "client-app/res"],
   "engines": {
     "node": ">=20.16",
     "npm": ">=10.8"

@@ -30,9 +30,10 @@ html
 				altLocale1 = esLocale;
 			}
 
-			const basePath = '/' + (env.useBuilt ? 'dist' : 'client-app'),
-				dojoConfigPath = basePath + '/' + (env.useBuilt ? 'js' : 'src') + '/dojoConfig.js',
-				dojoJsPath = basePath + '/' + (env.useBuilt ? 'js' : 'dep') + '/dojo/dojo.js';
+			const basePath = '/client-app/',
+				codeBasePath = basePath + (env.useBuilt ? 'dist/' : ''),
+				dojoConfigPath = codeBasePath + (env.useBuilt ? 'js' : 'src') + '/dojoConfig.js',
+				dojoJsPath = codeBasePath + (env.useBuilt ? 'js' : 'dep') + '/dojo/dojo.js';
 
 		meta(name = 'og:locale' content = locale)
 		meta(name = 'og:locale:alternate' content = altLocale1)
@@ -44,7 +45,7 @@ html
 		script(src = dojoConfigPath)
 		script(src = dojoJsPath data-dojo-config = 'locale:"' + env.lang + '"')
 
-		link(rel='shortcut icon', href=basePath + '/res/images/favicon.ico')
+		link(rel='shortcut icon', href=basePath + 'res/images/favicon.ico')
 
 	body(class=['db'])
 		//- Contenedor de carga de la aplicación
@@ -58,4 +59,4 @@ if !env.useBuilt
 	link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,600,400')
 	link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Exo+2:700')
 
-link(rel='stylesheet', href=basePath + '/style/style.css')
+link(rel='stylesheet', href=codeBasePath + 'style/style.css')

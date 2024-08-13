@@ -8,8 +8,6 @@ module.exports = function(grunt) {
 		destDir = grunt.config('redmicConfig.destDir'),
 		publicPath = srcPath.split('/')[0],
 
-		resourcesPath = 'res/**',
-
 		stylesPath = publicPath + '/style',
 		stylesDistPath = stylesPath + '/dist',
 		distStylesSubPath = distPath + '/style',
@@ -25,14 +23,6 @@ module.exports = function(grunt) {
 		pdfjsBuildName = 'build';
 
 	grunt.config('copy', {
-		resources: {
-			files: [{
-				cwd: publicPath,
-				src: resourcesPath,
-				dest: distPath + '/',
-				expand: true
-			}]
-		},
 		stylesDist: {
 			files: [{
 				cwd: stylesDistPath,

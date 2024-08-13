@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 			srcPath: 'client-app/src',
 			depPath: 'client-app/dep',
 			testPath: 'client-app/test',
-			distPath: 'dist',
+			distPath: 'client-app/dist',
 			destDir: 'js'
 		},
 		pkg: grunt.file.readJSON('package.json')

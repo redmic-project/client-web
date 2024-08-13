@@ -124,13 +124,12 @@ function expose(app) {
 
 	app.use(express.urlencoded({ extended: false }));
 
-	if (params.useBuilt) {
-		exposeContents(app, 'dist');
-	} else {
+	if (!params.useBuilt) {
 		require('./styles')(app);
-		exposeContents(app, 'client-app');
 		exposeContents(app, 'node_modules');
 	}
+
+	exposeContents(app, 'client-app');
 
 	app.set('view engine', 'pug')
 		.set('views', path.join(__dirname, '..', 'views'));

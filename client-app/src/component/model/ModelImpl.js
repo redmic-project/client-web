@@ -61,7 +61,7 @@ define([
 
 			var isValid = this.modelInstance.get('isValid');
 
-			if (redmicConfig.getEnvVariableValue('envDebug') === 'true') {
+			if ((/true/i).test(redmicConfig.getEnvVariableValue('envDebug'))) {
 				console.warn('Model validation errors', {
 					target: this.target,
 					isValid: isValid,

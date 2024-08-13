@@ -6,6 +6,7 @@ define([
 	, "dojo/query"
 	, 'leaflet/leaflet'
 	, "put-selector/put"
+	, 'src/redmicConfig'
 	, "./_LeafletImplItfc"
 	, './_LeafletWidgetsManagement'
 	, "./_ListenContainers"
@@ -19,6 +20,7 @@ define([
 	, query
 	, L
 	, put
+	, redmicConfig
 	, _LeafletImplItfc
 	, _LeafletWidgetsManagement
 	, _ListenContainers
@@ -48,7 +50,8 @@ define([
 
 		_initialize: function() {
 
-			L.Icon.Default.imagePath = '/' + ((/true/i).test(envUseBuilt) ? 'js' : 'dep') + '/leaflet/dist/images/';
+			var useBuilt = (/true/i).test(redmicConfig.getEnvVariableValue('envUseBuilt'));
+			L.Icon.Default.imagePath = '/' + (useBuilt ? 'js' : 'dep') + '/leaflet/dist/images/';
 
 			this.mapParentNode = put("div.map");
 			this.mapNode = put(this.mapParentNode, "div.map");

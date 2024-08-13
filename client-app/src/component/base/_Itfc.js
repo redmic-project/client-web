@@ -42,7 +42,7 @@ define([
 
 		_onNotImplementedMethod: function(method, props) {
 
-			if (redmicConfig.getEnvVariableValue('envDebug') === 'true') {
+			if ((/true/i).test(redmicConfig.getEnvVariableValue('envDebug'))) {
 				// TODO demasiado ruido y no aporta casi nada, quitar si no se echa en falta
 				//this._showNotImplementedMethodWarning(method, props);
 			}

@@ -6,6 +6,7 @@ define([
 	, "src/component/base/_Show"
 	, "src/component/layout/templateDisplayer/TemplateDisplayer"
 	, "put-selector/put"
+	, 'src/redmicConfig'
 	, "templates/DocumentAuthFailed"
 	, "templates/DocumentNotAvailable"
 ], function(
@@ -16,6 +17,7 @@ define([
 	, _Show
 	, TemplateDisplayer
 	, put
+	, redmicConfig
 	, TemplateAuthFailed
 	, TemplateNoAvailable
 ) {
@@ -98,7 +100,8 @@ define([
 
 				this.lastPDF = url;
 
-				var path = '/' + ((/true/i).test(envUseBuilt) ? 'js' : 'dep') + '/pdfjs/web/viewer.html?file=' + url;
+				var useBuilt = (/true/i).test(redmicConfig.getEnvVariableValue('envUseBuilt')),
+					path = '/' + (useBuilt ? 'js' : 'dep') + '/pdfjs/web/viewer.html?file=' + url;
 
 				if (!this.roleGuestActive) {
 					path += '?access_token%3D' + Credentials.get("accessToken");

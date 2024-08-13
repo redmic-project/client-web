@@ -132,7 +132,7 @@ function(
 
 		_checkDomainToAddMessage: function() {
 
-			if (redmicConfig.getEnvVariableValue('envProduction') === 'false') {
+			if ((/false/i).test(redmicConfig.getEnvVariableValue('envProduction'))) {
 				this._addMessage('.appDev', this.i18n.messageAppDev);
 			}
 		},

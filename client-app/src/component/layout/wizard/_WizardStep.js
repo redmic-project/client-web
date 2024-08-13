@@ -452,7 +452,7 @@ define([
 
 			this._isValidProperty = !propErrors;
 
-			if (redmicConfig.getEnvVariableValue('envDebug') === 'true') {
+			if ((/true/i).test(redmicConfig.getEnvVariableValue('envDebug'))) {
 				console.warn('Wizard step validation', {
 					property: this.propertyName,
 					isValid: this._isValidProperty,

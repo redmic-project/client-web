@@ -11,6 +11,7 @@ html
 		script.
 			var lang = '#{env.lang}',
 				envApiUrl = '#{env.apiUrl}',
+				envUseBuilt = '#{env.useBuilt}',
 				envProduction = '#{env.production}',
 				envVersion = '#{env.version}',
 				envDebug = '#{env.debug}';
@@ -30,8 +31,8 @@ html
 			}
 
 			const basePath = '/' + (env.useBuilt ? 'dist' : 'client-app'),
-				dojoConfigPath = basePath + '/' + (env.useBuilt ? 'javascript' : 'src') + '/dojoConfig.js',
-				dojoJsPath = basePath + '/' + (env.useBuilt ? 'javascript' : 'dep') + '/dojo/dojo.js';
+				dojoConfigPath = basePath + '/' + (env.useBuilt ? 'js' : 'src') + '/dojoConfig.js',
+				dojoJsPath = basePath + '/' + (env.useBuilt ? 'js' : 'dep') + '/dojo/dojo.js';
 
 		meta(name = 'og:locale' content = locale)
 		meta(name = 'og:locale:alternate' content = altLocale1)

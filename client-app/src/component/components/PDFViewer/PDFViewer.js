@@ -98,7 +98,7 @@ define([
 
 				this.lastPDF = url;
 
-				var path = '/javascript/pdfjs/web/viewer.html?file=' + url;
+				var path = '/' + ((/true/i).test(envUseBuilt) ? 'js' : 'dep') + '/pdfjs/web/viewer.html?file=' + url;
 
 				if (!this.roleGuestActive) {
 					path += '?access_token%3D' + Credentials.get("accessToken");

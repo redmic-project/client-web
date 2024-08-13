@@ -27,7 +27,7 @@ var declarativeTagger = function(filename) {
 var profileObj = {
 	basePath: '.',
 	releaseDir: '../dist',
-	releaseName: 'javascript',
+	releaseName: 'js',
 	action: 'release',
 	layerOptimize: 'closure',
 	optimize: 'closure',

@@ -24,7 +24,7 @@ define([
 			this.config = {
 				target: redmicConfig.services.program,
 				reportService: "program",
-				_targetListRank: redmicConfig.services.activityProject,
+				_targetListRank: redmicConfig.services.projectProgram,
 				_indexListRank: 4
 			};
 

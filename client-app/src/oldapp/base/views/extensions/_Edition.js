@@ -45,14 +45,16 @@ define([
 
 		_addListButtonsEdition: function() {
 
-			var browserRowButtons = this._getBrowserButtons();
+			var browserRowButtons = this._getBrowserButtons(),
+				buttons;
 
 			if (browserRowButtons && browserRowButtons.length) {
-				this._mergeInEditionButtons(browserRowButtons);
+				buttons = this._mergeInEditionButtons(browserRowButtons);
 			} else {
-				this._setBrowserButtons(lang.clone(this.listButtonsEdition));
+				buttons = lang.clone(this.listButtonsEdition);
 			}
 
+			this._setBrowserButtons(buttons);
 			delete this.listButtonsEdition;
 		},
 
@@ -79,6 +81,8 @@ define([
 			} else if (this.listButtonsEdition.length) {
 				browserRowButtons = browserRowButtons.concat(this.listButtonsEdition);
 			}
+
+			return browserRowButtons;
 		},
 
 		_getBrowserButtons: function() {
@@ -107,13 +111,12 @@ define([
 
 		_setBrowserButtons: function(listButton) {
 
-			this._setBrowserConfig(this._merge([{
-				rowConfig: {
-					buttonsConfig: {
-						listButton: listButton
-					}
-				}
-			}, this._getBrowserConfig() || {}]));
+			if (!this.browserConfig || !this.browserConfig.rowConfig || !this.browserConfig.rowConfig.buttonsConfig) {
+				console.warn('Tried to add edition buttons to browser row config, but base config was not found!');
+				return;
+			}
+
+			this.browserConfig.rowConfig.buttonsConfig.listButton = listButton;
 		},
 
 		_mixEditionEventsAndActions: function() {

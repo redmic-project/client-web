@@ -52,7 +52,7 @@ prepare-built-version:
     paths:
       - package-lock.json
       - redmic-project-web-*.tgz
-      - build-report.txt
+      - client-app/build-report.txt
   rules:
     - if: $CI_MERGE_REQUEST_ID ||
           $CI_PIPELINE_SOURCE == "schedule"

@@ -29,13 +29,15 @@ define([
 				},
 				editionViewActions: {
 					UPDATE_TARGET_FORM: "updateTargetForm"
-				}
+				},
+
+				_editionGroupId: 'edition'
 			};
 
 			lang.mixin(this, this.config);
 
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixEditionEventsAndActions));
-			aspect.before(this, "_afterSetConfigurations",	lang.hitch(this, this._addListButtonsEdition));
+			aspect.after(this, "_afterSetConfigurations",	lang.hitch(this, this._addListButtonsEdition));
 			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._setEditionOwnCallbacksForEvents));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineEditionSubscriptions));
 			aspect.after(this, "_definePublications", lang.hitch(this, this._defineEditionPublications));
@@ -43,44 +45,54 @@ define([
 
 		_addListButtonsEdition: function() {
 
-			if (this._existListButton()) {
-				for (var i = (this._getListButton().length - 1); i >= 0; i--) {
-					for (var s = (this.listButtonsEdition.length - 1); s >= 0; s--) {
-						if (this._getListButton()[i].groupId == this.listButtonsEdition[s].groupId) {
-							for (var k = (this.listButtonsEdition[s].icons.length - 1); k >= 0; k--) {
-								this._getListButton()[i].icons.unshift(this.listButtonsEdition[s].icons[k]);
-							}
+			var browserRowButtons = this._getBrowserButtons();
 
-							this.listButtonsEdition.splice(s, 1);
-						}
-					}
-				}
-
-				for (var n = (this.listButtonsEdition.length - 1); n >= 0; n--) {
-					this._getListButton().unshift(this.listButtonsEdition[n]);
-				}
+			if (browserRowButtons && browserRowButtons.length) {
+				this._mergeInEditionButtons(browserRowButtons);
 			} else {
-				this._setListButton(lang.clone(this.listButtonsEdition));
+				this._setBrowserButtons(lang.clone(this.listButtonsEdition));
 			}
 
 			delete this.listButtonsEdition;
 		},
 
-		_existListButton: function() {
+		_mergeInEditionButtons: function(browserRowButtons) {
 
-			var browserConfig = this._getBrowserConfig();
+			var findIndexCallback = lang.hitch(this, function(button) {
 
-			if (browserConfig && browserConfig.rowConfig && browserConfig.rowConfig.buttonsConfig &&
-				browserConfig.rowConfig.buttonsConfig.listButton) {
-				return true;
+				return button.groupId && button.groupId === this._editionGroupId;
+			});
+
+			var rowButtonIndex = browserRowButtons.findIndex(findIndexCallback);
+
+			if (rowButtonIndex !== -1) {
+				var rowButtonEditionGroup = browserRowButtons[rowButtonIndex];
+
+				var editionButtonIndex = this.listButtonsEdition.findIndex(findIndexCallback);
+
+				if (editionButtonIndex !== -1) {
+					var editionButtonEditionGroup = this.listButtonsEdition[editionButtonIndex];
+
+					rowButtonEditionGroup.icons = rowButtonEditionGroup.icons.concat(editionButtonEditionGroup.icons);
+					this.listButtonsEdition.splice(editionButtonIndex, 1);
+				}
+			} else if (this.listButtonsEdition.length) {
+				browserRowButtons = browserRowButtons.concat(this.listButtonsEdition);
 			}
-
-			return null;
 		},
 
-		_getListButton: function() {
+		_getBrowserButtons: function() {
 
-			return this._getBrowserConfig().rowConfig.buttonsConfig.listButton;
+			var browserConfig = this._getBrowserConfig(),
+				rowConfig = browserConfig && browserConfig.rowConfig,
+				buttonsConfig = rowConfig && rowConfig.buttonsConfig,
+				buttonsList = buttonsConfig && buttonsConfig.listButton;
+
+			if (buttonsList) {
+				return buttonsList;
+			}
+
+			return [];
 		},
 
 		_getBrowserConfig: function() {
@@ -93,7 +105,7 @@ define([
 			this.browserConfig = browserConfig;
 		},
 
-		_setListButton: function(listButton) {
+		_setBrowserButtons: function(listButton) {
 
 			this._setBrowserConfig(this._merge([{
 				rowConfig: {

@@ -57,21 +57,19 @@ define([
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineEditionViewSubscriptions));
 		},
 
-		_existListButton: function() {
+		_getBrowserButtons: function() {
 
-			if (this.rowConfig && this.rowConfig.buttonsConfig && this.rowConfig.buttonsConfig.listButton) {
-				return true;
+			var buttonsConfig = this.rowConfig && this.rowConfig.buttonsConfig,
+				buttonsList = buttonsConfig && buttonsConfig.listButton;
+
+			if (buttonsList) {
+				return buttonsList;
 			}
 
-			return null;
+			return [];
 		},
 
-		_getListButton: function() {
-
-			return this.rowConfig.buttonsConfig.listButton;
-		},
-
-		_setListButton: function(listButton) {
+		_setBrowserButtons: function(listButton) {
 
 			this.rowConfig = this._merge([{
 				buttonsConfig: {

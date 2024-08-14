@@ -157,12 +157,6 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: 'fa-file-pdf-o',
-								btnId: 'downloadPdf',
-								title: this.i18n.download,
-								condition: 'url',
-								href: redmicConfig.viewPaths.bibliographyDetails
-							},{
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.info,

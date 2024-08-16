@@ -521,7 +521,6 @@ var viewLayers = {
 	, 'app/details/views/ActivityCatalogDetailsView': {}
 	, 'app/details/views/PlatformCatalogDetailsView': {}
 	, 'app/details/views/ServiceOGCCatalogDetailsView': {}
-	, 'app/details/views/ProgramDetailsView': {}
 	, 'app/details/views/DocumentDetailsView': {}
 	, 'app/details/views/BibliographyDetailsView': {}
 	, 'app/details/views/ContactDetailsView': {}

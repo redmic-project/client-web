@@ -70,8 +70,7 @@ define([], function() {
 		'platformEdit': '/admin/platform-edit/{id}',
 		'platform': '/admin/platform',
 		'programCatalog': '/catalog/program-catalog',
-		'programCatalogDetails': '/catalog/program-info/{id}',
-		'programDetails': '/admin/program-info/{id}',
+		'programDetails': '/catalog/program-info/{id}',
 		'programAdd': '/admin/program-add/{id}',
 		'programEdit': '/admin/program-edit/{id}',
 		'programProject': '/admin/project/program/{id}',
@@ -528,7 +527,7 @@ define([], function() {
 		document: ['id', 'title', 'author', 'year', 'documentType', 'language', 'url'],
 		organisation: ['id', 'name', 'acronym', 'logo', 'organisationType', 'webpage'],
 		program: ['id', 'name', 'code', 'endDate'],
-		project: ['id', 'name', 'code', 'endDate', 'projectGroup'],
+		project: ['accessibility', 'id', 'name', 'code', 'endDate', 'projectGroup'],
 		species: [
 			'aphia', 'authorship', 'commonName', 'groupIcon', 'id', 'peculiarity.popularNames', 'scientificName',
 			'status'

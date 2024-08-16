@@ -4,7 +4,9 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/base/_ExternalConfig'
+	, 'src/detail/activity/_ActivityEdition'
 	, 'src/detail/activity/_ActivityLayoutWidget'
+	, 'src/util/Credentials'
 	, 'templates/ActivityInfo'
 ], function(
 	redmicConfig
@@ -12,13 +14,21 @@ define([
 	, declare
 	, lang
 	, _ExternalConfig
+	, _ActivityEdition
 	, _ActivityLayoutWidget
+	, Credentials
 	, TemplateInfo
 ) {
 
-	return declare([_ActivityBase, _ActivityLayoutWidget, _ExternalConfig], {
+	var declareItems = [_ActivityBase, _ActivityLayoutWidget, _ExternalConfig];
+
+	if (Credentials.userIsEditor()) {
+		declareItems.push(_ActivityEdition);
+	}
+
+	return declare(declareItems, {
 		//	summary:
-		//		Layout para detalle de actividad con metadatos.
+		//		Vista de detalle de actividades.
 
 		constructor: function(args) {
 
@@ -34,16 +44,6 @@ define([
 		},
 
 		_setMainConfigurations: function() {
-
-			this._titleRightButtonsList = [{
-				icon: 'fa-edit',
-				href: redmicConfig.viewPaths.activityEdit,
-				title: this.i18n.edit
-			}];
-
-			this.shownOptionInfo = {
-				id: true
-			};
 
 			this.viewPathsWidgets = {
 				organisations: redmicConfig.viewPaths.organisationCatalogDetails,

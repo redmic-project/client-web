@@ -517,7 +517,6 @@ var viewLayers = {
 	, 'app/details/views/ProjectCatalogDetailsView': {}
 	, 'app/details/views/ProgramCatalogDetailsView': {}
 	, 'app/details/views/PlatformDetailsView': {}
-	, 'app/details/views/ActivityDetailsView': {}
 	, 'app/details/views/SpeciesDetailsView': {}
 	, 'app/details/views/ActivityCatalogDetailsView': {}
 	, 'app/details/views/PlatformCatalogDetailsView': {}

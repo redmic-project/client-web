@@ -316,7 +316,7 @@ define([
 
 			var platformData = {
 				activityName: activityData.name,
-				activityUrl: lang.replace(redmicConfig.viewPaths.activityCatalogDetails, {
+				activityUrl: lang.replace(redmicConfig.viewPaths.activityDetails, {
 					id: activityData.id
 				}),
 				description: activityData.description,

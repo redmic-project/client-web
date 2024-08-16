@@ -14,7 +14,7 @@ define([
 		_setConfigurations: function() {
 
 			this.viewPathsWidgets = {
-				activities: redmicConfig.viewPaths.activityCatalogDetails
+				activities: redmicConfig.viewPaths.activityDetails
 			};
 
 			this.pathParent = redmicConfig.viewPaths.bibliography;

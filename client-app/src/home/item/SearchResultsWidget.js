@@ -80,7 +80,7 @@ define([
 							icon: 'fa-info-circle',
 							btnId: 'info',
 							title: 'info',
-							href: redmicConfig.viewPaths.activityCatalogDetails
+							href: redmicConfig.viewPaths.activityDetails
 						}]
 					}
 				}

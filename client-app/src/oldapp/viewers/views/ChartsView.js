@@ -150,7 +150,7 @@ define([
 
 									return item.activityId;
 								},
-								href: lang.replace(redmicConfig.viewPaths.activityCatalogDetails, {
+								href: lang.replace(redmicConfig.viewPaths.activityDetails, {
 									id: '{activityId}'
 								})
 							}]

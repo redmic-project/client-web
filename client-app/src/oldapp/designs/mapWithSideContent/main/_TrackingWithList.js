@@ -81,7 +81,7 @@ define([
 							btnId: "details",
 							title: "info",
 							href: [
-								redmicConfig.viewPaths.activityCatalogDetails,
+								redmicConfig.viewPaths.activityDetails,
 								redmicConfig.viewPaths.platformCatalogDetails
 							],
 							chooseHref: function(item) {

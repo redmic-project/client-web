@@ -10,9 +10,8 @@ define([], function() {
 
 	retObj.viewPaths = {
 		'activityCatalog': '/catalog/activities-catalog',
-		'activityCatalogDetails': '/catalog/activity-info/{id}',
+		'activityDetails': '/catalog/activity-info/{id}',
 		'activityCatalogDetailsRegister': '/catalog/activity-info/{properties.activityId}',
-		'activityDetails': '/admin/activity-info/{id}',
 		'activityAdd': '/admin/activity-add/{id}',
 		'activityEdit': '/admin/activity-edit/{id}',
 		'activityCitation': '/data-loader/activity/{id}/citation',

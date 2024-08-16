@@ -17,7 +17,7 @@ define([
 				organisations: redmicConfig.viewPaths.organisationCatalogDetails,
 				platforms: redmicConfig.viewPaths.platformCatalogDetails,
 				documents: redmicConfig.viewPaths.bibliographyDetails,
-				activities: redmicConfig.viewPaths.activityCatalogDetails
+				activities: redmicConfig.viewPaths.activityDetails
 			};
 
 			this.pathParent = redmicConfig.viewPaths.project;

@@ -1,37 +1,37 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/detail/project/_ProjectEdition'
+	, 'src/detail/program/_ProgramEdition'
 	, 'src/oldapp/designs/details/main/_DetailsBase'
 	, 'src/redmicConfig'
-	, 'templates/ActivityList'
-	, 'templates/ProjectInfo'
+	, 'templates/ProgramInfo'
+	, 'templates/ProjectList'
 ], function(
 	declare
 	, lang
-	, _ProjectEdition
+	, _ProgramEdition
 	, _DetailsBase
 	, redmicConfig
-	, TemplateActivities
 	, TemplateInfo
+	, TemplateProjects
 ) {
 
-	return declare([_DetailsBase, _ProjectEdition], {
+	return declare([_DetailsBase, _ProgramEdition], {
 		//	summary:
-		//		Vista de detalle de proyectos.
+		//		Vista de detalle de programas.
 
 		constructor: function(args) {
 
 			this.config = {
-				target: redmicConfig.services.project,
-				activitiesTargetBase: redmicConfig.services.activityProject,
+				target: redmicConfig.services.program,
+				activitiesTargetBase: redmicConfig.services.projectProgram,
 				_titleRightButtonsList: [{
 					icon: 'fa-print',
 					btnId: 'report',
 					title: this.i18n.printToPdf
 				}],
-				reportService: 'project',
-				pathParent: redmicConfig.viewPaths.projectCatalog
+				reportService: 'program',
+				pathParent: redmicConfig.viewPaths.programCatalog
 			};
 
 			lang.mixin(this, this.config, args);
@@ -46,11 +46,11 @@ define([
 					template: TemplateInfo,
 					target: this.target[0]
 				}),
-				activityList: this._getActivitiesOrProjectsConfig({
-					title: this.i18n.activities,
+				projectList: this._getActivitiesOrProjectsConfig({
+					title: this.i18n.projects,
 					target: this.activityTarget,
-					template: TemplateActivities,
-					href: redmicConfig.viewPaths.activityDetails,
+					template: TemplateProjects,
+					href: redmicConfig.viewPaths.projectDetails,
 					height: 6
 				})
 			}, this.widgetConfigs || {}]);
@@ -63,7 +63,7 @@ define([
 				target: this.target[1],
 				action: '_search',
 				query: {
-					returnFields: redmicConfig.returnFields.activity
+					returnFields: redmicConfig.returnFields.project
 				}
 			});
 		},

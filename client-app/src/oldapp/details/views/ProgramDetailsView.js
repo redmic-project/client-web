@@ -1,32 +1,9 @@
 define([
-	"app/designs/details/main/Program"
-	, 'src/redmicConfig'
-	, "dojo/_base/declare"
+	'src/detail/program/ProgramDetailView'
 ], function(
-	Program
-	, redmicConfig
-	, declare
-){
-	return declare(Program, {
-		//	summary:
-		//
+	ProgramDetailView
+) {
 
-		_setConfigurations: function() {
-
-			this._titleRightButtonsList = [{
-				icon: "fa-edit",
-				href: redmicConfig.viewPaths.programEdit,
-				title: this.i18n.edit
-			}];
-
-			this.viewPathsWidgets = {
-				organisations: redmicConfig.viewPaths.organisationCatalogDetails,
-				platforms: redmicConfig.viewPaths.platformCatalogDetails,
-				documents: redmicConfig.viewPaths.bibliographyDetails,
-				projects: redmicConfig.viewPaths.projectDetails
-			};
-
-			this.pathParent = redmicConfig.viewPaths.program;
-		}
-	});
+	// TODO placeholder hasta que se referencien las vistas a partir de src/
+	return ProgramDetailView;
 });

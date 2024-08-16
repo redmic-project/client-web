@@ -1,26 +1,9 @@
 define([
-	"app/designs/details/main/Project"
-	, 'src/redmicConfig'
-	, "dojo/_base/declare"
+	'src/detail/project/ProjectDetailView'
 ], function(
-	Project
-	, redmicConfig
-	, declare
+	ProjectDetailView
 ){
-	return declare(Project, {
-		//	summary:
-		//
 
-		_setConfigurations: function() {
-
-			this.viewPathsWidgets = {
-				organisations: redmicConfig.viewPaths.organisationCatalogDetails,
-				platforms: redmicConfig.viewPaths.platformCatalogDetails,
-				documents: redmicConfig.viewPaths.bibliographyDetails,
-				activities: redmicConfig.viewPaths.activityDetails
-			};
-
-			this.pathParent = redmicConfig.viewPaths.project;
-		}
-	});
+	// TODO placeholder hasta que se referencien las vistas a partir de src/
+	return ProjectDetailView;
 });

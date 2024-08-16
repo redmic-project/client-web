@@ -1,20 +1,22 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/detail/project/_ProjectEdition'
 	, 'src/oldapp/designs/details/main/_DetailsBase'
 	, 'src/redmicConfig'
 	, 'templates/ProjectInfo'
 ], function(
 	declare
 	, lang
+	, _ProjectEdition
 	, _DetailsBase
 	, redmicConfig
 	, TemplateInfo
 ) {
 
-	return declare(_DetailsBase, {
+	return declare([_DetailsBase, _ProjectEdition], {
 		//	summary:
-		//		Vista detalle de Project.
+		//		Vista de detalle de proyectos.
 
 		constructor: function(args) {
 
@@ -27,13 +29,18 @@ define([
 					btnId: 'report',
 					title: this.i18n.printToPdf
 				}],
-				reportService: 'project'
+				reportService: 'project',
+				pathParent: redmicConfig.viewPaths.projectCatalog
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
 		_setMainConfigurations: function() {
+
+			this.viewPathsWidgets = {
+				activities: redmicConfig.viewPaths.activityDetails
+			};
 
 			this.inherited(arguments);
 

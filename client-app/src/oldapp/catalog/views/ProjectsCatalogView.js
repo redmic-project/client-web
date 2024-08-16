@@ -35,7 +35,7 @@ define([
 							icon: "fa-info-circle",
 							btnId: "details",
 							title: "info",
-							href: this.viewPaths.projectCatalogDetails
+							href: this.viewPaths.projectDetails
 						}]
 					}
 				}

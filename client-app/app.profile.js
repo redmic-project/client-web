@@ -520,7 +520,6 @@ var viewLayers = {
 	, 'app/details/views/SpeciesDetailsView': {}
 	, 'app/details/views/ActivityCatalogDetailsView': {}
 	, 'app/details/views/PlatformCatalogDetailsView': {}
-	, 'app/details/views/ProjectDetailsView': {}
 	, 'app/details/views/ServiceOGCCatalogDetailsView': {}
 	, 'app/details/views/ProgramDetailsView': {}
 	, 'app/details/views/DocumentDetailsView': {}

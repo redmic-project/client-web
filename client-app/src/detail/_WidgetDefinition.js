@@ -171,8 +171,8 @@ define([
 		_getActivitiesOrProjectsConfig: function(config) {
 
 			return {
-				width: 3,
-				height: 2,
+				width: config.width || 3,
+				height: config.height || 2,
 				type: declare([ListImpl, _Framework, _ButtonsInRow, _Filter]),
 				props: {
 					title: config.title,

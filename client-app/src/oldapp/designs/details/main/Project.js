@@ -1,21 +1,18 @@
 define([
-	'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "templates/ActivityList"
-	, "templates/ProjectInfo"
-	, 'src/detail/_WidgetDefinition'
-	, "./_ActivityBase"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/oldapp/designs/details/main/_DetailsBase'
+	, 'src/redmicConfig'
+	, 'templates/ProjectInfo'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, lang
-	, TemplateActivities
+	, _DetailsBase
+	, redmicConfig
 	, TemplateInfo
-	, _WidgetDefinition
-	, _ActivityBase
-){
-	return declare([_ActivityBase, _WidgetDefinition], {
+) {
+
+	return declare(_DetailsBase, {
 		//	summary:
 		//		Vista detalle de Project.
 
@@ -23,9 +20,14 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.project,
-				reportService: "project",
-				_targetListRank: redmicConfig.services.activityProject,
-				_indexListRank: 4
+				activitiesTargetBase: redmicConfig.services.activityProject,
+				templateInfo: TemplateInfo,
+				_titleRightButtonsList: [{
+					icon: 'fa-print',
+					btnId: 'report',
+					title: this.i18n.printToPdf
+				}],
+				reportService: 'project'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -33,20 +35,32 @@ define([
 
 		_setMainConfigurations: function() {
 
-			this.widgetConfigs = this._merge([{
-				info: this._getInfoConfig({
-					template: TemplateInfo
-				}),
-				childActivitiesOrProjects: this._getActivitiesOrProjectsConfig({
-					title: this.i18n.activities,
-					template: TemplateActivities,
-					href: this.viewPathsWidgets.activities
-				}),
-				organisationList: this._getOrganisationsConfig(),
-				platformList: this._getPlatformsConfig(),
-				contactList: this._getContactsConfig(),
-				documentList: this._getDocumentsConfig()
-			}, this.widgetConfigs || {}]);
+			this.inherited(arguments);
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
+				activityList: {
+					height: 6
+				}
+			}]);
+		},
+
+		_getActivityTargetData: function() {
+
+			this._emitEvt('REQUEST', {
+				method: 'POST',
+				target: this.target[1],
+				action: '_search',
+				query: {
+					returnFields: redmicConfig.returnFields.activity
+				}
+			});
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			if (resWrapper.target === this.target[1]) {
+				this._dataToActivities(res);
+			}
 		}
 	});
 });

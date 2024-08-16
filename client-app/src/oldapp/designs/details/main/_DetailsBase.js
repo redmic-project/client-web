@@ -61,16 +61,28 @@ define([
 		_refreshModules: function() {
 
 			this._checkPathVariableId();
+			this._getMainTargetData();
+			this._prepareActivityTarget();
+			this._getActivityTargetData();
+		},
+
+		_getMainTargetData: function() {
 
 			this._emitEvt('GET', {
 				target: this.target[0],
 				requesterId: this.ownChannel,
 				id: this.pathVariableId
 			});
+		},
+
+		_prepareActivityTarget: function() {
 
 			this.target[1] = lang.replace(this.activitiesTargetBase, {
 				id: this.pathVariableId
 			});
+		},
+
+		_getActivityTargetData: function() {
 
 			this._emitEvt('GET', {
 				target: this.target[1],

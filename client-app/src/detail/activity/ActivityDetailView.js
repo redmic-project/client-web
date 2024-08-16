@@ -35,6 +35,24 @@ define([
 
 		_setMainConfigurations: function() {
 
+			this._titleRightButtonsList = [{
+				icon: 'fa-edit',
+				href: redmicConfig.viewPaths.activityEdit,
+				title: this.i18n.edit
+			}];
+
+			this.shownOptionInfo = {
+				id: true
+			};
+
+			this.viewPathsWidgets = {
+				organisations: redmicConfig.viewPaths.organisationCatalogDetails,
+				platforms: redmicConfig.viewPaths.platformCatalogDetails,
+				documents: redmicConfig.viewPaths.bibliographyDetails
+			};
+
+			this.pathParent = redmicConfig.viewPaths.activityCatalog;
+
 			this.widgetConfigs = this._merge([{
 				info: this._getInfoConfig({
 					height: 4,

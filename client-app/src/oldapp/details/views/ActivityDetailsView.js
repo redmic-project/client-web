@@ -1,36 +1,9 @@
 define([
-	'src/redmicConfig'
-	, 'dojo/_base/declare'
-	, 'src/detail/activity/ActivityDetail'
+	'src/detail/activity/ActivityDetailView'
 ], function(
-	redmicConfig
-	, declare
-	, ActivityDetail
+	ActivityDetailView
 ) {
 
-	return declare(ActivityDetail, {
-		//	summary:
-		//
-
-		_setConfigurations: function() {
-
-			this._titleRightButtonsList = [{
-				icon: 'fa-edit',
-				href: redmicConfig.viewPaths.activityEdit,
-				title: this.i18n.edit
-			}];
-
-			this.shownOptionInfo = {
-				id: true
-			};
-
-			this.viewPathsWidgets = {
-				organisations: redmicConfig.viewPaths.organisationDetails,
-				platforms: redmicConfig.viewPaths.platformDetails,
-				documents: redmicConfig.viewPaths.documentDetails
-			};
-
-			this.pathParent = redmicConfig.viewPaths.activity;
-		}
-	});
+	// TODO placeholder hasta que se referencien las vistas a partir de src/
+	return ActivityDetailView;
 });

@@ -411,9 +411,6 @@ var viewLayers = {
 	, 'app/catalog/views/ProgramsCatalogView': {}
 	, 'app/catalog/views/OrganisationsCatalogView': {}
 
-	, 'app/administrative/views/ActivityView': {}
-	, 'app/administrative/views/ProjectView': {}
-	, 'app/administrative/views/ProgramView': {}
 	, 'app/administrative/views/OrganisationView': {}
 	, 'app/administrative/views/ContactView': {}
 	, 'app/administrative/views/PlatformView': {}

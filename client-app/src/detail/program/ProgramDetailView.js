@@ -2,8 +2,9 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/detail/program/_ProgramEdition'
-	, 'src/oldapp/designs/details/main/_DetailsBase'
+	, 'app/designs/details/main/_DetailsBase'
 	, 'src/redmicConfig'
+	, 'src/util/Credentials'
 	, 'templates/ProgramInfo'
 	, 'templates/ProjectList'
 ], function(
@@ -12,11 +13,18 @@ define([
 	, _ProgramEdition
 	, _DetailsBase
 	, redmicConfig
+	, Credentials
 	, TemplateInfo
 	, TemplateProjects
 ) {
 
-	return declare([_DetailsBase, _ProgramEdition], {
+	var declareItems = [_DetailsBase];
+
+	if (Credentials.userIsEditor()) {
+		declareItems.push(_ProgramEdition);
+	}
+
+	return declare(declareItems, {
 		//	summary:
 		//		Vista de detalle de programas.
 

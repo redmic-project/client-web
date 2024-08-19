@@ -73,13 +73,11 @@ define([], function() {
 		'programDetails': '/catalog/program-info/{id}',
 		'programAdd': '/admin/program-add/{id}',
 		'programEdit': '/admin/program-edit/{id}',
-		'programProject': '/admin/project/program/{id}',
 		'program': '/admin/program',
 		'projectCatalog': '/catalog/project-catalog',
 		'projectDetails': '/catalog/project-info/{id}',
 		'projectAdd': '/admin/project-add/{id}',
 		'projectEdit': '/admin/project-edit/{id}',
-		'projectActivity': '/admin/activity/project/{id}',
 		'project': '/admin/project',
 		/*'serviceOGCCatalog': '/products/service-ogc-catalog',
 		'serviceOGCCatalogDetails': '/products/service-ogc-info/{id}',*/

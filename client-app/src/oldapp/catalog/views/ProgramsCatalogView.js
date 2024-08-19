@@ -1,45 +1,9 @@
 define([
-	"app/designs/textSearchFacetsList/main/Program"
-	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
+	'src/catalog/program/ProgramCatalogView'
 ], function (
-	ProgramMain
-	, redmicConfig
-	, declare
-	, lang
-){
-	return declare(ProgramMain, {
-		//	summary:
-		//		Vista de Program Catalog.
+	ProgramCatalogView
+) {
 
-		constructor: function (args) {
-
-			this.config = {
-				mask: {"download":{}},
-				target: redmicConfig.services.program,
-				reportService: "program",
-				title: this.i18n.programCatalogView,
-				ownChannel: "programCatalog"
-			};
-
-			lang.mixin(this, this.config, args);
-		},
-
-		_setConfigurations: function() {
-
-			this.browserConfig = this._merge([{
-				rowConfig: {
-					buttonsConfig: {
-						listButton: [{
-							icon: "fa-info-circle",
-							btnId: "details",
-							title: "info",
-							href: this.viewPaths.programDetails
-						}]
-					}
-				}
-			}, this.browserConfig || {}]);
-		}
-	});
+	// TODO placeholder hasta que se referencien las vistas a partir de src/
+	return ProgramCatalogView;
 });

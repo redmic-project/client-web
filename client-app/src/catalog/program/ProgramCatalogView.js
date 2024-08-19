@@ -6,10 +6,12 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ProgramList"
+	, 'src/catalog/program/_ProgramEdition'
 	, "src/component/browser/_Select"
 	, "src/component/browser/bars/SelectionBox"
 	, "src/component/browser/bars/Order"
 	, "src/component/browser/bars/Total"
+	, 'src/util/Credentials'
 ], function(
 	_Main
 	, Controller
@@ -18,22 +20,35 @@ define([
 	, declare
 	, lang
 	, templateList
+	, _ProgramEdition
 	, _Select
 	, SelectionBox
 	, Order
 	, Total
-){
-	return declare([Layout, Controller, _Main], {
+	, Credentials
+) {
+
+	var declareItems = [Layout, Controller, _Main];
+
+	if (Credentials.userIsEditor()) {
+		declareItems.push(_ProgramEdition);
+	}
+
+	return declare(declareItems, {
 		//	summary:
-		//		Extensión para establecer la configuración de las vistas de program.
-		//	description:
-		//
+		//		Vista de catálogo de programas.
 
 		constructor: function(args) {
 
 			this.config = {
 				browserExts: [_Select],
-				title: this.i18n.programs
+				mask: {"download":{}},
+				reportService: "program",
+				title: this.i18n.programCatalogView,
+				ownChannel: "programCatalog",
+				target: redmicConfig.services.program,
+				perms: null,
+				idProperty: "id"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -47,6 +62,16 @@ define([
 
 			this.browserConfig = this._merge([{
 				template: templateList,
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+							icon: "fa-info-circle",
+							btnId: "details",
+							title: "info",
+							href: this.viewPaths.programDetails
+						}]
+					}
+				},
 				bars: [{
 					instance: Total
 				},{

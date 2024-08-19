@@ -49,17 +49,13 @@ define([
 				mask: {"download":{}},
 				reportService: "activity",
 
-				activityTarget: redmicConfig.services.activity,
-				selectionTarget: redmicConfig.services.activity,
-				activityProjectTarget: redmicConfig.services.activityProject,
+				target: redmicConfig.services.activity,
 				perms: null,
 
 				browserExts: [_Select]
 			};
 
 			lang.mixin(this, this.config, args);
-
-			this.target = this.activityTarget;
 		},
 
 		_setMainConfigurations: function() {
@@ -71,7 +67,6 @@ define([
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
-				selectionTarget: this.selectionTarget,
 				template: templateList,
 				rowConfig: {
 					buttonsConfig: {
@@ -110,27 +105,6 @@ define([
 			this.textSearchConfig = this._merge([{
 				showExpandIcon: true
 			}, this.textSearchConfig || {}]);
-		},
-
-		_setOwnCallbacksForEvents: function() {
-
-			this._onEvt('CONNECT', this._createTarget);
-		},
-
-		_createTarget: function() {
-
-			var target = this.activityTarget;
-
-			if (this.pathVariableId && Number.isInteger(parseInt(this.pathVariableId, 10))) {
-				target = lang.replace(this.activityProjectTarget, {
-					id: this.pathVariableId
-				});
-			}
-
-			this._publish(this.getChannel('UPDATE_TARGET'), {
-				target: target,
-				refresh: true
-			});
 		}
 	});
 });

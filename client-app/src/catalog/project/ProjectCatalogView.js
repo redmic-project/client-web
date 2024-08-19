@@ -6,10 +6,12 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ProjectList"
+	, 'src/catalog/project/_ProjectEdition'
 	, "src/component/browser/_Select"
 	, "src/component/browser/bars/SelectionBox"
 	, "src/component/browser/bars/Order"
 	, "src/component/browser/bars/Total"
+	, 'src/util/Credentials'
 ], function(
 	_Main
 	, Controller
@@ -18,22 +20,34 @@ define([
 	, declare
 	, lang
 	, templateList
+	, _ProjectEdition
 	, _Select
 	, SelectionBox
 	, Order
 	, Total
-){
-	return declare([Layout, Controller, _Main], {
+	, Credentials
+) {
+
+	var declareItems = [Layout, Controller, _Main];
+
+	if (Credentials.userIsEditor()) {
+		declareItems.push(_ProjectEdition);
+	}
+
+	return declare(declareItems, {
 		//	summary:
-		//		Extensión para establecer la configuración de las vistas de project.
-		//	description:
-		//
+		//		Vista de catálogo de proyectos.
 
 		constructor: function(args) {
 
 			this.config = {
 				browserExts: [_Select],
-				title: this.i18n.projects
+				target: redmicConfig.services.project,
+				perms: null,
+				mask: {"download":{}},
+				reportService: "project",
+				title: this.i18n.projectCatalogView,
+				ownChannel: "projectCatalog"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -46,6 +60,16 @@ define([
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+							icon: "fa-info-circle",
+							btnId: "details",
+							title: "info",
+							href: this.viewPaths.projectDetails
+						}]
+					}
+				},
 				template: templateList,
 				bars: [{
 					instance: Total

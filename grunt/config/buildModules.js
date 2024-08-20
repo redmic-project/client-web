@@ -9,11 +9,7 @@ module.exports = function(grunt) {
 		'client-app/dep/wicket': preBuildCmds.concat([
 			'npm run build'
 		]),
-		'client-app/dep/templates': preBuildCmds.concat([
-			'grunt build'
-		]),
-		'client-app/style': preBuildCmds.concat([
-			'grunt addModules buildModules'
-		])
+		'client-app/dep/templates': preBuildCmds,
+		'client-app/style': preBuildCmds
 	});
 };

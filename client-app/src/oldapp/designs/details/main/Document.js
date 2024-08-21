@@ -83,7 +83,7 @@ define([
 				pdfUrl = documentData.internalUrl,
 				privatePdf = documentData.privateInternalUrl;
 
-			if (!pdfUrl || (privatePdf && Credentials.get('userRole') !== 'ROLE_ADMINISTRATOR')) {
+			if (!pdfUrl || (privatePdf && !Credentials.userIsEditor())) {
 				this._hideWidget('pdf');
 			} else {
 				this._showWidget('pdf');

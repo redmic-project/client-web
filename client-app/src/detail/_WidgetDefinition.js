@@ -195,10 +195,9 @@ define([
 									var accessibilityId = item && item.accessibility && item.accessibility.id,
 										browseableAccesibilities = [2], // libre
 										accessibilityIsBrowseable = accessibilityId &&
-											browseableAccesibilities.indexOf(accessibilityId) !== -1,
-										userRoleIsAdmin = Credentials.get('userRole') === 'ROLE_ADMINISTRATOR';
+											browseableAccesibilities.indexOf(accessibilityId) !== -1;
 
-									return accessibilityIsBrowseable || userRoleIsAdmin;
+									return accessibilityIsBrowseable || Credentials.userIsEditor();
 								}
 							}]
 						}

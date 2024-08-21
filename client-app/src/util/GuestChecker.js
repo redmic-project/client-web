@@ -47,7 +47,7 @@ define([
 			//	url:
 			//		URL a controlar.
 
-			if (Credentials.get("userRole") === this.guestRole) {
+			if (Credentials.userIsGuest()) {
 				alertify.alert(this.title, this.banIcon + this.banMessageDocument);
 			} else {
 				window.open(url + '?access_token=' + Credentials.get("accessToken"),'_blank');
@@ -59,12 +59,11 @@ define([
 			//		Si el usuario es invitado, cambia su comportamiento.
 			//
 
-			if (Credentials.get("userRole") === this.guestRole) {
+			var userIsGuest = Credentials.userIsGuest();
+			if (userIsGuest) {
 				alertify.alert(this.title, this.banIcon + this.banMessage);
-				return false;
-			} else {
-				return true;
 			}
+			return !userIsGuest;
 		}
 
 	});

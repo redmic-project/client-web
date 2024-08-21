@@ -122,7 +122,7 @@ define([
 
 		_authChecker: function() {
 
-			if (!this.roleGuestActive && Credentials.get("userRole") === "ROLE_GUEST") {
+			if (!this.roleGuestActive && Credentials.userIsGuest()) {
 				if (this.templateDisplayerPdfError) {
 					this._publish(this.templateDisplayerPdfError.getChannel("CHANGE_TEMPLATE"), {
 						template: TemplateAuthFailed

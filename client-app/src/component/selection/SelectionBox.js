@@ -174,7 +174,7 @@ define([
 
 		_isRegisteredUser: function(item) {
 
-			return Credentials.get('userRole') !== 'ROLE_GUEST';
+			return !Credentials.userIsGuest();
 		},
 
 		_select: function(item, total) {

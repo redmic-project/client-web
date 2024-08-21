@@ -245,7 +245,7 @@ define([
 				info: ''
 			};
 
-			if (Credentials.get('userRole') === 'ROLE_GUEST') {
+			if (Credentials.userIsGuest()) {
 				obj.roleGuest = this.i18n.contentInfo1 + ' ';
 				obj.roleGuest += this.i18n.visitor;
 				obj.roleGuest += this.i18n.contentInfo2;

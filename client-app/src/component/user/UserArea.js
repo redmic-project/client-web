@@ -219,7 +219,7 @@ define([
 
 		_checkUserIsRegistered: function() {
 
-			return Credentials.get('userRole') !== 'ROLE_GUEST';
+			return !Credentials.userIsGuest();
 		},
 
 		_startLoading: function() {

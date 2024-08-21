@@ -108,7 +108,7 @@ define([
 
 			this._createReCaptcha();
 
-			if (Credentials.get("userRole") !== "ROLE_GUEST") {
+			if (!Credentials.userIsGuest()) {
 				if (Credentials.get("userEmail")) {
 					this._emitEvt('SET_VALUE', {
 						email: Credentials.get("userEmail")

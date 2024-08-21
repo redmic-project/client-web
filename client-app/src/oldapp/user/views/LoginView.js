@@ -48,7 +48,7 @@ define([
 			this.inherited(arguments);
 
 			// Si hemos entrado anteriormente, pone el correo usado por última vez
-			if (Credentials.get("userRole") !== "ROLE_GUEST") {
+			if (!Credentials.userIsGuest("userRole")) {
 				this.template.emailInputForm.set("value", Credentials.get("userEmail"));
 			}
 			// Si hemos activado la cuenta anteriormente, informa al usuario

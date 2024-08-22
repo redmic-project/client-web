@@ -6,6 +6,7 @@ define([
 	, 'src/component/base/_ExternalConfig'
 	, 'src/detail/activity/_ActivityEdition'
 	, 'src/detail/activity/_ActivityLayoutWidget'
+	, 'src/oldapp/designs/details/_AddWidgetSelector'
 	, 'src/util/Credentials'
 	, 'templates/ActivityInfo'
 ], function(
@@ -16,11 +17,12 @@ define([
 	, _ExternalConfig
 	, _ActivityEdition
 	, _ActivityLayoutWidget
+	, _AddWidgetSelector
 	, Credentials
 	, TemplateInfo
 ) {
 
-	var declareItems = [_ActivityBase, _ActivityLayoutWidget, _ExternalConfig];
+	var declareItems = [_ActivityBase, _AddWidgetSelector, _ActivityLayoutWidget, _ExternalConfig];
 
 	if (Credentials.userIsEditor()) {
 		declareItems.push(_ActivityEdition);

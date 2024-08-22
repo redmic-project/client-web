@@ -103,6 +103,7 @@ define([
 
 		_updateDataTitle: function() {
 
+			// TODO no setear a lo bruto, es un component!!
 			this.data = this.titleWidget.data;
 		},
 

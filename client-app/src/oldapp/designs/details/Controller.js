@@ -245,9 +245,15 @@ define([
 				return;
 			}
 
-			var moduleProps = this._merge([this.propsWidget || {}, config.props || {}]);
-			moduleProps.ownChannel = key;
-			moduleProps.parentChannel = this.getChannel();
+			var moduleProps = this._merge([
+				this.propsWidget || {},
+				config.props || {},
+				{
+					ownChannel: key,
+					parentChannel: this.getChannel(),
+					windowTitle: key
+				}
+			]);
 
 			var moduleType = config.type,
 				moduleDefinition = declare(moduleType).extend(_Window),

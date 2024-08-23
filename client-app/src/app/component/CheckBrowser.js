@@ -7,16 +7,16 @@ define([
 	return {
 		_supportedBrowsersAndMinVersion: [{
 			name: 'chrome',
-			version: 31
+			version: 86
 		},{
 			name: 'ff',
-			version: 28
+			version: 78
 		},{
 			name: 'edge',
-			version: 12
+			version: 86
 		},{
 			name: 'safari',
-			version: 8
+			version: 14
 		},{
 			name: 'webkit',
 			version: 537.36

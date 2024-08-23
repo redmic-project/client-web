@@ -43,7 +43,7 @@ define([
 		hiddenClass: 'hidden',
 
 		titleHeight: 2,
-		minWidth: 200,
+		minWidth: 300,
 
 		widthByColsAttr: 'data-cols',
 		minWidthCols: 1,
@@ -230,13 +230,10 @@ define([
 				windowBottom = windowTop + parent.offsetHeight,
 
 				windowTopAboveVisibleBottom = gParentVisibleBottom >= windowTop,
-				windowBottomUnderVisibleTop = gParentVisibleTop <= windowBottom;
+				windowBottomUnderVisibleTop = gParentVisibleTop <= windowBottom,
+				windowIsVisible = windowBottomUnderVisibleTop && windowTopAboveVisibleBottom;
 
-			if (windowBottomUnderVisibleTop && windowTopAboveVisibleBottom) {
-				this._setVisibleIntoParent(true);
-			} else {
-				this._setVisibleIntoParent(false);
-			}
+			this._setVisibleIntoParent(windowIsVisible);
 		},
 
 		_unsetWindowParentNodeSize: function() {

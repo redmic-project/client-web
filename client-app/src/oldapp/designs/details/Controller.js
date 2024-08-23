@@ -49,6 +49,7 @@ define([
 				idProperty: "id",
 				hiddenClass: "hidden",
 
+				_heightFitContentValue: 'fitContent',
 				_rowsParameterName: "data-rows",
 				_colsParameterName: "data-cols",
 				_updateInteractiveTimeout: 100,
@@ -251,22 +252,23 @@ define([
 				{
 					ownChannel: key,
 					parentChannel: this.getChannel(),
-					windowTitle: key
+					windowTitle: key,
+					fitHeightToContent: config.height === this._heightFitContentValue
 				}
 			]);
 
 			var moduleType = config.type,
-				moduleDefinition = declare(moduleType).extend(_Window),
-				moduleInstance = new moduleDefinition(moduleProps);
+				WidgetDefinition = declare(moduleType).extend(_Window),
+				widgetInstance = new WidgetDefinition(moduleProps);
 
-			this._widgets[key] = moduleInstance;
-			this._listenModule(moduleInstance);
+			this._widgets[key] = widgetInstance;
+			this._listenWidget(widgetInstance);
 		},
 
-		_listenModule: function(moduleInstance) {
+		_listenWidget: function(widgetInstance) {
 
 			this._setSubscription({
-				channel: moduleInstance.getChannel("RESIZED"),
+				channel: widgetInstance.getChannel("RESIZED"),
 				callback: "_subModuleResized"
 			});
 		},

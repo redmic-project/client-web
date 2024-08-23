@@ -59,6 +59,7 @@ define([
 		omitTitleCloseButton: false,
 		resizable: true,
 		scrollSensitive: true,
+		fitHeightToContent: false,
 
 		_resizableForcedMinWidth: 100,
 		_validSizeInterval: 100,
@@ -132,6 +133,10 @@ define([
 
 		_limitMaxHeightToAvailableHeight: function() {
 
+			if (this.fitHeightToContent) {
+				return;
+			}
+
 			var currMaxHeight = window.innerHeight;
 
 			if (this._lastMaxHeight !== currMaxHeight) {
@@ -177,7 +182,7 @@ define([
 			this._windowNode.parentNode.addEventListener('transitionend', this._transitionEndCallback);
 
 			if (this.scrollSensitive) {
-				this._windowNode.parentNode.parentNode.addEventListener('scroll', lang.hitch(this,
+				this._windowNode.parentNode.parentNode.addEventListener('scrollend', lang.hitch(this,
 					this._onGrandParentScroll));
 			}
 

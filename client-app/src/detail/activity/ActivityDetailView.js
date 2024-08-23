@@ -57,7 +57,6 @@ define([
 
 			this.widgetConfigs = this._merge([{
 				info: this._getInfoConfig({
-					height: 4,
 					template: TemplateInfo
 				}),
 				spatialExtensionMap: this._getSpatialExtensionMapConfig(),

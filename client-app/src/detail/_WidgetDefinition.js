@@ -72,7 +72,7 @@ define([
 
 			return {
 				width: 3,
-				height: 2,
+				height: 4,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
 					title: this.i18n.organisations,
@@ -100,7 +100,7 @@ define([
 
 			return {
 				width: 3,
-				height: 2,
+				height: 4,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
 					title: this.i18n.platforms,
@@ -128,7 +128,7 @@ define([
 
 			return {
 				width: 3,
-				height: 2,
+				height: 4,
 				type: declare([ListImpl, _Framework]),
 				props: {
 					title: this.i18n.contacts,
@@ -145,7 +145,7 @@ define([
 
 			return {
 				width: 3,
-				height: 2,
+				height: 4,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
 					title: this.i18n.documents,
@@ -172,7 +172,7 @@ define([
 
 			return {
 				width: config.width || 3,
-				height: config.height || 2,
+				height: config.height || 4,
 				type: declare([ListImpl, _Framework, _ButtonsInRow, _Filter]),
 				props: {
 					title: config.title,
@@ -210,7 +210,7 @@ define([
 
 			return {
 				width: config.width || 3,
-				height: config.height || 6,
+				height: config.height || 'fitContent',
 				type: TemplateDisplayer,
 				props: {
 					title: this.i18n.info,

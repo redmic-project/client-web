@@ -6,7 +6,7 @@ define([
 	, 'src/component/base/_ExternalConfig'
 	, 'src/detail/activity/_ActivityEdition'
 	, 'src/detail/activity/_ActivityLayoutWidget'
-	, 'src/oldapp/designs/details/_AddWidgetSelector'
+	, 'app/designs/details/_AddWidgetSelector'
 	, 'src/util/Credentials'
 	, 'templates/ActivityInfo'
 ], function(

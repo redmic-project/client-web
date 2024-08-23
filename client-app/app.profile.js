@@ -410,6 +410,7 @@ var viewLayers = {
 	, 'app/catalog/views/SpeciesCatalogView': {}
 	, 'app/catalog/views/ProgramsCatalogView': {}
 	, 'app/catalog/views/OrganisationsCatalogView': {}
+	, 'app/catalog/views/StacBrowserView': {}
 
 	, 'app/administrative/views/OrganisationView': {}
 	, 'app/administrative/views/ContactView': {}
@@ -509,7 +510,6 @@ var viewLayers = {
 	, 'app/viewers/views/ChartsView': {}
 	, 'app/viewers/views/RealTimeView': {}
 	, 'app/viewers/views/RealTimeDashboardView': {}
-	, 'app/viewers/views/StacBrowserView': {}
 
 	, 'app/details/views/ProjectCatalogDetailsView': {}
 	, 'app/details/views/ProgramCatalogDetailsView': {}

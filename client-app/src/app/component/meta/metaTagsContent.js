@@ -60,6 +60,10 @@ define({
 		"title": "{i18n.metaCatalogSpeciesInfoIdTitle} '{scientificName} {authorship}'",
 		"description": "{i18n.metaCatalogSpeciesInfoIdDescription} '{scientificName} {authorship}'. {commonName}."
 	},
+	"/catalog/stac-browser": {
+		"title": "{i18n.metaViewerStacBrowserTitle}",
+		"description": "{i18n.metaViewerStacBrowserDescription}."
+	},
 	"/viewer/species-distribution": {
 		"title": "{i18n.metaViewerSpeciesDistributionTitle}",
 		"description": "{i18n.metaViewerSpeciesDistributionDescription}."
@@ -83,10 +87,6 @@ define({
 	"/viewer/real-time-dashboard/{id}": {
 		"title": "{i18n.metaViewerRealTimeDashboardIdTitle} '{properties.site.name}'",
 		"description": "{i18n.metaViewerRealTimeDashboardIdDescription} '{properties.site.name}'. {properties.site.description}."
-	},
-	"/viewer/stac-browser": {
-		"title": "{i18n.metaViewerStacBrowserTitle}",
-		"description": "{i18n.metaViewerStacBrowserDescription}."
 	},
 	"/atlas": {
 		"title": "{i18n.metaAtlasTitle}",

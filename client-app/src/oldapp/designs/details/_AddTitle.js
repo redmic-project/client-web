@@ -112,7 +112,13 @@ define([
 			var leftButtons = this._titleLeftButtonsList.concat(this.titleLeftButtonsList || []),
 				rightButtons = this._titleRightButtonsList.concat(this.titleRightButtonsList || []);
 
-			this._insertButtonsIcons(leftButtons.reverse(), rightButtons.reverse());
+			var evaluateButton = lang.hitch(this, this._evaluateButton),
+				filteredLeftButtons = leftButtons.filter(evaluateButton),
+				filteredRightButtons = rightButtons.filter(evaluateButton);
+
+			put(this._titleRightNode, (filteredRightButtons.length ? '!' : '.') + this.hiddenClass);
+
+			this._insertButtonsIcons(filteredLeftButtons.reverse(), filteredRightButtons.reverse());
 		},
 
 		_createTitle: function() {
@@ -172,48 +178,22 @@ define([
 
 		_insertButtonsIcons: function(leftButtons, rightButtons) {
 
-			var i;
+			var getIconNode = lang.hitch(this, this._getIconNode);
+				leftButtonsNodes = leftButtons.map(getIconNode),
+				rightButtonsNodes = rightButtons.map(getIconNode);
 
-			if (this._titleLeftNode.children.length !== 0) {
-				for (i = 0; i < this._titleLeftNode.children.length; i++) {
-					put('!', this._titleLeftNode.children[i]);
-				}
-			}
-			for (i = 0; i < leftButtons.length; i++) {
-				this._preInsertIcon(leftButtons[i], this._titleLeftNode);
-			}
-
-			if (this._titleRightNode.children.length !== 0) {
-				for (i = 0; i < this._titleRightNode.children.length; i++) {
-					put('!', this._titleRightNode.children[i]);
-				}
-			}
-
-			if (rightButtons.length === 0) {
-				put(this._titleRightNode, '.' + this.hiddenClass);
-			} else {
-				put(this._titleRightNode, '!' + this.hiddenClass);
-			}
-
-			for (i = 0; i < rightButtons.length; i++) {
-				this._preInsertIcon(rightButtons[i], this._titleRightNode);
-			}
+			this._titleLeftNode.replaceChildren.apply(this._titleLeftNode, leftButtonsNodes);
+			this._titleRightNode.replaceChildren.apply(this._titleRightNode, rightButtonsNodes);
 		},
 
-		_preInsertIcon: function(buttonProp, node) {
+		_evaluateButton: function(config) {
 
-			if (!buttonProp.condition || (this.data && this.data[buttonProp.condition])) {
-				this._insertIcon(buttonProp, node);
-			}
+			return !config.condition || this._evaluateCondition(config.condition);
 		},
 
-		_insertIcon: function(config, node) {
+		_getIconNode: function(config) {
 
-			if (config.condition && this._evaluateCondition(config.condition)) {
-				return;
-			}
-
-			var iconNode = put(node, (config.href ? 'a' : 'i') + ".iconList." + config.icon.split("-")[0] + "." + config.icon);
+			var iconNode = put((config.href ? 'a' : 'i') + ".iconList." + config.icon.split("-")[0] + "." + config.icon);
 
 			if (config.title) {
 				iconNode.setAttribute("title", config.title);
@@ -227,6 +207,8 @@ define([
 			if (config.btnId) {
 				iconNode.onclick = lang.hitch(this, this._emitEvt, 'BUTTON_EVENT', config.btnId);
 			}
+
+			return iconNode;
 		}
 	});
 });

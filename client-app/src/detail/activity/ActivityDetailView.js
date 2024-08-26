@@ -129,6 +129,8 @@ define([
 				data: this._activityData,
 				target: this.infoTarget
 			});
+
+			this._updateInteractive();
 		},
 
 		_prepareSpatialExtension: function() {

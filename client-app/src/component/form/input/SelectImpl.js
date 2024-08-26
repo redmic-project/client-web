@@ -38,6 +38,7 @@ define([
 				labelKeyPropertyName: "labelKey",
 				propertyName: "name",
 				includeEmptyValue: true,
+				emptyValueLabel: ' ',
 				resetValue: false,
 				pathSeparator: '.',
 				_items: {}
@@ -195,7 +196,7 @@ define([
 			if (this.includeEmptyValue) {
 				options.push({
 					value: null,
-					label: ' ',
+					label: this.emptyValueLabel,
 					selected: true
 				});
 			}

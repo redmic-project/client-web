@@ -1339,6 +1339,8 @@ define({
 		, "leafletForwardButton": "Go forward in location history"
 		, "leafletBackButton": "Go back in location history"
 
+		, "noSectionFocused": "No section focused"
+
 		// Meta-tags
 		, "metaDefaultTitle": "Repositorio de Datos Marinos Integrados de Canarias"
 		, "metaDefaultDescription": "REDMIC is a public marine data infrastructure that offers information on the marine biophysical environment of the Canary Islands"

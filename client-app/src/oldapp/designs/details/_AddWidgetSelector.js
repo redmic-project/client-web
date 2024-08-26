@@ -25,17 +25,11 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			aspect.after(this, '_generateWidgets', lang.hitch(this, this._afterGenerateWidgetsAddSelector));
 			aspect.after(this, '_addWidget', lang.hitch(this, this._afterAddWidgetUpdateSelector));
 			aspect.after(this, '_addDataInTitle', lang.hitch(this, this._afterAddDataInTitleShowSelector));
 			aspect.after(this, '_onLayoutComplete', lang.hitch(this, this._afterLayoutCompleteApplyAnchor));
 			aspect.after(this, '_onControllerMeOrAncestorShown',
 				lang.hitch(this, this._afterControllerOrAncestorShownUpdateSelectorInstance));
-		},
-
-		_afterGenerateWidgetsAddSelector: function() {
-
-			this._addWidgetsToSelector();
 		},
 
 		_afterAddWidgetUpdateSelector: function(retValue, params) {
@@ -79,11 +73,11 @@ define([
 
 			this._widgetSelector = new SelectImpl({
 				parentChannel: this.getChannel(),
-				includeEmptyValue: false,
-				_inputProps: {
-					options: this._widgetKeys
-				}
+				includeEmptyValue: true,
+				emptyValueLabel: '< <i>' + this.i18n.noSectionFocused + '</i> >'
 			});
+
+			this._setWidgetKeysAsSelectorOptions();
 
 			this._setSubscription({
 				channel: this._widgetSelector.getChannel('VALUE_CHANGED'),
@@ -116,9 +110,27 @@ define([
 
 			this._widgetKeys.push(key);
 
+			this._setWidgetKeysAsSelectorOptions();
+		},
+
+		_setWidgetKeysAsSelectorOptions: function() {
+
+			var selectorOptions = this._widgetKeys.map(lang.hitch(this, this._getWidgetOptionObject));
+
 			this._publish(this._widgetSelector.getChannel('SET_OPTIONS'), {
-				options: this._widgetKeys
+				options: selectorOptions
 			});
+		},
+
+		_getWidgetOptionObject: function(widgetKey) {
+
+			var widgetInstance = this._getWidgetInstance(widgetKey),
+				widgetLabel = (widgetInstance && widgetInstance.get('title')) || this.i18n[widgetKey];
+
+			return {
+				value: widgetKey,
+				label: widgetLabel || widgetKey
+			};
 		},
 
 		_onWidgetSelectorValueChanged: function(res) {

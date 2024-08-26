@@ -397,9 +397,10 @@ var profileObj = {
 var viewLayers = {
 	'src/app/App': {}
 
-	, 'app/views/404': {}
-	, 'app/views/ActivateAccount': {}
-	, 'app/views/NoSupportBrowser': {}
+	, 'src/error/404': {}
+	, 'src/error/NoSupportBrowser': {}
+
+	, 'src/user/ActivateAccount': {}
 
 	, 'app/home/views/HomeView': {}
 

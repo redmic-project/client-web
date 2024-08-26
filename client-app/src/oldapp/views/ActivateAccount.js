@@ -3,12 +3,14 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/request'
+	, 'src/app/component/CookieLoader'
 	, 'src/util/RedmicLocalStorage'
 ], function(
 	redmicConfig
 	, declare
 	, lang
 	, request
+	, CookieLoader
 	, RedmicLocalStorage
 ) {
 
@@ -21,6 +23,10 @@ define([
 			var data = {
 				token: this.token
 			};
+
+			new CookieLoader({
+				omitWarning: true
+			});
 
 			this._activateAccount(data);
 		},
@@ -59,12 +65,12 @@ define([
 
 		_goBack: function() {
 
-			window.location = '/';
+			location.href = '/';
 		},
 
 		_goError: function() {
 
-			window.location = '/404';
+			location.href = '/404';
 		}
 	});
 });

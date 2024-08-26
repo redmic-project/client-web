@@ -6,6 +6,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/text!./templates/NoSupportBrowser.html"
 	, "dojo/i18n!./nls/translation"
+	, 'src/app/component/CookieLoader'
 ], function(
 	_TemplatedMixin
 	, _WidgetBase
@@ -14,6 +15,7 @@ define([
 	, lang
 	, template
 	, i18n
+	, CookieLoader
 ){
 	return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
 		//	summary:
@@ -26,7 +28,7 @@ define([
 		//		Html template obtenido de la variable template ["dojo/text!./templates/NoSupportBrowser.html"]
 
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				templateString: template,
@@ -34,12 +36,10 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-		},
 
-		postCreate: function() {
-
-			this.inherited(arguments);
+			new CookieLoader({
+				omitWarning: true
+			});
 		}
-
 	});
 });

@@ -1,10 +1,10 @@
 define([
 	'alertify/alertify.min'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/i18n!app/nls/translation"
-	, "src/util/Credentials"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/i18n!app/nls/translation'
+	, 'src/util/Credentials'
 ], function(
 	alertify
 	, redmicConfig
@@ -12,7 +12,8 @@ define([
 	, lang
 	, i18n
 	, Credentials
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Widget encargado de la carga y aviso de cookies.
@@ -23,15 +24,17 @@ define([
 		//		Retraso para mostrar el aviso de cookies.
 		//	hideTimeout: Integer
 		//		Retraso para ocultar el aviso de cookies.
+		//	omitWarning: Boolean
+		//		Procede a cargar las cookies sin preguntar, para casos donde es indispensable.
 		//	warningText: String
 		//		Contenido a mostrar en el aviso de cookies.
-
 
 		constructor: function(args) {
 
 			this.config = {
 				showTimeout: 500,
 				hideTimeout: 14500,
+				omitWarning: false,
 				warningText: '<span class="cookies fa fa-exclamation-circle"></span> ' + i18n.cookiesWarning +
 					'<a href="/terms-and-conditions" d-state-url="true">' +
 					i18n.here + '</a>.'
@@ -48,13 +51,13 @@ define([
 			//	tags:
 			//		private
 
-			if (!Credentials.has("cookiesAccepted")) {
-				this._onCookiesAcceptedHandler = Credentials.on("changed:cookiesAccepted", lang.hitch(this,
+			if (this.omitWarning || Credentials.has('cookiesAccepted')) {
+				this._loadCookies();
+			} else {
+				this._onCookiesAcceptedHandler = Credentials.on('changed:cookiesAccepted', lang.hitch(this,
 					this._loadCookies));
 
 				this._showWarning();
-			} else {
-				this._loadCookies();
 			}
 		},
 
@@ -67,7 +70,7 @@ define([
 			this._showTimeoutHandler = setTimeout(lang.hitch(this, function() {
 				// Si pasa el tiempo de la alerta o le hacemos click, aceptamos
 				// TODO pasar a notification
-				this._cookiesNotificationHandler = alertify.notify(this.warningText, "message", this.hideTimeout / 1000,
+				this._cookiesNotificationHandler = alertify.notify(this.warningText, 'message', this.hideTimeout / 1000,
 					lang.hitch(this, this._acceptCookies));
 			}), this.showTimeout);
 		},
@@ -78,7 +81,7 @@ define([
 			//	tags:
 			//		private
 
-			Credentials.set("cookiesAccepted", "true");
+			Credentials.set('cookiesAccepted', 'true');
 		},
 
 		_loadCookies: function() {
@@ -91,7 +94,8 @@ define([
 			this._onCookiesAcceptedHandler && this._onCookiesAcceptedHandler.remove();
 			this._cookiesNotificationHandler && this._cookiesNotificationHandler.dismiss();
 
-			if (window.location.hostname.indexOf('redmic.es') !== -1) {
+			var isProduction = (/true/i).test(redmicConfig.getEnvVariableValue('envProduction'));
+			if (isProduction) {
 				this._googleAnalytics();
 			}
 		},

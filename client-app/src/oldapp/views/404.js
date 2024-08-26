@@ -1,24 +1,31 @@
 define([
-	"dijit/form/Button"
+	'dijit/form/Button'
 	, 'dojo/_base/declare'
+	, 'src/app/component/CookieLoader'
 
-	, "dojo/domReady!"
+	, 'dojo/domReady!'
 ], function(
 	Button
 	, declare
-){
+	, CookieLoader
+) {
+
 	return declare(null, {
 
 		constructor: function() {
 
 			new Button({
-				'class': "primary",
-				label: "Go back",
+				'class': 'primary',
+				label: 'Go back',
 				onClick: function() {
 
-					window.location = "/";
+					location.href = '/';
 				}
-			}).placeAt("goBack");
+			}).placeAt('goBack');
+
+			new CookieLoader({
+				omitWarning: true
+			});
 		}
 	});
 });

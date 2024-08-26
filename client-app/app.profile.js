@@ -400,7 +400,6 @@ var viewLayers = {
 	, 'app/views/404': {}
 	, 'app/views/ActivateAccount': {}
 	, 'app/views/NoSupportBrowser': {}
-	, 'app/views/UnderConstructionView': {}
 
 	, 'app/home/views/HomeView': {}
 

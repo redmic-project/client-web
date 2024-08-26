@@ -11,7 +11,6 @@ define({
 	, "closeActivityConfirmationTitle": "Confirmación de cierre de actividad"
 	, "closeActivityConfirmationMessage": "¿Desea establecer como cerrada esta actividad?"
 	, "viewDocument": "Ver documento"
-	, "underConstruction": "En construcción"
 	, "notFound": "Cero coincidencias"
 	, "layers": "Capas"
 	, "services": "Servicios"
@@ -24,6 +23,7 @@ define({
 	, "parentalTaxon": "Taxón parental"
 	, "legend": "Leyenda"
 	, "noAssociatedDocuments": "Sin documentos asociados"
+	, "noSupport": "Por favor, actualice su navegador a una versión más reciente"
 
 	, "registeredTask1": "Su tarea "
 	, "registeredTask2": " se ha registrado."

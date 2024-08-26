@@ -5,8 +5,6 @@ define([
 	, 'dojo/has'
 	, 'put-selector/put'
 	, 'src/app/component/Analytics'
-	, 'src/app/component/CheckBrowser'
-	, 'src/app/component/CookieLoader'
 	, 'src/app/component/Credentials'
 	, 'src/app/component/ExternalConfig'
 	, 'src/app/component/layout/InnerLayoutImpl'
@@ -15,12 +13,14 @@ define([
 	, 'src/app/component/meta/MetaTags'
 	, 'src/app/component/ModuleStore'
 	, 'src/app/component/Router'
+	, 'src/app/util/CheckBrowser'
 	, 'src/component/notification/CommunicationCenter'
 	, 'src/component/notification/Alert'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
 	, 'src/component/store/RestManagerImpl'
 	, 'src/redmicConfig'
+	, 'src/util/CookieLoader'
 	, 'templates/LoadingCustom'
 ], function(
 	declare
@@ -29,8 +29,6 @@ define([
 	, has
 	, put
 	, Analytics
-	, CheckBrowser
-	, CookieLoader
 	, Credentials
 	, ExternalConfig
 	, InnerLayoutImpl
@@ -39,12 +37,14 @@ define([
 	, MetaTags
 	, ModuleStore
 	, Router
+	, CheckBrowser
 	, CommunicationCenter
 	, Alert
 	, _Module
 	, _Store
 	, RestManagerImpl
 	, redmicConfig
+	, CookieLoader
 	, LoadingCustomTemplate
 ) {
 
@@ -74,7 +74,7 @@ define([
 		hideNativeLoadingNode();
 		getGlobalContext().location.href = '/noSupportBrowser';
 
-		return;
+		return declare(null);
 	}
 
 	return declare(_Module, {

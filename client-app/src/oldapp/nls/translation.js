@@ -12,7 +12,6 @@ define({
 		, "closeActivityConfirmationTitle": "Activity closing confirmation"
 		, "closeActivityConfirmationMessage": "Do you want to set this activity as closed?"
 		, "viewDocument": "View document"
-		, "underConstruction": "Under construction"
 		, "notFound": "No matches"
 		, "layers": "Layers"
 		, "services": "Services"
@@ -25,6 +24,7 @@ define({
 		, "parentalTaxon": "Parental taxon"
 		, "legend": "Legend"
 		, "noAssociatedDocuments": "No associated documents"
+		, "noSupport": "Please, update your browser to a newer version"
 
 		, "registeredTask1": "Your task "
 		, "registeredTask2": " has been recorded."

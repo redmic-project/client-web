@@ -1,7 +1,7 @@
 define([
 	'dijit/form/Button'
 	, 'dojo/_base/declare'
-	, 'src/app/component/CookieLoader'
+	, 'src/util/CookieLoader'
 
 	, 'dojo/domReady!'
 ], function(

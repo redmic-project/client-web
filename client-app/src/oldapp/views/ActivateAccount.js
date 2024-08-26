@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/request'
-	, 'src/app/component/CookieLoader'
+	, 'src/util/CookieLoader'
 	, 'src/util/RedmicLocalStorage'
 ], function(
 	redmicConfig

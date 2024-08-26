@@ -1,45 +1,49 @@
 define([
-	"dijit/_TemplatedMixin"
-	, "dijit/_WidgetBase"
-	, "dijit/_WidgetsInTemplateMixin"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/text!./templates/NoSupportBrowser.html"
-	, "dojo/i18n!./nls/translation"
-	, 'src/app/component/CookieLoader'
+	'dijit/_WidgetBase'
+	, 'dojo/_base/declare'
+	, 'dojo/i18n!app/nls/translation'
+	, 'put-selector/put'
+	, 'src/util/CookieLoader'
 ], function(
-	_TemplatedMixin
-	, _WidgetBase
-	, _WidgetsInTemplateMixin
+	_WidgetBase
 	, declare
-	, lang
-	, template
 	, i18n
+	, put
 	, CookieLoader
-){
-	return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+) {
+
+	return declare(_WidgetBase, {
 		//	summary:
 		//		Widget para cuando el navegador no soporta la aplicación.
 		//
 		// description:
 		//		Contiene enlace a la actualización de los navegadores
 
-		//	templateString: [readonly const] String
-		//		Html template obtenido de la variable template ["dojo/text!./templates/NoSupportBrowser.html"]
-
-
-		constructor: function(args) {
-
-			this.config = {
-				templateString: template,
-				i18n: i18n
-			};
-
-			lang.mixin(this, this.config, args);
+		constructor: function() {
 
 			new CookieLoader({
 				omitWarning: true
 			});
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
+			var containerNode = put(this.domNode, 'div.fHeight.fWidth.noSupport');
+			put(containerNode, 'h2.textNoSupport.titleRedmic', i18n.noSupport);
+
+			var firefoxNode = put(containerNode, 'a[href="https://www.mozilla.org/firefox/"][target="_blank"]');
+			put(firefoxNode, 'img.iconMargin[src="/res/images/browsers/firefox.png"]');
+
+			var chromeNode = put(containerNode, 'a[href="https://www.google.com/chrome/"][target="_blank"]');
+			put(chromeNode, 'img.iconMargin[src="/res/images/browsers/chrome.png"]');
+
+			var edgeNode = put(containerNode, 'a[href="https://www.microsoft.com/edge/download/"][target="_blank"]');
+			put(edgeNode, 'img.iconMargin[src="/res/images/browsers/edge.png"]');
+
+			var operaNode = put(containerNode, 'a[href="http://www.opera.com/"][target="_blank"]');
+			put(operaNode, 'img.iconMargin[src="/res/images/browsers/opera.png"]');
 		}
 	});
 });

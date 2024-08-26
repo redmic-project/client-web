@@ -1,7 +1,9 @@
 define([
-	'dojo/sniff'
+	'dojo/_base/lang'
+	, 'dojo/sniff'
 ], function(
-	has
+	lang
+	, has
 ) {
 
 	return {

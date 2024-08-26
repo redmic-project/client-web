@@ -18,37 +18,40 @@ define([
 			name: 'safari',
 			version: 14
 		},{
-			name: 'webkit',
-			version: 537.36
+			name: 'opr',
+			version: 72
 		}],
 
-		_allowedBots: ['Googlebot', 'bingbot'],
+		_allowedBots: [
+			'googlebot'
+			, 'duckduckgo'
+			, 'bingbot',
+			, 'slurp'
+			, 'applebot'
+		],
 
 		isSupported: function() {
 
-			var userAgent = navigator && navigator.userAgent,
-				i;
+			var userAgent = navigator && navigator.userAgent;
 
-			if (userAgent) {
-				for (i = 0; i < this._allowedBots.length; i++) {
-					var allowedBotFragment = this._allowedBots[i];
-					if (userAgent.indexOf(allowedBotFragment) !== -1) {
-						return true;
-					}
-				}
+			if (userAgent && this._allowedBots.find(lang.hitch(this, this._findBotAgent, userAgent))) {
+				return true;
 			}
 
-			for (i = 0; i < this._supportedBrowsersAndMinVersion.length; i++) {
-				var item = this._supportedBrowsersAndMinVersion[i],
-					name = item.name,
-					version = item.version;
+			return !!this._supportedBrowsersAndMinVersion.find(lang.hitch(this, this._findSupportedBrowser));
+		},
 
-				if (has(name) >= version) {
-					return true;
-				}
-			}
+		_findBotAgent: function(userAgent, allowedBotFragment) {
 
-			return false;
+
+			return userAgent.toLowerCase().includes(allowedBotFragment);
+		},
+
+		_findSupportedBrowser: function(item) {
+
+			var browserVersion = has(item.name);
+
+			return browserVersion && browserVersion >= item.version;
 		}
 	};
 });

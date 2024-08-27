@@ -27,7 +27,7 @@ define([
 		_allowedBots: [
 			'googlebot'
 			, 'duckduckgo'
-			, 'bingbot',
+			, 'bingbot'
 			, 'slurp'
 			, 'applebot'
 		],

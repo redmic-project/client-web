@@ -20,7 +20,8 @@ define([
 
 			this.config = {
 				_widgetSelector: null,
-				widgetSelectorClass: 'detailWidgetSelector'
+				widgetSelectorClass: 'detailWidgetSelector',
+				_restoreTransitionWithSelectorTimeout: 2000
 			};
 
 			lang.mixin(this, this.config, args);
@@ -28,6 +29,8 @@ define([
 			aspect.after(this, '_addWidget', lang.hitch(this, this._afterAddWidgetUpdateSelector));
 			aspect.after(this, '_addDataInTitle', lang.hitch(this, this._afterAddDataInTitleShowSelector));
 			aspect.after(this, '_onLayoutComplete', lang.hitch(this, this._afterLayoutCompleteApplyAnchor));
+			aspect.before(this, '_prepareRestorePackeryTransitionDuration',
+				lang.hitch(this, this._beforePrepareRestoreTransitionUpdateTimeout));
 			aspect.after(this, '_onControllerMeOrAncestorShown',
 				lang.hitch(this, this._afterControllerOrAncestorShownUpdateSelectorInstance));
 		},
@@ -40,6 +43,16 @@ define([
 		_afterAddDataInTitleShowSelector: function() {
 
 			this._showWidgetSelector();
+		},
+
+		_beforePrepareRestoreTransitionUpdateTimeout: function() {
+
+			if (!location.hash || this._restoreTransitionTimeoutUpdated) {
+				return;
+			}
+
+			this._restoreTransitionTimeout = this._restoreTransitionWithSelectorTimeout;
+			this._restoreTransitionTimeoutUpdated = true;
 		},
 
 		_afterLayoutCompleteApplyAnchor: function() {
@@ -61,6 +74,12 @@ define([
 			var hash = location.hash;
 			location.hash = '';
 			location.hash = hash;
+
+			if (this._widgetSelector) {
+				this._publish(this._widgetSelector.getChannel('SET_VALUE'), {
+					name: hash.substring(1)
+				});
+			}
 		},
 
 		_addWidgetsToSelector: function() {
@@ -74,7 +93,7 @@ define([
 			this._widgetSelector = new SelectImpl({
 				parentChannel: this.getChannel(),
 				includeEmptyValue: true,
-				emptyValueLabel: '< <i>' + this.i18n.noSectionFocused + '</i> >'
+				emptyValueLabel: '<i>' + this.i18n.noFixedContent + '</i>'
 			});
 
 			this._setWidgetKeysAsSelectorOptions();

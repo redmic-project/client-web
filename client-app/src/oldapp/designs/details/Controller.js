@@ -52,7 +52,8 @@ define([
 				_heightFitContentValue: 'fitContent',
 				_rowsParameterName: "data-rows",
 				_colsParameterName: "data-cols",
-				_updateInteractiveTimeout: 100,
+				_transitionDuration: '0.4s',
+				_restoreTransitionTimeout: 500,
 
 				_widgets: {},
 				_nodes: {},
@@ -90,7 +91,8 @@ define([
 		_initializeController: function() {
 
 			this.packery = new packery(this.centerNode, {
-				isInitLayout: false
+				initLayout: false,
+				transitionDuration: 0
 			});
 		},
 
@@ -112,7 +114,7 @@ define([
 
 			if (!this._widgetsAlreadyGenerated) {
 				this._generateWidgets();
-				this._buildVisualization().then(lang.hitch(this, this._updateInteractive));
+				this._buildVisualization().then(lang.hitch(this, this._afterBuildVisualization));
 			}
 		},
 
@@ -155,9 +157,15 @@ define([
 			return this._showWidget(key, true);
 		},
 
+		_afterBuildVisualization: function() {
+
+			this._reloadInteractive();
+			this._updateInteractive();
+		},
+
 		_onControllerResize: function() {
 
-			this._getShown() && this._updateInteractive();
+			this._updateInteractive();
 		},
 
 		_onButtonEvent: function(evt) {
@@ -167,20 +175,8 @@ define([
 			this[methodName] && this[methodName](evt);
 		},
 
-		/*_onControllerShown: function() {
-
-			if (this._getShown()) {
-				this._reloadInteractive();
-				this._updateInteractive();
-			}
-
-			this._clearModules();
-			this._refreshModules();
-		},*/
-
 		_reloadInteractive: function() {
 
-			this.packery.layout();
 			this.packery.reloadItems();
 		},
 
@@ -194,10 +190,8 @@ define([
 
 		_onControllerMeOrAncestorShown: function(res) {
 
-			if (this._getShown()) {
-				this._reloadInteractive();
-				this._updateInteractive();
-			}
+			this._reloadInteractive();
+			this._updateInteractive();
 
 			this._clearModules();
 			this._refreshModules();
@@ -208,15 +202,21 @@ define([
 			this._clearModules();
 		},
 
-		/*_getModuleRootNode: function() {
+		_prepareRestorePackeryTransitionDuration: function() {
 
-			return this.containerNode;
+			if (this.packery.options.transitionDuration === this._transitionDuration) {
+				return;
+			}
+
+			clearTimeout(this._restoreTransitionTimeoutHandler);
+			this._restoreTransitionTimeoutHandler = setTimeout(lang.hitch(this, this._restorePackeryTransitionDuration),
+				this._restoreTransitionTimeout);
 		},
 
-		_getModuleMainNode: function() {
+		_restorePackeryTransitionDuration: function() {
 
-			return this.centerNode;
-		},*/
+			this.packery.options.transitionDuration = this._transitionDuration;
+		},
 
 		_evaluateCondition: function(condition) {
 			// TODO: eso es para casos concretos (botones), debería separarse
@@ -269,7 +269,12 @@ define([
 
 			this._setSubscription({
 				channel: widgetInstance.getChannel("RESIZED"),
-				callback: "_subModuleResized"
+				callback: "_subWidgetResized"
+			});
+
+			this._setSubscription({
+				channel: widgetInstance.getChannel("HIDDEN"),
+				callback: "_subWidgetHidden"
 			});
 		},
 
@@ -304,15 +309,7 @@ define([
 
 			var dfd = new Deferred();
 
-			this._once(instance.getChannel("SHOWN"), lang.hitch(this, function(args) {
-
-				put(args.node, "!" + this.hiddenClass);
-				this._addWidgetInteractivity(args.key);
-				args.dfd.resolve();
-				if (!args.omitReload) {
-					this._reloadInteractive();
-				}
-			}, {
+			this._once(instance.getChannel("SHOWN"), lang.hitch(this, this._onceWidgetShown, {
 				key: key,
 				node: node,
 				dfd: dfd,
@@ -326,7 +323,20 @@ define([
 			return dfd;
 		},
 
-		_hideWidget: function(key, omitReload) {
+		_onceWidgetShown: function(args) {
+
+			put(args.node, "!" + this.hiddenClass);
+			this._addWidgetInteractivity(args.key);
+
+			args.dfd.resolve();
+
+			if (!args.omitReload) {
+				this._updateInteractive();
+				this._reloadInteractive();
+			}
+		},
+
+		_hideWidget: function(key) {
 
 			var instance = this._getWidgetInstance(key),
 				node = this._nodes[key];
@@ -335,19 +345,6 @@ define([
 				console.error('Tried to hide non-existent widget "%s" or node was missing', key);
 				return;
 			}
-
-			this._once(instance.getChannel("HIDDEN"), lang.hitch(this, function(args) {
-
-				put(args.node, "." + this.hiddenClass);
-				this._removeWidgetInteractivity(args.key);
-				if (!args.omitReload) {
-					this._reloadInteractive();
-				}
-			}, {
-				key: key,
-				node: node,
-				omitReload: omitReload
-			}));
 
 			this._publish(instance.getChannel("HIDE"), {
 				node: node
@@ -426,16 +423,40 @@ define([
 			delete this._nodesHandlers[key];
 		},
 
-		_subModuleResized: function() {
+		_getWidgetKeyByChannel: function(widgetChannel) {
 
+			for (var widgetKey in this._widgets) {
+				if (this._widgets[widgetKey].getChannel() === widgetChannel) {
+					return widgetKey;
+				}
+			}
+
+			console.error('Tried to get key for non-existent widget channel "%s"', widgetChannel);
+		},
+
+		_subWidgetResized: function(res) {
+
+			this._updateInteractive();
+		},
+
+		_subWidgetHidden: function(res, channelObj) {
+
+			var widgetChannel = channelObj._parent.namespace,
+				widgetKey = this._getWidgetKeyByChannel(widgetChannel),
+				widgetNode = this._nodes[widgetKey];
+
+			put(widgetNode, '.' + this.hiddenClass);
+			this._removeWidgetInteractivity(widgetKey);
 			this._updateInteractive();
 		},
 
 		_updateInteractive: function() {
 
-			clearTimeout(this._updateInteractiveTimeoutHandler);
-			this._updateInteractiveTimeoutHandler = setTimeout(lang.hitch(this.packery, this.packery.layout),
-				this._updateInteractiveTimeout);
+			if (!this._getShown()) {
+				return;
+			}
+
+			this.packery.layout();
 		},
 
 		_onLayoutComplete: function(laidOutItems) {
@@ -451,7 +472,7 @@ define([
 				this._emitEvt("RESIZE");
 			}
 
-			//this._emitEvt("LOADED");
+			this._prepareRestorePackeryTransitionDuration();
 		},
 
 		_reportClicked: function() {

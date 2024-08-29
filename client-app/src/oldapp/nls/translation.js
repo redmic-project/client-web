@@ -1339,7 +1339,7 @@ define({
 		, "leafletForwardButton": "Go forward in location history"
 		, "leafletBackButton": "Go back in location history"
 
-		, "noSectionFocused": "No section focused"
+		, "noFixedContent": "No fixed content"
 
 		// Meta-tags
 		, "metaDefaultTitle": "Repositorio de Datos Marinos Integrados de Canarias"

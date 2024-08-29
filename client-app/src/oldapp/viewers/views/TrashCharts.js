@@ -178,7 +178,7 @@ define([
 			if (this._lastDataLength && this._lastDataLength > data.length) {
 				for (i = data.length; i < this._lastDataLength; i++) {
 					widgetKey = "multiPieChartContainer" + i;
-					this._hideWidget(widgetKey, true);
+					this._hideWidget(widgetKey);
 					this._disconnectWidget(widgetKey);
 				}
 

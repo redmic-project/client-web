@@ -144,7 +144,7 @@ define([
 		_getWidgetOptionObject: function(widgetKey) {
 
 			var widgetInstance = this._getWidgetInstance(widgetKey),
-				widgetLabel = (widgetInstance && widgetInstance.get('title')) || this.i18n[widgetKey];
+				widgetLabel = (widgetInstance && widgetInstance.get('windowTitle')) || this.i18n[widgetKey];
 
 			return {
 				value: widgetKey,

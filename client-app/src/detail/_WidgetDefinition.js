@@ -75,7 +75,7 @@ define([
 				height: 4,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
-					title: this.i18n.organisations,
+					title: 'organisations',
 					target: this.organisationTarget,
 					template: TemplateOrganisation,
 					bars: [{
@@ -103,7 +103,7 @@ define([
 				height: 4,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
-					title: this.i18n.platforms,
+					title: 'platforms',
 					target: this.platformTarget,
 					template: TemplatePlatform,
 					bars: [{
@@ -131,7 +131,7 @@ define([
 				height: 4,
 				type: declare([ListImpl, _Framework]),
 				props: {
-					title: this.i18n.contacts,
+					title: 'contacts',
 					target: this.contactTarget,
 					template: TemplateContacts,
 					bars: [{
@@ -148,7 +148,7 @@ define([
 				height: 4,
 				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
-					title: this.i18n.documents,
+					title: 'documents',
 					target: this.documentTarget,
 					template: TemplateDocuments,
 					bars: [{
@@ -213,7 +213,7 @@ define([
 				height: config.height || 'fitContent',
 				type: TemplateDisplayer,
 				props: {
-					title: this.i18n.info,
+					title: 'info',
 					template: config.template,
 					'class': 'containerDetails',
 					classEmptyTemplate: 'contentListNoData',
@@ -232,7 +232,7 @@ define([
 				hidden: true,
 				type: declare([LeafletImpl, _ImportWkt]),
 				props: {
-					title: this.i18n.spatialExtension,
+					title: 'spatialExtension',
 					omitContainerSizeCheck: true,
 					maxZoom: 15,
 					coordinatesViewer: false,
@@ -251,7 +251,7 @@ define([
 				height: 6,
 				type: ActivityCitationMapBase,
 				props: {
-					windowTitle: 'citations',
+					title: 'citations',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -264,7 +264,7 @@ define([
 				height: 6,
 				type: ActivityLayerMapBase,
 				props: {
-					windowTitle: 'layers',
+					title: 'layers',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -277,7 +277,7 @@ define([
 				height: 6,
 				type: ActivityTrackingMap,
 				props: {
-					windowTitle: 'tracking',
+					title: 'tracking',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -290,7 +290,7 @@ define([
 				height: 6,
 				type: ActivityInfrastructureMapBase,
 				props: {
-					windowTitle: 'infrastructures',
+					title: 'infrastructures',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -303,7 +303,7 @@ define([
 				height: 6,
 				type: ActivityAreaMapBase,
 				props: {
-					windowTitle: 'area',
+					title: 'area',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -316,7 +316,7 @@ define([
 				height: 6,
 				type: ActivityFixedTimeseriesMap,
 				props: {
-					windowTitle: 'associatedSurveyStation',
+					title: 'associatedSurveyStation',
 					pathVariableId: this._activityData.id
 				}
 			};
@@ -329,7 +329,7 @@ define([
 				height: 6,
 				type: ActivityFixedTimeseriesChart,
 				props: {
-					windowTitle: 'charts',
+					title: 'charts',
 					pathVariableId: this._activityData.id,
 					timeseriesDataChannel: this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA')
 				}

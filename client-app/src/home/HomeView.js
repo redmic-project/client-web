@@ -79,7 +79,7 @@ define([
 					height: 4,
 					type: SearchFastFilterWidget,
 					props: {
-						windowTitle: 'fastFilters',
+						title: 'fastFilters',
 						omitTitleCloseButton: true,
 						facetsSearchConfig: {
 							query: {
@@ -98,7 +98,7 @@ define([
 					type: SearchResultsWidget,
 					props: {
 						queryChannel: 'stub',
-						windowTitle: 'starredActivities',
+						title: 'starredActivities',
 						omitTitleCloseButton: true
 					}
 				},
@@ -107,7 +107,7 @@ define([
 					height: 2,
 					type: TemplateDisplayer,
 					props: {
-						windowTitle: 'info',
+						title: 'info',
 						template: TemplateInfo,
 						'class': 'mediumSolidContainer.borderRadiusBottom',
 						target: 'initial_info'
@@ -118,7 +118,7 @@ define([
 					height: 6,
 					type: ProductWidget,
 					props: {
-						windowTitle: 'products'
+						title: 'products'
 					}
 				},
 				stats: {
@@ -126,7 +126,7 @@ define([
 					height: 3,
 					type: StatsWidget,
 					props: {
-						windowTitle: 'statistics'
+						title: 'statistics'
 					}
 				},
 				social: {
@@ -134,7 +134,7 @@ define([
 					height: 1,
 					type: SocialWidget,
 					props: {
-						windowTitle: 'followUs'
+						title: 'followUs'
 					}
 				}
 			};
@@ -168,7 +168,7 @@ define([
 				this._once(addedToQueryChannel, lang.hitch(this, function() {
 
 					this._publish(this._getWidgetInstance('searchResults').getChannel('SET_PROPS'), {
-						windowTitle: 'searchResults'
+						title: 'searchResults'
 					});
 				}));
 			}));

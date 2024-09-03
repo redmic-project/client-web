@@ -246,15 +246,15 @@ define([
 				return;
 			}
 
-			var moduleProps = this._merge([
-				this.propsWidget || {},
-				config.props || {},
-				{
+			var moduleProps = this._merge([{
 					ownChannel: key,
 					parentChannel: this.getChannel(),
-					windowTitle: key,
+					windowId: key,
+					title: key,
 					fitHeightToContent: config.height === this._heightFitContentValue
-				}
+				},
+				this.propsWidget || {},
+				config.props || {}
 			]);
 
 			var moduleType = config.type,

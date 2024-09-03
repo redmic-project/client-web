@@ -390,14 +390,16 @@ define([
 
 		_getWindowTitleIdValue: function() {
 
-			return this.windowTitle || this.getOwnChannel();
+			return this.windowId || this.getOwnChannel();
 		},
 
-		_getWindowTitleTextValue: function() {
+		_getWindowTitleTextValue: function(newValue) {
 
-			var windowTitle = this.windowTitle || this.getOwnChannel();
+			var windowTitle = newValue || this.windowTitle || this.title || this._getWindowTitleIdValue();
 
-			return this.i18n[windowTitle] || this.title || this.getOwnChannel();
+			this.windowTitle = this.i18n[windowTitle] || windowTitle;
+
+			return this.windowTitle;
 		},
 
 		_createWindowButtons: function() {
@@ -643,22 +645,16 @@ define([
 			this._updateWindowTitleValue(this.title);
 		},
 
-		_onWindowTitlePropSet: function() {
-
-			var windowId = this._getWindowTitleIdValue();
-			domAttr.set(this._windowNode, 'id', windowId);
-
-			this._updateWindowTitleValue(this._getWindowTitleTextValue());
-		},
-
 		_updateWindowTitleValue: function(newValue) {
+
+			var titleTextValue = this._getWindowTitleTextValue(newValue);
 
 			if (this.omitTitleBar) {
 				return;
 			}
 
-			domAttr.set(this._windowTitleTextNode, 'title', newValue);
-			this._windowTitleTextNode.innerHTML = newValue;
+			domAttr.set(this._windowTitleTextNode, 'title', titleTextValue);
+			this._windowTitleTextNode.innerHTML = titleTextValue;
 		}
 	};
 });

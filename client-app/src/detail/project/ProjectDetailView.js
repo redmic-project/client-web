@@ -55,7 +55,7 @@ define([
 					target: this.target[0]
 				}),
 				activityList: this._getActivitiesOrProjectsConfig({
-					title: this.i18n.activities,
+					title: 'activities',
 					target: this.activityTarget,
 					template: TemplateActivities,
 					href: redmicConfig.viewPaths.activityDetails,

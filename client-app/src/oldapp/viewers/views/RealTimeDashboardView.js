@@ -91,7 +91,7 @@ define([
 					height: 5,
 					type: TemplateDisplayer,
 					props: {
-						title: this.i18n.info,
+						title: 'info',
 						template: RealTimeInfo,
 						"class": "containerDetails",
 						classEmptyTemplate: "contentListNoData",

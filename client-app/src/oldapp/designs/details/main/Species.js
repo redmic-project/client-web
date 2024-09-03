@@ -86,7 +86,7 @@ define([
 						height: 4,
 						type: SpeciesLocation,
 						props: {
-							title: this.i18n.location,
+							title: 'location',
 							pathVariableId: this.pathVariableId
 						}
 					}

@@ -63,7 +63,7 @@ define([
 						hidden: true,
 						type: DocumentPDF,
 						props: {
-							title: this.i18n.document,
+							title: 'document',
 							pathVariableId: this.pathVariableId
 						}
 					}

@@ -100,7 +100,7 @@ define([
 					height: 3,
 					type: TemplateDisplayer,
 					props: {
-						title: this.i18n.image,
+						title: 'image',
 						template: TemplateImage,
 						"class": "imageContainer.imageContainerEdit",
 						target: this.target,
@@ -112,7 +112,7 @@ define([
 					height: 3,
 					type: declare([ListImpl, _ButtonsInRow, _MultiTemplate]),
 					props: {
-						title: "Datos de usuario",
+						title: "userData",
 						target: this.target,
 						idProperty: "dataType",
 						rowConfig: {

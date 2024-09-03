@@ -49,7 +49,7 @@ define([
 					height: 6,
 					type: Geographic,
 					props: {
-						title: this.i18n.map,
+						title: 'map',
 						target: this.targetChange,
 						classWindowContent: "view",
 						filterConfig: {

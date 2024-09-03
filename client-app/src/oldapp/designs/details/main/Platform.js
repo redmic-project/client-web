@@ -51,7 +51,7 @@ define([
 				height: 2,
 				type: declare([ListImpl, _Framework]),
 				props: {
-					title: this.i18n.contacts,
+					title: 'contacts',
 					target: this.contactTarget,
 					template: TemplateContacts,
 					bars: [{

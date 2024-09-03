@@ -1,5 +1,6 @@
 define({
 	"ok": "Aceptar"
+	, "userData": "Datos de usuario"
 	, "cancel": "Cancelar"
 	, "nextStep": "Siguiente"
 	, "prevStep": "Anterior"

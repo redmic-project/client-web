@@ -50,7 +50,7 @@ define([
 					height: 6,
 					type: [ChartsWithLegendAndToolbarsAndSlider, _ProcessDataDefinitionAndGetTimeSeries],
 					props: {
-						title: this.i18n.chart,
+						title: 'chart',
 						target: this.target,
 						filterConfig: {
 							initQuery: {

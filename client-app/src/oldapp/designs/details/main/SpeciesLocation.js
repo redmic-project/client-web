@@ -70,7 +70,7 @@ define([
 					height: 6,
 					type: declare([LeafletImpl, _PlaceNamesButton]),
 					props: {
-						title: this.i18n.map,
+						title: 'map',
 						omitContainerSizeCheck: true
 					}
 				}

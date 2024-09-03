@@ -224,7 +224,7 @@ define([
 			};
 		},
 
-		_getSpatialExtensionMapConfig: function(config) {
+		_getSpatialExtensionConfig: function(config) {
 
 			return {
 				width: 3,

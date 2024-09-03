@@ -59,7 +59,7 @@ define([
 					height: 6,
 					type: declare([ListImpl, _ButtonsInRow]),
 					props: {
-						title: this.i18n.administrative,
+						title: 'administrative',
 						target: this.targetBrowser,
 						//template: TemplateList,
 						template: TemplateTitle,

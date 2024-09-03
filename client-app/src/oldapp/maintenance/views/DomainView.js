@@ -32,7 +32,7 @@ define([
 					height: 3,
 					type: _ViewListBase,
 					props: {
-						title: this.i18n.administrative,
+						title: 'administrative',
 						"class": "containerDetails",
 						items: {
 							catergoryId: 109,
@@ -46,7 +46,7 @@ define([
 					height: 3,
 					type: _ViewListBase,
 					props: {
-						title: this.i18n.speciesAndTaxonomy,
+						title: 'speciesAndTaxonomy',
 						"class": "containerDetails",
 						items: {
 							catergoryId: 110,
@@ -59,7 +59,7 @@ define([
 					height: 3,
 					type: _ViewListBase,
 					props: {
-						title: this.i18n.dataAndObservations,
+						title: 'dataAndObservations',
 						"class": "containerDetails",
 						items: {
 							catergoryId: 111,
@@ -73,7 +73,7 @@ define([
 					height: 3,
 					type: _ViewListBase,
 					props: {
-						title: this.i18n.geometryAndClassifications,
+						title: 'geometryAndClassifications',
 						"class": "containerDetails",
 						items: {
 							catergoryId: 112,

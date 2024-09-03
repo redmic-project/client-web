@@ -54,7 +54,7 @@ define([
 					height: 2,
 					type: TemplateDisplayer,
 					props: {
-						title: this.i18n.site,
+						title: 'site',
 						template: SiteInfoTemplate,
 						"class": "containerDetails",
 						target: this.siteInfoTarget
@@ -65,7 +65,7 @@ define([
 					height: 4,
 					type: declare([HierarchicalImpl, _MultiTemplate]),
 					props: {
-						title: this.i18n.measurements,
+						title: 'measurements',
 						target: this.measurementListTarget,
 						typeGroupProperty: this.typeGroupProperty
 					}
@@ -75,7 +75,7 @@ define([
 					height: 6,
 					type: TemplateDisplayer,
 					props: {
-						title: this.i18n.activity,
+						title: 'activity',
 						"class": "containerDetails",
 						target: this.activityInfoTarget,
 						template: ActivityInfoTemplate

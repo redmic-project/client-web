@@ -59,7 +59,7 @@ define([
 				info: this._getInfoConfig({
 					template: TemplateInfo
 				}),
-				spatialExtensionMap: this._getSpatialExtensionMapConfig(),
+				spatialExtension: this._getSpatialExtensionConfig(),
 				organisationList: this._getOrganisationsConfig(),
 				platformList: this._getPlatformsConfig(),
 				contactList: this._getContactsConfig(),
@@ -140,15 +140,15 @@ define([
 				return;
 			}
 
-			var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+			var mapInstance = this._getWidgetInstance('spatialExtension');
 			this._once(mapInstance.getChannel('BBOX_CHANGED'), lang.hitch(this, this._showSpatialExtension, wkt));
 
-			this._showWidget('spatialExtensionMap');
+			this._showWidget('spatialExtension');
 		},
 
 		_showSpatialExtension: function(wkt) {
 
-			var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+			var mapInstance = this._getWidgetInstance('spatialExtension');
 
 			this._once(mapInstance.getChannel('WKT_ADDED'), lang.hitch(this, function(res) {
 
@@ -164,14 +164,14 @@ define([
 		_onActivityDetailsHidden: function() {
 
 			if (this._lastWktLayer) {
-				var mapInstance = this._getWidgetInstance('spatialExtensionMap');
+				var mapInstance = this._getWidgetInstance('spatialExtension');
 
 				this._publish(mapInstance.getChannel('REMOVE_LAYER'), {
 					layer: this._lastWktLayer
 				});
 			}
 
-			this._hideWidget('spatialExtensionMap');
+			this._hideWidget('spatialExtension');
 
 			this._removeCustomWidgets();
 		}

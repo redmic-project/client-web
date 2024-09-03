@@ -229,7 +229,7 @@ define([
 					_ProcessDataDefinitionAndGetTimeSeries
 				]),
 				props: {
-					title: this.i18n.collectedItems,
+					title: 'collectedItems',
 					parentChannel: this.getChannel(),
 					target: redmicConfig.services.objectCollectingSeriesTemporalData,
 					intervalLabelKey: this._intervalLabelKey,

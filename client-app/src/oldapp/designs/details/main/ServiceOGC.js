@@ -71,7 +71,7 @@ define([
 					height: 6,
 					type: TemplateDisplayer,
 					props: {
-						title: this.i18n.sourceInfo,
+						title: 'sourceInfo',
 						template: TemplateSourceInfo,
 						target: this.sourceInfoLayerTarget,
 						"class": "containerDetails",
@@ -83,16 +83,16 @@ define([
 				activityList: {
 					height: 3,
 					props: {
-						title: this.i18n.dataSource,
+						title: 'dataSource',
 						target: this.activityLocalTarget
 					}
 				},
-				spatialExtensionMap: {
+				spatialExtension: {
 					width: 3,
 					height: 3,
 					type: LeafletImpl,
 					props: {
-						title: this.i18n.geograficFrame,
+						title: 'geograficFrame',
 						omitContainerSizeCheck: true,
 						maxZoom: 15,
 						coordinatesViewer: false,
@@ -107,7 +107,7 @@ define([
 					height: 4,
 					type: TemplateDisplayer,
 					props: {
-						title: this.i18n.legend,
+						title: 'legend',
 						template: TemplateImage,
 						"class": "imageContainer",
 						target: this.atlasTarget,
@@ -119,7 +119,7 @@ define([
 
 		_publishMapBox: function(action, obj) {
 
-			this._publish(this._getWidgetInstance('spatialExtensionMap').getChannel(action), obj);
+			this._publish(this._getWidgetInstance('spatialExtension').getChannel(action), obj);
 		},
 
 		_clearModules: function() {
@@ -230,7 +230,7 @@ define([
 
 			this.layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
-				mapChannel: this._getWidgetInstance('spatialExtensionMap').getChannel(),
+				mapChannel: this._getWidgetInstance('spatialExtension').getChannel(),
 				layerDefinition: layerDefinition
 			});
 

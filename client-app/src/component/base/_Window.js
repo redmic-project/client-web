@@ -154,12 +154,10 @@ define([
 
 		_createWindowContent: function() {
 
-			var contentClass = this.windowContentClass,
-				contentHeightReduction = this.titleHeight;
+			var contentClass = this.windowContentClass;
 
 			if (this.omitTitleBar) {
 				contentClass += '.' + this.windowWithoutTitleContentClass;
-				contentHeightReduction = 0;
 			}
 
 			if (this.classWindowContent) {
@@ -168,8 +166,14 @@ define([
 
 			this._windowContentNode = put(this._windowNode, 'div.' + contentClass);
 
-			var contentHeight = 'calc(100% - ' + contentHeightReduction + 'rem)';
-			domStyle.set(this._windowContentNode, 'height', contentHeight);
+			domStyle.set(this._windowContentNode, 'height', this._getWindowContentHeight());
+		},
+
+		_getWindowContentHeight: function() {
+
+			var contentHeightReduction = this.omitTitleBar ? 0 : this.titleHeight;
+
+			return 'calc(100% - ' + contentHeightReduction + 'rem)';
 		},
 
 		_addNodeListeners: function() {
@@ -431,7 +435,7 @@ define([
 
 			this._prevMinimizeWindowHeight = this._windowNode.clientHeight;
 
-			domStyle.set(this._moduleOwnNode, 'height', 0);
+			domStyle.set(this._windowContentNode, 'height', 0);
 			domStyle.set(this._windowNode.parentNode, 'height', this.titleHeight + 'rem');
 		},
 
@@ -443,7 +447,7 @@ define([
 				this._minimizeButton.onclick = lang.hitch(this, this._minimizeModule);
 			}
 
-			domStyle.set(this._moduleOwnNode, 'height', null);
+			domStyle.set(this._windowContentNode, 'height', this._getWindowContentHeight());
 
 			var prevHeight = this._prevMinimizeWindowHeight ? this._prevMinimizeWindowHeight + 'px' : null;
 			domStyle.set(this._windowNode.parentNode, 'height', prevHeight);

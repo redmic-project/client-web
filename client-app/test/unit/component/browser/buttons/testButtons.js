@@ -78,7 +78,7 @@ define([
 			buttons = new declare([Buttons, _GroupButtons])(config);
 
 			node = put('div[style="width:300px;height:300px"]');
-			document.children[0].appendChild(node);
+			globalThis.document.children[0].appendChild(node);
 
 			item = {
 				id: 1,

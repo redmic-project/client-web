@@ -25,8 +25,6 @@ define([
 
 		//	paths: Object
 		//		Constantes de rutas base
-		//	globalContext: Object
-		//		Contexto provisto por App para gestionar el entorno de ejecución
 		//	_userFound: Boolean
 		//		Indica si hay presente algún token de usuario.
 
@@ -94,7 +92,7 @@ define([
 			//	tags:
 			//		private
 
-			var gCtx = this.globalContext,
+			var gCtx = globalThis,
 				dCtx = gCtx.document,
 				listenMethod, eventPrefix;
 
@@ -116,7 +114,7 @@ define([
 			//	tags:
 			//		private
 
-			var event = evt || this.globalContext.event,
+			var event = evt || globalThis.event,
 				targets = this._getClickTargets(event);
 
 			for (var i = 0; i < targets.length; i++) {
@@ -137,10 +135,8 @@ define([
 			var url = target.pathname + target.search + target.hash;
 
 			if (mouse.isMiddle(event)) {
-				var gCtx = this.globalContext,
-					newPageUrl = target.protocol + '//' + target.hostname + url;
-
-				gCtx.open(newPageUrl, '_blank');
+				var newPageUrl = target.protocol + '//' + target.hostname + url;
+				globalThis.open(newPageUrl, '_blank');
 			} else {
 				this._addHistory(url);
 				this._onRouteChange();
@@ -155,12 +151,12 @@ define([
 
 		_addHistory: function(value) {
 
-			this.globalContext.history.pushState(null, null, value);
+			globalThis.history.pushState(null, null, value);
 		},
 
 		_onRouteChange: function() {
 
-			var locationObj = this.globalContext.location,
+			var locationObj = globalThis.location,
 				locationPath = locationObj.pathname,
 				route = locationPath.substr(1),
 				routeIsEmpty = !route || route === '' || route === this.paths.ROOT,
@@ -221,12 +217,12 @@ define([
 
 		_goToRootPage: function() {
 
-			this.globalContext.location.href = this.paths.ROOT;
+			globalThis.location.href = this.paths.ROOT;
 		},
 
 		_goToErrorPage: function() {
 
-			this.globalContext.location.href = this.paths.ERROR;
+			globalThis.location.href = this.paths.ERROR;
 		},
 
 		_handleQueryParameters: function(queryString) {
@@ -243,10 +239,10 @@ define([
 
 		_removeQueryParametersFromHref: function() {
 
-			var locationObj = this.globalContext.location,
+			var locationObj = globalThis.location,
 				href = locationObj.origin + locationObj.pathname + locationObj.hash;
 
-			this.globalContext.history.replaceState(null, null, href);
+			globalThis.history.replaceState(null, null, href);
 		}
 	});
 });

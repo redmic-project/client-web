@@ -47,7 +47,7 @@ define([
 
 		_beforePrepareRestoreTransitionUpdateTimeout: function() {
 
-			if (!location.hash || this._restoreTransitionTimeoutUpdated) {
+			if (!globalThis.location.hash || this._restoreTransitionTimeoutUpdated) {
 				return;
 			}
 
@@ -67,17 +67,17 @@ define([
 
 		_applyHrefValueWithoutHistory: function(hrefValue) {
 
-			history.replaceState(null, null, hrefValue);
+			globalThis.history.replaceState(null, null, hrefValue);
 		},
 
 		_getHrefWithoutHashValue: function() {
 
-			return location.origin + location.pathname + location.search;
+			return globalThis.location.origin + globalThis.location.pathname + globalThis.location.search;
 		},
 
 		_applyCurrentAnchor: function() {
 
-			var hash = location.hash;
+			var hash = globalThis.location.hash;
 
 			if (!hash || !this._widgetSelector) {
 				return;
@@ -172,7 +172,7 @@ define([
 
 			this._applyHrefValueWithoutHistory(newHref + newAnchor);
 
-			var contentSelectedElement = document.querySelector(newAnchor);
+			var contentSelectedElement = globalThis.document.querySelector(newAnchor);
 
 			if (!contentSelectedElement) {
 				console.warn('Tried to focus non-existant content:', newAnchor);

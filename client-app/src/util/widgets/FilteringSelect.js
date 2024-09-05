@@ -481,7 +481,7 @@ define([
 			Results = Results.data;
 
 			if (!this.dialogNode) {
-				this.dialogNode = query("div.dijitDialogFocused", document.body);
+				this.dialogNode = query("div.dijitDialogFocused", globalThis.document.body);
 
 				if (this.dialogNode.length !== 0){
 					this.dialogNode = this.dialogNode[0];
@@ -490,7 +490,7 @@ define([
 			}
 
 			this._cleanChildrenNode(this.boxResultsNode);
-			this.boxResultsNode = put(document.body, 'div.' + this.suggestionsContainerClass + '.' + this.hiddenClass);
+			this.boxResultsNode = put(globalThis.document.body, 'div.' + this.suggestionsContainerClass + '.' + this.hiddenClass);
 
 			var positionNode = domGeom.position(this.domNode);
 

@@ -37,7 +37,7 @@ define([
 				ogDescriptionLimit: 200,
 				twitterDescriptionLimit: 200,
 
-				_headNode: document.getElementsByTagName('head')[0],
+				_headNode: globalThis.document.getElementsByTagName('head')[0],
 				_defaultKey: 'default'
 			};
 
@@ -74,7 +74,7 @@ define([
 				return;
 			}
 
-			var currUrl = window.location.href,
+			var currUrl = globalThis.location.href,
 				hostname = new URL(currUrl).hostname;
 
 			viewData.hostname = hostname;
@@ -115,7 +115,7 @@ define([
 			var customTitle = this._getMetaTagValue('title', viewLocaleMetaTags, viewData);
 
 			// Title nativo
-			document.title = customTitle + ' | ' + this.nativeTitleSuffix;
+			globalThis.document.title = customTitle + ' | ' + this.nativeTitleSuffix;
 
 			// Open Graph
 			var ogTag = 'og:title',
@@ -285,7 +285,7 @@ define([
 				metaTagNode = metaTagNodes[0];
 				metaTagNode.content = tagContent;
 			} else {
-				metaTagNode = document.createElement('meta');
+				metaTagNode = globalThis.document.createElement('meta');
 				metaTagNode.setAttribute(tagIdProperty, tagIdValue);
 				metaTagNode.content = tagContent;
 				this._headNode.appendChild(metaTagNode);

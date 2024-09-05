@@ -60,7 +60,7 @@ define([
 						},
 						urlWebcamCallback: function(obj) {
 
-							window.open(obj.item.url, '_blank');
+							globalThis.open(obj.item.url, '_blank');
 						}
 					}
 				}

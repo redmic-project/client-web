@@ -173,7 +173,7 @@ define([
 			for (var i = 0; i < embeddedContents.length; i++) {
 				var embeddedContentObj = embeddedContents[i],
 					embeddedContentValue = embeddedContentObj.embeddedContent,
-					embeddedContentParentNode = document.createElement('object');
+					embeddedContentParentNode = globalThis.document.createElement('object');
 
 				embeddedContentParentNode.innerHTML = embeddedContentValue;
 

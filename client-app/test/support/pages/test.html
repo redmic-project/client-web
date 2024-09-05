@@ -30,7 +30,7 @@
 				, script
 			) {
 
-				var url = window.location.href,
+				var url = globalThis.location.href,
 					urlParams = url.substring(url.indexOf('?') + 1),
 					paramsObj = ioQuery.queryToObject(urlParams),
 					scriptUrl = paramsObj.script;

@@ -69,12 +69,12 @@ define([
 
 		_goBack: function() {
 
-			location.href = '/';
+			globalThis.location.href = '/';
 		},
 
 		_goError: function() {
 
-			location.href = '/404';
+			globalThis.location.href = '/404';
 		}
 	});
 });

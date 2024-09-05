@@ -70,7 +70,7 @@ define([
 				return;
 			}
 
-			localStorage.setItem(this._prefix + key, value);
+			globalThis.localStorage.setItem(this._prefix + key, value);
 
 			this.emit('changed:' + key, {
 				key: key,
@@ -86,7 +86,7 @@ define([
 			//	returns:
 			//		Valor del campo.
 
-			var ret = localStorage.getItem(this._prefix + key);
+			var ret = globalThis.localStorage.getItem(this._prefix + key);
 
 			// Si el valor es nulo o sin longitud, se devuelve nulo
 			if (!ret || (ret && !ret.length)) {
@@ -107,7 +107,7 @@ define([
 			//	key:
 			//		Clave del elemento a eliminar.
 
-			localStorage.removeItem(this._prefix + key);
+			globalThis.localStorage.removeItem(this._prefix + key);
 
 			this.emit('removed:' + key);
 		},
@@ -143,7 +143,7 @@ define([
 			//	returns:
 			//		Clave del elemento.
 
-			var ret = localStorage.key(index);
+			var ret = globalThis.localStorage.key(index);
 			if (ret && ret.length) {
 				ret = this._getKeyWithoutPrefix(ret);	// Clave sin prefijo
 			}
@@ -158,7 +158,7 @@ define([
 			//		Array de claves.
 
 			var retArray = [],
-				allKeys = Object.keys(localStorage),
+				allKeys = Object.keys(globalThis.localStorage),
 				i;
 
 			for (i = 0; i < allKeys.length; i++) {
@@ -180,7 +180,7 @@ define([
 			//	returns:
 			//		Booleano indicando su presencia.
 
-			return localStorage.hasOwnProperty(this._prefix + key) && this.getItem(key);	// return Boolean
+			return globalThis.localStorage.hasOwnProperty(this._prefix + key) && this.getItem(key);	// return Boolean
 		},
 
 		_getKeyWithoutPrefix: function(/*String*/ key) {
@@ -196,9 +196,9 @@ define([
 
 	});
 
-	if (!window.redmicLocalStorage) {
-		window.redmicLocalStorage = new RedmicLocalStorage();
+	if (!globalThis.redmicLocalStorage) {
+		globalThis.redmicLocalStorage = new RedmicLocalStorage();
 	}
 
-	return window.redmicLocalStorage;
+	return globalThis.redmicLocalStorage;
 });

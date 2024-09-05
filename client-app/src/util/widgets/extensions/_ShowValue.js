@@ -59,7 +59,7 @@ define([
 		_createPopupPlay: function() {
 
 			this.popupPlayCreate = true;
-			this.popupPlayNode = put(document.body, "div.popupCreate.popupProgressBarPlay");
+			this.popupPlayNode = put(globalThis.document.body, "div.popupCreate.popupProgressBarPlay");
 			this.spanPopupPlayNode = put(this.popupPlayNode, "span");
 		},
 

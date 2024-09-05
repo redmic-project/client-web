@@ -1,10 +1,8 @@
 define([
 	"dojo/_base/lang"
-	, "dojo/has"
 	, 'mediatorjs/mediator.min'
 ], function(
 	lang
-	, has
 	, MediatorJS
 ){
 	//	summary:
@@ -69,20 +67,9 @@ define([
 		}
 	};
 
-	var mediatorInstance;
-	if (has("host-browser")) {
-		if (!window.mediator) {
-			window.mediator = new MediatorJS();
-		}
-		mediatorInstance = window.mediator;
-	} else if (has("host-node")) {
-		if (!global.mediator) {
-			global.mediator = new MediatorJS();
-		}
-		mediatorInstance = global.mediator;
-	} else {
-		console.error('Cannot create a mediatorjs instance, environment not supported');
+	if (!globalThis.mediator) {
+		globalThis.mediator = new MediatorJS();
 	}
 
-	return mediatorInstance;
+	return globalThis.mediator;
 });

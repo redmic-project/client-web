@@ -219,7 +219,7 @@ define([
 				this.i18n.sendFeedback,
 				lang.hitch(this, function() {
 					this._resetForm();
-					window.location.href = "/";
+					globalThis.location.href = "/";
 				})
 			);
 		},

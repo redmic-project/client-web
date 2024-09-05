@@ -85,8 +85,8 @@ define([
 
 		_changeLang: function(evt) {
 
-			window.location.href = window.location.protocol + '//' + evt.target.dataset.dojoProps + '.' +
-				window.location.hostname.replace(kernel.locale + '.', '');
+			globalThis.location.href = globalThis.location.protocol + '//' + evt.target.dataset.dojoProps + '.' +
+				globalThis.location.hostname.replace(kernel.locale + '.', '');
 		},
 
 		_onShowWhatIsRedmic: function(event) {
@@ -100,10 +100,10 @@ define([
 
 			event.stopPropagation();
 			var path = 'what-is-redmic';
-			if (window.location.href.indexOf(path) < 0) {
-				window.location.href = path;
+			if (globalThis.location.href.indexOf(path) < 0) {
+				globalThis.location.href = path;
 			} else {
-				window.history.back();
+				globalThis.history.back();
 			}
 		},
 
@@ -117,8 +117,8 @@ define([
 			//
 
 			setTimeout(lang.hitch(this, function() {
-				if (window.location.href.indexOf(this.whatIsRedmicPath) >= 0) {
-					window.history.back();
+				if (globalThis.location.href.indexOf(this.whatIsRedmicPath) >= 0) {
+					globalThis.history.back();
 				}
 			}), 200);
 		}

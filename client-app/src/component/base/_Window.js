@@ -137,7 +137,7 @@ define([
 				return;
 			}
 
-			var currMaxHeight = window.innerHeight;
+			var currMaxHeight = globalThis.innerHeight;
 
 			if (this._lastMaxHeight !== currMaxHeight) {
 				this._lastMaxHeight = currMaxHeight;

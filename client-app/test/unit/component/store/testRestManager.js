@@ -26,12 +26,12 @@ define([
 				parentChannel: 'app'
 			});
 
-			originalOpenMethod = window.XMLHttpRequest.prototype.open;
+			originalOpenMethod = globalThis.XMLHttpRequest.prototype.open;
 		},
 
 		afterEach: function() {
 
-			window.XMLHttpRequest.prototype.open = originalOpenMethod;
+			globalThis.XMLHttpRequest.prototype.open = originalOpenMethod;
 		},
 
 		after: function() {
@@ -44,7 +44,7 @@ define([
 
 				var dfd = this.async(timeout);
 
-				window.XMLHttpRequest.prototype.open = dfd.callback(function(method, url) {
+				globalThis.XMLHttpRequest.prototype.open = dfd.callback(function(method, url) {
 
 					var expectedUrl = target + '/' + exampleId;
 					assert.strictEqual(url, expectedUrl, 'La URL de petición no es la esperada');
@@ -157,7 +157,7 @@ define([
 
 				var dfd = this.async(timeout);
 
-				window.XMLHttpRequest.prototype.open = dfd.callback(function(method, url) {
+				globalThis.XMLHttpRequest.prototype.open = dfd.callback(function(method, url) {
 
 					var expectedUrl = target + '/' + exampleAction;
 					assert.strictEqual(url, expectedUrl, 'La URL de petición no es la esperada');
@@ -270,7 +270,7 @@ define([
 
 				var dfd = this.async(timeout);
 
-				window.XMLHttpRequest.prototype.open = dfd.callback(function(method, url) {
+				globalThis.XMLHttpRequest.prototype.open = dfd.callback(function(method, url) {
 
 					var expectedUrl = target + '/' + exampleId;
 					assert.strictEqual(url, expectedUrl, 'La URL de petición no es la esperada');
@@ -385,7 +385,7 @@ define([
 
 				var dfd = this.async(timeout);
 
-				window.XMLHttpRequest.prototype.open = dfd.callback(function(method, url) {
+				globalThis.XMLHttpRequest.prototype.open = dfd.callback(function(method, url) {
 
 					var expectedUrl = target + '/' + exampleId;
 					assert.strictEqual(url, expectedUrl, 'La URL de petición no es la esperada');

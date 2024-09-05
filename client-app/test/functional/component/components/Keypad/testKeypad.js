@@ -29,7 +29,7 @@ define([
 					.then(Utils.clickElement(buttonSelector1))
 					.then(pollUntil(function() {
 
-						return window.inputKey;
+						return globalThis.inputKey;
 					}, timeout))
 					.then(function(inputKey) {
 

@@ -16,24 +16,24 @@ define([
 
 		constructor: function() {
 
-			global.listContainerWithoutLoadingSelector = this._getParentList() +
+			globalThis.listContainerWithoutLoadingSelector = this._getParentList() +
 				'div.containerList' + Config.selector.notLoading;
 
-			global.listSelector = listContainerWithoutLoadingSelector + ' div.contentList';
-			global.listRowCheckboxSelector = 'div.check span';
-			global.listRowTitleTextSelector = 'span.title';
-			global.listRowSelector = 'div.containerRow';
+			globalThis.listSelector = listContainerWithoutLoadingSelector + ' div.contentList';
+			globalThis.listRowCheckboxSelector = 'div.check span';
+			globalThis.listRowTitleTextSelector = 'span.title';
+			globalThis.listRowSelector = 'div.containerRow';
 
-			global.listBottomAreaSelector = listContainerWithoutLoadingSelector + ' div.bottomList';
-			global.listSelectionBoxSelector = listBottomAreaSelector + ' > div.containerSelectionBox';
+			globalThis.listBottomAreaSelector = listContainerWithoutLoadingSelector + ' div.bottomList';
+			globalThis.listSelectionBoxSelector = listBottomAreaSelector + ' > div.containerSelectionBox';
 
-			global.listSelectionBoxInputSelector = listSelectionBoxSelector + ' > div.selectionBox';
-			global.listSelectionCountSelector = listSelectionBoxInputSelector + ' > span:nth-child(2)';
+			globalThis.listSelectionBoxInputSelector = listSelectionBoxSelector + ' > div.selectionBox';
+			globalThis.listSelectionCountSelector = listSelectionBoxInputSelector + ' > span:nth-child(2)';
 
-			global.listModeInputSelector = listSelectionBoxSelector + ' > div.seeSelection';
-			global.listModeInputSelectSelector = listModeInputSelector + ' > select';
+			globalThis.listModeInputSelector = listSelectionBoxSelector + ' > div.seeSelection';
+			globalThis.listModeInputSelectSelector = listModeInputSelector + ' > select';
 
-			global.listOrderSelector = listBottomAreaSelector + ' > div.orderZone > div.containerOrder';
+			globalThis.listOrderSelector = listBottomAreaSelector + ' > div.orderZone > div.containerOrder';
 		},
 
 		_getParentList: function() {

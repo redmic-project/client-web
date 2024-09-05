@@ -19,7 +19,7 @@ define([
 				label: 'Go back',
 				onClick: function() {
 
-					location.href = '/';
+					globalThis.location.href = '/';
 				}
 			}).placeAt('goBack');
 

@@ -155,8 +155,8 @@ define([
 
 		_calculateOrientation: function() {
 
-			var middleWidth = window.innerWidth / 2,
-				middleHeight = window.innerHeight / 2,
+			var middleWidth = globalThis.innerWidth / 2,
+				middleHeight = globalThis.innerHeight / 2,
 
 				sourceBounding = this._tooltipSourceNode.getBoundingClientRect(),
 				sourceMiddleWidth = sourceBounding.left + sourceBounding.width / 2,

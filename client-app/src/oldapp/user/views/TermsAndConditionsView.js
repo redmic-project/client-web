@@ -38,7 +38,7 @@ define([
 			//		callback private
 			//
 
-			window.history.go(-1);
+			globalThis.history.go(-1);
 		}
 	});
 });

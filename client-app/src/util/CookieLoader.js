@@ -106,17 +106,17 @@ define([
 			//	tags:
 			//		private
 
-			var script = document.createElement('script'),
+			var script = globalThis.document.createElement('script'),
 				gtagId = redmicConfig.googleAnalyticsId;
 
 			script.async = true;
 			script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gtagId;
 
-			document.head.appendChild(script);
+			globalThis.document.head.appendChild(script);
 
-			window.dataLayer = [];
+			globalThis.dataLayer = [];
 
-			window.gtag = function() {
+			globalThis.gtag = function() {
 
 				dataLayer.push(arguments);
 			};

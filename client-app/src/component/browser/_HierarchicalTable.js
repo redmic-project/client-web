@@ -35,9 +35,9 @@ define([
 
 			this.inherited(arguments);
 
-			this._hierarchicalTableStyle = document.createElement("style");
+			this._hierarchicalTableStyle = globalThis.document.createElement("style");
 
-			document.head.appendChild(this._hierarchicalTableStyle);
+			globalThis.document.head.appendChild(this._hierarchicalTableStyle);
 
 			this._hierarchicalTableStyle = this._hierarchicalTableStyle.sheet;
 		},

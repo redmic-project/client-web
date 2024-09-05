@@ -75,7 +75,7 @@ define([
 
 			put(this.domNode, '[title=$]', this.i18n.language);
 
-			var languageIcon = this._getLanguageIcon(window.lang);
+			var languageIcon = this._getLanguageIcon(globalThis.lang);
 			put(this.domNode, 'i.' + languageIcon);
 
 			this._publish(this.listMenu.getChannel('ADD_EVT'), {
@@ -93,12 +93,11 @@ define([
 		_changeLanguage: function(itemObj) {
 
 			var language = itemObj.value,
-				currentUrl = window.location,
-				protocol = currentUrl.protocol,
-				hostname = currentUrl.hostname,
+				protocol = globalThis.location.protocol,
+				hostname = globalThis.location.hostname,
 				hostnameWithoutLang = hostname.replace(kernel.locale + '.', '');
 
-			window.location.href = protocol + '//' + language + '.' + hostnameWithoutLang;
+			globalThis.location.href = protocol + '//' + language + '.' + hostnameWithoutLang;
 		},
 
 		_getLanguageIcon: function(currentLanguage) {

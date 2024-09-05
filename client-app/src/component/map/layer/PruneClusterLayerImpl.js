@@ -162,7 +162,7 @@ define([
 
 				createIcon: function () {
 
-					var e = document.createElement('canvas');
+					var e = globalThis.document.createElement('canvas');
 					this._setIconStyles(e, 'icon');
 					var s = this.options.iconSize;
 					e.width = s.x;

@@ -179,7 +179,7 @@ define([
 			//
 
 			this._resetForm();
-			window.location.href = "/";
+			globalThis.location.href = "/";
 		},
 
 		_resetForm: function() {
@@ -240,7 +240,7 @@ define([
 			alertify.alert(this.i18n.success, this.i18n.activateAccount, lang.hitch(this, function() {
 
 				this._resetForm();
-				window.location.href = "/";
+				globalThis.location.href = "/";
 			}));
 		},
 
@@ -279,7 +279,7 @@ define([
 				}
 			});
 
-			window.location.href = "terms-and-conditions";
+			globalThis.location.href = "terms-and-conditions";
 		}
 	});
 });

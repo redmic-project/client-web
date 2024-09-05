@@ -105,7 +105,7 @@ define([
 
 		_shareCallback: function(data) {
 
-			var shareUrl = window.location + '?settings-id=' + data.id;
+			var shareUrl = globalThis.location + '?settings-id=' + data.id;
 
 			alertify.confirm(shareUrl,
 				lang.hitch(this, function(shareUrl) {

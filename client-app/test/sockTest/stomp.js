@@ -142,7 +142,7 @@
 
     Client.prototype.debug = function(message) {
       var ref;
-      return typeof window !== "undefined" && window !== null ? (ref = window.console) != null ? ref.log(message) : void 0 : void 0;
+      return typeof globalThis !== "undefined" && globalThis !== null ? (ref = globalThis.console) != null ? ref.log(message) : void 0 : void 0;
     };
 
     now = function() {
@@ -492,12 +492,12 @@
 
   if (typeof window !== "undefined" && window !== null) {
     Stomp.setInterval = function(interval, f) {
-      return window.setInterval(f, interval);
+      return globalThis.setInterval(f, interval);
     };
     Stomp.clearInterval = function(id) {
-      return window.clearInterval(id);
+      return globalThis.clearInterval(id);
     };
-    window.Stomp = Stomp;
+    globalThis.Stomp = Stomp;
   } else if (!exports) {
     self.Stomp = Stomp;
   }

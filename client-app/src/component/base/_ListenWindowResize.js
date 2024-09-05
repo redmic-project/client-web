@@ -2,12 +2,10 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, 'dojo/has'
 ], function(
 	declare
 	, lang
 	, aspect
-	, has
 ) {
 
 	return declare(null, {
@@ -40,13 +38,12 @@ define([
 
 		_doListenWindowResizeEvtFacade: function() {
 
-			var globalCtx = this._getGlobalContext(),
-				resizeMethod = lang.hitch(this, this._groupEventArgs, 'WINDOW_RESIZE');
+			var resizeMethod = lang.hitch(this, this._groupEventArgs, 'WINDOW_RESIZE');
 
-			if (!globalCtx.onresize) {
-				globalCtx.onresize = resizeMethod;
+			if (!globalThis.onresize) {
+				globalThis.onresize = resizeMethod;
 			} else {
-				aspect.after(globalCtx, 'onresize', resizeMethod);
+				aspect.after(globalThis, 'onresize', resizeMethod);
 			}
 		},
 
@@ -72,7 +69,7 @@ define([
 
 		_evaluateCurrentWindowSize: function() {
 
-			this._setLowWidth(this._getGlobalContext().innerWidth < this.lowWidthValue);
+			this._setLowWidth(globalThis.innerWidth < this.lowWidthValue);
 		},
 
 		_getLowWidth: function() {
@@ -83,17 +80,6 @@ define([
 		_setLowWidth: function(value) {
 
 			this.statusFlags.lowWidth = value;
-		},
-
-		_getGlobalContext: function() {
-
-			if (has('host-browser')) {
-				return window;
-			} else if (has('host-node')) {
-				return global;
-			} else {
-				console.error('Environment not supported');
-			}
 		}
 	});
 });

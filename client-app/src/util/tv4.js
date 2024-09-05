@@ -1,12 +1,10 @@
 define([
 	'dojo/_base/lang'
-	, 'dojo/has'
 	, 'RWidgets/Utilities'
 	, 'src/util/stringFormats'
 	, 'tv4/tv4'
 ], function(
 	lang
-	, has
 	, Utilities
 	, stringFormats
 	, tv4
@@ -64,22 +62,10 @@ define([
 		instance.defineKeyword('uniqueItemsByRequiredProperties', lang.hitch(this, _uniqueItemsByRequiredProperties));
 	}
 
-	var tv4Instance;
-	if (has('host-browser')) {
-		if (!window.tv4) {
-			_customizeTv4(tv4);
-			window.tv4 = tv4;
-		}
-		tv4Instance = window.tv4;
-	} else if (has('host-node')) {
-		if (!global.tv4) {
-			_customizeTv4(tv4);
-			global.tv4 = tv4;
-		}
-		tv4Instance = global.tv4;
-	} else {
-		console.error('Cannot create a tv4 instance, environment not supported');
+	if (!globalThis.tv4) {
+		_customizeTv4(tv4);
+		globalThis.tv4 = tv4;
 	}
 
-	return tv4Instance;
+	return globalThis.tv4;
 });

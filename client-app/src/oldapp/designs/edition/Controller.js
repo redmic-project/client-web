@@ -287,7 +287,7 @@ define([
 			if (this.popupBody) {
 				this._publish(this.getChannel("HIDE"));
 			} else {
-				window.history.go(-1);
+				globalThis.history.go(-1);
 			}
 		},
 

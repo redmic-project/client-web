@@ -89,7 +89,7 @@ define([
 
 		_goTo404: function() {
 
-			window.location.href = "/404";
+			globalThis.location.href = "/404";
 		}
 	});
 });

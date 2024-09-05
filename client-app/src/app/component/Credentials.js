@@ -159,11 +159,10 @@ define([
 
 			this._setEmptySelectionIds();
 
-			var location = window.location;
-			if (location.pathname === this._loginPath) {
+			if (globalThis.location.pathname === this._loginPath) {
 				this._getCredentials();
 			} else {
-				location.reload();
+				globalThis.location.reload();
 			}
 		},
 

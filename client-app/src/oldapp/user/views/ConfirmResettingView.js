@@ -163,7 +163,7 @@ define([
 
 		_goBack: function() {
 
-			window.location.href = '/';
+			globalThis.location.href = '/';
 		},
 
 		_onGetTokenError: function() {
@@ -177,7 +177,7 @@ define([
 				}
 			});
 
-			window.location.href = '/404';
+			globalThis.location.href = '/404';
 		},
 
 		_confirmValidator: function() {

@@ -20,11 +20,11 @@ define([
 				key1: value1,
 				key2: value2
 			};
-			localStorage.clear();
+			globalThis.localStorage.clear();
 		},
 
 		afterEach: function() {
-			localStorage.clear();
+			globalThis.localStorage.clear();
 			handler && handler.remove();
 		},
 
@@ -32,7 +32,7 @@ define([
 			"check support of HTML5 storage": function() {
 				var support;
 				try {
-					support = 'localStorage' in window && window.localStorage !== null;
+					support = 'localStorage' in globalThis && globalThis.localStorage !== null;
 				} catch (e) {
 					support = false;
 				}
@@ -42,7 +42,7 @@ define([
 			"check setItem": function() {
 				// Guardamos con nuestro método y recuperamos con el nativo
 				RedmicLocalStorage.setItem(key1, value1);
-				assert.strictEqual(value1, localStorage.getItem(prefix + key1), "El valor obtenido no es igual al guardado previamente.");
+				assert.strictEqual(value1, globalThis.localStorage.getItem(prefix + key1), "El valor obtenido no es igual al guardado previamente.");
 			},
 
 			"check getItem": function() {
@@ -50,34 +50,34 @@ define([
 				assert.strictEqual(null, RedmicLocalStorage.getItem(key1), "El valor buscado no existe pero al recuperarlo obtenemos algo válido.");
 
 				// Guardamos con el método nativo y recuperamos con el nuestro
-				localStorage.setItem(prefix + key1, value1);
+				globalThis.localStorage.setItem(prefix + key1, value1);
 				assert.strictEqual(value1, RedmicLocalStorage.getItem(key1), "El valor obtenido no es igual al guardado previamente.");
 			},
 
 			"check removeItem": function() {
-				localStorage.setItem(prefix + key1, value1);
+				globalThis.localStorage.setItem(prefix + key1, value1);
 				RedmicLocalStorage.removeItem(key1);
-				assert.strictEqual(null, localStorage.getItem(prefix + key1), "La propiedad se ha borrado pero se sigue encontrando.");
+				assert.strictEqual(null, globalThis.localStorage.getItem(prefix + key1), "La propiedad se ha borrado pero se sigue encontrando.");
 			},
 
 			"check clear": function() {
-				localStorage.setItem(prefix + key1, value1);
-				localStorage.setItem(prefix + key2, value2);
+				globalThis.localStorage.setItem(prefix + key1, value1);
+				globalThis.localStorage.setItem(prefix + key2, value2);
 				// Propiedad sin nuestro prefijo, ejemplo de propiedad ajena
-				localStorage.setItem(key1, value1);
+				globalThis.localStorage.setItem(key1, value1);
 				RedmicLocalStorage.clear();
-				assert.strictEqual(null, localStorage.getItem(prefix + key1), "La propiedad se ha borrado pero se sigue encontrando.");
-				assert.strictEqual(null, localStorage.getItem(prefix + key2), "La propiedad se ha borrado pero se sigue encontrando.");
-				assert.strictEqual(1, localStorage.length, "La propiedad ajena se ha borrado cuando deberíamos respetarla.");
+				assert.strictEqual(null, globalThis.localStorage.getItem(prefix + key1), "La propiedad se ha borrado pero se sigue encontrando.");
+				assert.strictEqual(null, globalThis.localStorage.getItem(prefix + key2), "La propiedad se ha borrado pero se sigue encontrando.");
+				assert.strictEqual(1, globalThis.localStorage.length, "La propiedad ajena se ha borrado cuando deberíamos respetarla.");
 			},
 
 			"check length": function() {
 				// Propiedad sin nuestro prefijo, no cuenta para la longitud
-				localStorage.setItem(key1, value1);
+				globalThis.localStorage.setItem(key1, value1);
 				assert.strictEqual(0, RedmicLocalStorage.length(), "No existen propiedades pero se encuentra alguna.");
-				localStorage.setItem(prefix + key1, value1);
+				globalThis.localStorage.setItem(prefix + key1, value1);
 				assert.strictEqual(1, RedmicLocalStorage.length(), "Existe una propiedad pero se encuentra un número distinto de ellas.");
-				localStorage.setItem(prefix + key2, value2);
+				globalThis.localStorage.setItem(prefix + key2, value2);
 				assert.strictEqual(2, RedmicLocalStorage.length(), "Existen dos propiedades pero se encuentra un número distinto de ellas.");
 			},
 
@@ -85,7 +85,7 @@ define([
 
 				assert.strictEqual(null, RedmicLocalStorage.key(0), "Ya existe un elemento en la posición 0");
 
-				localStorage.setItem(prefix + key1, value1);
+				globalThis.localStorage.setItem(prefix + key1, value1);
 				assert.strictEqual(key1, RedmicLocalStorage.key(0), "El elemento indexado no tiene la clave esperada");
 			},
 
@@ -93,15 +93,15 @@ define([
 
 				assert.isEmpty(RedmicLocalStorage.keys(), "Ya existen elementos antes de comenzar");
 
-				localStorage.setItem(prefix + key1, value1);
-				localStorage.setItem(prefix + key2, value2);
+				globalThis.localStorage.setItem(prefix + key1, value1);
+				globalThis.localStorage.setItem(prefix + key2, value2);
 
 				assert.sameMembers([key1, key2], RedmicLocalStorage.keys(), "Los elementos indexados no tienen las claves esperadas");
 			},
 
 			"check has": function() {
 				assert.notOk(RedmicLocalStorage.has(key1), "La propiedad no existe pero se informa de que sí.");
-				localStorage.setItem(prefix + key1, value1);
+				globalThis.localStorage.setItem(prefix + key1, value1);
 				assert.ok(RedmicLocalStorage.has(key1), "La propiedad existe pero se informa de que no es así.");
 			},
 
@@ -128,7 +128,7 @@ define([
 				handler = RedmicLocalStorage.on("removed:"+key1, function() {
 					assert.ok(1);
 				});
-				localStorage.setItem(key1, value1);
+				globalThis.localStorage.setItem(key1, value1);
 				RedmicLocalStorage.removeItem(key1);
 			},
 
@@ -136,7 +136,7 @@ define([
 				handler = RedmicLocalStorage.on("cleared", function() {
 					assert.ok(1);
 				});
-				localStorage.setItem(key1, value1);
+				globalThis.localStorage.setItem(key1, value1);
 				RedmicLocalStorage.clear();
 			}
 		}

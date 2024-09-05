@@ -16,10 +16,10 @@ define([
 
 		constructor: function() {
 
-			global.expandCollapseSelector = 'div.expandCollapse';
-			global.expandSelector = expandCollapseSelector + ' span.fa-caret-right';
-			global.collapseSelector = expandCollapseSelector + ' span.fa-caret-down';
-			global.childrenInParentSelector = 'div.containerBottomRow div.rowsContainer > *';
+			globalThis.expandCollapseSelector = 'div.expandCollapse';
+			globalThis.expandSelector = expandCollapseSelector + ' span.fa-caret-right';
+			globalThis.collapseSelector = expandCollapseSelector + ' span.fa-caret-down';
+			globalThis.childrenInParentSelector = 'div.containerBottomRow div.rowsContainer > *';
 		},
 
 		getCountChildrenInParent: function(indexParent) {

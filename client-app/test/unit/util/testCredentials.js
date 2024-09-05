@@ -30,7 +30,7 @@ define([
 			"check support of HTML5 storage": function() {
 				var support;
 				try {
-					support = 'localStorage' in window && window.localStorage !== null;
+					support = 'localStorage' in globalThis && globalThis.localStorage !== null;
 				} catch (e) {
 					support = false;
 				}

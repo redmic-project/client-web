@@ -47,7 +47,7 @@ define([
 			});
 
 			node = put('div[style="width:300px;height:300px"]');
-			document.children[0].appendChild(node);
+			globalThis.document.children[0].appendChild(node);
 
 			Mediator.publish(chartsContainer.getChannel('SHOW'), {
 				node: node

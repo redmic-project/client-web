@@ -33,13 +33,13 @@ module.exports = function(args) {
 		config.functionalSuites = defaultFunctionalSuites;
 	}
 
-	global.credentials = {
+	globalThis.credentials = {
 		userRole: role,
 		userName: user,
 		userPassword: pass
 	};
 
-	global.reportersOutputPath = args.reportersOutputPath;
+	globalThis.reportersOutputPath = args.reportersOutputPath;
 
 	return deepmerge.all([_intern, config], {
 		arrayMerge: function (_destinationArray, sourceArray, _options) {

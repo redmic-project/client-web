@@ -128,9 +128,9 @@ define([
 
 			this.inherited(arguments);
 
-			this._tableStyle = document.createElement("style");
+			this._tableStyle = globalThis.document.createElement("style");
 
-			document.head.appendChild(this._tableStyle);
+			globalThis.document.head.appendChild(this._tableStyle);
 
 			this._tableStyle = this._tableStyle.sheet;
 		},

@@ -50,7 +50,7 @@ define([
 			if (Credentials.userIsGuest()) {
 				alertify.alert(this.title, this.banIcon + this.banMessageDocument);
 			} else {
-				window.open(url + '?access_token=' + Credentials.get("accessToken"),'_blank');
+				globalThis.open(url + '?access_token=' + Credentials.get("accessToken"),'_blank');
 			}
 		},
 

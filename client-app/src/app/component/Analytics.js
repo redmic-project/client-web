@@ -9,7 +9,7 @@ define([
 ){
 	// Constantes para trakear acciones
 	// TODO: sacar a un fichero externo (Necesita ser global)
-	window.TRACK = {
+	globalThis.TRACK = {
 		'type': {
 			'event': 'event',
 			'page': 'pageview',

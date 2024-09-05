@@ -165,7 +165,7 @@ define([
 
 		_createPopupIntermediateValue: function() {
 
-			this.popupNode = put(document.body, "div.popupCreate.popupProgressIntermediateValue");
+			this.popupNode = put(globalThis.document.body, "div.popupCreate.popupProgressIntermediateValue");
 			this.spanPopupNode = put(this.popupNode, "span");
 			this._popupIntermediateValue = true;
 		},
@@ -393,12 +393,12 @@ define([
 			this._pause();
 			this.playExecute = playExecute;
 
-			document.body.onmouseup = lang.hitch(this, this._eventOnMouseUpDocument);
+			globalThis.document.body.onmouseup = lang.hitch(this, this._eventOnMouseUpDocument);
 		},
 
 		_eventOnMouseUpDocument: function() {
 
-			document.body.onmouseup = null;
+			globalThis.document.body.onmouseup = null;
 			if (this.playExecute)
 				this._play();
 		},

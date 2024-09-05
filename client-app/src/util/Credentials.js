@@ -2,13 +2,11 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Evented'
-	, 'dojo/has'
 	, 'src/util/RedmicLocalStorage'
 ], function(
 	declare
 	, lang
 	, Evented
-	, has
 	, RedmicLocalStorage
 ) {
 
@@ -127,20 +125,9 @@ define([
 		}
 	});
 
-	var credentialsInstance;
-	if (has('host-browser')) {
-		if (!window.credentials) {
-			window.credentials = new Credentials();
-		}
-		credentialsInstance = window.credentials;
-	} else if (has('host-node')) {
-		if (!global.credentials) {
-			global.credentials = new Credentials();
-		}
-		credentialsInstance = global.credentials;
-	} else {
-		console.error('Cannot create a credentials instance, environment not supported');
+	if (!globalThis.credentials) {
+		globalThis.credentials = new Credentials();
 	}
 
-	return credentialsInstance;
+	return globalThis.credentials;
 });

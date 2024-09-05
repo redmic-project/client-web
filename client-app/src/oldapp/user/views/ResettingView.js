@@ -65,7 +65,7 @@ define([
 
 		_goBack: function() {
 
-			window.location.href = '/';
+			globalThis.location.href = '/';
 		},
 
 		_onSubmitResettingPassword: function(/*Event*/ evt) {

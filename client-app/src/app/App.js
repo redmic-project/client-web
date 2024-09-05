@@ -2,7 +2,6 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/dom'
-	, 'dojo/has'
 	, 'put-selector/put'
 	, 'src/app/component/Analytics'
 	, 'src/app/component/Credentials'
@@ -26,7 +25,6 @@ define([
 	declare
 	, lang
 	, dom
-	, has
 	, put
 	, Analytics
 	, Credentials
@@ -51,17 +49,6 @@ define([
 	var rootNode = dom.byId('rootContainer'),
 		nativeLoadingNode = dom.byId('loadingContainer');
 
-	var getGlobalContext = function() {
-
-		if (has('host-browser')) {
-			return window;
-		} else if (has('host-node')) {
-			return global;
-		} else {
-			console.error('Environment not supported');
-		}
-	};
-
 	var hideNativeLoadingNode = function() {
 
 		if (nativeLoadingNode) {
@@ -72,7 +59,7 @@ define([
 
 	if (!CheckBrowser.isSupported()) {
 		hideNativeLoadingNode();
-		getGlobalContext().location.href = '/noSupportBrowser';
+		globalThis.location.href = '/noSupportBrowser';
 
 		return declare(null);
 	}
@@ -108,7 +95,7 @@ define([
 		constructor: function(args) {
 
 			// TODO medida temporal de comienzo de migración de identidad
-			var currDomain = getGlobalContext().location.hostname,
+			var currDomain = globalThis.location.hostname,
 				ecomarcanDomainPattern = /.*ecomarcan\..+/;
 
 			this.config = {
@@ -134,8 +121,7 @@ define([
 			var parentChannel = this.getChannel();
 
 			this._router = new Router({
-				parentChannel: parentChannel,
-				globalContext: getGlobalContext()
+				parentChannel: parentChannel
 			});
 
 			new CookieLoader();

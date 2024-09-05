@@ -229,7 +229,7 @@ define([
 				return;
 			}
 
-			var shareUrl = window.location + '?settings-id=' + res.data[this.idProperty];
+			var shareUrl = globalThis.location + '?settings-id=' + res.data[this.idProperty];
 
 			alertify.message('<i class="fa fa-share-alt"></i> ' + this.i18n.copyToClipboard, 0, lang.hitch(this, function(url) {
 

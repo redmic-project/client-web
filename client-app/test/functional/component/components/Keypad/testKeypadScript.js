@@ -39,7 +39,7 @@ require([
 
 	keypad._once(keypad.getChannel('KEYPAD_INPUT'), function(obj) {
 
-		window.inputKey = obj.inputKey;
+		globalThis.inputKey = obj.inputKey;
 	});
 
 	keypad._publish(keypad.getChannel('HIDE_BUTTON'), {

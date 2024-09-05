@@ -244,10 +244,7 @@ define([
 		_removeQueryParametersFromHref: function() {
 
 			var locationObj = this.globalContext.location,
-				locationPort = locationObj.port,
-				isNotStandardPort = locationPort !== '80',
-				hrefPort = isNotStandardPort ? (':' + locationPort) : '',
-				href = locationObj.protocol + '//' + locationObj.hostname + hrefPort + locationObj.pathname + locationObj.hash;
+				href = locationObj.origin + locationObj.pathname + locationObj.hash;
 
 			this.globalContext.history.replaceState(null, null, href);
 		}

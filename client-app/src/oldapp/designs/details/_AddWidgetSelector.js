@@ -65,21 +65,27 @@ define([
 			this._addWidgetsToSelector();
 		},
 
+		_applyHrefValueWithoutHistory: function(hrefValue) {
+
+			history.replaceState(null, null, hrefValue);
+		},
+
+		_getHrefWithoutHashValue: function() {
+
+			return location.origin + location.pathname + location.search;
+		},
+
 		_applyCurrentAnchor: function() {
 
-			if (!location.hash) {
+			var hash = location.hash;
+
+			if (!hash || !this._widgetSelector) {
 				return;
 			}
 
-			var hash = location.hash;
-			location.hash = '';
-			location.hash = hash;
-
-			if (this._widgetSelector) {
-				this._publish(this._widgetSelector.getChannel('SET_VALUE'), {
-					name: hash.substring(1)
-				});
-			}
+			this._publish(this._widgetSelector.getChannel('SET_VALUE'), {
+				name: hash.substring(1)
+			});
 		},
 
 		_addWidgetsToSelector: function() {
@@ -154,9 +160,21 @@ define([
 
 		_onWidgetSelectorValueChanged: function(res) {
 
-			var value = res.value || '';
+			var value = res.value,
+				newHref = this._getHrefWithoutHashValue();
 
-			location.href = '#' + value;
+			if (!value) {
+				this._applyHrefValueWithoutHistory(newHref);
+				return;
+			}
+
+			var newAnchor = '#' + value;
+
+			this._applyHrefValueWithoutHistory(newHref + newAnchor);
+
+			document.querySelector(newAnchor).scrollIntoView({
+				behavior: 'smooth'
+			});
 		}
 	});
 });

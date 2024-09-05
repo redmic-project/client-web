@@ -92,30 +92,17 @@ define([
 			//	tags:
 			//		private
 
-			var gCtx = globalThis,
-				dCtx = gCtx.document,
-				listenMethod, eventPrefix;
-
-			if (gCtx.addEventListener) {
-				listenMethod = dCtx.addEventListener;
-				eventPrefix = '';
-			} else {
-				listenMethod = dCtx.attachEvent;
-				eventPrefix = 'on';
-			}
-
-			listenMethod.call(dCtx, eventPrefix + 'click', lang.hitch(this, this._evaluateClickEvt));
-			listenMethod.call(gCtx, eventPrefix + 'popstate', lang.hitch(this, this._evaluatePopStateEvt));
+			globalThis.addEventListener.call(globalThis, 'click', lang.hitch(this, this._evaluateClickEvt));
+			globalThis.addEventListener.call(globalThis, 'popstate', lang.hitch(this, this._evaluatePopStateEvt));
 		},
 
-		_evaluateClickEvt: function(evt) {
+		_evaluateClickEvt: function(event) {
 			//	summary:
 			//		Recibe eventos de click y, en caso de detectar un enlace de navegación interno, lo captura
 			//	tags:
 			//		private
 
-			var event = evt || globalThis.event,
-				targets = this._getClickTargets(event);
+			var targets = this._getClickTargets(event);
 
 			for (var i = 0; i < targets.length; i++) {
 				var target = targets[i],

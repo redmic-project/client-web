@@ -1,13 +1,11 @@
 define([
-	'alertify/alertify.min'
-	, "app/designs/base/_Main"
+	"app/designs/base/_Main"
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
 	, 'src/redmicConfig'
 	, 'd3/d3.min'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/has"
 	, 'moment/moment.min'
 	, "put-selector/put"
 	, "RWidgets/Utilities"
@@ -22,15 +20,13 @@ define([
 	, "src/component/map/layer/TrackingLayerImpl"
 	, "src/component/mapQuery/QueryOnMap"
 ], function(
-	alertify
-	, _Main
+	_Main
 	, Controller
 	, Layout
 	, redmicConfig
 	, d3
 	, declare
 	, lang
-	, has
 	, moment
 	, put
 	, Utilities
@@ -104,11 +100,6 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-
-			if (has("edge") || has("trident") || has("ie")) {
-				alertify.alert(this.i18n.browserPartiallySupported, this.i18n.browserPartiallySupportedMsg1 + ". " +
-					this.i18n.browserPartiallySupportedMsg2 + ".<br><br>" + this.i18n.recommendBrowser + ".");
-			}
 		},
 
 		_setMainConfigurations: function() {

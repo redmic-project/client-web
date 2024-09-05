@@ -407,11 +407,6 @@ define({
 
 		, "alertRestartAction": "Click here to undo the action"
 
-		, "browserPartiallySupported": "Browser partially supported"
-		, "browserPartiallySupportedMsg1": "Your browser does not support all the features present in this module"
-		, "browserPartiallySupportedMsg2": "You can continue despite this, or use a different browser"
-		, "recommendBrowser": "We recommend using 'Google Chrome' or 'Mozilla Firefox' to get full support"
-
 		, "categorizeLayer": "Categorize layer"
 		, "addLayersCategory": "Add layers category"
 		, "editLayersCategory": "Edit layers category"

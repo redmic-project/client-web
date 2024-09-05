@@ -407,11 +407,6 @@ define({
 
 	, "alertRestartAction": "Pulse aquí para deshacer la acción"
 
-	, "browserPartiallySupported": "Navegador soportado parcialmente"
-	, "browserPartiallySupportedMsg1": "Su navegador no soporta todas las características presentes en este módulo"
-	, "browserPartiallySupportedMsg2": "Puede continuar a pesar de ello, o usar un navegador diferente"
-	, "recommendBrowser": "Le recomendamos utilizar 'Google Chrome' o 'Mozilla Firefox' para tener un soporte completo"
-
 	, "categorizeLayer": "Categorizar capa"
 	, "addLayersCategory": "Añadir categoría de capas"
 	, "editLayersCategory": "Editando categoría de capas"

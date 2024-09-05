@@ -172,7 +172,14 @@ define([
 
 			this._applyHrefValueWithoutHistory(newHref + newAnchor);
 
-			document.querySelector(newAnchor).scrollIntoView({
+			var contentSelectedElement = document.querySelector(newAnchor);
+
+			if (!contentSelectedElement) {
+				console.warn('Tried to focus non-existant content:', newAnchor);
+				return;
+			}
+
+			contentSelectedElement.scrollIntoView({
 				behavior: 'smooth'
 			});
 		}

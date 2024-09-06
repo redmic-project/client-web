@@ -35,7 +35,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				target: redmicConfig.services.activity,
+				activityTarget: redmicConfig.services.activity,
 				reportService: 'activity',
 				ancestorsTarget: redmicConfig.services.activityAncestors,
 				infoTarget: 'infoWidgetTarget',
@@ -46,6 +46,8 @@ define([
 		},
 
 		_setMainConfigurations: function() {
+
+			this.target = [this.activityTarget];
 
 			this.viewPathsWidgets = {
 				organisations: redmicConfig.viewPaths.organisationCatalogDetails,
@@ -82,14 +84,28 @@ define([
 			});
 		},
 
+		_addTargetToArray: function(target) {
+
+			if (this.target && this.target instanceof Array && !this.target.includes(target)) {
+				this.target.push(target);
+			}
+		},
+
+		_removeTargetFromArray: function(target) {
+
+			if (this.target && this.target instanceof Array && this.target.includes(target)) {
+				this.target.splice(this.target.indexOf(target), 1);
+			}
+		},
+
 		_itemAvailable: function(res) {
 
-			var path = res.data.path,
-				ancestorsTarget = lang.replace(this.ancestorsTarget, { path: path });
+			var path = res.data.path;
 
 			this._activityData = res.data;
-			this._originalTarget = this.target;
-			this.target = ancestorsTarget;
+
+			this._ancestorsTarget = lang.replace(this.ancestorsTarget, { path: path });
+			this._addTargetToArray(this._ancestorsTarget);
 
 			this._emitEvt('INJECT_DATA', {
 				data: this._activityData,
@@ -98,7 +114,7 @@ define([
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
-				target: ancestorsTarget,
+				target: this._ancestorsTarget,
 				action: '_search',
 				query: {
 					returnFields: ['id', 'path', 'name']
@@ -118,7 +134,7 @@ define([
 
 		_dataAvailable: function(res) {
 
-			this.target = this._originalTarget;
+			this._removeTargetFromArray(this._ancestorsTarget);
 
 			var data = res.data,
 				ancestors = data.data;
@@ -162,6 +178,8 @@ define([
 		},
 
 		_onActivityDetailsHidden: function() {
+
+			this.target = [this.activityTarget];
 
 			if (this._lastWktLayer) {
 				var mapInstance = this._getWidgetInstance('spatialExtension');

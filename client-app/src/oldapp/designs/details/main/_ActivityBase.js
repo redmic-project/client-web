@@ -50,7 +50,7 @@ define([
 			this._checkPathVariableId();
 
 			this._emitEvt('GET', {
-				target: this.target,
+				target: this.activityTarget,
 				requesterId: this.ownChannel,
 				id: this.pathVariableId
 			});

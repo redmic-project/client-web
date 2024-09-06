@@ -58,13 +58,15 @@ define([
 				},{
 					instance: Order,
 					config: {
+						defaultOrderField: 'starred',
 						options: [
 							{value: 'name'},
 							{value: 'code'},
 							{value: 'activityType.name', label: this.i18n.activityType},
 							{value: 'startDate'},
 							{value: 'endDate'},
-							{value: 'updated'}
+							{value: 'updated'},
+							{value: 'starred'}
 						]
 					}
 				},{

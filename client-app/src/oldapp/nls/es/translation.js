@@ -1234,6 +1234,7 @@ define({
 	, "activityStatusFirstValue": "Sin iniciar"
 	, "activityStatusSecondValue": "En curso"
 	, "activityStatusThirdValue": "Concluida"
+	, "starred": "Destacada"
 	, "starredActivity": "Destacada"
 	, "activityHasResource": "Con recursos"
 	, "accessibilityFilterInfo": "La accesibilidad de una actividad determina si los datos que contiene son públicos o tienen algún tipo de restricción para su visualización y descarga. Utiliza este filtro para diferenciar actividades con datos libres o con algún tipo de restricción."

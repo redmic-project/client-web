@@ -1238,6 +1238,7 @@ define({
 		, "activityStatusFirstValue": "Not started"
 		, "activityStatusSecondValue": "In progress"
 		, "activityStatusThirdValue": "Concluded"
+		, "starred": "Starred"
 		, "starredActivity": "Starred"
 		, "activityHasResource": "Has resources"
 		, "accessibilityFilterInfo": "The accessibility of an activity determines if the contained data is public or has some kind of restriction for viewing and downloading it. Use this filter to differentiate activities with open data or with some kind of restriction."

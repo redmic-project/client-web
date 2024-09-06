@@ -1,37 +1,35 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "put-selector/put"
-	, "src/component/base/_Module"
-	, "src/component/base/_Show"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'put-selector/put'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
 ], function(
 	declare
 	, lang
-	, aspect
 	, put
 	, _Module
 	, _Show
-){
+) {
+
 	return declare([_Module, _Show], {
 		//	summary:
-		//
-		//	description:
-		//
+		//		Componente que aporta un selector de campo de ordenación y dirección.
 
 		constructor: function(args) {
 
 			this.config = {
 				'class': 'orderZone',
-				options: null,
+				hiddenClass: 'hidden',
 				optionDefault: 'default',
-				directionOrder: "ASC",
-				directionIconAsc: "fa-sort-amount-asc",
-				directionIconDesc: "fa-sort-amount-desc",
+				ascIcon: 'fa-sort-amount-asc',
+				descIcon: 'fa-sort-amount-desc',
+				defaultOrderField: 'updated',
+				defaultOrderDirection: 'DESC',
 
 				actions: {
-					ADD_TO_QUERY: "addToQuery",
-					UPDATE_OPTIONS: "updateOptions"
+					ADD_TO_QUERY: 'addToQuery',
+					UPDATE_OPTIONS: 'updateOptions'
 				}
 			};
 
@@ -41,8 +39,8 @@ define([
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this.getChannel("UPDATE_OPTIONS"),
-				callback: "_subUpdateOptions"
+				channel : this.getChannel('UPDATE_OPTIONS'),
+				callback: '_subUpdateOptions'
 			});
 		},
 
@@ -51,6 +49,10 @@ define([
 			this.inherited(arguments);
 
 			this._createOrder();
+
+			if (this.defaultOrderField !== this.optionDefault) {
+				this._publishOrder();
+			}
 		},
 
 		_subUpdateOptions: function(req) {
@@ -61,16 +63,16 @@ define([
 				return;
 			}
 
-			this.selectOrderNode && put(this.selectOrderNode, '!');
-
 			this.options = options;
+
+			this.selectOrderNode && put(this.selectOrderNode, '!');
 
 			this._createSelectOrderOption();
 		},
 
 		_createOrder: function() {
 
-			put(this.domNode, 'span', this.i18n.sort + ":");
+			put(this.domNode, 'span', this.i18n.sort + ':');
 
 			this.orderNode = put(this.domNode, 'div.containerOrder');
 
@@ -85,9 +87,11 @@ define([
 
 		_createSelectOrderOption: function() {
 
-			this.optionSelect = this.optionDefault;
+			this._currentOrderField = this.defaultOrderField;
 
-			this.options.unshift({value: "default"});
+			this.options.unshift({
+				value: this.optionDefault
+			});
 
 			this.selectOrderNode = put(this.orderNode, 'select.form-control');
 
@@ -96,14 +100,14 @@ define([
 
 			for (var i = 0; i < this.options.length; i++ ) {
 				var item = this.options[i],
-					selected = "";
+					selected = '';
 
-				if (item.value == this.optionDefault) {
-					selected = "[selected]";
+				if (item.value === this.defaultOrderField) {
+					selected = '[selected]';
 				}
 
-				var optionNode = put(this.selectOrderNode, "option" +
-					selected + "[value=$]", item.value, item.label || this.i18n[item.value] || item.value);
+				put(this.selectOrderNode, 'option' + selected + '[value=$]', item.value,
+					item.label || this.i18n[item.value] || item.value);
 			}
 
 			this._changeDirectionIcon();
@@ -111,7 +115,9 @@ define([
 
 		_createDirectionOrder: function() {
 
-			this.directionOrderNode = put(this.orderNode, 'span.hidden');
+			this._currentOrderDirection = this.defaultOrderDirection;
+
+			this.directionOrderNode = put(this.orderNode, 'span.' + this.hiddenClass);
 			this.directionOrderNode.onclick = lang.hitch(this, this._eventDirectionClick);
 
 			this._changeDirectionIcon();
@@ -119,85 +125,84 @@ define([
 
 		_changeDirectionIcon: function() {
 
-			if (this.directionOrder == "ASC") {
-				this.directionOrderNode.setAttribute("class", "fa " + this.directionIconAsc);
-			} else {
-				this.directionOrderNode.setAttribute("class", "fa " + this.directionIconDesc);
-			}
+			var directionIconClass = 'fa ' + (this._currentOrderDirection === 'ASC' ? this.ascIcon : this.descIcon);
 
-			this.optionSelect !== "default" ? this._showDirectionIcon() : this._hideDirectionIcon();
+			this.directionOrderNode.setAttribute('class', directionIconClass);
+
+			if (this._currentOrderField === this.optionDefault) {
+				this._hideDirectionIcon();
+			} else {
+				this._showDirectionIcon();
+			}
 		},
 
 		_hideDirectionIcon: function() {
 
-			put(this.directionOrderNode, '.hidden');
+			put(this.directionOrderNode, '.' + this.hiddenClass);
 		},
 
 		_showDirectionIcon: function() {
 
-			put(this.directionOrderNode, '!hidden');
+			put(this.directionOrderNode, '!' + this.hiddenClass);
 		},
 
 		_eventOrderOptionClick: function(evt) {
 
-			var optionSelect = this.selectOrderNode.options[this.selectOrderNode.selectedIndex].value,
-				optionOrder = null;
+			var optionSelect = this.selectOrderNode.options[this.selectOrderNode.selectedIndex].value;
 
-			if (optionSelect != this.optionSelect) {
-				this.optionSelect = optionSelect;
-
-				optionOrder = "ASC";
-
-				this._eventDirectionClick(optionOrder);
+			if (optionSelect !== this._currentOrderField) {
+				this._currentOrderField = optionSelect;
+				this._applyCurrentOrderDirection();
 			}
 		},
 
-		_eventDirectionClick: function(optionOrder) {
+		_eventDirectionClick: function() {
 
-			if (typeof optionOrder !== 'string') {
-				if (this.directionOrder === "ASC") {
-					this.directionOrder = "DESC";
-				} else {
-					this.directionOrder = "ASC";
-				}
+			this._toggleCurrentOrderDirection();
+			this._applyCurrentOrderDirection();
+		},
+
+		_toggleCurrentOrderDirection: function() {
+
+			if (this._currentOrderDirection === 'ASC') {
+				this._currentOrderDirection = 'DESC';
 			} else {
-				this.directionOrder = optionOrder;
+				this._currentOrderDirection = 'ASC';
 			}
+		},
+
+		_applyCurrentOrderDirection: function() {
 
 			this._changeDirectionIcon();
-
 			this._publishOrder();
 		},
 
 		_publishOrder: function() {
 
-			if (this.queryChannel) {
-				this._publish(this._buildChannel(this.queryChannel, this.actions.ADD_TO_QUERY), {
-					query: {
-						sorts: this._createSorts(),
-						target: this.target
-					}
-				});
+			if (!this.queryChannel) {
+				return;
 			}
+
+			this._publish(this._buildChannel(this.queryChannel, this.actions.ADD_TO_QUERY), {
+				query: {
+					sorts: this._createSorts(),
+					target: this.target
+				}
+			});
 		},
 
 		_createSorts: function() {
 
 			var sorts = [];
 
-			if (this.optionSelect && this.optionSelect !== this.optionDefault) {
+			if (this._currentOrderField !== this.optionDefault) {
 				sorts.push({
-					"field": this.optionSelect,
-					"order": this.directionOrder
+					field: this._currentOrderField,
+					order: this._currentOrderDirection
 				});
 			}
 
 			return sorts;
-		},
-
-		_getNodeToShow: function() {
-
-			return this.domNode;
 		}
 	});
 });

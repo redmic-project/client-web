@@ -1,6 +1,5 @@
 define([
-	'src/redmicConfig'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/kernel'
 	, 'dojo/_base/lang'
 	, 'put-selector/put'
@@ -10,8 +9,7 @@ define([
 	, 'src/component/base/_ShowOnEvt'
 	, 'src/component/layout/listMenu/ListMenu'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, kernel
 	, lang
 	, put
@@ -43,13 +41,11 @@ define([
 			this.listMenuConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				items: [{
-					icon: 'flag-icon-background.flag-icon-es',
-					label: this.i18n.es,
+					label: 'Español',
 					callback: '_changeLanguage',
 					value: 'es'
 				},{
-					icon: 'flag-icon-background.flag-icon-gb',
-					label: this.i18n.en,
+					label: 'English',
 					callback: '_changeLanguage',
 					value: 'en'
 				}]
@@ -58,7 +54,9 @@ define([
 
 		_initialize: function() {
 
-			this.listMenu = new declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip)(this.listMenuConfig);
+			var LanguageTooltipDefinition = declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip);
+
+			this.listMenu = new LanguageTooltipDefinition(this.listMenuConfig);
 		},
 
 		_defineSubscriptions: function() {
@@ -75,7 +73,7 @@ define([
 
 			put(this.domNode, '[title=$]', this.i18n.language);
 
-			var languageIcon = this._getLanguageIcon(globalThis.lang);
+			var languageIcon = 'fa.fa-language';
 			put(this.domNode, 'i.' + languageIcon);
 
 			this._publish(this.listMenu.getChannel('ADD_EVT'), {
@@ -98,26 +96,6 @@ define([
 				hostnameWithoutLang = hostname.replace(kernel.locale + '.', '');
 
 			globalThis.location.href = protocol + '//' + language + '.' + hostnameWithoutLang;
-		},
-
-		_getLanguageIcon: function(currentLanguage) {
-
-			var iconClasses;
-
-			if (currentLanguage === 'es') {
-				iconClasses = 'flag.flag-icon-background.flag-icon-es';
-			} else if (currentLanguage === 'en') {
-				iconClasses = 'flag.flag-icon-background.flag-icon-gb';
-			} else {
-				iconClasses = 'fa.fa-language';
-			}
-
-			return iconClasses;
-		},
-
-		_getNodeToShow: function() {
-
-			return this.domNode;
 		}
 	});
 });

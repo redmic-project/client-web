@@ -45,14 +45,14 @@ define([
 
 			this.config = {
 				baseTemplateProps: {
-					_onShowWhatIsRedmic: this._onShowWhatIsRedmic,
-					_onCloseWhatIsRedmic: this._onCloseWhatIsRedmic,
+					_onShowWhatIsRedmic: lang.hitch(this, this._onShowWhatIsRedmic),
 					_getManagerNode: this._getManagerNode,
 					_changeLang: this._changeLang
 				},
 				baseClass: '',
 				replaceReg: /\%\[([^\]]+)\]/g,
-				whatIsRedmicPath: 'what-is-redmic'
+				whatIsRedmicPath: '/what-is-redmic',
+				loginPath: '/login'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -92,35 +92,18 @@ define([
 		_onShowWhatIsRedmic: function(event) {
 			// summary:
 			//		Función que muestra información de redmic.
-			//		*** Se ejecuta en el ámbito del template
-			//
 			//	tags:
 			//		callback private
-			//
 
 			event.stopPropagation();
-			var path = 'what-is-redmic';
-			if (globalThis.location.href.indexOf(path) < 0) {
-				globalThis.location.href = path;
+
+			var path = this.whatIsRedmicPath;
+
+			if (globalThis.location.pathname.includes(path)) {
+				globalThis.location.href = this.loginPath;
 			} else {
-				globalThis.history.back();
+				globalThis.location.href = path;
 			}
-		},
-
-		_onCloseWhatIsRedmic: function(/*event*/ evt) {
-			// summary:
-			//		Función que cierra la vista que muestra información de redmic.
-			//		*** Se ejecuta en el ámbito del template
-			//
-			//	tags:
-			//		callback private
-			//
-
-			setTimeout(lang.hitch(this, function() {
-				if (globalThis.location.href.indexOf(this.whatIsRedmicPath) >= 0) {
-					globalThis.history.back();
-				}
-			}), 200);
 		}
 	});
 });

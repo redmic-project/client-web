@@ -36,6 +36,17 @@ define([
 			this.inherited(arguments);
 
 			on(this.domNode, "click", lang.hitch(this, this._onCloseWhatIsRedmic));
+		},
+
+		_onCloseWhatIsRedmic: function(/*event*/ evt) {
+			// summary:
+			//		Función que cierra la vista que muestra información de redmic.
+			//	tags:
+			//		callback private
+
+			if (globalThis.location.pathname.includes(this.whatIsRedmicPath)) {
+				globalThis.location.href = this.loginPath;
+			}
 		}
 	});
 });

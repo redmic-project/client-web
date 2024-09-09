@@ -49,6 +49,10 @@ define([
 		minWidthCols: 1,
 		maxWidthCols: 6,
 
+		_heightFitContentValue: 'fitContent',
+		heightByRowsAttr: 'data-rows',
+		maxHeightRows: 6,
+
 		resizableBottomPadding: 15,
 		resizableActionableThreshold: 15,
 
@@ -99,6 +103,7 @@ define([
 
 			if (node) {
 				this._originalWidthByCols = domAttr.get(node, this.widthByColsAttr);
+				this._originalHeightByRows = domAttr.get(node, this.heightByRowsAttr);
 				this._createWindow(node);
 			}
 
@@ -473,11 +478,23 @@ define([
 				this._updateMaximizeButtonIcon(true);
 			}
 
-			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this.maxWidthCols);
+			this._setWindowParentNodeAttrsToMaximize();
+
 			this._unsetWindowParentNodeSize();
 			this._unsetWindowNodeSize();
 
 			this._undoMinimizeModule();
+		},
+
+		_setWindowParentNodeAttrsToMaximize: function() {
+
+			var node = this._windowNode.parentNode;
+
+			domAttr.set(node, this.widthByColsAttr, this.maxWidthCols);
+
+			if (domAttr.get(node, this.heightByRowsAttr) !== this._heightFitContentValue) {
+				domAttr.set(node, this.heightByRowsAttr, this.maxHeightRows);
+			}
 		},
 
 		_maximizeModuleReturn: function() {
@@ -489,9 +506,20 @@ define([
 				this._updateMaximizeButtonIcon(false);
 			}
 
-			domAttr.set(this._windowNode.parentNode, this.widthByColsAttr, this._originalWidthByCols);
+			this._setWindowParentNodeAttrsToUndoMaximize();
 
 			this._undoMinimizeModule();
+		},
+
+		_setWindowParentNodeAttrsToUndoMaximize: function() {
+
+			var node = this._windowNode.parentNode;
+
+			domAttr.set(node, this.widthByColsAttr, this._originalWidthByCols);
+
+			if (this._originalHeightByRows !== this._heightFitContentValue) {
+				domAttr.set(node, this.heightByRowsAttr, this._originalHeightByRows);
+			}
 		},
 
 		_prepareMaximizeForUndoUserResize: function() {

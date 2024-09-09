@@ -57,7 +57,7 @@ define([
 			this.mapNode = put(this.mapParentNode, "div.map");
 
 			this.map = L.map(this.mapNode, {
-				crs: L.CRS.EPSG4326,
+				//crs: L.CRS.EPSG4326,
 				doubleClickZoom: false,
 				zoomControl: false,
 				minZoom: this.minZoom,

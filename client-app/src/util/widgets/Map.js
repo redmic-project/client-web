@@ -57,7 +57,7 @@ define([
 				doubleClickZoom: false,
 				attributionControl: false,
 				minZoom: 1,
-				crs: L.CRS.EPSG4326,
+				//crs: L.CRS.EPSG4326,
 				maxBounds: L.latLngBounds(L.latLng(-85, -180), L.latLng(85, 180))
 			});
 

@@ -59,12 +59,23 @@ define([
 
 		_getBrowserConfig: function() {
 
+			// TODO esto causa confusión, el nivel superior de config se aplica a diseño que contiene componente browser
+			// TODO el primer nivel no debería llamarse 'browserConfig' para evitar la confusión
 			return this.browserConfig.browserConfig;
 		},
 
 		_setBrowserConfig: function(browserConfig) {
 
+			// TODO esto causa confusión, el nivel superior de config se aplica a diseño que contiene componente browser
+			// TODO el primer nivel no debería llamarse 'browserConfig' para evitar la confusión
 			this.browserConfig.browserConfig = browserConfig;
+		},
+
+		_setBrowserButtonsList: function(listButton) {
+
+			// TODO esto causa confusión, el nivel superior de config se aplica a diseño que contiene componente browser
+			// TODO el primer nivel no debería llamarse 'browserConfig' para evitar la confusión
+			this.browserConfig.browserConfig.rowConfig.buttonsConfig.listButton = listButton;
 		},
 
 		_getNodeForForm: function() {

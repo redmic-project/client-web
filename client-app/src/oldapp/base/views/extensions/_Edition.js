@@ -112,9 +112,17 @@ define([
 		_setBrowserButtons: function(listButton) {
 
 			if (!this.browserConfig || !this.browserConfig.rowConfig || !this.browserConfig.rowConfig.buttonsConfig) {
-				console.warn('Tried to add edition buttons to browser row config, but base config was not found!');
-				return;
+				this._setBrowserConfig(this._merge([{
+					rowConfig: {
+						buttonsConfig: {}
+					}
+				}, this._getBrowserConfig() || {}]));
 			}
+
+			this._setBrowserButtonsList(listButton);
+		},
+
+		_setBrowserButtonsList: function(listButton) {
 
 			this.browserConfig.rowConfig.buttonsConfig.listButton = listButton;
 		},

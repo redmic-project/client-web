@@ -58,6 +58,8 @@ define([
 					}
 				},
 				orderConfig: {
+					defaultOrderField: 'name',
+					defaultOrderDirection: 'ASC',
 					options: [
 						{value: 'name'},
 						{value: 'name_en'}

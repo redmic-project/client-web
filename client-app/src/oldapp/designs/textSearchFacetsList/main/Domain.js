@@ -40,7 +40,11 @@ define([
 				},{
 					instance: Order,
 					config: 'orderConfig'
-				}]
+				}],
+				orderConfig: {
+					defaultOrderField: 'name',
+					defaultOrderDirection: 'ASC'
+				}
 			}, this.browserConfig || {}]);
 		}
 	});

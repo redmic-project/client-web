@@ -1,12 +1,11 @@
 define([
 	"app/base/views/extensions/_EditionFormList"
 	, "app/components/steps/_RememberDeleteItems"
-	,"app/designs/formList/layout/Layout"
+	, "app/designs/formList/layout/Layout"
 	, "app/designs/formList/main/FormListByStep"
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/Deferred"
 	, "templates/PlatformSet"
 ], function (
 	_EditionFormList
@@ -16,9 +15,9 @@ define([
 	, redmicConfig
 	, declare
 	, lang
-	, Deferred
 	, TemplateList
-){
+) {
+
 	return declare([Layout, Controller, _EditionFormList, _RememberDeleteItems], {
 		//	summary:
 		//		Step de ActivityPlatform.

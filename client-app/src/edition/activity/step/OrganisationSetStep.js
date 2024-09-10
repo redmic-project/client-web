@@ -1,13 +1,12 @@
 define([
 	"app/base/views/extensions/_EditionFormList"
 	, "app/components/steps/_RememberDeleteItems"
-	,"app/designs/formList/layout/Layout"
+	, "app/designs/formList/layout/Layout"
 	, "app/designs/formList/main/FormListByStep"
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/Deferred"
-	, "templates/ContactSet"
+	, "templates/OrganisationSet"
 ], function (
 	_EditionFormList
 	, _RememberDeleteItems
@@ -16,35 +15,33 @@ define([
 	, redmicConfig
 	, declare
 	, lang
-	, Deferred
 	, TemplateList
-){
+) {
+
 	return declare([Layout, Controller, _EditionFormList, _RememberDeleteItems], {
 		//	summary:
-		//		Step de ActivityContact.
+		//		Step de ActivityOrganisation.
 
 		constructor: function (args) {
 
 			this.config = {
 				// WizardStep params
-				label: this.i18n.contacts,
-				title: this.i18n.contactsAssociated,
+				label: this.i18n.organisations,
+				title: this.i18n.organisationsAssociated,
 
 				// General params
 				items: {
-					contact: {
-						target: redmicConfig.services.contact
-					},
-					role: {
-						target: redmicConfig.services.contactRole
-					},
 					organisation: {
 						target: redmicConfig.services.organisation
+					},
+					role: {
+						target: redmicConfig.services.organisationRole
 					}
 				},
-				propToRead: "contacts",
 
-				ownChannel: "contactSetStep"
+				propToRead: "organisations",
+
+				ownChannel: "organisationSetStep"
 			};
 
 			lang.mixin(this, this.config, args);
@@ -59,8 +56,8 @@ define([
 			}, this.browserConfig || {}]);
 
 			this.formConfig = this._merge([{
-				modelTarget: redmicConfig.services.organisationContactRole,
-				template: "administrative/views/templates/forms/ActivityContact"
+				modelTarget: redmicConfig.services.organisationrole,
+				template: "administrative/views/templates/forms/ActivityOrganisation"
 			}, this.formConfig || {}]);
 		}
 	});

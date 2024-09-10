@@ -10,7 +10,8 @@ define([
 	, declare
 	, lang
 	, templateList
-){
+) {
+
 	return declare(Main, {
 		//	summary:
 		//		Step de ActivityDocument.

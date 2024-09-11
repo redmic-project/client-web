@@ -185,10 +185,12 @@ define([
 
 		hide: function() {
 
-			if (this.centerContent && this.centerContent.destroyRecursive && !this.notDestroyRecursive) {
-				this.centerContent.destroyRecursive();
-			} else {
-				put(this.centerContent.domNode, '!');
+			if (this.centerContent) {
+				if (this.centerContent.destroyRecursive && !this.notDestroyRecursive) {
+					this.centerContent.destroyRecursive();
+				} else {
+					put(this.centerContent.domNode, '!');
+				}
 			}
 
 			if (this.bottomContent && this.bottomContent.activeButtons) {

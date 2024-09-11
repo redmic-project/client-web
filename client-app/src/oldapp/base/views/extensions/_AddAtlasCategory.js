@@ -4,18 +4,20 @@ define([
 	, 'dojo/aspect'
 	, "src/component/base/_Persistence"
 	, 'src/component/form/FormContainerImpl'
+	, 'src/component/form/_CreateInternalKeypad'
 	, "src/component/form/_ListenModelHasChanged"
 	, 'src/component/form/_PublicateChanges'
-	, "src/component/form/_ShowInDialog"
+	, 'src/component/base/_ShowInPopup'
 ], function(
 	declare
 	, lang
 	, aspect
 	, _Persistence
 	, FormContainerImpl
+	, _CreateInternalKeypad
 	, _ListenModelHasChanged
 	, _PublicateChanges
-	, _ShowInDialog
+	, _ShowInPopup
 ) {
 
 	return declare(_Persistence, {
@@ -50,13 +52,11 @@ define([
 
 		_initializeAddAtlasCategory: function() {
 
-			var formDefinition = declare([
-				FormContainerImpl,
-				_ListenModelHasChanged,
-				_ShowInDialog
-			]);
+			var FormDefinition = declare([
+				FormContainerImpl, _ListenModelHasChanged, _CreateInternalKeypad
+			]).extend(_ShowInPopup);
 
-			this._categoryForm = new formDefinition(this.categoryFormConfig);
+			this._categoryForm = new FormDefinition(this.categoryFormConfig);
 		},
 
 		_defineAddAtlasCategorySubscriptions: function () {

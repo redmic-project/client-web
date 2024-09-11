@@ -3,16 +3,19 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "src/component/form/FormContainerImpl"
+	, 'src/component/form/_CreateInternalKeypad'
 	, "src/component/form/_ListenModelHasChanged"
-	, "src/component/form/_ShowInDialog"
+	, 'src/component/base/_ShowInPopup'
 ], function(
 	declare
 	, lang
 	, aspect
 	, FormContainerImpl
+	, _CreateInternalKeypad
 	, _ListenModelHasChanged
-	, _ShowInDialog
-){
+	, _ShowInPopup
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Extensión para las vistas con formulario en un Dialog.
@@ -45,8 +48,11 @@ define([
 
 		_initializeFormInDialogView: function() {
 
-			var formDef = declare([FormContainerImpl, _ListenModelHasChanged, _ShowInDialog]);
-			this.editor = new formDef(this.formConfig);
+			var FormDefinition = declare([
+				FormContainerImpl, _ListenModelHasChanged, _CreateInternalKeypad
+			]).extend(_ShowInPopup);
+
+			this.editor = new FormDefinition(this.formConfig);
 		},
 
 		_afterSaved: function(results) {

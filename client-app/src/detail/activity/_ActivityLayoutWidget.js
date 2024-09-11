@@ -25,9 +25,10 @@ define([
 			// TODO medida temporal por retrocompatibilidad con activityCategory
 
 			var currentElementId = this.pathVariableId,
-				detailLayout = this.detailLayouts && this.detailLayouts[currentElementId];
+				detailLayout = this.detailLayouts && this.detailLayouts[currentElementId],
+				detailLayoutWidgetsCount = this._detailLayoutWidgets && this._detailLayoutWidgets.length;
 
-			if (!detailLayout) {
+			if (!detailLayout || !detailLayoutWidgetsCount) {
 				this._prepareActivityCategoryCustomWidgets();
 			}
 		},
@@ -56,12 +57,15 @@ define([
 				widgetKey = this._prepareEmbeddedContentsActivityWidgets();
 			}
 
-			if (widgetKey) {
-				if (widgetKey instanceof Array) {
-					this._detailLayoutWidgets = this._detailLayoutWidgets.concat(widgetKey);
-				} else {
-					this._detailLayoutWidgets.push(widgetKey);
-				}
+			if (!widgetKey) {
+				console.warn('Tried to get widgets for "%s" detail layout, but none found!', detailLayout);
+				return;
+			}
+
+			if (widgetKey instanceof Array) {
+				this._detailLayoutWidgets = this._detailLayoutWidgets.concat(widgetKey);
+			} else {
+				this._detailLayoutWidgets.push(widgetKey);
 			}
 		},
 

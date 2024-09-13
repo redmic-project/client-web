@@ -39,7 +39,7 @@ define([
 			}, this.filterConfig || {}]);
 
 			this.formConfig = this._merge([{
-				template: 'maintenance/domains/templates/forms/HierarchicalDomain'
+				template: 'src/maintenance/domain/form/HierarchicalDomain'
 			}, this.formConfig || {}]);
 
 			this.browserConfig = this._merge([{

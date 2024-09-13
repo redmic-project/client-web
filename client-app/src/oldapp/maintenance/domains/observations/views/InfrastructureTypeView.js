@@ -1,24 +1,9 @@
 define([
-	'app/maintenance/domains/_HierarchicalDomain'
-	, 'dojo/_base/declare'
-	, 'dojo/_base/lang'
-], function(
-	_HierarchicalDomain
-	, declare
-	, lang
-){
-	return declare(_HierarchicalDomain, {
-		//	summary:
-		//		Vista de InfrastructureType.
+	'src/maintenance/domain/DomainMaintenanceView'
+], function (
+	DomainMaintenanceView
+) {
 
-		constructor: function(args) {
-
-			this.config = {
-				title: this.i18n['infrastructure-type'],
-				target: this.services.infrastructureType
-			};
-
-			lang.mixin(this, this.config, args);
-		}
-	});
+	// TODO placeholder hasta que se referencien las vistas a partir de src/
+	return DomainMaintenanceView;
 });

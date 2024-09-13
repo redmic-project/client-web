@@ -177,7 +177,15 @@ define([
 			if (this.dataTemplate) {
 				this.templateString = this._getTemplate();
 			} else {
-				this.templatePath = require.toUrl('app/' + this.template + 'Form.html');
+				var templatePathPrefix = '',
+					templatePathSuffix = 'Form.html';
+
+				// TODO parche para compatibilidad con antiguas rutas parciales, las nuevas ya han de empezar con 'src/'
+				if (this.template.indexOf('src/') !== 0) {
+					templatePathPrefix = 'app/';
+				}
+
+				this.templatePath = require.toUrl(templatePathPrefix + this.template + templatePathSuffix);
 			}
 		},
 

@@ -1,26 +1,9 @@
 define([
-	"app/designs/textSearchList/main/Domain"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-], function(
-	DomainMain
-	, declare
-	, lang
-){
-	return declare(DomainMain, {
-		// summary:
-		// 	Vista de Sex.
-		// description:
-		// 	Muestra la información.
+	'src/maintenance/domain/DomainMaintenanceView'
+], function (
+	DomainMaintenanceView
+) {
 
-		constructor: function(args) {
-
-			this.config = {
-				title: this.i18n.sex,
-				target: this.services.sex
-			};
-
-			lang.mixin(this, this.config, args);
-		}
-	});
+	// TODO placeholder hasta que se referencien las vistas a partir de src/
+	return DomainMaintenanceView;
 });

@@ -70,7 +70,7 @@ define([
 			});
 
 			this.formConfig = this._merge([{
-				template: 'maintenance/domains/templates/forms/Domain'
+				template: 'src/maintenance/domain/form/Domain'
 			}, this.formConfig || {}]);
 		},
 

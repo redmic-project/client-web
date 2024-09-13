@@ -1,26 +1,9 @@
 define([
-	"app/designs/textSearchList/main/Domain"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-], function(
-	DomainMain
-	, declare
-	, lang
-){
-	return declare(DomainMain, {
-		// summary:
-		// 	Vista de ProjectGroup.
-		// description:
-		// 	Muestra la información.
+	'src/maintenance/domain/DomainMaintenanceView'
+], function (
+	DomainMaintenanceView
+) {
 
-		constructor: function(args) {
-
-			this.config = {
-				title: this.i18n.projectGroup,
-				target: this.services.projectGroup
-			};
-
-			lang.mixin(this, this.config, args);
-		}
-	});
+	// TODO placeholder hasta que se referencien las vistas a partir de src/
+	return DomainMaintenanceView;
 });

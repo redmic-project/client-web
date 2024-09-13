@@ -402,6 +402,8 @@ var viewLayers = {
 
 	, 'src/user/ActivateAccount': {}
 
+	, 'src/maintenance/domain/DomainMaintenanceView': {}
+
 	, 'app/home/views/HomeView': {}
 
 	, 'app/catalog/views/ActivitiesCatalogView': {}
@@ -418,61 +420,6 @@ var viewLayers = {
 	, 'app/administrative/views/DeviceView': {}
 	, 'app/administrative/views/DocumentView': {}
 	, 'app/administrative/views/AnimalView': {}
-
-	, 'app/maintenance/domains/admin/views/AccessibilityView': {}
-	, 'app/maintenance/domains/admin/views/ActivityFieldsView': {}
-	, 'app/maintenance/domains/admin/views/ActivityTypesView': {}
-	, 'app/maintenance/domains/admin/views/ContactRolesView': {}
-	, 'app/maintenance/domains/admin/views/CountriesView': {}
-	, 'app/maintenance/domains/admin/views/DeviceTypesView': {}
-	, 'app/maintenance/domains/admin/views/DocumentTypesView': {}
-	, 'app/maintenance/domains/admin/views/OrganisationRolesView': {}
-	, 'app/maintenance/domains/admin/views/OrganisationTypesView': {}
-	, 'app/maintenance/domains/admin/views/PlatformTypesView': {}
-	, 'app/maintenance/domains/admin/views/ProjectGroupsView': {}
-	, 'app/maintenance/domains/admin/views/ScopesView': {}
-
-	//, 'app/maintenance/domains/geometry/views/AreaTypesView': {}
-	, 'app/maintenance/domains/geometry/views/DestinyView': {}
-	, 'app/maintenance/domains/geometry/views/EndingView': {}
-	, 'app/maintenance/domains/geometry/views/InspireThemesView': {}
-	, 'app/maintenance/domains/geometry/views/LineTypesView': {}
-	//, 'app/maintenance/domains/geometry/views/MeshTypesView': {}
-	//, 'app/maintenance/domains/geometry/views/RasterTypesView': {}
-	//, 'app/maintenance/domains/geometry/views/RecordingTypesView': {}
-	//, 'app/maintenance/domains/geometry/views/ShorelineTypesView': {}
-	, 'app/maintenance/domains/geometry/views/ThematicTypeView': {}
-	, 'app/maintenance/domains/geometry/views/ToponymTypesView': {}
-
-	, 'app/maintenance/domains/observations/views/AttributeTypesView': {}
-	, 'app/maintenance/domains/observations/views/CensingStatusView': {}
-	, 'app/maintenance/domains/observations/views/ConfidenceView': {}
-	//, 'app/maintenance/domains/observations/views/EventGroupsView': {}
-	, 'app/maintenance/domains/observations/views/InfrastructureTypeView': {}
-	//, 'app/maintenance/domains/observations/views/MetricGroupsView': {}
-	//, 'app/maintenance/domains/observations/views/MetricsDefinitionsView': {}
-	, 'app/maintenance/domains/observations/views/ObjectTypesView': {}
-	//, 'app/maintenance/domains/observations/views/ObservationTypesView': {}
-	, 'app/maintenance/domains/observations/views/ParametersView': {}
-	, 'app/maintenance/domains/observations/views/ParameterTypesView': {}
-	, 'app/maintenance/domains/observations/views/SampleTypesView': {}
-	, 'app/maintenance/domains/observations/views/SeaConditionsView': {}
-	, 'app/maintenance/domains/observations/views/UnitsView': {}
-	, 'app/maintenance/domains/observations/views/UnitTypesView': {}
-
-	, 'app/maintenance/domains/taxon/views/CanaryProtectionView': {}
-	, 'app/maintenance/domains/taxon/views/EcologyView': {}
-	, 'app/maintenance/domains/taxon/views/EndemicityView': {}
-	, 'app/maintenance/domains/taxon/views/EUProtectionView': {}
-	, 'app/maintenance/domains/taxon/views/InterestView': {}
-	, 'app/maintenance/domains/taxon/views/LifeStagesView': {}
-	, 'app/maintenance/domains/taxon/views/OriginView': {}
-	, 'app/maintenance/domains/taxon/views/PermanenceView': {}
-	, 'app/maintenance/domains/taxon/views/RankView': {}
-	, 'app/maintenance/domains/taxon/views/SexView': {}
-	, 'app/maintenance/domains/taxon/views/SpainProtectionView': {}
-	, 'app/maintenance/domains/taxon/views/StatusView': {}
-	, 'app/maintenance/domains/taxon/views/TrophicRegimeView': {}
 
 	, 'app/administrative/taxonomy/views/MisIdentificationView': {}
 	, 'app/administrative/taxonomy/views/SpeciesView': {}

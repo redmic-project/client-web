@@ -7,7 +7,7 @@ define([
 	, 'src/maintenance/domain/definition/Accessibility'
 	, 'src/maintenance/domain/definition/ActivityFields'
 	, 'src/maintenance/domain/definition/ActivityTypes'
-	, 'src/maintenance/domain/definition/AreaTypes'
+//	, 'src/maintenance/domain/definition/AreaTypes'
 	, 'src/maintenance/domain/definition/AttributeTypes'
 	, 'src/maintenance/domain/definition/CanaryProtection'
 	, 'src/maintenance/domain/definition/CensingStatus'
@@ -21,17 +21,17 @@ define([
 	, 'src/maintenance/domain/definition/Endemicity'
 	, 'src/maintenance/domain/definition/Ending'
 	, 'src/maintenance/domain/definition/EUProtection'
-	, 'src/maintenance/domain/definition/EventGroups'
+//	, 'src/maintenance/domain/definition/EventGroups'
 	, 'src/maintenance/domain/definition/InfrastructureType'
 	, 'src/maintenance/domain/definition/InspireThemes'
 	, 'src/maintenance/domain/definition/Interest'
 	, 'src/maintenance/domain/definition/LifeStages'
 	, 'src/maintenance/domain/definition/LineTypes'
-	, 'src/maintenance/domain/definition/MeshTypes'
-	, 'src/maintenance/domain/definition/MetricGroups'
-	, 'src/maintenance/domain/definition/MetricsDefinitions'
+//	, 'src/maintenance/domain/definition/MeshTypes'
+//	, 'src/maintenance/domain/definition/MetricGroups'
+//	, 'src/maintenance/domain/definition/MetricsDefinitions'
 	, 'src/maintenance/domain/definition/ObjectTypes'
-	, 'src/maintenance/domain/definition/ObservationTypes'
+//	, 'src/maintenance/domain/definition/ObservationTypes'
 	, 'src/maintenance/domain/definition/OrganisationRoles'
 	, 'src/maintenance/domain/definition/OrganisationTypes'
 	, 'src/maintenance/domain/definition/Origin'
@@ -41,13 +41,13 @@ define([
 	, 'src/maintenance/domain/definition/PlatformTypes'
 	, 'src/maintenance/domain/definition/ProjectGroups'
 	, 'src/maintenance/domain/definition/Rank'
-	, 'src/maintenance/domain/definition/RasterTypes'
-	, 'src/maintenance/domain/definition/RecordingTypes'
+//	, 'src/maintenance/domain/definition/RasterTypes'
+//	, 'src/maintenance/domain/definition/RecordingTypes'
 	, 'src/maintenance/domain/definition/SampleTypes'
 	, 'src/maintenance/domain/definition/Scopes'
 	, 'src/maintenance/domain/definition/SeaConditions'
 	, 'src/maintenance/domain/definition/Sex'
-	, 'src/maintenance/domain/definition/ShorelineTypes'
+//	, 'src/maintenance/domain/definition/ShorelineTypes'
 	, 'src/maintenance/domain/definition/SpainProtection'
 	, 'src/maintenance/domain/definition/Status'
 	, 'src/maintenance/domain/definition/ThematicType'
@@ -64,7 +64,7 @@ define([
 	, AccessibilityDomainDefinition
 	, ActivityFieldsDomainDefinition
 	, ActivityTypesDomainDefinition
-	, AreaTypesDomainDefinition
+//	, AreaTypesDomainDefinition
 	, AttributeTypesDomainDefinition
 	, CanaryProtectionDomainDefinition
 	, CensingStatusDomainDefinition
@@ -78,17 +78,17 @@ define([
 	, EndemicityDomainDefinition
 	, EndingDomainDefinition
 	, EUProtectionDomainDefinition
-	, EventGroupsDomainDefinition
+//	, EventGroupsDomainDefinition
 	, InfrastructureTypeDomainDefinition
 	, InspireThemesDomainDefinition
 	, InterestDomainDefinition
 	, LifeStagesDomainDefinition
 	, LineTypesDomainDefinition
-	, MeshTypesDomainDefinition
-	, MetricGroupsDomainDefinition
-	, MetricsDefinitionsDomainDefinition
+//	, MeshTypesDomainDefinition
+//	, MetricGroupsDomainDefinition
+//	, MetricsDefinitionsDomainDefinition
 	, ObjectTypesDomainDefinition
-	, ObservationTypesDomainDefinition
+//	, ObservationTypesDomainDefinition
 	, OrganisationRolesDomainDefinition
 	, OrganisationTypesDomainDefinition
 	, OriginDomainDefinition
@@ -98,13 +98,13 @@ define([
 	, PlatformTypesDomainDefinition
 	, ProjectGroupsDomainDefinition
 	, RankDomainDefinition
-	, RasterTypesDomainDefinition
-	, RecordingTypesDomainDefinition
+//	, RasterTypesDomainDefinition
+//	, RecordingTypesDomainDefinition
 	, SampleTypesDomainDefinition
 	, ScopesDomainDefinition
 	, SeaConditionsDomainDefinition
 	, SexDomainDefinition
-	, ShorelineTypesDomainDefinition
+//	, ShorelineTypesDomainDefinition
 	, SpainProtectionDomainDefinition
 	, StatusDomainDefinition
 	, ThematicTypeDomainDefinition
@@ -127,7 +127,7 @@ define([
 					'accessibility': AccessibilityDomainDefinition
 					, 'activity-fields': ActivityFieldsDomainDefinition
 					, 'activity-types': ActivityTypesDomainDefinition
-					, '': AreaTypesDomainDefinition // TODO no se ha enlazado
+//					, '': AreaTypesDomainDefinition // TODO no se ha enlazado
 					, 'attribute-types': AttributeTypesDomainDefinition
 					, 'canary-protection': CanaryProtectionDomainDefinition
 					, 'censusing-status': CensingStatusDomainDefinition
@@ -141,17 +141,17 @@ define([
 					, 'endemicity': EndemicityDomainDefinition
 					, 'ending': EndingDomainDefinition
 					, 'eu-protection': EUProtectionDomainDefinition
-					, '': EventGroupsDomainDefinition // TODO no se ha enlazado
+//					, '': EventGroupsDomainDefinition // TODO no se ha enlazado
 					, 'infrastructure-type': InfrastructureTypeDomainDefinition
 					, 'inspire-themes': InspireThemesDomainDefinition
 					, 'interest': InterestDomainDefinition
 					, 'life-stages': LifeStagesDomainDefinition
 					, 'line-types': LineTypesDomainDefinition
-					, 'mesh-types': MeshTypesDomainDefinition
-					, '': MetricGroupsDomainDefinition // TODO no se ha enlazado
-					, '': MetricsDefinitionsDomainDefinition // TODO no se ha enlazado
+//					, '': MeshTypesDomainDefinition // TODO no se ha enlazado
+//					, '': MetricGroupsDomainDefinition // TODO no se ha enlazado
+//					, '': MetricsDefinitionsDomainDefinition // TODO no se ha enlazado
 					, 'object-types': ObjectTypesDomainDefinition
-					, '': ObservationTypesDomainDefinition // TODO no se ha enlazado
+//					, '': ObservationTypesDomainDefinition // TODO no se ha enlazado
 					, 'organisation-roles': OrganisationRolesDomainDefinition
 					, 'organisation-types': OrganisationTypesDomainDefinition
 					, 'origin': OriginDomainDefinition
@@ -161,18 +161,18 @@ define([
 					, 'platform-types': PlatformTypesDomainDefinition
 					, 'project-groups': ProjectGroupsDomainDefinition
 					, 'rank': RankDomainDefinition
-					, '': RasterTypesDomainDefinition // TODO no se ha enlazado
-					, '': RecordingTypesDomainDefinition // TODO no se ha enlazado
+//					, '': RasterTypesDomainDefinition // TODO no se ha enlazado
+//					, '': RecordingTypesDomainDefinition // TODO no se ha enlazado
 					, 'sample-types': SampleTypesDomainDefinition
 					, 'scopes': ScopesDomainDefinition
 					, 'sea-conditions': SeaConditionsDomainDefinition
 					, 'sex': SexDomainDefinition
-					, '': ShorelineTypesDomainDefinition // TODO no se ha enlazado
+//					, '': ShorelineTypesDomainDefinition // TODO no se ha enlazado
 					, 'spain-protection': SpainProtectionDomainDefinition
 					, 'status': StatusDomainDefinition
 					, 'thematic-type': ThematicTypeDomainDefinition
 					, 'toponym-types': ToponymTypesDomainDefinition // TODO no funciona la petición hacia api
-					, 'trophic-regime': TrophicRegimeDomainDefinition
+						, 'trophic-regime': TrophicRegimeDomainDefinition
 					, 'units': UnitsDomainDefinition
 					, 'unit-types': UnitTypesDomainDefinition
 				}

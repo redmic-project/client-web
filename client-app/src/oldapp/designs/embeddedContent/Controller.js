@@ -45,7 +45,7 @@ define([
 			});
 
 			this._publish(this._templateDisplayer.getChannel('SHOW'), {
-				node: this._getNodeToShow()
+				node: this.getNodeToShow()
 			});
 		},
 
@@ -71,6 +71,11 @@ define([
 		_onEmbeddedContentUrlPropSet: function(evt) {
 
 			this._updateEmbeddedContent(evt.value);
+		},
+
+		getNodeToShow: function() {
+
+			return this.domNode;
 		}
 	});
 });

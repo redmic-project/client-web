@@ -181,29 +181,33 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_beforeShow: function(req) {
+		_beforeShow: function() {
+
+			this._cleanOldDomainInstance();
+
+			this._domainInstanceDfd = new Deferred();
+
+			this._createDomainInstance();
+
+			return this._domainInstanceDfd;
+		},
+
+		_cleanOldDomainInstance: function() {
 
 			if (this._domainInstanceDfd && !this._domainInstanceDfd.isFulfilled()) {
 				this._domainInstanceDfd.reject();
 			}
 
-			this._domainInstanceDfd = new Deferred();
-
-			var pathSplitted = globalThis.location.pathname.split('/'),
-				domainName = pathSplitted.pop();
-
 			if (this._domainInstance) {
 				this._publish(this._domainInstance.getChannel('DESTROY'));
 			}
-
-			this._createDomainInstance(domainName, req.node);
-
-			return this._domainInstanceDfd;
 		},
 
-		_createDomainInstance: function(domainName, parentNode) {
+		_createDomainInstance: function() {
 
-			var DomainDefinition = this._getDefinitionForSpecificDomain(domainName);
+			var pathSplitted = globalThis.location.pathname.split('/'),
+				domainName = pathSplitted.pop(),
+				DomainDefinition = this._getDefinitionForSpecificDomain(domainName);
 
 			this._domainInstance = new DomainDefinition({
 				parentChannel: this.getChannel()
@@ -215,7 +219,7 @@ define([
 			}));
 
 			this._publish(this._domainInstance.getChannel('SHOW'), {
-				node: parentNode
+				node: this.domNode
 			});
 		},
 
@@ -230,9 +234,9 @@ define([
 			return domainDefinition;
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
-			return this._domainInstance._getNodeToShow();
+			return this._domainInstance.getNodeToShow();
 		}
 	});
 });

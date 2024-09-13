@@ -350,7 +350,7 @@ define([
 			delete this._layersLimits[layerId];
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.chartsContainerNode;
 		},

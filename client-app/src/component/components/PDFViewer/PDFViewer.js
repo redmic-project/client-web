@@ -205,7 +205,7 @@ define([
 			this._showTemplateDisplayerPdfError();
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		}

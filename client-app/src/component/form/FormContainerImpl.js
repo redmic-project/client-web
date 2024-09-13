@@ -63,7 +63,7 @@ define([
 
 			if (!this.form) {
 				this.form = new FormContainer(this.formContainerConfig);
-				this.form.placeAt(this._getNodeToShow());
+				this.form.placeAt(this.getNodeToShow());
 
 				this.form.startup();
 
@@ -249,7 +249,7 @@ define([
 			this.status = isValid;
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

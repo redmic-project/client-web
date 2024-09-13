@@ -259,7 +259,7 @@ define([
 			}
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

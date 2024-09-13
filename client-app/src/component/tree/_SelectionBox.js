@@ -82,7 +82,7 @@ define([
 				this._emitEvt('REFRESH');
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.contentNode.domNode;
 		}/*,

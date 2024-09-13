@@ -182,7 +182,7 @@ define([
 			return this.template && this.template(dataObj);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

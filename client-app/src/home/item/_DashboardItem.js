@@ -50,7 +50,7 @@ define([
 			this.contentNode = put(this.containerNode, "div.boxItems.fHeight");
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.containerNode;
 		}

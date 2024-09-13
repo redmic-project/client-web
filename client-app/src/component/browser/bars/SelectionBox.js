@@ -90,7 +90,7 @@ define([
 			return this.domNode;
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

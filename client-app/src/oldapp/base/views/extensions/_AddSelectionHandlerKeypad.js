@@ -144,7 +144,7 @@ define([
 			this._emitEvt("SELECT_CONFIRM", obj);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.contentView.domNode;
 		},

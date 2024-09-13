@@ -346,7 +346,7 @@ define([
 			return obj;
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

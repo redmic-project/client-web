@@ -126,7 +126,7 @@ define([
 			this._globalClicksHandler.pause();
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.textSearch.domNode;
 		},

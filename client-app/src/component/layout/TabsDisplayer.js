@@ -177,7 +177,7 @@ define([
 			this._container.resize();
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this._container.domNode;
 		}

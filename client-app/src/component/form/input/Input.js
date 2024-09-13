@@ -567,7 +567,7 @@ define([
 			this._emitEvt('SUBMITTED', obj);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		}

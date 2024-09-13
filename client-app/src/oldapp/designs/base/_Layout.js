@@ -93,7 +93,7 @@ define([
 			this._addNodeToLayout(child);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		}

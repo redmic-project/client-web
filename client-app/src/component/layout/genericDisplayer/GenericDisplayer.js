@@ -48,7 +48,7 @@ define([
 
 		postCreate: function() {
 
-			var ownNode = this._getNodeToShow(),
+			var ownNode = this.getNodeToShow(),
 				layoutClasses = this.layoutClass,
 				contentClasses = this.contentClass;
 
@@ -69,7 +69,7 @@ define([
 			}
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

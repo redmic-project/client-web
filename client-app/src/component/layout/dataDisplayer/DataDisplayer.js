@@ -46,7 +46,7 @@ define([
 			this._setDataToDisplay(data);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

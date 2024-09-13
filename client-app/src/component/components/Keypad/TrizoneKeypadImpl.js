@@ -78,7 +78,7 @@ define([
 			itemInstance.placeAt(itemZone);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.keypadContainer;
 		},

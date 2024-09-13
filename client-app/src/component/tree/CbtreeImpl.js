@@ -110,7 +110,7 @@ define([
 			this.tree.on("checkBoxClick", lang.hitch(this, this._groupEventArgs, 'CHECKBOXCLICK'));
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.tree.domNode;
 		},

@@ -242,7 +242,7 @@ define([
 			this._addTabs(this.addTabChannel);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this._atlasContainer;
 		},

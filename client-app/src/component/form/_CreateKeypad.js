@@ -68,7 +68,7 @@ define([
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineCreateKeypadSubscriptions));
 			aspect.after(this, "_definePublications", lang.hitch(this, this._defineCreateKeypadPublications));
 			aspect.after(this, "postCreate", lang.hitch(this, this._postCreateCreateKeypad));
-			aspect.after(this, "_getNodeToShow", lang.hitch(this, this._getNodeToShowCreateKeypadAfter));
+			aspect.after(this, "getNodeToShow", lang.hitch(this, this._getNodeToShowCreateKeypadAfter));
 
 			lang.mixin(this, this.config, args);
 		},

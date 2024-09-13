@@ -52,7 +52,7 @@ define([
 			this.datePicker.placeAt(this.domNode);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

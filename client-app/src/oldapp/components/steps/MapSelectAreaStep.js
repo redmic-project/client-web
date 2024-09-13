@@ -90,7 +90,7 @@ define([
 			this._createContainerImage();
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.containerNode;
 		},

@@ -158,7 +158,7 @@ define([
 			this._onEvt('LAYER_REMOVED_FROM_PANE', lang.hitch(this, this._onLayerRemovedFromPane));
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.mapParentNode;
 		},

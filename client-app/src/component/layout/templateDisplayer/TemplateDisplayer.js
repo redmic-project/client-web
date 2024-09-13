@@ -78,7 +78,7 @@ define([
 
 		_prepareNodes: function() {
 
-			var node = this._getNodeToShow(),
+			var node = this.getNodeToShow(),
 				customClass = this['class'];
 
 			put(node, '.' + this.containerClass);
@@ -133,7 +133,7 @@ define([
 
 		_setContent: function(content) {
 
-			var node = this._getNodeToShow();
+			var node = this.getNodeToShow();
 
 			node.innerHTML = content;
 
@@ -161,7 +161,7 @@ define([
 			this._setContent(this._loadedTemplate);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		}

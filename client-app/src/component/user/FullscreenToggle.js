@@ -97,7 +97,7 @@ define([
 			this._fullscreenStatus = !this._fullscreenStatus;
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		}

@@ -140,7 +140,7 @@ define([
 			this._itemNodes[itemKey].onclick = function() {};
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.keypadContainer;
 		},

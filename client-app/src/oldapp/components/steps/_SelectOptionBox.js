@@ -158,7 +158,7 @@ define([
 			node.onclick = lang.hitch(this, this._onClickBox, key);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.containerNode;
 		},

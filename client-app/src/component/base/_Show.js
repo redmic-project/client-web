@@ -411,7 +411,7 @@ define([
 
 		_getNodeToShowWrapper: function() {
 
-			var nodeToShow = this._moduleOwnNode || this._getNodeToShow() || this.domNode;
+			var nodeToShow = this._moduleOwnNode || this.getNodeToShow() || this.domNode;
 
 			if (!nodeToShow) {
 				console.error('Node to show not found at module "%s"', this.getChannel());

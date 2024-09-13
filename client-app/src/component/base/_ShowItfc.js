@@ -17,7 +17,7 @@ define([
 		_getMethodsToImplement: function() {
 
 			return lang.mixin(this.inherited(arguments), {
-				"_getNodeToShow": {},
+				"getNodeToShow": {},
 				"_getNodeToShowLoading": {},
 				"_beforeShow": {},
 				"_afterShow": {},

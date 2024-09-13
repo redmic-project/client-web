@@ -92,7 +92,7 @@ define([
 			this._setTotal(this.total - 1);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.domNode;
 		},

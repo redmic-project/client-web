@@ -146,7 +146,7 @@ define([
 			this.progressSlider.emit(this.events.SET_DELTA, req.value);
 		},
 
-		_getNodeToShow: function() {
+		getNodeToShow: function() {
 
 			return this.progressSlider.domNode;
 		}

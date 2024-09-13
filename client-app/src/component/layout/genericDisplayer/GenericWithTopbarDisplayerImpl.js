@@ -46,7 +46,7 @@ define([
 
 		postCreate: function() {
 
-			this._topbarNode = put(this._getNodeToShow(), 'div.' + this.topbarClass);
+			this._topbarNode = put(this.getNodeToShow(), 'div.' + this.topbarClass);
 
 			this._titleNode = put(this._topbarNode, 'div.' + this.titleClass);
 			this._addTitle(this.title);

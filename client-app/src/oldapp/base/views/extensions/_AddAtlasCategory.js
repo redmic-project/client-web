@@ -46,7 +46,8 @@ define([
 			this.categoryFormConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				template: 'maintenance/views/templates/forms/CategoryLayer',
-				modelTarget: this.editionTarget
+				modelTarget: this.editionTarget,
+				lockBackground: true
 			}, this.categoryFormConfig || {}]);
 		},
 

@@ -323,7 +323,13 @@ define([
 
 			var dfd = new Deferred(),
 				parentChannel = redmicConfig.isOuterPath(moduleItem.id) ? this.outerAppChannel : this.innerAppChannel,
-				moduleDefinitionPath = 'app' + moduleItem.internPath + 'View';
+				moduleDefinitionPath = moduleItem.internPath;
+
+			// TODO parche para compatibilidad con antiguas rutas parciales, las nuevas ya han de empezar con 'src/' e
+			// incluir la terminación 'View' para ser totalmente explícitos
+			if (moduleDefinitionPath.indexOf('src/') !== 0) {
+				moduleDefinitionPath = 'app' + moduleDefinitionPath + 'View';
+			}
 
 			require([moduleDefinitionPath], lang.hitch(this, function(moduleObj, ModuleView) {
 

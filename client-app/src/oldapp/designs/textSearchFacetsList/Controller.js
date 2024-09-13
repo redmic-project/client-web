@@ -42,12 +42,14 @@ define([
 					DOWNLOAD_FILE: "downloadFile",
 					GET_REPORT: "getReport"
 				},
-				browserBars: [{
-					definition: Pagination,
-					config: {
-						rowPerPage: 25
+				browserBars: {
+					pagination: {
+						definition: Pagination,
+						config: {
+							rowPerPage: 25
+						}
 					}
-				}]
+				}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -101,7 +103,7 @@ define([
 
 			this._emitEvt('ADD_TO_QUERY', {
 				query: {
-					size: 25
+					size: this.browserBars.pagination.config.rowPerPage
 				}
 			});
 

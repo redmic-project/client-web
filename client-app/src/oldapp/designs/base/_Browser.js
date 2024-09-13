@@ -33,7 +33,7 @@ define([
 				},
 				browserExts: [],
 				browserBase: [ListImpl, _Framework, _ButtonsInRow],
-				browserBars: []
+				browserBars: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -87,8 +87,8 @@ define([
 				return;
 			}
 
-			for (var i = 0; i < this.browserBars.length; i++) {
-				var item = this.browserBars[i],
+			for (var key in this.browserBars) {
+				var item = this.browserBars[key],
 					Definition = item.definition;
 
 				var config = this._merge([{

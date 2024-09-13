@@ -9,7 +9,6 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, "src/component/browser/bars/Order"
-	, "src/component/browser/bars/Pagination"
 	, "src/component/browser/bars/Total"
 	, 'templates/DomainList'
 ], function(
@@ -23,7 +22,6 @@ define([
 	, declare
 	, lang
 	, Order
-	, Pagination
 	, Total
 	, templateList
 ){
@@ -49,8 +47,6 @@ define([
 				},{
 					instance: Order,
 					config: 'orderConfig'
-				},{
-					instance: Pagination
 				}],
 				rowConfig: {
 					buttonsConfig: {

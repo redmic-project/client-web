@@ -81,6 +81,11 @@ define([
 
 			selectNode.onchange = lang.hitch(this, this._eventOptionClick, selectNode);
 
+			if (!this.pageSizeOptions.includes(this.rowPerPage)) {
+				this.pageSizeOptions.push(this.rowPerPage);
+				this.pageSizeOptions.sort(function(a, b) { return a - b; });
+			}
+
 			for (var i = 0; i < this.pageSizeOptions.length; i++ ) {
 				this._addOption(selectNode, this.pageSizeOptions[i]);
 			}

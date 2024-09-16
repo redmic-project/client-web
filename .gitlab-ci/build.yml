@@ -1,7 +1,7 @@
 .web-build:
   image: ${WEB_BUILD_IMAGE_NAME}:${WEB_BUILD_IMAGE_TAG}
   variables:
-    GIT_SUBMODULE_STRATEGY: normal
+    GIT_SUBMODULE_STRATEGY: recursive
     WEB_BUILD_IMAGE_NAME: registry.gitlab.com/redmic-project/docker/web-build
     WEB_BUILD_IMAGE_TAG: latest
   before_script:

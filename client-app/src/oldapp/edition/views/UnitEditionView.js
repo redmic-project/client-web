@@ -1,6 +1,6 @@
 define([
 	"app/components/steps/MainDataStep"
-	, "app/maintenance/domains/observations/views/UnitTypesView"
+	, "src/maintenance/domain/definition/UnitTypes"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"
 	, 'src/redmicConfig'

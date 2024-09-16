@@ -1,5 +1,5 @@
 define([
-	"app/maintenance/domains/observations/views/MetricGroupsView"
+	"src/maintenance/domain/definition/MetricGroups"
 	, "app/administrative/views/DeviceView"
 	, "app/components/steps/MainDataStep"
 	, "app/designs/edition/Controller"

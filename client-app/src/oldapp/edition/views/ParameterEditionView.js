@@ -1,5 +1,5 @@
 define([
-	"app/maintenance/domains/observations/views/ParameterTypesView"
+	"src/maintenance/domain/definition/ParameterTypes"
 	, "app/components/steps/MainDataStep"
 	, "app/components/steps/UnitSetStep"
 	, "app/designs/edition/Controller"

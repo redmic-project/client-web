@@ -1,5 +1,5 @@
 define([
-	"app/maintenance/domains/admin/views/ActivityTypesView"
+	"src/maintenance/domain/definition/ActivityTypes"
 	, "app/components/steps/MainDataStep"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"

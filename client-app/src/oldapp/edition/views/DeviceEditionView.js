@@ -1,5 +1,5 @@
 define([
-	"app/maintenance/domains/admin/views/DeviceTypesView"
+	"src/maintenance/domain/definition/DeviceTypes"
 	, "app/components/steps/CalibrationSetStep"
 	, "app/components/steps/MainDataStep"
 	, "app/designs/edition/Controller"

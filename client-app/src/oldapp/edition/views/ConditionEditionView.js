@@ -1,5 +1,5 @@
 define([
-	"app/maintenance/domains/observations/views/AttributeTypesView"
+	"src/maintenance/domain/definition/AttributeTypes"
 	, "app/components/steps/MainDataStep"
 	, "app/designs/edition/Controller"
 	, "app/designs/edition/Layout"

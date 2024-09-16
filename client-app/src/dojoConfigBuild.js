@@ -6,6 +6,9 @@ dojoConfig = {
 		name: 'app',
 		location: '../app'
 	},{
+		name: 'src',
+		location: '../src'
+	},{
 		name: 'dojo',
 		location: '../dojo'
 	},{

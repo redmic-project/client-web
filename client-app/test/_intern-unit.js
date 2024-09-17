@@ -6,7 +6,7 @@ module.exports = function(args) {
 		_intern = require('./_intern')(args),
 		_functions = require('./_functions'),
 
-		testsPath = args.testsPath,
+		testsPath = 'test',
 		suitesGroups = args.suitesGroups,	// TODO por ahora no funciona, porque se recorre desde directorio no controlable
 		suites = args.suites,
 

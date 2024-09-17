@@ -172,7 +172,7 @@ define([
 					, 'status': StatusDomainDefinition
 					, 'thematic-type': ThematicTypeDomainDefinition
 					, 'toponym-types': ToponymTypesDomainDefinition // TODO no funciona la petición hacia api
-						, 'trophic-regime': TrophicRegimeDomainDefinition
+					, 'trophic-regime': TrophicRegimeDomainDefinition
 					, 'units': UnitsDomainDefinition
 					, 'unit-types': UnitTypesDomainDefinition
 				}

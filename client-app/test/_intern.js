@@ -25,7 +25,9 @@ module.exports = function(args) {
 	var drivers = [];
 
 	var chromeDriver = {
-		name: 'chrome'
+		name: 'chrome',
+		baseUrl: 'https://storage.googleapis.com/chrome-for-testing-public',
+		platform: 'linux64'
 	};
 
 	if (chromeVersion) {
@@ -55,7 +57,8 @@ module.exports = function(args) {
 
 	var config = {
 		capabilities: {
-			'idle-timeout': 30
+			'idle-timeout': 30,
+			'fixSessionCapabilities': true
 		},
 
 		environments: environments,

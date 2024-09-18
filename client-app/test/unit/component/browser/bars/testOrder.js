@@ -50,7 +50,7 @@ define([
 				assert.ok(instance.orderNode, "No se ha creado correctamente");
 				assert.ok(instance.selectOrderNode, "No se ha creado correctamente");
 				assert.ok(instance.directionOrderNode, "No se ha creado correctamente");
-				assert.ok(instance.optionSelect, "No se ha creado correctamente");
+				assert.ok(instance._currentOrderField, "No se ha creado correctamente");
 				assert.ok(instance.options, "No se ha creado correctamente");
 			},
 
@@ -66,7 +66,7 @@ define([
 				Mediator.once(instance._buildChannel(parentChannel, instance.actions.ADD_TO_QUERY), function(req) {
 
 					assert.strictEqual(req.query.sorts[0].field, 'name', "No se ha enviado correctamente");
-					assert.strictEqual(req.query.sorts[0].order, 'ASC', "No se ha enviado correctamente");
+					assert.strictEqual(req.query.sorts[0].order, 'DESC', "No se ha enviado correctamente");
 					assert.strictEqual(req.query.target, target, "No se ha enviado correctamente");
 					dfd.resolve();
 				});
@@ -87,7 +87,7 @@ define([
 				Mediator.once(instance._buildChannel(parentChannel, instance.actions.ADD_TO_QUERY), function(req) {
 
 					assert.strictEqual(req.query.sorts[0].field, 'name', "No se ha enviado correctamente");
-					assert.strictEqual(req.query.sorts[0].order, 'DESC', "No se ha enviado correctamente");
+					assert.strictEqual(req.query.sorts[0].order, 'ASC', "No se ha enviado correctamente");
 					assert.strictEqual(req.query.target, target, "No se ha enviado correctamente");
 					dfd.resolve();
 				});

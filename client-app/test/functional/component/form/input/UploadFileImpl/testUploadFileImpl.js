@@ -11,9 +11,9 @@ define([
 ){
 	var indexPageUrl,
 		timeout = Config.timeout.findElement,
-		fileUrl = Config.env.cwd + '/tests/support/resources/profile.png',
-		altFileUrl = Config.env.cwd + '/tests/support/resources/profile.png',
-		wrongFileUrl = Config.env.cwd + '/tests/support/resources/DomainModel.js',
+		fileUrl = Config.env.cwd + '/client-app/test/support/resources/profile.png',
+		altFileUrl = Config.env.cwd + '/client-app/test/support/resources/profile.png',
+		wrongFileUrl = Config.env.cwd + '/client-app/test/support/resources/DomainModel.js',
 
 		uploadBoxSelector = '.dropzone.dz-clickable.dz-started',
 		uploadPreviewSelector = uploadBoxSelector + ' > .dz-preview',

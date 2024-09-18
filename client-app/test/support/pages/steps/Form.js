@@ -36,7 +36,7 @@ define([
 				number: '2000',
 				valueAndUnit: '10',
 				colorPickerTextBox: '#531721',
-				upload: Config.env.cwd + '/tests/support/resources/profile.png',
+				upload: Config.env.cwd + '/client-app/test/support/resources/profile.png',
 				range: '1'
 			};
 		},

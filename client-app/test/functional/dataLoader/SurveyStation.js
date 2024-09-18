@@ -32,7 +32,7 @@ define([
 
 
 		valuesByInputModel: {
-			'fileName': Config.env.cwd + '/tests/support/resources/fileForLoadData/ft.csv',
+			'fileName': Config.env.cwd + '/client-app/test/support/resources/fileForLoadData/ft.csv',
 			'separator': ';'
 		},
 		configStepsByLoad: [{

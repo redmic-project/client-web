@@ -15,7 +15,7 @@ define([
 		userImageContainerSelector = 'div.infoContainer div.imageContainerEdit span',
 		userImageSelector = 'div' + Config.selector.notLoading + ' div.imageContainer img',
 
-		newImageUrl = Config.env.cwd + '/tests/support/resources/profile.png',
+		newImageUrl = Config.env.cwd + '/client-app/test/support/resources/profile.png',
 		emptyImageUrl = '/res/images/noIMG.png',
 
 		goToProfile = function() {

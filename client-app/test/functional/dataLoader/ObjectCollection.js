@@ -32,7 +32,7 @@ define([
 
 		valuesByInputModel: {
 			'geometry/coordinates': '[[-16.602745056152344,28.393980721011758],[-16.60208523273468,28.39444206096232]]',
-			'fileName': Config.env.cwd + '/tests/support/resources/fileForLoadData/oc.csv',
+			'fileName': Config.env.cwd + '/client-app/test/support/resources/fileForLoadData/oc.csv',
 			'separator': ';'
 		},
 

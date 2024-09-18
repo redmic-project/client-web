@@ -26,7 +26,7 @@ define([
 
 
 		valuesByInputModel: {
-			'fileName': Config.env.cwd + '/tests/support/resources/fileForLoadData/ar.zip'
+			'fileName': Config.env.cwd + '/client-app/test/support/resources/fileForLoadData/ar.zip'
 		},
 		configStepsByLoad: [{
 			type: 'form',

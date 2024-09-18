@@ -27,8 +27,8 @@ define([
 		}],
 		valuesByInputModel = {
 			language: 'es',
-			'fileName': Config.env.cwd + '/tests/support/resources/fileForLoadData/document.csv',
-			'url': Config.env.cwd + '/tests/support/resources/doc.pdf',
+			'fileName': Config.env.cwd + '/client-app/test/support/resources/fileForLoadData/document.csv',
+			'url': Config.env.cwd + '/client-app/test/support/resources/doc.pdf',
 			'separator': '|'
 		},
 		configStepsByLoad = [{

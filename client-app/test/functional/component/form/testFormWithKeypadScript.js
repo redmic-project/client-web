@@ -16,7 +16,7 @@ require([
 		form = new formDefinition({
 			parentChannel: 'test',
 			target: 'test',
-			template: 'maintenance/domains/templates/forms/Domain',
+			template: 'src/maintenance/domain/form/Domain',
 			modelSchema: DomainModel
 		});
 

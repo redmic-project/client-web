@@ -519,7 +519,7 @@ define([
 			configBrowser.itemByDataList = true;
 
 			configBrowser.formConfig = {
-				template: 'maintenance/domains/templates/forms/Domain',
+				template: 'src/maintenance/domain/form/Domain',
 				modelSchema: '"$schema":"http://json-schema.org/draft-04/schema#","title":"Activity Field DTO","type":"object","properties":{"id":{"type":["integer","null"]},"name":{"type":"string","minLength":1,"maxLength":150},"name_en":{"type":"string","minLength":1,"maxLength":150}},"required":["name","name_en"]}'
 			};
 

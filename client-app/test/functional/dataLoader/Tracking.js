@@ -50,7 +50,7 @@ define([
 
 
 		valuesByInputModel: {
-			'fileName': Config.env.cwd + '/tests/support/resources/fileForLoadData/pt.csv',
+			'fileName': Config.env.cwd + '/client-app/test/support/resources/fileForLoadData/pt.csv',
 			'separator': ';'
 		}
 	});

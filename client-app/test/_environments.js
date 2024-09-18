@@ -13,6 +13,7 @@ module.exports = function(args) {
 			browserName: 'chrome',
 			'goog:chromeOptions': {
 				args: [
+					'disable-search-engine-choice-screen',
 					'disable-extensions',
 					'window-size=' + windowWidth + ',' + windowHeight,
 					//'user-data-dir=' + userDataDir

@@ -13,6 +13,7 @@ module.exports = function(grunt) {
 			, '"--chromeVersion=version" para definir una versión del driver para Chrome (por defecto, automática)'
 			, '"--firefoxVersion=version" para definir una versión del driver para Firefox (por defecto, automática)'
 			, '"--headless" para ejecutar sin interfaz'
+			, '"--grep" para filtrar mediante expresión regular los tests a ejecutar'
 		],
 
 		remoteOptionParameters = [

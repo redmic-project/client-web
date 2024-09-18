@@ -8,6 +8,7 @@ module.exports = function(args) {
 		testsPath = args.testsPath,
 		coverage = args.coverage,
 		reporters = args.reporters,
+		grep = args.grep,
 
 		seleniumVersion = args.seleniumVersion,
 		chromeVersion = args.chromeVersion,
@@ -98,6 +99,10 @@ module.exports = function(args) {
 
 	if (reporters) {
 		config.reporters = reporters;
+	}
+
+	if (grep) {
+		config.grep = grep;
 	}
 
 	return config;

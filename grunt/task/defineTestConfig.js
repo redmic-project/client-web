@@ -11,7 +11,6 @@ module.exports = function(grunt) {
 
 			rootPath = grunt.config('redmicConfig.rootPath'),
 			srcPath = grunt.config('redmicConfig.srcPath'),
-			depPath = grunt.config('redmicConfig.depPath'),
 			testPath = grunt.config('redmicConfig.testPath'),
 			outputPath = 'test_reports',
 
@@ -87,7 +86,6 @@ module.exports = function(grunt) {
 			testUnitRemotePath = path.join(absoluteTestsPath, 'intern-unit-remote'),
 			testFunctionalLocalPath = path.join(absoluteTestsPath, 'intern-functional-local'),
 			testFunctionalRemotePath = path.join(absoluteTestsPath, 'intern-functional-remote'),
-			dojoCommonBaseUrl = path.join(' ', depPath, '*').trim(),
 
 			ipGetterPath = path.join(absoluteTestsPath, 'IpGetter'),
 			IpGetter = require(ipGetterPath)(),
@@ -117,8 +115,7 @@ module.exports = function(grunt) {
 			testUnitParams = deepmerge(testParams, {
 				reporters: unitReporters,
 				suites: suites,
-				coverage: coverage,
-				dojoBaseUrl: dojoCommonBaseUrl
+				coverage: coverage
 			}),
 			testFunctionalParams = deepmerge(testParams, {
 				serverUrl: serverUrl,
@@ -128,7 +125,7 @@ module.exports = function(grunt) {
 				reporters: functionalReporters,
 				functionalSuites: functionalSuites,
 				reportersOutputPath: reportersOutputPath,
-				dojoBaseUrl: '.' + dojoCommonBaseUrl
+				dojoBaseUrlPrefix: '.'
 			}),
 
 			testUnitLocalOptions = require(testUnitLocalPath)(testUnitParams),

@@ -13,7 +13,7 @@ module.exports = function(args) {
 		path = require('path'),
 
 		srcPath = args.srcPath,
-		dojoBaseUrl = args.dojoBaseUrl,
+		dojoBaseUrlPrefix = args.dojoBaseUrlPrefix,
 
 		dojoConfigFileName = 'dojoConfig.js',
 		dojoConfigFileContent = fs.readFileSync(path.join(srcPath, dojoConfigFileName), 'utf8'),
@@ -21,12 +21,9 @@ module.exports = function(args) {
 		dojoConfigStringValue = dojoConfigContentRegex.exec(dojoConfigFileContent)[1],
 		dojoConfig = _stringToJson(dojoConfigStringValue);
 
-	dojoConfig.baseUrl = dojoBaseUrl;
-
-	dojoConfig.packages.push({
-		name: 'test',
-		location: '../../test'
-	});
+	if (dojoBaseUrlPrefix) {
+		dojoConfig.baseUrl = dojoBaseUrlPrefix + dojoConfig.baseUrl
+	};
 
 	return dojoConfig;
 };

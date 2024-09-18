@@ -1,115 +1,120 @@
 dojoConfig = {
+	baseUrl: '/client-app',
+
 	packages: [{
 		name: 'src',
-		location: '../../src'
+		location: 'src'
+	},{
+		name: 'test',
+		location: 'test'
 	},{
 		name: 'app',
-		location: '../../src/oldapp'
+		location: 'src/oldapp'
 	},{
 		name: 'RWidgets',
-		location: '../../src/util/widgets'
+		location: 'src/util/widgets'
 	},{
 		name: 'dojo',
-		location: '../dojo'
+		location: 'dep/dojo'
 	},{
 		name: 'dijit',
-		location: '../dijit'
+		location: 'dep/dijit'
 	},{
 		name: 'dojox',
-		location: '../dojox'
+		location: 'dep/dojox'
 	},{
 		name: 'put-selector',
-		location: '../put-selector'
+		location: 'dep/put-selector'
 	},{
 		name: 'alertify',
-		location: '../alertify/build'
+		location: 'dep/alertify/build'
 	},{
 		name: 'dropzone',
-		location: '../dropzone/dist/min'
+		location: 'dep/dropzone/dist/min'
 	},{
 		name: 'leaflet',
-		location: '../leaflet/dist'
+		location: 'dep/leaflet/dist'
 	},{
 		name: 'L-draw',
-		location: '../leaflet-draw/dist'
+		location: 'dep/leaflet-draw/dist'
 	},{
 		name: 'L-miniMap',
-		location: '../leaflet-minimap/dist'
+		location: 'dep/leaflet-minimap/dist'
 	},{
 		name: 'L-coordinates',
-		location: '../leaflet-coordinates/dist'
+		location: 'dep/leaflet-coordinates/dist'
 	},{
 		name: 'L-navBar',
-		location: '../leaflet-nav'
+		location: 'dep/leaflet-nav'
 	},{
 		name: 'L-areaselect',
-		location: '../leaflet-areaselect/src'
+		location: 'dep/leaflet-areaselect/src'
 	},{
 		name: 'd3',
-		location: '../d3/dist'
+		location: 'dep/d3/dist'
 	},{
 		name: 'd3Tip',
-		location: '../d3-v6-tip/build'
+		location: 'dep/d3-v6-tip/build'
 	},{
 		name: 'tv4',
-		location: '../tv4'
+		location: 'dep/tv4'
 	},{
 		name: 'mediatorjs',
-		location: '../mediatorjs'
+		location: 'dep/mediatorjs'
 	},{
 		name: 'cbtree',
-		location: '../cbtree'
+		location: 'dep/cbtree'
 	},{
 		name: 'proj4',
-		location: '../proj4/dist'
+		location: 'dep/proj4/dist'
 	},{
 		name: 'handlebars',
-		location: '../handlebars/dist'
+		location: 'dep/handlebars/dist'
 	},{
 		name: 'awesome-markers',
-		location: '../leaflet.awesome-markers/dist'
+		location: 'dep/leaflet.awesome-markers/dist'
 	},{
 		name: 'pruneCluster',
-		location: '../pruneCluster/dist'
+		location: 'dep/pruneCluster/dist'
 	},{
 		name: 'templates',
-		location: '../templates/dist'
+		location: 'dep/templates/dist'
 	},{
 		name: 'packery',
-		location: '../packery/dist'
+		location: 'dep/packery/dist'
 	},{
 		name: 'draggabilly',
-		location: '../draggabilly/dist'
+		location: 'dep/draggabilly/dist'
 	},{
 		name: 'moment',
-		location: '../moment/min'
+		location: 'dep/moment/min'
 	},{
 		name: 'leaflet-measure',
-		location: '../leaflet-measure/dist'
+		location: 'dep/leaflet-measure/dist'
 	},{
 		name: 'sockjs',
-		location: '../sockjs/dist'
+		location: 'dep/sockjs/dist'
 	},{
 		name: 'stomp-websocket',
-		location: '../stomp-websocket/lib'
+		location: 'dep/stomp-websocket/lib'
 	},{
 		name: 'deepmerge',
-		location: '../deepmerge/dist'
+		location: 'dep/deepmerge/dist'
 	},{
 		name: 'colorjs',
-		location: '../color-js'
+		location: 'dep/color-js'
 	},{
 		name: 'uuid',
-		location: '../uuid/dist/umd'
+		location: 'dep/uuid/dist/umd'
 	},{
 		name: 'json-schema-ref-parser',
-		location: '../json-schema-ref-parser/dist'
+		location: 'dep/json-schema-ref-parser/dist'
 	},{
 		name: 'leaflet-nontiledlayer',
-		location: '../leaflet-nontiledlayer/dist'
+		location: 'dep/leaflet-nontiledlayer/dist'
 	},{
 		name: 'wicket',
-		location: '../wicket'
+		location: 'dep/wicket'
 	}],
 
 	map: {

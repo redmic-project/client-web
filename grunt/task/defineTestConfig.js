@@ -40,7 +40,7 @@ module.exports = function(grunt) {
 
 			configPath = path.join(rootPath, outputPath, configDirName),
 			reportersOutputPath = path.join(rootPath, outputPath, currOutputDirName),
-			absoluteTestsPath = path.join(rootPath, testPath),
+			absoluteTestPath = path.join(rootPath, testPath),
 			userDataDir = outputPath + '/' + configDirName;
 
 		grunt.file['delete'](configPath);
@@ -82,18 +82,18 @@ module.exports = function(grunt) {
 
 			functionalReporters = [].concat(commonReporters),
 
-			testUnitLocalPath = path.join(absoluteTestsPath, 'intern-unit-local'),
-			testUnitRemotePath = path.join(absoluteTestsPath, 'intern-unit-remote'),
-			testFunctionalLocalPath = path.join(absoluteTestsPath, 'intern-functional-local'),
-			testFunctionalRemotePath = path.join(absoluteTestsPath, 'intern-functional-remote'),
+			testUnitLocalPath = path.join(absoluteTestPath, 'intern-unit-local'),
+			testUnitRemotePath = path.join(absoluteTestPath, 'intern-unit-remote'),
+			testFunctionalLocalPath = path.join(absoluteTestPath, 'intern-functional-local'),
+			testFunctionalRemotePath = path.join(absoluteTestPath, 'intern-functional-remote'),
 
-			ipGetterPath = path.join(absoluteTestsPath, 'IpGetter'),
+			ipGetterPath = path.join(absoluteTestPath, 'IpGetter'),
 			IpGetter = require(ipGetterPath)(),
 			localIp = IpGetter.getIp(),
 
 			testParams = {
 				srcPath: srcPath,
-				testsPath: testPath,
+				testPath: testPath,
 				ownServerPort: ownServerPort,
 				ownSocketPort: ownSocketPort,
 				ownTunnelPort: ownTunnelPort,

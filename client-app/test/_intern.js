@@ -5,7 +5,7 @@ module.exports = function(args) {
 		browserDojoConfig = JSON.parse(JSON.stringify(dojoConfig)),
 		environments = require('./_environments')(args),
 
-		testsPath = args.testsPath,
+		testPath = args.testPath,
 		coverage = args.coverage,
 		reporters = args.reporters,
 		grep = args.grep,
@@ -89,7 +89,7 @@ module.exports = function(args) {
 		reporters: ['pretty'],
 
 		plugins: [{
-			script: path.join(testsPath, 'support', 'CustomReporter.js')
+			script: path.join(testPath, 'support', 'CustomReporter.js')
 		}]
 	};
 

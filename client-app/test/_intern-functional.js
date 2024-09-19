@@ -5,20 +5,20 @@ module.exports = function(args) {
 		_intern = require('./_intern')(args),
 		_functions = require('./_functions'),
 
-		testsPath = args.testsPath,
+		testPath = args.testPath,
 		role = args.role,
 		user = args.user,
 		pass = args.pass,
 		suitesGroups = args.suitesGroups,
 		functionalSuites = args.functionalSuites,
 
-		pathPrefix = path.join(testsPath, 'functional'),
+		suitesPrefix = path.join(testPath, 'functional'),
 		config = {};
 
 	if (functionalSuites) {
 		config.functionalSuites = _functions.getParameterValueAsArray(functionalSuites);
 	} else if (suitesGroups) {
-		config.functionalSuites = _functions.getSuites(pathPrefix, suitesGroups);
+		config.functionalSuites = _functions.getSuites(suitesPrefix, suitesGroups);
 	} else {
 		var suitesLimitedByRole;
 
@@ -26,8 +26,8 @@ module.exports = function(args) {
 			suitesLimitedByRole = ['common', 'catalog', 'catalogDetails', 'viewers', 'products'];
 		}
 
-		var defaultFunctionalSuites = _functions.getSuites(pathPrefix, suitesLimitedByRole),
-			excludePattern = '!' + path.join(pathPrefix, 'component', '**');
+		var defaultFunctionalSuites = _functions.getSuites(suitesPrefix, suitesLimitedByRole),
+			excludePattern = '!' + path.join(suitesPrefix, 'component', '**');
 
 		defaultFunctionalSuites.push(excludePattern);
 		config.functionalSuites = defaultFunctionalSuites;

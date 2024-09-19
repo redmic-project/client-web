@@ -17,13 +17,13 @@ module.exports = function(args) {
 
 		dojoConfigFileName = 'dojoConfig.js',
 		dojoConfigFileContent = fs.readFileSync(path.join(srcPath, dojoConfigFileName), 'utf8'),
-		dojoConfigContentRegex = /^.*\n([^$]+)};[^$]$/g,
+		dojoConfigContentRegex = /^.*\n([^$]+)};[^$]*$/g,
 		dojoConfigStringValue = dojoConfigContentRegex.exec(dojoConfigFileContent)[1],
 		dojoConfig = _stringToJson(dojoConfigStringValue);
 
 	if (dojoBaseUrlPrefix) {
-		dojoConfig.baseUrl = dojoBaseUrlPrefix + dojoConfig.baseUrl
-	};
+		dojoConfig.baseUrl = dojoBaseUrlPrefix + dojoConfig.baseUrl;
+	}
 
 	return dojoConfig;
 };

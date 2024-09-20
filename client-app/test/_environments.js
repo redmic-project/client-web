@@ -3,7 +3,8 @@ module.exports = function(args) {
 	var headless = args.headless,
 		browser = args.browser,
 		browserList = typeof browser === 'string' ? browser.split(',') : browser,
-		//userDataDir = args.userDataDir || '.config',
+		chromeBrowserVersion = args.chromeVersion,
+		firefoxBrowserVersion = args.firefoxVersion,
 		windowWidth = 1280,
 		windowHeight = 768,
 		environments = [];
@@ -15,8 +16,7 @@ module.exports = function(args) {
 				args: [
 					'disable-search-engine-choice-screen',
 					'disable-extensions',
-					'window-size=' + windowWidth + ',' + windowHeight,
-					//'user-data-dir=' + userDataDir
+					'window-size=' + windowWidth + ',' + windowHeight
 				]
 			}
 		},
@@ -37,6 +37,17 @@ module.exports = function(args) {
 	if (headless) {
 		browserConfigs.chromeConfig['goog:chromeOptions'].args.push('headless', 'disable-gpu', 'no-sandbox');
 		browserConfigs.firefoxConfig['moz:firefoxOptions'].args.push('--headless');
+	}
+
+	if (chromeBrowserVersion) {
+		var chromeBrowserVersionSplitted = chromeBrowserVersion.split('.'),
+			chromeBrowserMajorMinorVersion = chromeBrowserVersionSplitted.slice(0, 2).join('.');
+
+		browserConfigs.chromeConfig.browserVersion = chromeBrowserMajorMinorVersion;
+	}
+
+	if (firefoxBrowserVersion) {
+		browserConfigs.firefoxConfig.browserVersion = firefoxBrowserVersion;
 	}
 
 	for (var i = 0; i < browserList.length; i++) {

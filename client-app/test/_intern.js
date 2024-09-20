@@ -11,8 +11,6 @@ module.exports = function(args) {
 		grep = args.grep,
 
 		seleniumVersion = args.seleniumVersion,
-		chromeVersion = args.chromeVersion,
-		firefoxVersion = args.firefoxVersion,
 
 		ownServerPort = args.ownServerPort,
 		ownSocketPort = args.ownSocketPort,
@@ -23,33 +21,8 @@ module.exports = function(args) {
 
 	delete dojoConfig.deps;
 
-	var drivers = [];
-
-	var chromeDriver = {
-		name: 'chrome',
-		baseUrl: 'https://storage.googleapis.com/chrome-for-testing-public',
-		platform: 'linux64'
-	};
-
-	if (chromeVersion) {
-		chromeDriver.version = chromeVersion;
-	}
-
-	drivers.push(chromeDriver);
-
-	var firefoxDriver = {
-		name: 'firefox'
-	};
-
-	if (firefoxVersion) {
-		firefoxDriver.version = firefoxVersion;
-	}
-
-	drivers.push(firefoxDriver);
-
 	var tunnelOptions = {
-		port: tunnelPort,
-		drivers: drivers
+		port: tunnelPort
 	};
 
 	if (seleniumVersion) {
@@ -59,7 +32,7 @@ module.exports = function(args) {
 	var config = {
 		capabilities: {
 			'idle-timeout': 30,
-			'fixSessionCapabilities': true
+			fixSessionCapabilities: 'no-detect'
 		},
 
 		environments: environments,

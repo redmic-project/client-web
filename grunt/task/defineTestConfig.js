@@ -105,10 +105,12 @@ module.exports = function(grunt) {
 				grep: grep,
 				userDataDir: userDataDir,
 				seleniumVersion: seleniumVersion,
-				chromeDriverVersion: chromeDriverVersion,
 				chromeBrowserVersion: chromeBrowserVersion,
-				firefoxDriverVersion: firefoxDriverVersion,
 				firefoxBrowserVersion: firefoxBrowserVersion
+			},
+			localTestParams = {
+				chromeDriverVersion: chromeDriverVersion,
+				firefoxDriverVersion: firefoxDriverVersion
 			},
 			remoteTestParams = {
 				ownServerHost: ownServerHost,
@@ -132,11 +134,17 @@ module.exports = function(grunt) {
 				dojoBaseUrlPrefix: '.'
 			}),
 
-			testUnitLocalOptions = require(testUnitLocalPath)(testUnitParams),
-			testUnitRemoteOptions = require(testUnitRemotePath)(deepmerge(testUnitParams, remoteTestParams)),
-			testFunctionalLocalOptions = require(testFunctionalLocalPath)(testFunctionalParams),
-			testFunctionalRemoteOptions = require(testFunctionalRemotePath)(deepmerge(testFunctionalParams,
-				remoteTestParams));
+			testUnitLocalOptions = require(testUnitLocalPath)(
+				deepmerge(testUnitParams, localTestParams)),
+
+			testUnitRemoteOptions = require(testUnitRemotePath)(
+				deepmerge(testUnitParams, remoteTestParams)),
+
+			testFunctionalLocalOptions = require(testFunctionalLocalPath)(
+				deepmerge(testFunctionalParams, localTestParams)),
+
+			testFunctionalRemoteOptions = require(testFunctionalRemotePath)(
+				deepmerge(testFunctionalParams, remoteTestParams));
 
 		grunt.config('intern', {
 			'test-unit-local': {

@@ -40,10 +40,7 @@ module.exports = function(args) {
 	}
 
 	if (chromeBrowserVersion) {
-		var chromeBrowserVersionSplitted = chromeBrowserVersion.split('.'),
-			chromeBrowserMajorMinorVersion = chromeBrowserVersionSplitted.slice(0, 2).join('.');
-
-		browserConfigs.chromeConfig.browserVersion = chromeBrowserMajorMinorVersion;
+		browserConfigs.chromeConfig.browserVersion = chromeBrowserVersion;
 	}
 
 	if (firefoxBrowserVersion) {

@@ -3,8 +3,8 @@ module.exports = function(args) {
 	var headless = args.headless,
 		browser = args.browser,
 		browserList = typeof browser === 'string' ? browser.split(',') : browser,
-		chromeBrowserVersion = args.chromeVersion,
-		firefoxBrowserVersion = args.firefoxVersion,
+		chromeBrowserVersion = args.chromeBrowserVersion,
+		firefoxBrowserVersion = args.firefoxBrowserVersion,
 		windowWidth = 1280,
 		windowHeight = 768,
 		environments = [];

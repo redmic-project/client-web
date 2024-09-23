@@ -32,8 +32,10 @@ module.exports = function(grunt) {
 			functionalSuites = grunt.option('functionalSuites'),
 			coverage = grunt.option('coverage'),
 			seleniumVersion = grunt.option('seleniumVersion'),
-			chromeVersion = grunt.option('chromeVersion'),
-			firefoxVersion = grunt.option('firefoxVersion'),
+			chromeDriverVersion = grunt.option('chromeDriverVersion'),
+			chromeBrowserVersion = grunt.option('chromeBrowserVersion'),
+			firefoxDriverVersion = grunt.option('firefoxDriverVersion'),
+			firefoxBrowserVersion = grunt.option('firefoxBrowserVersion'),
 
 			currOutputDirName = gruntTaskName + '_on-port_' + ownServerPort,
 			configDirName = '.config-' + ownServerPort,
@@ -103,8 +105,10 @@ module.exports = function(grunt) {
 				grep: grep,
 				userDataDir: userDataDir,
 				seleniumVersion: seleniumVersion,
-				chromeVersion: chromeVersion,
-				firefoxVersion: firefoxVersion
+				chromeDriverVersion: chromeDriverVersion,
+				chromeBrowserVersion: chromeBrowserVersion,
+				firefoxDriverVersion: firefoxDriverVersion,
+				firefoxBrowserVersion: firefoxBrowserVersion
 			},
 			remoteTestParams = {
 				ownServerHost: ownServerHost,

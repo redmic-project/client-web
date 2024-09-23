@@ -10,21 +10,21 @@ module.exports = function(grunt) {
 			, '"--browser" para elegir navegadores a usar, soporta definiciones múltiples y lista separada por comas ' +
 				'(por defecto, chrome)'
 			, '"--seleniumVersion=version" para definir una versión del túnel Selenium (por defecto, automática)'
+			, '"--chromeBrowserVersion=version" para definir una versión deseada del navegador Chrome remoto (por defecto, vale cualquiera). Especificar como "major.minor"'
+			, '"--firefoxBrowserVersion=version" para definir una versión deseada del navegador Firefox remoto (por defecto, vale cualquiera). Especificar como "major.minor"'
 			, '"--headless" para ejecutar sin interfaz'
 			, '"--grep" para filtrar mediante expresión regular los tests a ejecutar'
 		],
 
 		localOptionParameters = [
-			'"--chromeVersion=version" para definir una versión del driver Chrome local (por defecto, automática hasta "114.0.5735.90")'
-			, '"--firefoxVersion=version" para definir una versión del driver Firefox local (por defecto, automática hasta "0.29.1")'
+			'"--chromeDriverVersion=version" para definir una versión del driver Chrome local (por defecto, automática hasta "114.0.5735.90")'
+			, '"--firefoxDriverVersion=version" para definir una versión del driver Firefox local (por defecto, automática hasta "0.29.1")'
 		],
 
 		remoteOptionParameters = [
 			'"--remoteHost=host" para redefinir la dirección del servicio de testeo remoto'
 			, '"--remotePort=port" para redefinir el puerto del servicio de testeo remoto'
 			, '"--ownServerHost=host" para redefinir dirección del servidor de intern, para indicarle al túnel remoto'
-			, '"--chromeVersion=version" para definir una versión deseada del navegador Chrome remoto (por defecto, vale cualquiera). Especificar como "major.minor"'
-			, '"--firefoxVersion=version" para definir una versión deseada del navegador Firefox remoto (por defecto, vale cualquiera). Especificar como "major.minor"'
 		],
 
 		unitOptionParameters = [

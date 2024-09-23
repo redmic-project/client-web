@@ -44,7 +44,7 @@ run-local-unit-tests:
       --headless
       --browser=${TEST_BROWSER}
       --seleniumVersion=${LOCAL_SELENIUM_VERSION}
-      --chromeVersion=${LOCAL_CHROME_VERSION}
+      --chromeDriverVersion=${LOCAL_CHROME_DRIVER_VERSION}
       | tee test.out
 
 .run-remote-unit-tests:
@@ -59,8 +59,8 @@ run-local-unit-tests:
       --ownServerHost="${TEST_OWN_SERVER_HOST}"
       --remoteHost=${TEST_REMOTE_HOST}
       --seleniumVersion=${REMOTE_SELENIUM_VERSION}
-      --chromeVersion=${REMOTE_CHROME_VERSION}
-      --firefoxVersion=${REMOTE_FIREFOX_VERSION}
+      --chromeBrowserVersion=${REMOTE_CHROME_BROWSER_VERSION}
+      --firefoxBrowserVersion=${REMOTE_FIREFOX_BROWSER_VERSION}
       | tee test.out
 
 run-remote-unit-tests-chrome:
@@ -94,7 +94,7 @@ run-local-modules-functional-tests:
       --headless
       --browser=${TEST_BROWSER}
       --seleniumVersion=${LOCAL_SELENIUM_VERSION}
-      --chromeVersion=${LOCAL_CHROME_VERSION}
+      --chromeDriverVersion=${LOCAL_CHROME_DRIVER_VERSION}
   artifacts: *run-functional-tests-artifacts
 
 .run-remote-modules-functional-tests:
@@ -112,8 +112,8 @@ run-local-modules-functional-tests:
       --ownServerHost="${TEST_OWN_SERVER_HOST}"
       --remoteHost=${TEST_REMOTE_HOST}
       --seleniumVersion=${REMOTE_SELENIUM_VERSION}
-      --chromeVersion=${REMOTE_CHROME_VERSION}
-      --firefoxVersion=${REMOTE_FIREFOX_VERSION}
+      --chromeBrowserVersion=${REMOTE_CHROME_BROWSER_VERSION}
+      --firefoxBrowserVersion=${REMOTE_FIREFOX_BROWSER_VERSION}
   artifacts: *run-functional-tests-artifacts
 
 run-remote-modules-functional-tests-chrome:
@@ -144,8 +144,8 @@ run-remote-modules-functional-tests-firefox:
       --browser=${TEST_BROWSER}
       --remoteHost=${TEST_REMOTE_HOST}
       --seleniumVersion=${REMOTE_SELENIUM_VERSION}
-      --chromeVersion=${REMOTE_CHROME_VERSION}
-      --firefoxVersion=${REMOTE_FIREFOX_VERSION}
+      --chromeBrowserVersion=${REMOTE_CHROME_BROWSER_VERSION}
+      --firefoxBrowserVersion=${REMOTE_FIREFOX_BROWSER_VERSION}
   dependencies: []
   artifacts: *run-functional-tests-artifacts
   rules:

@@ -1,7 +1,7 @@
 module.exports = function(args) {
 
-	var chromeDriverVersion = args.chromeVersion,
-		firefoxDriverVersion = args.firefoxVersion;
+	var chromeDriverVersion = args.chromeDriverVersion,
+		firefoxDriverVersion = args.firefoxDriverVersion;
 
 	var drivers = [];
 
@@ -12,9 +12,9 @@ module.exports = function(args) {
 	if (chromeDriverVersion) {
 		chromeDriver.version = chromeDriverVersion;
 
-		var chromeMajorVersion = parseInt(chromeDriverVersion.split('.')[0], 10);
+		var majorVersion = parseInt(chromeDriverVersion.split('.')[0], 10);
 
-		if (chromeMajorVersion > 114) {
+		if (majorVersion > 114) {
 			chromeDriver.baseUrl = 'https://storage.googleapis.com/chrome-for-testing-public';
 			chromeDriver.platform = 'linux64';
 		}

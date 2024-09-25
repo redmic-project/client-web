@@ -1,9 +1,4 @@
 dojoConfig = {
-	locale: typeof lang !== 'undefined' ? lang : 'es',
-	extraLocale: ['en'],
-
-	baseUrl: '/client-app/dist/js',
-
 	packages: [{
 		name: 'app',
 		location: 'app'
@@ -34,28 +29,5 @@ dojoConfig = {
 	},{
 		name: 'leaflet-measure',
 		location: 'leaflet-measure'
-	}],
-
-	map: {
-		'd3Tip/d3-v6-tip.min': {
-			'd3-selection': 'd3/d3.min'
-		},
-		'leaflet-nontiledlayer/NonTiledLayer': {
-			'leaflet': 'leaflet/leaflet'
-		},
-		'L-miniMap/Control.MiniMap.min': {
-			'leaflet': 'leaflet/leaflet'
-		},
-		'pruneCluster/PruneCluster.amd.min': {
-			'leaflet': 'leaflet/leaflet'
-		},
-		'wicket': {
-			'wicket': 'wicket/wicket.min'
-		}
-	},
-
-	async: true,
-	waitSeconds: 5,
-	requestProvider: 'dojo/request/registry',
-	selectorEngine: 'lite'
+	}]
 };

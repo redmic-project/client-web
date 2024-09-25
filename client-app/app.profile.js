@@ -1,5 +1,23 @@
 var includeLocales = ['es', 'en'];
 
+var packagesMap = {
+	'd3Tip/d3-v6-tip.min': {
+		'd3-selection': 'd3/d3.min'
+	},
+	'leaflet-nontiledlayer/NonTiledLayer': {
+		'leaflet': 'leaflet/leaflet'
+	},
+	'L-miniMap/Control.MiniMap.min': {
+		'leaflet': 'leaflet/leaflet'
+	},
+	'pruneCluster/PruneCluster.amd.min': {
+		'leaflet': 'leaflet/leaflet'
+	},
+	'wicket': {
+		'wicket': 'wicket/wicket.min'
+	}
+};
+
 var amdTagger = function(filename) {
 
 	return /\.js$/.test(filename);
@@ -26,7 +44,7 @@ var declarativeTagger = function(filename) {
 
 var profileObj = {
 	basePath: '.',
-	releaseDir: '../client-app/dist',
+	releaseDir: 'dist',
 	releaseName: 'js',
 	action: 'release',
 	layerOptimize: 'closure',
@@ -40,8 +58,6 @@ var profileObj = {
 	mini: true,
 	stripConsole: 'warn',
 	selectorEngine: 'lite',
-	locale: includeLocales[0],
-	localeList: includeLocales.join(','),
 	useSourceMaps: false,
 	buildReportDir: '../..',
 	maxOptimizationProcesses: 1,
@@ -51,18 +67,36 @@ var profileObj = {
 		declarative: declarativeTagger
 	},
 
+	defaultConfig: {
+		hasCache:{
+			'dojo-built': 1,
+			'dojo-loader': 1,
+			'dom': 1,
+			'host-browser': 1,
+			'config-selectorEngine': 'lite'
+		},
+
+		// Configuraciones de dojoConfig, definidas estáticamente en tiempo de compilación ('packages' no funciona)
+		baseUrl: '/client-app/dist/js',
+		map: packagesMap,
+		async: true,
+		waitSeconds: 5,
+		requestProvider: 'dojo/request/registry',
+		selectorEngine: 'lite'
+	},
+
 	staticHasFeatures: {
 		'config-deferredInstrumentation': 0,
 		'config-dojo-loader-catches': 0,
 		'config-tlmSiblingOfDojo': 0,
-		'dojo-amd-factory-scan': 1,
+		'dojo-amd-factory-scan': 0,
 		'dojo-combo-api': 0,
 		'dojo-config-api': 1,
 		'dojo-config-require': 0,
 		'dojo-debug-messages': 0,
-		'dojo-dom-ready-api': 1,
+		'dojo-dom-ready-api': 0,
 		'dojo-firebug': 0,
-		'dojo-guarantee-console': 1,
+		'dojo-guarantee-console': 0,
 		'dojo-has-api': 1,
 		'dojo-inject-api': 1,
 		'dojo-loader': 1,
@@ -338,23 +372,7 @@ var profileObj = {
 		}
 	}],
 
-	map: {
-		'd3Tip/d3-v6-tip.min': {
-			'd3-selection': 'd3/d3.min'
-		},
-		'leaflet-nontiledlayer/NonTiledLayer': {
-			'leaflet': 'leaflet/leaflet'
-		},
-		'L-miniMap/Control.MiniMap.min': {
-			'leaflet': 'leaflet/leaflet'
-		},
-		'pruneCluster/PruneCluster.amd.min': {
-			'leaflet': 'leaflet/leaflet'
-		},
-		'wicket': {
-			'wicket': 'wicket/wicket.min'
-		}
-	},
+	map: packagesMap,
 
 	layers: {
 		'dojo/dojo': {
@@ -362,33 +380,17 @@ var profileObj = {
 			boot: true,
 			include: [
 				'dojo/dojo'
-				, 'dojo/domReady'
 				, 'dojo/dom'
 				, 'dojo/dom-class'
 				, 'dojo/dom-attr'
 				, 'dojo/_base/declare'
-				, 'dojo/_base/html'
 				, 'dojo/i18n'
 				, 'dojo/_base/lang'
 				, 'dojo/io-query'
 				, 'dojo/mouse'
 				, 'dojo/request/registry'
 				, 'dojo/request/notify'
-				, 'dojo/store/Observable'
-				, 'dojo/DeferredList'
-				, 'dojo/NodeList-manipulate'
 				, 'dojo/NodeList-traverse'
-				, 'dojo/dnd/Moveable'
-				, 'dojo/dnd/TimedMoveable'
-				, 'dojo/dnd/Mover'
-				, 'dojo/dnd/move'
-				, 'dojo/dnd/autoscroll'
-			]
-		},
-		'src/component/base/_Module': {
-			discard: true,
-			dependencies: [
-				'src/component/base/_Show'
 			]
 		}
 	}

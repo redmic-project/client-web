@@ -387,7 +387,8 @@ define([
 			}
 
 			if (layerObj.layer) {
-				return this._getLayerId(layerObj.layer) || layerObj.id;
+				return this._getLayerId(layerObj.layer) ||
+					(layerObj instanceof _Module ? layerObj.getOwnChannel() : layerObj.id);
 			}
 
 			return layerObj._leaflet_id || (layerObj.options && layerObj.options.id);
@@ -418,13 +419,14 @@ define([
 				layerId = layer;
 			}
 
-			if (layerId === undefined) {
+			if (layerId === undefined || typeof layerId === 'number') {
 				this.removeLayer(layer);
 			} else if (this._overlayLayers[layerId]) {
 				this._removeMapLayer(layerId, keepInstance);
 			} else if (this._baseLayerInstances[layerId]) {
 				this._removeMapBaseLayer(layerId, keepInstance);
 			} else {
+				console.error('Failed to remove layer:', layer);
 				this._emitEvt('LAYER_REMOVE_FAIL', layer);
 			}
 		},

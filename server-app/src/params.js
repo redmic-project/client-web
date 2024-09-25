@@ -1,8 +1,8 @@
-const commander = require('commander');
+const { program } = require('commander');
 
 module.exports = function(version) {
 
-	commander
+	program
 		.version(version)
 		.option('-b, --use-built', 'Run using built resources, instead of requiring each one separately', false)
 		.option('-c, --cluster', 'Run multiple processes in cluster mode, one per CPU core found', false)
@@ -12,7 +12,7 @@ module.exports = function(version) {
 		.showSuggestionAfterError()
 		.parse(process.argv);
 
-	const commanderOpts = commander.opts();
+	const commanderOpts = program.opts();
 
 	return {
 		useBuilt: commanderOpts.useBuilt,

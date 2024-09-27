@@ -18,6 +18,13 @@ module.exports = function(args) {
 			chromeDriver.baseUrl = 'https://storage.googleapis.com/chrome-for-testing-public';
 			chromeDriver.platform = 'linux64';
 		}
+	} else {
+		var versionsUrl = 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json',
+			driverErrorText = 'Internjs automatic lookup for Chrome driver version fails after v114.\n' +
+				'Please, set a valid version using parameter: --chromeDriverVersion="a.b.c.d".\n' +
+				'You can check latest stable version number at "' + versionsUrl + '".';
+
+		throw new Error(driverErrorText);
 	}
 
 	drivers.push(chromeDriver);

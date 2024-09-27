@@ -3,17 +3,13 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/dom-attr'
 	, 'dojo/io-query'
-	, 'dojo/mouse'
 	, 'src/component/base/_Module'
-	, 'src/component/base/_Store'
 ], function(
 	declare
 	, lang
 	, domAttr
 	, ioQuery
-	, mouse
 	, _Module
-	, _Store
 ) {
 
 	return declare(_Module, {
@@ -96,13 +92,13 @@ define([
 			globalThis.addEventListener.call(globalThis, 'popstate', lang.hitch(this, this._evaluatePopStateEvt));
 		},
 
-		_evaluateClickEvt: function(event) {
+		_evaluateClickEvt: function(evt) {
 			//	summary:
 			//		Recibe eventos de click y, en caso de detectar un enlace de navegación interno, lo captura
 			//	tags:
 			//		private
 
-			var targets = this._getClickTargets(event);
+			var targets = this._getClickTargets(evt);
 
 			for (var i = 0; i < targets.length; i++) {
 				var target = targets[i],
@@ -112,28 +108,25 @@ define([
 					continue;
 				}
 
-				this._handleAppHref(event, target);
+				this._handleAppHref(evt, target);
 				break;
 			}
 		},
 
-		_handleAppHref: function(event, target) {
+		_handleAppHref: function(evt, target) {
+
+			var mustOmitEventHandle = evt.ctrlKey || evt.shiftKey;
+
+			if (mustOmitEventHandle) {
+				return;
+			}
 
 			var url = target.pathname + target.search + target.hash;
 
-			if (mouse.isMiddle(event)) {
-				var newPageUrl = target.protocol + '//' + target.hostname + url;
-				globalThis.open(newPageUrl, '_blank');
-			} else {
-				this._addHistory(url);
-				this._onRouteChange();
-			}
+			this._addHistory(url);
+			this._onRouteChange();
 
-			if (event.preventDefault) {
-				event.preventDefault();
-			} else {
-				event.returnValue = false;
-			}
+			evt.preventDefault();
 		},
 
 		_addHistory: function(value) {

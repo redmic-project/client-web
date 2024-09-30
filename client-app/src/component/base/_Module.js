@@ -235,6 +235,8 @@ define([
 			this._mixModuleEventsAndActions();
 			this._mixEventsAndActions();
 
+			this._actionsPropNames = Object.keys(this.actions);
+
 			if (this.getOwnChannel() !== this.rootChannel && !this.parentChannel) {
 				console.error("The module '%s' does not have a parent", this.getChannel());
 			}
@@ -349,7 +351,7 @@ define([
 				alwaysOn: true
 			},{
 				event: 'TRACK',
-				channel: this._buildChannel(this.analyticsChannel, this.actions.TRACK),
+				channel: this._buildChannel(this.analyticsChannel, 'TRACK'),
 				alwaysOn: true
 			},{
 				event: 'DESTROY',
@@ -375,39 +377,67 @@ define([
 			return this.ownChannel;
 		},
 
+		_getActionValue: function(/*String*/ actionPropName) {
+
+			return this.actions[actionPropName];
+		},
+
 		checkAction: function(/*String*/ action) {
 
-			return !(action && (action === action.toUpperCase() && isNaN(parseInt(action, 10))) &&
-				!this.actions[action]);
+			if (action === undefined || action === null || action === '') {
+				return false;
+			}
+
+			var actionIsUpperCase = action === action.toUpperCase();
+
+			if (actionIsUpperCase) {
+				var actionIsPropName = this._getActionValue(action) !== undefined;
+				return actionIsPropName;
+			}
+
+			var actionPropName = this._getActionPropName(action);
+
+			return actionPropName && !!actionPropName.length;
+		},
+
+		_getActionPropName: function(/*String*/ actionValue) {
+
+			var actionPropNameFound = this._actionsPropNames.filter(
+				lang.hitch(this, function(actionValueToCheck, actionPropName) {
+
+				return this.actions[actionPropName] === actionValueToCheck;
+			}, actionValue));
+
+			return actionPropNameFound.length && actionPropNameFound[0];
 		},
 
 		getChannel: function(/*String?*/ action) {
 
-			var channel = this.getParentChannel(this.ownChannel);
+			var channel = this._buildChannel(this.getParentChannel(), this.getOwnChannel());
+
+			if (action === undefined || action === null) {
+				return channel || '';
+			}
 
 			this._checkActionExistence(action);
 
-			if (!action) {
-				return this._buildChannel(channel);
-			}
-
-			return this._buildChannel(channel, this.actions[action] || action);
+			return this._buildChannel(channel, action);
 		},
 
 		getParentChannel: function(/*String?*/ action) {
 
 			var channel = this.parentChannel;
 
-			this._checkActionExistence(action);
-
-			if (!action) {
-				return this._buildChannel(channel);
+			if (action === undefined || action === null) {
+				return channel || '';
 			}
 
-			return this._buildChannel(channel, this.actions[action] || action);
+			this._checkActionExistence(action);
+
+			return this._buildChannel(channel, action);
 		},
 
-		_checkActionExistence: function(/*String?*/ action) {
+		_checkActionExistence: function(/*String*/ action) {
 
 			if (!this.checkAction(action)) {
 				console.error("The action '%s' does not exist at module '%s'", action,
@@ -415,22 +445,25 @@ define([
 			}
 		},
 
-		_buildChannel: function(/*String*/ channel, /*String?*/ action) {
+		_buildChannel: function(/*String*/ channel, /*String?*/ channelSuffix) {
 
 			var channelBuilt = channel || "";
 
-			if (arguments.length > 1 && !action) {
-				console.error("Tried to build a channel '%s' with invalid action at module '%s'", channel,
+			if (arguments.length > 1 && !channelSuffix) {
+				console.error("Tried to build a channel '%s' with invalid suffix at module '%s'", channel,
 					this.parentChannel + this.channelSeparator + this.ownChannel);
 
 				return channelBuilt;
 			}
 
-			if (action) {
+			if (channelSuffix) {
+				var actionValue = this.actions && this._getActionValue(channelSuffix),
+					suffixValue = actionValue || channelSuffix;
+
 				if (channelBuilt.length) {
 					channelBuilt += this.channelSeparator;
 				}
-				channelBuilt += action;
+				channelBuilt += suffixValue;
 			}
 
 			return channelBuilt;
@@ -660,8 +693,8 @@ define([
 
 		_connectAction: function(actionToReconnect) {
 
-			var action = this.actions[actionToReconnect];
-			delete this.actionsPaused[action];
+			var actionValue = this._getActionValue(actionToReconnect);
+			delete this.actionsPaused[actionValue];
 		},
 
 		_getPaused: function() {
@@ -708,8 +741,8 @@ define([
 
 		_disconnectAction: function(actionToDisconnect) {
 
-			var action = this.actions[actionToDisconnect];
-			this.actionsPaused[action] = true;
+			var actionValue = this._getActionValue(actionToDisconnect);
+			this.actionsPaused[actionValue] = true;
 		},
 
 		_pause: function() {
@@ -719,7 +752,9 @@ define([
 
 		_disconnectModule: function() {
 
-			var actionOnChildrenDfdsName = '_' + this.actions.DISCONNECTED + this._childrenActionDfdsNameSuffix;
+			var actionOnChildrenDfdsName = '_' + this._getActionValue('DISCONNECTED') +
+				this._childrenActionDfdsNameSuffix;
+
 			delete this[actionOnChildrenDfdsName];
 
 			this._pause();
@@ -818,7 +853,7 @@ define([
 				childModuleOwnChannel = this._getActionFromChannel(childModuleChannel);
 
 			this._childrenModules[childModuleOwnChannel] = false;
-			this._resolvePendingChildrenActionDfds(childModuleChannel, this.actions.DISCONNECTED);
+			this._resolvePendingChildrenActionDfds(childModuleChannel, this._getActionValue('DISCONNECTED'));
 		},
 
 		_onChildDestroyed: function(res) {
@@ -827,7 +862,7 @@ define([
 				childModuleOwnChannel = this._getActionFromChannel(childModuleChannel);
 
 			delete this._childrenModules[childModuleOwnChannel];
-			this._resolvePendingChildrenActionDfds(childModuleChannel, this.actions.DESTROYED);
+			this._resolvePendingChildrenActionDfds(childModuleChannel, this._getActionValue('DESTROYED'));
 		},
 
 		_resolvePendingChildrenActionDfds: function(childModuleChannel, action) {
@@ -1136,10 +1171,10 @@ define([
 
 		_prepareModuleActionAfterChildrenActionsAreDone: function(args) {
 
-			var action = this.actions[args.action],
+			var actionValue = this._getActionValue(args.action);
 				cbk = args.cbk,
 				waitForDisconnected = args.waitForDisconnected || false,
-				actionOnChildrenDfdsName = '_' + action + this._childrenActionDfdsNameSuffix,
+				actionOnChildrenDfdsName = '_' + actionValue + this._childrenActionDfdsNameSuffix,
 				currentModuleChannel = this.getChannel();
 
 			this[actionOnChildrenDfdsName] = {};
@@ -1160,11 +1195,9 @@ define([
 
 		_propagateActionToChildren: function(action, req) {
 
-			var actionValue = this.actions[action];
-
 			for (var childOwnChannel in this._childrenModules) {
 				var childChannel = this._buildChannel(this.getChannel(), childOwnChannel),
-					childActionChannel = this._buildChannel(childChannel, actionValue);
+					childActionChannel = this._buildChannel(childChannel, action);
 
 				this._publish(childActionChannel, req);
 			}
@@ -1173,7 +1206,7 @@ define([
 		_destroyModule: function() {
 
 			var currentModuleChannel = this.getChannel(),
-				actionOnChildrenDfdsName = '_' + this.actions.DESTROYED + this._childrenActionDfdsNameSuffix;
+				actionOnChildrenDfdsName = '_' + this._getActionValue('DESTROYED') + this._childrenActionDfdsNameSuffix;
 
 			delete this[actionOnChildrenDfdsName];
 

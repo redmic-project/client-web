@@ -29,10 +29,12 @@ define([
 			this.config = {
 				ownChannel: 'router',
 				events: {
-					GET_QUERY_PARAMS: 'getQueryParams'
+					GET_QUERY_PARAMS: 'getQueryParams',
+					CHANGE_MODULE: 'changeModule'
 				},
 				actions: {
 					CHANGE_MODULE: 'changeModule',
+					MODULE_CHANGED: 'moduleChanged',
 					EVALUATE_ROUTE: 'evaluateRoot',
 					GO_TO_ROOT_ROUTE: 'goToRootRoute',
 					GO_TO_ERROR_ROUTE: 'goToErrorRoute',
@@ -70,6 +72,12 @@ define([
 			},{
 				channel : this.getChannel('GET_QUERY_PARAMS'),
 				callback: '_subGetQueryParams'
+			},{
+				channel : this._buildChannel(this.rootChannel, 'MODULE_CHANGED'),
+				callback: '_subModuleChanged',
+				options: {
+					predicate: lang.hitch(this, this._chkModuleChanged)
+				}
 			});
 		},
 
@@ -78,6 +86,9 @@ define([
 			this.publicationsConfig.push({
 				event: 'GET_QUERY_PARAMS',
 				channel: this.getChannel('GOT_QUERY_PARAMS')
+			},{
+				event: 'CHANGE_MODULE',
+				channel: this._buildChannel(this.rootChannel, 'CHANGE_MODULE')
 			});
 		},
 
@@ -121,10 +132,15 @@ define([
 				return;
 			}
 
-			var url = target.pathname + target.search + target.hash;
+			var locationObj = globalThis.location,
+				currentPath = locationObj.pathname,
+				nextPath = target.pathname;
 
-			this._addHistory(url);
-			this._onRouteChange();
+			if (nextPath !== currentPath) {
+				var nextUrl = target.pathname + target.search + target.hash;
+				this._addHistory(nextUrl);
+				this._onRouteChange();
+			}
 
 			evt.preventDefault();
 		},
@@ -134,24 +150,34 @@ define([
 			globalThis.history.pushState(null, null, value);
 		},
 
+		_replaceHistory: function(value) {
+
+			globalThis.history.replaceState(null, null, value);
+		},
+
 		_onRouteChange: function() {
 
 			var locationObj = globalThis.location,
 				locationPath = locationObj.pathname,
-				route = locationPath.substr(1),
-				routeIsEmpty = !route || route === '' || route === this.paths.ROOT,
-				loginWasSuccessful = route === this.paths.LOGIN && this._userFound;
+				route = locationPath.slice(1);
 
-			if (routeIsEmpty || loginWasSuccessful) {
+			var routeIsEmpty = !route || route === '' || route === this.paths.ROOT;
+			if (routeIsEmpty) {
 				route = this.paths.HOME;
-				this._addHistory(route);
+				this._replaceHistory(route);
+			}
+
+			if (route === this.paths.LOGIN && this._userFound) {
+				var prevRouteExistsAndIsNotHome = this._prevRoute && this._prevRoute !== this.paths.HOME;
+
+				route = prevRouteExistsAndIsNotHome ? this._prevRoute : this.paths.HOME;
+				this._replaceHistory(route);
 			}
 
 			var locationQuery = locationObj.search;
+			this._handleQueryParameters(locationQuery.slice(1));
 
-			this._handleQueryParameters(locationQuery.substr(1));
-
-			this._publish(this.getParentChannel('CHANGE_MODULE'), {
+			this._emitEvt('CHANGE_MODULE', {
 				route: route,
 				locationQuery: locationQuery
 			});
@@ -195,6 +221,20 @@ define([
 			});
 		},
 
+		_chkModuleChanged: function(res) {
+
+			var route = res.route;
+
+			return route !== this.paths.HOME && route !== this.paths.LOGIN && this._prevRoute !== route;
+		},
+
+		_subModuleChanged: function(res) {
+
+			var route = res.route;
+
+			this._prevRoute = route;
+		},
+
 		_goToRootPage: function() {
 
 			globalThis.location.href = this.paths.ROOT;
@@ -209,7 +249,9 @@ define([
 
 			this._currentQueryParams = this._getQueryParameters(queryString);
 
-			this._removeQueryParametersFromHref();
+			if (Object.keys(this._currentQueryParams).length) {
+				this._removeQueryParametersFromHref();
+			}
 		},
 
 		_getQueryParameters: function(queryString) {
@@ -222,7 +264,7 @@ define([
 			var locationObj = globalThis.location,
 				href = locationObj.origin + locationObj.pathname + locationObj.hash;
 
-			globalThis.history.replaceState(null, null, href);
+			this._replaceHistory(href);
 		}
 	});
 });

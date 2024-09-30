@@ -103,10 +103,12 @@ define([
 				events: {
 					GET_CREDENTIALS: 'getCredentials',
 					GET_MODULE: 'getModule',
-					CLEAR_MODULE: 'clearModule'
+					CLEAR_MODULE: 'clearModule',
+					MODULE_CHANGED: 'moduleChanged'
 				},
 				actions: {
-					CHANGE_MODULE: 'changeModule'
+					CHANGE_MODULE: 'changeModule',
+					MODULE_CHANGED: 'moduleChanged'
 				},
 
 				_reconnectTimeout: 10000,
@@ -196,6 +198,9 @@ define([
 			},{
 				event: 'CLEAR_MODULE',
 				channel: this._moduleStore.getChannel('CLEAR_MODULE')
+			},{
+				event: 'MODULE_CHANGED',
+				channel: this.getChannel('MODULE_CHANGED')
 			});
 		},
 
@@ -233,12 +238,18 @@ define([
 				locationQuery = req.locationQuery,
 				routeChanged = this._changeModule(route);
 
-			if (routeChanged) {
-				this._emitEvt('TRACK', {
-					type: TRACK.type.page,
-					info: route + locationQuery
-				});
+			if (!routeChanged) {
+				return;
 			}
+
+			this._emitEvt('TRACK', {
+				type: TRACK.type.page,
+				info: route + locationQuery
+			});
+
+			this._emitEvt('MODULE_CHANGED', {
+				route: route
+			});
 		},
 
 		_showReconnectingMessage: function() {

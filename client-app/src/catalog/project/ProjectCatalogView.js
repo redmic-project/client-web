@@ -45,7 +45,6 @@ define([
 			this.config = {
 				browserExts: [_Select],
 				target: redmicConfig.services.project,
-				perms: null,
 				reportService: "project",
 				title: this.i18n.projectCatalogView,
 				ownChannel: "projectCatalog"

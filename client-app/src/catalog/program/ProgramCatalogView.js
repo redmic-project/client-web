@@ -48,7 +48,6 @@ define([
 				title: this.i18n.programCatalogView,
 				ownChannel: "programCatalog",
 				target: redmicConfig.services.program,
-				perms: null,
 				idProperty: "id"
 			};
 

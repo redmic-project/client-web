@@ -64,7 +64,6 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				perms: 1,
 				target: redmicConfig.services.timeSeriesStations,
 				browserTarget: "browser",
 				browserPopupTarget: "browserPopup",

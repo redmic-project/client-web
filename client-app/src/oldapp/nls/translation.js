@@ -129,7 +129,7 @@ define({
 		, "printToPdf": "Print content to PDF"
 		, "remove": "Remove"
 		, "module": "Module"
-		, "perms": "Perms"
+		, "perms": "Permissions"
 		, "selectSpecies": "Select species"
 		, "selectActivity": "Select activity"
 		, "associatedSurveyStation": "Associated survey stations"

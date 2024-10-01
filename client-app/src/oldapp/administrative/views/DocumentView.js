@@ -31,7 +31,6 @@ define([
 				addPath: this.viewPaths.documentAdd,
 				loadPath: this.viewPaths.documentLoad,
 				target: redmicConfig.services.document,
-				perms: null,
 				title: this.i18n.documents
 			};
 

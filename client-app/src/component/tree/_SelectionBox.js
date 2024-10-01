@@ -74,8 +74,7 @@ define([
 			var target = this.selectionTarget ? this.selectionTarget : this.target;
 
 			this._publish(this.selectionBox.getChannel("REFRESH"), {
-				selectionTarget: target,
-				perms: this.perms
+				selectionTarget: target
 			});
 
 			if (this._getPreviouslyShown())

@@ -38,7 +38,6 @@ define([
 				target: redmicConfig.services.users,
 				browserExts: [_Select],
 				itemLabel: null,
-				perms: null,
 
 				listButtonsEdition: []
 			};

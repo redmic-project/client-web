@@ -93,7 +93,6 @@ define([
 			ROUTER: "router",
 			STORE: "data",
 			SELECTOR: "selection",
-			MANAGER: "manager",
 			CREDENTIALS: "credentials",
 			EXTERNAL_CONFIG: "externalConfig",
 			ANALYTICS: "analytics",
@@ -164,9 +163,6 @@ define([
 		//		Nombre del canal por donde se van a recibir los datos.
 		//	selectorChannel: String
 		//		Nombre del canal por donde se van a seleccionar los items.
-		//	managerChannel: String
-		//		Nombre del canal por donde se realiza la comunicación con Manager (recibir
-		//		acciones de botones).
 		//	credentialsChannel: String
 		//		Nombre del canal por donde se va a controlar la cajita de seleccionados
 		//	analyticsChannel: String
@@ -216,7 +212,6 @@ define([
 			this.innerAppChannel = this._buildChannel(this.rootChannel, this.innerAppOwnChannel);
 
 			this.selectorChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.SELECTOR);
-			this.managerChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.MANAGER);
 			this.taskChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.TASK);
 			this.socketChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.SOCKET);
 			this.notificationChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.NOTIFICATION);

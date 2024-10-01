@@ -66,7 +66,6 @@ define([
 			this.selectionBoxConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				selectionTarget: this.selectionTarget || this.target,
-				perms: this.perms,
 				selectorChannel: this.selectorChannel
 			}, this.selectionBoxConfig || {}]);
 		},
@@ -171,8 +170,7 @@ define([
 			var target = this.selectionTarget ? this.selectionTarget : this.target;
 
 			this._publish(this.selectionBox.getChannel("REFRESH"), {
-				selectionTarget: target,
-				perms: this.perms
+				selectionTarget: target
 			});
 		}
 	});

@@ -21,8 +21,7 @@ define([
 
 			this.config = {
 				addPath: this.viewPaths.platformAdd,
-				target: redmicConfig.services.platform,
-				perms: null
+				target: redmicConfig.services.platform
 			};
 
 			lang.mixin(this, this.config, args);

@@ -27,7 +27,6 @@ define([
 
 			this.config = {
 				ownChannel: "catalogOGC",
-				perms: null,
 				title: this.i18n.layersCatalog
 			};
 

@@ -24,8 +24,7 @@ define([
 			this.config = {
 				target: redmicConfig.services.animal,
 				title: this.i18n.animals,
-				addPath: this.viewPaths.animalAdd,
-				perms: null
+				addPath: this.viewPaths.animalAdd
 			};
 
 			lang.mixin(this, this.config, args);

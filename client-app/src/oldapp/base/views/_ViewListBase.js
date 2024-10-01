@@ -26,8 +26,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				title: "noTitle",
-				mask: {}
+				title: "noTitle"
 			};
 
 			lang.mixin(this, this.config, args);

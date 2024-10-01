@@ -51,7 +51,6 @@ define([
 				reportService: "activity",
 
 				target: redmicConfig.services.activity,
-				perms: null,
 
 				browserExts: [_Select]
 			};

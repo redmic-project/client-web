@@ -83,7 +83,6 @@ define([
 				target: this.target,
 				template: templateActivityList,
 				selectorChannel: this.selectorChannel,
-				perms: this.perms,
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{

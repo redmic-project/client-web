@@ -207,7 +207,6 @@ define([
 			this.browserConfig = this._merge([{
 				idProperty: "path",
 				parentChannel: this.getChannel(),
-				perms: this.perms,
 				target: this.elasticTarget,
 				selectionTarget: this.selectionTarget,
 				template: TemplateList,
@@ -238,7 +237,6 @@ define([
 				target: this.taxonsTarget,
 				selectionTarget: this.selectionTarget,
 				idProperty: "path",
-				perms: this.perms,
 				itemLabel: "{rank.name} - {scientificName} ({leaves})",
 				createQuery: function(item) {
 					var query = {
@@ -291,8 +289,7 @@ define([
 			}, this.pruneClusterLayerConfig || {}]);
 
 			this.atlasConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				perms: this.perms
+				parentChannel: this.getChannel()
 			}, this.atlasConfig || {}]);
 
 			this.queryOnMapConfig = this._merge([{

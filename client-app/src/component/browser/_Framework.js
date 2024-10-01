@@ -112,7 +112,6 @@ define([
 					queryChannel: this.queryChannel,
 					target: this._getTarget(),
 					selectionTarget: this.selectionTarget,
-					perms: this.perms,
 					selectorChannel: this.selectorChannel,
 					storeChannel: this.storeChannel,
 					browserChannel: this.getChannel(),

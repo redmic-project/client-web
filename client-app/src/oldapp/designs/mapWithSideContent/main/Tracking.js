@@ -212,7 +212,6 @@ define([
 
 			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
-				perms: this.perms,
 				getMapChannel: getMapChannel,
 				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});

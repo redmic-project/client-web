@@ -60,8 +60,7 @@ define([
 				parentChannel: this.getChannel(),
 				idProperty: this.idProperty,
 				target: this._getTarget(),
-				selectionTarget: this.selectionTarget,
-				perms: this.perms
+				selectionTarget: this.selectionTarget
 			}, this.browserConfig || {}]);
 		},
 
@@ -96,7 +95,6 @@ define([
 					queryChannel: this.browserConfig.queryChannel,
 					target: this._getTarget(),
 					selectionTarget: this.selectionTarget,
-					perms: this.perms,
 					selectorChannel: this.selectorChannel,
 					browserChannel: this.browser.getChannel()
 				}, item.config || {}]);

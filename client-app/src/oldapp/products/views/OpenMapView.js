@@ -47,8 +47,7 @@ define([
 
 			this.atlasConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				terms: this.terms,
-				perms: this.perms
+				terms: this.terms
 			}, this.atlasConfig || {}]);
 
 			this.queryOnMapConfig = this._merge([{

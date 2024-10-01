@@ -31,13 +31,6 @@ define([
 
 			this.config = {
 				viewPaths: redmicConfig.viewPaths,
-				controllerEvents: {
-					DOWNLOAD_FILE: "downloadFile"
-				},
-				controllerActions: {
-					DOWNLOAD_FILE: "downloadFile",
-					GET_REPORT: "getReport"
-				},
 				browserBars: {
 					pagination: {
 						definition: Pagination,

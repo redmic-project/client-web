@@ -24,8 +24,7 @@ define([
 			this.config = {
 				target: redmicConfig.services.contact,
 				title: this.i18n.contacts,
-				addPath: this.viewPaths.contactAdd,
-				perms: null
+				addPath: this.viewPaths.contactAdd
 			};
 
 			lang.mixin(this, this.config, args);

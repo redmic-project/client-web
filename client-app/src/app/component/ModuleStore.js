@@ -164,20 +164,20 @@ define([
 				if (category.modules) {
 					for (var j = 0; j < category.modules.length; j++) {
 						var moduleItem = category.modules[j];
-						if (moduleItem.perms && moduleItem.enable) {
+						if (moduleItem.enable) {
 							this._addModule(category.name + "/" + moduleItem.name, moduleItem.name,
-								moduleItem.internPath, moduleItem.perms);
+								moduleItem.internPath);
 						}
 					}
 				}
 
-				if (category.perms && category.enable) {
-					this._addModule(category.name, category.name, category.internPath, category.perms);
+				if (category.enable) {
+					this._addModule(category.name, category.name, category.internPath);
 				}
 			}
 		},
 
-		_addModule: function(/*String*/ id, /*String*/ name, /*String*/ internPath, /*Integer*/ perms) {
+		_addModule: function(/*String*/ id, /*String*/ name, /*String*/ internPath) {
 			//	summary:
 			//		Añade el item con la información básica al store
 			//	tags:
@@ -188,8 +188,6 @@ define([
 			//		nombre o path parcial del módulo
 			//	internPath:
 			//		ubicación del js de la vista
-			//	perms:
-			//		permisos del usuario en la vista
 
 			if (this._moduleExists(id)) return;
 
@@ -197,7 +195,6 @@ define([
 				id: id,
 				name: name,
 				internPath: internPath,
-				perms: perms,
 				instance: null,
 				timeStamp: null
 			});
@@ -339,7 +336,6 @@ define([
 				var moduleInstance = new moduleDefinition({
 					parentChannel: parentChannel,
 					ownChannel: this.viewSeparator + moduleObj.id,
-					perms: moduleObj.perms,
 					pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null
 				});
 

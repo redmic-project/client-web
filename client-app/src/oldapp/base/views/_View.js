@@ -3,18 +3,16 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "app/base/views/_ListenRequestError"
-	, "app/base/views/_ViewHandle"	// QUITAR
 	,'./_SettingsHandler'
 ], function(
 	declare
 	, lang
 	, aspect
 	, _ListenRequestError
-	, _ViewHandle	// QUITAR
 	, _SettingsHandler
 ) {
 
-	return declare([_ListenRequestError, _ViewHandle, _SettingsHandler], {
+	return declare([_ListenRequestError, _SettingsHandler], {
 		//	summary:
 		//		Extensión común para todas los módulos usados como vistas. Se adjunta automáticamente cuando la
 		//		navegación a través de la app requiere un módulo como contenido principal a mostrar.

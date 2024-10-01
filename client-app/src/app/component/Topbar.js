@@ -4,27 +4,26 @@ define([
 	, 'put-selector/put'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
-	, 'src/component/base/Manager'
 	, 'src/component/user/FullscreenToggle'
 	, 'src/component/user/LanguageSelector'
 	, 'src/component/user/UserArea'
+	, 'src/redmicConfig'
 ], function(
 	declare
 	, lang
 	, put
 	, _Module
 	, _Show
-	, Manager
 	, FullscreenToggle
 	, LanguageSelector
 	, UserArea
+	, redmicConfig
 ) {
 
 	return declare([_Module, _Show], {
 		//	summary:
-		//		Widget que controla la barra superior, siempre visible y compartida.
-		//	description:
-		//		Zona común que comparten todos los módulos.
+		//		Componente que controla la barra superior, siempre visible y compartida para toda la aplicación (salvo
+		//		para la zona externa).
 
 		constructor: function(args) {
 
@@ -36,7 +35,9 @@ define([
 
 				logoClass: 'topbarLogo',
 				logoHref: '/home',
-				logoImgSrc: '/res/images/logos/logo.svg'
+				logoImgSrc: '/res/images/logos/logo.svg',
+
+				_isProductionEnvironment: (/true/i).test(redmicConfig.getEnvVariableValue('envProduction'))
 			};
 
 			if (args && args.ecomarcan) {
@@ -94,20 +95,24 @@ define([
 		_createContentNode: function() {
 
 			var contentNode = put(this.domNode, 'div.topbarContent'),
-				managerNode = put(contentNode, 'div.manager'),
+				centerNode = put(contentNode, 'div.center'),
 				buttonsNode = put(contentNode, 'div.buttons');
 
-			this._createManagerNode(managerNode);
+			this._addGobCanLogos(centerNode);
+
+			if (!this._isProductionEnvironment) {
+				put(contentNode, '.appDev');
+				put(centerNode, 'span.fontExo2', this.i18n.messageAppDev);
+			}
+
 			this._showModules(buttonsNode);
 		},
 
-		_createManagerNode: function(containerNode) {
+		_addGobCanLogos: function(containerNode) {
 
-			// TODO integrar manager con topbar, manager está desfasado casi por completo
-			this._manager = new Manager({
-				//parentChannel: this.getChannel()
-				parentChannel: this.getParentChannel()
-			}, containerNode);
+			var logosContainer = put(containerNode, 'div.gobcan-logos');
+
+			put(logosContainer, 'img[src=/res/images/logos/gobcan-logos.png]');
 		},
 
 		_showModules: function(containerNode) {

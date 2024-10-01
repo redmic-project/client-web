@@ -1,22 +1,23 @@
 define([
 	"app/designs/textSearchFacetsList/main/Species"
-	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, 'src/catalog/_GenerateReport'
+	, 'src/redmicConfig'
 ], function (
 	SpeciesMain
-	, redmicConfig
 	, declare
 	, lang
+	, _GenerateReport
+	, redmicConfig
 ){
-	return declare(SpeciesMain, {
+	return declare([SpeciesMain, _GenerateReport], {
 		//	summary:
 		//		Vista de Species Catalog.
 
 		constructor: function (args) {
 
 			this.config = {
-				mask: {"download":{}},
 				target: redmicConfig.services.species,
 				reportService: "species",
 				title: this.i18n.speciesCatalogView,

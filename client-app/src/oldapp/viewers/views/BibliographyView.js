@@ -1,16 +1,18 @@
 define([
 	'app/designs/textSearchFacetsList/main/Bibliography'
-	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/catalog/_GenerateReport'
+	, 'src/redmicConfig'
 ], function (
 	BibliographyMain
-	, redmicConfig
 	, declare
 	, lang
+	, _GenerateReport
+	, redmicConfig
 ) {
 
-	return declare(BibliographyMain, {
+	return declare([BibliographyMain, _GenerateReport], {
 		//	summary:
 		//		Vista de Bibliography.
 
@@ -20,7 +22,6 @@ define([
 		constructor: function (args) {
 
 			this.config = {
-				mask: {'download':{}},
 				reportService: 'document',
 				target: redmicConfig.services.document,
 				ownChannel: 'bibliography'

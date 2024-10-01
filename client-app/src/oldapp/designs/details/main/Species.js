@@ -4,6 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "src/component/browser/_ButtonsInRow"
 	, "src/component/browser/_Framework"
+	, 'src/detail/_GenerateReport'
 	, "templates/LoadingCustom"
 	, "templates/SpeciesInfo"
 	, "templates/SpeciesTitle"
@@ -15,6 +16,7 @@ define([
 	, lang
 	, _ButtonsInRow
 	, _Framework
+	, _GenerateReport
 	, TemplateCustom
 	, TemplateInfo
 	, TemplateTitle
@@ -22,18 +24,13 @@ define([
 	, SpeciesLocation
 ) {
 
-	return declare([_DetailsBase], {
+	return declare([_DetailsBase, _GenerateReport], {
 		//	summary:
 		//		Vista detalle de especies.
 
 		constructor: function(args) {
 
 			this.config = {
-				_titleRightButtonsList: [{
-					icon: "fa-print",
-					btnId: "report",
-					title: this.i18n.printToPdf
-				}],
 				templateTitle: TemplateTitle,
 				templateInfo: TemplateInfo,
 				target: redmicConfig.services.species,

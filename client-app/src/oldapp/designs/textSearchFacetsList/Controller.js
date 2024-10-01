@@ -9,8 +9,6 @@ define([
 	, "src/component/browser/bars/Pagination"
 	, "src/component/search/FacetsImpl"
 	, "src/component/search/TextImpl"
-	, 'src/util/Credentials'
-	, 'src/util/GuestChecker'
 	, "./_AddFilter"
 ], function (
 	_OnShownAndRefresh
@@ -23,8 +21,6 @@ define([
 	, Pagination
 	, FacetsImpl
 	, TextImpl
-	, Credentials
-	, GuestChecker
 	, _AddFilter
 ){
 	return declare([_Controller, _Browser, _Store, _AddFilter, _OnShownAndRefresh], {
@@ -74,22 +70,11 @@ define([
 			this.facets = new FacetsImpl(this.facetsConfig);
 		},
 
-		_defineControllerSubscriptions: function() {
-
-			this.subscriptionsConfig.push({
-				channel : this._buildChannel(this.managerChannel, this.actions.DOWNLOAD_FILE),
-				callback: "_subDownloadFile"
-			});
-		},
-
 		_defineControllerPublications: function() {
 
 			this.publicationsConfig.push({
 				event: 'UPDATE_TARGET',
 				channel: this.textSearch.getChannel("UPDATE_TARGET")
-			},{
-				event: 'DOWNLOAD_FILE',
-				channel: this._buildChannel(this.taskChannel, this.actions.GET_REPORT)
 			});
 		},
 
@@ -109,21 +94,6 @@ define([
 
 			this._publish(this.facets.getChannel("SHOW"), {
 				node: this.facetsNode
-			});
-		},
-
-		_subDownloadFile: function(request) {
-
-			// TODO abstraer para hacerlo implícitamente
-			if (Credentials.userIsGuest()) {
-				GuestChecker.protectFromGuests();
-				return;
-			}
-
-			this._emitEvt('DOWNLOAD_FILE', {
-				target: this.selectionTarget ? this.selectionTarget : this.target,
-				serviceTag: this.reportService,
-				format: request.format
 			});
 		}
 	});

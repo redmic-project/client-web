@@ -5,6 +5,7 @@ define([
 	, 'app/designs/textSearchFacetsList/Layout'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/catalog/_GenerateReport'
 	, 'src/catalog/activity/_ActivityEdition'
 	, 'src/component/browser/_Select'
 	, 'src/component/browser/bars/Order'
@@ -20,6 +21,7 @@ define([
 	, Layout
 	, declare
 	, lang
+	, _GenerateReport
 	, _ActivityEdition
 	, _Select
 	, Order
@@ -30,7 +32,7 @@ define([
 	, templateList
 ) {
 
-	var declareItems = [Layout, Controller, _Main, _AddComposite];
+	var declareItems = [Layout, Controller, _Main, _AddComposite, _GenerateReport];
 
 	if (Credentials.userIsEditor()) {
 		declareItems.push(_ActivityEdition);
@@ -46,7 +48,6 @@ define([
 				title: this.i18n.activitiesCatalogView,
 				ownChannel: "activitiesCatalog",
 
-				mask: {"download":{}},
 				reportService: "activity",
 
 				target: redmicConfig.services.activity,

@@ -4,6 +4,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/base/_ExternalConfig'
+	, 'src/detail/_GenerateReport'
 	, 'src/detail/activity/_ActivityEdition'
 	, 'src/detail/activity/_ActivityLayoutWidget'
 	, 'app/designs/details/_AddWidgetSelector'
@@ -15,6 +16,7 @@ define([
 	, declare
 	, lang
 	, _ExternalConfig
+	, _GenerateReport
 	, _ActivityEdition
 	, _ActivityLayoutWidget
 	, _AddWidgetSelector
@@ -22,7 +24,7 @@ define([
 	, TemplateInfo
 ) {
 
-	var declareItems = [_ActivityBase, _AddWidgetSelector, _ActivityLayoutWidget, _ExternalConfig];
+	var declareItems = [_ActivityBase, _AddWidgetSelector, _ActivityLayoutWidget, _ExternalConfig, _GenerateReport];
 
 	if (Credentials.userIsEditor()) {
 		declareItems.push(_ActivityEdition);

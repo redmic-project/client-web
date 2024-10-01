@@ -6,6 +6,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "templates/ProgramList"
+	, 'src/catalog/_GenerateReport'
 	, 'src/catalog/program/_ProgramEdition'
 	, "src/component/browser/_Select"
 	, "src/component/browser/bars/SelectionBox"
@@ -20,6 +21,7 @@ define([
 	, declare
 	, lang
 	, templateList
+	, _GenerateReport
 	, _ProgramEdition
 	, _Select
 	, SelectionBox
@@ -28,7 +30,7 @@ define([
 	, Credentials
 ) {
 
-	var declareItems = [Layout, Controller, _Main];
+	var declareItems = [Layout, Controller, _Main, _GenerateReport];
 
 	if (Credentials.userIsEditor()) {
 		declareItems.push(_ProgramEdition);
@@ -42,7 +44,6 @@ define([
 
 			this.config = {
 				browserExts: [_Select],
-				mask: {"download":{}},
 				reportService: "program",
 				title: this.i18n.programCatalogView,
 				ownChannel: "programCatalog",

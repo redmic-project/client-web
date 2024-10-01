@@ -2,6 +2,7 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/detail/_GenerateReport'
 	, 'src/util/Credentials'
 	, 'templates/DocumentInfo'
 	, './_DetailsBase'
@@ -10,25 +11,20 @@ define([
 	redmicConfig
 	, declare
 	, lang
+	, _GenerateReport
 	, Credentials
 	, TemplateInfo
 	, _DetailsBase
 	, DocumentPDF
 ) {
 
-	return declare(_DetailsBase, {
+	return declare([_DetailsBase, _GenerateReport], {
 		//	summary:
 		//		Vista detalle de Document.
 
 		constructor: function(args) {
 
 			this.config = {
-				_titleRightButtonsList: [{
-					icon: 'fa-print',
-					btnId: 'report',
-					title: this.i18n.printToPdf
-				}],
-
 				target: redmicConfig.services.document,
 				activitiesTargetBase: redmicConfig.services.activityDocuments,
 				templateInfo: TemplateInfo,

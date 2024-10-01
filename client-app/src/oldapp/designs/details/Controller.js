@@ -10,8 +10,6 @@ define([
 	, "put-selector/put"
 	, "src/component/base/_Store"
 	, "src/component/base/_Window"
-	, 'src/util/Credentials'
-	, 'src/util/GuestChecker'
 	, "./_ControllerItfc"
 ], function(
 	_Controller
@@ -25,8 +23,6 @@ define([
 	, put
 	, _Store
 	, _Window
-	, Credentials
-	, GuestChecker
 	, _ControllerItfc
 ) {
 
@@ -39,11 +35,7 @@ define([
 
 			this.config = {
 				controllerEvents: {
-					LAYOUT_COMPLETE: "layoutComplete",
-					BUTTON_EVENT: "btnEvent" // TODO esto es específico, reubicar
-				},
-				controllerActions: {
-					GET_REPORT: "getReport" // TODO esto es específico, reubicar
+					LAYOUT_COMPLETE: "layoutComplete"
 				},
 
 				idProperty: "id",
@@ -107,7 +99,6 @@ define([
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onControllerMeOrAncestorHidden));
 			this._onEvt('RESIZE', lang.hitch(this, this._onControllerResize));
 			this._onEvt('LAYOUT_COMPLETE', lang.hitch(this, this._onLayoutComplete));
-			this._onEvt('BUTTON_EVENT', lang.hitch(this, this._onButtonEvent)); // TODO esto es específico, reubicar
 		},
 
 		_afterControllerShow: function() {
@@ -168,13 +159,6 @@ define([
 			this._updateInteractive();
 		},
 
-		_onButtonEvent: function(evt) {
-			// TODO: eso es para casos concretos, debería separarse
-
-			var methodName = "_" + evt + "Clicked";
-			this[methodName] && this[methodName](evt);
-		},
-
 		_reloadInteractive: function() {
 
 			this.packery.reloadItems();
@@ -216,16 +200,6 @@ define([
 		_restorePackeryTransitionDuration: function() {
 
 			this.packery.options.transitionDuration = this._transitionDuration;
-		},
-
-		_evaluateCondition: function(condition) {
-			// TODO: eso es para casos concretos (botones), debería separarse
-
-			if (typeof condition === "function") {
-				return condition(this.data);
-			}
-
-			return condition && !!this.data[condition];
 		},
 
 		_getWidgetInstance: function(key) {
@@ -473,23 +447,6 @@ define([
 			}
 
 			this._prepareRestorePackeryTransitionDuration();
-		},
-
-		_reportClicked: function() {
-			// TODO: eso es para casos concretos, debería separarse
-
-			// TODO abstraer para hacerlo implícitamente
-			if (Credentials.userIsGuest()) {
-				GuestChecker.protectFromGuests();
-				return;
-			}
-
-			this._publish(this._buildChannel(this.taskChannel, this.actions.GET_REPORT), {
-				target: this.selectionTarget ? this.selectionTarget : this.target,
-				serviceTag: this.reportService,
-				format: "pdf",
-				id: parseInt(this.pathVariableId, 10)
-			});
 		}
 	});
 });

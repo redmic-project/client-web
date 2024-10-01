@@ -188,7 +188,28 @@ define([
 
 		_evaluateButton: function(config) {
 
-			return !config.condition || this._evaluateCondition(config.condition);
+			return this._evaluateCondition(config.condition);
+		},
+
+		_evaluateCondition: function(condition) {
+
+			if (condition === undefined || condition === null) {
+				return true;
+			}
+
+			if (typeof condition === 'boolean') {
+				return !!condition;
+			}
+
+			if (this.data) {
+				if (typeof condition === 'function') {
+					return condition(this.data);
+				}
+
+				return condition && !!this.data[condition];
+			}
+
+			return true;
 		},
 
 		_getIconNode: function(config) {
@@ -205,7 +226,12 @@ define([
 			}
 
 			if (config.btnId) {
-				iconNode.onclick = lang.hitch(this, this._emitEvt, 'BUTTON_EVENT', config.btnId);
+				var methodName = '_' + config.btnId + 'OnClick',
+					callback = this[methodName];
+
+				if (callback) {
+					iconNode.onclick = lang.hitch(this, callback);
+				}
 			}
 
 			return iconNode;

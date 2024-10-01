@@ -21,12 +21,6 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				_titleRightButtonsList: [{
-					icon: "fa-print",
-					btnId: "report",
-					title: this.i18n.printToPdf
-				}],
-
 				documentTarget: "documents",
 				contactTarget: "contacts",
 				organisationTarget: "organisations",

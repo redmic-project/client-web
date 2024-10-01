@@ -1,6 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/detail/_GenerateReport'
 	, 'src/detail/program/_ProgramEdition'
 	, 'app/designs/details/main/_DetailsBase'
 	, 'src/redmicConfig'
@@ -10,6 +11,7 @@ define([
 ], function(
 	declare
 	, lang
+	, _GenerateReport
 	, _ProgramEdition
 	, _DetailsBase
 	, redmicConfig
@@ -18,7 +20,7 @@ define([
 	, TemplateProjects
 ) {
 
-	var declareItems = [_DetailsBase];
+	var declareItems = [_DetailsBase, _GenerateReport];
 
 	if (Credentials.userIsEditor()) {
 		declareItems.push(_ProgramEdition);
@@ -33,11 +35,6 @@ define([
 			this.config = {
 				target: redmicConfig.services.program,
 				activitiesTargetBase: redmicConfig.services.projectProgram,
-				_titleRightButtonsList: [{
-					icon: 'fa-print',
-					btnId: 'report',
-					title: this.i18n.printToPdf
-				}],
 				reportService: 'program',
 				pathParent: redmicConfig.viewPaths.programCatalog
 			};

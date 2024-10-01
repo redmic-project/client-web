@@ -51,7 +51,7 @@ define([
 				centerContent: this.placeNamesNode,
 				width: 4,
 				height: "sm",
-				reposition: "n"
+				reposition: "e"
 			}, this.placeNamesConfig || {}]);
 		},
 

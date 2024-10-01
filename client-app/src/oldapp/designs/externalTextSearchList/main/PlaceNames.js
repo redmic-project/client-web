@@ -253,7 +253,7 @@ define([
 
 			var info = put("div"),
 				desiredPropsI18n = ["name", "location", "classification", "x", "y"];
-				desiredProps = ["nombre", "localizacion", "clasificacion", "x", "y"];
+				desiredProps = ["nombre", "localizacion", "clasificacion", "longitud", "latitud"];
 
 			for (var i = 0; i < desiredProps.length; i++) {
 				var key = desiredProps[i],

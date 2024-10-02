@@ -14,32 +14,19 @@ module.exports = function(grunt) {
 			testPath = grunt.config('redmicConfig.testPath'),
 			outputPath = 'test_reports',
 
-			ownServerHost = grunt.option('ownServerHost') || '',
 			ownServerPort = parseInt(grunt.option('ownServerPort'), 10) || 9000,
 			ownSocketPort = parseInt(grunt.option('ownSocketPort'), 10),
 			ownTunnelPort = parseInt(grunt.option('ownTunnelPort'), 10),
 			browser = grunt.option('browser') || 'chrome',
 			headless = grunt.option('headless') || false,
 			grep = grunt.option('grep'),
-			serverUrl = grunt.option('serverUrl'),
-			role = grunt.option('role'),
-			user = grunt.option('user'),
-			pass = grunt.option('pass'),
-			remoteHost = grunt.option('remoteHost'),
-			remotePort = grunt.option('remotePort'),
 			suitesGroups = grunt.option('suitesGroups'),
-			suites = grunt.option('suites'),
-			functionalSuites = grunt.option('functionalSuites'),
-			coverage = grunt.option('coverage'),
 			seleniumVersion = grunt.option('seleniumVersion'),
-			chromeDriverVersion = grunt.option('chromeDriverVersion'),
 			chromeBrowserVersion = grunt.option('chromeBrowserVersion'),
-			firefoxDriverVersion = grunt.option('firefoxDriverVersion'),
 			firefoxBrowserVersion = grunt.option('firefoxBrowserVersion'),
 
 			currOutputDirName = gruntTaskName + '_on-port_' + ownServerPort,
 			configDirName = '.config-' + ownServerPort,
-
 			configPath = path.join(rootPath, outputPath, configDirName),
 			reportersOutputPath = path.join(rootPath, outputPath, currOutputDirName),
 			absoluteTestPath = path.join(rootPath, testPath),
@@ -49,27 +36,92 @@ module.exports = function(grunt) {
 		grunt.file['delete'](reportersOutputPath);
 		grunt.file.mkdir(reportersOutputPath);
 
-		if (!coverage && coverage === undefined) {
-			coverage = [
-				path.join(srcPath, '**', '*.js')
-			];
+		var commonReporters = [{
+			name: 'runner'
+		},{
+			name: 'customreporter',
+			options: {
+				filename: path.join(reportersOutputPath, 'runner.out')
+			}
+		},{
+			name: 'junit',
+			options: {
+				filename: path.join(reportersOutputPath, 'runner.xml')
+			}
+		}];
+
+		var testPaths = {
+			unit: {
+				local: path.join(absoluteTestPath, 'intern-unit-local'),
+				remote: path.join(absoluteTestPath, 'intern-unit-remote')
+			},
+			functional: {
+				local: path.join(absoluteTestPath, 'intern-functional-local'),
+				remote: path.join(absoluteTestPath, 'intern-functional-remote')
+			}
+		};
+
+		var testParams = {
+			srcPath: srcPath,
+			testPath: testPath,
+			ownServerPort: ownServerPort,
+			ownSocketPort: ownSocketPort,
+			ownTunnelPort: ownTunnelPort,
+			suitesGroups: suitesGroups,
+			browser: browser,
+			headless: headless,
+			grep: grep,
+			userDataDir: userDataDir,
+			seleniumVersion: seleniumVersion,
+			chromeBrowserVersion: chromeBrowserVersion,
+			firefoxBrowserVersion: firefoxBrowserVersion
+		};
+
+		var testTargetName, testTargetConfig, testTypeName, testTypeConfig;
+
+		var localTargetName = 'local';
+		if (gruntTaskName.includes(localTargetName)) {
+			var chromeDriverVersion = grunt.option('chromeDriverVersion'),
+				firefoxDriverVersion = grunt.option('firefoxDriverVersion');
+
+			testTargetName = localTargetName;
+			testTargetConfig = {
+				chromeDriverVersion: chromeDriverVersion,
+				firefoxDriverVersion: firefoxDriverVersion
+			};
 		}
 
-		var commonReporters = [{
-				name: 'runner'
-			},{
-				name: 'customreporter',
-				options: {
-					filename: path.join(reportersOutputPath, 'runner.out')
-				}
-			},{
-				name: 'junit',
-				options: {
-					filename: path.join(reportersOutputPath, 'runner.xml')
-				}
-			}],
+		var remoteTargetName = 'remote';
+		if (gruntTaskName.includes(remoteTargetName)) {
+			var ownServerHost = grunt.option('ownServerHost') || '',
+				remoteHost = grunt.option('remoteHost'),
+				remotePort = grunt.option('remotePort');
 
-			unitReporters = [{
+			var ipGetterPath = path.join(absoluteTestPath, 'IpGetter'),
+				IpGetter = require(ipGetterPath)();
+
+			testTargetName = remoteTargetName;
+			testTargetConfig = {
+				ownServerHost: ownServerHost,
+				remoteHost: remoteHost,
+				remotePort: remotePort,
+				localIp: IpGetter.getIp()
+			};
+		}
+
+		var unitTypeName = 'unit';
+		if (gruntTaskName.includes(unitTypeName)) {
+			var suites = grunt.option('suites'),
+				coverage = grunt.option('coverage');
+
+			var coveragePaths;
+			if (!coverage && coverage === undefined) {
+				coveragePaths = [
+					path.join(srcPath, '**', '*.js')
+				];
+			}
+
+			var unitReporters = [{
 				name: 'lcov',
 				options: {
 					directory: reportersOutputPath,
@@ -80,50 +132,28 @@ module.exports = function(grunt) {
 				options: {
 					directory: reportersOutputPath
 				}
-			}].concat(commonReporters),
+			}].concat(commonReporters);
 
-			functionalReporters = [].concat(commonReporters),
-
-			testUnitLocalPath = path.join(absoluteTestPath, 'intern-unit-local'),
-			testUnitRemotePath = path.join(absoluteTestPath, 'intern-unit-remote'),
-			testFunctionalLocalPath = path.join(absoluteTestPath, 'intern-functional-local'),
-			testFunctionalRemotePath = path.join(absoluteTestPath, 'intern-functional-remote'),
-
-			ipGetterPath = path.join(absoluteTestPath, 'IpGetter'),
-			IpGetter = require(ipGetterPath)(),
-			localIp = IpGetter.getIp(),
-
-			testParams = {
-				srcPath: srcPath,
-				testPath: testPath,
-				ownServerPort: ownServerPort,
-				ownSocketPort: ownSocketPort,
-				ownTunnelPort: ownTunnelPort,
-				suitesGroups: suitesGroups,
-				browser: browser,
-				headless: headless,
-				grep: grep,
-				userDataDir: userDataDir,
-				seleniumVersion: seleniumVersion,
-				chromeBrowserVersion: chromeBrowserVersion,
-				firefoxBrowserVersion: firefoxBrowserVersion
-			},
-			localTestParams = {
-				chromeDriverVersion: chromeDriverVersion,
-				firefoxDriverVersion: firefoxDriverVersion
-			},
-			remoteTestParams = {
-				ownServerHost: ownServerHost,
-				remoteHost: remoteHost,
-				remotePort: remotePort,
-				localIp: localIp
-			},
-			testUnitParams = deepmerge(testParams, {
+			testTypeName = unitTypeName;
+			testTypeConfig = deepmerge(testParams, {
 				reporters: unitReporters,
 				suites: suites,
-				coverage: coverage
-			}),
-			testFunctionalParams = deepmerge(testParams, {
+				coverage: coveragePaths
+			});
+		}
+
+		var functionalTypeName = 'functional';
+		if (gruntTaskName.includes(functionalTypeName)) {
+			var serverUrl = grunt.option('serverUrl'),
+				role = grunt.option('role'),
+				user = grunt.option('user'),
+				pass = grunt.option('pass'),
+				functionalSuites = grunt.option('functionalSuites');
+
+			var functionalReporters = [].concat(commonReporters);
+
+			testTypeName = functionalTypeName;
+			testTypeConfig = deepmerge(testParams, {
 				serverUrl: serverUrl,
 				role: role,
 				user: user,
@@ -132,33 +162,18 @@ module.exports = function(grunt) {
 				functionalSuites: functionalSuites,
 				reportersOutputPath: reportersOutputPath,
 				dojoBaseUrlPrefix: '.'
-			}),
+			});
+		}
 
-			testUnitLocalOptions = require(testUnitLocalPath)(
-				deepmerge(testUnitParams, localTestParams)),
+		var testTaskName = ['test', testTypeName, testTargetName].join('-'),
+			testDefinitionPath = testPaths[testTypeName][testTargetName],
+			testTaskOptions = require(testDefinitionPath)(deepmerge.all([
+				testParams, testTypeConfig, testTargetConfig
+			])),
+			internGruntConfig = {};
 
-			testUnitRemoteOptions = require(testUnitRemotePath)(
-				deepmerge(testUnitParams, remoteTestParams)),
+		internGruntConfig[testTaskName] = { options: testTaskOptions };
 
-			testFunctionalLocalOptions = require(testFunctionalLocalPath)(
-				deepmerge(testFunctionalParams, localTestParams)),
-
-			testFunctionalRemoteOptions = require(testFunctionalRemotePath)(
-				deepmerge(testFunctionalParams, remoteTestParams));
-
-		grunt.config('intern', {
-			'test-unit-local': {
-				options: testUnitLocalOptions
-			},
-			'test-functional-local': {
-				options: testFunctionalLocalOptions
-			},
-			'test-unit-remote': {
-				options: testUnitRemoteOptions
-			},
-			'test-functional-remote': {
-				options: testFunctionalRemoteOptions
-			}
-		});
+		grunt.config('intern', internGruntConfig);
 	});
 };

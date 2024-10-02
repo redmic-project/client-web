@@ -42,14 +42,12 @@ define([
 			this.config = {
 				moduleStore: new Memory(),
 				actions: {
-					GET_ALLOWED_MODULES: "getAllowedModules",
 					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules",
 					GET_MODULE: "getModule",
 					AVAILABLE_MODULE: "availableModule",
 					CLEAR_MODULE: 'clearModule'
 				},
 				events: {
-					GET_ALLOWED_MODULES: "getAllowedModules",
 					GET_MODULE: "getModule"
 				},
 				// mediator params
@@ -69,8 +67,7 @@ define([
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this._buildChannel(this.credentialsChannel,
-					this.actions.AVAILABLE_ALLOWED_MODULES),
+				channel : this._buildChannel(this.credentialsChannel, 'AVAILABLE_ALLOWED_MODULES'),
 				callback: "_subAllowedModules",
 				options: {
 					predicate: lang.hitch(this, this._chkPublicationIsForMe)
@@ -87,21 +84,8 @@ define([
 		_definePublications: function() {
 
 			this.publicationsConfig.push({
-				event: 'GET_ALLOWED_MODULES',
-				channel: this._buildChannel(this.credentialsChannel,
-					this.actions.GET_ALLOWED_MODULES)
-			},{
 				event: 'GET_MODULE',
 				channel: this.getChannel("AVAILABLE_MODULE")
-			});
-		},
-
-		postCreate: function() {
-
-			this.inherited(arguments);
-
-			this._emitEvt('GET_ALLOWED_MODULES', {
-				id: this.getOwnChannel()
 			});
 		},
 

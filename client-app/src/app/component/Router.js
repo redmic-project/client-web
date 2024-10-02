@@ -21,8 +21,6 @@ define([
 
 		//	paths: Object
 		//		Constantes de rutas base
-		//	_userFound: Boolean
-		//		Indica si hay presente algún token de usuario.
 
 		constructor: function(args) {
 
@@ -36,7 +34,7 @@ define([
 					CHANGE_MODULE: 'changeModule',
 					MODULE_CHANGED: 'moduleChanged',
 					EVALUATE_ROUTE: 'evaluateRoot',
-					GO_TO_ROOT_ROUTE: 'goToRootRoute',
+					GO_TO_PREV_OR_ROOT_ROUTE: 'goToPrevOrRootRoute',
 					GO_TO_ERROR_ROUTE: 'goToErrorRoute',
 					GET_QUERY_PARAMS: 'getQueryParams',
 					GOT_QUERY_PARAMS: 'gotQueryParams'
@@ -64,8 +62,8 @@ define([
 				channel : this.getChannel('EVALUATE_ROUTE'),
 				callback: '_subEvaluateRoute'
 			},{
-				channel : this.getChannel('GO_TO_ROOT_ROUTE'),
-				callback: '_subGoToRootRoute'
+				channel : this.getChannel('GO_TO_PREV_OR_ROOT_ROUTE'),
+				callback: '_subGoToPrevOrRootRoute'
 			},{
 				channel : this.getChannel('GO_TO_ERROR_ROUTE'),
 				callback: '_subGoToErrorRoute'
@@ -167,13 +165,6 @@ define([
 				this._replaceHistory(route);
 			}
 
-			if (route === this.paths.LOGIN && this._userFound) {
-				var prevRouteExistsAndIsNotHome = this._prevRoute && this._prevRoute !== this.paths.HOME;
-
-				route = prevRouteExistsAndIsNotHome ? this._prevRoute : this.paths.HOME;
-				this._replaceHistory(route);
-			}
-
 			var locationQuery = locationObj.search;
 			this._handleQueryParameters(locationQuery.slice(1));
 
@@ -192,20 +183,18 @@ define([
 			this._onRouteChange();
 		},
 
-		_subEvaluateRoute: function(req) {
-
-			this._userFound = req.userFound;
+		_subEvaluateRoute: function() {
 
 			this._onRouteChange();
 		},
 
-		_subGoToRootRoute: function(req) {
+		_subGoToPrevOrRootRoute: function(req) {
 
-			if (req.userGone) {
-				delete this._userFound;
+			if (req.userGone || !this._prevRoute) {
+				this._goToRootPage();
+			} else {
+				this._goToPreviousPage();
 			}
-
-			this._goToRootPage();
 		},
 
 		_subGoToErrorRoute: function() {
@@ -238,6 +227,11 @@ define([
 		_goToRootPage: function() {
 
 			globalThis.location.href = this.paths.ROOT;
+		},
+
+		_goToPreviousPage: function() {
+
+			globalThis.location.href = this._prevRoute;
 		},
 
 		_goToErrorPage: function() {

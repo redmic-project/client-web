@@ -30,7 +30,8 @@ define([
 				events: {
 					GET_CREDENTIALS: 'getCredentials',
 					GET_ALLOWED_MODULES: 'getAllowedModules',
-					REMOVE: 'remove',
+					REMOVED: 'removed',
+					ADDED: 'added',
 					ACCEPT_COOKIES: 'acceptCookies',
 					REQUEST_FAILED: 'requestFailed'
 				},
@@ -40,6 +41,7 @@ define([
 					AVAILABLE: 'available',
 					AVAILABLE_ALLOWED_MODULES: 'availableAllowedModules',
 					REMOVED: 'removed',
+					ADDED: 'added',
 					COOKIES_ACCEPTED: 'cookiesAccepted',
 					ACCEPT_COOKIES: 'acceptCookies',
 					COOKIES_STATE: 'cookiesState',
@@ -102,8 +104,11 @@ define([
 				event: 'GET_ALLOWED_MODULES',
 				channel: this.getChannel('AVAILABLE_ALLOWED_MODULES')
 			},{
-				event: 'REMOVE',
+				event: 'REMOVED',
 				channel: this.getChannel('REMOVED')
+			},{
+				event: 'ADDED',
+				channel: this.getChannel('ADDED')
 			},{
 				event: 'ACCEPT_COOKIES',
 				channel: this.getChannel('COOKIES_ACCEPTED')
@@ -159,18 +164,14 @@ define([
 
 			this._setEmptySelectionIds();
 
-			if (globalThis.location.pathname === this._loginPath) {
-				this._getCredentials();
-			} else {
-				globalThis.location.reload();
-			}
+			this._emitEvt('ADDED');
 		},
 
 		_onAccessTokenRemoved: function() {
 
 			this._setEmptySelectionIds();
 
-			this._emitEvt('REMOVE');
+			this._emitEvt('REMOVED');
 		},
 
 		_cookiesAccepted: function(evt) {

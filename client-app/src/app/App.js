@@ -179,6 +179,9 @@ define([
 				channel : this._credentials.getChannel('REMOVED'),
 				callback: '_subCredentialsRemoved'
 			},{
+				channel : this._credentials.getChannel('ADDED'),
+				callback: '_subCredentialsAdded'
+			},{
 				channel : this._credentials.getChannel('REQUEST_FAILED'),
 				callback: '_subCredentialsRequestFailed'
 			},{
@@ -211,16 +214,19 @@ define([
 
 		_subCredentialsRemoved: function() {
 
-			this._publish(this._router.getChannel('GO_TO_ROOT_ROUTE'), {
+			this._publish(this._router.getChannel('GO_TO_PREV_OR_ROOT_ROUTE'), {
 				userGone: true
 			});
 		},
 
+		_subCredentialsAdded: function() {
+
+			this._publish(this._router.getChannel('GO_TO_PREV_OR_ROOT_ROUTE'));
+		},
+
 		_subAvailableCredentials: function(res) {
 
-			this._publish(this._router.getChannel('EVALUATE_ROUTE'), {
-				userFound: res.found
-			});
+			this._publish(this._router.getChannel('EVALUATE_ROUTE'));
 		},
 
 		_subCredentialsRequestFailed: function() {

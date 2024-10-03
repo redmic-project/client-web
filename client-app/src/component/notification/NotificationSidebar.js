@@ -228,7 +228,9 @@ define([
 
 			this._functionListener = lang.hitch(this, this.inherited, arguments);
 
-			this.domNode.addEventListener('animationend', this._functionListener);
+			this.domNode.addEventListener('animationend', this._functionListener, {
+				passive: true
+			});
 
 			put(this.domNode, ".retiring");
 		},

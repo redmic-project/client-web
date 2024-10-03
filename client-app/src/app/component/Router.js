@@ -98,7 +98,10 @@ define([
 			//		private
 
 			globalThis.addEventListener.call(globalThis, 'click', lang.hitch(this, this._evaluateClickEvt));
-			globalThis.addEventListener.call(globalThis, 'popstate', lang.hitch(this, this._evaluatePopStateEvt));
+
+			globalThis.addEventListener.call(globalThis, 'popstate', lang.hitch(this, this._evaluatePopStateEvt), {
+				passive: true
+			});
 		},
 
 		_evaluateClickEvt: function(evt) {

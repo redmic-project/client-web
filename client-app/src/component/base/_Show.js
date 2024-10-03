@@ -455,7 +455,9 @@ define([
 				dfd.resolve();
 			}), this.animationSafetyTimeout);
 
-			this._moduleOwnNode.firstChild.addEventListener('animationend', this._afterAnimationCallback);
+			this._moduleOwnNode.firstChild.addEventListener('animationend', this._afterAnimationCallback, {
+				passive: true
+			});
 
 			this._addClass(currentAnimationClass);
 

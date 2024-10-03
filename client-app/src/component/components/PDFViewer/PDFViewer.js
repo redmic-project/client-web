@@ -114,7 +114,9 @@ define([
 					this.dialog.set("title", namePDF[namePDF.length - 1]);
 				}
 
-				this.objectNode.addEventListener("load", lang.hitch(this, this._observerError));
+				this.objectNode.addEventListener("load", lang.hitch(this, this._observerError), {
+					passive: true
+				});
 			} else {
 				this._showTemplateDisplayerPdfError();
 			}

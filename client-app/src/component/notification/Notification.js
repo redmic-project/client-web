@@ -122,7 +122,9 @@ define([
 			this.iconNode = put(this.domNode, 'i.' + this.notificationIconClass);
 			this.spanNode = put(this.domNode, "span.hidden", 0);
 
-			this.iconNode.addEventListener('animationend', lang.hitch(this, this._removeAnimated));
+			this.iconNode.addEventListener('animationend', lang.hitch(this, this._removeAnimated), {
+				passive: true
+			});
 
 			this.domNode.onclick = lang.hitch(this, this._clickNotification);
 

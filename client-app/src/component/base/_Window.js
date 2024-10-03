@@ -183,22 +183,24 @@ define([
 
 		_addNodeListeners: function() {
 
+			var listenerOpts = { passive: true };
+
 			if (!this._transitionEndCallback) {
 				this._transitionEndCallback = lang.hitch(this, this._onWindowTransitionEnd);
 			}
 
-			this._windowContentNode.addEventListener('transitionend', this._transitionEndCallback);
-			this._windowNode.parentNode.addEventListener('transitionend', this._transitionEndCallback);
+			this._windowContentNode.addEventListener('transitionend', this._transitionEndCallback, listenerOpts);
+			this._windowNode.parentNode.addEventListener('transitionend', this._transitionEndCallback, listenerOpts);
 
 			if (this.scrollSensitive) {
 				this._windowNode.parentNode.parentNode.addEventListener('scrollend', lang.hitch(this,
-					this._onGrandParentScroll));
+					this._onGrandParentScroll), listenerOpts);
 			}
 
 			if (this.resizable) {
 				var startCallback = lang.hitch(this, this._onWindowUserResizeStart);
-				this._windowNode.addEventListener('mousedown', startCallback);
-				this._windowNode.addEventListener('touchstart', startCallback);
+				this._windowNode.addEventListener('mousedown', startCallback, listenerOpts);
+				this._windowNode.addEventListener('touchstart', startCallback, listenerOpts);
 			}
 		},
 

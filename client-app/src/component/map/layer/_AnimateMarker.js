@@ -45,7 +45,7 @@ define([
 
 				put(container.parentNode, icon);
 				put('!', container);
-			}, markerIcon, animatedContainer));
+			}, markerIcon, animatedContainer), { passive: true });
 		}
 	});
 });

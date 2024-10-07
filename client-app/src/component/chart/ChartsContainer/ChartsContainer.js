@@ -1,9 +1,9 @@
 define([
-	'd3/d3.min'
+	'd3'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
-	, "put-selector/put"
+	, 'put-selector'
 	, "RWidgets/Utilities"
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"

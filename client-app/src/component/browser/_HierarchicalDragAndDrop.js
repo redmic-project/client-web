@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/dom-class"
-	, "put-selector/put"
+	, 'put-selector'
 	, "./_DragAndDrop"
 ], function(
 	declare

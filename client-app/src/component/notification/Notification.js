@@ -6,7 +6,7 @@ define([
 	, "src/component/base/_Store"
 	, "src/component/notification/NotificationSidebar"
 	, "src/component/notification/TaskNotification"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	declare
 	, lang

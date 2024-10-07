@@ -5,7 +5,7 @@ define([
 	, 'dojo/dom-class'
 	, 'dojo/dom-style'
 	, 'dojo/on'
-	, 'put-selector/put'
+	, 'put-selector'
 ], function(
 	lang
 	, Deferred

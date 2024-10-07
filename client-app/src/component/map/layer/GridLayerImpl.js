@@ -1,9 +1,9 @@
 define([
-	'd3/d3.min'
+	'd3'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, 'leaflet/leaflet'
+	, 'leaflet'
 	, "src/util/Credentials"
 	, "src/component/filter/Filter"
 	, "./MapLayer"

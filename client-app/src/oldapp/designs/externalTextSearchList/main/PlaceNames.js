@@ -5,7 +5,7 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "put-selector/put"
+	, 'put-selector'
 	, "templates/PlaceNamesList"
 	, "src/component/browser/bars/Pagination"
 	, "src/component/browser/bars/Total"

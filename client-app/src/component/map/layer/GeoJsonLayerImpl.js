@@ -1,12 +1,12 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'leaflet/leaflet'
+	, 'leaflet'
 	, "./_AnimateMarker"
 	, "./_GeoJsonLayerItfc"
 	, "./MapLayer"
 
-	, 'awesome-markers/leaflet.awesome-markers.min'
+	, 'awesome-markers'
 ], function(
 	declare
 	, lang

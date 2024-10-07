@@ -2,14 +2,14 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, 'leaflet/leaflet'
-	, 'pruneCluster/PruneCluster.amd.min'
+	, 'leaflet'
+	, 'pruneCluster'
 	, "templates/LoadingArrows"
 	, "./_AnimateMarker"
 	, "./_PruneClusterLayerItfc"
 	, "./MapLayer"
 
-	, 'awesome-markers/leaflet.awesome-markers.min'
+	, 'awesome-markers'
 ], function(
 	declare
 	, lang

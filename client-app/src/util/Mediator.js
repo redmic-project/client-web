@@ -1,6 +1,6 @@
 define([
 	"dojo/_base/lang"
-	, 'mediatorjs/mediator.min'
+	, 'mediatorjs'
 ], function(
 	lang
 	, MediatorJS

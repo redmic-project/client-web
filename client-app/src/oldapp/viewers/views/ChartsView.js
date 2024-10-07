@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, "app/designs/embeddedContentWithTopbar/main/EmbeddedContentSelectionInTopbar"
 	, "app/designs/chart/main/_ProcessDataDefinitionAndGetTimeSeries"
 	, "app/designs/chart/main/ChartsWithLegendAndToolbarsAndSlider"

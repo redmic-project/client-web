@@ -4,7 +4,7 @@ define([
 	, "dojo/Deferred"
 	, "dojo/Stateful"
 	, "dojo/topic"
-	, "json-schema-ref-parser/ref-parser.min"
+	, "json-schema-ref-parser"
 	, "src/util/tv4"
 ], function(
 	declare

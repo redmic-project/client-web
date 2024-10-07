@@ -1,33 +1,16 @@
 dojoConfig = {
 	packages: [{
-		name: 'app',
-		location: 'app'
+		name: 'app'
 	},{
-		name: 'src',
-		location: 'src'
+		name: 'src'
 	},{
-		name: 'dojo',
-		location: 'dojo'
+		name: 'dojo'
 	},{
-		name: 'dojox',
-		location: 'dojox'
-	},{
-		name: 'json-schema-ref-parser',
-		location: 'json-schema-ref-parser'
-	},{
-		name: 'packery',
-		location: 'packery'
-	},{
-		name: 'draggabilly',
-		location: 'draggabilly'
+		name: 'dojox'
 	},{
 		name: 'colorjs',
-		location: 'colorjs'
+		main: 'color'
 	},{
-		name: 'd3',
-		location: 'd3'
-	},{
-		name: 'leaflet-measure',
-		location: 'leaflet-measure'
+		name: 'leaflet-measure'
 	}]
 };

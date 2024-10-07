@@ -5,12 +5,12 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/dom-class'
 	, 'dojo/on'
-	, 'leaflet/leaflet'
-	, 'L-miniMap/Control.MiniMap.min'
+	, 'leaflet'
+	, 'L-miniMap'
 
-	, 'awesome-markers/leaflet.awesome-markers.min'
-	, 'L-coordinates/Leaflet.Coordinates-0.1.5.min'
-	, 'L-navBar/index'
+	, 'awesome-markers'
+	, 'L-coordinates'
+	, 'L-navBar'
 ], function(
 	declare
 	, lang
@@ -196,15 +196,13 @@ define([
 				},
 			});
 
-			var measure = new L.Control.Measure({
+			new L.Control.Measure({
 				position: 'topright',
 				primaryLengthUnit: 'meters',
 				secondaryLengthUnit: 'kilometers',
 				primaryAreaUnit: 'sqmeters',
 				secondaryAreaUnit: 'hectares'
-			});
-
-			measure.addTo(this.map);
+			}).addTo(this.map);
 
 			dfd.resolve();
 		},

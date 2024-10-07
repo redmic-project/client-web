@@ -4,7 +4,7 @@ define([
 	, "dojo/dom-class"
 	, "dojo/on"
 	, "dojo/query"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 

@@ -5,7 +5,7 @@ define([
 	, "dojo/dom-class"
 	, "dojo/query"
 	, "RWidgets/Utilities"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	declare
 	, lang

@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, 'RWidgets/Utilities'
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	declare
 	, lang

@@ -5,7 +5,7 @@ define([
 	, "dijit/popup"
 	, "dojo/_base/lang"
 	, "dojo/Evented"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	Button
 	, declare

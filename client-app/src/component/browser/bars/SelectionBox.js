@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "src/util/Credentials"
@@ -7,7 +7,7 @@ define([
 	, "src/component/base/_Show"
 	, "src/component/selection/SelectionBox"
 	, "src/component/browser/bars/_SelectBox"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	alertify
 	, declare

@@ -5,7 +5,7 @@ define([
 	, "RWidgets/Utilities"
 	, "./_ColorSelectionItfc"
 
-	, 'colorjs/color'
+	, 'colorjs'
 ], function(
 	declare
 	, lang

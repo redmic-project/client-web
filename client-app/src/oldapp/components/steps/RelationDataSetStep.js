@@ -5,7 +5,7 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'moment/moment.min'
+	, 'moment'
 	, "src/component/browser/_ButtonsInRow"
 	, "src/component/browser/_Framework"
 	, "src/component/browser/_MultiTemplate"

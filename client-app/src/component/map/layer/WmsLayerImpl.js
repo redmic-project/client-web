@@ -1,7 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'leaflet/leaflet'
+	, 'leaflet'
 	, 'src/component/map/StaticLayersDefinition'
 	, 'templates/ServiceOGCImage'
 	, './_LayerProtocols'

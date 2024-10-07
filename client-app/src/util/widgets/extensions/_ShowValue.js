@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/lang"
-	, "put-selector/put"
-	, 'moment/moment.min'
+	, 'put-selector'
+	, 'moment'
 ], function(
 	lang
 	, put

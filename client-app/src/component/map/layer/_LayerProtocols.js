@@ -1,9 +1,9 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'leaflet/leaflet'
+	, 'leaflet'
 
-	, 'leaflet-nontiledlayer/NonTiledLayer'
+	, 'leaflet-nontiledlayer'
 ], function(
 	declare
 	, lang

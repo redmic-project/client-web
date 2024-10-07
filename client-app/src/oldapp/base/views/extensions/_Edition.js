@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, "app/base/views/extensions/_EditionCommons"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"

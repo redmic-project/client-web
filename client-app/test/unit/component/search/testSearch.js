@@ -1,6 +1,6 @@
 define([
 	"dojo/_base/declare"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/util/Mediator"
 	, "src/component/search/Search"
 	, "src/component/search/TextSearchImpl"

@@ -1,5 +1,5 @@
 define([
-	'leaflet/leaflet'
+	'leaflet'
 ], function(
 	L
 ) {

@@ -5,7 +5,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "src/component/selection/SelectionBox"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	LayoutContainer
 	, ContentPane

@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "put-selector/put"
+	, 'put-selector'
 	, "./Browser"
 	, "./row/_Hierarchical"
 ], function(

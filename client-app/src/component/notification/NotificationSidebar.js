@@ -4,7 +4,7 @@ define([
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/base/_Store"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	declare
 	, lang

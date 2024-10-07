@@ -8,7 +8,7 @@ define([
 	, 'dojo/dom-style'
 	, 'dojo/query'
 	, 'dojo/i18n!app/nls/translation'
-	, 'put-selector/put'
+	, 'put-selector'
 ], function(
 	Dialog
 	, BorderContainer

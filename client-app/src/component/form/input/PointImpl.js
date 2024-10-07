@@ -5,7 +5,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/number"
 	, "dojo/store/Memory"
-	, "put-selector/put"
+	, 'put-selector'
 	, "RWidgets/Utilities"
 	, "src/component/form/input/GeographicCoordinatesComponentImpl"
 	, "src/component/form/input/Input"

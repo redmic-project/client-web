@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Evented"
 	, "dojo/topic"
-	, 'uuid/uuidv4.min'
+	, 'uuid'
 	, "RWidgets/Utilities"
 ], function (
 	ObjAttr

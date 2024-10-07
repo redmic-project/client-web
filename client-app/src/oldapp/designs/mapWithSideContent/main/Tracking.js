@@ -3,11 +3,11 @@ define([
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContentAndTopbar"
 	, 'src/redmicConfig'
-	, 'd3/d3.min'
+	, 'd3'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'moment/moment.min'
-	, "put-selector/put"
+	, 'moment'
+	, 'put-selector'
 	, "RWidgets/Utilities"
 	, "src/component/base/_Store"
 	, "src/component/components/ProgressSlider/ProgressSlider"

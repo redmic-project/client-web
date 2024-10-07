@@ -3,7 +3,7 @@ define([
 	, "dijit/form/ValidationTextBox"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/component/form/input/Input"
 ], function(
 	redmicConfig

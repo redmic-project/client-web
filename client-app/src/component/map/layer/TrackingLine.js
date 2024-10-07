@@ -1,11 +1,11 @@
 define([
-	'd3/d3.min'
+	'd3'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/mouse'
 	, 'dojo/on'
-	, 'leaflet/leaflet'
+	, 'leaflet'
 	, 'src/component/base/_Module'
 	, 'RWidgets/Utilities'
 	, './_TrackingDataManagement'

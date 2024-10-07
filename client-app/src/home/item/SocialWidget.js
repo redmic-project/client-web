@@ -2,7 +2,7 @@ define([
 	'src/home/item/_DashboardItem'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'put-selector/put'
+	, 'put-selector'
 ], function(
 	_DashboardItem
 	, declare

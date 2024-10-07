@@ -9,7 +9,7 @@ define([
 	, "src/component/form/_ListenModelHasChanged"
 	, "app/base/views/extensions/_Edition"
 	, "RWidgets/Button"
-	, "put-selector/put"
+	, 'put-selector'
 	, "./_ButtonsInRow"
 	, "./_Table"
 ], function(

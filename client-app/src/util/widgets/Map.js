@@ -3,8 +3,9 @@ define([
 	, "dijit/_WidgetBase"
 	, "dojo/_base/lang"
 	, "dojo/Evented"
-	, 'leaflet/leaflet'
-	, 'L-areaselect/leaflet-areaselect'
+	, 'leaflet'
+
+	, 'L-areaselect'
 ], function(
 	declare
 	, _WidgetBase

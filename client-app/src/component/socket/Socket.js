@@ -4,9 +4,9 @@ define([
 	, "dojo/_base/lang"
 	, "src/component/base/_Module"
 	, "src/util/Credentials"
-	, 'sockjs/sockjs.min'
+	, 'sockjs'
 
-	, 'stomp-websocket/stomp.min'
+	, 'stomp-websocket'
 ], function(
 	redmicConfig
 	, declare

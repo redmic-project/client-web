@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/keys"
 	, "dojo/Deferred"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/model/ModelImpl"

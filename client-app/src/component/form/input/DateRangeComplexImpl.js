@@ -2,8 +2,8 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, 'moment/moment.min'
-	, "put-selector/put"
+	, 'moment'
+	, 'put-selector'
 	, "src/component/components/Keypad/TrizoneKeypadImpl"
 	, "src/component/form/input/_Dependence"
 	, "src/component/form/input/DateTimeImpl"

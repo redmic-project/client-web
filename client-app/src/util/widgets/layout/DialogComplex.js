@@ -4,7 +4,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/query'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'RWidgets/layout/_DialogBase'
 ], function(
 	ContentPane

@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'uuid/uuidv4.min'
+	, 'uuid'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, './_StaticLayersManagement'

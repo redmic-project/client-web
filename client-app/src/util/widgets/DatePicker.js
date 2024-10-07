@@ -5,7 +5,7 @@ define([
 	, "dijit/TooltipDialog"
 	, "dojo/_base/lang"
 	, "dojo/Evented"
-	, "put-selector/put"
+	, 'put-selector'
 	, "dijit/Calendar"
 	, "dojo/date/locale"
 	, "dijit/form/DateTextBox"

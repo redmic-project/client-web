@@ -6,7 +6,7 @@ define([
 	, "src/component/base/_ShowInTooltip"
 	, "src/component/base/_ShowOnEvt"
 	, "src/component/form/input/DateRangeComplexImpl"
-	, "put-selector/put"
+	, 'put-selector'
 	, "./Toolbar"
 ], function(
 	declare

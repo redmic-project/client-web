@@ -1,5 +1,5 @@
 define([
-	'proj4/proj4'
+	'proj4'
 ], function(
 	proj4
 ) {

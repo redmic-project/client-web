@@ -4,8 +4,8 @@ define([
 	, "dojo/Deferred"
 	, "dojo/dom-class"
 	, "dojo/query"
-	, 'leaflet/leaflet'
-	, "put-selector/put"
+	, 'leaflet'
+	, 'put-selector'
 	, 'src/redmicConfig'
 	, "./_LeafletImplItfc"
 	, './_LeafletWidgetsManagement'

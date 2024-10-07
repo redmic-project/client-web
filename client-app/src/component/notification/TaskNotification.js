@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/query"
@@ -11,7 +11,7 @@ define([
 	, "src/component/browser/_Framework"
 	, "src/component/browser/ListImpl"
 	, "src/component/browser/bars/Total"
-	, "put-selector/put"
+	, 'put-selector'
 	, "templates/NotificationList"
 	, "dijit/ProgressBar"
 ], function(

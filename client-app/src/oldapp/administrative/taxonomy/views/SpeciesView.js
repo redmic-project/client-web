@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, "app/designs/textSearchFacetsList/main/Species"
 	, "app/base/views/extensions/_EditionWizardView"
 	, 'src/redmicConfig'

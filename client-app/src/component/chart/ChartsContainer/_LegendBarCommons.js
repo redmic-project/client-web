@@ -1,9 +1,9 @@
 define([
-	'd3Tip/d3-v6-tip.min'
+	'd3Tip'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "put-selector/put"
+	, 'put-selector'
 	, "RWidgets/Utilities"
 	, "./_LegendBarCommonsItfc"
 ], function(

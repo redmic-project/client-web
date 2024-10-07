@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'moment/moment.min'
+	, 'moment'
 ], function (
 	declare
 	, lang

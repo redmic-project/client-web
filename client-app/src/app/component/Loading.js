@@ -2,7 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/query'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'src/component/base/_Module'
 	, 'templates/LoadingArrows'
 ], function(

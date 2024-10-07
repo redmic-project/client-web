@@ -5,9 +5,9 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "dojo/promise/all"
-	, 'draggabilly/draggabilly.pkgd.min'
-	, 'packery/packery.pkgd.min'
-	, "put-selector/put"
+	, 'draggabilly'
+	, 'packery'
+	, 'put-selector'
 	, "src/component/base/_Store"
 	, "src/component/base/_Window"
 	, "./_ControllerItfc"

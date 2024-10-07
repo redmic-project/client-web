@@ -3,8 +3,8 @@ define([
 	, "dijit/_WidgetBase"
 	, "dojo/_base/lang"
 	, "dojo/Evented"
-	, 'moment/moment.min'
-	, "put-selector/put"
+	, 'moment'
+	, 'put-selector'
 ], function(
 	declare
 	, _WidgetBase

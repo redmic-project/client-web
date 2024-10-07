@@ -1,10 +1,10 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, 'app/designs/textSearchList/main/Selection'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'src/util/Credentials'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Selection'

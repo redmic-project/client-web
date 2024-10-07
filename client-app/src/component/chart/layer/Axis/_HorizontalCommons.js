@@ -1,9 +1,9 @@
 define([
-	'd3/d3.min'
+	'd3'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, 'moment/moment.min'
+	, 'moment'
 	, "RWidgets/Utilities"
 ], function(
 	d3

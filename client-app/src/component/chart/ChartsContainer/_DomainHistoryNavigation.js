@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/dom-class"
-	, 'moment/moment.min'
-	, "put-selector/put"
+	, 'moment'
+	, 'put-selector'
 ], function(
 	declare
 	, lang

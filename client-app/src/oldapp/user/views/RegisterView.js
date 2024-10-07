@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, 'src/util/ReCaptcha'
 	, "app/user/models/RegisterModel"
 	, "app/user/views/_ExternalUserBaseView"

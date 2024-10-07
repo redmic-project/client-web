@@ -2,7 +2,7 @@ define([
 	"app/components/steps/_SelectOptionBox"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "put-selector/put"
+	, 'put-selector'
 ], function (
 	_SelectOptionBox
 	, declare

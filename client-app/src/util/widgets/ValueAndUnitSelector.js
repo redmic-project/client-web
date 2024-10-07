@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Evented"
 	, "dijit/form/NumberSpinner"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	declare
 	, _WidgetBase

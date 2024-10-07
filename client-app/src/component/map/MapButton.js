@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/dom-class"
 	, "dojo/Stateful"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/util/Mediator"
 ], function(
 	_WidgetBase

@@ -5,7 +5,7 @@ define([
 	, "dojo/aspect"
 	, "src/component/form/input/SelectImpl"
 	, "src/component/layout/dataDisplayer/DataDisplayer"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	_ProcessInterval
 	, declare

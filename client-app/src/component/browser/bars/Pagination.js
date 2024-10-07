@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/base/_Store"

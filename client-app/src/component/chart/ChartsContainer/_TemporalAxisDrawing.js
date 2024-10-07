@@ -1,8 +1,8 @@
 define([
-	'd3/d3.min'
+	'd3'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'moment/moment.min'
+	, 'moment'
 	, "src/component/chart/ChartsContainer/_DomainHistoryNavigation"
 	, "src/component/chart/layer/Axis/TemporalAxisImpl"
 	, "./_AxesDrawing"

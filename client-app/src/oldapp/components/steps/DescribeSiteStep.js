@@ -11,7 +11,7 @@ define([
 	, "src/component/components/Keypad/TrizoneKeypadImpl"
 	, "src/component/form/FormContainerImpl"
 	, "RWidgets/Utilities"
-	, "put-selector/put"
+	, 'put-selector'
 ], function (
 	_AddSelectionHandlerKeypad
 	, _MainData

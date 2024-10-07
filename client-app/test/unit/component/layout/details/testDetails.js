@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/i18n!app/nls/translation"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/util/Mediator"
 	, "redmic/dialog/LockDialogImpl"
 	, "RWidgets/layout/Keypad"

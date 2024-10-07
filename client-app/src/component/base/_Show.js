@@ -4,7 +4,7 @@ define([
 	, "dojo/aspect"
 	, "dojo/Deferred"
 	, "dojo/query"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/component/base/_ListenWindowResize"
 	, "src/component/base/_ShowItfc"
 ], function(

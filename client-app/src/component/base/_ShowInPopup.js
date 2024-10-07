@@ -5,7 +5,7 @@ define([
 	, 'dojo/promise/all'
 	, 'RWidgets/layout/DialogComplex'
 	, 'RWidgets/layout/DialogSimple'
-	, 'put-selector/put'
+	, 'put-selector'
 ], function(
 	ContentPane
 	, lang

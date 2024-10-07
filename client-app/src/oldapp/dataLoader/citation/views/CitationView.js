@@ -6,7 +6,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "src/component/browser/bars/Pagination"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	_ActivityClosed
 	, GeographicEditor

@@ -4,7 +4,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
-	, 'put-selector/put'
+	, 'put-selector'
 ], function(
 	_WidgetBase
 	, popup

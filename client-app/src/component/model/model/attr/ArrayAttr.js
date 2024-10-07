@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
 	, "RWidgets/Utilities"
-	, 'uuid/uuidv4.min'
+	, 'uuid'
 	, "src/component/model/model/attr/_ComplexAttr"
 ], function (
 	declare

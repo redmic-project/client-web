@@ -2,7 +2,7 @@ define([
 	'dijit/_WidgetBase'
 	, 'dojo/_base/declare'
 	, 'dojo/i18n!app/nls/translation'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'src/util/CookieLoader'
 ], function(
 	_WidgetBase

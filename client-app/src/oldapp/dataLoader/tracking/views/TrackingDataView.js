@@ -6,7 +6,7 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'moment/moment.min'
+	, 'moment'
 	, "src/component/base/_Store"
 	, "src/component/browser/_EditionTable"
 	, "src/component/browser/bars/Pagination"

@@ -2,7 +2,7 @@ define([
 	"dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/util/Mediator"
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"

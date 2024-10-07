@@ -3,7 +3,7 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'moment/moment.min'
+	, 'moment'
 	, "src/component/chart/ChartsContainer/_InfoOnMouseOver"
 	, "src/component/chart/ChartsContainer/_LegendBar"
 	, "src/component/chart/ChartsContainer/_TemporalAxisWithGridDrawing"

@@ -1,7 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'put-selector/put'
+	, 'put-selector'
 	, './_Layout'
 ], function(
 	declare

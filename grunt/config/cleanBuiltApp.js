@@ -2,10 +2,11 @@ module.exports = function(grunt) {
 
 	grunt.config('redmicConfig.cleanBuiltApp', {
 		directoriesToClean: [
-			'alertify', 'awesome-markers', 'cbtree', 'd3Tip', 'dijit', 'dojo', 'dojox', 'deepmerge', 'dropzone',
-			'handlebars', 'L-areaselect', 'L-coordinates', 'L-draw', 'L-miniMap', 'L-navBar', 'leaflet',
-			'leaflet-nontiledlayer', 'mediatorjs', 'moment', 'uuid', 'proj4', 'pruneCluster', 'put-selector',
-			'RWidgets', 'sockjs', 'stomp-websocket', 'templates', 'tv4', 'wicket'
+			'alertify', 'awesome-markers', 'cbtree', 'd3', 'd3Tip', 'deepmerge', 'dijit', 'dojo', 'dojox',
+			'draggabilly', 'dropzone', 'handlebars', 'iso8601-js-period', 'json-schema-ref-parser', 'L-areaselect',
+			'L-coordinates', 'L-draw', 'L-miniMap', 'L-navBar', 'L-timeDimension', 'leaflet', 'leaflet-nontiledlayer',
+			'mediatorjs', 'moment', 'packery', 'proj4', 'pruneCluster', 'put-selector', 'RWidgets', 'sockjs',
+			'stomp-websocket', 'templates', 'tv4', 'uuid', 'wicket'
 		],
 		recursiveDirectoriesToClean: [
 			'nls'

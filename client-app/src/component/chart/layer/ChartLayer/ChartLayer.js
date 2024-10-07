@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "put-selector/put"
+	, 'put-selector'
 	, "RWidgets/Utilities"
 	, "src/component/base/_Module"
 	, "src/component/chart/layer/_LayerCommons"

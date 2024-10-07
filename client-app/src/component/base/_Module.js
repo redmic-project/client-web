@@ -1,5 +1,5 @@
 define([
-	'deepmerge/umd'
+	'deepmerge'
 	, "dijit/_WidgetBase"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"

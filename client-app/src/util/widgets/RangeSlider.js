@@ -7,7 +7,7 @@ define([
 	, "dojox/form/HorizontalRangeSlider"
 	, "dijit/form/HorizontalRule"
 	, "dijit/form/HorizontalRuleLabels"
-	, "put-selector/put"
+	, 'put-selector'
 	, "./Utilities"
 ], function(
 	ValidationTextBox

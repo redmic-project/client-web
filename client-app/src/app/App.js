@@ -2,7 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/dom'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'src/app/component/Analytics'
 	, 'src/app/component/Credentials'
 	, 'src/app/component/ExternalConfig'

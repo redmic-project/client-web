@@ -9,7 +9,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/Deferred"
-	, 'moment/moment.min'
+	, 'moment'
 	, "src/component/base/_Filter"
 	, "src/component/base/_Store"
 	, "src/component/browser/HierarchicalImpl"

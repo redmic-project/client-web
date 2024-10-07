@@ -3,7 +3,7 @@ define([
 	, "dijit/_WidgetBase"
 	, "dojo/_base/lang"
 	, "dojo/Evented"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	declare
 	, _WidgetBase

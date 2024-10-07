@@ -5,7 +5,7 @@ define([
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/layout/templateDisplayer/TemplateDisplayer"
-	, "put-selector/put"
+	, 'put-selector'
 	, 'src/redmicConfig'
 	, "templates/DocumentAuthFailed"
 	, "templates/DocumentNotAvailable"

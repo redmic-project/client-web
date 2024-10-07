@@ -7,7 +7,7 @@ define([
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	_EditionWizardView
 	, _GetActivityData

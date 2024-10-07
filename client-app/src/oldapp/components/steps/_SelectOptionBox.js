@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
-	, "put-selector/put"
+	, 'put-selector'
 ], function (
 	ContentPane
 	, declare

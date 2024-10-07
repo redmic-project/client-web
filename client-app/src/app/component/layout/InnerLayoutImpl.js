@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'dojo/dom-class'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'src/util/Credentials'
 	, 'src/app/component/layout/Layout'
 	, 'src/app/component/sidebar/MainSidebarImpl'

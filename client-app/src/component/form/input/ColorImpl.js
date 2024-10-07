@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/component/form/input/ColorPickerImpl"
 	, "src/component/form/input/_BaseTextBoxWidthExpandTooltipImpl"
 ], function(

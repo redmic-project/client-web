@@ -10,7 +10,7 @@ define([
 	, 'dojo/dom-class'
 	, 'dojo/Evented'
 	, 'dojo/query'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'src/component/form/input/_IgnoreNonexistentProperty'
 	, 'src/component/form/input/_Dependence'
 	, 'src/component/form/input/_DeleteOnClear'

@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, 'moment/moment.min'
+	, 'moment'
 	, "src/component/form/input/DateTimeImpl"
 	, "src/component/form/input/_BaseDateTime"
 	, "src/component/form/input/_BaseTextBoxWidthExpandTooltipImpl"

@@ -5,7 +5,7 @@ define([
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "RWidgets/ValueAndUnitSelector"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	declare
 	, lang

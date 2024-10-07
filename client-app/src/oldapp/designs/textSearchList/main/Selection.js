@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, "app/base/views/extensions/_OnShownAndRefresh"
 	, "app/designs/base/_Main"
 	, "app/designs/textSearchList/Controller"

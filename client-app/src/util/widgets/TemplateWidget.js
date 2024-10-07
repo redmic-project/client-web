@@ -3,16 +3,16 @@ define([
 	, "dijit/_WidgetBase"
 	, "dojo/_base/lang"
 	, "dojo/Evented"
-	, 'leaflet/leaflet'
 	, "dojo/query"
 	, "dojo/on"
-	, "put-selector/put"
+	, 'put-selector'
+
+	, 'leaflet'
 ], function(
 	declare
 	, _WidgetBase
 	, lang
 	, Evented
-	, leaflet
 	, query
 	, on
 	, put

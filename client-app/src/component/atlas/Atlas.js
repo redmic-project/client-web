@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	,'app/designs/list/Controller'
 	, 'app/designs/list/layout/Layout'
 	, 'app/designs/textSearchList/main/ServiceOGC'

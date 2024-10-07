@@ -5,7 +5,7 @@ define([
 	, "src/component/base/_ShowInTooltip"
 	, "src/component/base/_ShowOnEvt"
 	, "src/component/layout/listMenu/ListMenu"
-	, "put-selector/put"
+	, 'put-selector'
 	, "./row/_Table"
 ], function(
 	declare

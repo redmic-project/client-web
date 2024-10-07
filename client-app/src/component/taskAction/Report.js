@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'

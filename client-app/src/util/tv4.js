@@ -2,7 +2,7 @@ define([
 	'dojo/_base/lang'
 	, 'RWidgets/Utilities'
 	, 'src/util/stringFormats'
-	, 'tv4/tv4'
+	, 'tv4'
 ], function(
 	lang
 	, Utilities

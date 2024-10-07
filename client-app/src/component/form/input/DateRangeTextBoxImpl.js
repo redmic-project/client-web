@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, 'moment/moment.min'
+	, 'moment'
 	, "src/component/form/input/DateRangeComplexImpl"
 	, "src/component/form/input/_BaseTextBoxWidthExpandTooltipImpl"
 	, "RWidgets/Utilities"

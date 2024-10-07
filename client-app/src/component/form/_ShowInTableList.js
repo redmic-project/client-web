@@ -5,7 +5,7 @@ define([
 	, "dojo/dom-class"
 	, "dojo/query"
 	, "src/component/form/_BaseCreateKeypad"
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	lang
 	, declare

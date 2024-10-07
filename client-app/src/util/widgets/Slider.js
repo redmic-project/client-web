@@ -6,7 +6,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Evented'
-	, 'put-selector/put'
+	, 'put-selector'
 	, './Utilities'
 ], function(
 	_WidgetBase

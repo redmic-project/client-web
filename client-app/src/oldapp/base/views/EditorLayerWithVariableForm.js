@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/dom-class"
-	, 'put-selector/put'
+	, 'put-selector'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 ], function (

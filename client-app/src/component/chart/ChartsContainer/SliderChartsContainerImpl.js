@@ -1,12 +1,12 @@
 define([
-	'd3/d3.min'
-	, 'd3Tip/d3-v6-tip.min'
+	'd3'
+	, 'd3Tip'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/_base/kernel'
 	, 'dojo/aspect'
 	, 'dojo/Deferred'
-	, 'moment/moment.min'
+	, 'moment'
 	, 'src/component/chart/ChartsContainer/_TemporalAxisDrawing'
 	, './ChartsContainer'
 ], function(

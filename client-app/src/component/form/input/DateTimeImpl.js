@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, 'moment/moment.min'
-	, "put-selector/put"
+	, 'moment'
+	, 'put-selector'
 	, "src/component/form/input/_BaseDateTime"
 	, "src/component/form/input/Input"
 	, "RWidgets/TimeSelect"

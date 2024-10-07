@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, 'src/redmicConfig'
 	, 'dijit/_TemplatedMixin'
 	, 'dijit/_WidgetBase'
@@ -9,10 +9,10 @@ define([
 	, 'dojo/Evented'
 	, 'dojo/i18n!./nls/UploadInput'
 	, 'dojo/text!./templates/UploadInput.html'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'src/util/Credentials'
 
-	, 'dropzone/dropzone-amd-module.min'
+	, 'dropzone'
 ], function(
 	alertify
 	, redmicConfig

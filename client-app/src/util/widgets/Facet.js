@@ -4,7 +4,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/Evented"
 	, 'dojo/query'
-	, "put-selector/put"
+	, 'put-selector'
 ], function(
 	declare
 	, TitlePane

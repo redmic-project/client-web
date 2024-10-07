@@ -1,5 +1,5 @@
 define([
-	'moment/moment.min'
+	'moment'
 ], function(
 	moment
 ){

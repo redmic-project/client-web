@@ -6,10 +6,10 @@ define([
 	, "dojo/Evented"
 	, "dojo/query"
 	, "dijit/form/HorizontalSlider"
-	, "put-selector/put"
+	, 'put-selector'
 	, "./Button"
 	, "dojo/dom-geometry"
-	, 'moment/moment.min'
+	, 'moment'
 ], function(
 	declare
 	, _WidgetBase

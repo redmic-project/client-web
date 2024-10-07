@@ -5,7 +5,7 @@ define([
 	, "dojo/dom-class"
 	, "dojo/on"
 	, "dojo/query"
-	, "put-selector/put"
+	, 'put-selector'
 	, "dojo/NodeList-dom"
 	, "dojo/NodeList-traverse"
 ], function(

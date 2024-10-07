@@ -1,5 +1,5 @@
 define([
-	'd3/d3.min'
+	'd3'
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "./_PieCommons"

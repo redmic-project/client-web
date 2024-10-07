@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, "app/designs/mapWithSideContent/Controller"
 	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, 'src/redmicConfig'
@@ -7,7 +7,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/Deferred"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/util/Credentials"
 	, "src/component/atlas/Atlas"
 	, "src/component/base/_Filter"

@@ -4,7 +4,7 @@ define([
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "RWidgets/Utilities"
-	, "put-selector/put"
+	, 'put-selector'
 	, "./_RowItfc"
 ], function(
 	declare

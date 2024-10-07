@@ -1,5 +1,5 @@
 define([
-	'alertify/alertify.min'
+	'alertify'
 	, "app/user/views/_ExternalUserBaseView"
 	, 'src/redmicConfig'
 	, "dojo/_base/declare"

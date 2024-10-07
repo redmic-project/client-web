@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "dojo/query"
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/component/layout/templateDisplayer/TemplateDisplayer"
 	, "templates/DefaultDetailsTitle"
 ], function (

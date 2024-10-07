@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
-	, 'put-selector/put'
+	, 'put-selector'
 	, 'src/util/Mediator'
 	, 'src/component/chart/ChartsContainer/InfoChartsContainerImpl'
 	, 'src/component/chart/layer/ChartLayer/LinearChartImpl'

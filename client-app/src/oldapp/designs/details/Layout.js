@@ -2,7 +2,7 @@ define([
 	'app/designs/base/_Layout'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'put-selector/put'
+	, 'put-selector'
 ], function (
 	_Layout
 	, declare

@@ -2,19 +2,17 @@ define([
 	"dijit/layout/ContentPane"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, 'leaflet/leaflet'
-	, "put-selector/put"
+	, 'put-selector'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "RWidgets/Button"
 	, "RWidgets/Map"
+
+	, 'leaflet'
 ], function (
 	ContentPane
 	, declare
 	, lang
-	, aspect
-	, L
 	, put
 	, _Module
 	, _Show

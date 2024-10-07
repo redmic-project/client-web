@@ -76,7 +76,7 @@ define([
 
 			this.map.on("layeradd", lang.hitch(this, this._onLayerAdd));
 			this.map.on("layerremove", lang.hitch(this, this._onLayerRemove));
-			this.map.on("baselayerchange", lang.hitch(this, this._onBaseLayerChangedFromControl));
+			this.map.on("baselayerchange", lang.hitch(this, this._onBaseLayerChange));
 			this.map.on("zoomend", lang.hitch(this, this._groupEventArgs, 'ZOOM_END'));
 			this.map.on("moveend", lang.hitch(this, this._groupEventArgs, 'PAN'));
 			this.map.on("click", lang.hitch(this, this._onMapClick));
@@ -122,7 +122,7 @@ define([
 
 		_onMapClick: function(evt) {
 
-			!this._clickDisabled && this._emitEvt('CLICK', {
+			this._emitEvt('CLICK', {
 				latLng: evt.latlng,
 				zoom: this.getZoom(),
 				bbox: this.getBounds(),
@@ -234,10 +234,6 @@ define([
 			}
 
 			this.map.invalidateSize();
-
-			if (this.miniMap && this.miniMapInstance) {
-				this.miniMapInstance.addTo(this.map);
-			}
 		},
 
 		hasLayer: function(layer) {

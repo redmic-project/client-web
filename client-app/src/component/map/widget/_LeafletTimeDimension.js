@@ -4,6 +4,7 @@ define([
 	, 'dojo/aspect'
 	, 'leaflet'
 
+	, 'leaflet-nontiledlayer'
 	, 'iso8601-js-period'
 	, 'L-timeDimension'
 ], function(
@@ -45,7 +46,6 @@ define([
 
 			var layerId = obj.layerId;
 
-			console.log('añadida capa', layerId)
 			this._layersWithTimeDimension[layerId] = timeDefinition;
 
 			if (!this._timeDimensionInstance) {
@@ -61,7 +61,6 @@ define([
 				return;
 			}
 
-			console.log('eliminada capa', layerId)
 			delete this._layersWithTimeDimension[layerId];
 
 			var layerInstance = this._overlayLayers[layerId].instance;
@@ -89,44 +88,51 @@ define([
 
 		_addTimeDimensionWidget: function() {
 
-			this._timeDimensionInstance = new L.TimeDimension();
+			this._timeDimensionInstance = new L.TimeDimension({
+				period: 'P1D',
+			});
 
-			this._timeDimensionControl = new L.Control.TimeDimension({
+			this._timeDimensionControlInstance = new L.Control.TimeDimension({
 				timeDimension: this._timeDimensionInstance,
 				playerOptions: {
-					transitionTime: 100,
+					transitionTime: 2000,
+					buffer: 5,
+					minBufferReady: 2,
 					loop: true,
 					startOver: true
 				},
 				position: 'bottomleft',
-				autoPlay: false,
-				minSpeed: 1,
-				speedStep: 1,
-				maxSpeed: 15
+				limitSliders: true,
+				autoPlay: true,
+				minSpeed: 0.1,
+				maxSpeed: 1,
+				speedStep: 0.1
 			}).addTo(this.map);
 		},
 
 		_removeTimeDimensionWidget: function() {
 
-			this._timeDimensionControl.remove();
+			this._timeDimensionControlInstance.remove();
 
-			delete this._timeDimensionControl;
+			delete this._timeDimensionControlInstance;
 			delete this._timeDimensionInstance;
 		},
 
 		_getInnerLayer: function(layer, layerId) {
 
-			var originalReturnValue = this.inherited(arguments);
+			var originalLayer = this.inherited(arguments);
 
-			if (!originalReturnValue || !this._layersWithTimeDimension[layerId]) {
-				return originalReturnValue;
+			if (!originalLayer || !this._layersWithTimeDimension[layerId]) {
+				return originalLayer;
 			}
 
-			var newReturnValue = L.timeDimension.layer.wms(originalReturnValue);
+			var timeDimensionLayer = L.timeDimension.layer.wms(originalLayer, {
+				timeDimension: this._timeDimensionInstance
+			});
 
-			this._timeDimensionInstance.registerSyncedLayer(newReturnValue);
+			this._timeDimensionInstance.registerSyncedLayer(timeDimensionLayer);
 
-			return newReturnValue;
+			return timeDimensionLayer;
 		}
 	});
 });

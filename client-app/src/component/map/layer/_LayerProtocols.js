@@ -56,6 +56,7 @@ define([
 
 			if (layerProtocol === 'WMS') {
 				layerProps.pane = 'tilePane';
+				layerProps.version = '1.3.0';
 			}
 
 			return new LayerImplementation(layerUrl, layerProps);	// return Object

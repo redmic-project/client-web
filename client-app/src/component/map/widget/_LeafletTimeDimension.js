@@ -3,6 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'leaflet'
+	, 'moment'
 
 	, 'leaflet-nontiledlayer'
 	, 'iso8601-js-period'
@@ -12,6 +13,7 @@ define([
 	, lang
 	, aspect
 	, L
+	, moment
 ) {
 
 	return declare(null, {
@@ -78,18 +80,32 @@ define([
 
 		_updateTimeDimensionWidget: function() {
 
-			var times = Object.values(this._layersWithTimeDimension).map(function(item) {
+			var layersTimeDefinitions = Object.values(this._layersWithTimeDimension),
+				startTime, endTime;
 
-				return [item.startDate, item.endDate];
-			}).flat();
+			layersTimeDefinitions.forEach(function(item) {
 
-			this._timeDimensionInstance.setAvailableTimes(times, 'extremes');
+				var itemStartMoment = moment(item.startDate),
+					itemEndMoment = moment(item.endDate);
+
+				if (!startTime || itemStartMoment.isBefore(startTime)) {
+					startTime = itemStartMoment;
+				}
+				if (!endTime || itemEndMoment.isAfter(endTime)) {
+					endTime = itemEndMoment;
+				}
+			});
+
+			var times = L.TimeDimension.Util.explodeTimeRange(startTime.toDate(), endTime.toDate(), 'P1D');
+
+			this._timeDimensionInstance.setAvailableTimes(times, 'replace');
+			this._timeDimensionInstance.setCurrentTime(startTime);
 		},
 
 		_addTimeDimensionWidget: function() {
 
 			this._timeDimensionInstance = new L.TimeDimension({
-				period: 'P1D',
+				period: 'P1D'
 			});
 
 			this._timeDimensionControlInstance = new L.Control.TimeDimension({
@@ -103,7 +119,7 @@ define([
 				},
 				position: 'bottomleft',
 				limitSliders: true,
-				autoPlay: true,
+				autoPlay: false,
 				minSpeed: 0.1,
 				maxSpeed: 1,
 				speedStep: 0.1

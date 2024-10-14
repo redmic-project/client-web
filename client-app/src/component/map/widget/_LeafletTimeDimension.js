@@ -80,26 +80,54 @@ define([
 
 		_updateTimeDimensionWidget: function() {
 
+			var timeLimitsObj = this._getCurrentLayersTimeLimits(),
+				times = L.TimeDimension.Util.explodeTimeRange(timeLimitsObj.startTime, timeLimitsObj.endTime, 'P1D');
+
+			this._timeDimensionInstance.setAvailableTimes(times, 'replace');
+
+			this._setValidTimePosition(timeLimitsObj);
+		},
+
+		_getCurrentLayersTimeLimits: function() {
+
 			var layersTimeDefinitions = Object.values(this._layersWithTimeDimension),
-				startTime, endTime;
+				startMoment, endMoment;
 
 			layersTimeDefinitions.forEach(function(item) {
 
 				var itemStartMoment = moment(item.startDate),
 					itemEndMoment = moment(item.endDate);
 
-				if (!startTime || itemStartMoment.isBefore(startTime)) {
-					startTime = itemStartMoment;
+				if (!startMoment || itemStartMoment.isBefore(startMoment)) {
+					startMoment = itemStartMoment;
 				}
-				if (!endTime || itemEndMoment.isAfter(endTime)) {
-					endTime = itemEndMoment;
+				if (!endMoment || itemEndMoment.isAfter(endMoment)) {
+					endMoment = itemEndMoment;
 				}
 			});
 
-			var times = L.TimeDimension.Util.explodeTimeRange(startTime.toDate(), endTime.toDate(), 'P1D');
+			return {
+				startMoment: startMoment,
+				endMoment: endMoment,
+				startTime: startMoment.toDate(),
+				endTime: endMoment.toDate()
+			};
+		},
 
-			this._timeDimensionInstance.setAvailableTimes(times, 'replace');
-			this._timeDimensionInstance.setCurrentTime(startTime);
+		_setValidTimePosition: function(timeLimitsObj) {
+
+			var currStartMoment = timeLimitsObj.startMoment,
+				currEndMoment = timeLimitsObj.endMoment,
+				currTime = this._timeDimensionInstance.getCurrentTime(),
+				validTimePosition = currTime;
+
+			if (currStartMoment.isAfter(currTime)) {
+				validTimePosition = timeLimitsObj.startTime;
+			} else if (currEndMoment.isBefore(currTime)) {
+				validTimePosition = timeLimitsObj.endTime;
+			}
+
+			this._timeDimensionInstance.setCurrentTime(validTimePosition);
 		},
 
 		_addTimeDimensionWidget: function() {

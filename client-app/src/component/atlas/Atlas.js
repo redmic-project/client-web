@@ -92,6 +92,7 @@ define([
 					bars: [{
 						instance: Total
 					}],
+					insertInFront: true,
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{

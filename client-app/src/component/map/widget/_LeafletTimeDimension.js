@@ -162,7 +162,7 @@ define([
 			delete this._timeDimensionInstance;
 		},
 
-		_getInnerLayer: function(layer, layerId) {
+		_getInnerLayer: function(_layer, layerId) {
 
 			var originalLayer = this.inherited(arguments);
 
@@ -174,9 +174,21 @@ define([
 				timeDimension: this._timeDimensionInstance
 			});
 
+			this._setLayerAvailableTimes(timeDimensionLayer, this._layersWithTimeDimension[layerId]);
+
 			this._timeDimensionInstance.registerSyncedLayer(timeDimensionLayer);
 
 			return timeDimensionLayer;
+		},
+
+		_setLayerAvailableTimes: function(layerInstance, timeDefinition) {
+
+			var layerStartTime = moment(timeDefinition.startDate).toDate(),
+				layerEndTime = moment(timeDefinition.endDate).toDate(),
+				layerPeriod = timeDefinition.period || 'P1D',
+				timesArray = L.TimeDimension.Util.explodeTimeRange(layerStartTime, layerEndTime, layerPeriod);
+
+			layerInstance.setAvailableTimes(timesArray);
 		}
 	});
 });

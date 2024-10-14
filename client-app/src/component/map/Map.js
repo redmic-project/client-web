@@ -367,6 +367,9 @@ define([
 					optional: !!optional
 				};
 			} else {
+				if (overlayLayerObj.instance !== layer) {
+					overlayLayerObj.instance = layer;
+				}
 				this._setLayerZIndex(layer, overlayLayerObj.order);
 			}
 

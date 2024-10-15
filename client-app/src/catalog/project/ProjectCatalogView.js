@@ -1,16 +1,16 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/textSearchFacetsList/Controller"
-	, "app/designs/textSearchFacetsList/Layout"
+	'app/designs/base/_Main'
+	, 'app/designs/textSearchFacetsList/Controller'
+	, 'app/designs/textSearchFacetsList/Layout'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "templates/ProjectList"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'templates/ProjectList'
 	, 'src/catalog/_GenerateReport'
-	, "src/component/browser/_Select"
-	, "src/component/browser/bars/SelectionBox"
-	, "src/component/browser/bars/Order"
-	, "src/component/browser/bars/Total"
+	, 'src/component/browser/_Select'
+	, 'src/component/browser/bars/SelectionBox'
+	, 'src/component/browser/bars/Order'
+	, 'src/component/browser/bars/Total'
 ], function(
 	_Main
 	, Controller
@@ -33,11 +33,13 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				browserExts: [_Select],
-				target: redmicConfig.services.project,
-				reportService: "project",
 				title: this.i18n.projectCatalogView,
-				ownChannel: "projectCatalog"
+				ownChannel: 'projectCatalog',
+				target: redmicConfig.services.project,
+
+				browserExts: [_Select],
+
+				reportService: 'project'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -53,9 +55,9 @@ define([
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
-							icon: "fa-info-circle",
-							btnId: "details",
-							title: "info",
+							icon: 'fa-info-circle',
+							btnId: 'details',
+							title: 'info',
 							href: this.viewPaths.projectDetails
 						}]
 					}
@@ -71,12 +73,12 @@ define([
 				}],
 				orderConfig: {
 					options: [
-						{value: "name"},
-						{value: "code"},
-						{value: "projectGroup.name", label: this.i18n.projectGroup},
-						{value: "startDate"},
-						{value: "endDate"},
-						{value: "updated"}
+						{value: 'name'},
+						{value: 'code'},
+						{value: 'projectGroup.name', label: this.i18n.projectGroup},
+						{value: 'startDate'},
+						{value: 'endDate'},
+						{value: 'updated'}
 					]
 				}
 			}, this.browserConfig || {}]);

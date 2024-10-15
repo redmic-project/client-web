@@ -1,15 +1,15 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/textSearchFacetsList/Controller"
-	, "app/designs/textSearchFacetsList/Layout"
+	'app/designs/base/_Main'
+	, 'app/designs/textSearchFacetsList/Controller'
+	, 'app/designs/textSearchFacetsList/Layout'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "templates/OrganisationList"
-	, "src/component/browser/_Select"
-	, "src/component/browser/bars/SelectionBox"
-	, "src/component/browser/bars/Order"
-	, "src/component/browser/bars/Total"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'templates/OrganisationList'
+	, 'src/component/browser/_Select'
+	, 'src/component/browser/bars/SelectionBox'
+	, 'src/component/browser/bars/Order'
+	, 'src/component/browser/bars/Total'
 ], function(
 	_Main
 	, Controller
@@ -22,18 +22,20 @@ define([
 	, SelectionBox
 	, Order
 	, Total
-){
+) {
+
 	return declare([Layout, Controller, _Main], {
 		//	summary:
-		//		Extensión para establecer la configuración de las vistas de organisation.
-		//	description:
-		//
+		//		Vista de catálogo de organizaciones.
 
 		constructor: function(args) {
 
 			this.config = {
-				browserExts: [_Select],
-				title: this.i18n.organisations
+				title: this.i18n.organisationCatalogView,
+				ownChannel: 'organisationCatalog',
+				target: redmicConfig.services.organisation,
+
+				browserExts: [_Select]
 			};
 
 			lang.mixin(this, this.config, args);
@@ -47,6 +49,16 @@ define([
 
 			this.browserConfig = this._merge([{
 				template: templateList,
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+							icon: 'fa-info-circle',
+							btnId: 'details',
+							title: 'info',
+							href: this.viewPaths.organisationDetails
+						}]
+					}
+				},
 				bars: [{
 					instance: Total
 				},{
@@ -57,10 +69,10 @@ define([
 				}],
 				orderConfig: {
 					options: [
-						{value: "name"},
-						{value: "organisationType.name", label: this.i18n.organisationType},
-						{value: "acronym"},
-						{value: "updated"}
+						{value: 'name'},
+						{value: 'organisationType.name', label: this.i18n.organisationType},
+						{value: 'acronym'},
+						{value: 'updated'}
 					]
 				}
 			}, this.browserConfig || {}]);

@@ -36,13 +36,12 @@ define([
 
 			this.config = {
 				title: this.i18n.activitiesCatalogView,
-				ownChannel: "activitiesCatalog",
-
-				reportService: "activity",
-
+				ownChannel: 'activitiesCatalog',
 				target: redmicConfig.services.activity,
 
-				browserExts: [_Select]
+				browserExts: [_Select],
+
+				reportService: 'activity'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -61,9 +60,9 @@ define([
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
-							icon: "fa-info-circle",
-							btnId: "details",
-							title: "info",
+							icon: 'fa-info-circle',
+							btnId: 'details',
+							title: 'info',
 							href: this.viewPaths.activityDetails
 						}]
 					}

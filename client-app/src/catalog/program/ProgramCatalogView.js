@@ -1,16 +1,16 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/textSearchFacetsList/Controller"
-	, "app/designs/textSearchFacetsList/Layout"
+	'app/designs/base/_Main'
+	, 'app/designs/textSearchFacetsList/Controller'
+	, 'app/designs/textSearchFacetsList/Layout'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "templates/ProgramList"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'templates/ProgramList'
 	, 'src/catalog/_GenerateReport'
-	, "src/component/browser/_Select"
-	, "src/component/browser/bars/SelectionBox"
-	, "src/component/browser/bars/Order"
-	, "src/component/browser/bars/Total"
+	, 'src/component/browser/_Select'
+	, 'src/component/browser/bars/SelectionBox'
+	, 'src/component/browser/bars/Order'
+	, 'src/component/browser/bars/Total'
 ], function(
 	_Main
 	, Controller
@@ -33,12 +33,13 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				browserExts: [_Select],
-				reportService: "program",
 				title: this.i18n.programCatalogView,
-				ownChannel: "programCatalog",
+				ownChannel: 'programCatalog',
 				target: redmicConfig.services.program,
-				idProperty: "id"
+
+				browserExts: [_Select],
+
+				reportService: 'program'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -55,9 +56,9 @@ define([
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
-							icon: "fa-info-circle",
-							btnId: "details",
-							title: "info",
+							icon: 'fa-info-circle',
+							btnId: 'details',
+							title: 'info',
 							href: this.viewPaths.programDetails
 						}]
 					}
@@ -72,11 +73,11 @@ define([
 				}],
 				orderConfig: {
 					options: [
-						{value: "name"},
-						{value: "code"},
-						{value: "startDate"},
-						{value: "endDate"},
-						{value: "updated"}
+						{value: 'name'},
+						{value: 'code'},
+						{value: 'startDate'},
+						{value: 'endDate'},
+						{value: 'updated'}
 					]
 				}
 			}, this.browserConfig || {}]);

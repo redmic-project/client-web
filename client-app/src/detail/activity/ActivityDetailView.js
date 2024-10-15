@@ -5,10 +5,8 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/component/base/_ExternalConfig'
 	, 'src/detail/_GenerateReport'
-	, 'src/detail/activity/_ActivityEdition'
 	, 'src/detail/activity/_ActivityLayoutWidget'
 	, 'app/designs/details/_AddWidgetSelector'
-	, 'src/util/Credentials'
 	, 'templates/ActivityInfo'
 ], function(
 	redmicConfig
@@ -17,20 +15,12 @@ define([
 	, lang
 	, _ExternalConfig
 	, _GenerateReport
-	, _ActivityEdition
 	, _ActivityLayoutWidget
 	, _AddWidgetSelector
-	, Credentials
 	, TemplateInfo
 ) {
 
-	var declareItems = [_ActivityBase, _AddWidgetSelector, _ActivityLayoutWidget, _ExternalConfig, _GenerateReport];
-
-	if (Credentials.userIsEditor()) {
-		declareItems.push(_ActivityEdition);
-	}
-
-	return declare(declareItems, {
+	return declare([_ActivityBase, _AddWidgetSelector, _ActivityLayoutWidget, _ExternalConfig, _GenerateReport], {
 		//	summary:
 		//		Vista de detalle de actividades.
 

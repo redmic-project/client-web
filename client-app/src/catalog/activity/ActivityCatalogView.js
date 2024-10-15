@@ -6,13 +6,11 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/catalog/_GenerateReport'
-	, 'src/catalog/activity/_ActivityEdition'
 	, 'src/component/browser/_Select'
 	, 'src/component/browser/bars/Order'
 	, 'src/component/browser/bars/SelectionBox'
 	, 'src/component/browser/bars/Total'
 	, 'src/redmicConfig'
-	, 'src/util/Credentials'
 	, 'templates/ActivityList'
 ], function(
 	_Main
@@ -22,23 +20,15 @@ define([
 	, declare
 	, lang
 	, _GenerateReport
-	, _ActivityEdition
 	, _Select
 	, Order
 	, SelectionBox
 	, Total
 	, redmicConfig
-	, Credentials
 	, templateList
 ) {
 
-	var declareItems = [Layout, Controller, _Main, _AddComposite, _GenerateReport];
-
-	if (Credentials.userIsEditor()) {
-		declareItems.push(_ActivityEdition);
-	}
-
-	return declare(declareItems, {
+	return declare([Layout, Controller, _Main, _AddComposite, _GenerateReport], {
 		//	summary:
 		//		Vista de catálogo de actividades.
 

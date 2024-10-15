@@ -1,22 +1,21 @@
 define([
-	"app/base/views/_View"
-	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/Deferred"
-	, "dojo/promise/all"
-	, "dojo/store/Memory"
-	, "src/component/base/_Module"
+	'src/redmicConfig'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'dojo/promise/all'
+	, 'dojo/store/Memory'
+	, 'src/component/base/_Module'
 ], function(
-	_View
-	, redmicConfig
+	redmicConfig
 	, declare
 	, lang
 	, Deferred
 	, all
 	, Memory
 	, _Module
-){
+) {
+
 	return declare(_Module, {
 		//	summary:
 		//		Módulo encargado de almacenar los módulos de la aplicación.
@@ -42,39 +41,41 @@ define([
 			this.config = {
 				moduleStore: new Memory(),
 				actions: {
-					AVAILABLE_ALLOWED_MODULES: "availableAllowedModules",
-					GET_MODULE: "getModule",
-					AVAILABLE_MODULE: "availableModule",
+					AVAILABLE_ALLOWED_MODULES: 'availableAllowedModules',
+					HAS_USER_EDITION_CAPABILITIES: 'hasUserEditionCapabilities',
+					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities',
+					GET_MODULE: 'getModule',
+					AVAILABLE_MODULE: 'availableModule',
 					CLEAR_MODULE: 'clearModule'
 				},
 				events: {
-					GET_MODULE: "getModule"
+					GET_MODULE: 'getModule'
 				},
 				// mediator params
-				ownChannel: "moduleStore",
+				ownChannel: 'moduleStore',
 
 				maxInstances: 10,
 
-				viewSeparator: "/",
+				viewSeparator: '/',
 
-				parameterRegExp: "([\-a-zA-Z0-9_\+=]+)",
-				parameterDelimiter: "{id}"
+				parameterRegExp: '([\-a-zA-Z0-9_\+=]+)',
+				parameterDelimiter: '{id}'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_defineSubscriptions: function () {
+		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel : this._buildChannel(this.credentialsChannel, 'AVAILABLE_ALLOWED_MODULES'),
-				callback: "_subAllowedModules",
+				callback: '_subAllowedModules',
 				options: {
 					predicate: lang.hitch(this, this._chkPublicationIsForMe)
 				}
 			},{
-				channel : this.getChannel("GET_MODULE"),
-				callback: "_subGetModule"
+				channel : this.getChannel('GET_MODULE'),
+				callback: '_subGetModule'
 			},{
 				channel : this.getChannel('CLEAR_MODULE'),
 				callback: '_subClearModule'
@@ -85,7 +86,7 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'GET_MODULE',
-				channel: this.getChannel("AVAILABLE_MODULE")
+				channel: this.getChannel('AVAILABLE_MODULE')
 			});
 		},
 
@@ -149,7 +150,7 @@ define([
 					for (var j = 0; j < category.modules.length; j++) {
 						var moduleItem = category.modules[j];
 						if (moduleItem.enable) {
-							this._addModule(category.name + "/" + moduleItem.name, moduleItem.name,
+							this._addModule(category.name + '/' + moduleItem.name, moduleItem.name,
 								moduleItem.internPath);
 						}
 					}
@@ -173,7 +174,9 @@ define([
 			//	internPath:
 			//		ubicación del js de la vista
 
-			if (this._moduleExists(id)) return;
+			if (this._moduleExists(id)) {
+				return;
+			}
 
 			this.moduleStore.put({
 				id: id,
@@ -225,28 +228,29 @@ define([
 					arrayAux = regex.exec(item.id);
 
 				while (arrayAux[3] !== undefined) {
-					copyPath = copyPath.replace("{" + arrayAux[3] + "}", this.parameterRegExp);
+					copyPath = copyPath.replace('{' + arrayAux[3] + '}', this.parameterRegExp);
 					results[arrayAux[3]] = true;
 
 					arrayAux = regex.exec(item.id);
 				}
 
-				var reg = new RegExp("^" + copyPath + "$");
+				var reg = new RegExp('^' + copyPath + '$');
 
 				if (reg.test(path)) {
 					var i = 1;
 					for (var key in results) {
-						results[key] = path.replace(reg, "$" + i).replace("\/","");
+						results[key] = path.replace(reg, '$' + i).replace('\/','');
 						this.pathVariableId = results[key];
 						i++;
 					}
 
 					var lengthResults = Object.keys(results).length;
 
-					if (lengthResults > 1)
+					if (lengthResults > 1) {
 						this.pathVariableId = results;
-					else if (lengthResults === 0)
+					} else if (lengthResults === 0) {
 						this.pathVariableId = null;
+					}
 
 					return item;
 				}
@@ -280,62 +284,105 @@ define([
 			moduleItem.timeStamp = new Date().getTime();
 			this.moduleStore.put(moduleItem);
 
-			this._publish(moduleItem.instance.getChannel("CONNECT"));
+			this._publish(moduleItem.instance.getChannel('CONNECT'));
 
 			this._publish(moduleItem.instance.getChannel('SET_PROPS'), {
-				pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null
+				pathVariableId: this.pathVariableId !== '$1' ? this.pathVariableId : null
 			});
 
 			var dfd = new Deferred();
 			dfd.resolve(moduleItem.instance);
 
-			return dfd;	// return Object
+			return dfd; // return Object
 		},
 
-		_createModule: function(/*Object*/ moduleItem) {
+		_createModule: function(/*Object*/ moduleStoreItem) {
 			//	summary:
 			//		Crea la instancia de un módulo de la aplicación.
 			//	tags:
 			//		private
-			//	moduleItem:
-			//		Módulo a crear
+			//	moduleStoreItem:
+			//		Elemento de configuración del módulo a crear
 			//	returns:
 			//		Promesa de la instancia del módulo
 
-			var dfd = new Deferred(),
-				parentChannel = redmicConfig.isOuterPath(moduleItem.id) ? this.outerAppChannel : this.innerAppChannel,
-				moduleDefinitionPath = moduleItem.internPath;
+			var instanceDfd = new Deferred(),
+				viewDefinitionPath = moduleStoreItem.internPath;
 
 			// TODO parche para compatibilidad con antiguas rutas parciales, las nuevas ya han de empezar con 'src/' e
 			// incluir la terminación 'View' para ser totalmente explícitos
-			if (moduleDefinitionPath.indexOf('src/') !== 0) {
-				moduleDefinitionPath = 'app' + moduleDefinitionPath + 'View';
+			if (viewDefinitionPath.indexOf('src/') !== 0) {
+				viewDefinitionPath = 'app' + viewDefinitionPath + 'View';
 			}
 
-			require([moduleDefinitionPath], lang.hitch(this, function(moduleObj, ModuleView) {
+			var channelToSubscribe = this._buildChannel(this.credentialsChannel, 'USER_HAS_EDITION_CAPABILITIES');
+			this._once(channelToSubscribe, lang.hitch(this, this._requireViewDefinition, {
+				moduleStoreItem: moduleStoreItem,
+				viewDefinitionPath: viewDefinitionPath,
+				instanceDfd: instanceDfd
+			}));
 
-				var moduleDefinition = declare([ModuleView, _View]);
+			var channelToPublish = this._buildChannel(this.credentialsChannel, 'HAS_USER_EDITION_CAPABILITIES');
+			this._publish(channelToPublish);
 
-				// Creamos el módulo
-				var moduleInstance = new moduleDefinition({
-					parentChannel: parentChannel,
-					ownChannel: this.viewSeparator + moduleObj.id,
-					pathVariableId: this.pathVariableId !== "$1" ? this.pathVariableId : null
-				});
+			return instanceDfd; // return Object
+		},
 
-				// Añadimos al store la instancia del módulo
-				moduleObj.instance = moduleInstance;
-				moduleObj.timeStamp = new Date().getTime();
-				this.moduleStore.put(moduleObj);
+		_requireViewDefinition: function(/*Object*/ args, /*Object*/ res) {
 
-				// Resolvemos para devolver la instancia creada
-				dfd.resolve(moduleInstance);
+			var viewDefinitionPath = args.viewDefinitionPath,
+				pathsToRequire = ['app/base/views/_View', viewDefinitionPath];
 
-				// Limpiamos las instancias antiguas
-				this._clearOldInstances();
-			}, moduleItem));
+			if (res.editionCapabilities) {
+				var viewDefinitionPathSplitted = viewDefinitionPath.split(this.viewSeparator),
+					viewDefinitionParentPath = viewDefinitionPathSplitted.slice(0, -1);
 
-			return dfd;	// return Object
+				viewDefinitionParentPath.push('_Edition');
+				var viewEditionDefinitionPath = viewDefinitionParentPath.join(this.viewSeparator);
+				pathsToRequire.push(viewEditionDefinitionPath);
+			}
+
+			require(pathsToRequire, lang.hitch(this, this._onViewDefinitionRequired, {
+				moduleStoreItem: args.moduleStoreItem,
+				instanceDfd: args.instanceDfd
+			}));
+		},
+
+		_onViewDefinitionRequired: function(
+			/*Object*/ args,
+			/*Object*/ _View,
+			/*Object*/ ViewDefinition,
+			/*Object?*/ EditionDefinition
+		) {
+
+			var moduleStoreItem = args.moduleStoreItem,
+				instanceDfd = args.instanceDfd,
+				isOuterView = redmicConfig.isOuterPath(moduleStoreItem.id),
+				pathsToDeclare = [ViewDefinition];
+
+			// Si existe y fue posible obtener la extensión de edición para la vista, se añade
+			if (EditionDefinition && EditionDefinition !== 'not-a-module') {
+				pathsToDeclare.push(EditionDefinition);
+			}
+			pathsToDeclare.push(_View);
+
+			// Creamos el módulo
+			var viewInstance = new declare(pathsToDeclare)({
+				parentChannel: isOuterView ? this.outerAppChannel : this.innerAppChannel,
+				ownChannel: this.viewSeparator + moduleStoreItem.id,
+				pathVariableId: this.pathVariableId !== '$1' ? this.pathVariableId : null
+			});
+
+			// Añadimos al store la instancia del módulo
+			moduleStoreItem.instance = viewInstance;
+			moduleStoreItem.timeStamp = new Date().getTime();
+			this.moduleStore.put(moduleStoreItem);
+
+			// Resolvemos para devolver la instancia creada
+			instanceDfd.resolve(viewInstance);
+
+			// Limpiamos las instancias antiguas
+			this._clearOldInstances();
 		},
 
 		_subClearModule: function(/*Object*/ req) {
@@ -362,7 +409,7 @@ define([
 				return item.instance !== null;
 			}, {
 				sort: [{
-					attribute: "timeStamp"
+					attribute: 'timeStamp'
 				}]
 			});
 

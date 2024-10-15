@@ -2,31 +2,21 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/detail/_GenerateReport'
-	, 'src/detail/program/_ProgramEdition'
 	, 'app/designs/details/main/_DetailsBase'
 	, 'src/redmicConfig'
-	, 'src/util/Credentials'
 	, 'templates/ProgramInfo'
 	, 'templates/ProjectList'
 ], function(
 	declare
 	, lang
 	, _GenerateReport
-	, _ProgramEdition
 	, _DetailsBase
 	, redmicConfig
-	, Credentials
 	, TemplateInfo
 	, TemplateProjects
 ) {
 
-	var declareItems = [_DetailsBase, _GenerateReport];
-
-	if (Credentials.userIsEditor()) {
-		declareItems.push(_ProgramEdition);
-	}
-
-	return declare(declareItems, {
+	return declare([_DetailsBase, _GenerateReport], {
 		//	summary:
 		//		Vista de detalle de programas.
 

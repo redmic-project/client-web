@@ -7,12 +7,10 @@ define([
 	, "dojo/_base/lang"
 	, "templates/ProjectList"
 	, 'src/catalog/_GenerateReport'
-	, 'src/catalog/project/_ProjectEdition'
 	, "src/component/browser/_Select"
 	, "src/component/browser/bars/SelectionBox"
 	, "src/component/browser/bars/Order"
 	, "src/component/browser/bars/Total"
-	, 'src/util/Credentials'
 ], function(
 	_Main
 	, Controller
@@ -22,21 +20,13 @@ define([
 	, lang
 	, templateList
 	, _GenerateReport
-	, _ProjectEdition
 	, _Select
 	, SelectionBox
 	, Order
 	, Total
-	, Credentials
 ) {
 
-	var declareItems = [Layout, Controller, _Main, _GenerateReport];
-
-	if (Credentials.userIsEditor()) {
-		declareItems.push(_ProjectEdition);
-	}
-
-	return declare(declareItems, {
+	return declare([Layout, Controller, _Main, _GenerateReport], {
 		//	summary:
 		//		Vista de catálogo de proyectos.
 

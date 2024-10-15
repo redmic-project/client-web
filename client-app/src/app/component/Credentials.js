@@ -33,7 +33,8 @@ define([
 					REMOVED: 'removed',
 					ADDED: 'added',
 					ACCEPT_COOKIES: 'acceptCookies',
-					REQUEST_FAILED: 'requestFailed'
+					REQUEST_FAILED: 'requestFailed',
+					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities'
 				},
 				actions: {
 					GET_CREDENTIALS: 'getCredentials',
@@ -45,7 +46,9 @@ define([
 					COOKIES_ACCEPTED: 'cookiesAccepted',
 					ACCEPT_COOKIES: 'acceptCookies',
 					COOKIES_STATE: 'cookiesState',
-					REQUEST_FAILED: 'requestFailed'
+					REQUEST_FAILED: 'requestFailed',
+					HAS_USER_EDITION_CAPABILITIES: 'hasUserEditionCapabilities',
+					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities'
 				},
 
 				target: redmicConfig.services.profile,
@@ -92,6 +95,9 @@ define([
 			},{
 				channel : this.getChannel('ACCEPT_COOKIES'),
 				callback: '_subAcceptCookies'
+			},{
+				channel : this.getChannel('HAS_USER_EDITION_CAPABILITIES'),
+				callback: '_subHasUserEditionCapabilities'
 			});
 		},
 
@@ -115,6 +121,9 @@ define([
 			},{
 				event: 'REQUEST_FAILED',
 				channel: this.getChannel('REQUEST_FAILED')
+			},{
+				event: 'USER_HAS_EDITION_CAPABILITIES',
+				channel: this.getChannel('USER_HAS_EDITION_CAPABILITIES')
 			});
 		},
 
@@ -151,6 +160,13 @@ define([
 		_subAcceptCookies: function() {
 
 			Credentials.set('cookiesAccepted', 'true');
+		},
+
+		_subHasUserEditionCapabilities: function(_req) {
+
+			this._emitEvt('USER_HAS_EDITION_CAPABILITIES', {
+				editionCapabilities: Credentials.userIsEditor()
+			});
 		},
 
 		_onAccessTokenChanged: function(evt) {

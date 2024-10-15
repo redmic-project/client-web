@@ -80,10 +80,10 @@ function onRobotsRequest(req, res) {
 	res.send(robotsContent);
 }
 
-function onNullableRequest(_req, res) {
+function onNullableJsRequest(_req, res) {
 
-	res.set('Content-Type', 'application/json');
-	res.send('{}');
+	res.set('Content-Type', 'text/javascript');
+	res.send('');
 }
 
 function onUnknownRequest(_req, res, _next) {
@@ -99,7 +99,7 @@ function exposeRoutes(app) {
 		.get('/config', externalRequest.onConfigRequest)
 		.get('/sitemap.xml', externalRequest.onSitemapRequest)
 		.get('/robots.txt', onRobotsRequest)
-		.get(/.*\/jquery.js/, onNullableRequest)
+		.get(/^.+\.js$/, onNullableJsRequest)
 		.get(/.*/, onGeneralRequest)
 		.post('/oauth/token', externalRequest.onOauthTokenRequest)
 		.use(onUnknownRequest);

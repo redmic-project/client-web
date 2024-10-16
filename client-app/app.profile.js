@@ -471,6 +471,7 @@ var viewLayers = {
 	// vistas detalle
 	, 'src/detail/activity/ActivityDetailView': {}
 	, 'src/detail/organisation/OrganisationDetailView': {}
+	, 'src/detail/platform/PlatformDetailView': {}
 	, 'src/detail/program/ProgramDetailView': {}
 	, 'src/detail/project/ProjectDetailView': {}
 
@@ -526,9 +527,7 @@ var viewLayers = {
 	, 'app/viewers/views/RealTimeView': {}
 	, 'app/viewers/views/RealTimeDashboardView': {}
 
-	, 'app/details/views/PlatformDetailsView': {}
 	, 'app/details/views/SpeciesDetailsView': {}
-	, 'app/details/views/PlatformCatalogDetailsView': {}
 	, 'app/details/views/ServiceOGCCatalogDetailsView': {}
 	, 'app/details/views/DocumentDetailsView': {}
 	, 'app/details/views/BibliographyDetailsView': {}

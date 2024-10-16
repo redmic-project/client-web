@@ -1,13 +1,13 @@
 define([
 	'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/browser/_Framework"
-	, "src/component/browser/ListImpl"
-	, "src/component/browser/bars/Total"
-	, "templates/ContactSet"
-	, "templates/PlatformInfo"
-	, "./_DetailsBase"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/browser/_Framework'
+	, 'src/component/browser/ListImpl'
+	, 'src/component/browser/bars/Total'
+	, 'templates/ContactSet'
+	, 'templates/PlatformInfo'
+	, 'app/designs/details/main/_DetailsBase'
 ], function(
 	redmicConfig
 	, declare
@@ -18,10 +18,11 @@ define([
 	, TemplateContacts
 	, TemplateInfo
 	, _DetailsBase
-){
-	return declare([_DetailsBase], {
+) {
+
+	return declare(_DetailsBase, {
 		//	summary:
-		//		Vista detalle de plataformas.
+		//		Vista de detalle de plataformas.
 
 		constructor: function(args) {
 
@@ -29,10 +30,18 @@ define([
 				target: redmicConfig.services.platform,
 				activitiesTargetBase: redmicConfig.services.activityPlatforms,
 				templateInfo: TemplateInfo,
-				contactTarget: "contacts"
+				pathParent: redmicConfig.viewPaths.platformCatalog,
+				contactTarget: 'contacts'
 			};
 
 			lang.mixin(this, this.config, args);
+		},
+
+		_setConfigurations: function() {
+
+			this.viewPathsWidgets = {
+				activities: redmicConfig.viewPaths.activityDetails
+			};
 		},
 
 		_setMainConfigurations: function() {

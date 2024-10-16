@@ -1,19 +1,21 @@
 define([
-	'src/redmicConfig'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
 	, 'dojo/store/Memory'
 	, 'src/component/base/_Module'
+	, 'src/redmicConfig'
+	, 'app/base/views/_View'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, lang
 	, Deferred
 	, all
 	, Memory
 	, _Module
+	, redmicConfig
+	, _View
 ) {
 
 	return declare(_Module, {
@@ -319,7 +321,8 @@ define([
 			this._once(channelToSubscribe, lang.hitch(this, this._requireViewDefinition, {
 				moduleStoreItem: moduleStoreItem,
 				viewDefinitionPath: viewDefinitionPath,
-				instanceDfd: instanceDfd
+				instanceDfd: instanceDfd,
+				viewBaseDefinition: _View
 			}));
 
 			var channelToPublish = this._buildChannel(this.credentialsChannel, 'HAS_USER_EDITION_CAPABILITIES');
@@ -331,7 +334,7 @@ define([
 		_requireViewDefinition: function(/*Object*/ args, /*Object*/ res) {
 
 			var viewDefinitionPath = args.viewDefinitionPath,
-				pathsToRequire = ['app/base/views/_View', viewDefinitionPath];
+				pathsToRequire = [viewDefinitionPath];
 
 			if (res.editionCapabilities) {
 				var viewDefinitionPathSplitted = viewDefinitionPath.split(this.viewSeparator),
@@ -344,19 +347,20 @@ define([
 
 			require(pathsToRequire, lang.hitch(this, this._onViewDefinitionRequired, {
 				moduleStoreItem: args.moduleStoreItem,
-				instanceDfd: args.instanceDfd
+				instanceDfd: args.instanceDfd,
+				viewBaseDefinition: args.viewBaseDefinition
 			}));
 		},
 
 		_onViewDefinitionRequired: function(
 			/*Object*/ args,
-			/*Object*/ _View,
 			/*Object*/ ViewDefinition,
 			/*Object?*/ EditionDefinition
 		) {
 
 			var moduleStoreItem = args.moduleStoreItem,
 				instanceDfd = args.instanceDfd,
+				viewBaseDefinition = args.viewBaseDefinition,
 				isOuterView = redmicConfig.isOuterPath(moduleStoreItem.id),
 				pathsToDeclare = [ViewDefinition];
 
@@ -364,7 +368,7 @@ define([
 			if (EditionDefinition && EditionDefinition !== 'not-a-module') {
 				pathsToDeclare.push(EditionDefinition);
 			}
-			pathsToDeclare.push(_View);
+			pathsToDeclare.push(viewBaseDefinition);
 
 			// Creamos el módulo
 			var viewInstance = new declare(pathsToDeclare)({

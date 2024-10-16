@@ -464,6 +464,7 @@ var viewLayers = {
 	// catálogos
 	, 'src/catalog/activity/ActivityCatalogView': {}
 	, 'src/catalog/organisation/OrganisationCatalogView': {}
+	, 'src/catalog/platform/PlatformCatalogView': {}
 	, 'src/catalog/program/ProgramCatalogView': {}
 	, 'src/catalog/project/ProjectCatalogView': {}
 
@@ -480,12 +481,10 @@ var viewLayers = {
 
 	, 'app/home/views/HomeView': {}
 
-	, 'app/catalog/views/PlatformsCatalogView': {}
 	, 'app/catalog/views/SpeciesCatalogView': {}
 	, 'app/catalog/views/StacBrowserView': {}
 
 	, 'app/administrative/views/ContactView': {}
-	, 'app/administrative/views/PlatformView': {}
 	, 'app/administrative/views/DeviceView': {}
 	, 'app/administrative/views/DocumentView': {}
 	, 'app/administrative/views/AnimalView': {}

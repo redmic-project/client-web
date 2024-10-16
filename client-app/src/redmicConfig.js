@@ -83,11 +83,9 @@ define([], function() {
 		'serviceOGCDetails': '/maintenance/service-ogc-info/{id}',
 		'serviceOGC': '/maintenance/service-ogc',
 		'speciesCatalog': '/catalog/species-catalog',
-		'speciesCatalogDetails': '/catalog/species-info/{id}',
-		'speciesDetails': '/admin/species-info/{id}',
+		'speciesDetails': '/catalog/species-info/{id}',
 		'speciesAdd': '/admin/species-add/{id}',
 		'speciesEdit': '/admin/species-edit/{id}',
-		'species': '/taxon/species',
 		'unitAdd': '/admin/unit-add/{id}',
 		'unitEdit': '/admin/unit-edit/{id}'
 	};

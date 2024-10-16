@@ -1150,9 +1150,6 @@ define({
 
 	, "loadDocument": "Cargar documentos"
 	, "isAphia": "Sin aphia"
-	, "updateAllSpecies": "Actualizar todas las especies"
-	, "updateAllSpeciesConfirmationTitle": "Confirmación"
-	, "updateAllSpeciesConfirmationMessage": "¿Actualizar todas las especies?"
 
 	, "noteForAttributeType": "Si ya existen otros atributos del mismo tipo, estos deben de tener las fechas establecidas y no deben solaparse entre si"
 	, "noteForContact": "Solo incluir datos de contacto profesional"

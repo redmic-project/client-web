@@ -467,6 +467,7 @@ var viewLayers = {
 	, 'src/catalog/platform/PlatformCatalogView': {}
 	, 'src/catalog/program/ProgramCatalogView': {}
 	, 'src/catalog/project/ProjectCatalogView': {}
+	, 'src/catalog/species/SpeciesCatalogView': {}
 
 	// vistas detalle
 	, 'src/detail/activity/ActivityDetailView': {}
@@ -474,6 +475,7 @@ var viewLayers = {
 	, 'src/detail/platform/PlatformDetailView': {}
 	, 'src/detail/program/ProgramDetailView': {}
 	, 'src/detail/project/ProjectDetailView': {}
+	, 'src/detail/species/SpeciesDetailView': {}
 
 	// mantenimiento
 	, 'src/maintenance/domain/DomainMaintenanceView': {}
@@ -482,7 +484,6 @@ var viewLayers = {
 
 	, 'app/home/views/HomeView': {}
 
-	, 'app/catalog/views/SpeciesCatalogView': {}
 	, 'app/catalog/views/StacBrowserView': {}
 
 	, 'app/administrative/views/ContactView': {}
@@ -491,7 +492,6 @@ var viewLayers = {
 	, 'app/administrative/views/AnimalView': {}
 
 	, 'app/administrative/taxonomy/views/MisIdentificationView': {}
-	, 'app/administrative/taxonomy/views/SpeciesView': {}
 	, 'app/administrative/taxonomy/views/GenusView': {}
 	, 'app/administrative/taxonomy/views/FamilyView': {}
 	, 'app/administrative/taxonomy/views/OrderView': {}
@@ -527,14 +527,12 @@ var viewLayers = {
 	, 'app/viewers/views/RealTimeView': {}
 	, 'app/viewers/views/RealTimeDashboardView': {}
 
-	, 'app/details/views/SpeciesDetailsView': {}
 	, 'app/details/views/ServiceOGCCatalogDetailsView': {}
 	, 'app/details/views/DocumentDetailsView': {}
 	, 'app/details/views/BibliographyDetailsView': {}
 	, 'app/details/views/ContactDetailsView': {}
 	, 'app/details/views/ServiceOGCDetailsView': {}
 	, 'app/details/views/StatisticsDetailsView': {}
-	, 'app/details/views/SpeciesCatalogDetailsView': {}
 
 	, 'app/edition/views/ActivityEditionView': {}
 	, 'app/edition/views/DeviceEditionView': {}

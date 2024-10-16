@@ -1,15 +1,15 @@
 define([
 	'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/browser/_ButtonsInRow"
-	, "src/component/browser/_Framework"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/browser/_ButtonsInRow'
+	, 'src/component/browser/_Framework'
 	, 'src/detail/_GenerateReport'
-	, "templates/LoadingCustom"
-	, "templates/SpeciesInfo"
-	, "templates/SpeciesTitle"
-	, "./_DetailsBase"
-	, "./SpeciesLocation"
+	, 'templates/LoadingCustom'
+	, 'templates/SpeciesInfo'
+	, 'templates/SpeciesTitle'
+	, 'app/designs/details/main/_DetailsBase'
+	, 'app/designs/details/main/SpeciesLocation'
 ], function(
 	redmicConfig
 	, declare
@@ -34,15 +34,24 @@ define([
 				templateTitle: TemplateTitle,
 				templateInfo: TemplateInfo,
 				target: redmicConfig.services.species,
-				reportService: "species",
+				reportService: 'species',
 				ancestorsTarget: redmicConfig.services.taxonAncestors,
-				documentTarget: "documents",
-				activityTarget: "activities",
-				infoTarget: "infoTarget",
-				titleWidgetTarget: "titleWidgetTarget"
+				documentTarget: 'documents',
+				activityTarget: 'activities',
+				infoTarget: 'infoTarget',
+				titleWidgetTarget: 'titleWidgetTarget',
+				pathParent: redmicConfig.viewPaths.speciesCatalog
 			};
 
 			lang.mixin(this, this.config, args);
+		},
+
+		_setConfigurations: function() {
+
+			this.viewPathsWidgets = {
+				documents: redmicConfig.viewPaths.bibliographyDetails,
+				activities: redmicConfig.viewPaths.activityDetails
+			};
 		},
 
 		_setMainConfigurations: function() {
@@ -59,7 +68,7 @@ define([
 					props: {
 						noDataMessage: TemplateCustom({
 							message: this.i18n.noAssociatedDocuments,
-							iconClass: "fr fr-no-data"
+							iconClass: 'fr fr-no-data'
 						})
 					}
 				}
@@ -154,7 +163,7 @@ define([
 			this._speciesData = lang.clone(res.data);
 
 			this._emitEvt('REQUEST', {
-				method: "POST",
+				method: 'POST',
 				target: this.target[3],
 				action: '_search',
 				query: {

@@ -1154,9 +1154,6 @@ define({
 
 		, "loadDocument": "Load document"
 		, "isAphia": "Not aphia"
-		, "updateAllSpecies": "Update all species"
-		, "updateAllSpeciesConfirmationTitle": "Confirmation"
-		, "updateAllSpeciesConfirmationMessage": "Update all species?"
 
 		, "noteForAttributeType": "Note: If other attributes of the same type already exist, they must have the established dates and must not only be between"
 		, "noteForContact": "Only include professional contact information"

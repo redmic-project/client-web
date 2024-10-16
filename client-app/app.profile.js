@@ -456,24 +456,34 @@ var profileObj = {
 };
 
 var viewLayers = {
+	// especiales
 	'src/error/404': {}
 	, 'src/error/NoSupportBrowser': {}
-
 	, 'src/user/ActivateAccount': {}
 
+	// catálogos
+	, 'src/catalog/activity/ActivityCatalogView': {}
+	, 'src/catalog/organisation/OrganisationCatalogView': {}
+	, 'src/catalog/program/ProgramCatalogView': {}
+	, 'src/catalog/project/ProjectCatalogView': {}
+
+	// vistas detalle
+	, 'src/detail/activity/ActivityDetailView': {}
+	, 'src/detail/organisation/OrganisationDetailView': {}
+	, 'src/detail/program/ProgramDetailView': {}
+	, 'src/detail/project/ProjectDetailView': {}
+
+	// mantenimiento
 	, 'src/maintenance/domain/DomainMaintenanceView': {}
+
+	// -------------------------------------------------------------------------
 
 	, 'app/home/views/HomeView': {}
 
-	, 'app/catalog/views/ActivitiesCatalogView': {}
 	, 'app/catalog/views/PlatformsCatalogView': {}
-	, 'app/catalog/views/ProjectsCatalogView': {}
 	, 'app/catalog/views/SpeciesCatalogView': {}
-	, 'app/catalog/views/ProgramsCatalogView': {}
-	, 'app/catalog/views/OrganisationsCatalogView': {}
 	, 'app/catalog/views/StacBrowserView': {}
 
-	, 'app/administrative/views/OrganisationView': {}
 	, 'app/administrative/views/ContactView': {}
 	, 'app/administrative/views/PlatformView': {}
 	, 'app/administrative/views/DeviceView': {}
@@ -517,11 +527,8 @@ var viewLayers = {
 	, 'app/viewers/views/RealTimeView': {}
 	, 'app/viewers/views/RealTimeDashboardView': {}
 
-	, 'app/details/views/ProjectCatalogDetailsView': {}
-	, 'app/details/views/ProgramCatalogDetailsView': {}
 	, 'app/details/views/PlatformDetailsView': {}
 	, 'app/details/views/SpeciesDetailsView': {}
-	, 'app/details/views/ActivityCatalogDetailsView': {}
 	, 'app/details/views/PlatformCatalogDetailsView': {}
 	, 'app/details/views/ServiceOGCCatalogDetailsView': {}
 	, 'app/details/views/DocumentDetailsView': {}
@@ -529,8 +536,6 @@ var viewLayers = {
 	, 'app/details/views/ContactDetailsView': {}
 	, 'app/details/views/ServiceOGCDetailsView': {}
 	, 'app/details/views/StatisticsDetailsView': {}
-	, 'app/details/views/OrganisationDetailsView': {}
-	, 'app/details/views/OrganisationCatalogDetailsView': {}
 	, 'app/details/views/SpeciesCatalogDetailsView': {}
 
 	, 'app/edition/views/ActivityEditionView': {}

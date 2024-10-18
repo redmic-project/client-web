@@ -93,8 +93,8 @@ define({
 		"description": "{i18n.metaAtlasDescription}."
 	},
 	"/service-ogc-catalog": {
-		"title": "{i18n.metaServiceOgcCatalogTitle}",
-		"description": "{i18n.metaServiceOgcCatalogDescription}."
+		"title": "{i18n.metaOgcServiceCatalogTitle}",
+		"description": "{i18n.metaOgcServiceCatalogDescription}."
 	},
 	"/service-ogc-catalog/service-ogc-info/{id}": {
 		"title": "{i18n.metaServiceOgcCatalogServiceOgcInfoIdTitle} '{title}'",

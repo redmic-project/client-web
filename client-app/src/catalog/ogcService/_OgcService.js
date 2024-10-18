@@ -1,7 +1,7 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/store/RequestJoiner/AtlasDataImpl"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/store/RequestJoiner/AtlasDataImpl'
 	, 'templates/FilterServiceOGCForm'
 ], function(
 	declare
@@ -12,13 +12,13 @@ define([
 
 	return declare(null, {
 		//	summary:
-		//		Base de vistas principales de ServiceOGC (varios diseños).
+		//		Base de vistas principales de servicios OGC (varios diseños).
 
 		constructor: function(args) {
 
 			this.config = {
-				pathProperty: "path",
-				pathSeparator: ".",
+				pathProperty: 'path',
+				pathSeparator: '.',
 				_atlasDataTarget: 'atlasData',
 
 				compositeConfig: {
@@ -71,7 +71,7 @@ define([
 
 		_requestAtlasDataOnRefresh: function() {
 
-			this._publish(this._buildChannel(this.queryChannel, "serialize"));
+			this._publish(this._buildChannel(this.queryChannel, 'serialize'));
 		},
 
 		_requestAtlasData: function(queryObj) {

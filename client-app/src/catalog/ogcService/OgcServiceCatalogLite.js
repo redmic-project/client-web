@@ -1,32 +1,33 @@
 define([
-	"app/base/views/extensions/_OnShownAndRefresh"
-	, "app/designs/base/_Main"
-	, "app/designs/base/_ServiceOGC"
-	, "app/designs/textSearchList/Controller"
-	, "app/designs/textSearchList/layout/BasicTopZone"
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/browser/HierarchicalImpl"
-	, "templates/ServiceOGCList"
+	'app/base/views/extensions/_OnShownAndRefresh'
+	, 'app/designs/base/_Main'
+	, 'src/catalog/ogcService/_OgcService'
+	, 'app/designs/textSearchList/Controller'
+	, 'app/designs/textSearchList/layout/BasicTopZone'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/browser/HierarchicalImpl'
+	, 'templates/ServiceOGCList'
 ], function(
 	_OnShownAndRefresh
 	, _Main
-	, _ServiceOGC
+	, _OgcService
 	, Controller
 	, Layout
 	, declare
 	, lang
 	, HierarchicalImpl
 	, templateList
-){
-	return declare([Layout, Controller, _Main, _ServiceOGC, _OnShownAndRefresh], {
+) {
+
+	return declare([Layout, Controller, _Main, _OgcService, _OnShownAndRefresh], {
 		//	summary:
-		//		Vista principal de ServiceOGC bajo este diseño.
+		//		Vista de catálogo de servicios OGC con diseño reducido (sin filtro por facets).
 
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: "catalogOGC",
+				ownChannel: 'catalogOGC',
 				title: this.i18n.layersCatalog
 			};
 

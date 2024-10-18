@@ -1,10 +1,10 @@
 define([
-	"app/base/views/extensions/_EditionWizardView"
-	, "app/base/views/extensions/_FormInDialogView"
+	'app/base/views/extensions/_EditionWizardView'
+	, 'app/base/views/extensions/_FormInDialogView'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
 ], function(
 	_EditionWizardView
 	, _FormInDialogView
@@ -12,64 +12,63 @@ define([
 	, declare
 	, lang
 	, aspect
-){
+) {
+
 	return declare([_EditionWizardView, _FormInDialogView], {
 		//	summary:
-		//		Extensión para las vistas de edición de datos relativos a capas.
-		//	description:
-		//		Añade funcionalidades de edición a la vista.
-		//		Ha de declararse junto con una extensión que aporte los métodos
-		//		en los que se apoya.
+		//		Extensión de vista de catálogo de servicios OGC para añadir funcionalidad relativa a la edición de
+		//		registros.
 
 		constructor: function(args) {
 
 			this.config = {
+				addPath: this.viewPaths.ogcServiceAdd,
 				editionLayerEvents: {
-					UPDATE: "update"
+					UPDATE: 'update'
 				},
 				editionLayerActions: {}
 			};
 
-			lang.mixin(this, this.config);
+			lang.mixin(this, this.config, args);
 
-			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixEditionLayerEventsAndActions));
-			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setEditionLayerConfigurations));
+			aspect.before(this, '_mixEventsAndActions', lang.hitch(this, this._mixEditionLayerEventsAndActions));
+			aspect.before(this, '_afterSetConfigurations', lang.hitch(this, this._setEditionLayerConfigurations));
 		},
 
 		_setEditionLayerConfigurations: function() {
 
 			this.formConfig = this._merge([{
-				template: "maintenance/views/templates/forms/CategoryLayer",
+				template: 'maintenance/views/templates/forms/CategoryLayer',
 				modelTarget: redmicConfig.services.atlasCategoryEdition
 			}, this.formConfig || {}]);
 
 			this.listButtonsEdition = [{
-				groupId: "edition",
+				groupId: 'edition',
 				icons:[{
-					icon: "fa-refresh",
-					btnId: "update",
-					title: "update",
+					icon: 'fa-refresh',
+					btnId: 'update',
+					title: 'update',
 					returnItem: true,
-					option: "default",
-					condition: "urlSource"
+					option: 'default',
+					condition: 'urlSource'
 				},{
-					icon: "fa-edit",
-					btnId: "edit",
-					title: "edit",
+					icon: 'fa-edit',
+					btnId: 'edit',
+					title: 'edit',
 					href: this.viewPaths.serviceOGCEdit,
-					option: "default",
-					condition: "urlSource"
+					option: 'default',
+					condition: 'urlSource'
 				},{
-					icon: "fa-edit",
-					btnId: "categoryEdit",
-					title: "edit",
+					icon: 'fa-edit',
+					btnId: 'categoryEdit',
+					title: 'edit',
 					returnItem: true,
-					option: "default",
+					option: 'default',
 					condition: this._checkItemIsCategory
 				},{
-					icon: "fa-trash-o",
-					btnId: "remove",
-					title: "remove",
+					icon: 'fa-trash-o',
+					btnId: 'remove',
+					title: 'remove',
 					returnItem: true
 				}]
 			}];
@@ -90,8 +89,8 @@ define([
 
 			if (this.editor) {
 				this.subscriptionsConfig.push({
-					channel: this.editor.getChannel("SUBMITTED"),
-					callback: "_subSubmitted"
+					channel: this.editor.getChannel('SUBMITTED'),
+					callback: '_subSubmitted'
 				});
 			}
 		},
@@ -103,10 +102,10 @@ define([
 			if (this.editor) {
 				this.publicationsConfig.push({
 					event: 'SAVED',
-					channel: this.editor.getChannel("SAVED")
+					channel: this.editor.getChannel('SAVED')
 				},{
 					event: 'SHOW_FORM',
-					channel: this.editor.getChannel("SHOW")
+					channel: this.editor.getChannel('SHOW')
 				});
 			}
 		},

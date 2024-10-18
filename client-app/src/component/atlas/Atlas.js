@@ -2,7 +2,7 @@ define([
 	'alertify'
 	,'app/designs/list/Controller'
 	, 'app/designs/list/layout/Layout'
-	, 'app/designs/textSearchList/main/ServiceOGC'
+	, 'src/catalog/ogcService/OgcServiceCatalogLite'
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
@@ -27,7 +27,7 @@ define([
 	alertify
 	, Controller
 	, Layout
-	, ServiceOGC
+	, OgcServiceCatalogLite
 	, redmicConfig
 	, declare
 	, lang
@@ -184,7 +184,7 @@ define([
 			var ThemesBrowser = declare([Layout, Controller]);
 			this.themesBrowser = new ThemesBrowser(this.themesBrowserConfig);
 
-			this.catalogView = new ServiceOGC(this.catalogConfig);
+			this.catalogView = new OgcServiceCatalogLite(this.catalogConfig);
 
 			var LayerDetailsTooltip = declare(TemplateDisplayer).extend(_ShowInTooltip);
 			this.templateDisplayerDetails = new LayerDetailsTooltip(this.detailsConfig);

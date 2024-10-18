@@ -468,6 +468,7 @@ var viewLayers = {
 	, 'src/catalog/program/ProgramCatalogView': {}
 	, 'src/catalog/project/ProjectCatalogView': {}
 	, 'src/catalog/species/SpeciesCatalogView': {}
+	, 'src/catalog/raster/RasterCatalogView': {}
 
 	// vistas detalle
 	, 'src/detail/activity/ActivityDetailView': {}
@@ -483,8 +484,6 @@ var viewLayers = {
 	// -------------------------------------------------------------------------
 
 	, 'app/home/views/HomeView': {}
-
-	, 'app/catalog/views/StacBrowserView': {}
 
 	, 'app/administrative/views/ContactView': {}
 	, 'app/administrative/views/DeviceView': {}

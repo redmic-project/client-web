@@ -12,7 +12,7 @@ define({
 		"title": "{i18n.metaHomeTitle}",
 		"description": "{i18n.metaHomeDescription}."
 	},
-	"/catalog/activities-catalog": {
+	"/catalog/activity-catalog": {
 		"title": "{i18n.metaCatalogActivitiesCatalogTitle}",
 		"description": "{i18n.metaCatalogActivitiesCatalogDescription}."
 	},
@@ -60,9 +60,9 @@ define({
 		"title": "{i18n.metaCatalogSpeciesInfoIdTitle} '{scientificName} {authorship}'",
 		"description": "{i18n.metaCatalogSpeciesInfoIdDescription} '{scientificName} {authorship}'. {commonName}."
 	},
-	"/catalog/stac-browser": {
-		"title": "{i18n.metaViewerStacBrowserTitle}",
-		"description": "{i18n.metaViewerStacBrowserDescription}."
+	"/catalog/raster-catalog": {
+		"title": "{i18n.metaCatalogRasterCatalogTitle}",
+		"description": "{i18n.metaCatalogRasterCatalogDescription}."
 	},
 	"/viewer/species-distribution": {
 		"title": "{i18n.metaViewerSpeciesDistributionTitle}",

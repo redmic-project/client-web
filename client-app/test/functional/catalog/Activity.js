@@ -7,7 +7,7 @@ define([
 ) {
 
 	var namePrefix = 'Activity catalog page',
-		urlValue = '/catalog/activities-catalog';
+		urlValue = '/catalog/activity-catalog';
 
 	new _CatalogWithReport({
 		namePrefix,

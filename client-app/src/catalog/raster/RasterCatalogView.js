@@ -14,15 +14,15 @@ define([
 
 	return declare([Layout, Controller, _ExternalConfig], {
 		//	summary:
-		//		Vista de STAC Browser incrustado.
+		//		Vista de catálogo de recursos ráster.
 		//	description:
-		//		Permite integrar la herramienta externa.
+		//		Permite integrar la herramienta externa STAC Browser como contenido incrustado.
 
 		constructor: function (args) {
 
 			this.config = {
 				embeddedContentUrl: null,
-				embeddedContentUrlPropertyName: 'stacBrowserViewEmbeddedContentUrl'
+				embeddedContentUrlPropertyName: 'rasterCatalogViewEmbeddedContentUrl'
 			};
 
 			lang.mixin(this, this.config, args);

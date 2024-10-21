@@ -27,10 +27,10 @@ define([], function() {
 		'surveyStationDataDefinitions': '/data-loader/activity/{activityid}/survey-station/{id}/series',
 		'objectCollectingDataDefinitions': '/data-loader/activity/{activityid}/object-collecting/{id}/series',
 		'activityInfrastructureAttributes': '/data-loader/activity/{activityid}/infrastructure/{id}/attributes',
-		'animalDetails': '/admin/activity-info/{id}',
+		'animalCatalog': '/catalog/animal-catalog',
+		'animalDetails': '/catalog/animal-info/{id}',
 		'animalAdd': '/admin/animal-add/{id}',
 		'animalEdit': '/admin/animal-edit/{id}',
-		'animal': '/admin/animal',
 		'bibliography': '/bibliography',
 		'bibliographyDetails': '/bibliography/document-info/{id}',
 		'bibliographyAdd': '/admin/document-add/{id}',
@@ -240,6 +240,7 @@ define([], function() {
 		'timeSeriesWindRose': baseUri + 'time-series/view/activities/{id}/windrose',
 
 		'activityOrganisations': baseUri + 'organisations/{id}/activities',
+		'activityAnimals': baseUri + 'platforms/{id}/activities', // TODO cambiar al servicio bueno cuando exista
 		'activityPlatforms': baseUri + 'platforms/{id}/activities',
 		'activityDocuments': baseUri + 'documents/{id}/activities',
 		'activityContacts': baseUri + 'contacts/{id}/activities',

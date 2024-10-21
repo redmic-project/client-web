@@ -463,6 +463,7 @@ var viewLayers = {
 
 	// catálogos
 	, 'src/catalog/activity/ActivityCatalogView': {}
+	, 'src/catalog/animal/AnimalCatalogView': {}
 	, 'src/catalog/bibliography/BibliographyCatalogView': {}
 	, 'src/catalog/ogcService/OgcServiceCatalogView': {}
 	, 'src/catalog/organisation/OrganisationCatalogView': {}
@@ -474,6 +475,7 @@ var viewLayers = {
 
 	// vistas detalle
 	, 'src/detail/activity/ActivityDetailView': {}
+	, 'src/detail/animal/AnimalDetailView': {}
 	, 'src/detail/bibliography/BibliographyDetailView': {}
 	, 'src/detail/ogcService/OgcServiceDetailView': {}
 	, 'src/detail/organisation/OrganisationDetailView': {}
@@ -491,7 +493,6 @@ var viewLayers = {
 
 	, 'app/administrative/views/ContactView': {}
 	, 'app/administrative/views/DeviceView': {}
-	, 'app/administrative/views/AnimalView': {}
 
 	, 'app/administrative/taxonomy/views/MisIdentificationView': {}
 	, 'app/administrative/taxonomy/views/GenusView': {}

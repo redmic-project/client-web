@@ -3,16 +3,14 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/detail/_GenerateReport'
-	, 'src/util/Credentials'
 	, 'templates/DocumentInfo'
-	, './_DetailsBase'
-	, './DocumentPDF'
+	, 'app/designs/details/main/_DetailsBase'
+	, 'src/detail/bibliography/DocumentPDF'
 ], function(
 	redmicConfig
 	, declare
 	, lang
 	, _GenerateReport
-	, Credentials
 	, TemplateInfo
 	, _DetailsBase
 	, DocumentPDF
@@ -28,6 +26,7 @@ define([
 				target: redmicConfig.services.document,
 				activitiesTargetBase: redmicConfig.services.activityDocuments,
 				templateInfo: TemplateInfo,
+				pathParent: redmicConfig.viewPaths.bibliography,
 
 				reportService: 'document'
 			};
@@ -38,6 +37,13 @@ define([
 		_setMainOwnCallbacksForEvents: function() {
 
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onDocumentDetailsHidden));
+		},
+
+		_setConfigurations: function() {
+
+			this.viewPathsWidgets = {
+				activities: redmicConfig.viewPaths.activityDetails
+			};
 		},
 
 		_setMainConfigurations: function() {
@@ -75,13 +81,18 @@ define([
 				return;
 			}
 
+			this._evaluateItemToShowOrHidePdf(res);
+		},
+
+		_evaluateItemToShowOrHidePdf: function(res) {
+
 			var documentData = res.data,
 				pdfUrl = documentData.internalUrl,
 				privatePdf = documentData.privateInternalUrl;
 
-			if (!pdfUrl || (privatePdf && !Credentials.userIsEditor())) {
+			if (!pdfUrl || privatePdf) {
 				this._hideWidget('pdf');
-			} else {
+			} else if (pdfUrl) {
 				this._showWidget('pdf');
 			}
 		},

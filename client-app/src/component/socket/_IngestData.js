@@ -142,7 +142,7 @@ define([
 						id: parameters.surveyId || parameters.elementUuid
 					});
 				} else if (obj.taskName === "ingest-data-document") {
-					url = redmicConfig.viewPaths.documentLoad;
+					url = redmicConfig.viewPaths.bibliographyLoad;
 				}
 
 				if (url) {

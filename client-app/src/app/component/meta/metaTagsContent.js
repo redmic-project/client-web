@@ -20,21 +20,21 @@ define({
 		"title": "{i18n.metaActivityInfoTitle} '{name}'",
 		"description": "{i18n.metaActivityInfoDescription} '{name}'. {activityType.name}. {description}."
 	},
-	"/catalog/project-catalog": {
-		"title": "{i18n.metaProjectCatalogTitle}",
-		"description": "{i18n.metaProjectCatalogDescription}."
+	"/bibliography": {
+		"title": "{i18n.metaBibliographyCatalogTitle}",
+		"description": "{i18n.metaBibliographyCatalogDescription}"
 	},
-	"/catalog/project-info/{id}": {
-		"title": "{i18n.metaProjectInfoTitle} '{name}'",
-		"description": "{i18n.metaProjectInfoDescription} '{name}'. {projectGroup.name}. {description}."
+	"/bibliography/document-info/{id}": {
+		"title": "{i18n.metaBibliographyInfoTitle} '{title}'",
+		"description": "{i18n.metaBibliographyInfoDescription1} '{title}'. {documentType.name}, {i18n.metaBibliographyInfoDescription2} '{author}' {i18n.metaBibliographyInfoDescription3} {year}. [{keyword}]"
 	},
-	"/catalog/program-catalog": {
-		"title": "{i18n.metaProgramCatalogTitle}",
-		"description": "{i18n.metaProgramCatalogDescription}."
+	"/service-ogc-catalog": {
+		"title": "{i18n.metaOgcServiceCatalogTitle}",
+		"description": "{i18n.metaOgcServiceCatalogDescription}."
 	},
-	"/catalog/program-info/{id}": {
-		"title": "{i18n.metaProgramInfoTitle} '{name}'",
-		"description": "{i18n.metaProgramInfoDescription} '{name}'. {description}."
+	"/service-ogc-catalog/service-ogc-info/{id}": {
+		"title": "{i18n.metaOgcServiceInfoTitle} '{title}'",
+		"description": "{i18n.metaOgcServiceInfoDescription} '{title}'. {abstractLayer} [{keywords}]"
 	},
 	"/catalog/organisation-catalog": {
 		"title": "{i18n.metaOrganizationCatalogTitle}",
@@ -52,6 +52,26 @@ define({
 		"title": "{i18n.metaPlatformInfoTitle} '{name}'",
 		"description": "{i18n.metaPlatformInfoDescription} '{name}'. {platformType.name}. {description}."
 	},
+	"/catalog/program-catalog": {
+		"title": "{i18n.metaProgramCatalogTitle}",
+		"description": "{i18n.metaProgramCatalogDescription}."
+	},
+	"/catalog/program-info/{id}": {
+		"title": "{i18n.metaProgramInfoTitle} '{name}'",
+		"description": "{i18n.metaProgramInfoDescription} '{name}'. {description}."
+	},
+	"/catalog/project-catalog": {
+		"title": "{i18n.metaProjectCatalogTitle}",
+		"description": "{i18n.metaProjectCatalogDescription}."
+	},
+	"/catalog/project-info/{id}": {
+		"title": "{i18n.metaProjectInfoTitle} '{name}'",
+		"description": "{i18n.metaProjectInfoDescription} '{name}'. {projectGroup.name}. {description}."
+	},
+	"/catalog/raster-catalog": {
+		"title": "{i18n.metaRasterCatalogTitle}",
+		"description": "{i18n.metaRasterCatalogDescription}."
+	},
 	"/catalog/species-catalog": {
 		"title": "{i18n.metaSpeciesCatalogTitle}",
 		"description": "{i18n.metaSpeciesCatalogDescription}."
@@ -59,10 +79,6 @@ define({
 	"/catalog/species-info/{id}": {
 		"title": "{i18n.metaSpeciesInfoTitle} '{scientificName} {authorship}'",
 		"description": "{i18n.metaSpeciesInfoDescription} '{scientificName} {authorship}'. {commonName}."
-	},
-	"/catalog/raster-catalog": {
-		"title": "{i18n.metaRasterCatalogTitle}",
-		"description": "{i18n.metaRasterCatalogDescription}."
 	},
 	"/viewer/species-distribution": {
 		"title": "{i18n.metaViewerSpeciesDistributionTitle}",
@@ -91,22 +107,6 @@ define({
 	"/atlas": {
 		"title": "{i18n.metaAtlasTitle}",
 		"description": "{i18n.metaAtlasDescription}."
-	},
-	"/service-ogc-catalog": {
-		"title": "{i18n.metaOgcServiceCatalogTitle}",
-		"description": "{i18n.metaOgcServiceCatalogDescription}."
-	},
-	"/service-ogc-catalog/service-ogc-info/{id}": {
-		"title": "{i18n.metaOgcServiceInfoTitle} '{title}'",
-		"description": "{i18n.metaOgcServiceInfoDescription} '{title}'. {abstractLayer} [{keywords}]"
-	},
-	"/bibliography": {
-		"title": "{i18n.metaBibliographyTitle}",
-		"description": "{i18n.metaBibliographyDescription}"
-	},
-	"/bibliography/document-info/{id}": {
-		"title": "{i18n.metaBibliographyDocumentInfoIdTitle} '{title}'",
-		"description": "{i18n.metaBibliographyDocumentInfoIdDescription1} '{title}'. {documentType.name}, {i18n.metaBibliographyDocumentInfoIdDescription2} '{author}' {i18n.metaBibliographyDocumentInfoIdDescription3} {year}. [{keyword}]"
 	},
 	"/login": {
 		"title": "{i18n.metaLoginTitle}",

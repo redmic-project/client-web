@@ -463,6 +463,7 @@ var viewLayers = {
 
 	// catálogos
 	, 'src/catalog/activity/ActivityCatalogView': {}
+	, 'src/catalog/bibliography/BibliographyCatalogView': {}
 	, 'src/catalog/ogcService/OgcServiceCatalogView': {}
 	, 'src/catalog/organisation/OrganisationCatalogView': {}
 	, 'src/catalog/platform/PlatformCatalogView': {}
@@ -473,6 +474,7 @@ var viewLayers = {
 
 	// vistas detalle
 	, 'src/detail/activity/ActivityDetailView': {}
+	, 'src/detail/bibliography/BibliographyDetailView': {}
 	, 'src/detail/ogcService/OgcServiceDetailView': {}
 	, 'src/detail/organisation/OrganisationDetailView': {}
 	, 'src/detail/platform/PlatformDetailView': {}
@@ -489,7 +491,6 @@ var viewLayers = {
 
 	, 'app/administrative/views/ContactView': {}
 	, 'app/administrative/views/DeviceView': {}
-	, 'app/administrative/views/DocumentView': {}
 	, 'app/administrative/views/AnimalView': {}
 
 	, 'app/administrative/taxonomy/views/MisIdentificationView': {}
@@ -519,15 +520,12 @@ var viewLayers = {
 	, 'app/maintenance/views/PermissionsView': {}
 
 	, 'app/viewers/views/SpeciesDistributionView': {}
-	, 'app/viewers/views/BibliographyView': {}
 	, 'app/viewers/views/TrackingView': {}
 	, 'app/viewers/views/TrashCollectionView': {}
 	, 'app/viewers/views/ChartsView': {}
 	, 'app/viewers/views/RealTimeView': {}
 	, 'app/viewers/views/RealTimeDashboardView': {}
 
-	, 'app/details/views/DocumentDetailsView': {}
-	, 'app/details/views/BibliographyDetailsView': {}
 	, 'app/details/views/ContactDetailsView': {}
 	, 'app/details/views/StatisticsDetailsView': {}
 

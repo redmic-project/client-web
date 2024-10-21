@@ -5,6 +5,7 @@ define([
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/catalog/_GenerateReport'
 	, 'src/component/browser/_Select'
 	, 'src/component/browser/bars/SelectionBox'
 	, 'src/component/browser/bars/Order'
@@ -17,6 +18,7 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, _GenerateReport
 	, _Select
 	, SelectionBox
 	, Order
@@ -24,7 +26,7 @@ define([
 	, templateList
 ) {
 
-	return declare([Layout, Controller, _Main], {
+	return declare([Layout, Controller, _Main, _GenerateReport], {
 		//	summary:
 		//		Base de vista de Bibliography/Document.
 
@@ -34,12 +36,37 @@ define([
 		constructor: function (args) {
 
 			this.config = {
+				title: this.i18n.canarianMarineBibliography,
+				ownChannel: 'bibliography',
+				target: redmicConfig.services.document,
+
 				idDetails: null,
 				browserExts: [_Select],
-				title: this.i18n.canarianMarineBibliography
+				reportService: 'document'
 			};
 
 			lang.mixin(this, this.config, args);
+		},
+
+		_setConfigurations: function() {
+
+			this.browserConfig = this._merge([{
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+							icon: 'fa-external-link',
+							btnId: 'url',
+							condition: this._urlCondition,
+							href: '{url}'
+						},{
+							icon: 'fa-info-circle',
+							btnId: 'details',
+							title: 'info',
+							href: this.viewPaths.bibliographyDetails
+						}]
+					}
+				}
+			}, this.browserConfig || {}]);
 		},
 
 		_setMainConfigurations: function() {

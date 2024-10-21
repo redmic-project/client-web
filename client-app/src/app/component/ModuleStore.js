@@ -4,18 +4,18 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
 	, 'dojo/store/Memory'
+	, 'src/app/component/view/_View'
 	, 'src/component/base/_Module'
 	, 'src/redmicConfig'
-	, 'app/base/views/_View'
 ], function(
 	declare
 	, lang
 	, Deferred
 	, all
 	, Memory
+	, _View
 	, _Module
 	, redmicConfig
-	, _View
 ) {
 
 	return declare(_Module, {

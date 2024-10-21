@@ -1,14 +1,13 @@
 define([
-	"dojo/_base/declare"
+	'dojo/_base/declare'
 ],
 function(
 	declare
-){
+) {
+
 	return declare(null, {
 		//	summary:
-		//		Gestiona los errores de los request
-		//	description:
-		//		Permite gestionar los errores de las peticiones a la API
+		//		Gestiona los errores de los request hacia la API
 
 		_errorAvailable: function(error, status) {
 
@@ -17,6 +16,11 @@ function(
 			} /*else if (status === 500) {
 				this._goTo500();
 			}*/
+		},
+
+		_goTo404: function() {
+
+			globalThis.location.href = '/404';
 		}
 	});
 });

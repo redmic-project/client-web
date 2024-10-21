@@ -33,7 +33,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				title: this.i18n.animals,
+				title: this.i18n.animalCatalogView,
 				ownChannel: 'animalCatalog',
 				target: redmicConfig.services.animal,
 

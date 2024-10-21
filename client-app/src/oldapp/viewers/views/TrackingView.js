@@ -136,7 +136,7 @@ define([
 			this._activityBrowserWithTopbar = new GenericWithTopbarDisplayerImpl({
 				parentChannel: this.getChannel(),
 				content: this.browser,
-				title: this.i18n.activitiesCatalogView
+				title: this.i18n.activityCatalogView
 			});
 
 			this._publish(this._activityBrowserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
@@ -157,7 +157,7 @@ define([
 			var addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
 
 			this._publish(addTabChannel, {
-				title: this.i18n.activitiesCatalogView,
+				title: this.i18n.activityCatalogView,
 				iconClass: 'fa fa-tasks',
 				channel: this._activityBrowserWithTopbar.getChannel()
 			});

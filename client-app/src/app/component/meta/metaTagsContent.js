@@ -20,6 +20,14 @@ define({
 		"title": "{i18n.metaActivityInfoTitle} '{name}'",
 		"description": "{i18n.metaActivityInfoDescription} '{name}'. {activityType.name}. {description}."
 	},
+	"/catalog/animal-catalog": {
+		"title": "{i18n.metaAnimalCatalogTitle}",
+		"description": "{i18n.metaAnimalCatalogDescription}."
+	},
+	"/catalog/animal-info/{id}": {
+		"title": "{i18n.metaAnimalInfoTitle} '{name}'",
+		"description": "{i18n.metaAnimalInfoDescription} '{name}'. {description}."
+	},
 	"/bibliography": {
 		"title": "{i18n.metaBibliographyCatalogTitle}",
 		"description": "{i18n.metaBibliographyCatalogDescription}"

@@ -35,7 +35,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				title: this.i18n.activitiesCatalogView,
+				title: this.i18n.activityCatalogView,
 				ownChannel: 'activitiesCatalog',
 				target: redmicConfig.services.activity,
 

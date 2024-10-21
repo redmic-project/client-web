@@ -13,56 +13,56 @@ define({
 		"description": "{i18n.metaHomeDescription}."
 	},
 	"/catalog/activity-catalog": {
-		"title": "{i18n.metaCatalogActivitiesCatalogTitle}",
-		"description": "{i18n.metaCatalogActivitiesCatalogDescription}."
+		"title": "{i18n.metaActivityCatalogTitle}",
+		"description": "{i18n.metaActivityCatalogDescription}."
 	},
 	"/catalog/activity-info/{id}": {
-		"title": "{i18n.metaCatalogActivityInfoIdTitle} '{name}'",
-		"description": "{i18n.metaCatalogActivityInfoIdDescription} '{name}'. {activityType.name}. {description}."
+		"title": "{i18n.metaActivityInfoTitle} '{name}'",
+		"description": "{i18n.metaActivityInfoDescription} '{name}'. {activityType.name}. {description}."
 	},
 	"/catalog/project-catalog": {
-		"title": "{i18n.metaCatalogProjectCatalogTitle}",
-		"description": "{i18n.metaCatalogProjectCatalogDescription}."
+		"title": "{i18n.metaProjectCatalogTitle}",
+		"description": "{i18n.metaProjectCatalogDescription}."
 	},
 	"/catalog/project-info/{id}": {
-		"title": "{i18n.metaCatalogProjectInfoIdTitle} '{name}'",
-		"description": "{i18n.metaCatalogProjectInfoIdDescription} '{name}'. {projectGroup.name}. {description}."
+		"title": "{i18n.metaProjectInfoTitle} '{name}'",
+		"description": "{i18n.metaProjectInfoDescription} '{name}'. {projectGroup.name}. {description}."
 	},
 	"/catalog/program-catalog": {
-		"title": "{i18n.metaCatalogProgramCatalogTitle}",
-		"description": "{i18n.metaCatalogProgramCatalogDescription}."
+		"title": "{i18n.metaProgramCatalogTitle}",
+		"description": "{i18n.metaProgramCatalogDescription}."
 	},
 	"/catalog/program-info/{id}": {
-		"title": "{i18n.metaCatalogProgramInfoIdTitle} '{name}'",
-		"description": "{i18n.metaCatalogProgramInfoIdDescription} '{name}'. {description}."
+		"title": "{i18n.metaProgramInfoTitle} '{name}'",
+		"description": "{i18n.metaProgramInfoDescription} '{name}'. {description}."
 	},
 	"/catalog/organisation-catalog": {
-		"title": "{i18n.metaCatalogOrganizationCatalogTitle}",
-		"description": "{i18n.metaCatalogOrganizationCatalogDescription}."
+		"title": "{i18n.metaOrganizationCatalogTitle}",
+		"description": "{i18n.metaOrganizationCatalogDescription}."
 	},
 	"/catalog/organisation-info/{id}": {
-		"title": "{i18n.metaCatalogOrganizationInfoIdTitle} '{name}'",
-		"description": "{i18n.metaCatalogOrganizationInfoIdDescription} '{name} ({acronym})'. {organisationType.name}. {description}."
+		"title": "{i18n.metaOrganizationInfoTitle} '{name}'",
+		"description": "{i18n.metaOrganizationInfoDescription} '{name} ({acronym})'. {organisationType.name}. {description}."
 	},
 	"/catalog/platform-catalog": {
-		"title": "{i18n.metaCatalogPlatformCatalogTitle}",
-		"description": "{i18n.metaCatalogPlatformCatalogDescription}."
+		"title": "{i18n.metaPlatformCatalogTitle}",
+		"description": "{i18n.metaPlatformCatalogDescription}."
 	},
 	"/catalog/platform-info/{id}": {
-		"title": "{i18n.metaCatalogPlatformInfoIdTitle} '{name}'",
-		"description": "{i18n.metaCatalogPlatformInfoIdDescription} '{name}'. {platformType.name}. {description}."
+		"title": "{i18n.metaPlatformInfoTitle} '{name}'",
+		"description": "{i18n.metaPlatformInfoDescription} '{name}'. {platformType.name}. {description}."
 	},
 	"/catalog/species-catalog": {
-		"title": "{i18n.metaCatalogSpeciesCatalogTitle}",
-		"description": "{i18n.metaCatalogSpeciesCatalogDescription}."
+		"title": "{i18n.metaSpeciesCatalogTitle}",
+		"description": "{i18n.metaSpeciesCatalogDescription}."
 	},
 	"/catalog/species-info/{id}": {
-		"title": "{i18n.metaCatalogSpeciesInfoIdTitle} '{scientificName} {authorship}'",
-		"description": "{i18n.metaCatalogSpeciesInfoIdDescription} '{scientificName} {authorship}'. {commonName}."
+		"title": "{i18n.metaSpeciesInfoTitle} '{scientificName} {authorship}'",
+		"description": "{i18n.metaSpeciesInfoDescription} '{scientificName} {authorship}'. {commonName}."
 	},
 	"/catalog/raster-catalog": {
-		"title": "{i18n.metaCatalogRasterCatalogTitle}",
-		"description": "{i18n.metaCatalogRasterCatalogDescription}."
+		"title": "{i18n.metaRasterCatalogTitle}",
+		"description": "{i18n.metaRasterCatalogDescription}."
 	},
 	"/viewer/species-distribution": {
 		"title": "{i18n.metaViewerSpeciesDistributionTitle}",
@@ -97,7 +97,7 @@ define({
 		"description": "{i18n.metaOgcServiceCatalogDescription}."
 	},
 	"/service-ogc-catalog/service-ogc-info/{id}": {
-		"title": "{i18n.metaOgcServiceInfoIdTitle} '{title}'",
+		"title": "{i18n.metaOgcServiceInfoTitle} '{title}'",
 		"description": "{i18n.metaOgcServiceInfoDescription} '{title}'. {abstractLayer} [{keywords}]"
 	},
 	"/bibliography": {

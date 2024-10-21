@@ -40,7 +40,6 @@ define([
 			this.config = {
 				atlasTarget: redmicConfig.services.atlasLayer,
 				activityTarget: redmicConfig.services.activity,
-				target: this.atlasTarget,
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				activeTitleParent: true,
 				pathParent: redmicConfig.viewPaths.ogcServiceCatalog,
@@ -52,6 +51,8 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			this.target = this.atlasTarget;
 		},
 
 		_setConfigurations: function() {

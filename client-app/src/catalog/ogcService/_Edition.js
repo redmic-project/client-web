@@ -22,7 +22,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				addPath: this.viewPaths.ogcServiceAdd,
+				addPath: this.viewPaths.ogcServiceEdit,
 				editionLayerEvents: {
 					UPDATE: 'update'
 				},

@@ -72,16 +72,12 @@ define([], function() {
 		'projectDetails': '/catalog/project-info/{id}',
 		'projectAdd': '/admin/project-add/{id}',
 		'projectEdit': '/admin/project-edit/{id}',
-		/*'serviceOGCCatalog': '/products/service-ogc-catalog',
-		'serviceOGCCatalogDetails': '/products/service-ogc-info/{id}',*/
 
 		'realTimeDashboard': '/viewer/real-time-dashboard/{uuid}',
 
-		'serviceOGCCatalog': '/service-ogc-catalog',
-		'serviceOGCCatalogDetails': '/service-ogc-catalog/service-ogc-info/{id}',
-		'serviceOGCEdit': '/maintenance/service-ogc-edit/{id}',
-		'serviceOGCDetails': '/maintenance/service-ogc-info/{id}',
-		'serviceOGC': '/maintenance/service-ogc',
+		'ogcServiceCatalog': '/service-ogc-catalog',
+		'ogcServiceDetails': '/service-ogc-catalog/service-ogc-info/{id}',
+		'ogcServiceEdit': '/maintenance/service-ogc-edit/{id}',
 		'speciesCatalog': '/catalog/species-catalog',
 		'speciesDetails': '/catalog/species-info/{id}',
 		'speciesAdd': '/admin/species-add/{id}',

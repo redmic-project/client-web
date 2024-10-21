@@ -38,7 +38,7 @@ define([
 					href: 'atlas'
 				},{
 					id: 3,
-					name: 'serviceOgc',
+					name: 'ogcService',
 					href: 'service-ogc-catalog'
 				},{
 					id: 4,

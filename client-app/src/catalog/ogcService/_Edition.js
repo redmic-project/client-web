@@ -55,7 +55,7 @@ define([
 					icon: 'fa-edit',
 					btnId: 'edit',
 					title: 'edit',
-					href: this.viewPaths.serviceOGCEdit,
+					href: this.viewPaths.ogcServiceEdit,
 					option: 'default',
 					condition: 'urlSource'
 				},{

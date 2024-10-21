@@ -1,18 +1,18 @@
 define([
-	"app/designs/base/_Main"
+	'app/designs/base/_Main'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
 	, 'src/component/atlas/_AtlasLayersManagement'
-	, "src/component/map/LeafletImpl"
-	, "src/component/map/layer/WmsLayerImpl"
-	, "RWidgets/RedmicUtilities"
-	, "templates/ServiceOGCTitle"
-	, "templates/ServiceOGCInfo"
-	, "templates/ServiceOGCSourceInfo"
-	, "templates/ServiceOGCImage"
-	, "./_DetailsBase"
+	, 'src/component/map/LeafletImpl'
+	, 'src/component/map/layer/WmsLayerImpl'
+	, 'RWidgets/RedmicUtilities'
+	, 'templates/ServiceOGCTitle'
+	, 'templates/ServiceOGCInfo'
+	, 'templates/ServiceOGCSourceInfo'
+	, 'templates/ServiceOGCImage'
+	, 'app/designs/details/main/_DetailsBase'
 ], function(
 	_Main
 	, redmicConfig
@@ -36,21 +36,29 @@ define([
 
 		constructor: function(args) {
 
-			this.atlasTarget = redmicConfig.services.atlasLayer;
-			this.activityTarget = redmicConfig.services.activity;
-			this.target = this.atlasTarget;
-			this.selectionTarget = redmicConfig.services.atlasLayerSelection;
-
-			this.activityLocalTarget = "activitiesLayer";
-			this.infoLayerTarget = 'infoLayerTarget';
-			this.sourceInfoLayerTarget = 'sourceInfoLayerTarget';
 
 			this.config = {
+				atlasTarget: redmicConfig.services.atlasLayer,
+				activityTarget: redmicConfig.services.activity,
+				target: this.atlasTarget,
+				selectionTarget: redmicConfig.services.atlasLayerSelection,
+				activeTitleParent: true,
+				pathParent: redmicConfig.viewPaths.ogcServiceCatalog,
+				activityLocalTarget: 'activitiesLayer',
+				infoLayerTarget: 'infoLayerTarget',
+				sourceInfoLayerTarget: 'sourceInfoLayerTarget',
 				templateTitle: TemplateTitle,
 				templateInfo: TemplateInfo
 			};
 
 			lang.mixin(this, this.config, args);
+		},
+
+		_setConfigurations: function() {
+
+			this.viewPathsWidgets = {
+				activities: '/catalog/{rank}-info/{id}'
+			};
 		},
 
 		_setMainConfigurations: function() {
@@ -74,8 +82,8 @@ define([
 						title: 'sourceInfo',
 						template: TemplateSourceInfo,
 						target: this.sourceInfoLayerTarget,
-						"class": "containerDetails",
-						classEmptyTemplate: "contentListNoData",
+						'class': 'containerDetails',
+						classEmptyTemplate: 'contentListNoData',
 						associatedIds: [this.ownChannel],
 						shownOption: this.shownOptionInfo
 					}
@@ -109,7 +117,7 @@ define([
 					props: {
 						title: 'legend',
 						template: TemplateImage,
-						"class": "imageContainer",
+						'class': 'imageContainer',
 						target: this.atlasTarget,
 						associatedIds: [this.ownChannel]
 					}

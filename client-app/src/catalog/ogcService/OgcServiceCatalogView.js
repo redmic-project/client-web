@@ -32,7 +32,7 @@ define([
 
 			this.config = {
 				title: this.i18n.ogcServiceCatalogView,
-				ownChannel: 'serviceOGCCatalog',
+				ownChannel: 'ogcServiceCatalog',
 				target: redmicConfig.services.atlasLayer
 			};
 
@@ -47,7 +47,7 @@ define([
 						listButton: [{
 							icon: 'fa-info-circle',
 							btnId: 'details',
-							href: this.viewPaths.serviceOGCCatalogDetails,
+							href: this.viewPaths.ogcServiceDetails,
 							condition: 'urlSource',
 							title: 'info'
 						}]

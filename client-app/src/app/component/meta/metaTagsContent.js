@@ -97,8 +97,8 @@ define({
 		"description": "{i18n.metaOgcServiceCatalogDescription}."
 	},
 	"/service-ogc-catalog/service-ogc-info/{id}": {
-		"title": "{i18n.metaServiceOgcCatalogServiceOgcInfoIdTitle} '{title}'",
-		"description": "{i18n.metaServiceOgcCatalogDescription} '{title}'. {abstractLayer} [{keywords}]"
+		"title": "{i18n.metaOgcServiceInfoIdTitle} '{title}'",
+		"description": "{i18n.metaOgcServiceInfoDescription} '{title}'. {abstractLayer} [{keywords}]"
 	},
 	"/bibliography": {
 		"title": "{i18n.metaBibliographyTitle}",

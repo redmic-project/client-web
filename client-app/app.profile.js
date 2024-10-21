@@ -463,15 +463,17 @@ var viewLayers = {
 
 	// catálogos
 	, 'src/catalog/activity/ActivityCatalogView': {}
+	, 'src/catalog/ogcService/OgcServiceCatalogView': {}
 	, 'src/catalog/organisation/OrganisationCatalogView': {}
 	, 'src/catalog/platform/PlatformCatalogView': {}
 	, 'src/catalog/program/ProgramCatalogView': {}
 	, 'src/catalog/project/ProjectCatalogView': {}
-	, 'src/catalog/species/SpeciesCatalogView': {}
 	, 'src/catalog/raster/RasterCatalogView': {}
+	, 'src/catalog/species/SpeciesCatalogView': {}
 
 	// vistas detalle
 	, 'src/detail/activity/ActivityDetailView': {}
+	, 'src/detail/ogcService/OgcServiceDetailView': {}
 	, 'src/detail/organisation/OrganisationDetailView': {}
 	, 'src/detail/platform/PlatformDetailView': {}
 	, 'src/detail/program/ProgramDetailView': {}
@@ -501,7 +503,6 @@ var viewLayers = {
 	, 'app/administrative/taxonomy/views/TaxonomyView': {}
 
 	, 'app/products/views/OpenMapView': {}
-	, 'app/products/views/ServiceOGCCatalogView': {}
 
 	, 'app/user/views/RegisterView': {}
 	, 'app/user/views/ResettingView': {}
@@ -515,7 +516,6 @@ var viewLayers = {
 	, 'app/user/views/UserProfileView': {}
 
 	, 'app/maintenance/views/DomainView': {}
-	, 'app/maintenance/views/ServiceOGCView': {}
 	, 'app/maintenance/views/PermissionsView': {}
 
 	, 'app/viewers/views/SpeciesDistributionView': {}
@@ -526,11 +526,9 @@ var viewLayers = {
 	, 'app/viewers/views/RealTimeView': {}
 	, 'app/viewers/views/RealTimeDashboardView': {}
 
-	, 'app/details/views/ServiceOGCCatalogDetailsView': {}
 	, 'app/details/views/DocumentDetailsView': {}
 	, 'app/details/views/BibliographyDetailsView': {}
 	, 'app/details/views/ContactDetailsView': {}
-	, 'app/details/views/ServiceOGCDetailsView': {}
 	, 'app/details/views/StatisticsDetailsView': {}
 
 	, 'app/edition/views/ActivityEditionView': {}

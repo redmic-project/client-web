@@ -48,9 +48,9 @@ define([
 		_setConfigurations: function() {
 
 			this.editorConfig = this._merge([{
-				title: this.i18n.newServiceOGC,
+				title: this.i18n.newOgcService,
 				editionTitle: {
-					primary: this.i18n.editServiceOGC,
+					primary: this.i18n.editOgcService,
 					secondary: "{title}"
 				},
 				modelTarget: this.editionTarget,

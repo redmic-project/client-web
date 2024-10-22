@@ -545,6 +545,7 @@ define({
 		, "map": "Map"
 		, "seeMap": "See map"
 		, "atlas": "Atlas"
+		, "atlasViewerView": "Atlas"
 		, "activity": "Activity"
 		, "activities": "Activities"
 		, "info": "Information"

@@ -60,11 +60,6 @@ define([
 			this._publish(this.map.getChannel("SHOW"), {
 				node: this.mapNode
 			});
-		},
-
-		_getNodeToShowLoading: function() {
-
-			return this.mapNode;
 		}
 	});
 });

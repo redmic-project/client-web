@@ -1,13 +1,13 @@
 define([
-	"app/designs/mapWithSideContent/Controller"
-	, "app/designs/mapWithSideContent/layout/MapAndContent"
+	'app/designs/mapWithSideContent/Controller'
+	, 'app/designs/mapWithSideContent/layout/MapAndContent'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
 	, 'put-selector'
-	, "src/component/atlas/Atlas"
+	, 'src/component/atlas/Atlas'
 	, 'src/component/layout/TabsDisplayer'
-	, "src/component/mapQuery/QueryOnMap"
+	, 'src/component/mapQuery/QueryOnMap'
 ], function(
 	Controller
 	, Layout
@@ -22,9 +22,10 @@ define([
 
 	return declare([Layout, Controller], {
 		//	summary:
-		//		Proporciona un contenedor para los mapas de Leaflet.
+		//		Vista de visor atlas. Proporciona un mapa principal y un contenido secundario (componente Atlas) para
+		//		trabajar sobre el mapa.
 		//	description:
-		//		Permite trabajar con los mapas y sus capas.
+		//		Permite cargar diferentes capas temáticas al mapa, manipularlas y trabajar con los datos que proveen.
 
 		//	config: Object
 		//		Opciones y asignaciones por defecto.
@@ -34,8 +35,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				title: this.i18n.map,
-				region: "center",
+				title: this.i18n.atlasViewerView,
+				ownChannel: 'atlasViewer',
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				_atlasContainerClass: 'atlasContainer',
 			};
@@ -88,11 +89,6 @@ define([
 			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
 				node: this.contentNode
 			});
-		},
-
-		_getNodeToShowLoading: function() {
-
-			return null;
 		}
 	});
 });

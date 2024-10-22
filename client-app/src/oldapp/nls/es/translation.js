@@ -544,6 +544,7 @@ define({
 	, "seeMap": "Ver mapa"
 	, "map": "Mapa"
 	, "atlas": "Atlas"
+	, "atlasViewerView": "Atlas"
 	, "activity": "Actividad"
 	, "activities": "Actividades"
 	, "info": "Información"

@@ -459,6 +459,7 @@ var viewLayers = {
 	// especiales
 	'src/error/404': {}
 	, 'src/error/NoSupportBrowser': {}
+	, 'src/home/HomeView': {}
 	, 'src/user/ActivateAccount': {}
 
 	// catálogos
@@ -487,9 +488,11 @@ var viewLayers = {
 	// mantenimiento
 	, 'src/maintenance/domain/DomainMaintenanceView': {}
 
-	// -------------------------------------------------------------------------
+	// visores
+	, 'src/viewer/AtlasViewerView': {}
 
-	, 'app/home/views/HomeView': {}
+
+	// -------------------------------------------------------------------------
 
 	, 'app/administrative/views/ContactView': {}
 	, 'app/administrative/views/DeviceView': {}
@@ -503,8 +506,6 @@ var viewLayers = {
 	, 'app/administrative/taxonomy/views/PhylumView': {}
 	, 'app/administrative/taxonomy/views/KingdomView': {}
 	, 'app/administrative/taxonomy/views/TaxonomyView': {}
-
-	, 'app/products/views/OpenMapView': {}
 
 	, 'app/user/views/RegisterView': {}
 	, 'app/user/views/ResettingView': {}

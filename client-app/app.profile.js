@@ -528,7 +528,6 @@ var viewLayers = {
 	, 'app/viewers/views/RealTimeDashboardView': {}
 
 	, 'app/details/views/ContactDetailsView': {}
-	, 'app/details/views/StatisticsDetailsView': {}
 
 	, 'app/edition/views/ActivityEditionView': {}
 	, 'app/edition/views/DeviceEditionView': {}
@@ -548,17 +547,6 @@ var viewLayers = {
 	, 'app/edition/views/MisIdentificationEditionView': {}
 	, 'app/edition/views/LoadDataToActivityEditionView': {}
 	, 'app/edition/views/LoadDataDocumentEditionView': {}
-
-	/*, 'app/dataLoader/citation/views/CitationView': {}
-	, 'app/dataLoader/surveyParameters/views/SurveyStationView': {}
-	, 'app/dataLoader/surveyParameters/views/ObjectCollectionView': {}
-	, 'app/dataLoader/surveyParameters/views/SurveyStationSeriesDataView': {}
-	, 'app/dataLoader/surveyParameters/views/ObjectCollectingSeriesDataView': {}
-	, 'app/dataLoader/tracking/views/TrackingView': {}
-	, 'app/dataLoader/tracking/views/TrackingDataView': {}
-	, 'app/dataLoader/infrastructure/views/InfrastructureView': {}
-	, 'app/dataLoader/infrastructure/views/InfrastructureAttributesView': {}
-	, 'app/dataLoader/areas/views/AreaView': {}*/
 };
 
 var viewLayerDefaultConfig = {

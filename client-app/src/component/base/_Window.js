@@ -76,9 +76,15 @@ define([
 			this.inherited(arguments);
 
 			this._onEvt('ANCESTOR_SHOW', lang.hitch(this, this._onWindowAncestorShown));
+			this._onEvt('LOADED', lang.hitch(this, this._onWindowLoaded));
 		},
 
 		_onWindowAncestorShown: function() {
+
+			this._prepareToResizeModuleWindow();
+		},
+
+		_onWindowLoaded: function() {
 
 			this._prepareToResizeModuleWindow();
 		},
@@ -383,7 +389,6 @@ define([
 		_onWindowValidSize: function() {
 
 			this._emitEvt('LOADED');
-			this._prepareToResizeModuleWindow();
 		},
 
 		_decorateTitleNode: function() {

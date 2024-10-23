@@ -1,14 +1,14 @@
 define([
-	'src/redmicConfig'
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
 	, 'app/designs/details/main/ActivityTrackingMap'
 	, 'app/details/views/ActivityAreaMapBase'
 	, 'app/details/views/ActivityCitationMapBase'
 	, 'app/details/views/ActivityFixedTimeseriesChart'
+	, 'src/detail/activity/widget/ActivityFixedObservationSeriesMap'
 	, 'app/details/views/ActivityFixedTimeseriesMap'
 	, 'app/details/views/ActivityInfrastructureMapBase'
 	, 'app/details/views/ActivityLayerMapBase'
-	, 'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'src/util/Credentials'
 	, 'src/component/base/_Filter'
 	, 'src/component/browser/_ButtonsInRow'
@@ -25,16 +25,16 @@ define([
 	, 'templates/OrganisationSet'
 	, 'templates/PlatformSet'
 ], function(
-	redmicConfig
+	declare
+	, lang
 	, ActivityTrackingMap
 	, ActivityAreaMapBase
 	, ActivityCitationMapBase
 	, ActivityFixedTimeseriesChart
+	, ActivityFixedObservationSeriesMap
 	, ActivityFixedTimeseriesMap
 	, ActivityInfrastructureMapBase
 	, ActivityLayerMapBase
-	, declare
-	, lang
 	, Credentials
 	, _Filter
 	, _ButtonsInRow
@@ -309,6 +309,19 @@ define([
 			};
 		},
 
+		_getActivityFixedObservationSeriesMapConfig: function(config) {
+
+			return {
+				width: 6,
+				height: 6,
+				type: ActivityFixedObservationSeriesMap,
+				props: {
+					title: 'associatedObservationStation',
+					pathVariableId: this._activityData.id
+				}
+			};
+		},
+
 		_getActivityFixedTimeseriesMapConfig: function(config) {
 
 			return {
@@ -322,7 +335,7 @@ define([
 			};
 		},
 
-		_getActivityFixedTimeseriesChartConfig: function(mapKey) {
+		_getActivityFixedTimeseriesChartConfig: function(mapKey, config) {
 
 			return {
 				width: 6,
@@ -336,7 +349,7 @@ define([
 			};
 		},
 
-		_getActivityEmbeddedContentsConfig: function(node, i) {
+		_getActivityEmbeddedContentsConfig: function(node, i, config) {
 
 			return {
 				width: 6,

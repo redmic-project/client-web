@@ -71,7 +71,9 @@ define([
 						}
 					}
 				}
-			}, this.widgetConfigs || {}]);
+			}, this.widgetConfigs || {}], {
+				arrayMergingStrategy: 'concatenate'
+			});
 
 			this.layerConfig = this._merge([{
 				idProperty: 'uuid',

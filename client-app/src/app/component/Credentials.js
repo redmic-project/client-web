@@ -34,7 +34,8 @@ define([
 					ADDED: 'added',
 					ACCEPT_COOKIES: 'acceptCookies',
 					REQUEST_FAILED: 'requestFailed',
-					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities'
+					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities',
+					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
 				},
 				actions: {
 					GET_CREDENTIALS: 'getCredentials',
@@ -48,7 +49,9 @@ define([
 					COOKIES_STATE: 'cookiesState',
 					REQUEST_FAILED: 'requestFailed',
 					HAS_USER_EDITION_CAPABILITIES: 'hasUserEditionCapabilities',
-					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities'
+					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities',
+					GET_USER_GRANTS_FOR_ACTIVITY: 'getUserGrantsForActivity',
+					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
 				},
 
 				target: redmicConfig.services.profile,
@@ -98,6 +101,9 @@ define([
 			},{
 				channel : this.getChannel('HAS_USER_EDITION_CAPABILITIES'),
 				callback: '_subHasUserEditionCapabilities'
+			},{
+				channel : this.getChannel('GET_USER_GRANTS_FOR_ACTIVITY'),
+				callback: '_subGetUserGrantsForActivity'
 			});
 		},
 
@@ -124,6 +130,9 @@ define([
 			},{
 				event: 'USER_HAS_EDITION_CAPABILITIES',
 				channel: this.getChannel('USER_HAS_EDITION_CAPABILITIES')
+			},{
+				event: 'GOT_USER_GRANTS_FOR_ACTIVITY',
+				channel: this.getChannel('GOT_USER_GRANTS_FOR_ACTIVITY')
 			});
 		},
 
@@ -166,6 +175,17 @@ define([
 
 			this._emitEvt('USER_HAS_EDITION_CAPABILITIES', {
 				editionCapabilities: Credentials.userIsEditor()
+			});
+		},
+
+		_subGetUserGrantsForActivity: function(req) {
+			// TODO consultar contra el servidor utilizando id de actividad y usuario
+
+			var activityId = req.activityId,
+				accessGranted = Credentials.userIsEditor();
+
+			this._emitEvt('GOT_USER_GRANTS_FOR_ACTIVITY', {
+				accessGranted: accessGranted
 			});
 		},
 

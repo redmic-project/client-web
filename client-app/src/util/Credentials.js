@@ -121,7 +121,7 @@ define([
 
 			var userRole = this.get('userRole');
 
-			return userRole === 'ROLE_ADMINISTRATOR' || userRole === 'ROLE_OAG';
+			return userRole === 'ROLE_ADMINISTRATOR' || userRole === 'ROLE_MANAGER';
 		}
 	});
 

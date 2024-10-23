@@ -260,6 +260,7 @@ define([], function() {
 
 		'timeSeriesActivities': baseUri + 'timeseries/activities',
 		'activityTimeSeriesStations': baseUri + 'activities/{activityid}/timeseriesstations',
+		'activityObservationSeriesStations': baseUri + 'private/activities/{id}/observationseriesstations',
 		'timeSeriesStations': baseUri + 'surveystations',
 		'surveyStationsTimeSeries': baseUri + 'datadefinitions/{datadefinitionid}/timeseries',
 

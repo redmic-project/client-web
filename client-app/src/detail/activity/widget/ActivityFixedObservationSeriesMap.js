@@ -1,44 +1,36 @@
 define([
-	'app/designs/details/main/ActivityMap'
+	"app/designs/details/main/ActivityMap"
 	, 'src/redmicConfig'
-	, 'dojo/_base/declare'
-	, 'dojo/_base/lang'
-	, 'dojo/aspect'
-	, 'dojo/query'
-	, 'templates/SurveyStationTimeseriesPopup'
-	, 'templates/SurveyStationList'
+	, "dojo/_base/declare"
+	, "dojo/_base/lang"
+	, "dojo/aspect"
+	, "templates/InfrastructurePopup"
+	, "templates/InfrastructureList"
 ], function(
 	ActivityMap
 	, redmicConfig
 	, declare
 	, lang
 	, aspect
-	, query
 	, TemplatePopup
 	, TemplateList
-) {
-
+){
 	return declare(ActivityMap, {
 		//	summary:
 		//
 
-		constructor: function(args) {
+		constructor: function (args) {
 
 			this.config = {
-				actions: {
-					TIMESERIES_DATA: 'timeseriesData'
-				},
-				templateTargetChange: redmicConfig.services.activityTimeSeriesStations,
+				target: redmicConfig.services.activity,
+				templateTargetChange: redmicConfig.services.activityObservationSeriesStations,
 				templatePopup: TemplatePopup,
 				_activeRadius: false,
-				activityCategory: ['ft'],
-				targetReplaceParameter: 'activityid',
-				_showChartsButtonClass: 'showCharts'
 			};
 
 			lang.mixin(this, this.config, args);
 
-			aspect.before(this, '_afterSetConfigurations', lang.hitch(this, this._setBaseConfigurations));
+			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setBaseConfigurations));
 		},
 
 		_setBaseConfigurations: function() {
@@ -52,10 +44,9 @@ define([
 								buttonsConfig: {
 									listButton: [{
 										icon: 'fa-bar-chart',
-										title: this.i18n.charts,
-										btnId: 'showCharts',
-										href: '#activityFixedTimeseriesChart',
-										returnItem: true
+										btnId: 'showObservations',
+										returnItem: true,
+										title: this.i18n.observations
 									}]
 								}
 							}
@@ -75,7 +66,7 @@ define([
 				lang.hitch(this, this._onStationPopupLoaded));
 
 			this._subscribe(this._getWidgetInstance('geographic').getChildChannel('browser', 'BUTTON_EVENT'),
-				lang.hitch(this, this._onBrowserShowChartsButtonEvent));
+				lang.hitch(this, this._onBrowserButtonEvent));
 		},
 
 		_onStationPopupLoaded: function(res) {
@@ -93,7 +84,7 @@ define([
 					return;
 				}
 
-				showChartsNode.onclick = lang.hitch(this, this._loadTimeseriesData, popupData);
+				showChartsNode.onclick = lang.hitch(this, this._loadObservationSeriesData, popupData);
 			}
 		},
 
@@ -105,16 +96,16 @@ define([
 			});
 		},
 
-		_onBrowserShowChartsButtonEvent: function(evt) {
+		_onBrowserButtonEvent: function(evt) {
 
-			if (evt.btnId === 'showCharts') {
-				this._loadTimeseriesData(evt.item);
+			if (evt.btnId === 'showObservations') {
+				this._loadObservationSeriesData(evt.item);
 			}
 		},
 
-		_loadTimeseriesData: function(itemData) {
+		_loadObservationSeriesData: function(item) {
 
-			this._publish(this.getChannel('TIMESERIES_DATA'), itemData);
+			console.log('cargo los datos de observaciones', item);
 		}
 	});
 });

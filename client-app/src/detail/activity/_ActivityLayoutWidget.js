@@ -1,8 +1,12 @@
 define([
 	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'src/detail/_WidgetDefinition'
 ], function(
 	declare
+	, lang
+	, Deferred
 	, _WidgetDefinition
 ) {
 
@@ -11,14 +15,80 @@ define([
 		//		Aplicación de componentes adicionales para la vista detalle de Activity, en función del tipo de layout
 		//		establecido según su identificador. Si no está establecido, se decide según su categoría.
 
+		constructor: function(args) {
+
+			this.config = {
+				mainActions: {
+					GET_USER_GRANTS_FOR_ACTIVITY: 'getUserGrantsForActivity',
+					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
+				}
+			};
+
+			lang.mixin(this, this.config, args);
+		},
+
 		_onDetailLayoutsPropSet: function(evt) {
 
 			var currentElementId = this.pathVariableId,
-				detailLayout = evt.value[currentElementId];
+				activityDetailLayouts = evt.value && evt.value[currentElementId];
 
-			if (detailLayout) {
-				this._prepareDetailLayoutWidgets(detailLayout);
+			if (!activityDetailLayouts || !activityDetailLayouts.length) {
+				return;
 			}
+
+			this._processActivityDetailLayouts(currentElementId, activityDetailLayouts);
+		},
+
+		_processActivityDetailLayouts: function(activityId, layouts) {
+
+			layouts.forEach(lang.hitch(this, function(layout) {
+
+				var layoutType = layout.type,
+					layoutConfig = layout.config || {},
+					layoutCheckGrants = layout.checkGrants || false;
+
+				if (!layoutType) {
+					return;
+				}
+
+				var grantedCallback = lang.hitch(this, this._prepareDetailLayoutWidgets, layoutType, layoutConfig);
+
+				if (layoutCheckGrants) {
+					var notGrantedCallback = lang.hitch(this, this._onLayoutNotGranted),
+						dfd = new Deferred();
+
+					dfd.then(grantedCallback, notGrantedCallback);
+
+					this._checkUserGrantsForActivityData(activityId, dfd);
+				} else {
+					grantedCallback();
+				}
+			}));
+		},
+
+		_checkUserGrantsForActivityData: function(activityId, dfd) {
+
+			var channelToSubscribe = this._buildChannel(this.credentialsChannel, 'GOT_USER_GRANTS_FOR_ACTIVITY');
+
+			this._once(channelToSubscribe, lang.hitch(this, function(grantsDfd, res) {
+
+				if (res.accessGranted) {
+					grantsDfd.resolve();
+				} else {
+					grantsDfd.reject();
+				}
+			}, dfd));
+
+			var channelToPublish = this._buildChannel(this.credentialsChannel, 'GET_USER_GRANTS_FOR_ACTIVITY');
+			this._publish(channelToPublish, {
+				activityId: activityId
+			});
+		},
+
+		_onLayoutNotGranted: function(res) {
+
+			// TODO mostrar al usuario un aviso de que existen datos en la actividad, pero no tiene permiso.
+			// Ofrecerle identificarse.
 		},
 
 		_prepareCustomWidgets: function() {
@@ -33,34 +103,38 @@ define([
 			}
 		},
 
-		_prepareDetailLayoutWidgets: function(detailLayout) {
+		_prepareDetailLayoutWidgets: function(detailLayout, layoutConfig) {
 
 			if (!this._detailLayoutWidgets) {
 				this._detailLayoutWidgets = [];
 			}
 
-			var widgetKey;
+			var prepareWidgetsMethod;
 
 			if (detailLayout === 'citationMap') {
-				widgetKey = this._prepareCitationActivityWidgets();
+				prepareWidgetsMethod = '_prepareCitationActivityWidgets';
 			} else if (detailLayout === 'ogcLayerMap') {
-				widgetKey = this._prepareMapLayerActivityWidgets();
+				prepareWidgetsMethod = '_prepareMapLayerActivityWidgets';
 			} else if (detailLayout === 'trackingMap') {
-				widgetKey = this._prepareTrackingActivityWidgets();
+				prepareWidgetsMethod = '_prepareTrackingActivityWidgets';
 			} else if (detailLayout === 'infrastructureMap') {
-				widgetKey = this._prepareInfrastructureActivityWidgets();
+				prepareWidgetsMethod = '_prepareInfrastructureActivityWidgets';
 			} else if (detailLayout === 'areaMap') {
-				widgetKey = this._prepareAreaActivityWidgets();
+				prepareWidgetsMethod = '_prepareAreaActivityWidgets';
+			} else if (detailLayout === 'featureMap') {
+				prepareWidgetsMethod = '_prepareFixedObservationSeriesActivityWidgets';
 			} else if (detailLayout === 'featureTimeseriesMapChart') {
-				widgetKey = this._prepareFixedTimeseriesActivityWidgets();
+				prepareWidgetsMethod = '_prepareFixedTimeseriesActivityWidgets';
 			} else if (detailLayout === 'embeddedContent') {
-				widgetKey = this._prepareEmbeddedContentsActivityWidgets();
+				prepareWidgetsMethod = '_prepareEmbeddedContentsActivityWidgets';
 			}
 
-			if (!widgetKey) {
+			if (!prepareWidgetsMethod) {
 				console.warn('Tried to get widgets for "%s" detail layout, but none found!', detailLayout);
 				return;
 			}
+
+			var widgetKey = this[prepareWidgetsMethod](layoutConfig);
 
 			if (widgetKey instanceof Array) {
 				this._detailLayoutWidgets = this._detailLayoutWidgets.concat(widgetKey);
@@ -104,72 +178,82 @@ define([
 			}
 		},
 
-		_prepareCitationActivityWidgets: function() {
+		_prepareCitationActivityWidgets: function(layoutConfig) {
 
 			var key = 'activityCitation',
-				config = this._getActivityCitationConfig();
+				config = this._getActivityCitationConfig(layoutConfig);
 
 			this._addWidget(key, config);
 
 			return key;
 		},
 
-		_prepareMapLayerActivityWidgets: function() {
+		_prepareMapLayerActivityWidgets: function(layoutConfig) {
 
 			var key = 'activityMapLayer',
-				config = this._getActivityMapLayerConfig();
+				config = this._getActivityMapLayerConfig(layoutConfig);
 
 			this._addWidget(key, config);
 
 			return key;
 		},
 
-		_prepareTrackingActivityWidgets: function() {
+		_prepareTrackingActivityWidgets: function(layoutConfig) {
 
 			var key = 'activityTracking',
-				config = this._getActivityTrackingConfig();
+				config = this._getActivityTrackingConfig(layoutConfig);
 
 			this._addWidget(key, config);
 
 			return key;
 		},
 
-		_prepareInfrastructureActivityWidgets: function() {
+		_prepareInfrastructureActivityWidgets: function(layoutConfig) {
 
 			var key = 'activityInfrastructure',
-				config = this._getActivityInfrastructureConfig();
+				config = this._getActivityInfrastructureConfig(layoutConfig);
 
 			this._addWidget(key, config);
 
 			return key;
 		},
 
-		_prepareAreaActivityWidgets: function() {
+		_prepareAreaActivityWidgets: function(layoutConfig) {
 
 			var key = 'activityArea',
-				config = this._getActivityAreaConfig();
+				config = this._getActivityAreaConfig(layoutConfig);
 
 			this._addWidget(key, config);
 
 			return key;
 		},
 
-		_prepareFixedTimeseriesActivityWidgets: function() {
+		_prepareFixedObservationSeriesActivityWidgets: function(layoutConfig) {
+
+			var key = 'activityFixedObservationSeriesMap',
+				config = this._getActivityFixedObservationSeriesMapConfig(layoutConfig);
+
+			this._addWidget(key, config);
+
+			return key;
+		},
+
+		_prepareFixedTimeseriesActivityWidgets: function(layoutConfig) {
 
 			var mapKey = 'activityFixedTimeseriesMap',
-				mapConfig = this._getActivityFixedTimeseriesMapConfig();
+				mapConfig = this._getActivityFixedTimeseriesMapConfig(layoutConfig);
 
 			this._addWidget(mapKey, mapConfig);
 
 			var chartKey = 'activityFixedTimeseriesChart',
-				chartConfig = this._getActivityFixedTimeseriesChartConfig(mapKey);
+				chartConfig = this._getActivityFixedTimeseriesChartConfig(mapKey, layoutConfig);
 
 			this._addWidget(chartKey, chartConfig);
 
 			return [mapKey, chartKey];
 		},
 
-		_prepareEmbeddedContentsActivityWidgets: function() {
+		_prepareEmbeddedContentsActivityWidgets: function(layoutConfig) {
 
 			var embeddedContents = this._activityData.embeddedContents,
 				keys = [];
@@ -182,7 +266,7 @@ define([
 				embeddedContentParentNode.innerHTML = embeddedContentValue;
 
 				var key = 'embeddedContent' + i,
-					config = this._getActivityEmbeddedContentsConfig(embeddedContentParentNode.firstChild, i);
+					config = this._getActivityEmbeddedContentsConfig(embeddedContentParentNode.firstChild, i, layoutConfig);
 
 				keys.push(key);
 

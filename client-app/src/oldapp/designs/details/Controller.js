@@ -86,6 +86,8 @@ define([
 				initLayout: false,
 				transitionDuration: 0
 			});
+
+			this._listenCenterNodeScrollShowUp();
 		},
 
 		_doControllerEvtFacade: function() {
@@ -99,6 +101,38 @@ define([
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onControllerMeOrAncestorHidden));
 			this._onEvt('RESIZE', lang.hitch(this, this._onControllerResize));
 			this._onEvt('LAYOUT_COMPLETE', lang.hitch(this, this._onLayoutComplete));
+		},
+
+		_listenCenterNodeScrollShowUp: function() {
+
+			this._detailsResizeObserver = new ResizeObserver(lang.hitch(this, this._onDetailsCenterNodeResize));
+			this._detailsResizeObserver.observe(this.centerNode);
+		},
+
+		_onDetailsCenterNodeResize: function(resizeEntries) {
+
+			for (var resizeEntry of resizeEntries) {
+				if (!resizeEntry.borderBoxSize && !resizeEntry.contentBoxSize) {
+					continue;
+				}
+
+				var borderWidth = resizeEntry.borderBoxSize[0].inlineSize,
+					contentWidth = resizeEntry.contentBoxSize[0].inlineSize;
+
+				if (borderWidth !== contentWidth) {
+					this._scrollPreviouslyDetected = true;
+					break;
+				} else if (this._scrollPreviouslyDetected) {
+					this._scrollPreviouslyDetected = false;
+					this._onCenterNodeScrollShowUp();
+					break;
+				}
+			}
+		},
+
+		_onCenterNodeScrollShowUp: function() {
+
+			this._updateInteractive();
 		},
 
 		_afterControllerShow: function() {

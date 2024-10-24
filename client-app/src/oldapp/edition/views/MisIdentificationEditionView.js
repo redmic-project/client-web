@@ -1,6 +1,6 @@
 define([
-	"app/viewers/views/BibliographyView"
-	, "app/catalog/views/SpeciesCatalogView"
+	"src/catalog/bibliography/BibliographyCatalogView"
+	, "src/catalog/species/SpeciesCatalogView"
 	, "app/components/steps/CitationStep"
 	, "app/components/steps/MainDataStep"
 	, "app/components/steps/DocumentStepFiltered"

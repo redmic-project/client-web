@@ -73,7 +73,7 @@ module.exports = function(grunt) {
 	};
 
 	// TODO desaparecerá cuando todo vaya por src/
-	var getCleanAppFilesCmds = function() {
+	var oldGetCleanAppFilesCmds = function() {
 
 		var fileExtension = '.js',
 			strippedSuffix = 'consoleStripped' + fileExtension,
@@ -87,6 +87,21 @@ module.exports = function(grunt) {
 		for (var j = 0; j < filesToClean.length; j++) {
 			cleanAppFilesCmd += (j === 0 ? '' : ' -o') + ' -name "' + filesToClean[j] + '" -delete';
 		}
+
+		return cleanAppFilesCmd;
+	};
+
+	// TODO desaparecerá cuando todo vaya por src/
+	var getCleanAppFilesCmds = function(fileExceptions) {
+
+		var appDir = path.join(destPath, 'app', '/'),
+			cleanAppFilesCmd = 'find ' + appDir + ' -type f';
+
+		for (var i = 0; i < fileExceptions.length; i++) {
+			cleanAppFilesCmd += ' \! -name "' + fileExceptions[i] + '"';
+		}
+
+		cleanAppFilesCmd += ' -delete';
 
 		return cleanAppFilesCmd;
 	};
@@ -105,6 +120,13 @@ module.exports = function(grunt) {
 		return cleanSrcFilesCmd;
 	};
 
+	getCleanEmptyDirectoriesCmds = function() {
+
+		var cleanEmptyDirsCmd = 'find ' + destPath + ' -type d -empty -delete';
+
+		return cleanEmptyDirsCmd;
+	};
+
 	grunt.config('shell.cleanBuiltApp', {
 		options: {
 			stdout: true
@@ -119,8 +141,9 @@ module.exports = function(grunt) {
 				getCleanDirectoriesCmd(cleanBuiltAppConfig.directoriesToClean),
 				getCleanRecursiveDirectoriesCmd(cleanBuiltAppConfig.recursiveDirectoriesToClean),
 				keepAndRestoreCmds.restoreFilesCmds,
-				getCleanAppFilesCmds(),
-				getCleanSrcFilesCmds(cleanBuiltAppConfig.cleanSrcFileExceptions)
+				getCleanAppFilesCmds(cleanBuiltAppConfig.cleanSrcFileExceptions),
+				getCleanSrcFilesCmds(cleanBuiltAppConfig.cleanSrcFileExceptions),
+				getCleanEmptyDirectoriesCmds()
 			].join('; ');
 		}
 	});

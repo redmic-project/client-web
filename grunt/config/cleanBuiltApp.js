@@ -16,7 +16,8 @@ module.exports = function(grunt) {
 			'leaflet/dist/images/*.png'
 		],
 		cleanSrcFileExceptions: [
-			'App.js', '*View.js', '_Edition.js', '*Form.html', '404.js', 'ActivateAccount.js', 'NoSupportBrowser.js'
+			'App.js', '*[A-Za-z0-9]View.js', '_Edition.js', '*Form.html', '404.js', 'ActivateAccount.js',
+			'NoSupportBrowser.js'
 		]
 	});
 };

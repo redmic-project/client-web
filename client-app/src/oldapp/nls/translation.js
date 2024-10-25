@@ -890,6 +890,7 @@ define({
 
 		, "items": "items"
 
+		, "marine-monitoring": "Marine monitoring"
 		, "real-time": "Realtime data"
 		, "goToDashboard": "Visualize data"
 		, "dashboard": "Dashboard"

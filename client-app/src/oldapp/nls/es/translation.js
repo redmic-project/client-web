@@ -885,6 +885,7 @@ define({
 
 	, "items": "elementos"
 
+	, "marine-monitoring": "Monitorización marina"
 	, "real-time": "Datos en tiempo real"
 	, "goToDashboard": "Visualizar datos"
 	, "dashboard": "Dashboard"

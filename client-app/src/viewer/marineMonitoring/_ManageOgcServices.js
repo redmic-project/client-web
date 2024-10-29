@@ -3,23 +3,24 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/component/atlas/_AtlasLayersManagement'
 	, 'src/redmicConfig'
-	, 'templates/ActivityLayerList'
+	, 'templates/ServiceOGCAtlasList'
 ], function(
 	declare
 	, lang
 	, _AtlasLayersManagement
 	, redmicConfig
-	, ActivityLayerList
+	, ActivityLayersList
 ) {
 
 	return declare(_AtlasLayersManagement, {
 		//	summary:
-		//
+		//		Extensión para el manejo de los datos de servicios OGC vinculados a actividades, permitiendo generar
+		//		capas para el mapa y su control.
 
 		constructor: function(args) {
 
 			this.config = {
-				layerTarget: redmicConfig.services.atlasLayer,
+				target: redmicConfig.services.atlasLayer,
 				templateTargetChange: 'activityLayers',
 				_activityLayers: {}
 			};
@@ -29,10 +30,8 @@ define([
 
 		_setMainConfigurations: function() {
 
-			this.inherited(arguments);
-
 			this.browserConfig = this._merge([{
-				template: ActivityLayerList,
+				template: ActivityLayersList,
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
@@ -45,29 +44,25 @@ define([
 						}]
 					}
 				}
-			}, this.browserConfig || {}]);
+			}, this.browserConfig || {}], {
+				arrayMergingStrategy: 'concatenate'
+			});
+
+			this.inherited(arguments);
+		},
+
+		_defineSubscriptions: function() {
+
+			this.inherited(arguments);
+
+			this.subscriptionsConfig.push({
+				channel : this.browser.getChannel('BUTTON_EVENT'),
+				callback: "_subActivityLayersListButtonEvent"
+			});
 		},
 
 		_refreshModules: function() {
 
-			this._checkPathVariableId();
-
-			this._emitEvt('GET', {
-				target: this.target,
-				requesterId: this.ownChannel,
-				id: this.pathVariableId
-			});
-
-			this.targetChange = lang.replace(this.templateTargetChange, {id: this.pathVariableId});
-
-			if (!this._listeningListButtons) {
-				this._subscribe(this.browser.getChannel('BUTTON_EVENT'), lang.hitch(this,
-					this._subActivityLayersListButtonEvent));
-
-				this._listeningListButtons = true;
-			}
-
-			this.target = this.targetChange;
 			this._emitEvt('REFRESH');
 		},
 
@@ -83,7 +78,7 @@ define([
 		_onToggleShowLayer: function(obj) {
 
 			if (obj.state) {
-				this._addMapLayer(obj.id);
+				this._addMapLayer(obj.id, obj);
 			} else {
 				this._removeMapLayer(obj.id);
 			}
@@ -91,20 +86,21 @@ define([
 
 		_updateToggleShowLayerButton: function(layerId, action) {
 
-			this._publish(this.browser.getChannel('browser', action), {
+			this._publish(this.browser.getChannel(action), {
 				idProperty: layerId,
 				btnId: 'toggleShowLayer'
 			});
 		},
 
-		_addMapLayer: function(layerId) {
+		_addMapLayer: function(layerId, layerItem) {
 
 			this._updateToggleShowLayerButton(layerId, 'CHANGE_ROW_BUTTON_TO_MAIN_CLASS');
 
 			var layerInstance = this._activityLayers[layerId];
 
 			this._publish(this.map.getChannel('ADD_LAYER'), {
-				layer: layerInstance
+				layer: layerInstance,
+				atlasItem: layerItem
 			});
 		},
 
@@ -119,55 +115,31 @@ define([
 			});
 		},
 
-		_itemAvailable: function() {
+		_onActivityLayersData: function(res) {
 
-			var storeChannel = this._buildChannel(this.storeChannel, this.actions.AVAILABLE);
-			this._once(storeChannel, lang.hitch(this, this._onLayerActivitiesData), {
-				predicate: lang.hitch(this, this._chkIsDataFromLayerActivities)
-			});
-
-			this._emitEvt('REQUEST', {
-				target: this.layerTarget,
-				action: '_search',
-				method: 'POST',
-				query: {
-					terms: {
-						activities: [this.pathVariableId]
-					}
-				},
-				requesterId: this.getChannel()
-			});
-		},
-
-		_chkIsDataFromLayerActivities: function(resWrapper) {
-
-			var target = resWrapper.target,
-				query = resWrapper.req.query || {},
-				terms = query.terms || {},
-				activities = terms.activities;
-
-			return target === this.layerTarget && activities && activities.indexOf(this.pathVariableId) !== -1;
-		},
-
-		_onLayerActivitiesData: function(resWrapper) {
-
-			var data = resWrapper.res.data,
-				layers = data.data || [];
+			var layersData = this._getDataToAddToBrowser(res);
 
 			this._emitEvt('INJECT_DATA', {
-				target: this.templateTargetChange,
-				data: layers
+				data: layersData,
+				target: this._activityLayersTarget
 			});
 
 			this._activityLayers = {};
 
-			for (var i = 0; i < layers.length; i++) {
-				var layer = layers[i];
-				this._createLayer(layer);
+			layersData.forEach(lang.hitch(this, this._processActivityLayerItem));
+		},
 
-				if (i === 0) {
-					this._addMapLayer(layer.id);
-				}
+		_getDataToAddToBrowser: function(res) {
+
+			return res.data.data;
+		},
+
+		_processActivityLayerItem: function(element, index) {
+
+			this._createLayer(element);
+
+			if (index === 0) {
+				this._addMapLayer(element.id, element);
 			}
 		},
 

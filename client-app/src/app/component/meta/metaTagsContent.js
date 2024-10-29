@@ -112,6 +112,10 @@ define({
 		"title": "{i18n.metaViewerRealTimeDashboardIdTitle} '{properties.site.name}'",
 		"description": "{i18n.metaViewerRealTimeDashboardIdDescription} '{properties.site.name}'. {properties.site.description}."
 	},
+	"/viewer/marine-monitoring": {
+		"title": "{i18n.metaViewerMarineMonitoringTitle}",
+		"description": "{i18n.metaViewerMarineMonitoringDescription}."
+	},
 	"/atlas": {
 		"title": "{i18n.metaAtlasTitle}",
 		"description": "{i18n.metaAtlasDescription}."

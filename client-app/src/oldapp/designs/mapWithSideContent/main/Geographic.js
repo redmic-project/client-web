@@ -127,7 +127,7 @@ define([
 			this._browserWithTopbar = new GenericWithTopbarDisplayerImpl({
 				parentChannel: this.getChannel(),
 				content: this.browser,
-				title: this.i18n.geographicData
+				title: this.browserConfig.title || this.i18n.geographicData
 			});
 		},
 
@@ -178,7 +178,7 @@ define([
 			this.inherited(arguments);
 
 			this._publish(this._tabsDisplayer.getChannel('ADD_TAB'), {
-				title: this.i18n.geographicData,
+				title: this.browserConfig.title || this.i18n.geographicData,
 				iconClass: 'fa fa-table',
 				channel: this._browserWithTopbar.getChannel()
 			});

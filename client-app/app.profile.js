@@ -489,7 +489,8 @@ var viewLayers = {
 	, 'src/maintenance/domain/DomainMaintenanceView': {}
 
 	// visores
-	, 'src/viewer/AtlasViewerView': {}
+	, 'src/viewer/atlas/AtlasViewerView': {}
+	, 'src/viewer/marineMonitoring/MarineMonitoringViewerView': {}
 
 
 	// -------------------------------------------------------------------------

@@ -108,7 +108,6 @@ define([
 				classByList: '.borderList',
 				browserConfig: {
 					template: serviceOGCList,
-					//noSelectParent: true,
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
@@ -146,7 +145,7 @@ define([
 				target: 'tooltipDetails',
 				'class': 'descriptionTooltip',
 				timeClose: 200
-			}, this.atlasConfig || {}]);
+			}, this.detailsConfig || {}]);
 		},
 
 		_initialize: function() {
@@ -404,7 +403,7 @@ define([
 			var node = res.iconNode,
 				item = res.item;
 
-			item.href = lang.replace(redmicConfig.viewPaths.serviceOGCCatalogDetails, item);
+			item.href = lang.replace(redmicConfig.viewPaths.ogcServiceDetails, item);
 
 			this._emitEvt('INJECT_ITEM', {
 				data: item,

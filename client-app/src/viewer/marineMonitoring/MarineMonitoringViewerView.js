@@ -1,20 +1,30 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'app/designs/mapWithSideContent/main/Geographic'
+	, "app/designs/mapWithSideContent/Controller"
+	, "app/designs/mapWithSideContent/layout/MapAndContent"
 	, 'src/component/base/_ExternalConfig'
+	, "src/component/base/_Store"
+	, "src/component/atlas/Atlas"
+	, 'src/component/layout/TabsDisplayer'
+	, "src/component/mapQuery/QueryOnMap"
 	, 'src/redmicConfig'
 	, 'src/viewer/marineMonitoring/_ManageOgcServices'
 ], function(
 	declare
 	, lang
-	, Geographic
+	, Controller
+	, Layout
 	, _ExternalConfig
+	, _Store
+	, Atlas
+	, TabsDisplayer
+	, QueryOnMap
 	, redmicConfig
 	, _ManageOgcServices
 ) {
 
-	return declare([Geographic, _ManageOgcServices, _ExternalConfig], {
+	return declare([Layout, Controller, _Store, _ManageOgcServices, _ExternalConfig], {
 		//	summary:
 		//		Vista de visor de monitorización marina. Proporciona un mapa principal y una serie de capas temáticas,
 		//		junto con el componente Atlas para cruzar datos.
@@ -26,7 +36,6 @@ define([
 				ownChannel: 'marineMonitoringViewer',
 				target: redmicConfig.services.atlasLayer,
 				_activityLayersTarget: 'activityLayersTarget',
-				notTextSearch: true,
 				externalConfigPropName: 'marineMonitoringViewerActivities'
 			};
 
@@ -53,12 +62,38 @@ define([
 			}, this.atlasConfig || {}]);
 		},
 
+		_initialize: function() {
+
+			this._tabsDisplayer = new TabsDisplayer({
+				parentChannel: this.getChannel()
+			});
+
+			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this._atlas = new Atlas({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB'),
+				localTarget: this._activityLayersTarget
+			});
+
+			this._queryOnMap = new QueryOnMap({
+				parentChannel: this.getChannel(),
+				getMapChannel: getMapChannel,
+				tabsDisplayerChannel: this._tabsDisplayer.getChannel()
+			});
+		},
+
 		postCreate: function() {
 
 			this.inherited(arguments);
 
 			this._emitEvt('GET_EXTERNAL_CONFIG', {
 				propertyName: this.externalConfigPropName
+			});
+
+			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
+				node: this.contentNode
 			});
 		},
 

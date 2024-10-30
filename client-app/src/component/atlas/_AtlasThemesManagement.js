@@ -82,14 +82,12 @@ define([
 
 		_initializeThemesBrowser: function() {
 
-			console.log('inicializo');
 			var ThemesBrowser = declare([Layout, Controller]);
 			this._themesBrowser = new ThemesBrowser(this.themesBrowserConfig);
 		},
 
 		_defineThemesBrowserSubscriptions: function() {
 
-			console.log('suscribo');
 			this.subscriptionsConfig.push({
 				channel: this._themesBrowser.getChildChannel('browser', 'BUTTON_EVENT'),
 				callback: '_subThemesBrowserButtonEvent'

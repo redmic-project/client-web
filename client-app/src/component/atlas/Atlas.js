@@ -1,7 +1,5 @@
 define([
 	'alertify'
-	,'app/designs/list/Controller'
-	, 'app/designs/list/layout/Layout'
 	, 'src/catalog/ogcService/OgcServiceCatalogLite'
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
@@ -12,21 +10,17 @@ define([
 	, 'src/component/base/_Show'
 	, 'src/component/base/_ShowInTooltip'
 	, 'src/component/base/_Store'
-	, 'src/component/browser/_DragAndDrop'
+	, 'src/component/atlas/_AtlasLayersManagement'
+	, 'src/component/atlas/_AtlasLegendManagement'
+	, 'src/component/atlas/_AtlasThemesManagement'
 	, 'src/component/browser/_HierarchicalSelect'
 	, 'src/component/browser/bars/SelectionBox'
-	, 'src/component/browser/bars/Total'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
-	, 'templates/AtlasList'
 	, 'templates/LoadingCustom'
 	, 'templates/ServiceOGCAtlasList'
 	, 'templates/ServiceOGCAtlasDetails'
-	, './_AtlasLayersManagement'
-	, './_AtlasLegendManagement'
 ], function(
 	alertify
-	, Controller
-	, Layout
 	, OgcServiceCatalogLite
 	, redmicConfig
 	, declare
@@ -37,20 +31,20 @@ define([
 	, _Show
 	, _ShowInTooltip
 	, _Store
-	, _DragAndDrop
+	, _AtlasLayersManagement
+	, _AtlasLegendManagement
+	, _AtlasThemesManagement
 	, _HierarchicalSelect
 	, SelectionBox
-	, Total
 	, TemplateDisplayer
-	, ListTemplate
 	, LoadingCustom
 	, serviceOGCList
 	, templateDetails
-	, _AtlasLayersManagement
-	, _AtlasLegendManagement
 ) {
 
-	return declare([_Module, _Show, _Store, _Selection, _AtlasLayersManagement, _AtlasLegendManagement], {
+	return declare([
+		_Module, _Show, _Store, _Selection, _AtlasLayersManagement, _AtlasLegendManagement, _AtlasThemesManagement
+	], {
 		//	summary:
 		//		Módulo de Atlas, con un catálogo de capas para añadir al mapa y un listado de gestión de las añadidas.
 
@@ -69,7 +63,6 @@ define([
 				target: redmicConfig.services.atlasLayer,
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: '.',
-				parentProperty: 'parent',
 
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				_layerIdsById: {}, // correspondencia entre ids de las capas con sus layerIds
@@ -82,37 +75,12 @@ define([
 		_setConfigurations: function() {
 
 			this.themesBrowserConfig = this._merge([{
-				parentChannel: this.getChannel(),
 				title: this.i18n.selectedLayers,
 				target: this.localTarget,
-				classByList: '.borderList',
-				browserExts: [_DragAndDrop],
 				browserConfig: {
-					template: ListTemplate,
-					bars: [{
-						instance: Total
-					}],
-					insertInFront: true,
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
-								icon: 'fa-map-o',
-								btnId: 'legend',
-								title: 'legend',
-								returnItem: true
-							},{
-								icon: 'fa-map-marker',
-								title: 'mapCentering',
-								btnId: 'fitBounds',
-								returnItem: true
-							},{
-								icon: 'fa-toggle-on',
-								altIcon: 'fa-toggle-off',
-								btnId: 'addLayer',
-								title: 'layer',
-								state: true,
-								returnItem: true
-							},{
 								icon: 'fa-trash-o',
 								btnId: 'remove',
 								title: 'remove',
@@ -128,7 +96,9 @@ define([
 						}
 					}
 				}
-			}, this.themesBrowserConfig || {}]);
+			}, this.themesBrowserConfig || {}], {
+				arrayMergingStrategy: 'concatenate'
+			});
 
 			this.catalogConfig = this._merge([{
 				parentChannel: this.getChannel(),
@@ -181,9 +151,6 @@ define([
 
 		_initialize: function() {
 
-			var ThemesBrowser = declare([Layout, Controller]);
-			this.themesBrowser = new ThemesBrowser(this.themesBrowserConfig);
-
 			this.catalogView = new OgcServiceCatalogLite(this.catalogConfig);
 
 			var LayerDetailsTooltip = declare(TemplateDisplayer).extend(_ShowInTooltip);
@@ -199,12 +166,6 @@ define([
 			this.subscriptionsConfig.push({
 				channel : this.getMapChannel('LAYER_REMOVED'),
 				callback: '_subLayerRemoved'
-			},{
-				channel: this.themesBrowser.getChildChannel('browser', 'BUTTON_EVENT'),
-				callback: '_subThemesBrowserButtonEvent'
-			},{
-				channel: this.themesBrowser.getChildChannel('browser', 'DRAG_AND_DROP'),
-				callback: '_subThemesBrowserDragAndDrop'
 			},{
 				channel : this.catalogView.getChildChannel('browser', 'BUTTON_EVENT'),
 				callback: '_subCatalogViewButtonEvent'
@@ -263,7 +224,7 @@ define([
 			this._publish(addTabChannel, {
 				title: this.i18n.selectedLayers,
 				iconClass: 'fa fa-map-o',
-				channel: this.themesBrowser.getChannel()
+				channel: this._themesBrowser.getChannel()
 			});
 		},
 
@@ -314,7 +275,7 @@ define([
 
 		_reportDeselection: function(id) {
 
-			this._publish(this.themesBrowser.getChildChannel('browser', 'REMOVE'), {
+			this._publish(this._themesBrowser.getChildChannel('browser', 'REMOVE'), {
 				ids: [id]
 			});
 
@@ -353,7 +314,7 @@ define([
 
 			this._clearSelectionPending = false;
 
-			this._publish(this.themesBrowser.getChildChannel('browser', 'CLEAR'));
+			this._publish(this._themesBrowser.getChildChannel('browser', 'CLEAR'));
 
 			for (var key in this._layerIdsById) {
 				this._removeLayerInstance(key);
@@ -434,24 +395,6 @@ define([
 			var layerId = res.layerId;
 
 			this._removeLegendOfRemovedLayer(layerId);
-		},
-
-		_subThemesBrowserDragAndDrop: function(response) {
-
-			var item = response.item,
-				total = response.total,
-				indexOld = response.indexOld,
-				indexList = response.indexList;
-
-			if (!item && !total && !indexOld && !indexList) {
-				return;
-			}
-
-			this._publish(this.getMapChannel('REORDER_LAYERS'), {
-				layerId: this._createLayerId(response.item.originalItem),
-				newPosition: response.total - response.indexList,
-				oldPosition: response.total - response.indexOld
-			});
 		},
 
 		_subCatalogViewButtonEvent: function(res) {
@@ -536,58 +479,6 @@ define([
 			this._removeLegendSubsAndPubsForLayer(layerInstance);
 
 			this._publish(layerInstance.getChannel('DISCONNECT'));
-		},
-
-		_subThemesBrowserButtonEvent: function(objReceived) {
-
-			var btnId = objReceived.btnId,
-				item = objReceived.item;
-
-			if (btnId === 'addLayer') {
-				this._onAddLayerBrowserButtonClick(objReceived);
-			} else if (btnId === 'remove') {
-				var parentItem = item.originalItem[this.parentProperty],
-					path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + item.id;
-
-				this._emitEvt('DESELECT', [path]);
-			} else if (btnId === 'legend') {
-				this._showLayerLegend(objReceived);
-			} else if (btnId === 'fitBounds') {
-				this._fitBounds(item);
-			}
-		},
-
-		_fitBounds: function(item) {
-
-			if (!item.originalItem.geometry) {
-				return;
-			}
-
-			var coordinates = item.originalItem.geometry.coordinates[0],
-				southWest = this._getLatLng(coordinates[0]),
-				northEast = this._getLatLng(coordinates[2]);
-
- 			this._publish(this.getMapChannel('FIT_BOUNDS'), {
-				bounds: L.latLngBounds(southWest, northEast)
-			});
-		},
-
-		_getLatLng: function(coord) {
-
-			return [coord[1], coord[0]];
-		},
-
-		_onAddLayerBrowserButtonClick: function(obj) {
-
-			var item = obj.item,
-				state = obj.state,
-				order = obj.total - obj.indexList;
-
-			if (!state) {
-				this._deactivateLayer(item, order);
-			} else {
-				this._activateLayer(item, order);
-			}
 		}
 	});
 });

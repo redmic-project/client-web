@@ -2,6 +2,11 @@ define({
 	root: {
 		"ok": "Agree"
 		, "contents": "Contents"
+		, "providedByAtlas": "Content provided by atlas"
+		, "providedByView": "Content provided by this product"
+		, "toggleLayerVisibility": "Toggle layer visibility"
+		, "showLegend": "Show layer legend"
+		, "navigateToLayerInfo": "Navigate to layer details view"
 		, "userData": "User data"
 		, "cancel": "Cancel"
 		, "nextStep": "Next"

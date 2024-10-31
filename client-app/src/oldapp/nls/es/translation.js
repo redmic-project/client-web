@@ -1,6 +1,11 @@
 define({
 	"ok": "Aceptar"
 	, "contents": "Contenidos"
+	, "providedByAtlas": "Contenido provisto por atlas"
+	, "providedByView": "Contenido provisto por este producto"
+	, "toggleLayerVisibility": "Alternar visibilidad de capa"
+	, "showLegend": "Mostrar leyenda de la capa"
+	, "navigateToLayerInfo": "Navegar a la vista de detalles de la capa"
 	, "userData": "Datos de usuario"
 	, "cancel": "Cancelar"
 	, "nextStep": "Siguiente"

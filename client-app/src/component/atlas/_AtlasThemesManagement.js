@@ -72,12 +72,12 @@ define([
 							listButton: [{
 								icon: 'fa-info-circle',
 								btnId: 'details',
-								title: 'info',
+								title: this.i18n.navigateToLayerInfo,
 								href: redmicConfig.viewPaths.ogcServiceDetails
 							},{
 								icon: 'fa-map-o',
 								btnId: 'legend',
-								title: 'legend',
+								title: 'showLegend',
 								returnItem: true
 							},{
 								icon: 'fa-map-marker',
@@ -88,7 +88,7 @@ define([
 								icon: 'fa-toggle-on',
 								altIcon: 'fa-toggle-off',
 								btnId: 'addLayer',
-								title: 'layer',
+								title: 'toggleLayerVisibility',
 								state: true,
 								returnItem: true
 							}]

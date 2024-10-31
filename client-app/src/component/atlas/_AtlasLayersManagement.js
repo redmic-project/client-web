@@ -19,7 +19,9 @@ define([
 
 			this.config = {
 				layerIdSeparator: '_',
-				themeSeparator: '-'
+				themeSeparator: '-',
+				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
+				defaultLayerItemState: true
 			};
 
 			lang.mixin(this, this.config, args);
@@ -272,6 +274,27 @@ define([
 			};
 		},
 
+		_getLayerItemToInject: function(item) {
+
+			var itemId = this._getAtlasLayerId(item),
+				layerDefinition = this._getAtlasLayerDefinition(),
+				layerConfiguration = this._getAtlasLayerConfiguration(item),
+				layerLabel = layerConfiguration.layerLabel;
+
+			layerConfiguration.mapChannel = this.getMapChannel();
+
+			return {
+				id: itemId,
+				label: layerLabel,
+				state: this.defaultLayerItemState,
+				originalItem: item,
+				layer: {
+					definition: layerDefinition,
+					props: layerConfiguration
+				}
+			};
+		},
+
 		_getAtlasLayerId: function(layerItem) {
 
 			return layerItem && layerItem.id;
@@ -287,6 +310,90 @@ define([
 		_createLayerLabel: function(layerItem) {
 
 			return layerItem.alias || layerItem.title;
+		},
+
+		_removeLayerInstance: function(layerId) {
+
+			this._emitEvt('REMOVE_LAYER', {
+				layer: layerId
+			});
+
+			this._removeSubsAndPubsForLayer(this._layerInstances[layerId]);
+
+			delete this._layerInstances[layerId];
+		},
+
+		_createSubsAndPubsForLayer: function(layerInstance) {
+
+			this._createLegendSubsAndPubsForLayer(layerInstance);
+		},
+
+		_removeSubsAndPubsForLayer: function(layerInstance) {
+
+			this._removeLegendSubsAndPubsForLayer(layerInstance);
+
+			this._publish(layerInstance.getChannel('DISCONNECT'));
+		},
+
+		_getLayerInstance: function(id, layerId, Definition, props) {
+
+			var layerInstance = this._layerInstances[layerId];
+
+			if (layerInstance) {
+				return layerInstance;
+			}
+
+			return this._createLayerInstance(id, layerId, Definition, props);
+		},
+
+		_createLayerInstance: function(_id, layerId, Definition, props) {
+
+			var layerInstance = new Definition(props);
+
+			this._layerInstances[layerId] = layerInstance;
+
+			this._createSubsAndPubsForLayer(layerInstance);
+
+			return layerInstance;
+		},
+
+		_activateLayer: function(/*Object*/ item, order) {
+
+			if (!item || !item.layer) {
+				return;
+			}
+
+			var definition = item.layer.definition,
+				props = item.layer.props,
+				id = item.id,
+				layerId = this._createLayerId(item.originalItem),
+				layer = this._getLayerInstance(id, layerId, definition, props);
+
+			this._emitEvt('ADD_LAYER', {
+				layer: layer,
+				layerId: layerId,
+				layerLabel: item.label,
+				atlasItem: item.originalItem,
+				order: order
+			});
+		},
+
+		_deactivateLayer: function(/*Object*/ item, order) {
+
+			if (!item.layer) {
+				return;
+			}
+
+			var layerId = this._createLayerId(item.originalItem),
+				layer = this._layerInstances[layerId];
+
+			if (layer) {
+				this._emitEvt('REMOVE_LAYER', {
+					layer: layer,
+					order: order,
+					keepInstance: true
+				});
+			}
 		}
 	});
 });

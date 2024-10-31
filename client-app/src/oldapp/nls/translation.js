@@ -1,6 +1,7 @@
 define({
 	root: {
 		"ok": "Agree"
+		, "contents": "Contents"
 		, "userData": "User data"
 		, "cancel": "Cancel"
 		, "nextStep": "Next"

@@ -4,6 +4,7 @@ define([
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/aspect'
 	, 'dojo/Deferred'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Selection'
@@ -25,6 +26,7 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, aspect
 	, Deferred
 	, _Module
 	, _Selection
@@ -64,12 +66,13 @@ define([
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: '.',
 
-				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				_layerIdsById: {}, // correspondencia entre ids de las capas con sus layerIds
 				_lastOrder: 0 // order de la última capa añadida (para saber donde añadir la siguiente)
 			};
 
 			lang.mixin(this, this.config, args);
+
+			aspect.before(this, '_createLayerInstance', lang.hitch(this, this._atlasBeforeCreateLayerInstance));
 		},
 
 		_setConfigurations: function() {
@@ -84,6 +87,7 @@ define([
 								icon: 'fa-trash-o',
 								btnId: 'remove',
 								title: 'remove',
+								condition: function(item) { return !!item.originalItem.atlas; },
 								returnItem: true
 							}]
 						}
@@ -199,7 +203,7 @@ define([
 
 			this.inherited(arguments);
 
-			this._addTabs(this.addTabChannel);
+			this._addTabs();
 		},
 
 		getNodeToShow: function() {
@@ -207,23 +211,17 @@ define([
 			return this._atlasContainer;
 		},
 
-		_addTabs: function(addTabChannel) {
+		_addTabs: function() {
 
-			if (!addTabChannel) {
+			if (!this.addTabChannel) {
 				console.error('Missing channel to add tabs at Atlas module "%s"', this.getChannel());
 				return;
 			}
 
-			this._publish(addTabChannel, {
+			this._publish(this.addTabChannel, {
 				title: this.i18n.layersCatalog,
 				iconClass: 'fr fr-world',
 				channel: this.catalogView.getChannel()
-			});
-
-			this._publish(addTabChannel, {
-				title: this.i18n.selectedLayers,
-				iconClass: 'fa fa-map-o',
-				channel: this._themesBrowser.getChannel()
 			});
 		},
 
@@ -233,6 +231,11 @@ define([
 				this._dfdWhenShownAgain.resolve();
 				this._dfdWhenShownAgain = null;
 			}
+		},
+
+		_atlasBeforeCreateLayerInstance: function(id, layerId) {
+
+			this._layerIdsById[id] = layerId;
 		},
 
 		_select: function(path, total) {
@@ -274,27 +277,13 @@ define([
 
 		_reportDeselection: function(id) {
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'REMOVE'), {
-				ids: [id]
-			});
-
-			this._removeLayerInstance(id);
-
-			this._lastOrder--;
-		},
-
-		_removeLayerInstance: function(id) {
-
 			var layerId = this._layerIdsById[id];
 
-			this._emitEvt('REMOVE_LAYER', {
-				layer: layerId
-			});
+			this._removeLayerInstance(layerId);
 
-			this._removeSubsAndPubsForLayer(this._layerInstances[layerId]);
-
-			delete this._layerInstances[layerId];
 			delete this._layerIdsById[id];
+
+			this._lastOrder--;
 		},
 
 		_clearSelection: function() {
@@ -313,11 +302,11 @@ define([
 
 			this._clearSelectionPending = false;
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'CLEAR'));
-
 			for (var key in this._layerIdsById) {
-				this._removeLayerInstance(key);
+				this._removeLayerInstance(this._layerIdsById[key]);
 			}
+
+			this._layerIdsById = [];
 
 			this._lastOrder = 0;
 		},
@@ -355,22 +344,6 @@ define([
 				return;
 			}
 
-			var layerDefinition = this._getAtlasLayerDefinition(),
-				layerConfiguration = this._getAtlasLayerConfiguration(item),
-				layerLabel = layerConfiguration.layerLabel;
-
-			layerConfiguration.mapChannel = this.getMapChannel();
-
-			var data = {
-				id: itemId,
-				label: layerLabel,
-				originalItem: item,
-				layer: {
-					definition: layerDefinition,
-					props: layerConfiguration
-				}
-			};
-
 			this._emitEvt('TRACK', {
 				type: TRACK.type.event,
 				info: {
@@ -380,13 +353,15 @@ define([
 				}
 			});
 
+			var layerItem = this._getLayerItemToInject(item);
+
 			this._emitEvt('INJECT_ITEM', {
-				data: data,
+				data: layerItem,
 				target: this.localTarget
 			});
 
 			this._lastOrder++;
-			this._activateLayer(data, this._lastOrder);
+			this._activateLayer(layerItem, this._lastOrder);
 		},
 
 		_subLayerRemoved: function(res) {
@@ -413,71 +388,6 @@ define([
 			this._publish(this.templateDisplayerDetails.getChannel('SHOW'), {
 				node: node
 			});
-		},
-
-		_activateLayer: function(/*Object*/ item, order) {
-
-			if (!item || !item.layer) {
-				return;
-			}
-
-			var definition = item.layer.definition,
-				props = item.layer.props,
-				id = item.id,
-				layerId = this._createLayerId(item.originalItem),
-				layer = this._getLayerInstance(id, layerId, definition, props);
-
-			this._emitEvt('ADD_LAYER', {
-				layer: layer,
-				layerId: layerId,
-				layerLabel: item.label,
-				atlasItem: item.originalItem,
-				order: order
-			});
-		},
-
-		_getLayerInstance: function(id, layerId, definition, props) {
-
-			var layer = this._layerInstances[layerId];
-
-			if (!layer) {
-				layer = new definition(props);
-				this._layerInstances[layerId] = layer;
-				this._layerIdsById[id] = layerId;
-				this._createSubsAndPubsForLayer(layer);
-			}
-
-			return layer;
-		},
-
-		_createSubsAndPubsForLayer: function(layerInstance) {
-
-			this._createLegendSubsAndPubsForLayer(layerInstance);
-		},
-
-		_deactivateLayer: function(/*Object*/ item, order) {
-
-			if (!item.layer) {
-				return;
-			}
-
-			var layerId = this._createLayerId(item.originalItem),
-				layer = this._layerInstances[layerId];
-
-			if (layer) {
-				this._emitEvt('REMOVE_LAYER', {
-					layer: layer,
-					order: order,
-					keepInstance: true
-				});
-			}
-		},
-
-		_removeSubsAndPubsForLayer: function(layerInstance) {
-
-			this._removeLegendSubsAndPubsForLayer(layerInstance);
-
-			this._publish(layerInstance.getChannel('DISCONNECT'));
 		}
 	});
 });

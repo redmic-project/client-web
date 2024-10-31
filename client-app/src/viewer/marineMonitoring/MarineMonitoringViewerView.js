@@ -1,15 +1,16 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, "app/designs/mapWithSideContent/Controller"
-	, "app/designs/mapWithSideContent/layout/MapAndContent"
+	, 'app/designs/mapWithSideContent/Controller'
+	, 'app/designs/mapWithSideContent/layout/MapAndContent'
 	, 'src/component/base/_ExternalConfig'
-	, "src/component/base/_Store"
-	, "src/component/atlas/Atlas"
+	, 'src/component/base/_Store'
+	, 'src/component/atlas/Atlas'
 	, 'src/component/layout/TabsDisplayer'
-	, "src/component/mapQuery/QueryOnMap"
+	, 'src/component/mapQuery/QueryOnMap'
 	, 'src/redmicConfig'
 	, 'src/viewer/marineMonitoring/_ManageOgcServices'
+	, 'templates/AtlasMixedList'
 ], function(
 	declare
 	, lang
@@ -22,6 +23,7 @@ define([
 	, QueryOnMap
 	, redmicConfig
 	, _ManageOgcServices
+	, AtlasMixedListTemplate
 ) {
 
 	return declare([Layout, Controller, _Store, _ManageOgcServices, _ExternalConfig], {
@@ -34,7 +36,7 @@ define([
 			this.config = {
 				title: this.i18n.marineMonitoringViewerView,
 				ownChannel: 'marineMonitoringViewer',
-				target: redmicConfig.services.atlasLayer,
+				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				_activityLayersTarget: 'activityLayersTarget',
 				externalConfigPropName: 'marineMonitoringViewerActivities'
 			};
@@ -49,17 +51,21 @@ define([
 
 		_setConfigurations: function() {
 
-			this.browserConfig = this._merge([{
-				title: this.i18n.marineMonitoringLayers,
-				target: this._activityLayersTarget
-			}, this.browserConfig || {}], {
-				arrayMergingStrategy: 'concatenate'
-			});
-
 			this.atlasConfig = this._merge([{
 				parentChannel: this.getChannel(),
-				terms: this.terms
+				localTarget: this._activityLayersTarget,
+				addThemesBrowserFirst: true,
+				themesBrowserConfig: {
+					title: this.i18n.contents,
+					browserConfig: {
+						template: AtlasMixedListTemplate
+					}
+				}
 			}, this.atlasConfig || {}]);
+
+			this.queryOnMapConfig = this._merge([{
+				parentChannel: this.getChannel()
+			}, this.queryOnMapConfig || {}]);
 		},
 
 		_initialize: function() {
@@ -68,20 +74,31 @@ define([
 				parentChannel: this.getChannel()
 			});
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+			this.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
+			this.getMapChannel = lang.hitch(this.map, this.map.getChannel);
 
-			this._atlas = new Atlas({
-				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
-				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB'),
-				localTarget: this._activityLayersTarget
-			});
+			this._initializeAtlas();
+			this._initializeQueryOnMap();
+		},
 
-			this._queryOnMap = new QueryOnMap({
-				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
+		_initializeAtlas: function() {
+
+			this.atlasConfig = this._merge([{
+				getMapChannel: this.getMapChannel,
+				addTabChannel: this.addTabChannel
+			}, this.atlasConfig || {}]);
+
+			this._atlas = new Atlas(this.atlasConfig);
+		},
+
+		_initializeQueryOnMap: function() {
+
+			this.queryOnMapConfig = this._merge([{
+				getMapChannel: this.getMapChannel,
 				tabsDisplayerChannel: this._tabsDisplayer.getChannel()
-			});
+			}, this.queryOnMapConfig || {}]);
+
+			this._queryOnMap = new QueryOnMap(this.queryOnMapConfig);
 		},
 
 		postCreate: function() {

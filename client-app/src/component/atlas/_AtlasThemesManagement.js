@@ -6,6 +6,7 @@ define([
 	, 'app/designs/list/layout/Layout'
 	, 'src/component/browser/_DragAndDrop'
 	, 'src/component/browser/bars/Total'
+	, 'src/redmicConfig'
 	, 'templates/AtlasList'
 ], function(
 	declare
@@ -15,6 +16,7 @@ define([
 	, Layout
 	, _DragAndDrop
 	, Total
+	, redmicConfig
 	, ListTemplate
 ) {
 
@@ -26,21 +28,34 @@ define([
 
 			this.config = {
 				pathSeparator: '.',
-				parentProperty: 'parent'
+				parentProperty: 'parent',
+				addThemesBrowserFirst: false,
+				omitThemesBrowser: false
 			};
 
 			lang.mixin(this, this.config, args);
 
+			if (this.omitThemesBrowser) {
+				return;
+			}
+
+			this._prepareThemesBrowserCallbacks();
+		},
+
+		_prepareThemesBrowserCallbacks: function() {
+
+			aspect.before(this, '_afterSetConfigurations', lang.hitch(this, this._themesBrowserAfterSetConfigurations));
 			aspect.before(this, '_initialize', lang.hitch(this, this._initializeThemesBrowser));
 			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineThemesBrowserSubscriptions));
+
+			var aspectMethod = this.addThemesBrowserFirst ? 'before' : 'after';
+			aspect[aspectMethod](this, '_addTabs', lang.hitch(this, this._addThemesBrowserTabs));
+
+			aspect.before(this, '_reportDeselection', lang.hitch(this, this._themesBrowserReportDeselection));
+			aspect.before(this, '_reportClearSelection', lang.hitch(this, this._themesBrowserReportClearSelection));
 		},
 
-		_afterSetConfigurations: function() {
-
-			this._setThemesBrowserConfiguration();
-		},
-
-		_setThemesBrowserConfiguration: function() {
+		_themesBrowserAfterSetConfigurations: function() {
 
 			this.themesBrowserConfig = this._merge([{
 				parentChannel: this.getChannel(),
@@ -55,6 +70,11 @@ define([
 					rowConfig: {
 						buttonsConfig: {
 							listButton: [{
+								icon: 'fa-info-circle',
+								btnId: 'details',
+								title: 'info',
+								href: redmicConfig.viewPaths.ogcServiceDetails
+							},{
 								icon: 'fa-map-o',
 								btnId: 'legend',
 								title: 'legend',
@@ -94,6 +114,20 @@ define([
 			},{
 				channel: this._themesBrowser.getChildChannel('browser', 'DRAG_AND_DROP'),
 				callback: '_subThemesBrowserDragAndDrop'
+			});
+		},
+
+		_addThemesBrowserTabs: function() {
+
+			if (!this.addTabChannel) {
+				console.error('Missing channel to add themes tab at module "%s"', this.getChannel());
+				return;
+			}
+
+			this._publish(this.addTabChannel, {
+				title: this.i18n.selectedLayers,
+				iconClass: 'fa fa-map-o',
+				channel: this._themesBrowser.getChannel()
 			});
 		},
 
@@ -180,6 +214,18 @@ define([
 		_getLatLng: function(coord) {
 
 			return [coord[1], coord[0]];
+		},
+
+		_themesBrowserReportDeselection: function(id) {
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'REMOVE'), {
+				ids: [id]
+			});
+		},
+
+		_themesBrowserReportClearSelection: function() {
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'CLEAR'));
 		}
 	});
 });

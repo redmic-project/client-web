@@ -18,7 +18,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				target: redmicConfig.services.atlasLayer
+				target: redmicConfig.services.atlasLayer,
+				defaultLayerItemState: false
 			};
 
 			lang.mixin(this, this.config, args);
@@ -38,25 +39,7 @@ define([
 
 			var items = res.data.data;
 
-			return items.map(lang.hitch(this, function(item) {
-
-				var itemId = this._getAtlasLayerId(item),
-					layerDefinition = this._getAtlasLayerDefinition(),
-					layerConfiguration = this._getAtlasLayerConfiguration(item),
-					layerLabel = layerConfiguration.layerLabel;
-
-				layerConfiguration.mapChannel = this.map.getChannel();
-
-				return {
-					id: itemId,
-					label: layerLabel,
-					originalItem: item,
-					layer: {
-						definition: layerDefinition,
-						props: layerConfiguration
-					}
-				};
-			}));
+			return items.map(lang.hitch(this, this._getLayerItemToInject));
 		}
 	});
 });

@@ -141,7 +141,8 @@ module.exports = function(grunt) {
 				getCleanDirectoriesCmd(cleanBuiltAppConfig.directoriesToClean),
 				getCleanRecursiveDirectoriesCmd(cleanBuiltAppConfig.recursiveDirectoriesToClean),
 				keepAndRestoreCmds.restoreFilesCmds,
-				getCleanAppFilesCmds(cleanBuiltAppConfig.cleanSrcFileExceptions),
+				oldGetCleanAppFilesCmds(),
+				//getCleanAppFilesCmds(cleanBuiltAppConfig.cleanSrcFileExceptions),
 				getCleanSrcFilesCmds(cleanBuiltAppConfig.cleanSrcFileExceptions),
 				getCleanEmptyDirectoriesCmds()
 			].join('; ');

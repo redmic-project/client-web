@@ -365,7 +365,7 @@ define([
 				pathsToDeclare = [ViewDefinition];
 
 			// Si existe y fue posible obtener la extensión de edición para la vista, se añade
-			if (EditionDefinition && EditionDefinition !== 'not-a-module') {
+			if (EditionDefinition && EditionDefinition !== 'not-a-module' && typeof EditionDefinition !== 'number') {
 				pathsToDeclare.push(EditionDefinition);
 			}
 			pathsToDeclare.push(viewBaseDefinition);

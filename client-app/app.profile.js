@@ -442,15 +442,66 @@ var profileObj = {
 				, 'dojo/window'
 			]
 		},
-		'src/component/base/_Module': {
-			discard: true,
-			dependencies: [
-				'src/component/base/_Show'
-			]
-		},
 		'src/app/App': {
-			includeLocales: includeLocales,
-			layerDependencies: ['src/component/base/_Module']
+			includeLocales: includeLocales
+		},
+
+		// edición desde catálogos
+		'src/catalog/activity/_Edition': {
+			discard: true
+		},
+		'src/catalog/animal/_Edition': {
+			discard: true
+		},
+		'src/catalog/bibliography/_Edition': {
+			discard: true
+		},
+		'src/catalog/ogcService/_Edition': {
+			discard: true
+		},
+		'src/catalog/organisation/_Edition': {
+			discard: true
+		},
+		'src/catalog/platform/_Edition': {
+			discard: true
+		},
+		'src/catalog/program/_Edition': {
+			discard: true
+		},
+		'src/catalog/project/_Edition': {
+			discard: true
+		},
+		'src/catalog/species/_Edition': {
+			discard: true
+		},
+
+		// edición desde vistas detalle
+		'src/detail/activity/_Edition': {
+			discard: true
+		},
+		'src/detail/animal/_Edition': {
+			discard: true
+		},
+		'src/detail/bibliography/_Edition': {
+			discard: true
+		},
+		'src/detail/ogcService/_Edition': {
+			discard: true
+		},
+		'src/detail/organisation/_Edition': {
+			discard: true
+		},
+		'src/detail/platform/_Edition': {
+			discard: true
+		},
+		'src/detail/program/_Edition': {
+			discard: true
+		},
+		'src/detail/project/_Edition': {
+			discard: true
+		},
+		'src/detail/species/_Edition': {
+			discard: true
 		}
 	}
 };
@@ -463,27 +514,63 @@ var viewLayers = {
 	, 'src/user/ActivateAccount': {}
 
 	// catálogos
-	, 'src/catalog/activity/ActivityCatalogView': {}
-	, 'src/catalog/animal/AnimalCatalogView': {}
-	, 'src/catalog/bibliography/BibliographyCatalogView': {}
-	, 'src/catalog/ogcService/OgcServiceCatalogView': {}
-	, 'src/catalog/organisation/OrganisationCatalogView': {}
-	, 'src/catalog/platform/PlatformCatalogView': {}
-	, 'src/catalog/program/ProgramCatalogView': {}
-	, 'src/catalog/project/ProjectCatalogView': {}
+	, 'src/catalog/activity/ActivityCatalogView': {
+		layerDependencies: ['src/catalog/activity/_Edition']
+	}
+	, 'src/catalog/animal/AnimalCatalogView': {
+		layerDependencies: ['src/catalog/animal/_Edition']
+	}
+	, 'src/catalog/bibliography/BibliographyCatalogView': {
+		layerDependencies: ['src/catalog/bibliography/_Edition']
+	}
+	, 'src/catalog/ogcService/OgcServiceCatalogView': {
+		layerDependencies: ['src/catalog/ogcService/_Edition']
+	}
+	, 'src/catalog/organisation/OrganisationCatalogView': {
+		layerDependencies: ['src/catalog/organisation/_Edition']
+	}
+	, 'src/catalog/platform/PlatformCatalogView': {
+		layerDependencies: ['src/catalog/platform/_Edition']
+	}
+	, 'src/catalog/program/ProgramCatalogView': {
+		layerDependencies: ['src/catalog/program/_Edition']
+	}
+	, 'src/catalog/project/ProjectCatalogView': {
+		layerDependencies: ['src/catalog/project/_Edition']
+	}
 	, 'src/catalog/raster/RasterCatalogView': {}
-	, 'src/catalog/species/SpeciesCatalogView': {}
+	, 'src/catalog/species/SpeciesCatalogView': {
+		layerDependencies: ['src/catalog/species/_Edition']
+	}
 
 	// vistas detalle
-	, 'src/detail/activity/ActivityDetailView': {}
-	, 'src/detail/animal/AnimalDetailView': {}
-	, 'src/detail/bibliography/BibliographyDetailView': {}
-	, 'src/detail/ogcService/OgcServiceDetailView': {}
-	, 'src/detail/organisation/OrganisationDetailView': {}
-	, 'src/detail/platform/PlatformDetailView': {}
-	, 'src/detail/program/ProgramDetailView': {}
-	, 'src/detail/project/ProjectDetailView': {}
-	, 'src/detail/species/SpeciesDetailView': {}
+	, 'src/detail/activity/ActivityDetailView': {
+		layerDependencies: ['src/detail/activity/_Edition']
+	}
+	, 'src/detail/animal/AnimalDetailView': {
+		layerDependencies: ['src/detail/animal/_Edition']
+	}
+	, 'src/detail/bibliography/BibliographyDetailView': {
+		layerDependencies: ['src/detail/bibliography/_Edition']
+	}
+	, 'src/detail/ogcService/OgcServiceDetailView': {
+		layerDependencies: ['src/detail/ogcService/_Edition']
+	}
+	, 'src/detail/organisation/OrganisationDetailView': {
+		layerDependencies: ['src/detail/organisation/_Edition']
+	}
+	, 'src/detail/platform/PlatformDetailView': {
+		layerDependencies: ['src/detail/platform/_Edition']
+	}
+	, 'src/detail/program/ProgramDetailView': {
+		layerDependencies: ['src/detail/program/_Edition']
+	}
+	, 'src/detail/project/ProjectDetailView': {
+		layerDependencies: ['src/detail/project/_Edition']
+	}
+	, 'src/detail/species/SpeciesDetailView': {
+		layerDependencies: ['src/detail/species/_Edition']
+	}
 
 	// mantenimiento
 	, 'src/maintenance/domain/DomainMaintenanceView': {}
@@ -552,8 +639,7 @@ var viewLayers = {
 };
 
 var viewLayerDefaultConfig = {
-	includeLocales: includeLocales,
-	layerDependencies: ['src/component/base/_Module']
+	includeLocales: includeLocales
 };
 
 var profile = (function() {

@@ -1,8 +1,10 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'put-selector'
 	, 'app/designs/mapWithSideContent/Controller'
-	, 'app/designs/mapWithSideContent/layout/MapAndContent'
+	, 'app/designs/mapWithSideContent/layout/MapAndContentAndTopbar'
 	, 'src/component/base/_ExternalConfig'
 	, 'src/component/base/_Store'
 	, 'src/component/atlas/Atlas'
@@ -14,6 +16,8 @@ define([
 ], function(
 	declare
 	, lang
+	, Deferred
+	, put
 	, Controller
 	, Layout
 	, _ExternalConfig
@@ -38,7 +42,8 @@ define([
 				ownChannel: 'marineMonitoringViewer',
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				_activityLayersTarget: 'activityLayersTarget',
-				externalConfigPropName: 'marineMonitoringViewerActivities'
+				externalConfigPropName: 'marineMonitoringViewerActivities',
+				_topbarNodeClassName: 'timeDimensionTopbarContainer'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -50,6 +55,10 @@ define([
 		},
 
 		_setConfigurations: function() {
+
+			this.mapConfig = this._merge([{
+				getTimeDimensionExternalContainer: lang.hitch(this, this._getExternalContainer)
+			}, this.mapConfig || {}]);
 
 			this.atlasConfig = this._merge([{
 				parentChannel: this.getChannel(),
@@ -105,6 +114,10 @@ define([
 
 			this.inherited(arguments);
 
+			put(this.topbarNode, '.' + this._topbarNodeClassName);
+			this._externalContainerDfd = new Deferred();
+			this._externalContainerDfd.resolve(this.topbarNode);
+
 			this._emitEvt('GET_EXTERNAL_CONFIG', {
 				propertyName: this.externalConfigPropName
 			});
@@ -112,6 +125,11 @@ define([
 			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
 				node: this.contentNode
 			});
+		},
+
+		_getExternalContainer: function() {
+
+			return this._externalContainerDfd;
 		},
 
 		_onGotExternalConfig: function(evt) {

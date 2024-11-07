@@ -4,6 +4,7 @@ define([
 	, 'dojo/aspect'
 	, 'leaflet'
 	, 'moment'
+	, 'put-selector'
 
 	, 'leaflet-nontiledlayer'
 	, 'iso8601-js-period'
@@ -14,6 +15,7 @@ define([
 	, aspect
 	, L
 	, moment
+	, put
 ) {
 
 	return declare(null, {
@@ -23,7 +25,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				_layersWithTimeDimension: {}
+				_layersWithTimeDimension: {},
+				getTimeDimensionExternalContainer: null
 			};
 
 			lang.mixin(this, this.config, args);
@@ -152,6 +155,34 @@ define([
 				maxSpeed: 1,
 				speedStep: 0.1
 			}).addTo(this.map);
+
+			if (this.getTimeDimensionExternalContainer) {
+				this._manageTimeDimensionControlLocation();
+			}
+		},
+
+		_manageTimeDimensionControlLocation: function() {
+
+			var externalContainer = this.getTimeDimensionExternalContainer();
+
+			if (!externalContainer) {
+				return;
+			}
+
+			if (externalContainer.then) {
+				externalContainer.then(lang.hitch(this, this._relocateTimeDimensionControl));
+			} else {
+				this._relocateTimeDimensionControl(externalContainer);
+			}
+		},
+
+		_relocateTimeDimensionControl: function(externalContainer) {
+
+			if (!externalContainer) {
+				return;
+			}
+
+			put(externalContainer, this._timeDimensionControlInstance._container);
 		},
 
 		_removeTimeDimensionWidget: function() {

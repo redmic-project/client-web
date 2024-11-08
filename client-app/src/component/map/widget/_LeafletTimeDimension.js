@@ -25,8 +25,22 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				_layersWithTimeDimension: {},
-				getTimeDimensionExternalContainer: null
+				timeDimensionPeriod: 'P1D',
+				timeDimensionCurrentTime: moment().startOf('day').subtract(1, 'days').toDate(),
+				timeDimensionControlPosition: 'bottomleft',
+				timeDimensionMinSpeed: 0.1,
+				timeDimensionMaxSpeed: 1,
+				timeDimensionSpeedStep: 0.1,
+				timeDimensionTransitionTime: 2000,
+				timeDimensionBuffer: 3,
+				timeDimensionMinBufferReady: 1,
+
+				timeDimensionMinTime: null,
+				timeDimensionMaxTime: moment().startOf('day').toDate(),
+
+				getTimeDimensionExternalContainer: null,
+
+				_layersWithTimeDimension: {}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -83,10 +97,26 @@ define([
 
 		_updateTimeDimensionWidget: function() {
 
-			var timeLimitsObj = this._getCurrentLayersTimeLimits(),
-				times = L.TimeDimension.Util.explodeTimeRange(timeLimitsObj.startTime, timeLimitsObj.endTime, 'P1D');
+			var timeLimitsObj = this._getCurrentLayersTimeLimits();
+
+			if (this.timeDimensionMinTime) {
+				timeLimitsObj.startMoment = moment(this.timeDimensionMinTime);
+				timeLimitsObj.startTime = timeLimitsObj.startMoment.toDate();
+			}
+
+			if (this.timeDimensionMaxTime) {
+				timeLimitsObj.endMoment = moment(this.timeDimensionMaxTime);
+				timeLimitsObj.endTime = timeLimitsObj.endMoment.toDate();
+			}
+
+			var times = L.TimeDimension.Util.explodeTimeRange(timeLimitsObj.startTime, timeLimitsObj.endTime,
+				this.timeDimensionPeriod);
 
 			this._timeDimensionInstance.setAvailableTimes(times, 'replace');
+
+			if (this.timeDimensionCurrentTime) {
+				this._timeDimensionInstance.setCurrentTime(this.timeDimensionCurrentTime);
+			}
 
 			this._setValidTimePosition(timeLimitsObj);
 		},
@@ -136,24 +166,24 @@ define([
 		_addTimeDimensionWidget: function() {
 
 			this._timeDimensionInstance = new L.TimeDimension({
-				period: 'P1D'
+				period: this.timeDimensionPeriod
 			});
 
 			this._timeDimensionControlInstance = new L.Control.TimeDimension({
 				timeDimension: this._timeDimensionInstance,
 				playerOptions: {
-					transitionTime: 2000,
-					buffer: 5,
-					minBufferReady: 2,
+					transitionTime: this.timeDimensionTransitionTime,
+					buffer: this.timeDimensionBuffer,
+					minBufferReady: this.timeDimensionMinBufferReady,
 					loop: true,
 					startOver: true
 				},
-				position: 'bottomleft',
+				position: this.timeDimensionControlPosition,
 				limitSliders: true,
 				autoPlay: false,
-				minSpeed: 0.1,
-				maxSpeed: 1,
-				speedStep: 0.1
+				minSpeed: this.timeDimensionMinSpeed,
+				maxSpeed: this.timeDimensionMaxSpeed,
+				speedStep: this.timeDimensionSpeedStep
 			}).addTo(this.map);
 
 			if (this.getTimeDimensionExternalContainer) {
@@ -216,7 +246,7 @@ define([
 
 			var layerStartTime = moment(timeDefinition.startDate).toDate(),
 				layerEndTime = moment(timeDefinition.endDate).toDate(),
-				layerPeriod = timeDefinition.period || 'P1D',
+				layerPeriod = timeDefinition.period || this.timeDimensionPeriod,
 				timesArray = L.TimeDimension.Util.explodeTimeRange(layerStartTime, layerEndTime, layerPeriod);
 
 			layerInstance.setAvailableTimes(timesArray);

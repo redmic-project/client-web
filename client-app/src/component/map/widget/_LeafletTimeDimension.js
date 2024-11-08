@@ -114,10 +114,6 @@ define([
 
 			this._timeDimensionInstance.setAvailableTimes(times, 'replace');
 
-			if (this.timeDimensionCurrentTime) {
-				this._timeDimensionInstance.setCurrentTime(this.timeDimensionCurrentTime);
-			}
-
 			this._setValidTimePosition(timeLimitsObj);
 		},
 
@@ -151,7 +147,7 @@ define([
 
 			var currStartMoment = timeLimitsObj.startMoment,
 				currEndMoment = timeLimitsObj.endMoment,
-				currTime = this._timeDimensionInstance.getCurrentTime(),
+				currTime = this.timeDimensionCurrentTime || this._getCurrentlySelectedTime(),
 				validTimePosition = currTime;
 
 			if (currStartMoment.isAfter(currTime)) {
@@ -161,6 +157,11 @@ define([
 			}
 
 			this._timeDimensionInstance.setCurrentTime(validTimePosition);
+		},
+
+		_getCurrentlySelectedTime: function() {
+
+			return this._timeDimensionInstance && this._timeDimensionInstance.getCurrentTime();
 		},
 
 		_addTimeDimensionWidget: function() {
@@ -250,6 +251,15 @@ define([
 				timesArray = L.TimeDimension.Util.explodeTimeRange(layerStartTime, layerEndTime, layerPeriod);
 
 			layerInstance.setAvailableTimes(timesArray);
+		},
+
+		_getMapClickEventValue: function(evt) {
+
+			var inheritedValue = this.inherited(arguments) || {};
+
+			return this._merge([inheritedValue, {
+				time: this._getCurrentlySelectedTime()
+			}]);
 		}
 	});
 });

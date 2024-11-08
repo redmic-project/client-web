@@ -122,14 +122,21 @@ define([
 
 		_onMapClick: function(evt) {
 
-			this._emitEvt('CLICK', {
+			this._emitEvt('CLICK', this._getMapClickEventValue(evt));
+		},
+
+		_getMapClickEventValue: function(evt) {
+
+			var inheritedValue = this.inherited(arguments) || {};
+
+			return this._merge([inheritedValue, {
 				latLng: evt.latlng,
 				zoom: this.getZoom(),
 				bbox: this.getBounds(),
 				size: this.map.getSize(),
 				containerPoint: evt.containerPoint,
 				layerPoint: evt.layerPoint
-			});
+			}]);
 		},
 
 		_setOwnCallbacksForEvents: function() {

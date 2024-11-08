@@ -26,7 +26,7 @@ define([
 
 			this.config = {
 				timeDimensionPeriod: 'P1D',
-				timeDimensionCurrentTime: moment().startOf('day').subtract(1, 'days').toDate(),
+				timeDimensionCurrentTime: moment().utc().startOf('day').subtract(1, 'days'),
 				timeDimensionControlPosition: 'bottomleft',
 				timeDimensionMinSpeed: 0.1,
 				timeDimensionMaxSpeed: 1,
@@ -36,7 +36,7 @@ define([
 				timeDimensionMinBufferReady: 1,
 
 				timeDimensionMinTime: null,
-				timeDimensionMaxTime: moment().startOf('day').toDate(),
+				timeDimensionMaxTime: moment().utc().startOf('day'),
 
 				getTimeDimensionExternalContainer: null,
 
@@ -100,12 +100,12 @@ define([
 			var timeLimitsObj = this._getCurrentLayersTimeLimits();
 
 			if (this.timeDimensionMinTime) {
-				timeLimitsObj.startMoment = moment(this.timeDimensionMinTime);
+				timeLimitsObj.startMoment = this.timeDimensionMinTime;
 				timeLimitsObj.startTime = timeLimitsObj.startMoment.toDate();
 			}
 
 			if (this.timeDimensionMaxTime) {
-				timeLimitsObj.endMoment = moment(this.timeDimensionMaxTime);
+				timeLimitsObj.endMoment = this.timeDimensionMaxTime;
 				timeLimitsObj.endTime = timeLimitsObj.endMoment.toDate();
 			}
 
@@ -124,8 +124,8 @@ define([
 
 			layersTimeDefinitions.forEach(function(item) {
 
-				var itemStartMoment = moment(item.startDate),
-					itemEndMoment = moment(item.endDate);
+				var itemStartMoment = moment(item.startDate).utc(),
+					itemEndMoment = moment(item.endDate).utc();
 
 				if (!startMoment || itemStartMoment.isBefore(startMoment)) {
 					startMoment = itemStartMoment;
@@ -138,8 +138,8 @@ define([
 			return {
 				startMoment: startMoment,
 				endMoment: endMoment,
-				startTime: startMoment.toDate(),
-				endTime: endMoment.toDate()
+				startTime: startMoment.valueOf(),
+				endTime: endMoment.valueOf()
 			};
 		},
 
@@ -245,8 +245,8 @@ define([
 
 		_setLayerAvailableTimes: function(layerInstance, timeDefinition) {
 
-			var layerStartTime = moment(timeDefinition.startDate).toDate(),
-				layerEndTime = moment(timeDefinition.endDate).toDate(),
+			var layerStartTime = moment(timeDefinition.startDate).utc().toDate(),
+				layerEndTime = moment(timeDefinition.endDate).utc().toDate(),
 				layerPeriod = timeDefinition.period || this.timeDimensionPeriod,
 				timesArray = L.TimeDimension.Util.explodeTimeRange(layerStartTime, layerEndTime, layerPeriod);
 

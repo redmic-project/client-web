@@ -34,8 +34,8 @@ define([
 		constructor: function(args) {
 
 			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixPublishInfoEventsAndActions));
-			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineSelectionSubscriptions));
-			aspect.after(this, "_definePublications", lang.hitch(this, this._defineSelectionPublications));
+			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._definePublishInfoSubscriptions));
+			aspect.after(this, "_definePublications", lang.hitch(this, this._definePublishInfoPublications));
 		},
 
 		_mixPublishInfoEventsAndActions: function () {
@@ -46,7 +46,7 @@ define([
 			delete this.publishInfoActions;
 		},
 
-		_defineSelectionSubscriptions: function () {
+		_definePublishInfoSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
 				channel: this._buildChannel(this.mapChannel, this.actions.MAP_CLICKED),
@@ -71,7 +71,7 @@ define([
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
 		},
 
-		_defineSelectionPublications: function () {
+		_definePublishInfoPublications: function () {
 
 			this.publicationsConfig.push({
 				event: 'LAYER_INFO',

@@ -2,18 +2,20 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'leaflet'
+	, 'moment'
+	, 'src/component/map/layer/_LayerProtocols'
+	, 'src/component/map/layer/MapLayer'
 	, 'src/component/map/StaticLayersDefinition'
 	, 'templates/ServiceOGCImage'
-	, './_LayerProtocols'
-	, './MapLayer'
 ], function(
 	declare
 	, lang
 	, L
-	, StaticLayersDefinition
-	, ServiceOGCImage
+	, moment
 	, _LayerProtocols
 	, MapLayer
+	, StaticLayersDefinition
+	, ServiceOGCImage
 ) {
 
 	return declare([MapLayer, _LayerProtocols], {
@@ -191,6 +193,17 @@ define([
 			};
 		},
 
+		_obtainDimensionParams: function(data) {
+
+			var dimensionParams = {};
+
+			if (data.time) {
+				dimensionParams.time = moment(data.time).toISOString();
+			}
+
+			return dimensionParams;
+		},
+
 		_obtainPositionGetParams: function(position, version) {
 
 			var params = {},
@@ -217,20 +230,23 @@ define([
 
 		_obtainAltGetParams: function(altDef, data) {
 
-			var getParams = this._obtainCommonGetParams(),
-				posParams = this._obtainPositionGetParams(data.containerPoint, getParams.version),
+			var commonGetParams = this._obtainCommonGetParams(),
+				dimensionParams = this._obtainDimensionParams(data),
+				positionParams = this._obtainPositionGetParams(data.containerPoint, commonGetParams.version),
+				sizeParams = {
+					width: data.size.x,
+					height: data.size.y,
+					bbox: data.bbox.toBBoxString()
+				},
 				layerProps = altDef.props,
 				layerName = layerProps.layers,
 				layerStyles = layerProps.styles || '';
 
-			lang.mixin(getParams, posParams, {
+			var getParams = this._merge([commonGetParams, dimensionParams, positionParams, sizeParams, {
 				layers: layerName,
 				query_layers: layerName,
-				styles: layerStyles,
-				width: data.size.x,
-				height: data.size.y,
-				bbox: data.bbox.toBBoxString()
-			});
+				styles: layerStyles
+			}]);
 
 			return L.Util.getParamString(getParams);
 		},
@@ -242,25 +258,23 @@ define([
 
 		_obtainMainGetParams: function(data) {
 
-			var getParams = this._obtainCommonGetParams(),
-				serviceVersion = getParams.version,
-				layerName = this.layer.wmsParams.layers;
-
-			lang.mixin(getParams, {
-				layers: layerName,
-				query_layers: layerName,
-				styles: this.layer.wmsParams.styles
-			});
+			var commonGetParams = this._obtainCommonGetParams(),
+				dimensionParams = this._obtainDimensionParams(data),
+				serviceVersion = commonGetParams.version,
+				layerName = this.layer.wmsParams.layers,
+				positionParams, sizeParams;
 
 			var isTiled = this.layerDefinition.protocol === 'WMS-C';
 			if (!isTiled) {
 				var containerPosParams = this._obtainPositionGetParams(data.containerPoint, serviceVersion);
 
-				lang.mixin(getParams, containerPosParams, {
+				positionParams = containerPosParams;
+
+				sizeParams = {
 					width: data.size.x,
 					height: data.size.y,
 					bbox: data.bbox.toBBoxString()
-				});
+				};
 			} else {
 				var tile = this._getClickedTile(data.latLng, data.zoom),
 					tileSize = this.layer.getTileSize(),
@@ -268,12 +282,20 @@ define([
 					tilePosParams = this._obtainPositionGetParams(tilePoint, serviceVersion);
 
 				// TODO falla el punto
-				lang.mixin(getParams, tilePosParams, {
+				positionParams = tilePosParams;
+
+				sizeParams = {
 					width: tileSize.x,
 					height: tileSize.y,
 					bbox: this._getTileBbox(tile)
-				});
+				};
 			}
+
+			var getParams = this._merge([commonGetParams, dimensionParams, positionParams, sizeParams, {
+				layers: layerName,
+				query_layers: layerName,
+				styles: this.layer.wmsParams.styles
+			}]);
 
 			return L.Util.getParamString(getParams);
 		},

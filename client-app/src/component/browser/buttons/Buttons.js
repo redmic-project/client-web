@@ -216,7 +216,7 @@ define([
 				node.setAttribute('title', this.i18n[title]);
 			}
 
-			put(node, '!occult');
+			put(node, '!hidden');
 
 			if (href) {
 				this._updateHref(item, config, node);
@@ -228,7 +228,7 @@ define([
 
 		_incorrectConditionButton: function(item, config, node) {
 
-			put(node, '.occult');
+			put(node, '.hidden');
 
 			node.setAttribute('title', null);
 

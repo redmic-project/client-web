@@ -126,7 +126,7 @@ define([
 
 					var buttonNode = buttons.domNode.children[1];
 
-					assert.isTrue(buttonNode.getAttribute('class').includes('occult'), "No se ha creado correctamente");
+					assert.isTrue(buttonNode.getAttribute('class').includes('hidden'), "No se ha creado correctamente");
 				});
 
 				delete item.type;

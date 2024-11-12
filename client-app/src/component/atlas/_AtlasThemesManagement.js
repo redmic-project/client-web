@@ -75,6 +75,12 @@ define([
 								title: this.i18n.navigateToLayerInfo,
 								href: redmicConfig.viewPaths.ogcServiceDetails
 							},{
+								icon: 'fa-arrows-v',
+								btnId: 'elevation',
+								title: 'showElevation',
+								condition: function(item) { return !!item.originalItem.elevationDimension; },
+								returnItem: true
+							},{
 								icon: 'fa-map-o',
 								btnId: 'legend',
 								title: 'showLegend',
@@ -140,6 +146,8 @@ define([
 				this._onThemesBrowserAddLayerButtonClick(objReceived);
 			} else if (btnId === 'remove') {
 				this._onThemesBrowserRemoveLayerButtonClick(item);
+			} else if (btnId === 'elevation') {
+				this._onThemesBrowserElevationButtonClick(objReceived);
 			} else if (btnId === 'legend') {
 				this._onThemesBrowserLegendButtonClick(objReceived);
 			} else if (btnId === 'fitBounds') {
@@ -184,6 +192,11 @@ define([
 				path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + item.id;
 
 			this._emitEvt('DESELECT', [path]);
+		},
+
+		_onThemesBrowserElevationButtonClick: function(obj) {
+
+			this._showLayerElevation(obj);
 		},
 
 		_onThemesBrowserLegendButtonClick: function(obj) {

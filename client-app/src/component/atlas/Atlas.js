@@ -11,6 +11,7 @@ define([
 	, 'src/component/base/_Show'
 	, 'src/component/base/_ShowInTooltip'
 	, 'src/component/base/_Store'
+	, 'src/component/atlas/_AtlasElevationManagement'
 	, 'src/component/atlas/_AtlasLayersManagement'
 	, 'src/component/atlas/_AtlasLegendManagement'
 	, 'src/component/atlas/_AtlasThemesManagement'
@@ -33,6 +34,7 @@ define([
 	, _Show
 	, _ShowInTooltip
 	, _Store
+	, _AtlasElevationManagement
 	, _AtlasLayersManagement
 	, _AtlasLegendManagement
 	, _AtlasThemesManagement
@@ -45,7 +47,8 @@ define([
 ) {
 
 	return declare([
-		_Module, _Show, _Store, _Selection, _AtlasLayersManagement, _AtlasLegendManagement, _AtlasThemesManagement
+		_Module, _Show, _Store, _Selection, _AtlasElevationManagement, _AtlasLayersManagement, _AtlasLegendManagement,
+		_AtlasThemesManagement
 	], {
 		//	summary:
 		//		Módulo de Atlas, con un catálogo de capas para añadir al mapa y un listado de gestión de las añadidas.

@@ -228,13 +228,14 @@ define([
 
 			var originalLayer = this.inherited(arguments);
 
-			if (!originalLayer || !this._layersWithTimeDimension[layerId] || originalLayer.getBaseLayer) {
+			if (!originalLayer || !this._layersWithTimeDimension[layerId]) {
 				return originalLayer;
 			}
 
 			var timeDimensionLayer = this._getLayerWithTimeDimensionWrapper(layerId, originalLayer);
 
-			// TODO parche para actualizar la instancia de la capa interna en el componente de capa
+			// TODO parche para actualizar la instancia de la capa interna en el componente de capa, necesario para
+			// que responda a la hora de aplicarle cambios de parámetros, como el de la dimensión de elevación
 			layer.layer = timeDimensionLayer;
 
 			return timeDimensionLayer;
@@ -242,7 +243,9 @@ define([
 
 		_getLayerWithTimeDimensionWrapper: function(layerId, originalLayer) {
 
-			var timeDimensionLayer = L.timeDimension.layer.wms(originalLayer, {
+			var layerWithoutTimeDimension = originalLayer.getBaseLayer ? originalLayer.getBaseLayer() : originalLayer;
+
+			var timeDimensionLayer = L.timeDimension.layer.wms(layerWithoutTimeDimension, {
 				timeDimension: this._timeDimensionInstance
 			});
 

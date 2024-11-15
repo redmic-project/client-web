@@ -78,7 +78,10 @@ define([
 								icon: 'fa-arrows-v',
 								btnId: 'elevation',
 								title: 'showElevation',
-								condition: function(item) { return !!item.originalItem.elevationDimension; },
+								condition: function(atlasLayerItem) {
+
+									return !!atlasLayerItem.atlasItem.elevationDimension;
+								},
 								returnItem: true
 							},{
 								icon: 'fa-map-o',
@@ -167,7 +170,7 @@ define([
 			}
 
 			this._publish(this.getMapChannel('REORDER_LAYERS'), {
-				layerId: this._createLayerId(response.item.originalItem),
+				layerId: this._createLayerId(response.item.atlasItem),
 				newPosition: response.total - response.indexList,
 				oldPosition: response.total - response.indexOld
 			});
@@ -175,21 +178,21 @@ define([
 
 		_onThemesBrowserAddLayerButtonClick: function(obj) {
 
-			var item = obj.item,
+			var atlasLayerItem = obj.item,
 				state = obj.state,
 				order = obj.total - obj.indexList;
 
 			if (!state) {
-				this._deactivateLayer(item, order);
+				this._deactivateLayer(atlasLayerItem, order);
 			} else {
-				this._activateLayer(item, order);
+				this._activateLayer(atlasLayerItem, order);
 			}
 		},
 
-		_onThemesBrowserRemoveLayerButtonClick: function(item) {
+		_onThemesBrowserRemoveLayerButtonClick: function(atlasLayerItem) {
 
-			var parentItem = item.originalItem[this.parentProperty],
-				path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + item.id;
+			var parentItem = atlasLayerItem.atlasItem[this.parentProperty],
+				path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + atlasLayerItem.id;
 
 			this._emitEvt('DESELECT', [path]);
 		},
@@ -209,13 +212,14 @@ define([
 			this._fitBounds(item);
 		},
 
-		_fitBounds: function(item) {
+		_fitBounds: function(atlasLayerItem) {
 
-			if (!item.originalItem.geometry) {
+			var geometry = atlasLayerItem.atlasItem.geometry;
+			if (!geometry) {
 				return;
 			}
 
-			var coordinates = item.originalItem.geometry.coordinates[0],
+			var coordinates = geometry.coordinates[0],
 				southWest = this._getLatLng(coordinates[0]),
 				northEast = this._getLatLng(coordinates[2]);
 

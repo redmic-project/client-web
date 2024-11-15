@@ -37,9 +37,9 @@ define([
 
 		_getDataToAddToBrowser: function(res) {
 
-			var items = res.data.data;
+			var atlasItems = res.data.data;
 
-			return items.map(lang.hitch(this, this._getLayerItemToInject));
+			return atlasItems.map(lang.hitch(this, this._getAtlasLayerItemToInject));
 		}
 	});
 });

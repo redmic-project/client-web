@@ -90,18 +90,18 @@ define([
 
 		_createLayer: function(widgetInstance, layer) {
 
-			var layerDefinition = this._getAtlasLayerDefinition(),
-				layerConfiguration = this._getAtlasLayerConfiguration(layer);
+			var LayerDefinition = this._getMapLayerComponentDefinition(),
+				layerConfiguration = this._getMapLayerComponentConfiguration(layer);
 
 			layerConfiguration = this._merge([layerConfiguration, {
 				mapChannel: widgetInstance.getChildChannel('map'),
 				selectorChannel: widgetInstance.getChannel()
 			}]);
 
-			var mapLayerInstance = new layerDefinition(layerConfiguration),
-				mapLayerId = this._getAtlasLayerId(layer);
+			var mapLayerInstance = new LayerDefinition(layerConfiguration),
+				atlasItemId = this._getAtlasItemId(layer);
 
-			this._activityLayers[mapLayerId] = mapLayerInstance;
+			this._activityLayers[atlasItemId] = mapLayerInstance;
 		},
 
 		_addMapLayer: function(layerId) {

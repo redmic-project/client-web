@@ -51,7 +51,7 @@ define([
 
 		_obtainLayerInfoTarget: function(data) {
 
-			var protocol = this.layerDefinition.protocol,
+			var protocol = this.innerLayerDefinition.protocol,
 				mustUseAlternativeDefinition = protocol === 'WMTS' || protocol === 'TMS' || protocol === 'WMS-C';
 
 			if (mustUseAlternativeDefinition) {
@@ -86,7 +86,7 @@ define([
 
 		_obtainLayerAlternativeDefinitionTarget: function(data) {
 
-			var alternativeDefinitions = this.layerDefinition.alternativeDefinitions,
+			var alternativeDefinitions = this.innerLayerDefinition.alternativeDefinitions,
 				alternativeDefinition;
 
 			for (var i = 0; i < alternativeDefinitions.length; i++) {
@@ -98,7 +98,7 @@ define([
 			}
 
 			if (!alternativeDefinition) {
-				console.error('Alternative protocol not found for GetFeatureInfo at layer:', this.layerDefinition);
+				console.error('Alternative protocol not found for GetFeatureInfo at layer:', this.innerLayerDefinition);
 				return;
 			}
 
@@ -179,7 +179,7 @@ define([
 				layerName = this.layer.wmsParams.layers,
 				positionParams, sizeParams;
 
-			var isTiled = this.layerDefinition.protocol === 'WMS-C';
+			var isTiled = this.innerLayerDefinition.protocol === 'WMS-C';
 			if (!isTiled) {
 				var containerPosParams = this._obtainPositionGetParams(data.containerPoint, serviceVersion);
 

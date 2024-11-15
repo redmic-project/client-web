@@ -75,7 +75,8 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			aspect.before(this, '_createLayerInstance', lang.hitch(this, this._atlasBeforeCreateLayerInstance));
+			aspect.before(this, '_createAtlasMapLayerInstance',
+				lang.hitch(this, this._beforeCreateAtlasMapLayerInstance));
 		},
 
 		_setConfigurations: function() {
@@ -90,7 +91,10 @@ define([
 								icon: 'fa-trash-o',
 								btnId: 'remove',
 								title: 'remove',
-								condition: function(item) { return !!item.originalItem.atlas; },
+								condition: function(atlasLayerItem) {
+
+									return !!atlasLayerItem.atlasItem.atlas;
+								},
 								returnItem: true
 							}]
 						}
@@ -236,7 +240,10 @@ define([
 			}
 		},
 
-		_atlasBeforeCreateLayerInstance: function(id, layerId) {
+		_beforeCreateAtlasMapLayerInstance: function(atlasLayerItem) {
+
+			var id = atlasLayerItem.id,
+				layerId = atlasLayerItem.mapLayerId;
 
 			this._layerIdsById[id] = layerId;
 		},
@@ -335,13 +342,13 @@ define([
 
 		_itemAvailable: function(response) {
 
-			var item = response.data;
+			var atlasItem = response.data;
 
-			if (item.leaves) {
+			if (atlasItem.leaves) {
 				return;
 			}
 
-			var itemId = this._getAtlasLayerId(item);
+			var itemId = this._getAtlasItemId(atlasItem);
 
 			if (this._layerIdsById[itemId]) {
 				return;
@@ -352,19 +359,19 @@ define([
 				info: {
 					category: TRACK.category.layer,
 					action: TRACK.action.click,
-					label: 'Layer loaded: ' + item.name
+					label: 'Layer loaded: ' + atlasItem.name
 				}
 			});
 
-			var layerItem = this._getLayerItemToInject(item);
+			var atlasLayerItem = this._getAtlasLayerItemToInject(atlasItem);
 
 			this._emitEvt('INJECT_ITEM', {
-				data: layerItem,
+				data: atlasLayerItem,
 				target: this.localTarget
 			});
 
 			this._lastOrder++;
-			this._activateLayer(layerItem, this._lastOrder);
+			this._activateLayer(atlasLayerItem, this._lastOrder);
 		},
 
 		_subLayerRemoved: function(res) {

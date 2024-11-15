@@ -28,7 +28,7 @@ define([
 
 			this.config = {
 				ownChannel: 'wmsLayer',
-				layerDefinition: null,
+				innerLayerDefinition: null,
 				refresh: 0
 			};
 
@@ -37,15 +37,15 @@ define([
 
 		_initialize: function() {
 
-			if (!this.layerDefinition) {
+			if (!this.innerLayerDefinition) {
 				return;
 			}
 
-			if (typeof this.layerDefinition === 'string') {
-				this.layerDefinition = StaticLayersDefinition[this.layerDefinition];
+			if (typeof this.innerLayerDefinition === 'string') {
+				this.innerLayerDefinition = StaticLayersDefinition[this.innerLayerDefinition];
 			}
 
-			this.layer = this._getLayerInstance(this.layerDefinition);
+			this.layer = this._getLayerInstance(this.innerLayerDefinition);
 		},
 
 		_afterLayerAdded: function(data) {

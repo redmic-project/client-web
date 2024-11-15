@@ -63,8 +63,8 @@ define([
 
 			var container = browserButtonObj.node,
 				legendContainer = container.children[1],
-				item = browserButtonObj.item.originalItem,
-				layerId = this._createLayerId(item),
+				atlasLayerItem = browserButtonObj.item,
+				layerId = atlasLayerItem.mapLayerId,
 				legend = this._legendByLayerId[layerId],
 				legendShown = this._legendShownByLayerId[layerId];
 

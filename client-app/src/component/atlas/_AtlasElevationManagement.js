@@ -34,8 +34,9 @@ define([
 
 			var container = browserButtonObj.node,
 				elevationContainer = container.children[1],
-				item = browserButtonObj.item.originalItem,
-				layerId = this._createLayerId(item),
+				atlasLayerItem = browserButtonObj.item,
+				item = atlasLayerItem.atlasItem,
+				layerId = atlasLayerItem.mapLayerId,
 				elevationTagListInstance = this._getLayerElevationTagList(layerId, item),
 				elevationShown = this._elevationShownByLayerId[layerId] || false;
 

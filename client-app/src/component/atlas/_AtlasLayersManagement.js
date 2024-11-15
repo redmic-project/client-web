@@ -253,51 +253,48 @@ define([
 			}
 		},
 
-		_getAtlasLayerDefinition: function() {
+		_getMapLayerComponentDefinition: function() {
 
 			return declare([WmsLayerImpl, _PublishInfo]);
 		},
 
-		_getAtlasLayerConfiguration: function(layerItem) {
+		_getMapLayerComponentConfiguration: function(atlasItem) {
 
-			var layerId = this._createLayerId(layerItem),
-				layerLabel = this._createLayerLabel(layerItem),
-				layerDefinition = this._getLayerDefinitionByProtocol(layerItem);
+			var layerId = this._createLayerId(atlasItem),
+				layerLabel = this._createLayerLabel(atlasItem),
+				innerLayerDefinition = this._getLayerDefinitionByProtocol(atlasItem);
 
 			return {
 				parentChannel: this.getChannel(),
-				layerDefinition: layerDefinition,
+				mapChannel: this.getMapChannel ? this.getMapChannel() : null,
+				innerLayerDefinition: innerLayerDefinition,
 				layerId: layerId,
 				layerLabel: layerLabel,
-				queryable: layerItem.queryable,
-				refresh: layerItem.refresh
+				queryable: atlasItem.queryable,
+				refresh: atlasItem.refresh
 			};
 		},
 
-		_getLayerItemToInject: function(item) {
+		_getAtlasLayerItemToInject: function(atlasItem) {
 
-			var itemId = this._getAtlasLayerId(item),
-				layerDefinition = this._getAtlasLayerDefinition(),
-				layerConfiguration = this._getAtlasLayerConfiguration(item),
-				layerLabel = layerConfiguration.layerLabel;
-
-			layerConfiguration.mapChannel = this.getMapChannel();
+			var itemId = this._getAtlasItemId(atlasItem),
+				mapLayerDefinition = this._getMapLayerComponentDefinition(),
+				mapLayerConfig = this._getMapLayerComponentConfiguration(atlasItem);
 
 			return {
 				id: itemId,
-				label: layerLabel,
+				label: mapLayerConfig.layerLabel,
 				state: this.defaultLayerItemState,
-				originalItem: item,
-				layer: {
-					definition: layerDefinition,
-					props: layerConfiguration
-				}
+				mapLayerId: mapLayerConfig.layerId,
+				mapLayerDefinition: mapLayerDefinition,
+				mapLayerConfig: mapLayerConfig,
+				atlasItem: atlasItem
 			};
 		},
 
-		_getAtlasLayerId: function(layerItem) {
+		_getAtlasItemId: function(atlasItem) {
 
-			return layerItem && layerItem.id;
+			return atlasItem && atlasItem.id;
 		},
 
 		_createLayerId: function(layerItem) {
@@ -335,57 +332,59 @@ define([
 			this._publish(layerInstance.getChannel('DISCONNECT'));
 		},
 
-		_getLayerInstance: function(id, layerId, Definition, props) {
+		_getAtlasMapLayerInstance: function(atlasLayerItem) {
 
-			var layerInstance = this._layerInstances[layerId];
+			var mapLayerId = atlasLayerItem.mapLayerId,
+				layerInstance = this._layerInstances[mapLayerId];
 
 			if (layerInstance) {
 				return layerInstance;
 			}
 
-			return this._createLayerInstance(id, layerId, Definition, props);
+			return this._createAtlasMapLayerInstance(atlasLayerItem);
 		},
 
-		_createLayerInstance: function(_id, layerId, Definition, props) {
+		_createAtlasMapLayerInstance: function(atlasLayerItem) {
 
-			var layerInstance = new Definition(props);
+			var MapLayerDefinition = atlasLayerItem.mapLayerDefinition,
+				mapLayerConfig = atlasLayerItem.mapLayerConfig,
+				mapLayerId = atlasLayerItem.mapLayerId;
 
-			this._layerInstances[layerId] = layerInstance;
+			var mapLayerInstance = new MapLayerDefinition(mapLayerConfig);
 
-			this._createSubsAndPubsForLayer(layerInstance);
+			this._layerInstances[mapLayerId] = mapLayerInstance;
 
-			return layerInstance;
+			this._createSubsAndPubsForLayer(mapLayerInstance);
+
+			return mapLayerInstance;
 		},
 
-		_activateLayer: function(/*Object*/ item, order) {
+		_activateLayer: function(/*Object*/ atlasLayerItem, order) {
 
-			if (!item || !item.layer) {
+			if (!atlasLayerItem) {
 				return;
 			}
 
-			var definition = item.layer.definition,
-				props = item.layer.props,
-				id = item.id,
-				layerId = this._createLayerId(item.originalItem),
-				layer = this._getLayerInstance(id, layerId, definition, props);
+			var mapLayerId = atlasLayerItem.mapLayerId,
+				layer = this._getAtlasMapLayerInstance(atlasLayerItem);
 
 			this._emitEvt('ADD_LAYER', {
 				layer: layer,
-				layerId: layerId,
-				layerLabel: item.label,
-				atlasItem: item.originalItem,
+				layerId: mapLayerId,
+				layerLabel: atlasLayerItem.label,
+				atlasItem: atlasLayerItem.atlasItem,
 				order: order
 			});
 		},
 
-		_deactivateLayer: function(/*Object*/ item, order) {
+		_deactivateLayer: function(/*Object*/ atlasLayerItem, order) {
 
-			if (!item.layer) {
+			if (!atlasLayerItem) {
 				return;
 			}
 
-			var layerId = this._createLayerId(item.originalItem),
-				layer = this._layerInstances[layerId];
+			var mapLayerId = atlasLayerItem.mapLayerId,
+				layer = this._layerInstances[mapLayerId];
 
 			if (layer) {
 				this._emitEvt('REMOVE_LAYER', {

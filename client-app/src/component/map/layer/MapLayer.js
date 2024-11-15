@@ -190,7 +190,7 @@ define([
 		_subLayerAdded: function(response) {
 
 			// TODO quizá sea mejor retrasar la carga de la leyenda, bajo petición
-			this._getLayerLegend(response.extraInfo);
+			this._getLayerLegend(response.atlasItem);
 			this._mapInstance = response.mapInstance;
 
 			this._publish(this.getChannel('CONNECT'), {

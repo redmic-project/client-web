@@ -94,10 +94,10 @@ define([
 			delete this._refreshIntervalHandler;
 		},
 
-		_getLayerLegend: function(extraInfo) {
+		_getLayerLegend: function(atlasItem) {
 
 			var legendElement = ServiceOGCImage({
-				data: extraInfo
+				data: atlasItem
 			});
 
 			this._emitEvt('LAYER_LEGEND', this._getLayerLegendToPublish(legendElement));

@@ -97,7 +97,7 @@ define([
 			};
 
 			if (this._infoForAddedLayers[layerId]) {
-				layerAddReq.extraInfo = this._infoForAddedLayers[layerId];
+				layerAddReq.atlasItem = this._infoForAddedLayers[layerId];
 				delete this._infoForAddedLayers[layerId];
 			}
 

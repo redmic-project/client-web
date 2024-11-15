@@ -224,13 +224,23 @@ define([
 			delete this._timeDimensionInstance;
 		},
 
-		_getInnerLayer: function(_layer, layerId) {
+		_getInnerLayer: function(layer, layerId) {
 
 			var originalLayer = this.inherited(arguments);
 
-			if (!originalLayer || !this._layersWithTimeDimension[layerId]) {
+			if (!originalLayer || !this._layersWithTimeDimension[layerId] || originalLayer.getBaseLayer) {
 				return originalLayer;
 			}
+
+			var timeDimensionLayer = this._getLayerWithTimeDimensionWrapper(layerId, originalLayer);
+
+			// TODO parche para actualizar la instancia de la capa interna en el componente de capa
+			layer.layer = timeDimensionLayer;
+
+			return timeDimensionLayer;
+		},
+
+		_getLayerWithTimeDimensionWrapper: function(layerId, originalLayer) {
 
 			var timeDimensionLayer = L.timeDimension.layer.wms(originalLayer, {
 				timeDimension: this._timeDimensionInstance

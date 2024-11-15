@@ -168,7 +168,9 @@ define([
 
 		_obtainMainGetUrl: function() {
 
-			return this.layer._wmsUrl + '?';
+			var innerLayer = this._getInnerLayerInstance();
+
+			return innerLayer._wmsUrl + '?';
 		},
 
 		_obtainMainGetParams: function(data) {
@@ -176,7 +178,7 @@ define([
 			var commonGetParams = this._obtainCommonGetParams(),
 				dimensionParams = this._obtainDimensionParams(data),
 				serviceVersion = commonGetParams.version,
-				layerName = this.layer.wmsParams.layers,
+				layerName = this._getLayerWmsParams().layers,
 				positionParams, sizeParams;
 
 			var isTiled = this.innerLayerDefinition.protocol === 'WMS-C';
@@ -209,10 +211,28 @@ define([
 			var getParams = this._merge([commonGetParams, dimensionParams, positionParams, sizeParams, {
 				layers: layerName,
 				query_layers: layerName,
-				styles: this.layer.wmsParams.styles
+				styles: this._getLayerWmsParams().styles
 			}]);
 
 			return L.Util.getParamString(getParams);
+		},
+
+		_getInnerLayerInstance: function() {
+
+			var innerLayer;
+			if (this.layer.getBaseLayer) {
+				innerLayer = this.layer.getBaseLayer();
+			} else {
+				innerLayer = this.layer;
+			}
+			return innerLayer;
+		},
+
+		_getLayerWmsParams: function() {
+
+			var innerLayer = this._getInnerLayerInstance();
+
+			return innerLayer.wmsParams || {};
 		},
 
 		_getClickedTile: function(clickLatLng, currZoom) {

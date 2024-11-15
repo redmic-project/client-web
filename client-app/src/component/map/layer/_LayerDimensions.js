@@ -98,6 +98,7 @@ define([
 			if (!this.layer) {
 				return;
 			}
+
 			this.layer.setParams({
 				elevation: this._currentDimensionValues.elevation
 			});

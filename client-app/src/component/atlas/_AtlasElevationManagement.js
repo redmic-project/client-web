@@ -60,6 +60,11 @@ define([
 			var instance = new TagList({
 				parentChannel: this.getChannel(),
 				tagsString: elevationDefinition.value,
+				simpleSelection: true,
+				getSelectedTags: function(_tagValue, tagIndex) {
+
+					return tagIndex === 0;
+				},
 				getTagLabel: lang.partial(function(unit, tagValue) {
 
 					return tagValue + ' ' + unit;

@@ -50,7 +50,7 @@ define([
 
 		_afterLayerAddedLayerDimensions: function() {
 
-			var elevationDimension = this.dimensions.elevation;
+			var elevationDimension = this.dimensions && this.dimensions.elevation;
 
 			if (elevationDimension) {
 				this._setElevationDimension({

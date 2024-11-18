@@ -59,7 +59,7 @@ define([
 		_setConfigurations: function() {
 
 			this.mapConfig = this._merge([{
-				timeDimensionMinTime: moment().utc().startOf('day').subtract(15, 'days'),
+				timeDimensionMinTime: moment().utc().startOf('day').subtract(30, 'days'),
 				getTimeDimensionExternalContainer: lang.hitch(this, this._getExternalContainer)
 			}, this.mapConfig || {}]);
 

@@ -7,6 +7,7 @@ define({
 		, "toggleLayerVisibility": "Toggle layer visibility"
 		, "showLegend": "Show layer legend"
 		, "showElevation": "Show layer elevation values"
+		, "addLayerFirst": "Add layer to map first"
 		, "navigateToLayerInfo": "Navigate to layer details view"
 		, "userData": "User data"
 		, "cancel": "Cancel"

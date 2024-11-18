@@ -6,6 +6,7 @@ define({
 	, "toggleLayerVisibility": "Alternar visibilidad de capa"
 	, "showLegend": "Mostrar leyenda de la capa"
 	, "showElevation": "Mostrar valores de elevación de la capa"
+	, "addLayerFirst": "Añade la capa al mapa primero"
 	, "navigateToLayerInfo": "Navegar a la vista de detalles de la capa"
 	, "userData": "Datos de usuario"
 	, "cancel": "Cancelar"

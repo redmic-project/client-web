@@ -1,11 +1,13 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/aspect'
 	, 'dojo/dom-class'
 	, 'src/component/layout/TagList'
 ], function(
 	declare
 	, lang
+	, aspect
 	, domClass
 	, TagList
 ) {
@@ -23,6 +25,8 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			aspect.before(this, '_deactivateLayer', lang.hitch(this, this._atlasDimensionsDeactivateLayer));
 		},
 
 		_getAtlasLayerDimensions: function(atlasItem) {
@@ -50,11 +54,20 @@ define([
 
 		_showLayerElevation: function(browserButtonObj) {
 
+			var atlasLayerItem = browserButtonObj.item,
+				layerId = atlasLayerItem.mapLayerId;
+
+			if (!this._activeLayers[layerId]) {
+				this._emitEvt('COMMUNICATION', {
+					description: this.i18n.addLayerFirst
+				});
+
+				return;
+			}
+
 			var container = browserButtonObj.node,
 				elevationContainer = container.children[1],
-				atlasLayerItem = browserButtonObj.item,
 				item = atlasLayerItem.atlasItem,
-				layerId = atlasLayerItem.mapLayerId,
 				elevationTagListInstance = this._getLayerElevationTagList(layerId, item),
 				elevationShown = this._elevationShownByLayerId[layerId] || false;
 
@@ -63,7 +76,6 @@ define([
 				this._elevationShownByLayerId[layerId] = true;
 			} else {
 				this._hideLayerElevationTagList(layerId);
-				this._elevationShownByLayerId[layerId] = false;
 			}
 		},
 
@@ -119,6 +131,7 @@ define([
 			}
 
 			this._publish(elevationTagListInstance.getChannel('HIDE'));
+			this._elevationShownByLayerId[layerId] = false;
 		},
 
 		_onElevationTagClicked: function(layerId, res) {
@@ -135,6 +148,21 @@ define([
 					label: res.label
 				}
 			});
+		},
+
+		_atlasDimensionsDeactivateLayer: function(atlasLayerItem) {
+
+			if (!atlasLayerItem) {
+				return;
+			}
+
+			var mapLayerId = atlasLayerItem.mapLayerId;
+
+			if (!this._elevationShownByLayerId[mapLayerId]) {
+				return;
+			}
+
+			this._hideLayerElevationTagList(mapLayerId);
 		}
 	});
 });

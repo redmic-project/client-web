@@ -1,10 +1,12 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/aspect'
 	, 'put-selector'
 ], function(
 	declare
 	, lang
+	, aspect
 	, put
 ) {
 
@@ -21,6 +23,8 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			aspect.before(this, '_deactivateLayer', lang.hitch(this, this._atlasLegendDeactivateLayer));
 		},
 
 		_removeLegendOfRemovedLayer: function(layerId) {
@@ -61,10 +65,19 @@ define([
 
 		_showLayerLegend: function(browserButtonObj) {
 
+			var atlasLayerItem = browserButtonObj.item,
+				layerId = atlasLayerItem.mapLayerId;
+
+			if (!this._activeLayers[layerId]) {
+				this._emitEvt('COMMUNICATION', {
+					description: this.i18n.addLayerFirst
+				});
+
+				return;
+			}
+
 			var container = browserButtonObj.node,
 				legendContainer = container.children[1],
-				atlasLayerItem = browserButtonObj.item,
-				layerId = atlasLayerItem.mapLayerId,
 				legend = this._legendByLayerId[layerId],
 				legendShown = this._legendShownByLayerId[layerId];
 
@@ -87,6 +100,17 @@ define([
 				put('!', legend);
 				this._legendShownByLayerId[layerId] = false;
 			}
+		},
+
+		_atlasLegendDeactivateLayer: function(atlasLayerItem) {
+
+			if (!atlasLayerItem) {
+				return;
+			}
+
+			var mapLayerId = atlasLayerItem.mapLayerId;
+
+			this._legendShownByLayerId[mapLayerId] = false;
 		}
 	});
 });

@@ -21,7 +21,6 @@ define([
 				layerIdSeparator: '_',
 				themeSeparator: '-',
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
-				_activeLayers: {}, // indicador sobre si la capa está activada en el mapa o no
 				defaultLayerItemState: true
 			};
 
@@ -377,8 +376,6 @@ define([
 				atlasItem: atlasLayerItem.atlasItem,
 				order: order
 			});
-
-			this._activeLayers[mapLayerId] = true;
 		},
 
 		_deactivateLayer: function(/*Object*/ atlasLayerItem, order) {
@@ -396,8 +393,6 @@ define([
 					order: order,
 					keepInstance: true
 				});
-
-				this._activeLayers[mapLayerId] = false;
 			}
 		}
 	});

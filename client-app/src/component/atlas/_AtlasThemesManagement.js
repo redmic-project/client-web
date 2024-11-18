@@ -30,7 +30,9 @@ define([
 				pathSeparator: '.',
 				parentProperty: 'parent',
 				addThemesBrowserFirst: false,
-				omitThemesBrowser: false
+				omitThemesBrowser: false,
+
+				_activeLayers: {}, // indicador sobre si la capa está activada en el mapa o no
 			};
 
 			lang.mixin(this, this.config, args);
@@ -179,13 +181,16 @@ define([
 		_onThemesBrowserAddLayerButtonClick: function(obj) {
 
 			var atlasLayerItem = obj.item,
+				mapLayerId = atlasLayerItem.mapLayerId,
 				state = obj.state,
 				order = obj.total - obj.indexList;
 
 			if (!state) {
 				this._deactivateLayer(atlasLayerItem, order);
+				this._activeLayers[mapLayerId] = false;
 			} else {
 				this._activateLayer(atlasLayerItem, order);
+				this._activeLayers[mapLayerId] = true;
 			}
 		},
 
@@ -204,7 +209,7 @@ define([
 
 		_onThemesBrowserLegendButtonClick: function(obj) {
 
-			this._showLayerLegend(obj);
+			this._toggleShowLayerLegend(obj);
 		},
 
 		_onThemesBrowserFitBoundsButtonClick: function(item) {
@@ -243,6 +248,11 @@ define([
 		_themesBrowserReportClearSelection: function() {
 
 			this._publish(this._themesBrowser.getChildChannel('browser', 'CLEAR'));
+		},
+
+		_cleanRowSecondaryContainer: function(layerId, container) {
+
+			// TODO se usa para conectar con aspect desde las otras extensiones
 		}
 	});
 });

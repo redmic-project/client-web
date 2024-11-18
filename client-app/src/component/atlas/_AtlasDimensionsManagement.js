@@ -27,6 +27,8 @@ define([
 			lang.mixin(this, this.config, args);
 
 			aspect.before(this, '_deactivateLayer', lang.hitch(this, this._atlasDimensionsDeactivateLayer));
+			aspect.before(this, '_cleanRowSecondaryContainer', lang.hitch(this,
+				this._atlasDimensionsCleanRowSecondaryContainer));
 		},
 
 		_getAtlasLayerDimensions: function(atlasItem) {
@@ -72,6 +74,7 @@ define([
 				elevationShown = this._elevationShownByLayerId[layerId] || false;
 
 			if (!elevationShown) {
+				this._cleanRowSecondaryContainer(layerId, elevationContainer);
 				this._showLayerElevationTagList(elevationTagListInstance, elevationContainer);
 				this._elevationShownByLayerId[layerId] = true;
 			} else {
@@ -163,6 +166,13 @@ define([
 			}
 
 			this._hideLayerElevationTagList(mapLayerId);
+		},
+
+		_atlasDimensionsCleanRowSecondaryContainer: function(mapLayerId) {
+
+			if (this._elevationShownByLayerId[mapLayerId]) {
+				this._hideLayerElevationTagList(mapLayerId);
+			}
 		}
 	});
 });

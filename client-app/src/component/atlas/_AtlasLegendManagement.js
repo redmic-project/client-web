@@ -25,6 +25,8 @@ define([
 			lang.mixin(this, this.config, args);
 
 			aspect.before(this, '_deactivateLayer', lang.hitch(this, this._atlasLegendDeactivateLayer));
+			aspect.before(this, '_cleanRowSecondaryContainer', lang.hitch(this,
+				this._atlasLegendCleanRowSecondaryContainer));
 		},
 
 		_removeLegendOfRemovedLayer: function(layerId) {
@@ -63,7 +65,7 @@ define([
 			}
 		},
 
-		_showLayerLegend: function(browserButtonObj) {
+		_toggleShowLayerLegend: function(browserButtonObj) {
 
 			var atlasLayerItem = browserButtonObj.item,
 				layerId = atlasLayerItem.mapLayerId;
@@ -94,12 +96,24 @@ define([
 			}
 
 			if (!legendShown) {
-				put(legendContainer, legend);
-				this._legendShownByLayerId[layerId] = true;
+				this._showLayerLegend(layerId, legendContainer, legend);
 			} else {
-				put('!', legend);
-				this._legendShownByLayerId[layerId] = false;
+				this._hideLayerLegend(layerId);
 			}
+		},
+
+		_showLayerLegend: function(layerId, legendContainer, legend) {
+
+			this._cleanRowSecondaryContainer(layerId, legendContainer);
+
+			put(legendContainer, legend);
+			this._legendShownByLayerId[layerId] = true;
+		},
+
+		_hideLayerLegend: function(layerId) {
+
+			put('!', this._legendByLayerId[layerId]);
+			this._legendShownByLayerId[layerId] = false;
 		},
 
 		_atlasLegendDeactivateLayer: function(atlasLayerItem) {
@@ -111,6 +125,13 @@ define([
 			var mapLayerId = atlasLayerItem.mapLayerId;
 
 			this._legendShownByLayerId[mapLayerId] = false;
+		},
+
+		_atlasLegendCleanRowSecondaryContainer: function(layerId) {
+
+			if (this._legendShownByLayerId[layerId]) {
+				this._hideLayerLegend(layerId);
+			}
 		}
 	});
 });

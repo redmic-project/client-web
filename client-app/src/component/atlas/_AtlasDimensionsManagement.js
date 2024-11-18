@@ -12,7 +12,7 @@ define([
 
 	return declare(null, {
 		//	summary:
-		//		Gestión de dimensión de elevación de capas para el módulo Atlas.
+		//		Gestión de dimensiones de capas (como tiempo y elevación) para el módulo Atlas.
 
 		constructor: function(args) {
 
@@ -23,6 +23,24 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+		},
+
+		_getAtlasLayerDimensions: function(atlasItem) {
+
+			var dimensions = {};
+
+			var time = atlasItem.timeDefinition || atlasItem.timeDimension,
+				elevation = atlasItem.elevationDimension;
+
+			if (time) {
+				dimensions.time = time;
+			}
+
+			if (elevation) {
+				dimensions.elevation = elevation;
+			}
+
+			return dimensions;
 		},
 
 		_removeElevationOfRemovedLayer: function(layerId) {

@@ -29,15 +29,16 @@ define([
 
 			aspect.after(this, '_mixEventsAndActions', lang.hitch(this, this._mixLayerDimensionsEventsAndActions));
 			aspect.after(this, '_defineSubscriptions', lang.hitch(this, this._defineLayerDimensionsSubscriptions));
+			aspect.after(this, '_afterLayerAdded', lang.hitch(this, this._afterLayerAddedLayerDimensions));
 		},
 
-		_mixLayerDimensionsEventsAndActions: function () {
+		_mixLayerDimensionsEventsAndActions: function() {
 
 			lang.mixin(this.actions, this.layerDimensionsActions);
 			delete this.layerDimensionsActions;
 		},
 
-		_defineLayerDimensionsSubscriptions: function () {
+		_defineLayerDimensionsSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel: this.getChannel('SET_LAYER_DIMENSION'),
@@ -45,6 +46,17 @@ define([
 			});
 
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
+		},
+
+		_afterLayerAddedLayerDimensions: function() {
+
+			var elevationDimension = this.dimensions.elevation;
+
+			if (elevationDimension) {
+				this._setElevationDimension({
+					value: elevationDimension.defaultValue
+				});
+			}
 		},
 
 		_obtainDimensionParams: function(data) {
@@ -78,22 +90,22 @@ define([
 
 		_subSetLayerDimension: function(req) {
 
-			this._setElevationDimension(req);
-		},
-
-		_setElevationDimension: function(req) {
-
 			if (!req || !req.elevation) {
 				return;
 			}
 
-			var newElevation = req.elevation.value;
+			this._setElevationDimension(req.elevation);
+		},
+
+		_setElevationDimension: function(elevation) {
+
+			var newElevation = elevation.value;
 			this._currentDimensionValues.elevation = newElevation;
 
 			this._applyElevationDimension();
 		},
 
-		_applyElevationDimension: function(req) {
+		_applyElevationDimension: function() {
 
 			if (!this.layer) {
 				return;

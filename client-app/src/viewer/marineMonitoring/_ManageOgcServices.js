@@ -1,16 +1,18 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/component/atlas/_AtlasDimensionsManagement'
 	, 'src/component/atlas/_AtlasLayersManagement'
 	, 'src/redmicConfig'
 ], function(
 	declare
 	, lang
+	, _AtlasDimensionsManagement
 	, _AtlasLayersManagement
 	, redmicConfig
 ) {
 
-	return declare(_AtlasLayersManagement, {
+	return declare([_AtlasDimensionsManagement, _AtlasLayersManagement], {
 		//	summary:
 		//		Extensión para el manejo de los datos de servicios OGC vinculados a actividades, permitiendo generar
 		//		capas para el mapa y su control.

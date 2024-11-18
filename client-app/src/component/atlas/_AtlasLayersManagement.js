@@ -271,7 +271,8 @@ define([
 				layerId: layerId,
 				layerLabel: layerLabel,
 				queryable: atlasItem.queryable,
-				refresh: atlasItem.refresh
+				refresh: atlasItem.refresh,
+				dimensions: this._getAtlasLayerDimensions(atlasItem)
 			};
 		},
 

@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 			},
 			command: function() {
 
-				var cmd = 'scripts/removeModules.sh';
+				var cmd = 'grunt/scripts/removeModules.sh';
 
 				if (module) {
 					cmd += ' ' + module;

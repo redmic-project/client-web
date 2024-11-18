@@ -1,0 +1,16 @@
+extends layout
+
+block root
+	#rootContainer
+
+	script.
+		require([
+			'src/user/ActivateAccount'
+		], function(
+			ActivateAccount
+		) {
+
+			new ActivateAccount({
+				token: '#{token}'
+			});
+		});

@@ -1,0 +1,67 @@
+<div class="boxContainer">
+	<div class="col-xs-6 col-sm-6 col-md-5 accessGroup loginBox bgWhite"
+		data-dojo-attach-point="loginManagerNode">
+		<div class="header">
+			<div class="title">
+				<img class="logoRedmic" src="/res/images/logos/logo.svg">
+				<h1 class="titleRedmic">REDMIC</h1>
+			</div>
+			<h4 class="subtitle">${i18n.subtitle}</h4>
+		</div>
+
+		<div class="formLogin" data-dojo-type="dijit/form/Form" data-dojo-attach-point="loginFormNode">
+			<div>
+				<input name="email"
+					type="email"
+					placeholder=${i18n.email}
+					required="required"
+					autoComplete=true
+					class="input-transparent not-removable formPadding"
+					data-dojo-type="dijit/form/ValidationTextBox"
+					data-dojo-attach-point="emailInputForm"
+					data-dojo-props="invalidMessage: '${i18n.invalidEmail}', intermediateChanges: true"
+					data-dojo-attach-event="onKeyPress: _onKeyPress">
+
+				<input name="password"
+					type="password"
+					placeholder=${i18n.password}
+					required="required"
+					class="input-transparent not-removable formPadding"
+					data-dojo-type="dijit/form/ValidationTextBox"
+					data-dojo-attach-point="password"
+					data-dojo-props="pattern: '^....(.)*', invalidMessage: '${i18n.invalidPassword}', intermediateChanges: true"
+					data-dojo-attach-event="onKeyPress: _onKeyPress">
+			</div>
+
+			<div>
+				<div data-dojo-type="dijit/form/Button"
+					data-dojo-props="class: 'primary btn-block'"
+					data-dojo-attach-event="click: _onSignIn">
+					${i18n.access}
+					<i class="fa fa-sign-in"></i>
+				</div>
+			</div>
+		</div>
+
+		<div class='linkZone'>
+			<div>
+				<span class="href">
+					<a href="/register" d-state-url=true>${i18n.register}</a>
+				</span>
+			</div>
+			<div>
+				<span class="href">
+					<a href="/recover-password" d-state-url=true>${i18n.resetting}</a>
+				</span>
+			</div>
+		</div>
+
+		<div class='boxLabel'>
+			<div>
+				<span class="href" data-dojo-attach-event="click: _onGuestAccess">
+					<a href="/home" d-state-url=true>${i18n.visitorButton}</a>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>

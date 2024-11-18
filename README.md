@@ -9,10 +9,10 @@ Cliente web de REDMIC.
 
 ## Entorno de desarrollo
 
-Una vez clonado el repositorio en el entorno local de desarrollo y satisfechas las dependencias base del sistema, es posible instalar las dependencias necesarias que define el proyecto y arrancar el servicio:
+Una vez clonado el repositorio del proyecto en el entorno local de desarrollo y satisfechas las dependencias base del sistema (`npm/Node.js` y `grunt-cli`), es posible instalar sus dependencias y arrancar el servicio en modo de desarrollo:
 
 ```sh
-yarn install
+npm install
 
 OAUTH_URL=https://redmic.grafcan.es/api/oauth \
 OAUTH_CLIENT_ID=app \
@@ -33,11 +33,22 @@ Si todo ha ido correctamente, el servicio *REDMIC web* estará accesible en <htt
 
 Es posible personalizar los puntos de conexión hacia la parte servidora y otros ajustes, según se necesite.
 
-Para facilitar las tareas repetitivas, se han creado una serie de tareas ejecutables mediante **Grunt**. Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/grunt>.
+Para facilitar las tareas repetitivas, se han creado una serie de tareas ejecutables mediante **Grunt**, que a su vez se referencian desde comandos de **npm**. Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/grunt>.
 
 ## Compilación
 
 Para optimizar la ejecución es necesario realizar un proceso de "compilación" de la aplicación.
+
+Se puede generar la salida compilada simplemente lanzando los siguientes comandos (cuidado, es un proceso pesado):
+
+```sh
+npm install
+npm pack
+```
+
+> Internamente se lanzarán otros comandos orquestados mediante **Grunt** (que también podrían ejecutarse de manera concreta si fuera necesario).
+
+Esto generará un directorio con el código compilado de salida (`client-app/dist/`) junto con un fichero comprimido que contiene dicha salida y otros recursos necesarios para lanzar la aplicación (`redmic-project-web-<version>.tgz`).
 
 Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/dojo-compile>.
 
@@ -55,7 +66,16 @@ Por defecto, `Prerender` consultará al servicio mediante protocolo HTTP. Si no 
 
 Se ha preparado una batería de pruebas, tanto unitarias como funcionales, que permiten evaluar el estado del proyecto a medida que se aplican cambios en la base de código.
 
-Más información en <https://gitlab.com/redmic-project/client/web/-/wikis/test-main>.
+Se puede comenzar la ejecución de tests lanzando los siguientes comandos:
+
+```sh
+npm install
+npm test
+```
+
+> Internamente se lanzarán otros comandos orquestados mediante **Grunt** (que también podrían ejecutarse de manera concreta si fuera necesario).
+
+Más información ejecutando `grunt --help` y en <https://gitlab.com/redmic-project/client/web/-/wikis/test-main>.
 
 ### Ejemplos de ejecución de tests locales
 
@@ -65,7 +85,7 @@ Como ejemplo de ejecución de tests locales (unitarios y funcionales), veamos lo
 
 ```sh
 grunt test-unit-local \
-  --suites=tests/unit/redmic/modules/model/testModelImpl \
+  --suites=test/unit/component/model/testModelImpl \
   --browser=chrome \
   --headless \
   --coverage=false
@@ -75,7 +95,7 @@ grunt test-unit-local \
 
 ```sh
 grunt test-functional-local \
-  --functionalSuites=tests/functional/modules/**/!(*Script).js \
+  --functionalSuites=client-app/test/functional/component/**/!(*Script).js \
   --browser=chrome
 ```
 
@@ -94,7 +114,7 @@ docker run --rm -d \
   --name selenium-hub \
   --net selenium-net \
   -p 4444:4444 \
-  selenium/hub:4.1.3
+  selenium/hub:4.8.3
 
 # Lanza un nodo de navegador Chrome
 docker run --rm -d \
@@ -105,7 +125,7 @@ docker run --rm -d \
   -e SE_EVENT_BUS_PUBLISH_PORT=4442 \
   -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
   -e VNC_NO_PASSWORD=true \
-  selenium/node-chrome:99.0
+  selenium/node-chrome:111.0
 
 # Lanza un nodo de navegador Firefox
 docker run --rm -d \
@@ -116,16 +136,16 @@ docker run --rm -d \
   -e SE_EVENT_BUS_PUBLISH_PORT=4442 \
   -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
   -e VNC_NO_PASSWORD=true \
-  selenium/node-firefox:98.0
+  selenium/node-firefox:111.0
 ```
 
 Si todo ha ido correctamente, el servicio *Selenium Hub* estará accesible en <http://localhost:4444> con 2 nodos añadidos, formando un *Selenium Grid* funcional.
 
 Hay que prestar atención a los tags desplegados para cada imagen. En el ejemplo, se usan:
 
-* `selenium/hub:4.1.3` (versión **4.1.3** de **Selenium Hub**, ver más en <https://hub.docker.com/r/selenium/hub>).
-* `selenium/node-chrome:99.0` (versión **99.0** de **Google Chrome**, ver más en <https://hub.docker.com/r/selenium/node-chrome>).
-* `selenium/node-firefox:98.0` (versión **98.0** de **Mozilla Firefox**, ver más en <https://hub.docker.com/r/selenium/node-firefox>).
+* `selenium/hub:4.8.3` (versión **4.8.3** de **Selenium Hub**, ver más en <https://hub.docker.com/r/selenium/hub>).
+* `selenium/node-chrome:111.0` (versión **111.0** de **Google Chrome**, ver más en <https://hub.docker.com/r/selenium/node-chrome>).
+* `selenium/node-firefox:111.0` (versión **111.0** de **Mozilla Firefox**, ver más en <https://hub.docker.com/r/selenium/node-firefox>).
 
 Existen otras etiquetas más específicas (consultar en los enlaces anteriores) si se quiere fijar con más certeza las versiones usadas, al igual que imágenes para otros navegadores (disponibles en <https://hub.docker.com/u/selenium>). También hay disponibles multitud de opciones para configurar el entorno de testeo, consultar documentación en <https://github.com/SeleniumHQ/docker-selenium>.
 
@@ -137,7 +157,7 @@ Como ejemplo de ejecución de tests remotos (unitarios y funcionales), pero apun
 
 ```sh
 grunt test-unit-remote \
-  --suites=tests/unit/redmic/modules/model/testModelImpl \
+  --suites=test/unit/component/model/testModelImpl \
   --browser=firefox \
   --headless \
   --coverage=false
@@ -147,7 +167,7 @@ grunt test-unit-remote \
 
 ```sh
 grunt test-functional-remote \
-  --functionalSuites=tests/functional/modules/**/!(*Script).js \
+  --functionalSuites=client-app/test/functional/component/**/!(*Script).js \
   --browser=chrome \
   --headless
 ```

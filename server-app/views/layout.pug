@@ -1,0 +1,62 @@
+doctype html
+
+html
+	head
+		title REDMIC
+
+		meta(charset = 'utf-8')
+		meta(name = 'viewport' content = 'width=device-width, initial-scale=1')
+		meta(name = 'robots' content = 'index, follow')
+
+		script.
+			var lang = '#{env.lang}',
+				envApiUrl = '#{env.apiUrl}',
+				envUseBuilt = '#{env.useBuilt}',
+				envProduction = '#{env.production}',
+				envVersion = '#{env.version}',
+				envDebug = '#{env.debug}';
+
+		-
+			const esLocale = 'es_ES',
+				enLocale = 'en_GB';
+
+			let locale, altLocale1;
+
+			if (env.lang === 'es') {
+				locale = esLocale;
+				altLocale1 = enLocale;
+			} else if (env.lang === 'en') {
+				locale = enLocale;
+				altLocale1 = esLocale;
+			}
+
+			const basePath = '/client-app/',
+				codeBasePath = basePath + (env.useBuilt ? 'dist/' : ''),
+				dojoConfigPath = codeBasePath + (env.useBuilt ? 'js' : 'src') + '/dojoConfig.js',
+				dojoJsPath = codeBasePath + (env.useBuilt ? 'js' : 'dep') + '/dojo/dojo.js';
+
+		meta(name = 'og:locale' content = locale)
+		meta(name = 'og:locale:alternate' content = altLocale1)
+		meta(name = 'og:type' content = 'website')
+		meta(name = 'og:site_name' content = 'REDMIC')
+		meta(name = 'twitter:card' content = 'summary')
+		meta(name = 'twitter:site' content = '@redmic_project')
+
+		script(src = dojoConfigPath)
+		script(src = dojoJsPath data-dojo-config = 'locale:"' + env.lang + '"')
+
+		link(rel='shortcut icon', href=basePath + 'res/images/favicon.ico')
+
+	body(class=['db'])
+		//- Contenedor de carga de la aplicación
+		block loading
+
+		//- Contenedores de la aplicación
+		block error404
+		block root
+
+if !env.useBuilt
+	link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,600,400')
+	link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Exo+2:700')
+
+link(rel='stylesheet', href=codeBasePath + 'style/style.css')

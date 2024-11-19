@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 			},
 			command: function() {
 
-				var cmd = 'scripts/updateModules.sh';
+				var cmd = 'grunt/scripts/updateModules.sh';
 
 				if (remote) {
 					cmd += ' remote';

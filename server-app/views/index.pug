@@ -1,0 +1,17 @@
+extends layout
+
+block loading
+	#loadingContainer
+		span.fa.fa-refresh.spinningElement
+
+block root
+	#rootContainer
+
+	script.
+		require([
+			'src/app/App'
+		], function(
+			App
+		) {
+			new App();
+		});

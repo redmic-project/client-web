@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 			},
 			command: function() {
 
-				return 'scripts/addModules.sh';
+				return 'grunt/scripts/addModules.sh';
 			}
 		});
 

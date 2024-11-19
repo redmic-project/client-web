@@ -10,9 +10,15 @@ module.exports = function(grunt) {
 			, '"--browser" para elegir navegadores a usar, soporta definiciones múltiples y lista separada por comas ' +
 				'(por defecto, chrome)'
 			, '"--seleniumVersion=version" para definir una versión del túnel Selenium (por defecto, automática)'
-			, '"--chromeVersion=version" para definir una versión del driver para Chrome (por defecto, automática)'
-			, '"--firefoxVersion=version" para definir una versión del driver para Firefox (por defecto, automática)'
+			, '"--chromeBrowserVersion=version" para definir una versión deseada del navegador Chrome remoto (por defecto, vale cualquiera). Especificar como "major.minor"'
+			, '"--firefoxBrowserVersion=version" para definir una versión deseada del navegador Firefox remoto (por defecto, vale cualquiera). Especificar como "major.minor"'
 			, '"--headless" para ejecutar sin interfaz'
+			, '"--grep" para filtrar mediante expresión regular los tests a ejecutar'
+		],
+
+		localOptionParameters = [
+			'"--chromeDriverVersion=version" para definir una versión del driver Chrome local (por defecto, automática hasta "114.0.5735.90")'
+			, '"--firefoxDriverVersion=version" para definir una versión del driver Firefox local (por defecto, automática hasta "0.29.1")'
 		],
 
 		remoteOptionParameters = [
@@ -38,6 +44,7 @@ module.exports = function(grunt) {
 		['Ejecuta los tests unitarios en entorno local']
 			.concat(commonOptionParameters)
 			.concat(unitOptionParameters)
+			.concat(localOptionParameters)
 			.join('\n'),
 		commonTasks.concat(['intern:test-unit-local']));
 
@@ -45,6 +52,7 @@ module.exports = function(grunt) {
 		['Ejecuta los tests funcionales en entorno local']
 			.concat(commonOptionParameters)
 			.concat(functionalOptionParameters)
+			.concat(localOptionParameters)
 			.join('\n'),
 		commonTasks.concat(['intern:test-functional-local']));
 
@@ -65,94 +73,4 @@ module.exports = function(grunt) {
 		commonTasks.concat(['intern:test-functional-remote']));
 
 	grunt.registerTask('test', ['test-unit-local']);
-
-	grunt.registerTask('test-functional-local-parallel',
-		'Ejecuta los tests funcionales en entorno local de manera paralela',
-		function() {
-
-		grunt.config('shell.test-functional-local-parallel', {
-			command: function() {
-
-				var serverUrlParam = grunt.option('serverUrl'),
-					userParam = grunt.option('user'),
-					passParam = grunt.option('pass'),
-					serverPort = 9000,
-					gruntCommand = 'grunt test-functional-local --headless',
-
-					publicZoneGroups = 'catalog,catalogDetails,viewers,products',
-					administrativeZoneGroup = 'administrative,!administrative/taxonomy',
-					taxonomyZoneGroup = 'administrative/taxonomy',
-					dataLoaderAndAdministrativeDetailsZoneGroup = 'administrativeDetails,dataLoader',
-					maintenanceAndAdminDomainsZoneGroup = 'maintenance,!maintenance/domains/taxon' +
-						',!maintenance/domains/observations',
-					taxonAndObservationDomainsZoneGroup = 'maintenance/domains/observations,maintenance/domains/taxon',
-
-					portParam = ' --ownServerPort=',
-
-					guestCommonTestsParams = ' --role=guest --suitesGroups=',
-
-					guestTestsParams = guestCommonTestsParams + publicZoneGroups,
-
-					specificParamsList = [],
-					specificParams,
-
-					userCommonTestsParams = ' --role=administrator --user=' + userParam + ' --pass=' + passParam +
-						' --suitesGroups=',
-
-					userZoneGroupsList = [
-						publicZoneGroups, administrativeZoneGroup, taxonomyZoneGroup,
-						dataLoaderAndAdministrativeDetailsZoneGroup, maintenanceAndAdminDomainsZoneGroup,
-						taxonAndObservationDomainsZoneGroup
-					],
-
-					commonGuestZoneGroups = guestCommonTestsParams + 'common',
-					commonUserZoneGroups = userCommonTestsParams + 'common',
-
-					cmds = [],
-					commandsGrunt = '';
-
-				if (serverUrlParam) {
-					gruntCommand += ' --serverUrl="' + serverUrlParam + '"';
-				}
-
-				for (var i = 0; i < userZoneGroupsList.length; i++) {
-					specificParamsList.push(userCommonTestsParams + userZoneGroupsList[i]);
-				}
-
-				commandsGrunt = gruntCommand + commonGuestZoneGroups + portParam + serverPort + ' ; ';
-				serverPort += 3;
-
-				commandsGrunt += gruntCommand + commonUserZoneGroups + portParam + serverPort + ' ; ';
-				serverPort += 3;
-
-				commandsGrunt += gruntCommand + guestTestsParams + portParam + serverPort + ' ; ';
-				serverPort += 3;
-
-				var firstPartSpecificParamsList = Math.floor(specificParamsList.length / 2);
-
-				for (i = 0; i < firstPartSpecificParamsList; i++) {
-					specificParams = specificParamsList[i];
-
-					cmds.push(gruntCommand + specificParams + portParam + serverPort);
-					serverPort += 3;
-				}
-
-				commandsGrunt += cmds.join(' & ') + ' ; ';
-				cmds = [];
-
-				for (i = firstPartSpecificParamsList; i < specificParamsList.length; i++) {
-					specificParams = specificParamsList[i];
-
-					cmds.push(gruntCommand + specificParams + portParam + serverPort);
-					serverPort += 3;
-				}
-
-				commandsGrunt += cmds.join(' & ');
-
-				return commandsGrunt;
-			}
-		});
-
-		grunt.task.run('shell:test-functional-local-parallel');
-	});
 };

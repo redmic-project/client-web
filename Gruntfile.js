@@ -12,9 +12,11 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		redmicConfig: {
 			rootPath: __dirname,
-			srcPath: 'public/javascript',
-			distPath: 'dist',
-			destDir: 'javascript'
+			srcPath: 'client-app/src',
+			depPath: 'client-app/dep',
+			testPath: 'client-app/test',
+			distPath: 'client-app/dist',
+			destDir: 'js'
 		},
 		pkg: grunt.file.readJSON('package.json')
 	});

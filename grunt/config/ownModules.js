@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 
 	grunt.config('redmicConfig.ownModules', [
-		'public/javascript/templates',
-		'public/stylesheets'
+		'client-app/dep/templates',
+		'client-app/style'
 	]);
 };

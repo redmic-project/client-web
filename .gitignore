@@ -1,7 +1,7 @@
 node_modules
-dist
+client-app/dist
+client-app/build-report.txt
 test_reports
 .gitmodules.old
-build-report.txt
-*.tar.gz
+*.tgz
 *.log

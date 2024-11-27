@@ -230,12 +230,17 @@ define([
 
 		_prepareFixedObservationSeriesActivityWidgets: function(layoutConfig) {
 
-			var key = 'activityFixedObservationSeriesMap',
-				config = this._getActivityFixedObservationSeriesMapConfig(layoutConfig);
+			var mapKey = 'activityFixedObservationSeriesMap',
+				mapConfig = this._getActivityFixedObservationSeriesMapConfig(layoutConfig);
 
-			this._addWidget(key, config);
+			this._addWidget(mapKey, mapConfig);
 
-			return key;
+			var listKey = 'activityFixedObservationSeriesList',
+				listConfig = this._getActivityFixedObservationSeriesListConfig(mapKey, layoutConfig);
+
+			this._addWidget(listKey, listConfig);
+
+			return [mapKey, listKey];
 		},
 
 		_prepareFixedTimeseriesActivityWidgets: function(layoutConfig) {

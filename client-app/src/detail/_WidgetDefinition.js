@@ -4,9 +4,10 @@ define([
 	, 'app/designs/details/main/ActivityTrackingMap'
 	, 'app/details/views/ActivityAreaMapBase'
 	, 'app/details/views/ActivityCitationMapBase'
-	, 'app/details/views/ActivityFixedTimeseriesChart'
+	, 'src/detail/activity/widget/ActivityFixedObservationSeriesList'
 	, 'src/detail/activity/widget/ActivityFixedObservationSeriesMap'
-	, 'app/details/views/ActivityFixedTimeseriesMap'
+	, 'src/detail/activity/widget/ActivityFixedTimeseriesChart'
+	, 'src/detail/activity/widget/ActivityFixedTimeseriesMap'
 	, 'app/details/views/ActivityInfrastructureMapBase'
 	, 'app/details/views/ActivityLayerMapBase'
 	, 'src/util/Credentials'
@@ -30,8 +31,9 @@ define([
 	, ActivityTrackingMap
 	, ActivityAreaMapBase
 	, ActivityCitationMapBase
-	, ActivityFixedTimeseriesChart
+	, ActivityFixedObservationSeriesList
 	, ActivityFixedObservationSeriesMap
+	, ActivityFixedTimeseriesChart
 	, ActivityFixedTimeseriesMap
 	, ActivityInfrastructureMapBase
 	, ActivityLayerMapBase
@@ -316,8 +318,22 @@ define([
 				height: 6,
 				type: ActivityFixedObservationSeriesMap,
 				props: {
-					title: 'associatedObservationStation',
+					title: 'associatedObservationStations',
 					pathVariableId: this._activityData.id
+				}
+			};
+		},
+
+		_getActivityFixedObservationSeriesListConfig: function(mapKey, config) {
+
+			return {
+				width: 6,
+				height: 6,
+				type: ActivityFixedObservationSeriesList,
+				props: {
+					title: 'associatedObservationRegisters',
+					pathVariableId: this._activityData.id,
+					timeseriesDataChannel: this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA')
 				}
 			};
 		},

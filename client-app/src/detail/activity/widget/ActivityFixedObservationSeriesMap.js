@@ -96,7 +96,6 @@ define([
 
 		_getPopupContent: function(data) {
 
-			console.log('popup', data)
 			return TemplatePopup({
 				i18n: this.i18n,
 				feature: data.feature

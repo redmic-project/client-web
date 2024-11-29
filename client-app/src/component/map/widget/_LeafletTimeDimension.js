@@ -39,6 +39,7 @@ define([
 				timeDimensionMaxTime: moment().utc().startOf('day'),
 
 				getTimeDimensionExternalContainer: null,
+				reducedTimeDimensionClass: 'timeDimensionReduced',
 
 				_layersWithTimeDimension: {}
 			};
@@ -47,6 +48,32 @@ define([
 
 			aspect.before(this, '_addMapLayer', lang.hitch(this, this._addTimeDimensionMapLayer));
 			aspect.before(this, '_removeMapLayer', lang.hitch(this, this._removeTimeDimensionMapLayer));
+			aspect.before(this, '_resize', lang.hitch(this, this._resizeTimeDimension));
+		},
+
+		_resizeTimeDimension: function() {
+
+			if (!this._timeDimensionInstance) {
+				return;
+			}
+
+			this._evaluateLowWidthCondition();
+			this._updateTimeDimensionWidget();
+		},
+
+		_evaluateLowWidthCondition: function() {
+
+			var controlContainer = this._getTimeDimensionControlContainer();
+
+			if (!controlContainer) {
+				return;
+			}
+
+			if (this._getLowWidth()) {
+				put(controlContainer, '.' + this.reducedTimeDimensionClass);
+			} else {
+				put(controlContainer, '!' + this.reducedTimeDimensionClass);
+			}
 		},
 
 		_addTimeDimensionMapLayer: function(obj) {
@@ -69,6 +96,7 @@ define([
 
 			if (!this._timeDimensionInstance) {
 				this._addTimeDimensionWidget();
+				this._evaluateLowWidthCondition();
 			}
 
 			this._updateTimeDimensionWidget();
@@ -213,7 +241,12 @@ define([
 				return;
 			}
 
-			put(externalContainer, this._timeDimensionControlInstance._container);
+			put(externalContainer, this._getTimeDimensionControlContainer());
+		},
+
+		_getTimeDimensionControlContainer: function() {
+
+			return this._timeDimensionControlInstance && this._timeDimensionControlInstance._container;
 		},
 
 		_removeTimeDimensionWidget: function() {
@@ -234,9 +267,9 @@ define([
 
 			var timeDimensionLayer = this._getLayerWithTimeDimensionWrapper(layerId, originalLayer);
 
-			// TODO parche para actualizar la instancia de la capa interna en el componente de capa, necesario para
-			// que responda a la hora de aplicarle cambios de parámetros, como el de la dimensión de elevación
-			layer.layer = timeDimensionLayer;
+			this._publish(layer.getChannel('SET_PROPS'), {
+				layer: timeDimensionLayer
+			});
 
 			return timeDimensionLayer;
 		},

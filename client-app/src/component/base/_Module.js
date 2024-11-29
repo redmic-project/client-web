@@ -803,11 +803,19 @@ define([
 
 		_getUnmutableValue: function(value) {
 
-			if (typeof value === 'object' && value && !value.ownChannel && !value.ownerDocument) {
-				return lang.clone(value);
+			var valueIsObject = value && typeof value === 'object';
+
+			if (!valueIsObject) {
+				return value;
 			}
 
-			return value;
+			var objectHasLifecycle = value.ownChannel || value.ownerDocument || value.constructor;
+
+			if (objectHasLifecycle) {
+				return value;
+			}
+
+			return lang.clone(value);
 		},
 
 		_subGetProps: function(req) {

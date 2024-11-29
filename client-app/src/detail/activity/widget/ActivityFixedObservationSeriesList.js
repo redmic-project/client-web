@@ -16,14 +16,14 @@ define([
 	, TemplateList
 ) {
 
-	return declare([ListController, ListLayout, _Store], {
+	return declare([ListLayout, ListController, _Store], {
 		//	summary:
 		//
 
 		constructor: function(args) {
 
 			this.config = {
-				targetWithParams: redmicConfig.services.stationObservationSeriesObservations
+				observationTarget: redmicConfig.services.observationSeries
 			};
 
 			lang.mixin(this, this.config, args);
@@ -31,9 +31,10 @@ define([
 
 		_afterSetConfigurations: function() {
 
-			this.browserConfig = this._merge([{
-				template: TemplateList
-			}, this.browserConfig || {}], {
+			this.browserConfig = this._merge([this.browserConfig || {}, {
+				template: TemplateList,
+				target: this.observationTarget
+			}], {
 				arrayMergingStrategy: 'concatenate'
 			});
 		},
@@ -48,25 +49,34 @@ define([
 
 		_subObservationStationSet: function(data) {
 
-			var stationId = data.id,
+			var dataDefinitionId = this._getDataDefinitionId(data),
 				stationName = data.site && data.site.name;
-
-			var target = lang.replace(this.targetWithParams, {
-				id: stationId
-			});
 
 			this._setTitle(stationName);
 
-			this._publish(this.browser.getChannel('UPDATE_TARGET'), {
-				target: target
-			});
-
 			this._emitEvt('REQUEST', {
 				method: 'POST',
-				target: target,
+				target: this.observationTarget,
 				action: '_search',
-				requesterId: this.browser.getOwnChannel()
+				requesterId: this.browser.getOwnChannel(),
+				query: {
+					terms: {
+						dataDefinition: dataDefinitionId
+					}
+				}
 			});
+		},
+
+		_getDataDefinitionId: function(data) {
+
+			var measurements = data.measurements;
+
+			var countMeasurement = measurements.find(function(measurement) {
+
+				return measurement.parameter && measurement.parameter.id === 87;
+			});
+
+			return countMeasurement && countMeasurement.dataDefinition && countMeasurement.dataDefinition.id;
 		}
 	});
 });

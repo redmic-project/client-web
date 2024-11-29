@@ -261,7 +261,7 @@ define([], function() {
 		'timeSeriesActivities': baseUri + 'timeseries/activities',
 		'activityTimeSeriesStations': baseUri + 'activities/{activityid}/timeseriesstations',
 		'activityObservationSeriesStations': baseUri + 'private/activities/{id}/observationseriesstations',
-		'stationObservationSeriesObservations': baseUri + 'private/station/{id}/observationseries',
+		'observationSeries': baseUri + 'private/observationseries',
 		'timeSeriesStations': baseUri + 'surveystations',
 		'surveyStationsTimeSeries': baseUri + 'datadefinitions/{datadefinitionid}/timeseries',
 

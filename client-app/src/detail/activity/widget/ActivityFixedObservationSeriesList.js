@@ -23,7 +23,8 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				observationTarget: redmicConfig.services.observationSeries
+				observationTarget: redmicConfig.services.observationSeries,
+				observationItemsPerPage: 25
 			};
 
 			lang.mixin(this, this.config, args);
@@ -60,6 +61,11 @@ define([
 				action: '_search',
 				requesterId: this.browser.getOwnChannel(),
 				query: {
+					size: this.observationItemsPerPage,
+					sorts: [{
+						field: 'date',
+						order: 'DESC'
+					}],
 					terms: {
 						dataDefinition: dataDefinitionId
 					}

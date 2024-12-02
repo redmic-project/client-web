@@ -10,6 +10,7 @@ define({
 		, "addLayerFirst": "Add layer to map first"
 		, "navigateToLayerInfo": "Navigate to layer details view"
 		, "checkSpeciesAtCatalog": "Check species at catalog"
+		, "checkAnimalAtCatalog": "Check animal at catalog"
 		, "associatedObservationStations": "Associated observation stations"
 		, "associatedObservationRegisters": "Associated observation registers at station"
 		, "userData": "User data"

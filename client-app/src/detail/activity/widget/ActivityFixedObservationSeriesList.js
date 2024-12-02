@@ -1,30 +1,31 @@
 define([
-	'app/designs/list/Controller'
-	, 'app/designs/list/layout/Layout'
+	'app/designs/textSearchList/Controller'
+	, 'app/designs/textSearchList/layout/BasicTopZone'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/base/_Store'
+	, 'src/component/browser/bars/Order'
+	, 'src/component/browser/bars/Total'
 	, 'src/redmicConfig'
 	, 'templates/ObservationRegisterList'
 ], function(
-	ListController
-	, ListLayout
+	TextSearchListController
+	, TextSearchListLayout
 	, declare
 	, lang
-	, _Store
+	, Order
+	, Total
 	, redmicConfig
 	, TemplateList
 ) {
 
-	return declare([ListLayout, ListController, _Store], {
+	return declare([TextSearchListLayout, TextSearchListController], {
 		//	summary:
 		//
 
 		constructor: function(args) {
 
 			this.config = {
-				observationTarget: redmicConfig.services.observationSeries,
-				observationItemsPerPage: 25
+				target: redmicConfig.services.observationSeries
 			};
 
 			lang.mixin(this, this.config, args);
@@ -32,9 +33,22 @@ define([
 
 		_afterSetConfigurations: function() {
 
+			this.filterConfig = this._merge([this.filterConfig || {}, {
+				serializeOnQueryUpdate: false
+			}]);
+
 			this.browserConfig = this._merge([this.browserConfig || {}, {
 				template: TemplateList,
-				target: this.observationTarget
+				bars: [{
+					instance: Total
+				},{
+					instance: Order,
+					config: {
+						options: [
+							{value: 'date'}
+						]
+					}
+				}]
 			}], {
 				arrayMergingStrategy: 'concatenate'
 			});
@@ -55,17 +69,12 @@ define([
 
 			this._setTitle(stationName);
 
-			this._emitEvt('REQUEST', {
-				method: 'POST',
-				target: this.observationTarget,
-				action: '_search',
-				requesterId: this.browser.getOwnChannel(),
+			this._publish(this.filter.getChannel('SET_PROPS'), {
+				serializeOnQueryUpdate: true
+			});
+
+			this._emitEvt('ADD_TO_QUERY', {
 				query: {
-					size: this.observationItemsPerPage,
-					sorts: [{
-						field: 'date',
-						order: 'DESC'
-					}],
 					terms: {
 						dataDefinition: dataDefinitionId
 					}

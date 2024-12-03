@@ -114,7 +114,7 @@ define([
 		_onToggleShowLayer: function(obj) {
 
 			if (obj.state) {
-				this._addMapLayer(obj.id);
+				this._addMapLayer(obj.id, obj.item);
 			} else {
 				this._removeMapLayer(obj.id);
 			}

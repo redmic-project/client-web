@@ -166,8 +166,8 @@ define([
 			return {
 				startMoment: startMoment,
 				endMoment: endMoment,
-				startTime: startMoment.valueOf(),
-				endTime: endMoment.valueOf()
+				startTime: startMoment.toDate(),
+				endTime: endMoment.toDate()
 			};
 		},
 

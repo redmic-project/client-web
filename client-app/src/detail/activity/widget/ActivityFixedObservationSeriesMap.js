@@ -3,6 +3,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
+	, 'dojo/query'
 	, 'src/redmicConfig'
 	, 'templates/ObservationStationPopup'
 	, 'templates/ObservationStationList'
@@ -11,6 +12,7 @@ define([
 	, declare
 	, lang
 	, aspect
+	, query
 	, redmicConfig
 	, TemplatePopup
 	, TemplateList
@@ -28,7 +30,8 @@ define([
 				},
 				target: redmicConfig.services.activity,
 				templateTargetChange: redmicConfig.services.activityObservationSeriesStations,
-				_activeRadius: false
+				_activeRadius: false,
+				_showObservationsButtonClass: 'showObservations'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -49,6 +52,7 @@ define([
 										icon: 'fa-database',
 										btnId: 'showObservations',
 										returnItem: true,
+										href: '#activityFixedObservationSeriesList',
 										title: this.i18n.observations
 									}]
 								}
@@ -85,7 +89,7 @@ define([
 				return;
 			}
 
-			var showChartsNode = query('.' + this._showChartsButtonClass, popupNode)[0];
+			var showChartsNode = query('.' + this._showObservationsButtonClass, popupNode)[0];
 
 			if (!showChartsNode) {
 				return;

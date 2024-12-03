@@ -332,7 +332,7 @@ define([
 			if (platforms) {
 				for (var i = 0; i < platforms.length; i++) {
 					var platform = platforms[i].platform;
-					platform.url = lang.replace(redmicConfig.viewPaths.platformCatalogDetails, {
+					platform.url = lang.replace(redmicConfig.viewPaths.platformDetails, {
 						id: platform.id
 					});
 				}

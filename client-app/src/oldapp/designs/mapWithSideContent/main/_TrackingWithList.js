@@ -82,7 +82,8 @@ define([
 							title: "info",
 							href: [
 								redmicConfig.viewPaths.activityDetails,
-								redmicConfig.viewPaths.platformCatalogDetails
+								redmicConfig.viewPaths.platformDetails,
+								redmicConfig.viewPaths.animalDetails
 							],
 							chooseHref: function(item) {
 
@@ -93,12 +94,14 @@ define([
 								if (item.platformType) {
 									return 1;
 								}
+
+								if (item.lifeStage) {
+									return 2;
+								}
 							},
 							condition: function(item) {
 
-								if (item.activityType || item.platformType) {
-									return true;
-								}
+								return item.activityType || item.platformType || item.lifeStage;
 							}
 						}]
 					},

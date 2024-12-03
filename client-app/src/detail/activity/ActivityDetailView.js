@@ -42,8 +42,8 @@ define([
 			this.target = [this.activityTarget];
 
 			this.viewPathsWidgets = {
-				organisations: redmicConfig.viewPaths.organisationCatalogDetails,
-				platforms: redmicConfig.viewPaths.platformCatalogDetails,
+				organisations: redmicConfig.viewPaths.organisationDetails,
+				platforms: redmicConfig.viewPaths.platformDetails,
 				documents: redmicConfig.viewPaths.bibliographyDetails
 			};
 

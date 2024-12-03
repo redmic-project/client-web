@@ -216,7 +216,7 @@ define([
 							icon: "fa-info-circle",
 							btnId: "details",
 							title: "info",
-							href: redmicConfig.viewPaths.speciesCatalogDetails
+							href: redmicConfig.viewPaths.speciesDetails
 						}]
 					}
 				},

@@ -95,7 +95,7 @@ define([
 								icon: "fa-info-circle",
 								btnId: "details",
 								title: "info",
-								href: redmicConfig.viewPaths.documentDetails
+								href: redmicConfig.viewPaths.bibliographyDetails
 							},{
 								icon: "fa-arrow-right",
 								btnId: "addItem",
@@ -141,7 +141,7 @@ define([
 								icon: "fa-info-circle",
 								btnId: "details",
 								title: "info",
-								href: redmicConfig.viewPaths.documentDetails
+								href: redmicConfig.viewPaths.bibliographyDetails
 							}]
 						}
 					},

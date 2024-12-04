@@ -39,7 +39,7 @@ define([
 		_accessByActivityCategory: function(activityCategory) {
 
 			if (!activityCategory || this.activityCategory.indexOf(activityCategory) === -1) {
-				this._goTo404();
+				//this._goTo404();
 			}
 		}
 	});

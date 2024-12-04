@@ -40,6 +40,10 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			if (this.usePrivateTarget) {
+				this.baseTargetChildren = redmicConfig.services.privateElementsTrackingActivity;
+			}
 		},
 
 		_setMainConfigurations: function() {
@@ -50,7 +54,8 @@ define([
 					height: 6,
 					type: declare([Tracking, _TrackingWithListByFilter]),
 					props: {
-						classWindowContent: "view"
+						classWindowContent: "view",
+						usePrivateTarget: this.usePrivateTarget
 					}
 				}
 			}, this.widgetConfigs || {}]);

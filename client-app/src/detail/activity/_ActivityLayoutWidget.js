@@ -73,9 +73,9 @@ define([
 			this._once(channelToSubscribe, lang.hitch(this, function(grantsDfd, res) {
 
 				if (res.accessGranted) {
-					grantsDfd.resolve();
+					grantsDfd.resolve(true);
 				} else {
-					grantsDfd.reject();
+					grantsDfd.reject(false);
 				}
 			}, dfd));
 
@@ -85,7 +85,7 @@ define([
 			});
 		},
 
-		_onLayoutNotGranted: function(res) {
+		_onLayoutNotGranted: function(grantsDfd) {
 
 			// TODO mostrar al usuario un aviso de que existen datos en la actividad, pero no tiene permiso.
 			// Ofrecerle identificarse.
@@ -103,10 +103,14 @@ define([
 			}
 		},
 
-		_prepareDetailLayoutWidgets: function(detailLayout, layoutConfig) {
+		_prepareDetailLayoutWidgets: function(detailLayout, layoutConfig, grantsDfd) {
 
 			if (!this._detailLayoutWidgets) {
 				this._detailLayoutWidgets = [];
+			}
+
+			if (grantsDfd !== undefined) {
+				layoutConfig.accessGranted = grantsDfd;
 			}
 
 			var prepareWidgetsMethod;

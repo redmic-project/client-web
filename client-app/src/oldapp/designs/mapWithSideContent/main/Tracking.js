@@ -60,8 +60,6 @@ define([
 				"class": "",
 
 				layersTarget: redmicConfig.services.pointTrackingCluster,
-				// TODO cuando se pidan por actividad, definir este en redmicConfig
-				//layersTarget: "/api/activities/{id}/tracking/cluster",
 				infoTarget: redmicConfig.services.trackingActivity,
 
 				mainEvents: {
@@ -100,6 +98,10 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			if (this.usePrivateTarget) {
+				this.layersTarget = redmicConfig.services.privatePointTrackingCluster;
+			}
 		},
 
 		_setMainConfigurations: function() {
@@ -287,7 +289,7 @@ define([
 			this._activityIdByUuid[idProperty] = item.activityId;
 
 			var target = lang.replace(this.layersTarget, {
-					elementuuid: idProperty,	// TODO cuando se pidan por actividad, omitir este parámetro
+					elementuuid: idProperty,
 					activityid: this._activityIdByUuid[idProperty]
 				}),
 				infoTarget = lang.replace(this.infoTarget, {

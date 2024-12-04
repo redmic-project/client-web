@@ -274,7 +274,14 @@ define([
 
 		_getActivityTrackingConfig: function(config) {
 
-			return {
+			var additionalConfig = {};
+
+			if (config && config.accessGranted) {
+				additionalConfig.props = {};
+				additionalConfig.props.usePrivateTarget = config.accessGranted;
+			}
+
+			return this._merge([{
 				width: 6,
 				height: 6,
 				type: ActivityTrackingMap,
@@ -282,7 +289,7 @@ define([
 					title: 'tracking',
 					pathVariableId: this._activityData.id
 				}
-			};
+			}, additionalConfig]);
 		},
 
 		_getActivityInfrastructureConfig: function(config) {

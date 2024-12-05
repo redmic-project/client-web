@@ -337,6 +337,7 @@ define([
 				width: 6,
 				height: 6,
 				type: ActivityFixedObservationSeriesList,
+				hidden: true,
 				props: {
 					title: 'associatedObservationRegisters',
 					pathVariableId: this._activityData.id,
@@ -364,6 +365,7 @@ define([
 				width: 6,
 				height: 6,
 				type: ActivityFixedTimeseriesChart,
+				hidden: true,
 				props: {
 					title: 'charts',
 					pathVariableId: this._activityData.id,

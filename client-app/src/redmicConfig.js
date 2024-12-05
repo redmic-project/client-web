@@ -527,7 +527,11 @@ define([], function() {
 			'properties.measurements.unit.id', 'properties.measurements.unit.name',
 			'properties.measurements.dataDefinition.id', 'properties.measurements.dataDefinition.z'
 		],
-		timeSeriesStationsMap: ['geometry']
+		timeSeriesStationsMap: ['geometry'],
+		observationSeries: [
+			'date', 'observation.note', 'observation.animal.id', 'observation.animal.name', 'observation.taxonomy.id',
+			'observation.taxonomy.scientificName', 'observation.device.name', 'observation.device.model'
+		]
 	};
 
 	retObj.outerPaths = [

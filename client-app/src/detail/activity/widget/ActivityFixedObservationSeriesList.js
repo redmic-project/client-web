@@ -44,6 +44,7 @@ define([
 				},{
 					instance: Order,
 					config: {
+						defaultOrderField: 'date',
 						options: [
 							{value: 'date'}
 						]
@@ -62,6 +63,13 @@ define([
 			});
 		},
 
+		postCreate: function() {
+
+			this.inherited(arguments);
+
+			this._setTitle('');
+		},
+
 		_subObservationStationSet: function(data) {
 
 			var dataDefinitionId = this._getDataDefinitionId(data),
@@ -77,7 +85,8 @@ define([
 				query: {
 					terms: {
 						dataDefinition: dataDefinitionId
-					}
+					},
+					returnFields: redmicConfig.returnFields.observationSeries
 				}
 			});
 		},

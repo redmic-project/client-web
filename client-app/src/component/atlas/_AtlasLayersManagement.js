@@ -376,6 +376,15 @@ define([
 				atlasItem: atlasLayerItem.atlasItem,
 				order: order
 			});
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'UPDATE_DRAGGABLE_ITEM_ORDER'), {
+				id: atlasLayerItem.id,
+				index: 0
+			});
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'ENABLE_DRAG_AND_DROP'), {
+				id: atlasLayerItem.id
+			});
 		},
 
 		_deactivateLayer: function(/*Object*/ atlasLayerItem, order) {
@@ -394,6 +403,10 @@ define([
 					keepInstance: true
 				});
 			}
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'DISABLE_DRAG_AND_DROP'), {
+				id: atlasLayerItem.id
+			});
 		}
 	});
 });

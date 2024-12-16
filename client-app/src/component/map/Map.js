@@ -561,8 +561,13 @@ define([
 		_subReorderLayers: function(request) {
 
 			var layerId = request.layerId,
-				layerObj = this._overlayLayers[layerId],
-				newPosition = request.newPosition + 1,
+				layerObj = this._overlayLayers[layerId];
+
+			if (!layerObj) {
+				return;
+			}
+
+			var newPosition = request.newPosition + 1,
 				oldPosition = request.oldPosition + 1,
 				diff = newPosition - oldPosition,
 				key, layerObject;

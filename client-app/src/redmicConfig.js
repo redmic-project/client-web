@@ -391,6 +391,18 @@ define([], function() {
 				}
 			}
 		},
+		observationSeries: {
+			animal: {
+				terms: {
+					field: 'observation.animal.name'
+				}
+			},
+			species: {
+				terms: {
+					field: 'observation.taxonomy.scientificName'
+				}
+			}
+		},
 		organisation: {
 			organisationType: {
 				terms: {

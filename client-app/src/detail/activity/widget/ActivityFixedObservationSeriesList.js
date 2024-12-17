@@ -1,6 +1,6 @@
 define([
-	'app/designs/textSearchList/Controller'
-	, 'app/designs/textSearchList/layout/BasicTopZone'
+	'app/designs/textSearchFacetsList/Controller'
+	, 'app/designs/textSearchFacetsList/Layout'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/browser/bars/Order'
@@ -8,8 +8,8 @@ define([
 	, 'src/redmicConfig'
 	, 'templates/ObservationRegisterList'
 ], function(
-	TextSearchListController
-	, TextSearchListLayout
+	TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, declare
 	, lang
 	, Order
@@ -18,7 +18,7 @@ define([
 	, TemplateList
 ) {
 
-	return declare([TextSearchListLayout, TextSearchListController], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController], {
 		//	summary:
 		//
 
@@ -53,6 +53,10 @@ define([
 			}], {
 				arrayMergingStrategy: 'concatenate'
 			});
+
+			this.facetsConfig = this._merge([{
+				aggs: redmicConfig.aggregations.observationSeries
+			}, this.facetsConfig || {}]);
 		},
 
 		_defineSubscriptions: function() {

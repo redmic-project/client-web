@@ -225,6 +225,12 @@ define([
 				query.size = null;
 			}
 
+			// TODO parche para evitar que elasticsearch falle al superar los 10000 registros
+			if (query.from + query.size > 10000) {
+				query.from = 0;
+				query.size = 0;
+			}
+
 			this._addToQuery(query, !omitRefresh);
 		},
 

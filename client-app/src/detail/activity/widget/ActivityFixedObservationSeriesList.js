@@ -1,24 +1,30 @@
 define([
-	'app/designs/textSearchFacetsList/Controller'
+	'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
+	, 'app/designs/textSearchFacetsList/Controller'
 	, 'app/designs/textSearchFacetsList/Layout'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/browser/bars/Order'
 	, 'src/component/browser/bars/Total'
 	, 'src/redmicConfig'
+	, 'templates/ObservationFilterForm'
 	, 'templates/ObservationRegisterList'
 ], function(
-	TextSearchFacetsListController
+	_AddCompositeSearchInTooltipFromTextSearch
+	, TextSearchFacetsListController
 	, TextSearchFacetsListLayout
 	, declare
 	, lang
 	, Order
 	, Total
 	, redmicConfig
+	, TemplateFilter
 	, TemplateList
 ) {
 
-	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController], {
+	return declare([
+		TextSearchFacetsListLayout, TextSearchFacetsListController, _AddCompositeSearchInTooltipFromTextSearch
+	], {
 		//	summary:
 		//
 
@@ -57,6 +63,14 @@ define([
 			this.facetsConfig = this._merge([{
 				aggs: redmicConfig.aggregations.observationSeries
 			}, this.facetsConfig || {}]);
+
+			this.textSearchConfig = this._merge([{
+				showExpandIcon: true
+			}, this.textSearchConfig || {}]);
+
+			this.compositeConfig = this._merge([this.compositeConfig || {}, {
+				template: TemplateFilter
+			}]);
 		},
 
 		_defineSubscriptions: function() {

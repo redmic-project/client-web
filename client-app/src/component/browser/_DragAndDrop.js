@@ -35,7 +35,10 @@ define([
 				rowContainerDragAndDropClass: 'dragAndDrop',
 				draggableItemIds: null,
 				disableDragHandlerOnCreation: false,
-				hiddenClass: 'hidden'
+				hiddenClass: 'hidden',
+				animatedClass: 'animate__animated',
+				animatedFromBottom: 'animate__slideInUp',
+				animatedFromTop: 'animate__slideInDown'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -330,14 +333,26 @@ define([
 
 		_updatePositionRow: function(row) {
 
+			this._nodeDrag.addEventListener('animationend', lang.hitch(this, this._rowDragAnimationEndCallback), {
+				passive: true
+			});
+
 			// Reordena a la posición correcta
 			if (domClass.contains(this._nodeBorderLast, this.topBorderDragAndDropClass)) {
 				put(this._nodeBorderLast, '-', this._nodeDrag);
+				domClass.add(this._nodeDrag, [this.animatedClass, this.animatedFromBottom]);
 			} if (domClass.contains(this._nodeBorderLast, this.bottomBorderDragAndDropClass)) {
 				put(this._nodeBorderLast, '+', this._nodeDrag);
+				domClass.add(this._nodeDrag, [this.animatedClass, this.animatedFromTop]);
 			}
+		},
 
-			this._removeDragAndDropBackground(this._nodeDrag);
+		_rowDragAnimationEndCallback: function(evt) {
+
+			var rowNode = evt.target;
+
+			domClass.remove(rowNode, [this.animatedClass, this.animatedFromBottom, this.animatedFromTop]);
+			this._removeDragAndDropBackground(rowNode);
 		},
 
 		_insertDragAndDropBackground: function(node) {

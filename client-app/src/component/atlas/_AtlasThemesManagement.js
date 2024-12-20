@@ -2,6 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
+	, 'dojo/dom-class'
 	, 'app/designs/list/Controller'
 	, 'app/designs/list/layout/Layout'
 	, 'src/component/browser/_DragAndDrop'
@@ -12,6 +13,7 @@ define([
 	declare
 	, lang
 	, aspect
+	, domClass
 	, Controller
 	, Layout
 	, _DragAndDrop
@@ -31,6 +33,8 @@ define([
 				parentProperty: 'parent',
 				addThemesBrowserFirst: false,
 				omitThemesBrowser: false,
+				animatedClass: 'animate__animated',
+				animatedOnSelect: 'animate__headShake',
 
 				_activeLayers: {}, // indicador sobre si la capa está activada en el mapa o no
 			};
@@ -183,12 +187,17 @@ define([
 			var atlasLayerItem = obj.item,
 				mapLayerId = atlasLayerItem.mapLayerId,
 				state = obj.state,
-				order = obj.total - obj.indexList;
+				order = obj.total - obj.indexList,
+				rowNode = obj.node;
 
 			if (!state) {
+				domClass.remove(rowNode, [this.animatedClass, this.animatedOnSelect]);
+
 				this._deactivateLayer(atlasLayerItem, order);
 				this._activeLayers[mapLayerId] = false;
 			} else {
+				domClass.add(rowNode, [this.animatedClass, this.animatedOnSelect]);
+
 				this._activateLayer(atlasLayerItem, order);
 				this._activeLayers[mapLayerId] = true;
 			}

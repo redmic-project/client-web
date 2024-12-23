@@ -1,6 +1,5 @@
 define([
-	"app/base/views/extensions/_ListenActivityDataAndAccessByActivityCategory"
-	, "app/designs/base/_Main"
+	"app/designs/base/_Main"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
 	, "dojo/_base/declare"
@@ -9,8 +8,7 @@ define([
 	, "src/component/map/layer/_RadiusOnClick"
 	, "app/designs/mapWithSideContent/main/Geographic"
 ], function(
-	_ListenActivityDataAndAccessByActivityCategory
-	, _Main
+	_Main
 	, Controller
 	, Layout
 	, declare
@@ -19,7 +17,7 @@ define([
 	, _RadiusOnClick
 	, Geographic
 ){
-	return declare([Layout, Controller, _Main, _ListenActivityDataAndAccessByActivityCategory], {
+	return declare([Layout, Controller, _Main], {
 		//	summary:
 		//		Vista detalle de ActivityMap.
 

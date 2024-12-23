@@ -1,7 +1,6 @@
 define([
 	"app/base/views/extensions/_EditionWizardView"
 	, "app/base/views/extensions/_GetActivityData"
-	, "app/base/views/extensions/_ListenActivityDataAndAccessByActivityCategory"
 	, "app/designs/mapWithSideContent/main/Tracking"
 	, "app/designs/mapWithSideContent/main/_TrackingWithListByFilter"
 	, 'src/redmicConfig'
@@ -11,7 +10,6 @@ define([
 ], function(
 	_EditionWizardView
 	, _GetActivityData
-	, _ListenActivityDataAndAccessByActivityCategory
 	, Tracking
 	, _TrackingWithListByFilter
 	, redmicConfig
@@ -20,8 +18,7 @@ define([
 	, put
 ) {
 
-	return declare([Tracking, _TrackingWithListByFilter, _EditionWizardView, _GetActivityData,
-		_ListenActivityDataAndAccessByActivityCategory], {
+	return declare([Tracking, _TrackingWithListByFilter, _EditionWizardView, _GetActivityData], {
 		//	summary:
 		//		Vista de Tracking.
 		//	description:

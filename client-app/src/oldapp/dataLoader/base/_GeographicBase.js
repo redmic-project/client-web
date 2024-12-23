@@ -2,7 +2,6 @@ define([
 	"app/base/views/extensions/_CompositeInTooltipFromIconKeypad"
 	, "app/base/views/extensions/_EditionWizardView"
 	, "app/base/views/extensions/_GetActivityData"
-	, "app/base/views/extensions/_ListenActivityDataAndAccessByActivityCategory"
 	, "app/base/views/extensions/_LocalSelectionView"
 	, "app/base/views/extensions/_OnShownAndRefresh"
 	, "app/designs/mapWithSideContent/main/Geographic"
@@ -20,7 +19,6 @@ define([
 	_CompositeInTooltipFromIconKeypad
 	, _EditionWizardView
 	, _GetActivityData
-	, _ListenActivityDataAndAccessByActivityCategory
 	, _LocalSelectionView
 	, _OnShownAndRefresh
 	, Geographic
@@ -37,7 +35,7 @@ define([
 ) {
 
 	return declare([Geographic, _EditionWizardView, _CompositeInTooltipFromIconKeypad,
-		_LocalSelectionView, _OnShownAndRefresh, _GetActivityData, _ListenActivityDataAndAccessByActivityCategory], {
+		_LocalSelectionView, _OnShownAndRefresh, _GetActivityData], {
 		//	summary:
 		//		Base de vistas de gestión de datos cargados con listado y mapa.
 		//	description:

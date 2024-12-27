@@ -27,6 +27,7 @@ define([
 			lang.mixin(this, this.config, args);
 
 			aspect.after(this, '_addWidget', lang.hitch(this, this._afterAddWidgetUpdateSelector));
+			aspect.after(this, '_removeWidgetNode', lang.hitch(this, this._afterRemoveWidgetNodeUpdateSelector));
 			aspect.after(this, '_addDataInTitle', lang.hitch(this, this._afterAddDataInTitleShowSelector));
 			aspect.after(this, '_onLayoutComplete', lang.hitch(this, this._afterLayoutCompleteApplyAnchor));
 			aspect.before(this, '_prepareRestorePackeryTransitionDuration',
@@ -38,6 +39,11 @@ define([
 		_afterAddWidgetUpdateSelector: function(retValue, params) {
 
 			this._addWidgetToSelector(params[0]);
+		},
+
+		_afterRemoveWidgetNodeUpdateSelector: function(retValue, params) {
+
+			this._removeWidgetFromSelector(params[0]);
 		},
 
 		_afterAddDataInTitleShowSelector: function() {
@@ -134,6 +140,14 @@ define([
 		_addWidgetToSelector: function(key) {
 
 			this._widgetKeys.push(key);
+
+			this._setWidgetKeysAsSelectorOptions();
+		},
+
+		_removeWidgetFromSelector: function(key) {
+
+			var keyIndex = this._widgetKeys.indexOf(key);
+			this._widgetKeys.splice(keyIndex, 1);
 
 			this._setWidgetKeysAsSelectorOptions();
 		},

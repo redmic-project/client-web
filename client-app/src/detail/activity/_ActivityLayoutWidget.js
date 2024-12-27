@@ -273,9 +273,18 @@ define([
 
 			var lineChartsKey = 'activityFixedTimeseriesLineCharts',
 				lineChartsConfig = this._getActivityFixedTimeseriesLineChartsConfig(layoutConfig),
-				lineChartsDataChannel = this.getChannel('TIMESERIES_LINE_CHARTS_DATA');
+				lineChartsDataChannel = this.getChannel('TIMESERIES_LINE_CHARTS_DATA'),
+				siteName = data.site.name;
 
-			lineChartsConfig.props.timeseriesDataChannel = lineChartsDataChannel;
+			lineChartsConfig.props = this._merge([lineChartsConfig.props, {
+				title: this.i18n.charts + ' | ' + siteName,
+				timeseriesDataChannel: lineChartsDataChannel
+			}]);
+
+			if (this._lineChartsWidgetKey) {
+				this._destroyWidget(this._lineChartsWidgetKey);
+			}
+			this._lineChartsWidgetKey = lineChartsKey;
 
 			this._addWidget(lineChartsKey, lineChartsConfig);
 
@@ -297,11 +306,17 @@ define([
 					allowedDirectionParameters: allowedDirectionParameters
 				}));
 
+			if (this._windroseWidgetKeys) {
+				this._windroseWidgetKeys.forEach(lang.hitch(this, this._destroyWidget));
+			}
+			this._windroseWidgetKeys = [];
+
 			for (var i = 0; i < filteredMeasurements.length - 1; i += 2) {
 				this._onEachWindroseDataPair({
 					index: i ? i - 1 : 0,
 					layoutConfig: layoutConfig,
 					measurements: [filteredMeasurements[i], filteredMeasurements[i + 1]],
+					site: data.site,
 					allowedSpeedParameters: allowedSpeedParameters,
 					allowedDirectionParameters: allowedDirectionParameters
 				});
@@ -320,16 +335,19 @@ define([
 			var windroseKey = 'activityFixedTimeseriesWindrose' + args.index,
 				windroseConfig = this._getActivityFixedTimeseriesWindroseConfig(args.layoutConfig),
 				windroseDataChannel = this.getChannel('TIMESERIES_WINDROSE_DATA') + args.index,
+				siteName = args.site.name,
 				speedParamTitle = args.measurements[0].parameter.name,
 				directionParamTitle = args.measurements[1].parameter.name;
 
 			windroseConfig.props = this._merge([windroseConfig.props, {
 				ownChannel: 'windrose' + args.index,
-				title: speedParamTitle + ' + ' + directionParamTitle,
+				title: speedParamTitle + ' + ' + directionParamTitle + ' | ' + siteName,
 				allowedSpeedParameters: args.allowedSpeedParameters,
 				allowedDirectionParameters: args.allowedDirectionParameters,
 				timeseriesDataChannel: windroseDataChannel
 			}]);
+
+			this._windroseWidgetKeys.push(windroseKey);
 
 			this._addWidget(windroseKey, windroseConfig);
 

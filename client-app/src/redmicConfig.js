@@ -70,9 +70,6 @@ define([], function() {
 		'projectDetails': '/catalog/project-info/{id}',
 		'projectAdd': '/admin/project-add/{id}',
 		'projectEdit': '/admin/project-edit/{id}',
-
-		'realTimeDashboard': '/viewer/real-time-dashboard/{uuid}',
-
 		'ogcServiceCatalog': '/service-ogc-catalog',
 		'ogcServiceDetails': '/service-ogc-catalog/service-ogc-info/{id}',
 		'ogcServiceEdit': '/maintenance/service-ogc-edit/{id}',

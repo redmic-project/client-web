@@ -58,8 +58,8 @@ define([
 					href: 'viewer/trash-collection'
 				},{
 					id: 8,
-					name: 'realTime',
-					href: 'viewer/real-time'
+					name: 'marineMonitoring',
+					href: 'viewer/marine-monitoring'
 				},{
 					id: 9,
 					name: 'bibliography',

@@ -537,8 +537,6 @@ var viewLayers = {
 	, 'app/viewers/views/TrackingView': {}
 	, 'app/viewers/views/TrashCollectionView': {}
 	, 'app/viewers/views/ChartsView': {}
-	, 'app/viewers/views/RealTimeView': {}
-	, 'app/viewers/views/RealTimeDashboardView': {}
 
 	, 'app/details/views/ContactDetailsView': {}
 

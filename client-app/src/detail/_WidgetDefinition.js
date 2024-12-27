@@ -6,8 +6,9 @@ define([
 	, 'app/details/views/ActivityCitationMapBase'
 	, 'src/detail/activity/widget/ActivityFixedObservationSeriesList'
 	, 'src/detail/activity/widget/ActivityFixedObservationSeriesMap'
-	, 'src/detail/activity/widget/ActivityFixedTimeseriesChart'
+	, 'src/detail/activity/widget/ActivityFixedTimeseriesLineCharts'
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesMap'
+	, 'src/detail/activity/widget/ActivityFixedTimeseriesWindrose'
 	, 'app/details/views/ActivityInfrastructureMapBase'
 	, 'app/details/views/ActivityLayerMapBase'
 	, 'src/util/Credentials'
@@ -33,8 +34,9 @@ define([
 	, ActivityCitationMapBase
 	, ActivityFixedObservationSeriesList
 	, ActivityFixedObservationSeriesMap
-	, ActivityFixedTimeseriesChart
+	, ActivityFixedTimeseriesLineCharts
 	, ActivityFixedTimeseriesMap
+	, ActivityFixedTimeseriesWindrose
 	, ActivityInfrastructureMapBase
 	, ActivityLayerMapBase
 	, Credentials
@@ -359,17 +361,16 @@ define([
 			};
 		},
 
-		_getActivityFixedTimeseriesChartConfig: function(mapKey, config) {
+		_getActivityFixedTimeseriesLineChartsConfig: function(config) {
 
 			return {
 				width: 6,
-				height: 6,
-				type: ActivityFixedTimeseriesChart,
+				height: 5,
+				type: ActivityFixedTimeseriesLineCharts,
 				hidden: true,
 				props: {
 					title: 'charts',
-					pathVariableId: this._activityData.id,
-					timeseriesDataChannel: this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA')
+					pathVariableId: this._activityData.id
 				}
 			};
 		},
@@ -383,6 +384,19 @@ define([
 				props: {
 					title: this.i18n.embeddedContent + ' #' + (i + 1),
 					content: node
+				}
+			};
+		},
+
+		_getActivityFixedTimeseriesWindroseConfig: function(config) {
+
+			return {
+				width: 3,
+				height: 5,
+				type: ActivityFixedTimeseriesWindrose,
+				props: {
+					title: 'windrose',
+					pathVariableId: this._activityData.id
 				}
 			};
 		}

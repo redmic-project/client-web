@@ -54,7 +54,7 @@ define([
 										icon: 'fa-bar-chart',
 										title: this.i18n.charts,
 										btnId: 'showCharts',
-										href: '#activityFixedTimeseriesChart',
+										href: '#activityFixedTimeseriesLineCharts',
 										returnItem: true
 									}]
 								}

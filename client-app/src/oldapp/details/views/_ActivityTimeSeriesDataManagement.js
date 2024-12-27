@@ -62,7 +62,8 @@ define([
 					parameter = measurement.parameter,
 					dataDefinition = measurement.dataDefinition,
  					index = this._isInserted(dataList, parameter.path);
- 				if (index < 0) {
+
+				if (index < 0) {
  					parameter.leaves = 0;
  					parameter.dataDefinitions = [dataDefinition];
  					parameter.unit = measurement.unit.name;

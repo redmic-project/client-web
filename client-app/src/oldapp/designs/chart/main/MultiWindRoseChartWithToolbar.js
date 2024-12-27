@@ -36,7 +36,7 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: 'multiPieChartWithToolbar',
+				ownChannel: 'multiWindroseChartWithToolbar',
 				events: {
 					ADD_LAYER: 'addLayer',
 					REMOVE_LAYER: 'removeLayer'
@@ -189,7 +189,8 @@ define([
 				action: '_search',
 				target: this.target,
 				method: 'POST',
-				query: this._queryObj
+				query: this._queryObj,
+				requesterId: this.getChannel()
 			});
 		},
 

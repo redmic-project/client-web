@@ -20,7 +20,9 @@ define([
 			this.config = {
 				mainActions: {
 					GET_USER_GRANTS_FOR_ACTIVITY: 'getUserGrantsForActivity',
-					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
+					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity',
+					TIMESERIES_LINE_CHARTS_DATA: 'timeseriesLineChartsData',
+					TIMESERIES_WINDROSE_DATA: 'timeseriesWindroseData'
 				}
 			};
 
@@ -254,12 +256,86 @@ define([
 
 			this._addWidget(mapKey, mapConfig);
 
-			var chartKey = 'activityFixedTimeseriesChart',
-				chartConfig = this._getActivityFixedTimeseriesChartConfig(mapKey, layoutConfig);
+			var timeseriesDataChannel = this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA');
 
-			this._addWidget(chartKey, chartConfig);
+			this._subscribe(timeseriesDataChannel, lang.hitch(this, this._onTimeseriesDataPublished, layoutConfig));
 
-			return [mapKey, chartKey];
+			return mapKey;
+		},
+
+		_onTimeseriesDataPublished: function(layoutConfig, data) {
+
+			this._onTimeseriesLineChartsDataPublished(layoutConfig, data);
+			this._onTimeseriesWindroseDataPublished(layoutConfig, data);
+		},
+
+		_onTimeseriesLineChartsDataPublished: function(layoutConfig, data) {
+
+			var lineChartsKey = 'activityFixedTimeseriesLineCharts',
+				lineChartsConfig = this._getActivityFixedTimeseriesLineChartsConfig(layoutConfig),
+				lineChartsDataChannel = this.getChannel('TIMESERIES_LINE_CHARTS_DATA');
+
+			lineChartsConfig.props.timeseriesDataChannel = lineChartsDataChannel;
+
+			this._addWidget(lineChartsKey, lineChartsConfig);
+
+			this._publish(lineChartsDataChannel, data);
+		},
+
+		_onTimeseriesWindroseDataPublished: function(layoutConfig, data) {
+
+			var allowedSpeedParameters = [
+					61, // velocidad viento media
+					66 // velocidad viento máxima
+				],
+				allowedDirectionParameters = [
+					62, // dirección viento media
+					67 // dirección viento máxima
+				],
+				filteredMeasurements = data.measurements.filter(lang.hitch(this, this._filterWindroseMeasurements, {
+					allowedSpeedParameters: allowedSpeedParameters,
+					allowedDirectionParameters: allowedDirectionParameters
+				}));
+
+			for (var i = 0; i < filteredMeasurements.length - 1; i += 2) {
+				this._onEachWindroseDataPair({
+					index: i ? i - 1 : 0,
+					layoutConfig: layoutConfig,
+					measurements: [filteredMeasurements[i], filteredMeasurements[i + 1]],
+					allowedSpeedParameters: allowedSpeedParameters,
+					allowedDirectionParameters: allowedDirectionParameters
+				});
+			}
+		},
+
+		_filterWindroseMeasurements: function(args, measurement) {
+
+			var paramId = measurement.parameter.id;
+
+			return args.allowedSpeedParameters.includes(paramId) || args.allowedDirectionParameters.includes(paramId);
+		},
+
+		_onEachWindroseDataPair: function(args) {
+
+			var windroseKey = 'activityFixedTimeseriesWindrose' + args.index,
+				windroseConfig = this._getActivityFixedTimeseriesWindroseConfig(args.layoutConfig),
+				windroseDataChannel = this.getChannel('TIMESERIES_WINDROSE_DATA') + args.index,
+				speedParamTitle = args.measurements[0].parameter.name,
+				directionParamTitle = args.measurements[1].parameter.name;
+
+			windroseConfig.props = this._merge([windroseConfig.props, {
+				ownChannel: 'windrose' + args.index,
+				title: speedParamTitle + ' + ' + directionParamTitle,
+				allowedSpeedParameters: args.allowedSpeedParameters,
+				allowedDirectionParameters: args.allowedDirectionParameters,
+				timeseriesDataChannel: windroseDataChannel
+			}]);
+
+			this._addWidget(windroseKey, windroseConfig);
+
+			this._publish(windroseDataChannel, {
+				measurements: args.measurements
+			});
 		},
 
 		_prepareEmbeddedContentsActivityWidgets: function(layoutConfig) {
@@ -275,7 +351,8 @@ define([
 				embeddedContentParentNode.innerHTML = embeddedContentValue;
 
 				var key = 'embeddedContent' + i,
-					config = this._getActivityEmbeddedContentsConfig(embeddedContentParentNode.firstChild, i, layoutConfig);
+					node = embeddedContentParentNode.firstChild,
+					config = this._getActivityEmbeddedContentsConfig(node, i, layoutConfig);
 
 				keys.push(key);
 

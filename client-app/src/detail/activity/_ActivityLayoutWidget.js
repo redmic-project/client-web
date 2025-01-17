@@ -361,6 +361,12 @@ define([
 			var embeddedContents = this._activityData.embeddedContents,
 				keys = [];
 
+			var embeddedContent = layoutConfig && layoutConfig.content;
+
+			if (embeddedContent) {
+				embeddedContents.push({embeddedContent: embeddedContent});
+			}
+
 			for (var i = 0; i < embeddedContents.length; i++) {
 				var embeddedContentObj = embeddedContents[i],
 					embeddedContentValue = embeddedContentObj.embeddedContent,

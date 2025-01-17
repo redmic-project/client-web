@@ -194,7 +194,6 @@ define([
 		_onThemesBrowserAddLayerButtonClick: function(obj) {
 
 			var atlasLayerItem = obj.item,
-				mapLayerId = atlasLayerItem.mapLayerId,
 				state = obj.state,
 				rowNode = obj.node;
 
@@ -202,12 +201,10 @@ define([
 				domClass.remove(rowNode, [this.animatedClass, this.animatedOnSelect]);
 
 				this._deactivateLayer(atlasLayerItem);
-				this._activeLayers[mapLayerId] = false;
 			} else {
 				domClass.add(rowNode, [this.animatedClass, this.animatedOnSelect]);
 
 				this._activateLayer(atlasLayerItem);
-				this._activeLayers[mapLayerId] = true;
 			}
 		},
 
@@ -280,7 +277,10 @@ define([
 				return;
 			}
 
-			var itemId = atlasLayerItem.id;
+			var itemId = atlasLayerItem.id,
+				mapLayerId = atlasLayerItem.mapLayerId;
+
+			this._activeLayers[mapLayerId] = true;
 
 			this._publish(this._themesBrowser.getChildChannel('browser', 'UPDATE_DRAGGABLE_ITEM_ORDER'), {
 				id: itemId,
@@ -300,7 +300,10 @@ define([
 				return;
 			}
 
-			var itemId = atlasLayerItem.id;
+			var itemId = atlasLayerItem.id,
+				mapLayerId = atlasLayerItem.mapLayerId;
+
+			this._activeLayers[mapLayerId] = false;
 
 			this._publish(this._themesBrowser.getChildChannel('browser', 'DISABLE_DRAG_AND_DROP'), {
 				id: itemId

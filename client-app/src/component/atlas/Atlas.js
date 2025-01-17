@@ -69,8 +69,7 @@ define([
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: '.',
 
-				_layerIdsById: {}, // correspondencia entre ids de las capas con sus layerIds
-				_lastOrder: 0 // order de la última capa añadida (para saber donde añadir la siguiente)
+				_layerIdsById: {} // correspondencia entre ids de las capas con sus layerIds
 			};
 
 			lang.mixin(this, this.config, args);
@@ -292,8 +291,6 @@ define([
 			this._removeLayerInstance(layerId);
 
 			delete this._layerIdsById[id];
-
-			this._lastOrder--;
 		},
 
 		_clearSelection: function() {
@@ -317,8 +314,6 @@ define([
 			}
 
 			this._layerIdsById = [];
-
-			this._lastOrder = 0;
 		},
 
 		_errorAvailable: function(error) {
@@ -370,8 +365,7 @@ define([
 				target: this.localTarget
 			});
 
-			this._lastOrder++;
-			this._activateLayer(atlasLayerItem, this._lastOrder);
+			this._activateLayer(atlasLayerItem);
 		},
 
 		_subLayerRemoved: function(res) {

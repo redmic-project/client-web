@@ -109,7 +109,7 @@ define([
 
 			this._emitEvt('DRAG_AND_DROP', {
 				id: rowId,
-				item:  this._getRowData(rowId),
+				item: this._getRowData(rowId),
 				indexOld: oldIndex,
 				indexList: newIndex,
 				total: Object.keys(this._rows).length
@@ -322,16 +322,16 @@ define([
 
 		_calcNodeIndex: function(node) {
 
-			var i = 0;
+			var listRows = Array.from(this.contentListNode.firstChild.childNodes);
 
-			while ((node = node.previousSibling) != null) {
-	 			i++;
-			}
-
-			return i;
+			return listRows.indexOf(node);
 		},
 
 		_updatePositionRow: function(row) {
+
+			if (!this._nodeDrag) {
+				return;
+			}
 
 			this._nodeDrag.addEventListener('animationend', lang.hitch(this, this._rowDragAnimationEndCallback), {
 				passive: true
@@ -341,7 +341,7 @@ define([
 			if (domClass.contains(this._nodeBorderLast, this.topBorderDragAndDropClass)) {
 				put(this._nodeBorderLast, '-', this._nodeDrag);
 				domClass.add(this._nodeDrag, [this.animatedClass, this.animatedFromBottom]);
-			} if (domClass.contains(this._nodeBorderLast, this.bottomBorderDragAndDropClass)) {
+			} else if (domClass.contains(this._nodeBorderLast, this.bottomBorderDragAndDropClass)) {
 				put(this._nodeBorderLast, '+', this._nodeDrag);
 				domClass.add(this._nodeDrag, [this.animatedClass, this.animatedFromTop]);
 			}

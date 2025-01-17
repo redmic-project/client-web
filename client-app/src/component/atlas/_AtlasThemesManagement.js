@@ -36,7 +36,7 @@ define([
 				animatedClass: 'animate__animated',
 				animatedOnSelect: 'animate__headShake',
 
-				_activeLayers: {}, // indicador sobre si la capa está activada en el mapa o no
+				_activeLayers: {} // indicador sobre si la capa está activada en el mapa o no
 			};
 
 			lang.mixin(this, this.config, args);
@@ -59,6 +59,9 @@ define([
 
 			aspect.before(this, '_reportDeselection', lang.hitch(this, this._themesBrowserReportDeselection));
 			aspect.before(this, '_reportClearSelection', lang.hitch(this, this._themesBrowserReportClearSelection));
+
+			aspect.after(this, '_activateLayer', lang.hitch(this, this._themesBrowserActivateLayer));
+			aspect.after(this, '_deactivateLayer', lang.hitch(this, this._themesBrowserDeactivateLayer));
 		},
 
 		_themesBrowserAfterSetConfigurations: function() {
@@ -166,19 +169,25 @@ define([
 
 		_subThemesBrowserDragAndDrop: function(response) {
 
-			var item = response.item,
-				total = response.total,
-				indexOld = response.indexOld,
-				indexList = response.indexList;
+			var item = response.item;
 
-			if (!item && !total && !indexOld && !indexList) {
+			if (!item) {
 				return;
 			}
 
+			var indexList = response.indexList,
+				indexOld = response.indexOld;
+
+			if (indexList === null || isNaN(indexList) || indexList === indexOld) {
+				return;
+			}
+
+			var movedDown = indexList > indexOld;
+
 			this._publish(this.getMapChannel('REORDER_LAYERS'), {
 				layerId: this._createLayerId(response.item.atlasItem),
-				newPosition: response.total - response.indexList,
-				oldPosition: response.total - response.indexOld
+				index: response.indexList,
+				movedDown: movedDown
 			});
 		},
 
@@ -187,18 +196,17 @@ define([
 			var atlasLayerItem = obj.item,
 				mapLayerId = atlasLayerItem.mapLayerId,
 				state = obj.state,
-				order = obj.total - obj.indexList,
 				rowNode = obj.node;
 
 			if (!state) {
 				domClass.remove(rowNode, [this.animatedClass, this.animatedOnSelect]);
 
-				this._deactivateLayer(atlasLayerItem, order);
+				this._deactivateLayer(atlasLayerItem);
 				this._activeLayers[mapLayerId] = false;
 			} else {
 				domClass.add(rowNode, [this.animatedClass, this.animatedOnSelect]);
 
-				this._activateLayer(atlasLayerItem, order);
+				this._activateLayer(atlasLayerItem);
 				this._activeLayers[mapLayerId] = true;
 			}
 		},
@@ -262,6 +270,41 @@ define([
 		_cleanRowSecondaryContainer: function(layerId, container) {
 
 			// TODO se usa para conectar con aspect desde las otras extensiones
+		},
+
+		_themesBrowserActivateLayer: function(_ret, args) {
+
+			var atlasLayerItem = args[0];
+
+			if (!atlasLayerItem) {
+				return;
+			}
+
+			var itemId = atlasLayerItem.id;
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'UPDATE_DRAGGABLE_ITEM_ORDER'), {
+				id: itemId,
+				index: 0
+			});
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'ENABLE_DRAG_AND_DROP'), {
+				id: itemId
+			});
+		},
+
+		_themesBrowserDeactivateLayer: function(_ret, args) {
+
+			var atlasLayerItem = args[0];
+
+			if (!atlasLayerItem) {
+				return;
+			}
+
+			var itemId = atlasLayerItem.id;
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'DISABLE_DRAG_AND_DROP'), {
+				id: itemId
+			});
 		}
 	});
 });

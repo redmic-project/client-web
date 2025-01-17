@@ -360,7 +360,7 @@ define([
 			return mapLayerInstance;
 		},
 
-		_activateLayer: function(/*Object*/ atlasLayerItem, order) {
+		_activateLayer: function(/*Object*/ atlasLayerItem) {
 
 			if (!atlasLayerItem) {
 				return;
@@ -373,21 +373,11 @@ define([
 				layer: layer,
 				layerId: mapLayerId,
 				layerLabel: atlasLayerItem.label,
-				atlasItem: atlasLayerItem.atlasItem,
-				order: order
-			});
-
-			this._publish(this._themesBrowser.getChildChannel('browser', 'UPDATE_DRAGGABLE_ITEM_ORDER'), {
-				id: atlasLayerItem.id,
-				index: 0
-			});
-
-			this._publish(this._themesBrowser.getChildChannel('browser', 'ENABLE_DRAG_AND_DROP'), {
-				id: atlasLayerItem.id
+				atlasItem: atlasLayerItem.atlasItem
 			});
 		},
 
-		_deactivateLayer: function(/*Object*/ atlasLayerItem, order) {
+		_deactivateLayer: function(/*Object*/ atlasLayerItem) {
 
 			if (!atlasLayerItem) {
 				return;
@@ -396,16 +386,13 @@ define([
 			var mapLayerId = atlasLayerItem.mapLayerId,
 				layer = this._layerInstances[mapLayerId];
 
-			if (layer) {
-				this._emitEvt('REMOVE_LAYER', {
-					layer: layer,
-					order: order,
-					keepInstance: true
-				});
+			if (!layer) {
+				return;
 			}
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'DISABLE_DRAG_AND_DROP'), {
-				id: atlasLayerItem.id
+			this._emitEvt('REMOVE_LAYER', {
+				layer: layer,
+				keepInstance: true
 			});
 		}
 	});

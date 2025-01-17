@@ -1346,7 +1346,7 @@ define({
 	, "leafletForwardButton": "Avanzar en el historial de localizaciones"
 	, "leafletBackButton": "Retroceder en el historial de localizaciones"
 
-	, "noFixedContent": "Sin contenido fijado"
+	, "noFixedContent": "Contenidos"
 
 	// Meta-tags
 	, "metaDefaultTitle": "Repositorio de Datos Marinos Integrados de Canarias"

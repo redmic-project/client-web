@@ -102,16 +102,12 @@ define([
 			this._selectionByAggregationGroup = {};
 		},
 
-		_getFacets: function(aggs) {
-
-			this._emitEvt('LOADING');
+		_getFacets: function() {
 
 			this._setAggs(this.aggs);
 
 			var obj = {
-				aggs: this._currentAggregationGroups//,
-				//size: 0,
-				//requesterId: this.queryChannel
+				aggs: this._currentAggregationGroups
 			};
 
 			lang.mixin(obj, this.query || {});
@@ -179,7 +175,6 @@ define([
 		_subAvailableFacets: function(availableAggregationGroups) {
 
 			this._setFacets(availableAggregationGroups);
-			this._emitEvt('LOADED');
 		},
 
 		_setFacets: function(availableAggregationGroups) {

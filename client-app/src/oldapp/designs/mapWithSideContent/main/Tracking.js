@@ -94,7 +94,9 @@ define([
 				_layerIdPrefix: "tracking",
 				layerIdSeparator: "_",
 				_deltaProgress: 3600000,
-				formTemplate: 'viewers/views/templates/forms/Tracking'
+				formTemplate: 'viewers/views/templates/forms/Tracking',
+				timeMode: false,
+				defaultTrackingMode: 0
 			};
 
 			lang.mixin(this, this.config, args);
@@ -110,7 +112,8 @@ define([
 				parentChannel: this.getChannel(),
 				template: this.formTemplate,
 				formContainerConfig: {
-					loadInputs: lang.hitch(this, this._loadInputsFormAndShow)
+					loadInputs: lang.hitch(this, this._loadInputsFormAndShow),
+					defaultTrackingMode: this.defaultTrackingMode
 				}
 			}, this.formConfig || {}]);
 
@@ -465,7 +468,7 @@ define([
 			var value = res.value,
 				animate = false;
 
-			if (this._timeMode) {
+			if (this.timeMode) {
 				if (!value._isAMomentObject) {
 					value = moment(value);
 				}
@@ -510,7 +513,7 @@ define([
 				for (var lineId in layerItem) {
 					var lineItem = layerItem[lineId];
 
-					if (!this._timeMode) {
+					if (!this.timeMode) {
 						var count = lineItem.count;
 
 						if (!Utilities.isValidNumber(max) || count > max) {
@@ -532,7 +535,7 @@ define([
 
 			return {
 				max: max || 0,
-				min: !this._timeMode ? 0 : min || 0
+				min: !this.timeMode ? 0 : min || 0
 			};
 		},
 
@@ -572,7 +575,7 @@ define([
 
 			this._deltaProgress = value;
 
-			if (this._timeMode) {
+			if (this.timeMode) {
 				this._emitEvt('SET_PROGRESS_DELTA', {
 					value: this._deltaProgress
 				});
@@ -589,11 +592,11 @@ define([
 			});
 
 			if (newMode === '0') {
-				this._timeMode = false;
+				this.timeMode = false;
 				delta = 1;
 				this._publish(this._buildChannel(this.inputsForm.interval.channel, this.actions.HIDE));
 			} else {
-				this._timeMode = true;
+				this.timeMode = true;
 				this._publish(this._buildChannel(this.inputsForm.interval.channel, this.actions.SHOW));
 				delta = this._deltaProgress;
 			}

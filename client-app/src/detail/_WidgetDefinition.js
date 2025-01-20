@@ -1,7 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'app/designs/details/main/ActivityTrackingMap'
+	, 'src/detail/activity/widget/ActivityTrackingMap'
 	, 'app/details/views/ActivityAreaMapBase'
 	, 'app/details/views/ActivityCitationMapBase'
 	, 'src/detail/activity/widget/ActivityFixedObservationSeriesList'

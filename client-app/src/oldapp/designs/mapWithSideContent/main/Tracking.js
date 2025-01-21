@@ -95,8 +95,7 @@ define([
 				layerIdSeparator: "_",
 				_deltaProgress: 3600000,
 				formTemplate: 'viewers/views/templates/forms/Tracking',
-				timeMode: false,
-				defaultTrackingMode: 0
+				timeMode: false
 			};
 
 			lang.mixin(this, this.config, args);
@@ -113,7 +112,7 @@ define([
 				template: this.formTemplate,
 				formContainerConfig: {
 					loadInputs: lang.hitch(this, this._loadInputsFormAndShow),
-					defaultTrackingMode: this.defaultTrackingMode
+					defaultTrackingMode: this.timeMode ? 1 : 0
 				}
 			}, this.formConfig || {}]);
 
@@ -251,15 +250,19 @@ define([
 			this.inputsForm = inputs;
 
 			for (var key in this.inputsForm) {
-				this._publish(this._buildChannel(this.inputsForm[key].channel, this.actions.SHOW), {
+				this._publish(this._buildChannel(this.inputsForm[key].channel, 'SHOW'), {
 					node: this.inputsForm[key].node
 				});
 
-				this._subscribe(this._buildChannel(this.inputsForm[key].channel, this.actions.VALUE_CHANGED),
+				this._subscribe(this._buildChannel(this.inputsForm[key].channel, 'VALUE_CHANGED'),
 					lang.hitch(this, this._subChanged));
 			}
 
-			this._publish(this._buildChannel(this.inputsForm.interval.channel, this.actions.HIDE));
+			if (this.timeMode) {
+				this._changeMode('1');
+			} else {
+				this._publish(this._buildChannel(this.inputsForm.interval.channel, 'HIDE'));
+			}
 		},
 
 		_subChanged: function(res) {
@@ -594,10 +597,10 @@ define([
 			if (newMode === '0') {
 				this.timeMode = false;
 				delta = 1;
-				this._publish(this._buildChannel(this.inputsForm.interval.channel, this.actions.HIDE));
+				this._publish(this._buildChannel(this.inputsForm.interval.channel, 'HIDE'));
 			} else {
 				this.timeMode = true;
-				this._publish(this._buildChannel(this.inputsForm.interval.channel, this.actions.SHOW));
+				this._publish(this._buildChannel(this.inputsForm.interval.channel, 'SHOW'));
 				delta = this._deltaProgress;
 			}
 

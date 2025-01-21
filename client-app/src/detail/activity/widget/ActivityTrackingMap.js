@@ -48,8 +48,7 @@ define([
 			this._trackingMap = new declare([Tracking, _TrackingWithListByFilter])({
 				parentChannel: this.getChannel(),
 				usePrivateTarget: this.usePrivateTarget,
-				timeMode: true,
-				defaultTrackingMode: 1
+				timeMode: true
 			});
 		},
 

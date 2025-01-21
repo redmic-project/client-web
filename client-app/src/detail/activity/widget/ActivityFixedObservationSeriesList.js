@@ -26,11 +26,12 @@ define([
 		TextSearchFacetsListLayout, TextSearchFacetsListController, _AddCompositeSearchInTooltipFromTextSearch
 	], {
 		//	summary:
-		//
+		//		Widget para mostrar un listado de las observaciones registradas en el punto seleccionado.
 
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: 'activityFixedObservationSeriesList',
 				target: redmicConfig.services.observationSeries
 			};
 

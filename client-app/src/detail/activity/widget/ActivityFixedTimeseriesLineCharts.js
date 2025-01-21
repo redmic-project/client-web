@@ -28,6 +28,7 @@ define([
 
 	return declare([_Module, _Show, _ActivityTimeSeriesDataManagement], {
 		//	summary:
+		//		Widget para representar mediante gráficas lineales los datos producidos por la estación seleccionada.
 		//
 
 		constructor: function(args) {

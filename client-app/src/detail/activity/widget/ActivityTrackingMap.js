@@ -20,11 +20,12 @@ define([
 
 	return declare([_Module, _Show, _Store], {
 		//	summary:
-		//
+		//		Widget para mostrar un mapa con datos de seguimiento y controles de reproducción.
 
 		constructor: function(args) {
 
 			this.config = {
+				ownChannel: 'activityTrackingMap',
 				target: [redmicConfig.services.activity]
 			};
 

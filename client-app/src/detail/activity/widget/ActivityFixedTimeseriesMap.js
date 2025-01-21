@@ -20,7 +20,7 @@ define([
 
 	return declare(ActivityMap, {
 		//	summary:
-		//
+		//		Widget para mostrar un mapa de estaciones que producen series de datos temporales.
 
 		constructor: function(args) {
 

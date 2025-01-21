@@ -20,7 +20,7 @@ define([
 
 	return declare(ActivityMap, {
 		//	summary:
-		//
+		//		Widget para mostrar un mapa de puntos donde se registran observaciones.
 
 		constructor: function(args) {
 

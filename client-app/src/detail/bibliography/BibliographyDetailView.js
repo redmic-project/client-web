@@ -5,7 +5,7 @@ define([
 	, 'src/detail/_GenerateReport'
 	, 'templates/DocumentInfo'
 	, 'app/designs/details/main/_DetailsBase'
-	, 'src/detail/bibliography/DocumentPDF'
+	, 'src/detail/bibliography/widget/DocumentPDF'
 ], function(
 	redmicConfig
 	, declare

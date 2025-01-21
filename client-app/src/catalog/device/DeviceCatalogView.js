@@ -28,7 +28,7 @@ define([
 		//	summary:
 		//		Vista de catálogo de dispositivos.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				title: this.i18n.devices,

@@ -36,7 +36,6 @@ define([
 
 		constructor: function(args) {
 
-
 			this.config = {
 				atlasTarget: redmicConfig.services.atlasLayer,
 				activityTarget: redmicConfig.services.activity,

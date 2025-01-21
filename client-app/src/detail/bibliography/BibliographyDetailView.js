@@ -18,7 +18,7 @@ define([
 
 	return declare([_DetailsBase, _GenerateReport], {
 		//	summary:
-		//		Vista detalle de Document.
+		//		Vista detalle de documentos (bibliografía).
 
 		constructor: function(args) {
 

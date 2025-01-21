@@ -13,8 +13,8 @@ define([
 	, 'templates/DocumentList'
 ], function (
 	_Main
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, redmicConfig
 	, declare
 	, lang
@@ -23,17 +23,14 @@ define([
 	, SelectionBox
 	, Order
 	, Total
-	, templateList
+	, DocumentListTemplate
 ) {
 
-	return declare([Layout, Controller, _Main, _GenerateReport], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController, _Main, _GenerateReport], {
 		//	summary:
-		//		Base de vista de Bibliography/Document.
+		//		Vista de catálogo de documentos (bibliografía).
 
-		//	title: String
-		//		Título de la vista.
-
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				title: this.i18n.canarianMarineBibliography,
@@ -76,7 +73,7 @@ define([
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
-				template: templateList,
+				template: DocumentListTemplate,
 				bars: [{
 					instance: Total
 				},{
@@ -87,11 +84,11 @@ define([
 				}],
 				orderConfig: {
 					options: [
-						{value: "title"},
-						{value: "author"},
-						{value: "documentType.name", label: this.i18n.documentType},
-						{value: "year"},
-						{value: "updated"}
+						{value: 'title'},
+						{value: 'author'},
+						{value: 'documentType.name', label: this.i18n.documentType},
+						{value: 'year'},
+						{value: 'updated'}
 					]
 				}
 			}, this.browserConfig || {}]);

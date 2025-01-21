@@ -12,19 +12,19 @@ define([
 	, 'src/component/browser/bars/Total'
 ], function(
 	_Main
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, redmicConfig
 	, declare
 	, lang
-	, templateList
+	, PlatformListTemplate
 	, _Select
 	, SelectionBox
 	, Order
 	, Total
 ) {
 
-	return declare([Layout, Controller, _Main], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController, _Main], {
 		//	summary:
 		//		Vista de catálogo de plataformas.
 
@@ -44,7 +44,7 @@ define([
 		_setConfigurations: function() {
 
 			this.browserConfig = this._merge([{
-				template: templateList,
+				template: PlatformListTemplate,
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{

@@ -12,19 +12,19 @@ define([
 	, 'src/component/browser/bars/Total'
 ], function(
 	_Main
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, redmicConfig
 	, declare
 	, lang
-	, templateList
+	, OrganisationListTemplate
 	, _Select
 	, SelectionBox
 	, Order
 	, Total
 ) {
 
-	return declare([Layout, Controller, _Main], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController, _Main], {
 		//	summary:
 		//		Vista de catálogo de organizaciones.
 
@@ -48,7 +48,7 @@ define([
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
-				template: templateList,
+				template: OrganisationListTemplate,
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{

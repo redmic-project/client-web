@@ -14,8 +14,8 @@ define([
 
 	return declare(_EditionWizardView, {
 		//	summary:
-		//		Extensión de vista de catálogo de bibliografía para añadir funcionalidad relativa a la edición de
-		//		registros.
+		//		Extensión de vista de catálogo de documentos (bibliografía) para añadir funcionalidad relativa a la
+		// 		edición de registros.
 
 		constructor: function(args) {
 

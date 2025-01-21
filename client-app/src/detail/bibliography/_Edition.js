@@ -12,8 +12,8 @@ define([
 
 	return declare(null, {
 		//	summary:
-		//		Extensión de vista de detalle de bibliografía para añadir funcionalidad relativa a la edición de
-		//		registros.
+		//		Extensión de vista de detalle de documentos (bibliografía) para añadir funcionalidad relativa a la
+		// 		edición de registros.
 
 		constructor: function(args) {
 

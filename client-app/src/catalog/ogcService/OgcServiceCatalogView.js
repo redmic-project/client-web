@@ -14,17 +14,17 @@ define([
 	_Main
 	, _OgcService
 	, _AddComposite
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, redmicConfig
 	, declare
 	, lang
 	, HierarchicalImpl
 	, Order
-	, templateList
+	, ServiceOGCListTemplate
 ) {
 
-	return declare([Layout, Controller, _Main, _OgcService, _AddComposite], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController, _Main, _OgcService, _AddComposite], {
 		//	summary:
 		//		Vista de catálogo de servicios OGC.
 
@@ -76,7 +76,7 @@ define([
 			this.browserBase.unshift(HierarchicalImpl);
 
 			this.browserConfig = this._merge([{
-				template: templateList,
+				template: ServiceOGCListTemplate,
 				target: this._atlasDataTarget,
 				rowConfig: {
 					selectionIdProperty: this.pathProperty

@@ -15,8 +15,8 @@ define([
 ], function(
 	_Main
 	, _AddComposite
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, declare
 	, lang
 	, _GenerateReport
@@ -25,10 +25,12 @@ define([
 	, SelectionBox
 	, Total
 	, redmicConfig
-	, templateList
+	, ActivityListTemplate
 ) {
 
-	return declare([Layout, Controller, _Main, _AddComposite, _GenerateReport], {
+	return declare([
+		TextSearchFacetsListLayout, TextSearchFacetsListController, _Main, _AddComposite, _GenerateReport
+	], {
 		//	summary:
 		//		Vista de catálogo de actividades.
 
@@ -56,7 +58,7 @@ define([
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
-				template: templateList,
+				template: ActivityListTemplate,
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{

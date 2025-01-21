@@ -13,12 +13,12 @@ define([
 	, 'src/component/browser/bars/Total'
 ], function(
 	_Main
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, redmicConfig
 	, declare
 	, lang
-	, templateList
+	, ProgramListTemplate
 	, _GenerateReport
 	, _Select
 	, SelectionBox
@@ -26,7 +26,7 @@ define([
 	, Total
 ) {
 
-	return declare([Layout, Controller, _Main, _GenerateReport], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController, _Main, _GenerateReport], {
 		//	summary:
 		//		Vista de catálogo de programas.
 
@@ -52,7 +52,7 @@ define([
 			}, this.filterConfig || {}]);
 
 			this.browserConfig = this._merge([{
-				template: templateList,
+				template: ProgramListTemplate,
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{

@@ -1,19 +1,19 @@
 define([
-	"app/designs/base/_Main"
-	, "app/designs/textSearchFacetsList/Controller"
-	, "app/designs/textSearchFacetsList/Layout"
+	'app/designs/base/_Main'
+	, 'app/designs/textSearchFacetsList/Controller'
+	, 'app/designs/textSearchFacetsList/Layout'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/browser/_Select"
-	, "src/component/browser/bars/SelectionBox"
-	, "src/component/browser/bars/Order"
-	, "src/component/browser/bars/Total"
-	, "templates/AnimalList"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/browser/_Select'
+	, 'src/component/browser/bars/SelectionBox'
+	, 'src/component/browser/bars/Order'
+	, 'src/component/browser/bars/Total'
+	, 'templates/AnimalList'
 ], function(
 	_Main
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, redmicConfig
 	, declare
 	, lang
@@ -24,11 +24,9 @@ define([
 	, AnimalListTemplate
 ) {
 
-	return declare([Layout, Controller, _Main], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController, _Main], {
 		//	summary:
-		//		Extensión para establecer la configuración de las vistas de dominios con facets.
-		//	description:
-		//
+		//		Vista de catálogo de animales.
 
 		constructor: function(args) {
 
@@ -50,18 +48,18 @@ define([
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
-							icon: "fa-info-circle",
-							btnId: "details",
-							title: "info",
+							icon: 'fa-info-circle',
+							btnId: 'details',
+							title: 'info',
 							href: this.viewPaths.animalDetails
 						}]
 					}
 				},
 				orderConfig: {
 					options: [
-						{value: "name"},
-						{value: "scientificName"},
-						{value: "updated"}
+						{value: 'name'},
+						{value: 'scientificName'},
+						{value: 'updated'}
 					]
 				},
 				bars: [{

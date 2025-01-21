@@ -41,7 +41,7 @@ define([], function() {
 		'contactDetails': '/admin/contact-info/{id}',
 		'contactAdd': '/admin/contact-add/{id}',
 		'contactEdit': '/admin/contact-edit/{id}',
-		'contact': '/admin/contact',
+		'contactCatalog': '/admin/contact',
 		'dataDefinition': '/admin/data-definition',
 		'dataDefinitionAdd': '/admin/data-definition-add/{id}',
 		'dataDefinitionEdit': '/admin/data-definition-edit/{id}',

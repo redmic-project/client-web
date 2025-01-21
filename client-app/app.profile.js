@@ -462,6 +462,10 @@ var viewLayers = {
 	, 'src/catalog/animal/_Edition': {}
 	, 'src/catalog/bibliography/BibliographyCatalogView': {}
 	, 'src/catalog/bibliography/_Edition': {}
+	, 'src/catalog/contact/ContactCatalogView': {}
+	, 'src/catalog/contact/_Edition': {}
+	, 'src/catalog/device/DeviceCatalogView': {}
+	, 'src/catalog/device/_Edition': {}
 	, 'src/catalog/ogcService/OgcServiceCatalogView': {}
 	, 'src/catalog/ogcService/_Edition': {}
 	, 'src/catalog/organisation/OrganisationCatalogView': {}
@@ -483,6 +487,8 @@ var viewLayers = {
 	, 'src/detail/animal/_Edition': {}
 	, 'src/detail/bibliography/BibliographyDetailView': {}
 	, 'src/detail/bibliography/_Edition': {}
+	, 'src/detail/contact/ContactDetailView': {}
+	, 'src/detail/contact/_Edition': {}
 	, 'src/detail/ogcService/OgcServiceDetailView': {}
 	, 'src/detail/ogcService/_Edition': {}
 	, 'src/detail/organisation/OrganisationDetailView': {}
@@ -505,9 +511,6 @@ var viewLayers = {
 
 
 	// -------------------------------------------------------------------------
-
-	, 'app/administrative/views/ContactView': {}
-	, 'app/administrative/views/DeviceView': {}
 
 	, 'app/administrative/taxonomy/views/MisIdentificationView': {}
 	, 'app/administrative/taxonomy/views/GenusView': {}
@@ -537,8 +540,6 @@ var viewLayers = {
 	, 'app/viewers/views/TrackingView': {}
 	, 'app/viewers/views/TrashCollectionView': {}
 	, 'app/viewers/views/ChartsView': {}
-
-	, 'app/details/views/ContactDetailsView': {}
 
 	, 'app/edition/views/ActivityEditionView': {}
 	, 'app/edition/views/DeviceEditionView': {}

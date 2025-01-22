@@ -512,16 +512,6 @@ var viewLayers = {
 
 	// -------------------------------------------------------------------------
 
-	, 'app/administrative/taxonomy/views/MisIdentificationView': {}
-	, 'app/administrative/taxonomy/views/GenusView': {}
-	, 'app/administrative/taxonomy/views/FamilyView': {}
-	, 'app/administrative/taxonomy/views/OrderView': {}
-	, 'app/administrative/taxonomy/views/ClassView': {}
-	, 'app/administrative/taxonomy/views/SubphylumView': {}
-	, 'app/administrative/taxonomy/views/PhylumView': {}
-	, 'app/administrative/taxonomy/views/KingdomView': {}
-	, 'app/administrative/taxonomy/views/TaxonomyView': {}
-
 	, 'app/user/views/RegisterView': {}
 	, 'app/user/views/ResettingView': {}
 	, 'app/user/views/WhatIsRedmicView': {}
@@ -556,7 +546,6 @@ var viewLayers = {
 	, 'app/edition/views/ServiceOGCEditionView': {}
 	, 'app/edition/views/AnimalEditionView': {}
 	, 'app/edition/views/PermissionsEditionView': {}
-	, 'app/edition/views/MisIdentificationEditionView': {}
 	, 'app/edition/views/LoadDataToActivityEditionView': {}
 	, 'app/edition/views/LoadDataDocumentEditionView': {}
 };

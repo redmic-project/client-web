@@ -274,10 +274,6 @@ define({
 		, "bathymetry": "Bathymetry"
 		, "identification": "Identification"
 
-		, "misidentification": "Erroneous citations"
-		, "misidentificationPopup": "Cited as"
-		, "misidentificationAdd": "Add new erroneous citation"
-		, "misidentificationEdit": "Edit erroneous citation"
 		, "openViewer": "Open"
 
 		, "copy": "Copy"
@@ -435,7 +431,6 @@ define({
 
 		, "seaDepth": "Bottom"
 		, "legalValidity": "Legal validity"
-		, "containsMisidentification": "Contains misidentification"
 		, "animalName": "Animal name"
 		, "protocols": "Protocols"
 		, "protocolsAssociated": "Protocols associated"
@@ -444,7 +439,6 @@ define({
 		, "bibliographyForm": "Bibliography"
 		, "levelProtectionForm": "Level of protection"
 		, "nameLayer": "Layer name"
-		, "speciesMisidentificationPlaceHolder": "Select a species"
 		, "speciesInvalid": "Species to correct"
 		, "speciesValid": "Species valid"
 		, "correctionDocument": "Correction document"

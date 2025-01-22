@@ -274,10 +274,6 @@ define({
 	, "bathymetry": "Batimetría"
 	, "identification": "Identificación"
 
-	, "misidentification": "Identificaciones erróneas"
-	, "misidentificationAdd": "Añadir nueva identificación errónea"
-	, "misidentificationPopup": "Identificado como"
-	, "misidentificationEdit": "Editando identificación errónea"
 	, "openViewer": "Abrir"
 
 	, "copy": "Copiar"
@@ -435,7 +431,6 @@ define({
 
 	, "seaDepth": "Fondo"
 	, "legalValidity": "Validez legal"
-	, "containsMisidentification": "Contiene identificaciones erróneas"
 	, "animalName": "Nombre del animal"
 	, "protocols": "Protocolos"
 	, "protocolsAssociated": "Protocolos asociados"
@@ -444,7 +439,6 @@ define({
 	, "bibliographyForm": "Bibliografía"
 	, "levelProtectionForm": "Nivel de protección"
 	, "nameLayer": "Nombre de la capa"
-	, "speciesMisidentificationPlaceHolder": "Seleccione una especie"
 	, "speciesInvalid": "Especie a corregir"
 	, "speciesValid": "Especie válida"
 	, "correctionDocument": "Documento de corrección"

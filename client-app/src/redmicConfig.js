@@ -49,9 +49,6 @@ define([], function() {
 		'deviceEdit': '/admin/device-edit/{id}',
 		'metricsDefinitionAdd': '/admin/metrics-definition-add/{id}',
 		'metricsDefinitionEdit': '/admin/metrics-definition-edit/{id}',
-		'misidentificationAdd': '/admin/misidentification-add/{id}',
-		'misidentificationEdit': '/admin/misidentification-edit/{id}',
-		'misidentification': '/taxons/misidentification',
 		'organisationCatalog': '/catalog/organisation-catalog',
 		'organisationDetails': '/catalog/organisation-info/{id}',
 		'organisationAdd': '/admin/organisation-add/{id}',
@@ -138,7 +135,6 @@ define([], function() {
 		'order': baseUri + 'taxons/orders',
 		'subphylum': baseUri + 'taxons/subphylums',
 		'status': baseUri + 'taxons/statuses',
-		'misidentification': baseUri + 'taxons/misidentifications',
 		'species': baseUri + 'taxons/species',
 		'speciesLocation': baseUri + 'taxons/species/{id}/locations',
 		'taxonAncestors': baseUri + 'taxons/{path}/ancestors',
@@ -147,7 +143,6 @@ define([], function() {
 		'documentsBySpecies': baseUri + 'taxons/species/{id}/documents',
 		'worms': baseUri + 'taxons/worms',
 		'wormsToRedmic': baseUri + 'taxons/worms/convert2redmic',
-		'wormsUpdate': baseUri + 'taxons/worms/update',
 
 		'users': baseUri + 'user',
 		'accountData': baseUri + 'user/accountData',
@@ -489,13 +484,6 @@ define([], function() {
 			euProtection: {
 				terms: {
 					field: 'peculiarity.euProtection.name'
-				}
-			}
-		},
-		taxons: {
-			status: {
-				terms: {
-					field: 'status.name'
 				}
 			}
 		},

@@ -272,6 +272,10 @@ define([
 
 		_evaluateCondition: function(item, condition) {
 
+			if (condition === undefined || condition === null) {
+				return true;
+			}
+
 			if (typeof condition === "function") {
 				return condition(item);
 			}

@@ -763,6 +763,8 @@ define({
 		, "organisation-catalog": "Organisations"
 		, "animal-catalog": "Animals"
 		, "raster-catalog": "Raster assets"
+		, "contact-catalog": "Contacts"
+		, "device-catalog": "Devices"
 		, "confidence": "Confidence"
 		, "sightings": "Sightings"
 		, "logout": "Logout"

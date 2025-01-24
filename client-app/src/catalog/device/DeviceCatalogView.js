@@ -33,7 +33,7 @@ define([
 			this.config = {
 				title: this.i18n.devices,
 				ownChannel: 'deviceCatalog',
-				target: this.services.device,
+				target: redmicConfig.services.device,
 
 				browserExts: [_Select]
 			};

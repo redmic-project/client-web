@@ -762,6 +762,8 @@ define({
 	, "organisation-catalog": "Organizaciones"
 	, "animal-catalog": "Animales"
 	, "raster-catalog": "Recursos ráster"
+	, "contact-catalog": "Contactos"
+	, "device-catalog": "Dispositivos"
 	, "confidence": "Fiabilidad"
 	, "sightings": "Avistamientos"
 	, "logout": "Cerrar sesión"

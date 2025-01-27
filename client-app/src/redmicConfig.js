@@ -393,6 +393,11 @@ define([], function() {
 				terms: {
 					field: 'observation.taxonomy.scientificName'
 				}
+			},
+			organisation: {
+				terms: {
+					field: 'observation.organisation.name'
+				}
 			}
 		},
 		organisation: {
@@ -527,7 +532,8 @@ define([], function() {
 		timeSeriesStationsMap: ['geometry'],
 		observationSeries: [
 			'date', 'observation.note', 'observation.animal.id', 'observation.animal.name', 'observation.taxonomy.id',
-			'observation.taxonomy.scientificName', 'observation.device.name', 'observation.device.model'
+			'observation.taxonomy.scientificName', 'observation.device.name', 'observation.device.model',
+			'observation.organisation.id', 'observation.organisation.name'
 		]
 	};
 

@@ -10,6 +10,7 @@ define({
 	, "navigateToLayerInfo": "Navegar a la vista de detalles de la capa"
 	, "checkSpeciesAtCatalog": "Consultar especie en catálogo"
 	, "checkAnimalAtCatalog": "Consultar animal en catálogo"
+	, "checkOrganisationAtCatalog": "Consultar organización en catálogo"
 	, "associatedObservationStations": "Estaciones de observación asociadas"
 	, "associatedObservationRegisters": "Registros de observación asociados en la estación"
 	, "userData": "Datos de usuario"

@@ -531,9 +531,10 @@ define([], function() {
 		],
 		timeSeriesStationsMap: ['geometry'],
 		observationSeries: [
-			'date', 'observation.note', 'observation.animal.id', 'observation.animal.name', 'observation.taxonomy.id',
-			'observation.taxonomy.scientificName', 'observation.device.name', 'observation.device.model',
-			'observation.organisation.id', 'observation.organisation.name'
+			'date', 'remark', 'observation.note', 'observation.animal.id', 'observation.animal.name',
+			'observation.taxonomy.id', 'observation.taxonomy.scientificName', 'observation.device.id',
+			'observation.device.name', 'observation.device.model', 'observation.organisation.id',
+			'observation.organisation.name'
 		]
 	};
 

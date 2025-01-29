@@ -249,17 +249,24 @@ define([
 				return;
 			}
 
-			var layerInstance = this._baseLayerInstances[layerId];
-			if (!layerInstance) {
-				layerInstance = this._createBaseLayer(layerId);
-				if (!layerInstance) {
-					return;
-				}
+			var baseLayerInstance = this._getBaseLayer(layerId);
+
+			if (!baseLayerInstance) {
+				return;
 			}
 
-			this._cleanOtherBaseLayers(layerInstance);
-			this.addLayer(layerInstance, layerId);
-			this._setLayerZIndex(layerInstance, 0);
+			this._cleanOtherBaseLayers(baseLayerInstance);
+			this.addLayer(baseLayerInstance, layerId);
+			this._setLayerZIndex(baseLayerInstance, 0);
+		},
+
+		_getBaseLayer: function(layerId) {
+
+			if (!layerId || !layerId.length) {
+				return;
+			}
+
+			return this._baseLayerInstances[layerId] || this._createBaseLayer(layerId);
 		},
 
 		_createBaseLayer: function(layerId) {
@@ -742,20 +749,34 @@ define([
 		_loadBaseLayers: function() {
 
 			if (!this._baseLayerKeys.length) {
-				this._baseLayerKeys = this._getBaseLayers();
+				var baseLayersKeys = this._getBaseLayers();
+
+				if (baseLayersKeys && baseLayersKeys.then) {
+					baseLayersKeys.then(lang.hitch(this, this._loadBaseLayers));
+					return;
+				} else {
+					this._baseLayerKeys = baseLayersKeys;
+				}
 			}
 
 			for (var i = 0; i < this._baseLayerKeys.length; i++) {
-				var baseLayerKey = this._baseLayerKeys[i];
-				this._changeBaseLayer(baseLayerKey);
+				this._getBaseLayer(this._baseLayerKeys[i]);
 			}
-			this._changeBaseLayer(this._baseLayerKeys[0]);
+
+			this._setFirstBaseLayer();
 		},
 
 		_loadOptionalLayers: function() {
 
 			if (!this._optionalLayerKeys.length) {
-				this._optionalLayerKeys = this._getOptionalLayers();
+				var optionalLayersKeys = this._getOptionalLayers();
+
+				if (optionalLayersKeys && optionalLayersKeys.then) {
+					optionalLayersKeys.then(lang.hitch(this, this._loadOptionalLayers));
+					return;
+				} else {
+					this._optionalLayerKeys = optionalLayersKeys;
+				}
 			}
 
 			for (var i = 0; i < this._optionalLayerKeys.length; i++) {
@@ -773,6 +794,13 @@ define([
 			this._lastAtlasLayerOrder = this._optionalLayerKeys.length;
 		},
 
+		_setFirstBaseLayer: function() {
+
+			if (this._baseLayerKeys.length) {
+				this._changeBaseLayer(this._baseLayerKeys[0]);
+			}
+		},
+
 		_isBaseLayer: function(layerId) {
 
 			return this._baseLayerKeys.indexOf(layerId) !== -1;
@@ -781,7 +809,7 @@ define([
 		clear: function() {
 
 			this._clearLayers();
-			this._changeBaseLayer(this._baseLayerKeys[0]);
+			this._setFirstBaseLayer();
 			this._loadOptionalLayers();
 			this._resetMapPosition();
 		},

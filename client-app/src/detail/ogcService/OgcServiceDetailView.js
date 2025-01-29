@@ -239,7 +239,7 @@ define([
 			this.layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: this._getWidgetInstance('spatialExtension').getChannel(),
-				layerDefinition: layerDefinition
+				innerLayerDefinition: layerDefinition
 			});
 
 			this._publishMapBox('ADD_LAYER', {

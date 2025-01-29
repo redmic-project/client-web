@@ -1302,11 +1302,11 @@ define({
 	, "activityStarred": "Destacada"
 	, "normative": "Normativa"
 
-	, "redmic": "REDMIC"
-	, "topografico": "Topográfico"
-	, "ortofoto": "Ortofoto"
-	, "eoc-map": "Mundial"
-	, "eoc-overlay": "Nombres"
+	, "grafcan-topografico": "Topográfico"
+	, "grafcan-ortofoto": "Ortofoto"
+	, "eoc-map": "EOC"
+	, "eoc-overlay": "Nombres (EOC)"
+	, "osm-map": "OSM"
 
 	, "layerRefreshInterval": "Intervalo de auto-actualización de capa"
 	, "layerName": "Nombre de capa"

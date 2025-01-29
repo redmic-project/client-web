@@ -387,25 +387,25 @@ define([
 			this.grid5000Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: mapChannel,
-				layerDefinition: 'grid5000m'
+				innerLayerDefinition: 'grid5000m'
 			});
 
 			this.grid1000Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: mapChannel,
-				layerDefinition: 'grid1000m'
+				innerLayerDefinition: 'grid1000m'
 			});
 
 			this.grid500Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: mapChannel,
-				layerDefinition: 'grid500m'
+				innerLayerDefinition: 'grid500m'
 			});
 
 			this.grid100Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: mapChannel,
-				layerDefinition: 'grid100m'
+				innerLayerDefinition: 'grid100m'
 			});
 		},
 

@@ -1306,11 +1306,11 @@ define({
 		, "activityStarred": "Starred"
 		, "normative": "Normative"
 
-		, "redmic": "REDMIC"
-		, "topografico": "Topographic"
-		, "ortofoto": "Orthophoto"
-		, "eoc-map": "World"
-		, "eoc-overlay": "Names"
+		, "grafcan-topografico": "Topographic"
+		, "grafcan-ortofoto": "Orthophoto"
+		, "eoc-map": "EOC"
+		, "eoc-overlay": "Names (EOC)"
+		, "osm-map": "OpenStreetMap"
 
 		, "layerRefreshInterval": "Layer auto-refresh interval"
 		, "layerName": "Layer name"

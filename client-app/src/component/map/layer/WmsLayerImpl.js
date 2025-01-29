@@ -1,24 +1,22 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/component/map/_StaticLayersManagement'
 	, 'src/component/map/layer/_LayerDimensions'
 	, 'src/component/map/layer/_LayerFeatureInfo'
-	, 'src/component/map/layer/_LayerProtocols'
 	, 'src/component/map/layer/MapLayer'
-	, 'src/component/map/StaticLayersDefinition'
 	, 'templates/ServiceOGCImage'
 ], function(
 	declare
 	, lang
+	, _StaticLayersManagement
 	, _LayerDimensions
 	, _LayerFeatureInfo
-	, _LayerProtocols
 	, MapLayer
-	, StaticLayersDefinition
 	, ServiceOGCImage
 ) {
 
-	return declare([MapLayer, _LayerProtocols, _LayerFeatureInfo, _LayerDimensions], {
+	return declare([MapLayer, _StaticLayersManagement, _LayerFeatureInfo, _LayerDimensions], {
 		//	summary:
 		//		Implementación de capa provista por servicio externo.
 		//	description:
@@ -41,11 +39,34 @@ define([
 				return;
 			}
 
+			this._setInnerLayer();
+		},
+
+		_setInnerLayer: function() {
+
 			if (typeof this.innerLayerDefinition === 'string') {
-				this.innerLayerDefinition = StaticLayersDefinition[this.innerLayerDefinition];
+				var innerLayerDefinition = this._getStaticLayerDefinition(this.innerLayerDefinition);
+
+				if (innerLayerDefinition && innerLayerDefinition.then) {
+					innerLayerDefinition.then(lang.hitch(this, this._setInnerLayer));
+					return;
+				} else {
+					this.innerLayerDefinition = innerLayerDefinition;
+				}
 			}
 
-			this.layer = this._getLayerInstance(this.innerLayerDefinition);
+			var layerInstance = this._getLayerInstance(this.innerLayerDefinition);
+
+			if (layerInstance && layerInstance.then) {
+				layerInstance.then(lang.hitch(this, this._setInnerLayerInstance));
+			} else {
+				this._setInnerLayerInstance(layerInstance);
+			}
+		},
+
+		_setInnerLayerInstance: function(layerInstance) {
+
+			this.layer = layerInstance;
 		},
 
 		_afterLayerAdded: function(data) {

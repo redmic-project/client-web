@@ -1304,6 +1304,7 @@ define({
 
 	, "grafcan-topografico": "Topográfico"
 	, "grafcan-ortofoto": "Ortofoto"
+	, "grafcan-mundial": "Mundial"
 	, "eoc-map": "EOC"
 	, "eoc-overlay": "Nombres (EOC)"
 	, "osm-map": "OSM"

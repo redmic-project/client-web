@@ -1308,6 +1308,7 @@ define({
 
 		, "grafcan-topografico": "Topographic"
 		, "grafcan-ortofoto": "Orthophoto"
+		, "grafcan-mundial": "World"
 		, "eoc-map": "EOC"
 		, "eoc-overlay": "Names (EOC)"
 		, "osm-map": "OpenStreetMap"

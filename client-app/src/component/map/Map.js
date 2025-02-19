@@ -751,7 +751,8 @@ define([
 			if (!this._baseLayerKeys.length) {
 				var baseLayersKeys = this._getBaseLayers();
 
-				if (baseLayersKeys && baseLayersKeys.then) {
+				if (baseLayersKeys && baseLayersKeys.then && !this._alreadyWaitingForBaseLayers) {
+					this._alreadyWaitingForBaseLayers = true;
 					baseLayersKeys.then(lang.hitch(this, this._loadBaseLayers));
 					return;
 				} else {
@@ -771,7 +772,8 @@ define([
 			if (!this._optionalLayerKeys.length) {
 				var optionalLayersKeys = this._getOptionalLayers();
 
-				if (optionalLayersKeys && optionalLayersKeys.then) {
+				if (optionalLayersKeys && optionalLayersKeys.then && !this._alreadyWaitingForOptionalLayers) {
+					this._alreadyWaitingForOptionalLayers = true;
 					optionalLayersKeys.then(lang.hitch(this, this._loadOptionalLayers));
 					return;
 				} else {

@@ -60,13 +60,15 @@ define([
 				return this._staticLayersDefinition;	// return Object
 			}
 
-			if (!this._staticLayersDefinitionDfd || this._staticLayersDefinitionDfd.isFulfilled()) {
+			if (!this._staticLayersDefinitionDfd) {
 				this._staticLayersDefinitionDfd = new Deferred();
 			}
 
-			this._emitEvt('GET_EXTERNAL_CONFIG', {
-				propertyName: this.mapLayersPropertyName
-			});
+			if (!this._staticLayersDefinitionDfd.isFulfilled()) {
+				this._emitEvt('GET_EXTERNAL_CONFIG', {
+					propertyName: this.mapLayersPropertyName
+				});
+			}
 
 			return this._staticLayersDefinitionDfd;	// return Deferred
 		},
@@ -165,16 +167,29 @@ define([
 
 			var staticLayersDefinition = this._getStaticLayersDefinition();
 
-			if (staticLayersDefinition && staticLayersDefinition.then) {
-				var dfd = new Deferred();
-
-				staticLayersDefinition.then(lang.hitch(this, function(layersDefinitionDfd) {
-
-					layersDefinitionDfd.resolve(this._getBaseLayers());
-				}, dfd));
-
-				return dfd;	// return Deferred
+			if (!staticLayersDefinition) {
+				return;	// return undefined
 			}
+
+			if (staticLayersDefinition.then) {
+				if (this._baseLayersDfd) {
+					return this._baseLayersDfd;	// return Deferred
+				}
+
+				this._baseLayersDfd = new Deferred();
+
+				staticLayersDefinition.then(lang.hitch(this, function() {
+
+					this._baseLayersDfd.resolve(this._getBaseLayers());
+				}));
+
+				return this._baseLayersDfd;	// return Deferred
+			}
+
+			return this._getBaseLayersArray(staticLayersDefinition);	// return Array
+		},
+
+		_getBaseLayersArray: function(/*Object*/ staticLayersDefinition) {
 
 			var layersArray = Object.entries(staticLayersDefinition);
 
@@ -183,7 +198,7 @@ define([
 				return layerArray[1].basemap;
 			});
 
-			return baseLayersArray.sort(function(layerArrayA, layerArrayB) {
+			var layerOrdering = function(layerArrayA, layerArrayB) {
 
 				var layerA = layerArrayA[1],
 					layerB = layerArrayB[1],
@@ -201,7 +216,11 @@ define([
 				if (!orderB || orderA < orderB) {
 					return -1;
 				}
-			}).map(function(item) { return item[0]; });	// return Array
+			};
+
+			var orderedBaseLayersArray = baseLayersArray.sort(layerOrdering);
+
+			return orderedBaseLayersArray.map(function(item) { return item[0]; });	// return Array
 		},
 
 		_getOptionalLayers: function() {
@@ -212,23 +231,38 @@ define([
 
 			var staticLayersDefinition = this._getStaticLayersDefinition();
 
-			if (staticLayersDefinition && staticLayersDefinition.then) {
-				var dfd = new Deferred();
-
-				staticLayersDefinition.then(lang.hitch(this, function(layersDefinitionDfd) {
-
-					layersDefinitionDfd.resolve(this._getOptionalLayers());
-				}, dfd));
-
-				return dfd;	// return Deferred
+			if (!staticLayersDefinition) {
+				return;	// return undefined
 			}
+
+			if (staticLayersDefinition.then) {
+				if (this._optionalLayersDfd) {
+					return this._optionalLayersDfd;	// return Deferred
+				}
+
+				this._optionalLayersDfd = new Deferred();
+
+				staticLayersDefinition.then(lang.hitch(this, function() {
+
+					this._optionalLayersDfd.resolve(this._getOptionalLayers());
+				}));
+
+				return this._optionalLayersDfd;	// return Deferred
+			}
+
+			return this._getOptionalLayersArray(staticLayersDefinition);	// return Array
+		},
+
+		_getOptionalLayersArray: function(/*Object*/ staticLayersDefinition) {
 
 			var layersArray = Object.entries(staticLayersDefinition);
 
-			return layersArray.filter(function(layerArray) {
+			var optionalLayersArray = layersArray.filter(function(layerArray) {
 
 				return layerArray[1].optional;
-			}).map(function(item) { return item[0]; });	// return Array
+			});
+
+			return optionalLayersArray.map(function(item) { return item[0]; });	// return Array
 		}
 	});
 });

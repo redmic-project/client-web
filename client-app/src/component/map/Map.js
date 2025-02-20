@@ -302,49 +302,80 @@ define([
 			this._addMapLayer(req);
 		},
 
-		_addMapLayer: function(obj) {
+		_addMapLayer: function(req) {
 
-			var layer = obj.layer;
+			var layer = req.layer;
 
 			if (!layer) {
 				console.error('Tried to add invalid layer to map "%s"', this.getChannel());
 				return;
 			}
 
-			var layerId = this._getLayerId(obj) || uuid(),
-				innerLayer = this._getInnerLayer(layer, layerId);
+			var layerId = this._getLayerId(req) || uuid(),
+				innerLayer = this._getInnerLayer(layer, layerId),
+				obj = {
+					layerId: layerId,
+					req: req
+				};
 
 			if (!innerLayer) {
 				return;
 			}
 
-			this._prepareInfoForLayerAddedEvent(layerId, obj);
-			this.addLayer(innerLayer, layerId);
-			this._manageAddedLayer(innerLayer, layerId, obj);
+			if (innerLayer.then) {
+				innerLayer.then(lang.hitch(this, function(objArg, innerLayerArg) {
+
+					objArg.innerLayer = innerLayerArg;
+					this._addInnerMapLayer(objArg);
+				}, obj));
+
+				return;
+			}
+
+			obj.innerLayer = innerLayer;
+			this._addInnerMapLayer(obj);
 		},
 
 		_getInnerLayer: function(layer, layerId) {
 
-			var innerLayer;
-
-			// Si la capa es un módulo
-			if (layer.isInstanceOf && layer.isInstanceOf(_Module)) {
-				innerLayer = layer.layer;
-
-				if (!innerLayer) {
-					// Si no contiene una capa de tipo Leaflet pero sí tiene ID (D3, por ejemplo)
-					if (layerId) {
-						this._emitEvt('LAYER_ADD', {
-							layer: layer,
-							mapInstance: this.map
-						});
-					}
-
-					return;
-				}
+			// Si la capa no es un módulo, no se busca capa interna
+			if (!layer.isInstanceOf || !layer.isInstanceOf(_Module)) {
+				return layer;
 			}
 
-			return innerLayer || layer;
+			var deferredLayer = layer.deferredLayer,
+				innerLayer = layer.layer;
+
+			// Si la capa es un módulo pero no tiene ni tendrá capa interna
+			if (!innerLayer && !deferredLayer) {
+				// Si no contiene una capa de tipo Leaflet pero sí tiene ID (D3, por ejemplo)
+				if (layerId) {
+					this._emitEvt('LAYER_ADD', {
+						layer: layer,
+						mapInstance: this.map
+					});
+				}
+				return;
+			}
+
+			// Si la capa es un módulo y tendrá capa interna
+			if (deferredLayer) {
+				return deferredLayer;
+			}
+
+			// Si la capa es un módulo y tiene capa interna
+			return innerLayer;
+		},
+
+		_addInnerMapLayer: function(obj) {
+
+			var layerId = obj.layerId,
+				innerLayer = obj.innerLayer,
+				req = obj.req;
+
+			this._prepareInfoForLayerAddedEvent(layerId, req);
+			this.addLayer(innerLayer, layerId);
+			this._manageAddedLayer(innerLayer, layerId, req);
 		},
 
 		_manageAddedLayer: function(layer, layerId, obj) {

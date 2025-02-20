@@ -108,7 +108,7 @@ define([
 					{ layer:"grid100", label:"100x100", value:3 }
 				],
 
-				_currentZoomLevel: 7,
+				_currentZoomLevel: null,
 				grid5000MinZoom: 7,
 				grid1000MinZoom: 10,
 				grid500MinZoom: 11,

@@ -1,6 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'src/component/map/_StaticLayersManagement'
 	, 'src/component/map/layer/_LayerDimensions'
 	, 'src/component/map/layer/_LayerFeatureInfo'
@@ -9,6 +10,7 @@ define([
 ], function(
 	declare
 	, lang
+	, Deferred
 	, _StaticLayersManagement
 	, _LayerDimensions
 	, _LayerFeatureInfo
@@ -44,6 +46,10 @@ define([
 
 		_setInnerLayer: function() {
 
+			if (!this.deferredLayer) {
+				this.deferredLayer = new Deferred();
+			}
+
 			if (typeof this.innerLayerDefinition === 'string') {
 				var innerLayerDefinition = this._getStaticLayerDefinition(this.innerLayerDefinition);
 
@@ -67,6 +73,8 @@ define([
 		_setInnerLayerInstance: function(layerInstance) {
 
 			this.layer = layerInstance;
+
+			this.deferredLayer.resolve(this.layer);
 		},
 
 		_afterLayerAdded: function(data) {

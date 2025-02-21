@@ -66,14 +66,6 @@ define([
 			//		private callback
 			//
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: label
-				}
-			});
 		},
 
 		_startLoading: function() {

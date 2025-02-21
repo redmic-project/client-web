@@ -134,15 +134,6 @@ define([
 
 			var msg = error.description;
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {
-					'exDescription': "_onSubmitConfirmResetting " + msg,
-					'exFatal': false,
-					'appName': 'API'
-				}
-			});
-
 			this._emitEvt('COMMUNICATION', {
 				type: "alert",
 				level: "error",
@@ -167,15 +158,6 @@ define([
 		},
 
 		_onGetTokenError: function() {
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {
-					'exDescription': "_onGetTokenError",
-					'exFatal': false,
-					'appName': 'WEB'
-				}
-			});
 
 			globalThis.location.href = '/404';
 		},

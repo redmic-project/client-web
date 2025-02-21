@@ -70,18 +70,18 @@ define([
 
 		_onBaseLayerChange: function(evt) {
 
-			var layerInstance = evt.layer,
-				layerId = layerInstance._leaflet_id;
+			var layerInstance = evt.layer;
 
 			this._setLayerZIndex(layerInstance, 0);
 
+			if (!this._alreadyReceivedInitialBaseLayerChange) {
+				this._alreadyReceivedInitialBaseLayerChange = true;
+				return;
+			}
+
 			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.layer,
-					action: TRACK.action.click,
-					label: 'Basemap changed: ' + layerId
-				}
+				event: 'change_map_baselayer',
+				baselayer_name: layerInstance.options.id
 			});
 		}
 	});

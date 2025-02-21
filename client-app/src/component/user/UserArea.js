@@ -258,15 +258,6 @@ define([
 				return;
 			}
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {
-					'exDescription': "_onLogout",
-					'exFatal': false,
-					'appName': 'API'
-				}
-			});
-
 			this._startLoading();
 			this._removeUserData();
 		},

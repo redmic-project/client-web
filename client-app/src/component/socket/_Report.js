@@ -97,15 +97,6 @@ define([
 			request.requesterId = this.getOwnChannel();
 
 			request.id ? this._emitRunTaskReport(request.id) : this._emitEvt('TOTAL');
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "downloadReport" + this.serviceTag
-				}
-			});
 		},
 
 		_totalAvailable: function(request) {

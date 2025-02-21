@@ -532,15 +532,6 @@ define([
 			this._currentZoomLevel = response.zoom;
 
 			this._checkZoomLevel();
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "speciesDistributionZoom-" + response.zoom
-				}
-			});
 		},
 
 		_checkZoomLevel: function() {
@@ -612,15 +603,6 @@ define([
 			var newLayer = this.layersGridInfo[value].layer;
 
 			this._changeGridLayer(newLayer, this[newLayer + "Layer"]);
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeGridSize" + newLayer
-				}
-			});
 		},
 
 		_changeGridLayer: function(newLayer, layerInstance) {
@@ -664,15 +646,6 @@ define([
 			});
 
 			this._updateDataLayer();
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeDistributionMode:" + this.mode[value].label
-				}
-			});
 
 			if (this.currentMode > 2) {
 				this._emitEvt('REMOVE_LAYER', {
@@ -723,15 +696,6 @@ define([
 			this._emitEvt('SET_LAYER_PROPS', {
 				confidences: confidences
 			});
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeDistributionConfidences" + confidences
-				}
-			});
 		},
 
 		_changePrecisionSlider: function(value) {
@@ -744,17 +708,6 @@ define([
 			};
 
 			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
-
-			if (value) {
-				this._emitEvt('TRACK', {
-					type: TRACK.type.event,
-					info: {
-						category: TRACK.category.button,
-						action: TRACK.action.click,
-						label: "changeDistributionPrecision:" + value.min + "-" + value.max
-					}
-				});
-			}
 		},
 
 		_changeZSlider: function(value) {
@@ -764,17 +717,6 @@ define([
 			};
 
 			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
-
-			if (value) {
-				this._emitEvt('TRACK', {
-					type: TRACK.type.event,
-					info: {
-						category: TRACK.category.button,
-						action: TRACK.action.click,
-						label: "changeDistributionDepth:" + value.min + "-" + value.max
-					}
-				});
-			}
 		},
 
 		_hideInputForm: function(inputKey, hide) {

@@ -113,15 +113,6 @@ define([
 				return;
 			}
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.layer,
-					action: TRACK.action.click,
-					label: this.layerId + " [lat:" + lat + ", lng:" + lng + "]"
-				}
-			});
-
 			this._emitEvt('LAYER_QUERYING', {
 				layerId: this.layerId
 			});

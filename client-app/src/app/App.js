@@ -248,11 +248,6 @@ define([
 				return;
 			}
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.page,
-				info: route + locationQuery
-			});
-
 			this._emitEvt('MODULE_CHANGED', {
 				route: route
 			});

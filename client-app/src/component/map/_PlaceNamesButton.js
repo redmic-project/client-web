@@ -72,15 +72,6 @@ define([
 		_showPlaceNames: function() {
 
 			this._publish(this.placeNames.getChannel("SHOW"));
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "showPlaceNames"
-				}
-			});
 		},
 
 		_hidePlaceNames: function() {

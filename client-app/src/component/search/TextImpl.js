@@ -200,15 +200,6 @@ define([
 
 		_newSearch: function(evt) {
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.search,
-					action: TRACK.action.send,
-					label: evt + " [" + this._getTarget() + "]"
-				}
-			});
-
 			this._emitEvt('SEARCH', {
 				text: this._createQuery(evt),
 				from: 0,

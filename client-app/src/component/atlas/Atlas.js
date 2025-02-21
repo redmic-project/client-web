@@ -349,15 +349,6 @@ define([
 				return;
 			}
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.layer,
-					action: TRACK.action.click,
-					label: 'Layer loaded: ' + atlasItem.name
-				}
-			});
-
 			var atlasLayerItem = this._getAtlasLayerItemToInject(atlasItem);
 
 			this._emitEvt('INJECT_ITEM', {

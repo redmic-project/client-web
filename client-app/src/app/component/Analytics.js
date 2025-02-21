@@ -1,71 +1,40 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/base/_Module"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/base/_Module'
 ], function(
 	declare
 	, lang
 	, _Module
-){
-	// Constantes para trakear acciones
-	// TODO: sacar a un fichero externo (Necesita ser global)
-	globalThis.TRACK = {
-		'type': {
-			'event': 'event',
-			'page': 'pageview',
-			'exception': 'exception'
-		},
-		'category': {
-			'button': 'button',
-			'check': 'checkBox',
-			'layer': 'layer',
-			'search': 'search'
-		},
-		'action': {
-			'click': 'click',
-			'dblClick': 'dblClick',
-			'send': 'send'
-		}
-	};
+) {
+
 	return declare(_Module, {
 		//	summary:
-		//		Módulo para trakear visualizaciones de páginas, eventos y otras acciones
-		//	description:
-		//		Escucha los canales de PageView... y envía a google analytics la información
-		//		recibida además de otras posibilidades [ logs, alertas...].
+		//		Módulo para hacer seguimiento de las acciones de los usuarios con el fin de extraer métricas.
 
 		//	_cookiesAccepted: Boolean
 		//		Flag que indica si se han aceptado las cookies.
-		//	_pendingPageView: Object
-		//		Guarda pageView pendiente para trakear cuando sea posible (cookies aceptadas)
-		//	_pendingEventFired: Object
-		//		Guarda eventFired pendiente para trakear cuando sea posible
-		//	_pendingExceptionCaught: Object
-		//		Guarda la excepción pendiente para trakear cuando sea posible
+		//	_pendingEvents: Array
+		//		Guarda eventos pendientes de envío (para cuando las cookies sean aceptadas)
 
 		constructor: function(args) {
 
 			this.config = {
 				// own events
 				events: {
-					ACCEPT_COOKIES: "acceptCookies",
-					COOKIES_STATE: "cookiesState"
+					ACCEPT_COOKIES: 'acceptCookies',
+					COOKIES_STATE: 'cookiesState'
 				},
 				// own actions
 				actions: {
-					ACCEPT_COOKIES: "acceptCookies",
-					COOKIES_STATE: "cookiesState",
-					COOKIES_ACCEPTED: "cookiesAccepted",
-					PAGE_VIEW: "pageView",
-					EVENT: "event",
-					EXCEPTION: "event"
+					ACCEPT_COOKIES: 'acceptCookies',
+					COOKIES_STATE: 'cookiesState',
+					COOKIES_ACCEPTED: 'cookiesAccepted'
 				},
 				// mediator params
-				ownChannel: "analytics",
+				ownChannel: 'analytics',
 				_cookiesAccepted: false,
-				_pendingPageView: null,
-				_pendingEventFired: null,
-				_pendingExceptionCaught: null
+				_pendingEvents: []
 			};
 
 			lang.mixin(this, this.config, args);
@@ -74,11 +43,11 @@ define([
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this._buildChannel(this.credentialsChannel, this.actions.COOKIES_ACCEPTED),
-				callback: "_subCookiesAccepted"
+				channel : this._buildChannel(this.credentialsChannel, 'COOKIES_ACCEPTED'),
+				callback: '_subCookiesAccepted'
 			},{
-				channel : this.getChannel("TRACK"),
-				callback: "_subTrack"
+				channel : this.getChannel('TRACK'),
+				callback: '_subTrack'
 			});
 		},
 
@@ -86,170 +55,70 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'ACCEPT_COOKIES',
-				channel: this._buildChannel(this.credentialsChannel, this.actions.ACCEPT_COOKIES),
-				callback: "_pubCookies"
+				channel: this._buildChannel(this.credentialsChannel, 'ACCEPT_COOKIES')
 			},{
 				event: 'COOKIES_STATE',
-				channel: this._buildChannel(this.credentialsChannel, this.actions.COOKIES_STATE),
-				callback: "_pubCookies"
+				channel: this._buildChannel(this.credentialsChannel, 'COOKIES_STATE')
 			});
 		},
 
 		_subCookiesAccepted: function() {
-			//	summary:
-			//		Se ejecuta este callback cuando se recibe vía mediator
-			//		que las cookies han sido aceptadas, por lo que se ejecutan
-			//		los tracks pendientes
-			//	tags:
-			//		private
 
 			this._cookiesAccepted = true;
 
-			if (this._pendingPageView) {
-				this._trackPageView(this._pendingPageView);
-				delete this._pendingPageView;
-			}
+			this._pendingEvents.forEach(lang.hitch(this, this._trackEvent));
 
-			if (this._pendingEventFired) {
-				this._trackEventFired(this._pendingEventFired);
-				delete this._pendingEventFired;
-			}
-
-			if (this._pendingExceptionCaught) {
-				this._trackExceptionCaught(this._pendingExceptionCaught);
-				delete this._pendingExceptionCaught;
-			}
+			this._pendingEvents = [];
 		},
 
-		_subTrack: function(/*Object*/ request) {
-			//	summary:
-			//		Se ejecuta este callback cuando se recibe vía mediator
-			//		la petición de un track, dependiendo el tipo se envía a
-			//		la función que lo procesará
-			//	tags:
-			//		private
+		_subTrack: function(/*Object*/ req) {
 
 			if (!this._cookiesAccepted) {
+				this._pendingEvents.push(req);
 				this._emitEvt('COOKIES_STATE');
+				return;
 			}
 
-			if (request.type === TRACK.type.page) {
-				this._pageView(request.info);
-			}
-
-			if (request.type === TRACK.type.event) {
-				this._eventFired(request.info);
-			}
-
-			if (request.type === TRACK.type.exception) {
-				this._exceptionCaught(request.info);
-			}
+			this._trackEvent(req);
 		},
 
-		_pageView: function(/*Object*/ pageInfo) {
+		_trackEvent: function(/*Object*/ eventInfo) {
 			//	summary:
-			//		Procesa la petición de trackear una página
+			//		Permite registrar un evento en Google Tag Manager.
+			//	tags:
+			//		private
+			//	eventInfo:
+			//		Objeto con la información del evento a registrar.
+
+			if (!this._gtmIsAvailable()) {
+				console.warn('Google Tag Manager was not available when tried to track event', event);
+				return;
+			}
+
+			this._pushEvent(this._getFinalEvent(eventInfo));
+		},
+
+		_gtmIsAvailable: function() {
+
+			return typeof globalThis.dataLayer !== 'undefined';
+		},
+
+		_pushEvent: function(/*Object*/ event) {
+			//	summary:
+			//		Hace la publicación final del evento en Google Tag Manager.
 			//	tags:
 			//		private
 
-			if (this._cookiesAccepted) {
-				this._trackPageView(pageInfo);
-			} else {
-				this._pendingPageView = pageInfo;
-			}
+			globalThis.dataLayer.push(event);
 		},
 
-		_eventFired: function(/*Object*/ eventInfo) {
+		_getFinalEvent: function(/*Object*/ eventInfo) {
 			//	summary:
-			//		Procesa la petición de trackear un evento
+			//		Permite transformar el objeto que define al evento antes de su envío a Google Tag Manager.
 			//	tags:
 			//		private
 
-			if (!this._cookiesAccepted) {
-				this._emitEvt('ACCEPT_COOKIES');
-				this._pendingEventFired = eventInfo;
-			} else {
-				this._trackEventFired(eventInfo);
-			}
-		},
-
-		_exceptionCaught: function(/*Object*/ exceptionInfo) {
-			//	summary:
-			//		Procesa la petición de trackear una excepción
-			//	tags:
-			//		private
-
-			if (this._cookiesAccepted) {
-				this._trackExceptionCaught(exceptionInfo);
-			} else {
-				this._pendingExceptionCaught = exceptionInfo;
-			}
-		},
-
-		_pubCookies: function(channel) {
-
-			this._publish(channel);
-		},
-
-		_gtagIsAvailable: function() {
-
-			return typeof gtag !== 'undefined';
-		},
-
-		_trackPageView: function(/*Object*/ pageInfo) {
-			//	summary:
-			//		Permite trakear una página vista en google analytics
-			//	tags:
-			//		private
-			//	pageInfo:
-			//		Puede ser un string con la url de la página o un objeto con más información
-			//		pj. page, title, version...
-
-			if (this._gtagIsAvailable()) {
-				gtag('event', 'page_view', {
-					page_path: '/' + pageInfo
-				});
-			}
-		},
-
-		_trackEventFired: function(/*Object*/ eventInfo) {
-			//	summary:
-			//		Permite trakear un evento en google analytics
-			//	tags:
-			//		private
-			//	eventInfo.category:
-			//		Categoría del evento. ej: Button
-			//	eventInfo.action
-			//		Acción del evento. ej: Click
-			//	eventInfo.label
-			//		Etiqueta de la categoría. ej: Botón de login
-			//	eventInfo.value
-			//		Valor del evento
-			//	** label y value son opcionales
-
-			if (this._gtagIsAvailable()) {
-				gtag('event', eventInfo.action, {
-					event_category: eventInfo.category,
-					event_label: eventInfo.label,
-					value: eventInfo.value
-				});
-			}
-		},
-
-		_trackExceptionCaught: function(/*Object*/ exceptionInfo) {
-			//	summary:
-			//		Permite trakear un evento en google analytics
-			//	tags:
-			//		private
-			//	exceptionInfo
-			//		Objecto con información de la excepción. ej: exDescription, exFatal(boolen)...
-
-			if (this._gtagIsAvailable()) {
-				gtag('event', 'exception', {
-					description: exceptionInfo.exDescription,
-					fatal: !!exceptionInfo.exFatal
-				});
-			}
+			return eventInfo;
 		}
 	});
 });

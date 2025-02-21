@@ -254,10 +254,6 @@ define([
 			this._resetForm();
 
 			var msg = error.description;
-			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {'exDescription': "_onSubmitRegister " + msg, 'exFatal':false, 'appName':'API'}
-			});
 
 			this._emitEvt('COMMUNICATION', {type: "alert", level: "error", description: msg});
 		},
@@ -269,15 +265,6 @@ define([
 			//	tags:
 			//		callback private
 			//
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "showTermsAndConditions"
-				}
-			});
 
 			globalThis.location.href = "terms-and-conditions";
 		}

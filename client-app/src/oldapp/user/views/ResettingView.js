@@ -134,15 +134,6 @@ define([
 
 			var msg = error.description;
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {
-					'exDescription': "_onSubmitResetting " + msg,
-					'exFatal': false,
-					'appName': 'API'
-				}
-			});
-
 			this._emitEvt('COMMUNICATION', {
 				type: "alert",
 				level: "error",

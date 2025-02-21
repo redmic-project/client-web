@@ -604,15 +604,6 @@ define([
 				delta = this._deltaProgress;
 			}
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeTrackingMode:" + (newMode === 0 ? "Step" : "Time")
-				}
-			});
-
 			for (var idProperty in this._layerInstances) {
 				var item = {activityId: this._activityIdByUuid[idProperty]};
 
@@ -636,15 +627,6 @@ define([
 				this._emitEvt('SHOW_DIRECTION_MARKERS');
 				this._markersAreShown = true;
 			}
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeTrackingMarkers:" + (value === 0 ? "Points" : "Direction")
-				}
-			});
 		},
 
 		_onHide: function() {

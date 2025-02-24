@@ -202,16 +202,28 @@ define([
 		_saveSelectionButtonCallback: function() {
 
 			this._emitEvt('SAVE_SELECTION');
+
+			this._emitEvt('TRACK', {
+				event: 'save_user_selection'
+			});
 		},
 
 		_loadSavedSelectionsButtonCallback: function() {
 
 			this._emitEvt('RESTORE_SELECTION');
+
+			this._emitEvt('TRACK', {
+				event: 'load_user_selection'
+			});
 		},
 
 		_clearSelectionButtonCallback: function() {
 
 			this._emitEvt('CLEAR_SELECTION');
+
+			this._emitEvt('TRACK', {
+				event: 'clear_user_selection'
+			});
 		}
 	});
 });

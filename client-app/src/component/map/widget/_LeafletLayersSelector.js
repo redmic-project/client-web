@@ -81,7 +81,7 @@ define([
 
 			this._emitEvt('TRACK', {
 				event: 'change_map_baselayer',
-				baselayer_name: layerInstance.options.id
+				layer_name: layerInstance.options.id
 			});
 		}
 	});

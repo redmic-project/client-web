@@ -118,6 +118,11 @@ define([
 			});
 
 			this._requestLayerInfo(response);
+
+			this._emitEvt('TRACK', {
+				event: 'request_layer_featureinfo',
+				layer_name: this.layerLabel || this.layerId
+			});
 		},
 
 		_subInfoAvailable: function(response) {

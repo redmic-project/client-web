@@ -222,7 +222,11 @@ define([
 					globalThis.location.href = "/";
 				})
 			);
-		},
+
+			this._emitEvt('TRACK', {
+				event: 'feedback'
+			});
+	},
 
 		_handleError: function(error) {
 			//	summary:
@@ -236,6 +240,11 @@ define([
 			var msg = error.description;
 
 			this._emitEvt('COMMUNICATION', {type: "alert", level: "error", description: msg});
+
+			this._emitEvt('TRACK', {
+				event: 'feedback_error',
+				error: msg
+			});
 		}
 	});
 });

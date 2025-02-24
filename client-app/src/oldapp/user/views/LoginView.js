@@ -58,16 +58,6 @@ define([
 			}
 		},
 
-		_trackLoginButton: function(label) {
-			//	Summary:
-			//		Manda al módulo analytics la información para trackear el botón
-			//
-			//	tags:
-			//		private callback
-			//
-
-		},
-
 		_startLoading: function() {
 
 			this._emitEvt('LOADING');
@@ -89,8 +79,6 @@ define([
 			//		private callback
 			//
 
-			self._trackLoginButton('login');
-
 			if (this.loginFormNode.validate()) {
 				var values = this.loginFormNode.get('value');
 				if (!values) {
@@ -100,13 +88,20 @@ define([
 				self._startLoading();
 				this.password.set('value', '');
 				self._getAccessToken(values);
+			} else {
+				self._emitEvt('TRACK', {
+					event: 'login_invalid'
+				});
 			}
 		},
 
 		_onGuestAccess: function() {
 
 			this._startLoading();
-			this._trackLoginButton('guest');
+
+			this._emitEvt('TRACK', {
+				event: 'login_guest'
+			});
 		},
 
 		_onKeyPress: function(self, /*Event*/ evt) {
@@ -152,10 +147,23 @@ define([
 
 		_dataAvailable: function(res) {
 
+			this._emitEvt('TRACK', {
+				event: 'login'
+			});
+
 			this._startLoading();
 
 			var accessToken = res.data.access_token;
 			Credentials.set('accessToken', accessToken);
+		},
+
+		_errorAvailable: function(error, status) {
+
+			this._emitEvt('TRACK', {
+				event: 'login_error',
+				status: status,
+				error: error
+			});
 		},
 
 		_beforeHide: function() {

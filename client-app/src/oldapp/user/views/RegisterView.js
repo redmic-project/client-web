@@ -242,6 +242,10 @@ define([
 				this._resetForm();
 				globalThis.location.href = "/";
 			}));
+
+			this._emitEvt('TRACK', {
+				event: 'register'
+			});
 		},
 
 		_handleError: function(error) {
@@ -256,6 +260,11 @@ define([
 			var msg = error.description;
 
 			this._emitEvt('COMMUNICATION', {type: "alert", level: "error", description: msg});
+
+			this._emitEvt('TRACK', {
+				event: 'register_error',
+				error: msg
+			});
 		},
 
 		_onShowTermsAndConditions: function(/*event*/ evt) {

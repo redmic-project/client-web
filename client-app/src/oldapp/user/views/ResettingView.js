@@ -24,7 +24,7 @@ define([
 
 			this.config = {
 				ownChannel: "resetting",
-				templateProps:  {
+				templateProps: {
 					templateString: template,
 					i18n: this.i18n,
 					_onCloseResettingPassword: lang.hitch(this, this._onCloseResettingPassword),
@@ -92,12 +92,21 @@ define([
 			});
 		},
 
-		_dataAvailable: function(res, resWrapper) {
+		_dataAvailable: function(res, _resWrapper) {
+
+			this._emitEvt('TRACK', {
+				event: 'password_reset'
+			});
 
 			this._handleResponse(res.data);
 		},
 
-		_errorAvailable: function(error, status, resWrapper) {
+		_errorAvailable: function(_error, status, resWrapper) {
+
+			this._emitEvt('TRACK', {
+				event: 'password_reset_error',
+				status: status
+			});
 
 			this._handleError(resWrapper.res.data);
 		},
@@ -122,7 +131,6 @@ define([
 			//		callback private
 
 			this._notifyError(error);
-			this._goBack();
 		},
 
 		_notifyError: function(error) {

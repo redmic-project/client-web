@@ -231,6 +231,10 @@ define([
 
 		_logout: function () {
 
+			this._emitEvt('TRACK', {
+				event: 'logout'
+			});
+
 			this._startLoading();
 
 			if (!Credentials.get('accessToken')) {
@@ -250,13 +254,18 @@ define([
 			});
 		},
 
-		_errorAvailable: function(_err, _status, resWrapper) {
+		_errorAvailable: function(_err, status, resWrapper) {
 
 			var target = resWrapper.target;
 
 			if (target !== this._logoutTarget) {
 				return;
 			}
+
+			this._emitEvt('TRACK', {
+				event: 'logout_error',
+				status: status
+			});
 
 			this._startLoading();
 			this._removeUserData();

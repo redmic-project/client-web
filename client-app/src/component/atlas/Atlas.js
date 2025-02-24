@@ -349,6 +349,11 @@ define([
 				return;
 			}
 
+			this._emitEvt('TRACK', {
+				event: 'select_atlas_layer',
+				layer_name: atlasItem.name
+			});
+
 			var atlasLayerItem = this._getAtlasLayerItemToInject(atlasItem);
 
 			this._emitEvt('INJECT_ITEM', {

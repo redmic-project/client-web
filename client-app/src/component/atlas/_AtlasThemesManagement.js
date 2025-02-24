@@ -182,10 +182,19 @@ define([
 				return;
 			}
 
-			var movedDown = indexList > indexOld;
+			var movedDown = indexList > indexOld,
+				automaticDrag = response.automaticDrag;
+
+			if (!automaticDrag) {
+				this._emitEvt('TRACK', {
+					event: 'reorder_layer',
+					layer_name: item.label,
+					layer_order: indexList
+				});
+			}
 
 			this._publish(this.getMapChannel('REORDER_LAYERS'), {
-				layerId: this._createLayerId(response.item.atlasItem),
+				layerId: this._createLayerId(item.atlasItem),
 				index: response.indexList,
 				movedDown: movedDown
 			});
@@ -198,10 +207,20 @@ define([
 				rowNode = obj.node;
 
 			if (!state) {
+				this._emitEvt('TRACK', {
+					event: 'disable_layer',
+					layer_name: atlasLayerItem.label
+				});
+
 				domClass.remove(rowNode, [this.animatedClass, this.animatedOnSelect]);
 
 				this._deactivateLayer(atlasLayerItem);
 			} else {
+				this._emitEvt('TRACK', {
+					event: 'enable_layer',
+					layer_name: atlasLayerItem.label
+				});
+
 				domClass.add(rowNode, [this.animatedClass, this.animatedOnSelect]);
 
 				this._activateLayer(atlasLayerItem);
@@ -213,20 +232,48 @@ define([
 			var parentItem = atlasLayerItem.atlasItem[this.parentProperty],
 				path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + atlasLayerItem.id;
 
+			this._emitEvt('TRACK', {
+				event: 'remove_layer',
+				layer_name: atlasLayerItem.label
+			});
+
 			this._emitEvt('DESELECT', [path]);
 		},
 
 		_onThemesBrowserElevationButtonClick: function(obj) {
+
+			var layerItem = obj.item,
+				layerLabel = layerItem && layerItem.label;
+
+			this._emitEvt('TRACK', {
+				event: 'show_layer_elevations',
+				layer_name: layerLabel
+			});
 
 			this._showLayerElevation(obj);
 		},
 
 		_onThemesBrowserLegendButtonClick: function(obj) {
 
+			var layerItem = obj.item,
+				layerLabel = layerItem && layerItem.label;
+
+			this._emitEvt('TRACK', {
+				event: 'show_layer_legend',
+				layer_name: layerLabel
+			});
+
 			this._toggleShowLayerLegend(obj);
 		},
 
 		_onThemesBrowserFitBoundsButtonClick: function(item) {
+
+			var layerLabel = item && item.label;
+
+			this._emitEvt('TRACK', {
+				event: 'fit_layer_bounds',
+				layer_name: layerLabel
+			});
 
 			this._fitBounds(item);
 		},

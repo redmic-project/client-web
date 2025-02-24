@@ -112,7 +112,8 @@ define([
 				item: this._getRowData(rowId),
 				indexOld: oldIndex,
 				indexList: newIndex,
-				total: Object.keys(this._rows).length
+				total: Object.keys(this._rows).length,
+				automaticDrag: true
 			});
 		},
 

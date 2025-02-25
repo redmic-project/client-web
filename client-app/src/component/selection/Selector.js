@@ -122,6 +122,7 @@ define([
 
 		_subSelect: function(req) {
 
+			console.log('entra')
 			var items = req.items,
 				target = req.target;
 
@@ -161,6 +162,12 @@ define([
 				selectionDfd.resolve();
 				return;
 			}
+
+			this._emitEvt('TRACK', {
+				event: 'select_content',
+				content_type: target,
+				content_id: id
+			});
 
 			this._selectById(id, target);
 			selectionDfd.resolve(id);

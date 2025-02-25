@@ -75,12 +75,28 @@ define([
 				mutationObserver = new MutationObserver(lang.hitch(this, this._onTabContainerMutation));
 
 			mutationObserver.observe(childTabsContainer, { childList: true });
+
+			this._container.watch('selectedChildWidget', lang.hitch(this, this._onTabChanged));
 		},
 
 		_onTabContainerMutation: function(_mutations, observer) {
 
 			observer.disconnect();
 			this._resizeTabs();
+		},
+
+		_onTabChanged: function(_evt, oldTab, newTab) {
+
+			var tabTitle = newTab && newTab.title;
+
+			if (!oldTab || !tabTitle) {
+				return;
+			}
+
+			this._emitEvt('TRACK', {
+				event: 'change_tab',
+				tab_title: tabTitle
+			});
 		},
 
 		_subAddTab: function(req) {

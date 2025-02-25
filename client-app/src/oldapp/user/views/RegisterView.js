@@ -244,7 +244,8 @@ define([
 			}));
 
 			this._emitEvt('TRACK', {
-				event: 'register'
+				event: 'sign_up',
+				method: 'email'
 			});
 		},
 
@@ -262,7 +263,7 @@ define([
 			this._emitEvt('COMMUNICATION', {type: "alert", level: "error", description: msg});
 
 			this._emitEvt('TRACK', {
-				event: 'register_error',
+				event: 'sign_up_error',
 				error: msg
 			});
 		},

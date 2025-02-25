@@ -217,9 +217,20 @@ define([
 				speedStep: this.timeDimensionSpeedStep
 			}).addTo(this.map);
 
+			this._listenTimeDimensionEvents();
+
 			if (this.getTimeDimensionExternalContainer) {
 				this._manageTimeDimensionControlLocation();
 			}
+		},
+
+		_listenTimeDimensionEvents: function() {
+
+			var playerInstance = this._timeDimensionControlInstance._player;
+
+			playerInstance.on('play', lang.hitch(this, this._onTimeDimensionPlay));
+			playerInstance.on('stop', lang.hitch(this, this._onTimeDimensionStop));
+			playerInstance.on('speedchange', lang.hitch(this, this._onTimeDimensionSpeedChange));
 		},
 
 		_manageTimeDimensionControlLocation: function() {
@@ -249,6 +260,28 @@ define([
 		_getTimeDimensionControlContainer: function() {
 
 			return this._timeDimensionControlInstance && this._timeDimensionControlInstance._container;
+		},
+
+		_onTimeDimensionPlay: function(_evt) {
+
+			this._emitEvt('TRACK', {
+				event: 'play_map_timedimension'
+			});
+		},
+
+		_onTimeDimensionStop: function(_evt) {
+
+			this._emitEvt('TRACK', {
+				event: 'pause_map_timedimension'
+			});
+		},
+
+		_onTimeDimensionSpeedChange: function(evt) {
+
+			this._emitEvt('TRACK', {
+				event: 'changespeed_map_timedimension',
+				value: 1000 / evt.transitionTime
+			});
 		},
 
 		_removeTimeDimensionWidget: function() {

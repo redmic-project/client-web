@@ -148,7 +148,8 @@ define([
 		_dataAvailable: function(res) {
 
 			this._emitEvt('TRACK', {
-				event: 'login'
+				event: 'login',
+				method: 'email'
 			});
 
 			this._startLoading();

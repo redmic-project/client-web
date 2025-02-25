@@ -122,7 +122,6 @@ define([
 
 		_subSelect: function(req) {
 
-			console.log('entra')
 			var items = req.items,
 				target = req.target;
 

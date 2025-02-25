@@ -6,7 +6,7 @@ define([], function() {
 		'siteKeyReCaptcha': '6LfA6_0SAAAAACT3i8poH1NqztZCtIW1OahT0cXs',
 		'siteKeyForDebugReCaptcha': '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
 		'googleTagManagerId': 'GTM-PK5MH63C',
-		'googleTagManagerDevParams': '&gtm_auth=cSgmYdWWNLp8VkfFPXeSYg&gtm_preview=env-5&gtm_cookies_win=x'
+		'googleTagManagerDevId': 'GTM-WJZRQZLZ'
 	};
 
 	retObj.viewPaths = {

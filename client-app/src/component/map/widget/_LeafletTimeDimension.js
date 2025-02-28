@@ -92,7 +92,7 @@ define([
 				return;
 			}
 
-			var layerId = obj.layerId || (obj.layer && obj.layer.layerId);
+			var layerId = this._getLayerId(obj);
 
 			this._layersWithTimeDimension[layerId] = timeDefinition;
 

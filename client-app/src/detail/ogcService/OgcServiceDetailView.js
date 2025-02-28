@@ -4,6 +4,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
+	, 'src/component/atlas/_AtlasDimensionsManagement'
 	, 'src/component/atlas/_AtlasLayersManagement'
 	, 'src/component/map/LeafletImpl'
 	, 'src/component/map/layer/WmsLayerImpl'
@@ -19,6 +20,7 @@ define([
 	, declare
 	, lang
 	, TemplateDisplayer
+	, _AtlasDimensionsManagement
 	, _AtlasLayersManagement
 	, LeafletImpl
 	, WmsLayerImpl
@@ -30,7 +32,7 @@ define([
 	, _DetailsBase
 ) {
 
-	return declare([_DetailsBase, _AtlasLayersManagement], {
+	return declare([_DetailsBase, _AtlasDimensionsManagement, _AtlasLayersManagement], {
 		//	summary:
 		//		Vista detalle de servicios OGC.
 
@@ -245,6 +247,7 @@ define([
 			this._publishMapBox('ADD_LAYER', {
 				layer: this.layer,
 				layerLabel: data.alias || data.name,
+				atlasItem: data,
 				optional: true
 			});
 		},

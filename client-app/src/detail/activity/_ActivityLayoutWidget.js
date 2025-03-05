@@ -133,6 +133,8 @@ define([
 				prepareWidgetsMethod = '_prepareFixedTimeseriesActivityWidgets';
 			} else if (detailLayout === 'embeddedContent') {
 				prepareWidgetsMethod = '_prepareEmbeddedContentsActivityWidgets';
+			} else if (detailLayout === 'supersetDashboard') {
+				prepareWidgetsMethod = '_prepareSupersetDashboardActivityWidget';
 			}
 
 			if (!prepareWidgetsMethod) {
@@ -384,6 +386,17 @@ define([
 			}
 
 			return keys;
+		},
+
+		_prepareSupersetDashboardActivityWidget: function(layoutConfig) {
+
+			var dashboardId = layoutConfig.id,
+				key = 'superset-' + dashboardId,
+				config = this._getSupersetDashboardConfig(layoutConfig);
+
+			this._addWidget(key, config);
+
+			return key;
 		},
 
 		_removeCustomWidgets: function() {

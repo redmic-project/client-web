@@ -19,6 +19,7 @@ define([
 	, 'src/component/browser/bars/Pagination'
 	, 'src/component/browser/bars/Total'
 	, 'src/component/layout/genericDisplayer/GenericDisplayer'
+	, 'src/component/layout/SupersetDisplayer'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
 	, 'src/component/map/_ImportWkt'
 	, 'src/component/map/LeafletImpl'
@@ -47,6 +48,7 @@ define([
 	, Pagination
 	, Total
 	, GenericDisplayer
+	, SupersetDisplayer
 	, TemplateDisplayer
 	, _ImportWkt
 	, LeafletImpl
@@ -384,6 +386,19 @@ define([
 				props: {
 					title: this.i18n.embeddedContent + ' #' + (i + 1),
 					content: node
+				}
+			};
+		},
+
+		_getSupersetDashboardConfig: function(config) {
+
+			return {
+				width: 6,
+				height: 6,
+				type: SupersetDisplayer,
+				props: {
+					pathVariableId: this._activityData.id,
+					dashboardConfig: config
 				}
 			};
 		},

@@ -2,6 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
+	, 'dojo/dom-class'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
@@ -11,6 +12,7 @@ define([
 	declare
 	, lang
 	, Deferred
+	, domClass
 	, _Module
 	, _Show
 	, _Store
@@ -34,20 +36,11 @@ define([
 				events: {
 				},
 				ownChannel: 'supersetDisplayer',
-				target: redmicConfig.services.getSupersetToken
+				target: redmicConfig.services.getSupersetToken,
+				className: 'supersetDashboard'
 			};
 
 			lang.mixin(this, this.config, args);
-		},
-
-		_initialize: function() {
-
-			if (!this.dashboardConfig) {
-				console.error('Missing dashboard configuration for SupersetDisplayer!');
-				return;
-			}
-
-			this._prepareDashboard();
 		},
 
 		_defineSubscriptions: function() {
@@ -61,17 +54,24 @@ define([
 			});
 		},
 
+		postCreate: function() {
+
+			if (!this.dashboardConfig) {
+				console.error('Missing dashboard configuration for SupersetDisplayer!');
+				return;
+			}
+
+			domClass.add(this.getNodeToShow(), this.className);
+
+			this._prepareDashboard();
+		},
+
 		_prepareDashboard: function() {
 
 			this._prepareDashboardConfig();
 
 			var tokenDfd = this._getGuestToken();
 			tokenDfd.then(lang.hitch(this, this._prepareDashboardInstance));
-
-			setTimeout(lang.hitch(this, function() {
-
-				this._guestToken.resolve('123');
-			}), 5000);
 		},
 
 		_prepareDashboardConfig: function() {
@@ -126,16 +126,16 @@ define([
 			return this._guestToken;
 		},
 
-		_onSupersetDashboardReady: function() {
+		_onSupersetDashboardReady: function(evt) {
 
-			console.log('dashboard ready', arguments);
+			this._supersetUnmount = evt.unmount;
 		},
 
 		_clearDashboard: function() {
 
-			var node = this.getNodeToShow();
-
-			node.firstChild && node.firstChild.remove();
+			if (this._supersetUnmount) {
+				this._supersetUnmount();
+			}
 		},
 
 		_subChangeDashboard: function(req) {
@@ -153,9 +153,14 @@ define([
 
 		_itemAvailable: function(res) {
 
-			var token = res.body ? res.body.token : res.token;
+			var data = res && res.data || {},
+				token = data.token;
 
-			this._guestToken.resolve(token);
+			if (token) {
+				this._guestToken.resolve(token);
+			} else {
+				this._guestToken.reject('No token available');
+			}
 		},
 
 		getNodeToShow: function() {

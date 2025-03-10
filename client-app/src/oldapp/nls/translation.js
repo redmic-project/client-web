@@ -1178,6 +1178,8 @@ define({
 		, "goToActivity": "Go to activity"
 		, "goToPlatform": "Go to platform"
 
+		, "supersetDashboard": "Dashboard"
+
 		, "windrose": "Wind rose"
 		, "sliderSelector": "Slider selector"
 		, "dateFilter": "Date filter"

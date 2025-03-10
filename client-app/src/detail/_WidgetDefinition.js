@@ -397,6 +397,7 @@ define([
 				height: 6,
 				type: SupersetDisplayer,
 				props: {
+					title: config.title || 'supersetDashboard',
 					pathVariableId: this._activityData.id,
 					dashboardConfig: config
 				}

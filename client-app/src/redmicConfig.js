@@ -160,7 +160,7 @@ define([], function() {
 		'changePassword': baseUri + 'user/profile/changePassword',
 		'changeName': baseUri + 'user/profile/changeName',
 		'changeUserImage': baseUri + 'user/profile/changeImage',
-		'getSupersetToken': baseUri + 'user/superset/get-token/{id}',
+		'getSupersetToken': baseUri + 'user/superset/get-token',
 
 		'uploadUsers': baseMediastorageUploads + 'users',
 		'uploadContacts': baseMediastorageUploads + 'contacts',

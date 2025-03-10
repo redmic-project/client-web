@@ -1174,6 +1174,8 @@ define({
 	, "goToActivity": "Ir a actividad"
 	, "goToPlatform": "Ir a plataforma"
 
+	, "supersetDashboard": "Cuadro de mandos"
+
 	, "windrose": "Rosa de los vientos"
 	, "sliderSelector": "Selector desplazable"
 	, "dateFilter": "Filtro por fecha"

@@ -70,7 +70,7 @@ define([
 
 			this._prepareDashboardConfig();
 
-			var tokenDfd = this._getGuestToken();
+			let tokenDfd = this._getGuestToken();
 			tokenDfd.then(lang.hitch(this, this._prepareDashboardInstance));
 		},
 
@@ -146,15 +146,14 @@ define([
 			this._prepareDashboard();
 		},
 
-		_subClear: function(req) {
+		_subClear: function(_req) {
 
 			this._clearDashboard();
 		},
 
 		_itemAvailable: function(res) {
 
-			var data = res && res.data || {},
-				token = data.token;
+			let token = res?.data?.token;
 
 			if (token) {
 				this._guestToken.resolve(token);

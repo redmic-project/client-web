@@ -6,7 +6,6 @@ module.exports = function(grunt) {
 	grunt.config('jshint', {
 		src: {
 			options: {
-				esversion: 6
 			},
 			files: {
 				src: [
@@ -19,7 +18,6 @@ module.exports = function(grunt) {
 		},
 		test: {
 			options: {
-				esversion: 6,
 				ignores: [testPath + '/sockTest/*.js']
 			},
 			files: {
@@ -29,7 +27,7 @@ module.exports = function(grunt) {
 		options: {
 			laxcomma: true,
 			expr: true,
-			esversion: 3
+			esversion: 11
 		}
 	});
 };

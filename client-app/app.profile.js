@@ -41,8 +41,8 @@ var profileObj = {
 	layerOptimize: 'closure',
 	optimize: 'closure',
 	optimizeOptions: {
-		languageIn: 'ECMASCRIPT_2017',
-		languageOut: 'ECMASCRIPT_2015',
+		languageIn: 'ECMASCRIPT_NEXT',
+		languageOut: 'ECMASCRIPT_2020',
 		compilationLevel: 'SIMPLE_OPTIMIZATIONS'
 	},
 	cssOptimize: 'comments',
@@ -146,6 +146,13 @@ var profileObj = {
 		name: 'put-selector',
 		location: 'dep/put-selector',
 		main: 'put'
+	},{
+		name: 'superset-sdk',
+		location: 'dep/superset-sdk/bundle',
+		main: 'index',
+		resourceTags: {
+			amd: amdTagger
+		}
 	},{
 		name: 'wicket',
 		location: 'dep/wicket',

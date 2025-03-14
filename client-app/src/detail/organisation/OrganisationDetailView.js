@@ -3,19 +3,18 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'templates/OrganisationInfo'
-	, 'app/designs/details/main/_DetailsBase'
+	, 'src/detail/_DetailRelatedToActivity'
 ], function(
 	redmicConfig
 	, declare
 	, lang
 	, TemplateInfo
-	, _DetailsBase
+	, _DetailRelatedToActivity
 ) {
 
-	return declare(_DetailsBase, {
+	return declare(_DetailRelatedToActivity, {
 		//	summary:
 		//		Vista detalle de organizaciones.
-
 
 		constructor: function(args) {
 
@@ -27,13 +26,6 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-		},
-
-		_setConfigurations: function() {
-
-			this.viewPathsWidgets = {
-				activities: redmicConfig.viewPaths.activityDetails
-			};
 		}
 	});
 });

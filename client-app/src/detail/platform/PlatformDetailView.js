@@ -3,24 +3,18 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/browser/_Framework'
-	, 'src/component/browser/ListImpl'
-	, 'src/component/browser/bars/Total'
-	, 'templates/ContactSet'
 	, 'templates/PlatformInfo'
-	, 'app/designs/details/main/_DetailsBase'
+	, 'src/detail/_DetailRelatedToActivity'
 ], function(
 	redmicConfig
 	, declare
 	, lang
 	, _Framework
-	, ListImpl
-	, Total
-	, TemplateContacts
 	, TemplateInfo
-	, _DetailsBase
+	, _DetailRelatedToActivity
 ) {
 
-	return declare(_DetailsBase, {
+	return declare(_DetailRelatedToActivity, {
 		//	summary:
 		//		Vista de detalle de plataformas.
 
@@ -37,37 +31,13 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_setConfigurations: function() {
-
-			this.viewPathsWidgets = {
-				activities: redmicConfig.viewPaths.activityDetails
-			};
-		},
-
 		_setMainConfigurations: function() {
 
-			this.widgetConfigs = this._merge([{
-				contactList: this._getContactsConfig()
-			}, this.widgetConfigs || {}]);
-
 			this.inherited(arguments);
-		},
 
-		_getContactsConfig: function() {
-
-			return {
-				width: 3,
-				height: 2,
-				type: declare([ListImpl, _Framework]),
-				props: {
-					title: 'contacts',
-					target: this.contactTarget,
-					template: TemplateContacts,
-					bars: [{
-						instance: Total
-					}]
-				}
-			};
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
+				contactList: this._getContactsConfig()
+			}]);
 		},
 
 		_clearModules: function() {
@@ -79,12 +49,12 @@ define([
 
 		_itemAvailable: function(res, resWrapper) {
 
+			this.inherited(arguments);
+
 			if (resWrapper.target === this.target[0]) {
 				this._dataToContacts(res);
 				return;
 			}
-
-			this.inherited(arguments);
 		},
 
 		_dataToContacts: function(response) {

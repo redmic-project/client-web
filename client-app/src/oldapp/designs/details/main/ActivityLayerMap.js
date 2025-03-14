@@ -75,8 +75,6 @@ define([
 
 		_refreshModules: function() {
 
-			this._checkPathVariableId();
-
 			this._emitEvt('GET', {
 				target: this.target,
 				requesterId: this.ownChannel,

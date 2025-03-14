@@ -37,20 +37,15 @@ define([
 		},
 
 		_putMetaTags: function() {
-			//	summary:
-			//		Manda a publicar la información necesaria para que se generen las meta-tags
-			//		de la vista actual. Debe ejecutarse después del show de la vista, ya que este
-			//		indica mediante el flag "metaTags" si debe o no generarse.
-			//		*** Función que sobreescribe a la de _View para enviar más datos  ***
-			//	tags:
-			//		private
 
-			if (this.metaTags) {
-				this._emitEvt('PUT_META_TAGS', {
-					view: this.ownChannel,
-					"robots": "noindex, nofollow"
-				});
+			if (!this.metaTags) {
+				return;
 			}
+
+			this._emitEvt('PUT_META_TAGS', {
+				view: this.ownChannel,
+				"robots": "noindex, nofollow"
+			});
 		},
 
 		_onCloseResettingPassword: function(/*Event*/ evt) {

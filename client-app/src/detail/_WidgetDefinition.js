@@ -23,6 +23,7 @@ define([
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
 	, 'src/component/map/_ImportWkt'
 	, 'src/component/map/LeafletImpl'
+	, 'src/redmicConfig'
 	, 'templates/ContactSet'
 	, 'templates/DocumentList'
 	, 'templates/OrganisationSet'
@@ -52,6 +53,7 @@ define([
 	, TemplateDisplayer
 	, _ImportWkt
 	, LeafletImpl
+	, redmicConfig
 	, TemplateContacts
 	, TemplateDocuments
 	, TemplateOrganisation
@@ -93,7 +95,7 @@ define([
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.info,
-								href: this.viewPathsWidgets.organisations,
+								href: redmicConfig.viewPaths.organisationDetails,
 								pathToItem: 'organisation'
 							}]
 						}
@@ -121,7 +123,7 @@ define([
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.info,
-								href: this.viewPathsWidgets.platforms,
+								href: redmicConfig.viewPaths.platformDetails,
 								pathToItem: 'platform'
 							}]
 						}
@@ -135,14 +137,25 @@ define([
 			return {
 				width: 3,
 				height: 4,
-				type: declare([ListImpl, _Framework]),
+				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
 					title: 'contacts',
 					target: this.contactTarget,
 					template: TemplateContacts,
 					bars: [{
 						instance: Total
-					}]
+					}],
+					rowConfig: {
+						buttonsConfig: {
+							listButton: [{
+								icon: 'fa-info-circle',
+								btnId: 'details',
+								title: this.i18n.info,
+								href: redmicConfig.viewPaths.contactDetails,
+								pathToItem: 'contact'
+							}]
+						}
+					}
 				}
 			};
 		},
@@ -166,7 +179,7 @@ define([
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.info,
-								href: this.viewPathsWidgets.documents
+								href: redmicConfig.viewPaths.bibliographyDetails
 							}]
 						}
 					}

@@ -151,14 +151,6 @@ define([
 
 		_refreshModules: function() {
 
-			/*this._checkPathVariableId();
-
-			this._emitEvt('GET', {
-				target: this.target,
-				requesterId: this.ownChannel,
-				id: this.pathVariableId
-			});*/
-
 			this._replacePathVariableIdInTarget();
 
 			this.layerInstance && this._publish(this.layerInstance.getChannel("CHANGE_TARGET"), {

@@ -4,7 +4,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/detail/_GenerateReport'
 	, 'templates/DocumentInfo'
-	, 'app/designs/details/main/_DetailsBase'
+	, 'src/detail/_DetailRelatedToActivity'
 	, 'src/detail/bibliography/widget/DocumentPDF'
 ], function(
 	redmicConfig
@@ -12,11 +12,11 @@ define([
 	, lang
 	, _GenerateReport
 	, TemplateInfo
-	, _DetailsBase
+	, _DetailRelatedToActivity
 	, DocumentPDF
 ) {
 
-	return declare([_DetailsBase, _GenerateReport], {
+	return declare([_DetailRelatedToActivity, _GenerateReport], {
 		//	summary:
 		//		Vista detalle de documentos (bibliografía).
 
@@ -37,13 +37,6 @@ define([
 		_setMainOwnCallbacksForEvents: function() {
 
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onDocumentDetailsHidden));
-		},
-
-		_setConfigurations: function() {
-
-			this.viewPathsWidgets = {
-				activities: redmicConfig.viewPaths.activityDetails
-			};
 		},
 
 		_setMainConfigurations: function() {
@@ -107,8 +100,6 @@ define([
 		_refreshModules: function() {
 
 			this.inherited(arguments);
-
-			this._checkPathVariableId();
 
 			this._publish(this._getWidgetInstance('pdf').getChannel('SET_PROPS'), {
 				pathVariableId: this.pathVariableId

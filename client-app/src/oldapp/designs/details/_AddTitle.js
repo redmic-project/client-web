@@ -133,7 +133,7 @@ define([
 				this._addIdTitle();
 			}
 
-			if (this.pathParent && this.activeTitleParent) {
+			if (this.pathParent) {
 				this._addParentTitle();
 			}
 		},
@@ -162,6 +162,8 @@ define([
 		},
 
 		_addParentTitle: function() {
+
+			// TODO convertir este enlace en un botón del grupo de la derecha!!
 
 			var nodeTitle = query("h1", this._titleCenterNode);
 

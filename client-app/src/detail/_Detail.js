@@ -2,6 +2,7 @@ define([
 	'app/designs/base/_Main'
 	, 'app/designs/details/Controller'
 	, 'app/designs/details/Layout'
+	, 'app/designs/details/_AddWidgetSelector'
 	, 'app/designs/details/_AddTitle'
 	, 'dojo/_base/declare'
 	, 'src/detail/_WidgetDefinition'
@@ -9,12 +10,13 @@ define([
 	_Main
 	, Controller
 	, Layout
+	, _AddWidgetSelector
 	, _AddTitle
 	, declare
 	, _WidgetDefinition
 ) {
 
-	return declare([Layout, Controller, _Main, _AddTitle, _WidgetDefinition], {
+	return declare([Layout, Controller, _Main, _AddTitle, _AddWidgetSelector, _WidgetDefinition], {
 		//	summary:
 		//		Base común a todas las vistas de detalle.
 

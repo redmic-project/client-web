@@ -74,9 +74,11 @@ define([
 
 			this.inherited(arguments);
 
-			if (resWrapper.target === this.target[1] && res?.data) {
-				this._dataToActivities(res.data);
+			if (resWrapper.target !== this.target[1] || !res?.data) {
+				return;
 			}
+
+			this._dataToActivities(res.data);
 		},
 
 		_dataToActivities: function(data) {

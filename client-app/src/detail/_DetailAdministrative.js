@@ -56,21 +56,20 @@ define([
 				return;
 			}
 
-			let documents = data.documents;
-			documents && this._dataToDocuments(documents);
-
-			let contacts = data.contacts;
-			contacts && this._dataToContacts(contacts);
-
-			let platforms = data.platforms;
-			platforms && this._dataToPlatforms(platforms);
-
-			let organisations = data.organisations;
-			organisations && this._dataToOrganisations(organisations);
+			this._dataToDocuments(data.documents);
+			this._dataToContacts(data.contacts);
+			this._dataToPlatforms(data.platforms);
+			this._dataToOrganisations(data.organisations);
 		},
 
 		_dataToDocuments: function(dataItems) {
 
+			if (!dataItems?.length) {
+				this._hideWidget('documentList');
+				return;
+			};
+
+			this._showWidget('documentList');
 			dataItems.forEach(function(dataItem) {
 
 				this._injectEntityData(dataItem.document, this.documentTarget);
@@ -79,16 +78,34 @@ define([
 
 		_dataToContacts: function(dataItems) {
 
+			if (!dataItems?.length) {
+				this._hideWidget('contactList');
+				return;
+			};
+
+			this._showWidget('contactList');
 			this._injectEntityData(dataItems, this.contactTarget);
 		},
 
 		_dataToPlatforms: function(dataItems) {
 
+			if (!dataItems?.length) {
+				this._hideWidget('platformList');
+				return;
+			};
+
+			this._showWidget('platformList');
 			this._injectEntityData(dataItems, this.platformTarget);
 		},
 
 		_dataToOrganisations: function(dataItems) {
 
+			if (!dataItems?.length) {
+				this._hideWidget('organisationList');
+				return;
+			};
+
+			this._showWidget('organisationList');
 			this._injectEntityData(dataItems, this.organisationTarget);
 		},
 

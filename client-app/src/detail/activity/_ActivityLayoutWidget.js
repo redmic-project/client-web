@@ -2,15 +2,13 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
-	, 'src/detail/_WidgetDefinition'
 ], function(
 	declare
 	, lang
 	, Deferred
-	, _WidgetDefinition
 ) {
 
-	return declare(_WidgetDefinition, {
+	return declare(null, {
 		//	summary:
 		//		Aplicación de componentes adicionales para la vista detalle de Activity, en función del tipo de layout
 		//		establecido según su identificador. Si no está establecido, se decide según su categoría.

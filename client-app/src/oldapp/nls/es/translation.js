@@ -134,6 +134,7 @@ define({
 	, "citationsAssociated": "Citas asociadas"
 	, "unitsAssociated": "Unidades asociadas"
 	, "unitsSelected": "Unidades seleccionadas"
+	, "goToCatalog": "Ir al catálogo"
 	, "speciesCatalogView": "Catálogo de especies"
 	, "activityCatalogView": "Catálogo de actividades"
 	, "animalCatalogView": "Catálogo de animales"

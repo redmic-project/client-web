@@ -46,6 +46,16 @@ define([
 			this._publish(this._getWidgetInstance('organisationList').getChannel('CLEAR'));
 		},
 
+		_showWidgets: function() {
+
+			this.inherited(arguments);
+
+			this._showWidget('contactList');
+			this._showWidget('documentList');
+			this._showWidget('platformList');
+			this._showWidget('organisationList');
+		},
+
 		_itemAvailable: function(res) {
 
 			this.inherited(arguments);
@@ -69,7 +79,6 @@ define([
 				return;
 			}
 
-			this._showWidget('documentList');
 			this._injectEntityData(dataItems.map((dataItem) => dataItem.document), this.documentTarget);
 		},
 
@@ -80,7 +89,6 @@ define([
 				return;
 			}
 
-			this._showWidget('contactList');
 			this._injectEntityData(dataItems, this.contactTarget);
 		},
 
@@ -91,7 +99,6 @@ define([
 				return;
 			}
 
-			this._showWidget('platformList');
 			this._injectEntityData(dataItems, this.platformTarget);
 		},
 
@@ -102,7 +109,6 @@ define([
 				return;
 			}
 
-			this._showWidget('organisationList');
 			this._injectEntityData(dataItems, this.organisationTarget);
 		},
 

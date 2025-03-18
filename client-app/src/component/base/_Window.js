@@ -591,7 +591,7 @@ define([
 
 		_closeModule: function() {
 
-			domStyle.set(this._windowNode.parentNode, 'display', 'none');
+			this._publish(this.getChannel('HIDE'));
 
 			this._prepareToResizeModuleWindow();
 		},

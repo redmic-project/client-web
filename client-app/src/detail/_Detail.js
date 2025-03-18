@@ -46,6 +46,7 @@ define([
 		_refreshModules: function() {
 
 			this._checkPathVariableId();
+			this._showWidgets();
 			this._getMainTargetData();
 		},
 
@@ -54,6 +55,11 @@ define([
 			if (!this.pathVariableId) {
 				this._goTo404();
 			}
+		},
+
+		_showWidgets: function() {
+
+			this._showWidget('info');
 		},
 
 		_getMainTargetData: function() {

@@ -14,20 +14,25 @@ define([
 
 	return declare(null, {
 		//	summary:
-		//		Extensión para añadir un componente selector de widget a enfocar
+		//		Extensión para añadir un componente selector de widget a enfocar.
 
 		constructor: function(args) {
 
 			this.config = {
-				_widgetSelector: null,
 				widgetSelectorClass: 'detailWidgetSelector',
+				_widgetSelector: null,
+				_widgetKeys: [],
+				_widgetsShown: {},
 				_restoreTransitionWithSelectorTimeout: 2000
 			};
 
 			lang.mixin(this, this.config, args);
 
-			aspect.after(this, '_addWidget', lang.hitch(this, this._afterAddWidgetUpdateSelector));
-			aspect.after(this, '_removeWidgetNode', lang.hitch(this, this._afterRemoveWidgetNodeUpdateSelector));
+			aspect.before(this, '_buildVisualization', lang.hitch(this, this._beforeBuildVisualizationSetWidgetKeys));
+			aspect.after(this, '_showWidget', lang.hitch(this, this._afterShowWidgetUpdateSelector));
+			aspect.after(this, '_hideWidget', lang.hitch(this, this._afterHideWidgetUpdateSelector));
+			aspect.after(this, '_onWidgetHidden', lang.hitch(this, this._afterWidgetHiddenUpdateSelector));
+			aspect.after(this, '_destroyWidget', lang.hitch(this, this._afterDestroyWidgetUpdateSelector));
 			aspect.after(this, '_addDataInTitle', lang.hitch(this, this._afterAddDataInTitleShowSelector));
 			aspect.after(this, '_onLayoutComplete', lang.hitch(this, this._afterLayoutCompleteApplyAnchor));
 			aspect.before(this, '_prepareRestorePackeryTransitionDuration',
@@ -36,12 +41,27 @@ define([
 				lang.hitch(this, this._afterControllerOrAncestorShownUpdateSelectorInstance));
 		},
 
-		_afterAddWidgetUpdateSelector: function(retValue, params) {
+		_beforeBuildVisualizationSetWidgetKeys: function() {
+
+			this._generateWidgetKeys();
+		},
+
+		_afterShowWidgetUpdateSelector: function(retValue, params) {
 
 			this._addWidgetToSelector(params[0]);
 		},
 
-		_afterRemoveWidgetNodeUpdateSelector: function(retValue, params) {
+		_afterHideWidgetUpdateSelector: function(retValue, params) {
+
+			this._removeWidgetFromSelector(params[0]);
+		},
+
+		_afterWidgetHiddenUpdateSelector: function(retValue, params) {
+
+			this._removeWidgetFromSelector(params[0]);
+		},
+
+		_afterDestroyWidgetUpdateSelector: function(retValue, params) {
 
 			this._removeWidgetFromSelector(params[0]);
 		},
@@ -100,15 +120,11 @@ define([
 				this._publish(this._widgetSelector.getChannel('DESTROY'));
 			}
 
-			this._widgetKeys = Object.keys(this._widgets);
-
 			this._widgetSelector = new SelectImpl({
 				parentChannel: this.getChannel(),
 				includeEmptyValue: true,
 				emptyValueLabel: '<i>' + this.i18n.noFixedContent + '</i>'
 			});
-
-			this._setWidgetKeysAsSelectorOptions();
 
 			this._setSubscription({
 				channel: this._widgetSelector.getChannel('VALUE_CHANGED'),
@@ -118,6 +134,13 @@ define([
 			if (this._getPreviouslyShown()) {
 				this._showWidgetSelector();
 			}
+		},
+
+		_generateWidgetKeys: function() {
+
+			this._widgetKeys = Object.keys(this._widgets);
+
+			this._widgetKeys.forEach((key) => this._widgetsShown[key] = !this.widgetConfigs[key]?.hidden);
 		},
 
 		_showWidgetSelector: function() {
@@ -139,22 +162,35 @@ define([
 
 		_addWidgetToSelector: function(key) {
 
-			this._widgetKeys.push(key);
+			if (!this._widgetKeys.includes(key)) {
+				this._widgetKeys.push(key);
+			}
+
+			this._widgetsShown[key] = true;
 
 			this._setWidgetKeysAsSelectorOptions();
 		},
 
 		_removeWidgetFromSelector: function(key) {
 
-			var keyIndex = this._widgetKeys.indexOf(key);
-			this._widgetKeys.splice(keyIndex, 1);
+			if (!this._widgetKeys.includes(key)) {
+				return;
+			}
+
+			this._widgetsShown[key] = false;
 
 			this._setWidgetKeysAsSelectorOptions();
 		},
 
 		_setWidgetKeysAsSelectorOptions: function() {
 
-			var selectorOptions = this._widgetKeys.map(lang.hitch(this, this._getWidgetOptionObject));
+			if (!this._widgetSelector) {
+				return;
+			}
+
+			var selectorOptions = this._widgetKeys
+				.filter((key) => this._widgetsShown[key])
+				.map(lang.hitch(this, this._getWidgetOptionObject));
 
 			this._publish(this._widgetSelector.getChannel('SET_OPTIONS'), {
 				options: selectorOptions
@@ -164,7 +200,7 @@ define([
 		_getWidgetOptionObject: function(widgetKey) {
 
 			var widgetInstance = this._getWidgetInstance(widgetKey),
-				widgetLabel = (widgetInstance && widgetInstance.get('windowTitle')) || this.i18n[widgetKey];
+				widgetLabel = widgetInstance?.get('windowTitle') || this.i18n[widgetKey];
 
 			return {
 				value: widgetKey,

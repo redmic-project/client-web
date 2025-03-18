@@ -48,6 +48,13 @@ define([
 			this._refreshDescendantData();
 		},
 
+		_showWidgets: function() {
+
+			this.inherited(arguments);
+
+			this._showWidget('descendantList');
+		},
+
 		_prepareDescendantTarget: function() {
 
 			this.target[1] = lang.replace(this._descendantTargetBase, {

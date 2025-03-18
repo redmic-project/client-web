@@ -416,11 +416,17 @@ define([
 
 		_subWidgetHidden: function(res, channelObj) {
 
-			var widgetChannel = channelObj._parent.namespace,
-				widgetKey = this._getWidgetKeyByChannel(widgetChannel),
-				widgetNode = this._nodes[widgetKey];
+			let widgetChannel = channelObj._parent.namespace,
+				widgetKey = this._getWidgetKeyByChannel(widgetChannel);
 
+			this._onWidgetHidden(widgetKey);
+		},
+
+		_onWidgetHidden: function(widgetKey) {
+
+			let widgetNode = this._nodes[widgetKey];
 			put(widgetNode, '.' + this.hiddenClass);
+
 			this._removeWidgetInteractivity(widgetKey);
 			this._updateInteractive();
 		},

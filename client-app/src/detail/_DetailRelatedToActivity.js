@@ -54,6 +54,13 @@ define([
 			this._getActivityTargetData();
 		},
 
+		_showWidgets: function() {
+
+			this.inherited(arguments);
+
+			this._showWidget('activityList');
+		},
+
 		_prepareActivityTarget: function() {
 
 			this.target[1] = lang.replace(this.activitiesTargetBase, {

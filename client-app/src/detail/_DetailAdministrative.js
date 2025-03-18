@@ -67,7 +67,7 @@ define([
 			if (!dataItems?.length) {
 				this._hideWidget('documentList');
 				return;
-			};
+			}
 
 			this._showWidget('documentList');
 			dataItems.forEach(function(dataItem) {
@@ -81,7 +81,7 @@ define([
 			if (!dataItems?.length) {
 				this._hideWidget('contactList');
 				return;
-			};
+			}
 
 			this._showWidget('contactList');
 			this._injectEntityData(dataItems, this.contactTarget);
@@ -92,7 +92,7 @@ define([
 			if (!dataItems?.length) {
 				this._hideWidget('platformList');
 				return;
-			};
+			}
 
 			this._showWidget('platformList');
 			this._injectEntityData(dataItems, this.platformTarget);
@@ -103,7 +103,7 @@ define([
 			if (!dataItems?.length) {
 				this._hideWidget('organisationList');
 				return;
-			};
+			}
 
 			this._showWidget('organisationList');
 			this._injectEntityData(dataItems, this.organisationTarget);

@@ -70,10 +70,7 @@ define([
 			}
 
 			this._showWidget('documentList');
-			dataItems.forEach(function(dataItem) {
-
-				this._injectEntityData(dataItem.document, this.documentTarget);
-			}, this);
+			this._injectEntityData(dataItems.map((dataItem) => dataItem.document), this.documentTarget);
 		},
 
 		_dataToContacts: function(dataItems) {

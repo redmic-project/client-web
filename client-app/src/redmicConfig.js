@@ -300,213 +300,146 @@ define([], function() {
 	retObj.aggregations = {
 		activity: {
 			themeInspire: {
-				terms: {
-					field: 'themeInspire.name'
-				}
+				field: 'themeInspire.name'
 			},
 			activityType: {
-				terms: {
-					field: 'activityType.name'
-				}
+				field: 'activityType.name'
 			},
 			territorialScope: {
-				terms: {
-					field: 'scope.name'
-				}
+				field: 'scope.name'
 			}
 		},
 		activityType: {
 			activityField: {
-				terms: {
-					field: 'activityField.name'
-				}
+				field: 'activityField.name'
 			}
 		},
 		animal: {
 			sex: {
-				terms: {
-					field: 'sex.name'
-				}
+				field: 'sex.name'
 			},
 			lifeStage: {
-				terms: {
-					field: 'lifeStage.name'
-				}
+				field: 'lifeStage.name'
 			}
 		},
 		atlasLayer: {
 			protocols: {
-				terms: {
-					field: 'protocols.type',
-					nested: 'protocols'
-				}
+				field: 'protocols.type',
+				nested: 'protocols'
 			},
 			themeInspire: {
-				terms: {
-					field: 'themeInspire.name'
-				}
+				field: 'themeInspire.name'
 			},
 			keywords: {
-				terms: {
-					field: 'keywords'
-				}
+				field: 'keywords'
 			}
 		},
 		contact: {
 			organisation: {
-				terms: {
-					field: 'affiliation.name'
-				}
+				field: 'affiliation.name'
 			}
 		},
 		device: {
 			deviceType: {
-				terms: {
-					field: 'deviceType.name'
-				}
+				field: 'deviceType.name'
 			}
 		},
 		document: {
 			documentType: {
-				terms: {
-					field: 'documentType.name'
-				}
+				field: 'documentType.name'
 			},
 			language: {
-				terms: {
-					field: 'language'
-				}
+				field: 'language'
 			}
 		},
 		metricsDefinition: {
 			metricGroup: {
-				terms: {
-					field: 'metricGroup.name'
-				}
+				field: 'metricGroup.name'
 			}
 		},
 		observationSeries: {
 			animal: {
-				terms: {
-					field: 'observation.animal.name'
-				}
+				field: 'observation.animal.name',
+				minCount: 1
 			},
 			species: {
-				terms: {
-					field: 'observation.taxonomy.scientificName'
-				}
+				field: 'observation.taxonomy.scientificName',
+				minCount: 1
 			},
 			organisation: {
-				terms: {
-					field: 'observation.organisation.name'
-				}
+				field: 'observation.organisation.name',
+				minCount: 1
 			}
 		},
 		organisation: {
 			organisationType: {
-				terms: {
-					field: 'organisationType.name'
-				}
+				field: 'organisationType.name'
 			}
 		},
 		parameter: {
 			parameterType: {
-				terms: {
-					field: 'parameterType.name'
-				}
+				field: 'parameterType.name'
 			}
 		},
 		platform: {
 			platformType: {
-				terms: {
-					field: 'platformType.name'
-				}
+				field: 'platformType.name'
 			}
 		},
 		program: {
 			territorialScope: {
-				terms: {
-					field: 'scope.name'
-				}
+				field: 'scope.name'
 			}
 		},
 		project: {
 			projectGroup: {
-				terms: {
-					field: 'projectGroup.name'
-				}
+				field: 'projectGroup.name'
 			},
 			territorialScope: {
-				terms: {
-					field: 'scope.name'
-				}
+				field: 'scope.name'
 			}
 		},
 		species: {
 			status: {
-				terms: {
-					field: 'status.name'
-				}
+				field: 'status.name'
 			},
 			origin: {
-				terms: {
-					field: 'peculiarity.origin.name'
-				}
+				field: 'peculiarity.origin.name'
 			},
 			endemicity: {
-				terms: {
-					field: 'peculiarity.endemicity.name'
-				}
+				field: 'peculiarity.endemicity.name'
 			},
 			permanence: {
-				terms: {
-					field: 'peculiarity.permanence.name'
-				}
+				field: 'peculiarity.permanence.name'
 			},
 			ecology: {
-				terms: {
-					field: 'peculiarity.ecology.name'
-				}
+				field: 'peculiarity.ecology.name'
 			},
 			trophicRegime: {
-				terms: {
-					field: 'peculiarity.trophicRegime.name'
-				}
+				field: 'peculiarity.trophicRegime.name'
 			},
 			interest: {
-				terms: {
-					field: 'peculiarity.interest.name'
-				}
+				field: 'peculiarity.interest.name'
 			},
 			canaryProtection: {
-				terms: {
-					field: 'peculiarity.canaryProtection.name'
-				}
+				field: 'peculiarity.canaryProtection.name'
 			},
 			spainProtection: {
-				terms: {
-					field: 'peculiarity.spainProtection.name'
-				}
+				field: 'peculiarity.spainProtection.name'
 			},
 			euProtection: {
-				terms: {
-					field: 'peculiarity.euProtection.name'
-				}
+				field: 'peculiarity.euProtection.name'
 			}
 		},
 		timeSeriesStations: {
 			properties: {
-				terms: {
-					field: 'properties.measurements.parameter.name',
-					nested: 'properties.measurements'
-				}
+				field: 'properties.measurements.parameter.name',
+				nested: 'properties.measurements'
 			}
 		},
 		unit: {
 			unitType: {
-				terms: {
-					field: 'unitType.name'
-				}
+				field: 'unitType.name'
 			}
 		}
 	};

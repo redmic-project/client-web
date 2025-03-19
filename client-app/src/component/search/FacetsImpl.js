@@ -120,23 +120,22 @@ define([
 			this._aggregationGroupsDefinition = aggs;
 			this._currentAggregationGroups = [];
 
-			for (var item in aggs) {
-				var terms = aggs[item].terms,
-					field = terms.field,
-					nested = terms.nested,
-					obj = {
-						size: terms.size || 100,
+			for (const [key, value] of Object.entries(aggs)) {
+				let field = value.field,
+					nested = value.nested,
+					aggObj = {
+						term: key,
 						field: field,
-						term: item,
-						minCount: 0
+						size: value.size || 100,
+						minCount: value.minCount || 0
 					};
 
 				if (nested) {
-					obj.nested = nested;
+					aggObj.nested = nested;
 					this._nestedAggs[field] = nested;
 				}
 
-				this._currentAggregationGroups.push(obj);
+				this._currentAggregationGroups.push(aggObj);
 			}
 		},
 

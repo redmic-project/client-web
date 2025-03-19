@@ -274,11 +274,7 @@ define([
 
 			var aggGroupDefinition = this._aggregationGroupsDefinition[groupName];
 
-			if (aggGroupDefinition && aggGroupDefinition.terms) {
-				return aggGroupDefinition.terms.field || groupName;
-			} else {
-				return groupName;
-			}
+			return aggGroupDefinition?.field || groupName;
 		},
 
 		_getAggregationGroupOpenStatus: function(groupName) {

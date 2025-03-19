@@ -430,6 +430,7 @@ define({
 		, "layersCatalog": "Layers catalog"
 		, "addLayersToLoadInMap": "Add layers from catalog"
 		, "layersQueryResults": "Layers query results"
+		, "selectStationWithRegisteredData": "Select a station with registered data"
 
 		, "seaDepth": "Bottom"
 		, "legalValidity": "Legal validity"

@@ -7,6 +7,7 @@ define([
 	, 'src/component/browser/bars/Order'
 	, 'src/component/browser/bars/Total'
 	, 'src/redmicConfig'
+	, 'templates/LoadingCustom'
 	, 'templates/ObservationFilterForm'
 	, 'templates/ObservationRegisterList'
 ], function(
@@ -18,6 +19,7 @@ define([
 	, Order
 	, Total
 	, redmicConfig
+	, LoadingCustom
 	, TemplateFilter
 	, TemplateList
 ) {
@@ -46,6 +48,13 @@ define([
 
 			this.browserConfig = this._merge([this.browserConfig || {}, {
 				template: TemplateList,
+				noDataMessage: {
+					definition: LoadingCustom,
+					props: {
+						message: this.i18n.selectStationWithRegisteredData,
+						iconClass: 'fr fr-no-data'
+					}
+				},
 				bars: [{
 					instance: Total
 				},{

@@ -430,6 +430,7 @@ define({
 	, "layersCatalog": "Catálogo de capas"
 	, "addLayersToLoadInMap": "Añada capas desde el catálogo"
 	, "layersQueryResults": "Resultados de consulta sobre capas"
+	, "selectStationWithRegisteredData": "Seleccione una estación con datos registrados"
 
 	, "seaDepth": "Fondo"
 	, "legalValidity": "Validez legal"

@@ -200,8 +200,7 @@ define([
 
 			this.topbar = new Topbar({
 				parentChannel: this.getChannel(),
-				collapseButtonClass: this.collapseButtonClass,
-				ecomarcan: this.ecomarcan
+				collapseButtonClass: this.collapseButtonClass
 			});
 
 			this.sidebar = new MainSidebarImpl({

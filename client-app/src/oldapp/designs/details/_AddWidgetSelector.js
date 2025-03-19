@@ -126,6 +126,8 @@ define([
 				emptyValueLabel: '<i>' + this.i18n.noFixedContent + '</i>'
 			});
 
+			this._setWidgetKeysAsSelectorOptions();
+
 			this._setSubscription({
 				channel: this._widgetSelector.getChannel('VALUE_CHANGED'),
 				callback: lang.hitch(this, this._onWidgetSelectorValueChanged)

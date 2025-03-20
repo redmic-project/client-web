@@ -20,9 +20,9 @@ define([
 
 	return declare([Layout, Controller, _EditionFormList, _RememberDeleteItems], {
 		//	summary:
-		//		Step de ActivityOrganisation.
+		//		Step de edición de organizaciones.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				// WizardStep params

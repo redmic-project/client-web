@@ -14,9 +14,9 @@ define([
 
 	return declare(Main, {
 		//	summary:
-		//		Step de ActivityDocument.
+		//		Step de edición de documentos.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				// WizardStep params

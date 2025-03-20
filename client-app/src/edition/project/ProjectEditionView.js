@@ -4,6 +4,10 @@ define([
 	, "app/designs/edition/Layout"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
+	, 'src/edition/step/ContactSetStep'
+	, 'src/edition/step/DocumentSetStep'
+	, 'src/edition/step/OrganisationSetStep'
+	, 'src/edition/step/PlatformSetStep'
 	, 'src/redmicConfig'
 ], function(
 	MainDataStep
@@ -11,6 +15,10 @@ define([
 	, Layout
 	, declare
 	, lang
+	, ContactSetStep
+	, DocumentSetStep
+	, OrganisationSetStep
+	, PlatformSetStep
 	, redmicConfig
 ) {
 
@@ -27,7 +35,8 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.project,
-				propsToClean: ['code', 'id', 'contacts.{i}.id', 'organisations.{i}.id', 'documents.{i}.id']
+				propsToClean: ['code', 'id', 'contacts.{i}.id', 'organisations.{i}.id', 'documents.{i}.id',
+					'platforms.{i}.id']
 			};
 
 			lang.mixin(this, this.config, args);
@@ -48,6 +57,30 @@ define([
 						formTemplate: "administrative/views/templates/forms/Project",
 						label: this.i18n.project
 					}
+				},{
+					definition: DocumentSetStep,
+					skippable: true,
+					props: {
+						propertyName: 'documents'
+					}
+				},{
+					definition: OrganisationSetStep,
+					props: {
+						propertyName: 'organisations'
+					},
+					skippable: true
+				},{
+					definition: ContactSetStep,
+					props: {
+						propertyName: 'contacts'
+					},
+					skippable: true
+				},{
+					definition: PlatformSetStep,
+					props: {
+						propertyName: 'platforms'
+					},
+					skippable: true
 				}]
 			}, this.editorConfig || {}]);
 		}

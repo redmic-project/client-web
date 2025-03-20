@@ -20,9 +20,9 @@ define([
 
 	return declare([Layout, Controller, _EditionFormList, _RememberDeleteItems], {
 		//	summary:
-		//		Step de ActivityPlatform.
+		//		Step de edición de plataformas.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
 				// WizardStep params

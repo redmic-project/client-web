@@ -24,7 +24,7 @@ define([
 
 			this.config = {
 				ownChannel: "resetting",
-				templateProps:  {
+				templateProps: {
 					templateString: template,
 					i18n: this.i18n,
 					_onCloseResettingPassword: lang.hitch(this, this._onCloseResettingPassword),
@@ -37,20 +37,15 @@ define([
 		},
 
 		_putMetaTags: function() {
-			//	summary:
-			//		Manda a publicar la información necesaria para que se generen las meta-tags
-			//		de la vista actual. Debe ejecutarse después del show de la vista, ya que este
-			//		indica mediante el flag "metaTags" si debe o no generarse.
-			//		*** Función que sobreescribe a la de _View para enviar más datos  ***
-			//	tags:
-			//		private
 
-			if (this.metaTags) {
-				this._emitEvt('PUT_META_TAGS', {
-					view: this.ownChannel,
-					"robots": "noindex, nofollow"
-				});
+			if (!this.metaTags) {
+				return;
 			}
+
+			this._emitEvt('PUT_META_TAGS', {
+				view: this.ownChannel,
+				"robots": "noindex, nofollow"
+			});
 		},
 
 		_onCloseResettingPassword: function(/*Event*/ evt) {
@@ -92,12 +87,21 @@ define([
 			});
 		},
 
-		_dataAvailable: function(res, resWrapper) {
+		_dataAvailable: function(res, _resWrapper) {
+
+			this._emitEvt('TRACK', {
+				event: 'password_reset'
+			});
 
 			this._handleResponse(res.data);
 		},
 
-		_errorAvailable: function(error, status, resWrapper) {
+		_errorAvailable: function(_error, status, resWrapper) {
+
+			this._emitEvt('TRACK', {
+				event: 'password_reset_error',
+				status: status
+			});
 
 			this._handleError(resWrapper.res.data);
 		},
@@ -122,7 +126,6 @@ define([
 			//		callback private
 
 			this._notifyError(error);
-			this._goBack();
 		},
 
 		_notifyError: function(error) {
@@ -133,15 +136,6 @@ define([
 			//		callback private
 
 			var msg = error.description;
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {
-					'exDescription': "_onSubmitResetting " + msg,
-					'exFatal': false,
-					'appName': 'API'
-				}
-			});
 
 			this._emitEvt('COMMUNICATION', {
 				type: "alert",

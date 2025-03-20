@@ -2,15 +2,13 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
-	, 'src/detail/_WidgetDefinition'
 ], function(
 	declare
 	, lang
 	, Deferred
-	, _WidgetDefinition
 ) {
 
-	return declare(_WidgetDefinition, {
+	return declare(null, {
 		//	summary:
 		//		Aplicación de componentes adicionales para la vista detalle de Activity, en función del tipo de layout
 		//		establecido según su identificador. Si no está establecido, se decide según su categoría.
@@ -20,7 +18,9 @@ define([
 			this.config = {
 				mainActions: {
 					GET_USER_GRANTS_FOR_ACTIVITY: 'getUserGrantsForActivity',
-					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
+					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity',
+					TIMESERIES_LINE_CHARTS_DATA: 'timeseriesLineChartsData',
+					TIMESERIES_WINDROSE_DATA: 'timeseriesWindroseData'
 				}
 			};
 
@@ -73,9 +73,9 @@ define([
 			this._once(channelToSubscribe, lang.hitch(this, function(grantsDfd, res) {
 
 				if (res.accessGranted) {
-					grantsDfd.resolve();
+					grantsDfd.resolve(true);
 				} else {
-					grantsDfd.reject();
+					grantsDfd.reject(false);
 				}
 			}, dfd));
 
@@ -85,7 +85,7 @@ define([
 			});
 		},
 
-		_onLayoutNotGranted: function(res) {
+		_onLayoutNotGranted: function(grantsDfd) {
 
 			// TODO mostrar al usuario un aviso de que existen datos en la actividad, pero no tiene permiso.
 			// Ofrecerle identificarse.
@@ -103,10 +103,14 @@ define([
 			}
 		},
 
-		_prepareDetailLayoutWidgets: function(detailLayout, layoutConfig) {
+		_prepareDetailLayoutWidgets: function(detailLayout, layoutConfig, grantsDfd) {
 
 			if (!this._detailLayoutWidgets) {
 				this._detailLayoutWidgets = [];
+			}
+
+			if (grantsDfd !== undefined) {
+				layoutConfig.accessGranted = grantsDfd;
 			}
 
 			var prepareWidgetsMethod;
@@ -127,6 +131,8 @@ define([
 				prepareWidgetsMethod = '_prepareFixedTimeseriesActivityWidgets';
 			} else if (detailLayout === 'embeddedContent') {
 				prepareWidgetsMethod = '_prepareEmbeddedContentsActivityWidgets';
+			} else if (detailLayout === 'supersetDashboard') {
+				prepareWidgetsMethod = '_prepareSupersetDashboardActivityWidget';
 			}
 
 			if (!prepareWidgetsMethod) {
@@ -230,12 +236,17 @@ define([
 
 		_prepareFixedObservationSeriesActivityWidgets: function(layoutConfig) {
 
-			var key = 'activityFixedObservationSeriesMap',
-				config = this._getActivityFixedObservationSeriesMapConfig(layoutConfig);
+			var mapKey = 'activityFixedObservationSeriesMap',
+				mapConfig = this._getActivityFixedObservationSeriesMapConfig(layoutConfig);
 
-			this._addWidget(key, config);
+			this._addWidget(mapKey, mapConfig);
 
-			return key;
+			var listKey = 'activityFixedObservationSeriesList',
+				listConfig = this._getActivityFixedObservationSeriesListConfig(mapKey, layoutConfig);
+
+			this._addWidget(listKey, listConfig);
+
+			return [mapKey, listKey];
 		},
 
 		_prepareFixedTimeseriesActivityWidgets: function(layoutConfig) {
@@ -245,18 +256,116 @@ define([
 
 			this._addWidget(mapKey, mapConfig);
 
-			var chartKey = 'activityFixedTimeseriesChart',
-				chartConfig = this._getActivityFixedTimeseriesChartConfig(mapKey, layoutConfig);
+			var timeseriesDataChannel = this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA');
 
-			this._addWidget(chartKey, chartConfig);
+			this._subscribe(timeseriesDataChannel, lang.hitch(this, this._onTimeseriesDataPublished, layoutConfig));
 
-			return [mapKey, chartKey];
+			return mapKey;
+		},
+
+		_onTimeseriesDataPublished: function(layoutConfig, data) {
+
+			this._onTimeseriesLineChartsDataPublished(layoutConfig, data);
+			this._onTimeseriesWindroseDataPublished(layoutConfig, data);
+		},
+
+		_onTimeseriesLineChartsDataPublished: function(layoutConfig, data) {
+
+			var lineChartsKey = 'activityFixedTimeseriesLineCharts',
+				lineChartsConfig = this._getActivityFixedTimeseriesLineChartsConfig(layoutConfig),
+				lineChartsDataChannel = this.getChannel('TIMESERIES_LINE_CHARTS_DATA'),
+				siteName = data.site.name;
+
+			lineChartsConfig.props = this._merge([lineChartsConfig.props, {
+				title: this.i18n.charts + ' | ' + siteName,
+				timeseriesDataChannel: lineChartsDataChannel
+			}]);
+
+			if (this._lineChartsWidgetKey) {
+				this._destroyWidget(this._lineChartsWidgetKey);
+			}
+			this._lineChartsWidgetKey = lineChartsKey;
+
+			this._addWidget(lineChartsKey, lineChartsConfig);
+
+			this._publish(lineChartsDataChannel, data);
+		},
+
+		_onTimeseriesWindroseDataPublished: function(layoutConfig, data) {
+
+			var allowedSpeedParameters = [
+					61, // velocidad viento media
+					66 // velocidad viento máxima
+				],
+				allowedDirectionParameters = [
+					62, // dirección viento media
+					67 // dirección viento máxima
+				],
+				filteredMeasurements = data.measurements.filter(lang.hitch(this, this._filterWindroseMeasurements, {
+					allowedSpeedParameters: allowedSpeedParameters,
+					allowedDirectionParameters: allowedDirectionParameters
+				}));
+
+			if (this._windroseWidgetKeys) {
+				this._windroseWidgetKeys.forEach(lang.hitch(this, this._destroyWidget));
+			}
+			this._windroseWidgetKeys = [];
+
+			for (var i = 0; i < filteredMeasurements.length - 1; i += 2) {
+				this._onEachWindroseDataPair({
+					index: i ? i - 1 : 0,
+					layoutConfig: layoutConfig,
+					measurements: [filteredMeasurements[i], filteredMeasurements[i + 1]],
+					site: data.site,
+					allowedSpeedParameters: allowedSpeedParameters,
+					allowedDirectionParameters: allowedDirectionParameters
+				});
+			}
+		},
+
+		_filterWindroseMeasurements: function(args, measurement) {
+
+			var paramId = measurement.parameter.id;
+
+			return args.allowedSpeedParameters.includes(paramId) || args.allowedDirectionParameters.includes(paramId);
+		},
+
+		_onEachWindroseDataPair: function(args) {
+
+			var windroseKey = 'activityFixedTimeseriesWindrose' + args.index,
+				windroseConfig = this._getActivityFixedTimeseriesWindroseConfig(args.layoutConfig),
+				windroseDataChannel = this.getChannel('TIMESERIES_WINDROSE_DATA') + args.index,
+				siteName = args.site.name,
+				speedParamTitle = args.measurements[0].parameter.name,
+				directionParamTitle = args.measurements[1].parameter.name;
+
+			windroseConfig.props = this._merge([windroseConfig.props, {
+				ownChannel: 'windrose' + args.index,
+				title: speedParamTitle + ' + ' + directionParamTitle + ' | ' + siteName,
+				allowedSpeedParameters: args.allowedSpeedParameters,
+				allowedDirectionParameters: args.allowedDirectionParameters,
+				timeseriesDataChannel: windroseDataChannel
+			}]);
+
+			this._windroseWidgetKeys.push(windroseKey);
+
+			this._addWidget(windroseKey, windroseConfig);
+
+			this._publish(windroseDataChannel, {
+				measurements: args.measurements
+			});
 		},
 
 		_prepareEmbeddedContentsActivityWidgets: function(layoutConfig) {
 
 			var embeddedContents = this._activityData.embeddedContents,
 				keys = [];
+
+			var embeddedContent = layoutConfig && layoutConfig.content;
+
+			if (embeddedContent) {
+				embeddedContents.push({embeddedContent: embeddedContent});
+			}
 
 			for (var i = 0; i < embeddedContents.length; i++) {
 				var embeddedContentObj = embeddedContents[i],
@@ -266,7 +375,8 @@ define([
 				embeddedContentParentNode.innerHTML = embeddedContentValue;
 
 				var key = 'embeddedContent' + i,
-					config = this._getActivityEmbeddedContentsConfig(embeddedContentParentNode.firstChild, i, layoutConfig);
+					node = embeddedContentParentNode.firstChild,
+					config = this._getActivityEmbeddedContentsConfig(node, i, layoutConfig);
 
 				keys.push(key);
 
@@ -274,6 +384,17 @@ define([
 			}
 
 			return keys;
+		},
+
+		_prepareSupersetDashboardActivityWidget: function(layoutConfig) {
+
+			var dashboardId = layoutConfig.id,
+				key = 'superset-' + dashboardId,
+				config = this._getSupersetDashboardConfig(layoutConfig);
+
+			this._addWidget(key, config);
+
+			return key;
 		},
 
 		_removeCustomWidgets: function() {

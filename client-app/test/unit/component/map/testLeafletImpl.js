@@ -1,12 +1,16 @@
 define([
 	'src/util/Mediator'
 	, 'src/component/map/LeafletImpl'
+	, 'dojo/text!./mapLayersConfig.json'
 ], function(
 	Mediator
 	, LeafletImpl
+	, mapLayersConfigText
 ) {
 
 	var timeout, map, newLayer1, newLayer2, newBaseLayerName, newCenter, newZoom;
+
+	var mapLayers = JSON.parse(mapLayersConfigText).mapLayers;
 
 	var registerSuite = intern.getInterface('object').registerSuite,
 		assert = intern.getPlugin('chai').assert;
@@ -16,13 +20,14 @@ define([
 		before: function() {
 
 			map = new LeafletImpl({
-				parentChannel: 'test'
+				parentChannel: 'test',
+				_staticLayersDefinition: mapLayers
 			});
 
 			timeout = 10;
 			newLayer1 = map._getStaticLayerInstance('grid5000m');
 			newLayer2 = map._getStaticLayerInstance('grid1000m');
-			newBaseLayerName = 'topografico';
+			newBaseLayerName = 'grafcan-topografico';
 			newCenter = L.latLng(28, -16);
 			newZoom = 15;
 		},

@@ -5,14 +5,15 @@ define([], function() {
 	var retObj = {
 		'siteKeyReCaptcha': '6LfA6_0SAAAAACT3i8poH1NqztZCtIW1OahT0cXs',
 		'siteKeyForDebugReCaptcha': '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-		'googleAnalyticsId': 'G-J753HC86F0'
+		'googleTagManagerId': 'GTM-PK5MH63C',
+		'googleTagManagerDevId': 'GTM-WJZRQZLZ'
 	};
 
 	retObj.viewPaths = {
 		'activityCatalog': '/catalog/activity-catalog',
 		'activityDetails': '/catalog/activity-info/{id}',
-		'activityAdd': '/admin/activity-add/{id}',
-		'activityEdit': '/admin/activity-edit/{id}',
+		'activityAdd': '/catalog/activity-add/{id}',
+		'activityEdit': '/catalog/activity-edit/{id}',
 		'activityCatalogDetailsRegister': '/catalog/activity-info/{properties.activityId}',
 		'activityCitation': '/data-loader/activity/{id}/citation',
 		'activityInfrastructure': '/data-loader/activity/{id}/infrastructure',
@@ -29,59 +30,53 @@ define([], function() {
 		'activityInfrastructureAttributes': '/data-loader/activity/{activityid}/infrastructure/{id}/attributes',
 		'animalCatalog': '/catalog/animal-catalog',
 		'animalDetails': '/catalog/animal-info/{id}',
-		'animalAdd': '/admin/animal-add/{id}',
-		'animalEdit': '/admin/animal-edit/{id}',
+		'animalAdd': '/catalog/animal-add/{id}',
+		'animalEdit': '/catalog/animal-edit/{id}',
 		'bibliography': '/bibliography',
 		'bibliographyDetails': '/bibliography/document-info/{id}',
-		'bibliographyAdd': '/admin/document-add/{id}',
-		'bibliographyEdit': '/admin/document-edit/{id}',
-		'bibliographyLoad': '/admin/document/load',
-		'conditionAdd': '/admin/condition-add/{id}',
-		'conditionEdit': '/admin/condition-edit/{id}',
-		'contactDetails': '/admin/contact-info/{id}',
-		'contactAdd': '/admin/contact-add/{id}',
-		'contactEdit': '/admin/contact-edit/{id}',
-		'contact': '/admin/contact',
-		'dataDefinition': '/admin/data-definition',
-		'dataDefinitionAdd': '/admin/data-definition-add/{id}',
-		'dataDefinitionEdit': '/admin/data-definition-edit/{id}',
-		'deviceAdd': '/admin/device-add/{id}',
-		'deviceEdit': '/admin/device-edit/{id}',
-		'metricsDefinitionAdd': '/admin/metrics-definition-add/{id}',
-		'metricsDefinitionEdit': '/admin/metrics-definition-edit/{id}',
-		'misidentificationAdd': '/admin/misidentification-add/{id}',
-		'misidentificationEdit': '/admin/misidentification-edit/{id}',
-		'misidentification': '/taxons/misidentification',
+		'bibliographyAdd': '/bibliography/document-add/{id}',
+		'bibliographyEdit': '/bibliography/document-edit/{id}',
+		'bibliographyLoad': '/bibliography/document/load',
+		'conditionAdd': '/maintenance/condition-add/{id}',
+		'conditionEdit': '/maintenance/condition-edit/{id}',
+		'contactCatalog': '/catalog/contact-catalog',
+		'contactDetails': '/catalog/contact-info/{id}',
+		'contactAdd': '/catalog/contact-add/{id}',
+		'contactEdit': '/catalog/contact-edit/{id}',
+		'dataDefinition': '/maintenance/data-definition',
+		'dataDefinitionAdd': '/maintenance/data-definition-add/{id}',
+		'dataDefinitionEdit': '/maintenance/data-definition-edit/{id}',
+		'deviceAdd': '/catalog/device-add/{id}',
+		'deviceEdit': '/catalog/device-edit/{id}',
+		'metricsDefinitionAdd': '/maintenance/metrics-definition-add/{id}',
+		'metricsDefinitionEdit': '/maintenance/metrics-definition-edit/{id}',
 		'organisationCatalog': '/catalog/organisation-catalog',
 		'organisationDetails': '/catalog/organisation-info/{id}',
-		'organisationAdd': '/admin/organisation-add/{id}',
-		'organisationEdit': '/admin/organisation-edit/{id}',
-		'parameterAdd': '/admin/parameter-add/{id}',
-		'parameterEdit': '/admin/parameter-edit/{id}',
+		'organisationAdd': '/catalog/organisation-add/{id}',
+		'organisationEdit': '/catalog/organisation-edit/{id}',
+		'parameterAdd': '/maintenance/parameter-add/{id}',
+		'parameterEdit': '/maintenance/parameter-edit/{id}',
 		'platformCatalog': '/catalog/platform-catalog',
 		'platformDetails': '/catalog/platform-info/{id}',
-		'platformAdd': '/admin/platform-add/{id}',
-		'platformEdit': '/admin/platform-edit/{id}',
+		'platformAdd': '/catalog/platform-add/{id}',
+		'platformEdit': '/catalog/platform-edit/{id}',
 		'programCatalog': '/catalog/program-catalog',
 		'programDetails': '/catalog/program-info/{id}',
-		'programAdd': '/admin/program-add/{id}',
-		'programEdit': '/admin/program-edit/{id}',
+		'programAdd': '/catalog/program-add/{id}',
+		'programEdit': '/catalog/program-edit/{id}',
 		'projectCatalog': '/catalog/project-catalog',
 		'projectDetails': '/catalog/project-info/{id}',
-		'projectAdd': '/admin/project-add/{id}',
-		'projectEdit': '/admin/project-edit/{id}',
-
-		'realTimeDashboard': '/viewer/real-time-dashboard/{uuid}',
-
+		'projectAdd': '/catalog/project-add/{id}',
+		'projectEdit': '/catalog/project-edit/{id}',
 		'ogcServiceCatalog': '/service-ogc-catalog',
 		'ogcServiceDetails': '/service-ogc-catalog/service-ogc-info/{id}',
 		'ogcServiceEdit': '/maintenance/service-ogc-edit/{id}',
 		'speciesCatalog': '/catalog/species-catalog',
 		'speciesDetails': '/catalog/species-info/{id}',
-		'speciesAdd': '/admin/species-add/{id}',
-		'speciesEdit': '/admin/species-edit/{id}',
-		'unitAdd': '/admin/unit-add/{id}',
-		'unitEdit': '/admin/unit-edit/{id}'
+		'speciesAdd': '/catalog/species-add/{id}',
+		'speciesEdit': '/catalog/species-edit/{id}',
+		'unitAdd': '/maintenance/unit-add/{id}',
+		'unitEdit': '/maintenance/unit-edit/{id}'
 	};
 
 	var baseUri = '{apiUrl}/',
@@ -141,7 +136,6 @@ define([], function() {
 		'order': baseUri + 'taxons/orders',
 		'subphylum': baseUri + 'taxons/subphylums',
 		'status': baseUri + 'taxons/statuses',
-		'misidentification': baseUri + 'taxons/misidentifications',
 		'species': baseUri + 'taxons/species',
 		'speciesLocation': baseUri + 'taxons/species/{id}/locations',
 		'taxonAncestors': baseUri + 'taxons/{path}/ancestors',
@@ -150,7 +144,6 @@ define([], function() {
 		'documentsBySpecies': baseUri + 'taxons/species/{id}/documents',
 		'worms': baseUri + 'taxons/worms',
 		'wormsToRedmic': baseUri + 'taxons/worms/convert2redmic',
-		'wormsUpdate': baseUri + 'taxons/worms/update',
 
 		'users': baseUri + 'user',
 		'accountData': baseUri + 'user/accountData',
@@ -167,6 +160,7 @@ define([], function() {
 		'changePassword': baseUri + 'user/profile/changePassword',
 		'changeName': baseUri + 'user/profile/changeName',
 		'changeUserImage': baseUri + 'user/profile/changeImage',
+		'getSupersetToken': baseUri + 'user/superset/get-token',
 
 		'uploadUsers': baseMediastorageUploads + 'users',
 		'uploadContacts': baseMediastorageUploads + 'contacts',
@@ -204,10 +198,12 @@ define([], function() {
 		'pointTrackingActivities': baseUri + 'tracking/activities',
 		'trackingActivity': baseUri + 'activities/{id}/tracking',
 		'elementsTrackingActivity': baseUri + 'activities/{id}/tracking/elements',
+		'privateElementsTrackingActivity': baseUri + 'private/activities/{id}/tracking/elements',
 		'elementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}',
 		'trackElementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track',
 		'pointTrackElementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track/{id}',
 		'pointTrackingCluster': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track/cluster',
+		'privatePointTrackingCluster': baseUri + 'private/activities/{activityid}/tracking/elements/{elementuuid}/track/cluster',
 		'animalTrackingActivity': baseUri + 'activities/{activityid}/animaltracking',
 		'platformTrackingActivity': baseUri + 'activities/{activityid}/platformtracking',
 		'pointType': baseUri + 'pointtypes',
@@ -261,6 +257,7 @@ define([], function() {
 		'timeSeriesActivities': baseUri + 'timeseries/activities',
 		'activityTimeSeriesStations': baseUri + 'activities/{activityid}/timeseriesstations',
 		'activityObservationSeriesStations': baseUri + 'private/activities/{id}/observationseriesstations',
+		'observationSeries': baseUri + 'private/observationseries',
 		'timeSeriesStations': baseUri + 'surveystations',
 		'surveyStationsTimeSeries': baseUri + 'datadefinitions/{datadefinitionid}/timeseries',
 
@@ -303,203 +300,146 @@ define([], function() {
 	retObj.aggregations = {
 		activity: {
 			themeInspire: {
-				terms: {
-					field: 'themeInspire.name'
-				}
+				field: 'themeInspire.name'
 			},
 			activityType: {
-				terms: {
-					field: 'activityType.name'
-				}
+				field: 'activityType.name'
 			},
 			territorialScope: {
-				terms: {
-					field: 'scope.name'
-				}
+				field: 'scope.name'
 			}
 		},
 		activityType: {
 			activityField: {
-				terms: {
-					field: 'activityField.name'
-				}
+				field: 'activityField.name'
 			}
 		},
 		animal: {
 			sex: {
-				terms: {
-					field: 'sex.name'
-				}
+				field: 'sex.name'
 			},
 			lifeStage: {
-				terms: {
-					field: 'lifeStage.name'
-				}
+				field: 'lifeStage.name'
 			}
 		},
 		atlasLayer: {
 			protocols: {
-				terms: {
-					field: 'protocols.type',
-					nested: 'protocols'
-				}
+				field: 'protocols.type',
+				nested: 'protocols'
 			},
 			themeInspire: {
-				terms: {
-					field: 'themeInspire.name'
-				}
+				field: 'themeInspire.name'
 			},
 			keywords: {
-				terms: {
-					field: 'keywords'
-				}
+				field: 'keywords'
 			}
 		},
 		contact: {
 			organisation: {
-				terms: {
-					field: 'affiliation.name'
-				}
+				field: 'affiliation.name'
 			}
 		},
 		device: {
 			deviceType: {
-				terms: {
-					field: 'deviceType.name'
-				}
+				field: 'deviceType.name'
 			}
 		},
 		document: {
 			documentType: {
-				terms: {
-					field: 'documentType.name'
-				}
+				field: 'documentType.name'
 			},
 			language: {
-				terms: {
-					field: 'language'
-				}
+				field: 'language'
 			}
 		},
 		metricsDefinition: {
 			metricGroup: {
-				terms: {
-					field: 'metricGroup.name'
-				}
+				field: 'metricGroup.name'
+			}
+		},
+		observationSeries: {
+			animal: {
+				field: 'observation.animal.name',
+				minCount: 1
+			},
+			species: {
+				field: 'observation.taxonomy.scientificName',
+				minCount: 1
+			},
+			organisation: {
+				field: 'observation.organisation.name',
+				minCount: 1
 			}
 		},
 		organisation: {
 			organisationType: {
-				terms: {
-					field: 'organisationType.name'
-				}
+				field: 'organisationType.name'
 			}
 		},
 		parameter: {
 			parameterType: {
-				terms: {
-					field: 'parameterType.name'
-				}
+				field: 'parameterType.name'
 			}
 		},
 		platform: {
 			platformType: {
-				terms: {
-					field: 'platformType.name'
-				}
+				field: 'platformType.name'
 			}
 		},
 		program: {
 			territorialScope: {
-				terms: {
-					field: 'scope.name'
-				}
+				field: 'scope.name'
 			}
 		},
 		project: {
 			projectGroup: {
-				terms: {
-					field: 'projectGroup.name'
-				}
+				field: 'projectGroup.name'
 			},
 			territorialScope: {
-				terms: {
-					field: 'scope.name'
-				}
+				field: 'scope.name'
 			}
 		},
 		species: {
 			status: {
-				terms: {
-					field: 'status.name'
-				}
+				field: 'status.name'
 			},
 			origin: {
-				terms: {
-					field: 'peculiarity.origin.name'
-				}
+				field: 'peculiarity.origin.name'
 			},
 			endemicity: {
-				terms: {
-					field: 'peculiarity.endemicity.name'
-				}
+				field: 'peculiarity.endemicity.name'
 			},
 			permanence: {
-				terms: {
-					field: 'peculiarity.permanence.name'
-				}
+				field: 'peculiarity.permanence.name'
 			},
 			ecology: {
-				terms: {
-					field: 'peculiarity.ecology.name'
-				}
+				field: 'peculiarity.ecology.name'
 			},
 			trophicRegime: {
-				terms: {
-					field: 'peculiarity.trophicRegime.name'
-				}
+				field: 'peculiarity.trophicRegime.name'
 			},
 			interest: {
-				terms: {
-					field: 'peculiarity.interest.name'
-				}
+				field: 'peculiarity.interest.name'
 			},
 			canaryProtection: {
-				terms: {
-					field: 'peculiarity.canaryProtection.name'
-				}
+				field: 'peculiarity.canaryProtection.name'
 			},
 			spainProtection: {
-				terms: {
-					field: 'peculiarity.spainProtection.name'
-				}
+				field: 'peculiarity.spainProtection.name'
 			},
 			euProtection: {
-				terms: {
-					field: 'peculiarity.euProtection.name'
-				}
-			}
-		},
-		taxons: {
-			status: {
-				terms: {
-					field: 'status.name'
-				}
+				field: 'peculiarity.euProtection.name'
 			}
 		},
 		timeSeriesStations: {
 			properties: {
-				terms: {
-					field: 'properties.measurements.parameter.name',
-					nested: 'properties.measurements'
-				}
+				field: 'properties.measurements.parameter.name',
+				nested: 'properties.measurements'
 			}
 		},
 		unit: {
 			unitType: {
-				terms: {
-					field: 'unitType.name'
-				}
+				field: 'unitType.name'
 			}
 		}
 	};
@@ -524,7 +464,13 @@ define([], function() {
 			'properties.measurements.unit.id', 'properties.measurements.unit.name',
 			'properties.measurements.dataDefinition.id', 'properties.measurements.dataDefinition.z'
 		],
-		timeSeriesStationsMap: ['geometry']
+		timeSeriesStationsMap: ['geometry'],
+		observationSeries: [
+			'date', 'remark', 'observation.note', 'observation.animal.id', 'observation.animal.name',
+			'observation.taxonomy.id', 'observation.taxonomy.scientificName', 'observation.device.id',
+			'observation.device.name', 'observation.device.model', 'observation.organisation.id',
+			'observation.organisation.name'
+		]
 	};
 
 	retObj.outerPaths = [

@@ -36,15 +36,10 @@ define([
 				logoClass: 'topbarLogo',
 				logoHref: '/home',
 				logoImgSrc: '/res/images/logos/logo.svg',
+				logoTextContent: 'ECOMARCAN',
 
 				_isProductionEnvironment: (/true/i).test(redmicConfig.getEnvVariableValue('envProduction'))
 			};
-
-			if (args && args.ecomarcan) {
-				this.config.logoTextContent = 'ECOMARCAN';
-			} else {
-				this.config.logoTextContent = 'REDMIC';
-			}
 
 			lang.mixin(this, this.config, args);
 		},

@@ -12,15 +12,15 @@ define([
 	_OnShownAndRefresh
 	, _Main
 	, _OgcService
-	, Controller
-	, Layout
+	, TextSearchListController
+	, TextSearchListLayout
 	, declare
 	, lang
 	, HierarchicalImpl
-	, templateList
+	, ServiceOGCListTemplate
 ) {
 
-	return declare([Layout, Controller, _Main, _OgcService, _OnShownAndRefresh], {
+	return declare([TextSearchListLayout, TextSearchListController, _Main, _OgcService, _OnShownAndRefresh], {
 		//	summary:
 		//		Vista de catálogo de servicios OGC con diseño reducido (sin filtro por facets).
 
@@ -39,7 +39,7 @@ define([
 			this.inherited(arguments);
 
 			this.browserConfig = this._merge([{
-				template: templateList,
+				template: ServiceOGCListTemplate,
 				rowConfig: {
 					selectionIdProperty: this.pathProperty
 				},

@@ -27,7 +27,7 @@ define([
 
 			this.config = {
 				ownChannel: "confirmResetting",
-				templateProps:  {
+				templateProps: {
 					templateString: template,
 					i18n: this.i18n,
 					_onSubmitResetting: lang.hitch(this, this._onSubmitResetting),
@@ -87,12 +87,21 @@ define([
 			});
 		},
 
-		_dataAvailable: function(res, resWrapper) {
+		_dataAvailable: function(res, _resWrapper) {
+
+			this._emitEvt('TRACK', {
+				event: 'password_confirm'
+			});
 
 			this._handleResponse(res.data);
 		},
 
 		_errorAvailable: function(error, status, resWrapper) {
+
+			this._emitEvt('TRACK', {
+				event: 'password_confirm_error',
+				status: status
+			});
 
 			this._handleError(resWrapper.res.data);
 		},
@@ -134,15 +143,6 @@ define([
 
 			var msg = error.description;
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {
-					'exDescription': "_onSubmitConfirmResetting " + msg,
-					'exFatal': false,
-					'appName': 'API'
-				}
-			});
-
 			this._emitEvt('COMMUNICATION', {
 				type: "alert",
 				level: "error",
@@ -169,12 +169,7 @@ define([
 		_onGetTokenError: function() {
 
 			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {
-					'exDescription': "_onGetTokenError",
-					'exFatal': false,
-					'appName': 'WEB'
-				}
+				event: 'get_token_error'
 			});
 
 			globalThis.location.href = '/404';

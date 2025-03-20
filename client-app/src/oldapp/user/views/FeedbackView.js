@@ -222,7 +222,11 @@ define([
 					globalThis.location.href = "/";
 				})
 			);
-		},
+
+			this._emitEvt('TRACK', {
+				event: 'feedback'
+			});
+	},
 
 		_handleError: function(error) {
 			//	summary:
@@ -234,12 +238,13 @@ define([
 			this._resetForm();
 
 			var msg = error.description;
-			this._emitEvt('TRACK', {
-				type: TRACK.type.exception,
-				info: {'exDescription': "_onSubmitFeedback " + msg, 'exFatal':false, 'appName':'API'}
-			});
 
 			this._emitEvt('COMMUNICATION', {type: "alert", level: "error", description: msg});
+
+			this._emitEvt('TRACK', {
+				event: 'feedback_error',
+				error: msg
+			});
 		}
 	});
 });

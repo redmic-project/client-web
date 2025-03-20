@@ -145,6 +145,12 @@ define([
 				return;
 			}
 
+			this._emitEvt('TRACK', {
+				event: 'set_layer_elevation',
+				layer_name: layerInstance.layerLabel,
+				elevation_value: res.value
+			});
+
 			this._publish(layerInstance.getChannel('SET_LAYER_DIMENSION'), {
 				elevation: {
 					value: res.value,

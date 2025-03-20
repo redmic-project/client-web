@@ -1,12 +1,14 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'app/designs/details/main/ActivityTrackingMap'
+	, 'src/detail/activity/widget/ActivityTrackingMap'
 	, 'app/details/views/ActivityAreaMapBase'
 	, 'app/details/views/ActivityCitationMapBase'
-	, 'app/details/views/ActivityFixedTimeseriesChart'
+	, 'src/detail/activity/widget/ActivityFixedObservationSeriesList'
 	, 'src/detail/activity/widget/ActivityFixedObservationSeriesMap'
-	, 'app/details/views/ActivityFixedTimeseriesMap'
+	, 'src/detail/activity/widget/ActivityFixedTimeseriesLineCharts'
+	, 'src/detail/activity/widget/ActivityFixedTimeseriesMap'
+	, 'src/detail/activity/widget/ActivityFixedTimeseriesWindrose'
 	, 'app/details/views/ActivityInfrastructureMapBase'
 	, 'app/details/views/ActivityLayerMapBase'
 	, 'src/util/Credentials'
@@ -17,9 +19,11 @@ define([
 	, 'src/component/browser/bars/Pagination'
 	, 'src/component/browser/bars/Total'
 	, 'src/component/layout/genericDisplayer/GenericDisplayer'
+	, 'src/component/layout/SupersetDisplayer'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
 	, 'src/component/map/_ImportWkt'
 	, 'src/component/map/LeafletImpl'
+	, 'src/redmicConfig'
 	, 'templates/ContactSet'
 	, 'templates/DocumentList'
 	, 'templates/OrganisationSet'
@@ -30,9 +34,11 @@ define([
 	, ActivityTrackingMap
 	, ActivityAreaMapBase
 	, ActivityCitationMapBase
-	, ActivityFixedTimeseriesChart
+	, ActivityFixedObservationSeriesList
 	, ActivityFixedObservationSeriesMap
+	, ActivityFixedTimeseriesLineCharts
 	, ActivityFixedTimeseriesMap
+	, ActivityFixedTimeseriesWindrose
 	, ActivityInfrastructureMapBase
 	, ActivityLayerMapBase
 	, Credentials
@@ -43,9 +49,11 @@ define([
 	, Pagination
 	, Total
 	, GenericDisplayer
+	, SupersetDisplayer
 	, TemplateDisplayer
 	, _ImportWkt
 	, LeafletImpl
+	, redmicConfig
 	, TemplateContacts
 	, TemplateDocuments
 	, TemplateOrganisation
@@ -87,7 +95,7 @@ define([
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.info,
-								href: this.viewPathsWidgets.organisations,
+								href: redmicConfig.viewPaths.organisationDetails,
 								pathToItem: 'organisation'
 							}]
 						}
@@ -115,7 +123,7 @@ define([
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.info,
-								href: this.viewPathsWidgets.platforms,
+								href: redmicConfig.viewPaths.platformDetails,
 								pathToItem: 'platform'
 							}]
 						}
@@ -129,14 +137,25 @@ define([
 			return {
 				width: 3,
 				height: 4,
-				type: declare([ListImpl, _Framework]),
+				type: declare([ListImpl, _Framework, _ButtonsInRow]),
 				props: {
 					title: 'contacts',
 					target: this.contactTarget,
 					template: TemplateContacts,
 					bars: [{
 						instance: Total
-					}]
+					}],
+					rowConfig: {
+						buttonsConfig: {
+							listButton: [{
+								icon: 'fa-info-circle',
+								btnId: 'details',
+								title: this.i18n.info,
+								href: redmicConfig.viewPaths.contactDetails,
+								pathToItem: 'contact'
+							}]
+						}
+					}
 				}
 			};
 		},
@@ -160,7 +179,7 @@ define([
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.info,
-								href: this.viewPathsWidgets.documents
+								href: redmicConfig.viewPaths.bibliographyDetails
 							}]
 						}
 					}
@@ -272,7 +291,14 @@ define([
 
 		_getActivityTrackingConfig: function(config) {
 
-			return {
+			var additionalConfig = {};
+
+			if (config && config.accessGranted) {
+				additionalConfig.props = {};
+				additionalConfig.props.usePrivateTarget = config.accessGranted;
+			}
+
+			return this._merge([{
 				width: 6,
 				height: 6,
 				type: ActivityTrackingMap,
@@ -280,7 +306,7 @@ define([
 					title: 'tracking',
 					pathVariableId: this._activityData.id
 				}
-			};
+			}, additionalConfig]);
 		},
 
 		_getActivityInfrastructureConfig: function(config) {
@@ -316,8 +342,23 @@ define([
 				height: 6,
 				type: ActivityFixedObservationSeriesMap,
 				props: {
-					title: 'associatedObservationStation',
+					title: 'associatedObservationStations',
 					pathVariableId: this._activityData.id
+				}
+			};
+		},
+
+		_getActivityFixedObservationSeriesListConfig: function(mapKey, config) {
+
+			return {
+				width: 6,
+				height: 6,
+				type: ActivityFixedObservationSeriesList,
+				hidden: true,
+				props: {
+					title: 'associatedObservationRegisters',
+					pathVariableId: this._activityData.id,
+					timeseriesDataChannel: this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA')
 				}
 			};
 		},
@@ -335,16 +376,16 @@ define([
 			};
 		},
 
-		_getActivityFixedTimeseriesChartConfig: function(mapKey, config) {
+		_getActivityFixedTimeseriesLineChartsConfig: function(config) {
 
 			return {
 				width: 6,
-				height: 6,
-				type: ActivityFixedTimeseriesChart,
+				height: 5,
+				type: ActivityFixedTimeseriesLineCharts,
+				hidden: true,
 				props: {
 					title: 'charts',
-					pathVariableId: this._activityData.id,
-					timeseriesDataChannel: this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA')
+					pathVariableId: this._activityData.id
 				}
 			};
 		},
@@ -358,6 +399,33 @@ define([
 				props: {
 					title: this.i18n.embeddedContent + ' #' + (i + 1),
 					content: node
+				}
+			};
+		},
+
+		_getSupersetDashboardConfig: function(config) {
+
+			return {
+				width: 6,
+				height: 6,
+				type: SupersetDisplayer,
+				props: {
+					title: config.title || 'supersetDashboard',
+					pathVariableId: this._activityData.id,
+					dashboardConfig: config
+				}
+			};
+		},
+
+		_getActivityFixedTimeseriesWindroseConfig: function(config) {
+
+			return {
+				width: 3,
+				height: 5,
+				type: ActivityFixedTimeseriesWindrose,
+				props: {
+					title: 'windrose',
+					pathVariableId: this._activityData.id
 				}
 			};
 		}

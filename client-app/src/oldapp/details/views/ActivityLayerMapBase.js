@@ -3,16 +3,18 @@ define([
 	, 'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/component/atlas/_AtlasDimensionsManagement'
 	, 'src/component/atlas/_AtlasLayersManagement'
 ], function(
 	ActivityLayerMap
 	, redmicConfig
 	, declare
 	, lang
+	, _AtlasDimensionsManagement
 	, _AtlasLayersManagement
 ) {
 
-	return declare([ActivityLayerMap, _AtlasLayersManagement], {
+	return declare([ActivityLayerMap, _AtlasDimensionsManagement, _AtlasLayersManagement], {
 		//	summary:
 		//
 
@@ -83,7 +85,7 @@ define([
 
 				if (i === 0) {
 					var layerId = layer.id;
-					this._addMapLayer(layerId);
+					this._addMapLayer(layerId, layer);
 				}
 			}
 		},
@@ -104,7 +106,7 @@ define([
 			this._activityLayers[atlasItemId] = mapLayerInstance;
 		},
 
-		_addMapLayer: function(layerId) {
+		_addMapLayer: function(layerId, atlasItem) {
 
 			this.inherited(arguments);
 
@@ -117,7 +119,8 @@ define([
 			var layerInstance = this._activityLayers[layerId];
 
 			this._publish(widgetInstance.getChildChannel('map', 'ADD_LAYER'), {
-				layer: layerInstance
+				layer: layerInstance,
+				atlasItem: atlasItem
 			});
 		},
 

@@ -55,31 +55,6 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		// TODO: este método es más propio de vista que de diseño, el diseño puede usarse a nivel más bajo que una vista
-		_putMetaTags: function() {
-			//	summary:
-			//		Manda a publicar la información necesaria para que se generen las meta-tags
-			//		de la vista actual. Debe ejecutarse después del show de la vista, ya que este
-			//		indica mediante el flag "metaTags" si debe o no generarse.
-			//		*** Función que sobreescribe a la de _View para enviar más datos  ***
-			//	tags:
-			//		private
-
-			aspect.after(this, "_itemAvailable", lang.hitch(this, function(item, args) {
-
-				if (this.target instanceof Array && this.target[0] !== args[1].target) {
-					return;
-				}
-
-				if (this.metaTags) {
-					this._emitEvt('PUT_META_TAGS', {
-						view: this.getOwnChannel(),
-						data: args[0].data
-					});
-				}
-			}));
-		},
-
 		_initializeController: function() {
 
 			this.packery = new packery(this.centerNode, {
@@ -196,14 +171,6 @@ define([
 		_reloadInteractive: function() {
 
 			this.packery.reloadItems();
-		},
-
-		_checkPathVariableId: function() {
-			// TODO: este método es más propio de vista que de diseño, el diseño puede usarse a nivel más bajo que una vista
-
-			if (!this.pathVariableId) {
-				this._goTo404();
-			}
 		},
 
 		_onControllerMeOrAncestorShown: function(res) {
@@ -449,11 +416,17 @@ define([
 
 		_subWidgetHidden: function(res, channelObj) {
 
-			var widgetChannel = channelObj._parent.namespace,
-				widgetKey = this._getWidgetKeyByChannel(widgetChannel),
-				widgetNode = this._nodes[widgetKey];
+			let widgetChannel = channelObj._parent.namespace,
+				widgetKey = this._getWidgetKeyByChannel(widgetChannel);
 
+			this._onWidgetHidden(widgetKey);
+		},
+
+		_onWidgetHidden: function(widgetKey) {
+
+			let widgetNode = this._nodes[widgetKey];
 			put(widgetNode, '.' + this.hiddenClass);
+
 			this._removeWidgetInteractivity(widgetKey);
 			this._updateInteractive();
 		},

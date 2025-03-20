@@ -83,40 +83,36 @@ define([
 			}
 		},
 
-		_subGetReport: function(request) {
+		_subGetReport: function(req) {
 			//	summary:
 			//		Se ejecuta cuando algún módulo pide obtener el fichero de descarga
 			//	tags:
 			//		private
 
-			this.serviceTag = request.serviceTag;
-			delete request.format;
+			this.serviceTag = req.serviceTag;
+			delete req.format;
 
-			this.selectorTarget = request.target;
+			this.selectorTarget = req.target;
 
-			request.requesterId = this.getOwnChannel();
+			req.requesterId = this.getOwnChannel();
 
-			request.id ? this._emitRunTaskReport(request.id) : this._emitEvt('TOTAL');
+			req.id ? this._emitRunTaskReport(req.id) : this._emitEvt('TOTAL');
 
 			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "downloadReport" + this.serviceTag
-				}
+				event: 'generate_report',
+				entity: req.serviceTag
 			});
 		},
 
-		_totalAvailable: function(request) {
+		_totalAvailable: function(res) {
 			//	summary:
 			//		Se ejecuta cuando selector devuelve los seleccionados
 			//	tags:
 			//		private
 
-			if (request.total >= 1) {
-				var selectId = Credentials.get("selectIds")[request.target];
-				if (request.total > 1) {
+			if (res.total >= 1) {
+				var selectId = Credentials.get("selectIds")[res.target];
+				if (res.total > 1) {
 					alertify.prompt(null,
 						null,
 						lang.hitch(this, function(evt, value) {

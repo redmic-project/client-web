@@ -30,6 +30,11 @@ define([
 
 			var data = items.data.data;
 
+			if (!data || !data.length) {
+				this._clear();
+				return;
+			}
+
 			for (var i = 0; i < data.length; i++) {
 				var item = data[i];
 

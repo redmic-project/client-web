@@ -6,12 +6,12 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "src/component/layout/wizard/_CompleteBySelection"
-	, 'src/edition/activity/step/DocumentSetStep'
 	, 'src/edition/activity/step/EmbeddedContentSetStep'
-	, 'src/edition/activity/step/OrganisationSetStep'
-	, 'src/edition/activity/step/PlatformSetStep'
 	, 'src/edition/activity/step/ResourceSetStep'
 	, 'src/edition/step/ContactSetStep'
+	, 'src/edition/step/DocumentSetStep'
+	, 'src/edition/step/OrganisationSetStep'
+	, 'src/edition/step/PlatformSetStep'
 	, 'src/redmicConfig'
 ], function(
 	ActivityType
@@ -21,12 +21,12 @@ define([
 	, declare
 	, lang
 	, _CompleteBySelection
-	, DocumentSetStep
 	, EmbeddedContentSetStep
-	, OrganisationSetStep
-	, PlatformSetStep
 	, ResourceSetStep
 	, ContactSetStep
+	, DocumentSetStep
+	, OrganisationSetStep
+	, PlatformSetStep
 	, redmicConfig
 ) {
 
@@ -45,7 +45,7 @@ define([
 				target: redmicConfig.services.activity,
 				propsToClean: [
 					'code', 'id', 'contacts.{i}.id', 'organisations.{i}.id', 'documents.{i}.id', 'platforms.{i}.id',
-					'resources.{i}.id'
+					'resources.{i}.id', 'embeddedContents.{i}.id'
 				]
 			};
 
@@ -75,6 +75,12 @@ define([
 						label: this.i18n.activity
 					}
 				},{
+					definition: DocumentSetStep,
+					skippable: true,
+					props: {
+						propertyName: 'documents'
+					}
+				},{
 					definition: OrganisationSetStep,
 					props: {
 						propertyName: 'organisations'
@@ -92,12 +98,6 @@ define([
 						propertyName: 'platforms'
 					},
 					skippable: true
-				},{
-					definition: DocumentSetStep,
-					skippable: true,
-					props: {
-						propertyName: 'documents'
-					}
 				},{
 					definition: ResourceSetStep,
 					props: {

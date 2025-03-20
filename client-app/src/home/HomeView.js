@@ -142,14 +142,6 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_putMetaTags: function() {
-			// TODO esto es necesario porque se trata de una vista detalle, que define el método original,
-			// pero no interesa en este caso. Pisando nuevamente el método, se comporta como define _View.
-			// Revisar el proceso de rellenar metatags
-
-			this._putDefaultMetaTags();
-		},
-
 		_afterShow: function(request) {
 
 			if (this._getPreviouslyShown()) {

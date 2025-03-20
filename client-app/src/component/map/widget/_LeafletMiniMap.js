@@ -32,12 +32,20 @@ define([
 				return;
 			}
 
-			this._addMiniMap();
+			var baseLayer = this._getStaticLayerInstance('eoc-map');
+
+			if (baseLayer && baseLayer.then) {
+				baseLayer.then(lang.hitch(this, this._addMiniMap));
+			} else {
+				this._addMiniMap(baseLayer);
+			}
 		},
 
-		_addMiniMap: function() {
+		_addMiniMap: function(baseLayer) {
 
-			var baseLayer = this._getStaticLayerInstance('eoc-map');
+			if (!baseLayer) {
+				return;
+			}
 
 			var miniMapConfig = {
 				position: 'topright',

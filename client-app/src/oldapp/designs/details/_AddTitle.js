@@ -133,8 +133,10 @@ define([
 				this._addIdTitle();
 			}
 
-			if (this.pathParent && this.activeTitleParent) {
-				this._addParentTitle();
+			if (this.pathParent) {
+				this._addCatalogButton();
+			} else {
+				this._hideCatalogButton();
 			}
 		},
 
@@ -147,8 +149,12 @@ define([
 			this._titleCenterNode = this.titleNode;
 
 			this._titleButtonsNode = put(this.topNode, 'div.buttons');
+
 			this._titleLeftNode = put(this._titleButtonsNode, "div.left");
-			this._titleRightNode = put(this._titleButtonsNode, "div.right." + this.hiddenClass);
+
+			this._titleRightContainer = put(this._titleButtonsNode, "div.rightContainer");
+			this._titleRightCatalogContainerNode = put(this._titleRightContainer, 'div.goToCatalogContainer');
+			this._titleRightNode = put(this._titleRightContainer, "div.right." + this.hiddenClass);
 		},
 
 		_addIdTitle: function() {
@@ -161,24 +167,26 @@ define([
 			}
 		},
 
-		_addParentTitle: function() {
+		_addCatalogButton: function() {
 
-			var nodeTitle = query("h1", this._titleCenterNode);
-
-			if (nodeTitle.length !== 0) {
-				nodeTitle = nodeTitle[0];
-				var node = put(nodeTitle, "-a.titleParent");
-
-				put(node, "span", this.i18n[this.pathParent.split("/")[1]]);
-
-				node.setAttribute('href', this.pathParent);
-				node.setAttribute('d-state-url', true);
+			if (!this._titleRightCatalogNode) {
+				this._titleRightCatalogNode = put(this._titleRightCatalogContainerNode, 'a.goToCatalogButton',
+					this.i18n.goToCatalog);
 			}
+
+			put(this._titleRightCatalogContainerNode, '!' + this.hiddenClass);
+			this._titleRightCatalogNode.setAttribute('href', this.pathParent);
+			this._titleRightCatalogNode.setAttribute('d-state-url', true);
+		},
+
+		_hideCatalogButton: function() {
+
+			put(this._titleRightCatalogContainerNode, '.' + this.hiddenClass);
 		},
 
 		_insertButtonsIcons: function(leftButtons, rightButtons) {
 
-			var getIconNode = lang.hitch(this, this._getIconNode);
+			var getIconNode = lang.hitch(this, this._getIconNode),
 				leftButtonsNodes = leftButtons.map(getIconNode),
 				rightButtonsNodes = rightButtons.map(getIconNode);
 

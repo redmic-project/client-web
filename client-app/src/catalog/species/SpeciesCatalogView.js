@@ -16,12 +16,12 @@ define([
 	, 'src/component/tree/CbtreeImpl'
 ], function(
 	_Main
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, redmicConfig
 	, declare
 	, lang
-	, templateList
+	, SpeciesListTemplate
 	, _GenerateReport
 	, _Select
 	, SelectionBox
@@ -32,7 +32,7 @@ define([
 	, CbtreeImpl
 ) {
 
-	return declare([Layout, Controller, _Main, _GenerateReport], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController, _Main, _GenerateReport], {
 		//	summary:
 		//		Vista de catálogo de especies.
 
@@ -69,7 +69,7 @@ define([
 						{value: 'updated'}
 					]
 				},
-				template: templateList,
+				template: SpeciesListTemplate,
 				bars: [{
 					instance: Total
 				},{

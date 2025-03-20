@@ -1,36 +1,42 @@
 define([
-	"app/designs/details/main/ActivityMap"
+	'app/designs/details/main/ActivityMap'
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
+	, 'dojo/query'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "templates/InfrastructurePopup"
-	, "templates/InfrastructureList"
+	, 'templates/ObservationStationPopup'
+	, 'templates/ObservationStationList'
 ], function(
 	ActivityMap
-	, redmicConfig
 	, declare
 	, lang
 	, aspect
+	, query
+	, redmicConfig
 	, TemplatePopup
 	, TemplateList
-){
+) {
+
 	return declare(ActivityMap, {
 		//	summary:
-		//
+		//		Widget para mostrar un mapa de puntos donde se registran observaciones.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
 			this.config = {
+				actions: {
+					TIMESERIES_DATA: 'timeseriesData'
+				},
 				target: redmicConfig.services.activity,
 				templateTargetChange: redmicConfig.services.activityObservationSeriesStations,
-				templatePopup: TemplatePopup,
 				_activeRadius: false,
+				_showObservationsButtonClass: 'showObservations'
 			};
 
 			lang.mixin(this, this.config, args);
 
-			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setBaseConfigurations));
+			aspect.before(this, '_afterSetConfigurations', lang.hitch(this, this._setBaseConfigurations));
 		},
 
 		_setBaseConfigurations: function() {
@@ -43,9 +49,10 @@ define([
 							rowConfig: {
 								buttonsConfig: {
 									listButton: [{
-										icon: 'fa-bar-chart',
+										icon: 'fa-database',
 										btnId: 'showObservations',
 										returnItem: true,
+										href: '#activityFixedObservationSeriesList',
 										title: this.i18n.observations
 									}]
 								}
@@ -78,19 +85,22 @@ define([
 			var popupNode = res._contentNode,
 				popupData = res._source.feature.properties;
 
-			if (popupNode && popupData) {
-				var showChartsNode = query('.' + this._showChartsButtonClass, popupNode)[0];
-				if (!showChartsNode) {
-					return;
-				}
-
-				showChartsNode.onclick = lang.hitch(this, this._loadObservationSeriesData, popupData);
+			if (!popupNode || !popupData) {
+				return;
 			}
+
+			var showChartsNode = query('.' + this._showObservationsButtonClass, popupNode)[0];
+
+			if (!showChartsNode) {
+				return;
+			}
+
+			showChartsNode.onclick = lang.hitch(this, this._loadObservationSeriesData, popupData);
 		},
 
 		_getPopupContent: function(data) {
 
-			return this.templatePopup({
+			return TemplatePopup({
 				i18n: this.i18n,
 				feature: data.feature
 			});
@@ -105,7 +115,7 @@ define([
 
 		_loadObservationSeriesData: function(item) {
 
-			console.log('cargo los datos de observaciones', item);
+			this._publish(this.getChannel('TIMESERIES_DATA'), item);
 		}
 	});
 });

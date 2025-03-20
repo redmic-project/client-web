@@ -29,6 +29,7 @@ define([
 
 		windowTitleClass: 'windowTitle',
 		windowTitleValueClass: 'title',
+		windowTitleValueElement: 'h2',
 		windowButtonContainerClass: 'buttons',
 
 		buttonPrefixClass: 'fa',
@@ -393,11 +394,12 @@ define([
 
 		_decorateTitleNode: function() {
 
-			var titleTextValue = this._getWindowTitleTextValue(),
-				titleAttr = '[title="' + titleTextValue + '"]';
+			var titleTextClass = '.' + this.windowTitleValueClass,
+				titleTextValue = this._getWindowTitleTextValue(),
+				titleTextTitleAttr = '[title="' + titleTextValue + '"]',
+				titleTextElement = this.windowTitleValueElement + titleTextClass + titleTextTitleAttr;
 
-			this._windowTitleTextNode = put(this._windowTitleNode, 'div.' + this.windowTitleValueClass + titleAttr,
-				titleTextValue);
+			this._windowTitleTextNode = put(this._windowTitleNode, titleTextElement, titleTextValue);
 
 			if (!this.omitTitleButtons) {
 				this._createWindowButtons();
@@ -589,7 +591,7 @@ define([
 
 		_closeModule: function() {
 
-			domStyle.set(this._windowNode.parentNode, 'display', 'none');
+			this._publish(this.getChannel('HIDE'));
 
 			this._prepareToResizeModuleWindow();
 		},

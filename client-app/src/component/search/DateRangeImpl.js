@@ -65,15 +65,6 @@ define([
 		_onNewSearch: function(evt) {
 
 			this._newSearch(evt);
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "openDateFilter"
-				}
-			});
 		}
 	});
 });

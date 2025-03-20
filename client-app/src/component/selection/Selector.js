@@ -162,6 +162,12 @@ define([
 				return;
 			}
 
+			this._emitEvt('TRACK', {
+				event: 'select_content',
+				content_type: target,
+				content_id: id
+			});
+
 			this._selectById(id, target);
 			selectionDfd.resolve(id);
 		},

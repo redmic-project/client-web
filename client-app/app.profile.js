@@ -41,8 +41,8 @@ var profileObj = {
 	layerOptimize: 'closure',
 	optimize: 'closure',
 	optimizeOptions: {
-		languageIn: 'ECMASCRIPT_2017',
-		languageOut: 'ECMASCRIPT_2015',
+		languageIn: 'ECMASCRIPT_NEXT',
+		languageOut: 'ECMASCRIPT_2020',
 		compilationLevel: 'SIMPLE_OPTIMIZATIONS'
 	},
 	cssOptimize: 'comments',
@@ -146,6 +146,13 @@ var profileObj = {
 		name: 'put-selector',
 		location: 'dep/put-selector',
 		main: 'put'
+	},{
+		name: 'superset-sdk',
+		location: 'dep/superset-sdk/bundle',
+		main: 'index',
+		resourceTags: {
+			amd: amdTagger
+		}
 	},{
 		name: 'wicket',
 		location: 'dep/wicket',
@@ -462,6 +469,10 @@ var viewLayers = {
 	, 'src/catalog/animal/_Edition': {}
 	, 'src/catalog/bibliography/BibliographyCatalogView': {}
 	, 'src/catalog/bibliography/_Edition': {}
+	, 'src/catalog/contact/ContactCatalogView': {}
+	, 'src/catalog/contact/_Edition': {}
+	, 'src/catalog/device/DeviceCatalogView': {}
+	, 'src/catalog/device/_Edition': {}
 	, 'src/catalog/ogcService/OgcServiceCatalogView': {}
 	, 'src/catalog/ogcService/_Edition': {}
 	, 'src/catalog/organisation/OrganisationCatalogView': {}
@@ -483,6 +494,8 @@ var viewLayers = {
 	, 'src/detail/animal/_Edition': {}
 	, 'src/detail/bibliography/BibliographyDetailView': {}
 	, 'src/detail/bibliography/_Edition': {}
+	, 'src/detail/contact/ContactDetailView': {}
+	, 'src/detail/contact/_Edition': {}
 	, 'src/detail/ogcService/OgcServiceDetailView': {}
 	, 'src/detail/ogcService/_Edition': {}
 	, 'src/detail/organisation/OrganisationDetailView': {}
@@ -506,19 +519,6 @@ var viewLayers = {
 
 	// -------------------------------------------------------------------------
 
-	, 'app/administrative/views/ContactView': {}
-	, 'app/administrative/views/DeviceView': {}
-
-	, 'app/administrative/taxonomy/views/MisIdentificationView': {}
-	, 'app/administrative/taxonomy/views/GenusView': {}
-	, 'app/administrative/taxonomy/views/FamilyView': {}
-	, 'app/administrative/taxonomy/views/OrderView': {}
-	, 'app/administrative/taxonomy/views/ClassView': {}
-	, 'app/administrative/taxonomy/views/SubphylumView': {}
-	, 'app/administrative/taxonomy/views/PhylumView': {}
-	, 'app/administrative/taxonomy/views/KingdomView': {}
-	, 'app/administrative/taxonomy/views/TaxonomyView': {}
-
 	, 'app/user/views/RegisterView': {}
 	, 'app/user/views/ResettingView': {}
 	, 'app/user/views/WhatIsRedmicView': {}
@@ -537,10 +537,6 @@ var viewLayers = {
 	, 'app/viewers/views/TrackingView': {}
 	, 'app/viewers/views/TrashCollectionView': {}
 	, 'app/viewers/views/ChartsView': {}
-	, 'app/viewers/views/RealTimeView': {}
-	, 'app/viewers/views/RealTimeDashboardView': {}
-
-	, 'app/details/views/ContactDetailsView': {}
 
 	, 'app/edition/views/ActivityEditionView': {}
 	, 'app/edition/views/DeviceEditionView': {}
@@ -557,7 +553,6 @@ var viewLayers = {
 	, 'app/edition/views/ServiceOGCEditionView': {}
 	, 'app/edition/views/AnimalEditionView': {}
 	, 'app/edition/views/PermissionsEditionView': {}
-	, 'app/edition/views/MisIdentificationEditionView': {}
 	, 'app/edition/views/LoadDataToActivityEditionView': {}
 	, 'app/edition/views/LoadDataDocumentEditionView': {}
 };

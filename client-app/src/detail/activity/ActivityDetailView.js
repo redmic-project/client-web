@@ -1,37 +1,37 @@
 define([
 	'src/redmicConfig'
-	, 'app/designs/details/main/_ActivityBase'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/base/_ExternalConfig'
+	, 'src/detail/_DetailAdministrative'
 	, 'src/detail/_GenerateReport'
 	, 'src/detail/activity/_ActivityLayoutWidget'
-	, 'app/designs/details/_AddWidgetSelector'
 	, 'templates/ActivityInfo'
 ], function(
 	redmicConfig
-	, _ActivityBase
 	, declare
 	, lang
 	, _ExternalConfig
+	, _DetailAdministrative
 	, _GenerateReport
 	, _ActivityLayoutWidget
-	, _AddWidgetSelector
-	, TemplateInfo
+	, ActivityInfoTemplate
 ) {
 
-	return declare([_ActivityBase, _AddWidgetSelector, _ActivityLayoutWidget, _ExternalConfig, _GenerateReport], {
+	return declare([_DetailAdministrative, _ActivityLayoutWidget, _ExternalConfig, _GenerateReport], {
 		//	summary:
 		//		Vista de detalle de actividades.
 
 		constructor: function(args) {
 
 			this.config = {
-				activityTarget: redmicConfig.services.activity,
+				target: redmicConfig.services.activity,
 				reportService: 'activity',
 				ancestorsTarget: redmicConfig.services.activityAncestors,
-				infoTarget: 'infoWidgetTarget',
-				externalConfigPropName: 'detailLayouts.activity'
+				externalConfigPropName: 'detailLayouts.activity',
+				pathParent: redmicConfig.viewPaths.activityCatalog,
+				templateInfo: ActivityInfoTemplate,
+				_infoTarget: 'infoWidgetTarget'
 			};
 
 			lang.mixin(this, this.config, args);
@@ -39,25 +39,11 @@ define([
 
 		_setMainConfigurations: function() {
 
-			this.target = [this.activityTarget];
-
-			this.viewPathsWidgets = {
-				organisations: redmicConfig.viewPaths.organisationCatalogDetails,
-				platforms: redmicConfig.viewPaths.platformCatalogDetails,
-				documents: redmicConfig.viewPaths.bibliographyDetails
-			};
-
-			this.pathParent = redmicConfig.viewPaths.activityCatalog;
+			this.inherited(arguments);
 
 			this.widgetConfigs = this._merge([{
-				info: this._getInfoConfig({
-					template: TemplateInfo
-				}),
-				spatialExtension: this._getSpatialExtensionConfig(),
-				organisationList: this._getOrganisationsConfig(),
-				platformList: this._getPlatformsConfig(),
-				contactList: this._getContactsConfig(),
-				documentList: this._getDocumentsConfig()
+				info: {},
+				spatialExtension: this._getSpatialExtensionConfig()
 			}, this.widgetConfigs || {}]);
 		},
 
@@ -65,6 +51,15 @@ define([
 
 			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onActivityDetailsHidden));
+		},
+
+		_refreshModules: function() {
+
+			this.inherited(arguments);
+
+			this._publish(this._getWidgetInstance('info').getChannel('UPDATE_TARGET'), {
+				target: this._infoTarget
+			});
 		},
 
 		_onGotExternalConfig: function(evt) {
@@ -92,17 +87,27 @@ define([
 
 		_itemAvailable: function(res) {
 
-			var path = res.data.path;
+			this.inherited(arguments);
 
 			this._activityData = res.data;
+			this._requestAncestorsData(res);
 
-			this._ancestorsTarget = lang.replace(this.ancestorsTarget, { path: path });
-			this._addTargetToArray(this._ancestorsTarget);
+			this._prepareSpatialExtension();
 
-			this._emitEvt('INJECT_DATA', {
-				data: this._activityData,
-				target: this.infoTarget
+			this._emitEvt('GET_EXTERNAL_CONFIG', {
+				propertyName: this.externalConfigPropName
 			});
+
+			this._prepareCustomWidgets();
+		},
+
+		_requestAncestorsData: function(res) {
+
+			this._ancestorsTarget = lang.replace(this.ancestorsTarget, {
+				path: res?.data?.path
+			});
+
+			this._addTargetToArray(this._ancestorsTarget);
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
@@ -112,33 +117,6 @@ define([
 					returnFields: ['id', 'path', 'name']
 				}
 			});
-
-			this._prepareSpatialExtension();
-
-			this._emitEvt('GET_EXTERNAL_CONFIG', {
-				propertyName: this.externalConfigPropName
-			});
-
-			this._prepareCustomWidgets();
-
-			this.inherited(arguments);
-		},
-
-		_dataAvailable: function(res) {
-
-			this._removeTargetFromArray(this._ancestorsTarget);
-
-			var data = res.data,
-				ancestors = data.data;
-
-			this._activityData.ancestors = ancestors;
-
-			this._emitEvt('INJECT_DATA', {
-				data: this._activityData,
-				target: this.infoTarget
-			});
-
-			this._updateInteractive();
 		},
 
 		_prepareSpatialExtension: function() {
@@ -152,6 +130,26 @@ define([
 			this._once(mapInstance.getChannel('BBOX_CHANGED'), lang.hitch(this, this._showSpatialExtension, wkt));
 
 			this._showWidget('spatialExtension');
+		},
+
+		_dataAvailable: function(res) {
+
+			this._removeTargetFromArray(this._ancestorsTarget);
+
+			var data = res.data,
+				ancestors = data.data;
+
+			this._activityData.ancestors = ancestors;
+
+			this._dataToInfo();
+		},
+
+		_dataToInfo: function() {
+
+			this._emitEvt('INJECT_DATA', {
+				data: this._activityData,
+				target: this._infoTarget
+			});
 		},
 
 		_showSpatialExtension: function(wkt) {
@@ -171,7 +169,7 @@ define([
 
 		_onActivityDetailsHidden: function() {
 
-			this.target = [this.activityTarget];
+			this.target = [redmicConfig.services.activity];
 
 			if (this._lastWktLayer) {
 				var mapInstance = this._getWidgetInstance('spatialExtension');

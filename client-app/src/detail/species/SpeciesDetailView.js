@@ -8,7 +8,7 @@ define([
 	, 'templates/LoadingCustom'
 	, 'templates/SpeciesInfo'
 	, 'templates/SpeciesTitle'
-	, 'app/designs/details/main/_DetailsBase'
+	, 'src/detail/_DetailRelatedToActivity'
 	, 'app/designs/details/main/SpeciesLocation'
 ], function(
 	redmicConfig
@@ -20,11 +20,11 @@ define([
 	, TemplateCustom
 	, TemplateInfo
 	, TemplateTitle
-	, _DetailsBase
+	, _DetailRelatedToActivity
 	, SpeciesLocation
 ) {
 
-	return declare([_DetailsBase, _GenerateReport], {
+	return declare([_DetailRelatedToActivity, _GenerateReport], {
 		//	summary:
 		//		Vista detalle de especies.
 
@@ -34,24 +34,15 @@ define([
 				templateTitle: TemplateTitle,
 				templateInfo: TemplateInfo,
 				target: redmicConfig.services.species,
+				activitiesTargetBase: redmicConfig.services.activitiesBySpecies,
 				reportService: 'species',
 				ancestorsTarget: redmicConfig.services.taxonAncestors,
-				documentTarget: 'documents',
-				activityTarget: 'activities',
 				infoTarget: 'infoTarget',
 				titleWidgetTarget: 'titleWidgetTarget',
 				pathParent: redmicConfig.viewPaths.speciesCatalog
 			};
 
 			lang.mixin(this, this.config, args);
-		},
-
-		_setConfigurations: function() {
-
-			this.viewPathsWidgets = {
-				documents: redmicConfig.viewPaths.bibliographyDetails,
-				activities: redmicConfig.viewPaths.activityDetails
-			};
 		},
 
 		_setMainConfigurations: function() {
@@ -62,63 +53,50 @@ define([
 				target: this.titleWidgetTarget
 			}, this.titleWidgetConfig || {}]);
 
-			var documentListConfig = this._merge([
-				this._getDocumentsConfig(),
-				{
-					props: {
-						noDataMessage: TemplateCustom({
-							message: this.i18n.noAssociatedDocuments,
-							iconClass: 'fr fr-no-data'
-						})
-					}
+			var documentListConfig = this._merge([this._getDocumentsConfig(), {
+				props: {
+					noDataMessage: TemplateCustom({
+						message: this.i18n.noAssociatedDocuments,
+						iconClass: 'fr fr-no-data'
+					})
 				}
-			]);
+			}]);
 
-			this.widgetConfigs = this._merge([
-				this.widgetConfigs || {},
-				{
-					info: {
-						height: 5,
-						props: {
-							target: this.infoTarget
-						}
-					},
-					activityList: {
-						height: 3
-					},
-					documentList: documentListConfig,
-					map: {
-						width: 6,
-						height: 4,
-						type: SpeciesLocation,
-						props: {
-							title: 'location',
-							pathVariableId: this.pathVariableId
-						}
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
+				info: {
+					height: 5,
+					props: {
+						target: this.infoTarget
+					}
+				},
+				activityList: {
+					height: 3
+				},
+				documentList: documentListConfig,
+				map: {
+					width: 6,
+					height: 4,
+					type: SpeciesLocation,
+					props: {
+						title: 'location',
+						pathVariableId: this.pathVariableId
 					}
 				}
-			]);
+			}]);
 		},
 
 		_clearModules: function() {
 
 			this.inherited(arguments);
 
-			this._publish(this._getWidgetInstance('activityList').getChannel('CLEAR'));
 			this._publish(this._getWidgetInstance('documentList').getChannel('CLEAR'));
 		},
 
 		_refreshModules: function() {
 
-			this._checkPathVariableId();
+			this.inherited(arguments);
 
 			this._refreshChildrenDataModules();
-
-			this._emitEvt('GET', {
-				target: this.target[0],
-				requesterId: this.ownChannel,
-				id: this.pathVariableId
-			});
 		},
 
 		_refreshChildrenDataModules: function() {
@@ -127,16 +105,7 @@ define([
 				pathVariableId: this.pathVariableId
 			});
 
-			this.target[1] = lang.replace(redmicConfig.services.documentsBySpecies, {
-				id: this.pathVariableId
-			});
-
-			this._emitEvt('GET', {
-				target: this.target[1],
-				id: ''
-			});
-
-			this.target[2] = lang.replace(redmicConfig.services.activitiesBySpecies, {
+			this.target[2] = lang.replace(redmicConfig.services.documentsBySpecies, {
 				id: this.pathVariableId
 			});
 
@@ -148,19 +117,33 @@ define([
 
 		_itemAvailable: function(res, resWrapper) {
 
+			this.inherited(arguments);
+
 			if (resWrapper.target === this.target[1]) {
-				this._dataToDocument(res);
 				return;
 			}
 
 			if (resWrapper.target === this.target[2]) {
-				this._dataToActivities(res);
+				this._dataToDocument(res.data);
 				return;
 			}
 
-			this.target[3] = lang.replace(this.ancestorsTarget, { path: res.data.path });
+			this._dataToInfoAndTitle(res.data);
+		},
 
-			this._speciesData = lang.clone(res.data);
+		_dataToDocument: function(data) {
+
+			this._emitEvt('INJECT_DATA', {
+				data: data,
+				target: this.documentTarget
+			});
+		},
+
+		_dataToInfoAndTitle: function(data) {
+
+			this.target[3] = lang.replace(this.ancestorsTarget, { path: data.path });
+
+			this._speciesData = lang.clone(data);
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
@@ -181,24 +164,13 @@ define([
 			});
 		},
 
-		_dataToDocument: function(response) {
+		_hrefDocument: function(idProperty) {
 
-			var data = response.data;
+			var valueItem = this._speciesData[idProperty];
 
-			this._emitEvt('INJECT_DATA', {
-				data: data,
-				target: this.documentTarget
-			});
-		},
-
-		_dataToActivities: function(response) {
-
-			var data = response.data;
-
-			this._emitEvt('INJECT_DATA', {
-				data: data,
-				target: this.activityTarget
-			});
+			if (valueItem) {
+				return lang.replace(redmicConfig.viewPaths.bibliographyDetails, { id: valueItem });
+			}
 		},
 
 		_dataAvailable: function(res) {
@@ -212,15 +184,6 @@ define([
 				data: this._speciesData,
 				target: this.titleWidgetTarget
 			});
-		},
-
-		_hrefDocument: function(idProperty) {
-
-			var valueItem = this._speciesData[idProperty];
-
-			if (valueItem) {
-				return lang.replace(this.viewPathsWidgets.documents, { id: valueItem });
-			}
 		}
 	});
 });

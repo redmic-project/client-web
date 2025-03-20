@@ -101,7 +101,9 @@ define([
 				_overlayLayers: {},
 				_optionalLayerKeys: [],
 				_baseLayerKeys: [],
-				_baseLayerInstances: {}
+				_baseLayerInstances: {},
+
+				_lastAtlasLayerOrder: 0
 			};
 
 			lang.mixin(this, this.config, args);
@@ -247,17 +249,24 @@ define([
 				return;
 			}
 
-			var layerInstance = this._baseLayerInstances[layerId];
-			if (!layerInstance) {
-				layerInstance = this._createBaseLayer(layerId);
-				if (!layerInstance) {
-					return;
-				}
+			var baseLayerInstance = this._getBaseLayer(layerId);
+
+			if (!baseLayerInstance) {
+				return;
 			}
 
-			this._cleanOtherBaseLayers(layerInstance);
-			this.addLayer(layerInstance, layerId);
-			this._setLayerZIndex(layerInstance, 0);
+			this._cleanOtherBaseLayers(baseLayerInstance);
+			this.addLayer(baseLayerInstance, layerId);
+			this._setLayerZIndex(baseLayerInstance, 0);
+		},
+
+		_getBaseLayer: function(layerId) {
+
+			if (!layerId || !layerId.length) {
+				return;
+			}
+
+			return this._baseLayerInstances[layerId] || this._createBaseLayer(layerId);
 		},
 
 		_createBaseLayer: function(layerId) {
@@ -293,70 +302,89 @@ define([
 			this._addMapLayer(req);
 		},
 
-		_addMapLayer: function(obj) {
+		_addMapLayer: function(req) {
 
-			var layer = obj.layer;
+			var layer = req.layer;
 
 			if (!layer) {
 				console.error('Tried to add invalid layer to map "%s"', this.getChannel());
 				return;
 			}
 
-			var layerId = this._getLayerId(obj) || uuid(),
-				innerLayer = this._getInnerLayer(layer, layerId);
+			var layerId = this._getLayerId(req) || uuid(),
+				innerLayer = this._getInnerLayer(layer, layerId),
+				obj = {
+					layerId: layerId,
+					req: req
+				};
 
 			if (!innerLayer) {
 				return;
 			}
 
-			this._prepareInfoForLayerAddedEvent(layerId, obj);
-			this.addLayer(innerLayer, layerId);
-			this._manageAddedLayer(innerLayer, layerId, obj);
+			if (innerLayer.then) {
+				innerLayer.then(lang.hitch(this, function(objArg, innerLayerArg) {
+
+					objArg.innerLayer = innerLayerArg;
+					this._addInnerMapLayer(objArg);
+				}, obj));
+
+				return;
+			}
+
+			obj.innerLayer = innerLayer;
+			this._addInnerMapLayer(obj);
 		},
 
 		_getInnerLayer: function(layer, layerId) {
 
-			var innerLayer;
-
-			// Si la capa es un módulo
-			if (layer.isInstanceOf && layer.isInstanceOf(_Module)) {
-				innerLayer = layer.layer;
-
-				if (!innerLayer) {
-					// Si no contiene una capa de tipo Leaflet pero sí tiene ID (D3, por ejemplo)
-					if (layerId) {
-						this._emitEvt('LAYER_ADD', {
-							layer: layer,
-							mapInstance: this.map
-						});
-					}
-
-					return;
-				}
+			// Si la capa no es un módulo, no se busca capa interna
+			if (!layer.isInstanceOf || !layer.isInstanceOf(_Module)) {
+				return layer;
 			}
 
-			return innerLayer || layer;
+			var deferredLayer = layer.deferredLayer,
+				innerLayer = layer.layer;
+
+			// Si la capa es un módulo pero no tiene ni tendrá capa interna
+			if (!innerLayer && !deferredLayer) {
+				// Si no contiene una capa de tipo Leaflet pero sí tiene ID (D3, por ejemplo)
+				if (layerId) {
+					this._emitEvt('LAYER_ADD', {
+						layer: layer,
+						mapInstance: this.map
+					});
+				}
+				return;
+			}
+
+			// Si la capa es un módulo y tendrá capa interna
+			if (deferredLayer) {
+				return deferredLayer;
+			}
+
+			// Si la capa es un módulo y tiene capa interna
+			return innerLayer;
+		},
+
+		_addInnerMapLayer: function(obj) {
+
+			var layerId = obj.layerId,
+				innerLayer = obj.innerLayer,
+				req = obj.req;
+
+			this._prepareInfoForLayerAddedEvent(layerId, req);
+			this.addLayer(innerLayer, layerId);
+			this._manageAddedLayer(innerLayer, layerId, req);
 		},
 
 		_manageAddedLayer: function(layer, layerId, obj) {
 
 			var optional = obj.optional,
-				order = obj.order,
 				layerLabel = obj.layerLabel || layerId;
 
 			if (optional) {
 				this._addLayerToSelector(layer, layerLabel, true);
-			} else {
-				if (order) {
-					var nextOrder = 0;
-					for (var key in this._overlayLayers) {
-						var overlayLayer = this._overlayLayers[key];
-						if (overlayLayer.optional) {
-							nextOrder++;
-						}
-					}
-					order += nextOrder;
-				}
 			}
 
 			var overlayLayerObj = this._overlayLayers[layerId];
@@ -370,13 +398,34 @@ define([
 				if (overlayLayerObj.instance !== layer) {
 					overlayLayerObj.instance = layer;
 				}
-				this._setLayerZIndex(layer, overlayLayerObj.order);
+			}
+
+			var externalOrder = obj.order,
+				atlasItem = obj.atlasItem,
+				order;
+
+			if (externalOrder) {
+				// asigna orden indicado desde fuera, para capas opcionales conocidas
+				order = externalOrder;
+			} else if (atlasItem) {
+				// asigna orden a capas overlay y tiled, si vienen desde servicio atlas
+				this._lastAtlasLayerOrder++;
+				order = this._lastAtlasLayerOrder;
+
+				overlayLayerObj.atlasItem = atlasItem;
 			}
 
 			if (order) {
 				overlayLayerObj.order = order;
 				this._setLayerZIndex(layer, order);
 			}
+		},
+
+		_getOrderForAddedLayers: function(externalIndex) {
+
+			var externalOrder = this._lastAtlasLayerOrder - externalIndex;
+
+			return externalOrder;
 		},
 
 		_getLayerId: function(layerObj) {
@@ -440,14 +489,11 @@ define([
 				layer = layerObj.instance,
 				order = layerObj.order;
 
-			if (!keepInstance && order) {
-				for (var key in this._overlayLayers) {
-					var layerObject = this._overlayLayers[key];
+			if (order) {
+				this._reorderNextLayers(order);
 
-					if (layerObject.order > order) {
-						layerObject.order--;
-						this._setLayerZIndex(layerObject.instance, layerObject.order);
-					}
+				if (layerObj.atlasItem) {
+					this._lastAtlasLayerOrder--;
 				}
 			}
 
@@ -460,6 +506,20 @@ define([
 			}
 
 			this.removeLayer(layer);
+		},
+
+		_reorderNextLayers: function(order) {
+
+			for (var key in this._overlayLayers) {
+				var layerObject = this._overlayLayers[key];
+
+				if (!layerObject.order || layerObject.order <= order) {
+					continue;
+				}
+
+				layerObject.order--;
+				this._setLayerZIndex(layerObject.instance, layerObject.order);
+			}
 		},
 
 		_removeMapBaseLayer: function(layerId, keepInstance) {
@@ -558,40 +618,61 @@ define([
 			this._emitEvt('LOADED');
 		},
 
-		_subReorderLayers: function(request) {
+		_subReorderLayers: function(req) {
 
-			var layerId = request.layerId,
-				layerObj = this._overlayLayers[layerId],
-				newPosition = request.newPosition + 1,
-				oldPosition = request.oldPosition + 1,
-				diff = newPosition - oldPosition,
-				key, layerObject;
+			var layerId = req.layerId,
+				layerObj = this._overlayLayers[layerId];
 
-			if (diff < 0) {
-				for (key in this._overlayLayers) {
-					layerObject = this._overlayLayers[key];
-
-					if (layerObject.order >= newPosition && layerObject.order < oldPosition) {
-						layerObject.order++;
-						this._setLayerZIndex(layerObject.instance, layerObject.order);
-					}
-				}
-
-				layerObj.order -= Math.abs(diff);
-				this._setLayerZIndex(layerObj.instance, layerObj.order);
-			} else {
-				for (key in this._overlayLayers) {
-					layerObject = this._overlayLayers[key];
-
-					if (layerObject.order <= newPosition && layerObject.order > oldPosition) {
-						layerObject.order--;
-						this._setLayerZIndex(layerObject.instance, layerObject.order);
-					}
-				}
-
-				layerObj.order += Math.abs(diff);
-				this._setLayerZIndex(layerObj.instance, layerObj.order);
+			if (!layerObj) {
+				return;
 			}
+
+			var index = req.index,
+				newOrder = this._getOrderForAddedLayers(index);
+
+			Object.entries(this._overlayLayers).forEach(lang.hitch(this, this._reorderAffectedLayers, {
+				movedLayerId: layerId,
+				movedLayerOldOrder: layerObj.order,
+				movedLayerNewOrder: newOrder,
+				movedDown: req.movedDown
+			}));
+
+			layerObj.order = newOrder;
+			this._setLayerZIndex(layerObj.instance, layerObj.order);
+		},
+
+		_reorderAffectedLayers: function(args, layerEntry) {
+
+			var layerId = layerEntry[0],
+				layerObject = layerEntry[1],
+				layerOrder = layerObject.order,
+
+				movedLayerId = args.movedLayerId,
+				movedLayerOldOrder = args.movedLayerOldOrder,
+				movedLayerNewOrder = args.movedLayerNewOrder,
+				movedDown = args.movedDown;
+
+			if (layerId === movedLayerId || isNaN(layerOrder) || !layerObject.atlasItem) {
+				return;
+			}
+
+			var layerNotAffectedByReorder;
+			if (movedDown) {
+				layerNotAffectedByReorder = layerOrder > movedLayerOldOrder || layerOrder < movedLayerNewOrder;
+			} else {
+				layerNotAffectedByReorder = layerOrder < movedLayerOldOrder || layerOrder > movedLayerNewOrder;
+			}
+
+			if (layerNotAffectedByReorder) {
+				return;
+			}
+
+			if (movedDown) {
+				layerObject.order++;
+			} else {
+				layerObject.order--;
+			}
+			this._setLayerZIndex(layerObject.instance, layerObject.order);
 		},
 
 		_subLayerAddedForwarded: function(res) {
@@ -692,27 +773,43 @@ define([
 
 		_bboxIsDifferent: function(bbox1, bbox2) {
 
-			return !(bbox1.lat1 === bbox2.lat1 && bbox1.lng1 === bbox2.lng1 &&
-				bbox1.lat2 === bbox2.lat2 && bbox1.lng2 === bbox2.lng2);
+			return bbox1.lat1 !== bbox2.lat1 || bbox1.lng1 !== bbox2.lng1 ||
+				bbox1.lat2 !== bbox2.lat2 || bbox1.lng2 !== bbox2.lng2;
 		},
 
 		_loadBaseLayers: function() {
 
 			if (!this._baseLayerKeys.length) {
-				this._baseLayerKeys = this._getBaseLayers();
+				var baseLayersKeys = this._getBaseLayers();
+
+				if (baseLayersKeys && baseLayersKeys.then && !this._alreadyWaitingForBaseLayers) {
+					this._alreadyWaitingForBaseLayers = true;
+					baseLayersKeys.then(lang.hitch(this, this._loadBaseLayers));
+					return;
+				} else {
+					this._baseLayerKeys = baseLayersKeys;
+				}
 			}
 
 			for (var i = 0; i < this._baseLayerKeys.length; i++) {
-				var baseLayerKey = this._baseLayerKeys[i];
-				this._changeBaseLayer(baseLayerKey);
+				this._getBaseLayer(this._baseLayerKeys[i]);
 			}
-			this._changeBaseLayer(this._baseLayerKeys[0]);
+
+			this._setFirstBaseLayer();
 		},
 
 		_loadOptionalLayers: function() {
 
 			if (!this._optionalLayerKeys.length) {
-				this._optionalLayerKeys = this._getOptionalLayers();
+				var optionalLayersKeys = this._getOptionalLayers();
+
+				if (optionalLayersKeys && optionalLayersKeys.then && !this._alreadyWaitingForOptionalLayers) {
+					this._alreadyWaitingForOptionalLayers = true;
+					optionalLayersKeys.then(lang.hitch(this, this._loadOptionalLayers));
+					return;
+				} else {
+					this._optionalLayerKeys = optionalLayersKeys;
+				}
 			}
 
 			for (var i = 0; i < this._optionalLayerKeys.length; i++) {
@@ -726,6 +823,15 @@ define([
 					order: i + 1
 				});
 			}
+
+			this._lastAtlasLayerOrder = this._optionalLayerKeys.length;
+		},
+
+		_setFirstBaseLayer: function() {
+
+			if (this._baseLayerKeys.length) {
+				this._changeBaseLayer(this._baseLayerKeys[0]);
+			}
 		},
 
 		_isBaseLayer: function(layerId) {
@@ -736,7 +842,7 @@ define([
 		clear: function() {
 
 			this._clearLayers();
-			this._changeBaseLayer(this._baseLayerKeys[0]);
+			this._setFirstBaseLayer();
 			this._loadOptionalLayers();
 			this._resetMapPosition();
 		},
@@ -766,6 +872,5 @@ define([
 				instance: this._getMapInstance()
 			};
 		}
-
 	});
 });

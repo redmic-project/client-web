@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
 	grunt.config('redmicConfig.buildModules', {
 		'client-app/dep/pruneCluster': preBuildCmds.concat([
-			'grunt build:dist --force'
+			'grunt build:dist --force > /dev/null'
 		]),
 		'client-app/dep/wicket': preBuildCmds.concat([
 			'npm run build'

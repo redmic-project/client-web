@@ -13,12 +13,12 @@ define([
 	, 'src/component/browser/bars/Total'
 ], function(
 	_Main
-	, Controller
-	, Layout
+	, TextSearchFacetsListController
+	, TextSearchFacetsListLayout
 	, redmicConfig
 	, declare
 	, lang
-	, templateList
+	, ProjectListTemplate
 	, _GenerateReport
 	, _Select
 	, SelectionBox
@@ -26,7 +26,7 @@ define([
 	, Total
 ) {
 
-	return declare([Layout, Controller, _Main, _GenerateReport], {
+	return declare([TextSearchFacetsListLayout, TextSearchFacetsListController, _Main, _GenerateReport], {
 		//	summary:
 		//		Vista de catálogo de proyectos.
 
@@ -62,7 +62,7 @@ define([
 						}]
 					}
 				},
-				template: templateList,
+				template: ProjectListTemplate,
 				bars: [{
 					instance: Total
 				},{

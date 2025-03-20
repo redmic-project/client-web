@@ -360,7 +360,7 @@ define([
 			return mapLayerInstance;
 		},
 
-		_activateLayer: function(/*Object*/ atlasLayerItem, order) {
+		_activateLayer: function(/*Object*/ atlasLayerItem) {
 
 			if (!atlasLayerItem) {
 				return;
@@ -373,12 +373,11 @@ define([
 				layer: layer,
 				layerId: mapLayerId,
 				layerLabel: atlasLayerItem.label,
-				atlasItem: atlasLayerItem.atlasItem,
-				order: order
+				atlasItem: atlasLayerItem.atlasItem
 			});
 		},
 
-		_deactivateLayer: function(/*Object*/ atlasLayerItem, order) {
+		_deactivateLayer: function(/*Object*/ atlasLayerItem) {
 
 			if (!atlasLayerItem) {
 				return;
@@ -387,13 +386,14 @@ define([
 			var mapLayerId = atlasLayerItem.mapLayerId,
 				layer = this._layerInstances[mapLayerId];
 
-			if (layer) {
-				this._emitEvt('REMOVE_LAYER', {
-					layer: layer,
-					order: order,
-					keepInstance: true
-				});
+			if (!layer) {
+				return;
 			}
+
+			this._emitEvt('REMOVE_LAYER', {
+				layer: layer,
+				keepInstance: true
+			});
 		}
 	});
 });

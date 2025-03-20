@@ -1,53 +1,56 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "dojo/dom-class"
-	, "dojo/query"
-	, "RWidgets/Utilities"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
+	, 'dojo/dom-class'
 	, 'put-selector'
 ], function(
 	declare
 	, lang
 	, aspect
 	, domClass
-	, query
-	, Utilities
 	, put
-){
+) {
+
 	return declare(null, {
 		//	summary:
-		//
-		//	description:
-		//
+		//		Agrega capacidades de arrastrar y soltar a las filas de un listado.
 
 		constructor: function(args) {
 
 			this.config = {
 				dragAndDropEvents: {
-					DRAG_AND_DROP: "dragAndDrop"
+					DRAG_AND_DROP: 'dragAndDrop'
 				},
 				dragAndDropActions: {
-					UPDATE_DRAGGABLE_ITEMS: "updateDraggableItems",
-					DRAG_AND_DROP: "dragAndDrop"
+					UPDATE_DRAGGABLE_ITEM_ORDER: 'updateDraggableItemOrder',
+					UPDATE_DRAGGABLE_ITEMS: 'updateDraggableItems',
+					DRAG_AND_DROP: 'dragAndDrop',
+					ENABLE_DRAG_AND_DROP: 'enableDragAndDrop',
+					DISABLE_DRAG_AND_DROP: 'disableDragAndDrop'
 				},
-				topRowContainerDragAndDropClass: "containerTopRowDragAndDrop",
-				topBorderDragAndDropClass: "borderTopDragAndDrop",
-				bottomBorderDragAndDropClass: "borderBottomDragAndDrop",
-				rowContainerDragAndDropClass: "dragAndDropContainerRow",
-				draggableItemIds: null
+				topRowContainerDragAndDropClass: 'dragHandler',
+				topBorderDragAndDropClass: 'borderTopDragAndDrop',
+				bottomBorderDragAndDropClass: 'borderBottomDragAndDrop',
+				rowContainerDragAndDropClass: 'dragAndDrop',
+				draggableItemIds: null,
+				disableDragHandlerOnCreation: false,
+				hiddenClass: 'hidden',
+				animatedClass: 'animate__animated',
+				animatedFromBottom: 'animate__slideInUp',
+				animatedFromTop: 'animate__slideInDown'
 			};
 
 			lang.mixin(this, this.config, args);
 
-			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixDragAndDropEventsAndActions));
-			//aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineDragAndDropSubscriptions));
-			aspect.after(this, "_definePublications", lang.hitch(this, this._defineDragAndDropPublications));
-			aspect.before(this, "_configRow", lang.hitch(this, this._configDragAndDropRow));
-			aspect.after(this, "_addRow", lang.hitch(this, this._addDragAndDropRow));
+			aspect.before(this, '_mixEventsAndActions', lang.hitch(this, this._mixDragAndDropEventsAndActions));
+			aspect.after(this, '_defineSubscriptions', lang.hitch(this, this._defineDragAndDropSubscriptions));
+			aspect.after(this, '_definePublications', lang.hitch(this, this._defineDragAndDropPublications));
+			aspect.before(this, '_configRow', lang.hitch(this, this._configDragAndDropRow));
+			aspect.after(this, '_addRow', lang.hitch(this, this._addDragAndDropRow));
 
 			this._buttonEventRow &&
-				aspect.before(this, "_buttonEventRow", lang.hitch(this, this._buttonEventDragAndDropRow));
+				aspect.before(this, '_buttonEventRow', lang.hitch(this, this._buttonEventDragAndDropRow));
 		},
 
 		_mixDragAndDropEventsAndActions: function () {
@@ -61,12 +64,18 @@ define([
 
 		_defineDragAndDropSubscriptions: function () {
 
-			this.subscriptionsConfig.push(/*{
-				channel : this.getChannel("UPDATE_ORDER"),
-				callback: "_subUpdateOrder"
-			},*/{
-				channel : this.getChannel("UPDATE_DRAGGABLE_ITEMS"),
-				callback: "_subUpdateDraggableItems"
+			this.subscriptionsConfig.push({
+				channel : this.getChannel('UPDATE_DRAGGABLE_ITEM_ORDER'),
+				callback: '_subUpdateDraggableItemOrder'
+			},{
+				channel : this.getChannel('UPDATE_DRAGGABLE_ITEMS'),
+				callback: '_subUpdateDraggableItems'
+			},{
+				channel : this.getChannel('ENABLE_DRAG_AND_DROP'),
+				callback: '_subEnableDragAndDrop'
+			},{
+				channel : this.getChannel('DISABLE_DRAG_AND_DROP'),
+				callback: '_subDisableDragAndDrop'
 			});
 		},
 
@@ -74,17 +83,8 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'DRAG_AND_DROP',
-				channel: this.getChannel("DRAG_AND_DROP")
+				channel: this.getChannel('DRAG_AND_DROP')
 			});
-		},
-
-		_subUpdateOrder: function(res) {
-
-		},
-
-		_subUpdateDraggableItems: function(req) {
-
-			this.draggableItemIds = req.items;
 		},
 
 		postCreate: function() {
@@ -96,13 +96,68 @@ define([
 			this.contentListNode.ondragleave = lang.hitch(this, this._dragLeaveContainer);
 		},
 
+		_subUpdateDraggableItemOrder: function(req) {
+
+			var rowId = req.id,
+				newIndex = req.index;
+
+			var rowNodeAtNewIndex = this.contentListNode.firstChild.children.item(newIndex),
+				rowNodeToUpdate = this._getRowNodeFromRowId(rowId),
+				oldIndex = Array.from(this.contentListNode.firstChild.children).indexOf(rowNodeToUpdate);
+
+			put(rowNodeAtNewIndex, '-', rowNodeToUpdate);
+
+			this._emitEvt('DRAG_AND_DROP', {
+				id: rowId,
+				item: this._getRowData(rowId),
+				indexOld: oldIndex,
+				indexList: newIndex,
+				total: Object.keys(this._rows).length,
+				automaticDrag: true
+			});
+		},
+
+		_subUpdateDraggableItems: function(req) {
+
+			this.draggableItemIds = req.items;
+		},
+
+		_subEnableDragAndDrop: function(req) {
+
+			var rowId = req.id,
+				dragHandlerNode = this._getDragHandlerNodeFromRowId(rowId);
+
+			domClass.remove(dragHandlerNode, this.hiddenClass);
+		},
+
+		_subDisableDragAndDrop: function(req) {
+
+			var rowId = req.id,
+				dragHandlerNode = this._getDragHandlerNodeFromRowId(rowId);
+
+			domClass.add(dragHandlerNode, this.hiddenClass);
+		},
+
+		_getRowNodeFromRowId: function(rowId) {
+
+			var rowInstance = this._getRowInstance(rowId);
+
+			return rowInstance.getNodeToShow();
+		},
+
+		_getDragHandlerNodeFromRowId: function(rowId) {
+
+			var rowNode = this._getRowNodeFromRowId(rowId);
+
+			return rowNode.firstChild.firstChild;
+		},
+
 		_dragOver: function(id, node, evt) {
 
 			if (!this._nodeDrag) {
 				return;
 			}
 
-			evt.dataTransfer.dropEffect = 'move';
 			evt.preventDefault();
 			evt.stopPropagation();
 
@@ -154,9 +209,9 @@ define([
 				return;
 			}
 
-			this._once(instance.getChannel("GOT_PROPS"), lang.hitch(this, this._subDomNodeGotProps, idProperty));
+			this._once(instance.getChannel('GOT_PROPS'), lang.hitch(this, this._subDomNodeGotProps, idProperty));
 
-			this._publish(instance.getChannel("GET_PROPS"), {
+			this._publish(instance.getChannel('GET_PROPS'), {
 				domNode: true
 			});
 		},
@@ -165,34 +220,44 @@ define([
 
 			var node = res.domNode;
 
-			node && this._prepareRowForDragAndDrop(node, idProperty);
-		},
-
-		_prepareRowForDragAndDrop: function(node, idProperty) {
-
 			if (!node) {
 				return;
 			}
 
-			if (!this.draggableItemIds || this.draggableItemIds.indexOf(idProperty) !== -1) {
-				node.setAttribute('draggable', "true");
-				put(node.firstChild, '.' + this.topRowContainerDragAndDropClass);
+			this._prepareRowForDragAndDrop(node, idProperty);
+		},
 
-				node.ondragstart = lang.hitch(this, this._dragStart, idProperty);
-				node.ondragend = lang.hitch(this, this._dragEnd, idProperty);
+		_prepareRowForDragAndDrop: function(node, idProperty) {
+
+			if (!this.draggableItemIds || this.draggableItemIds.indexOf(idProperty) !== -1) {
+				this._createDragHandlerNode(node);
+
+				node.ondragstart = lang.hitch(this, this._onRowDragStart, idProperty);
+				node.ondragend = lang.hitch(this, this._onRowDragEnd, idProperty);
 				node.ondrop = lang.hitch(this, this._drop, idProperty);
 			}
 
 			node.ondragover = lang.hitch(this, this._dragOver, idProperty, node);
 		},
 
-		_dragStart: function(id, evt) {
+		_createDragHandlerNode: function(parentNode) {
 
-			if (evt.dataTransfer) {
-				evt.dataTransfer.setData('Text', 'anything');
+			var dragHandlerClasses = this.topRowContainerDragAndDropClass;
+
+			if (this.disableDragHandlerOnCreation) {
+				dragHandlerClasses += '.' + this.hiddenClass;
 			}
 
-			evt.dataTransfer.effectAllowed = 'move';
+			var dragHandlerNode = put(parentNode.firstChild.firstChild,
+				'-div.' + dragHandlerClasses + '[draggable=true]');
+
+			var dragIconNodeDefinition = 'span.fa.fa-ellipsis-v';
+			put(dragHandlerNode, dragIconNodeDefinition);
+			put(dragHandlerNode, dragIconNodeDefinition);
+			put(dragHandlerNode, dragIconNodeDefinition);
+		},
+
+		_onRowDragStart: function(id, evt) {
 
 			clearTimeout(this.removeBackgroundTimeoutHandler);
 
@@ -200,10 +265,10 @@ define([
 				this._removeDragAndDropBackground(this._nodeDrag);
 			}
 
-			this._insertDragAndDropBackground(evt.target);
+			this._nodeDrag = this._getRowNodeFromRowId(id);
+			this._insertDragAndDropBackground(this._nodeDrag);
 
 			this._dropItemIdProperty = null;
-			this._nodeDrag = evt.target;
 			this._nodeDrop = null;
 			this._nodeBorderLast = null;
 			this._dragAndDropInUse = true;
@@ -213,16 +278,16 @@ define([
 			this._idLastNode = null;
 		},
 
-		_dragEnd: function(idProperty, evt) {
+		_onRowDragEnd: function(idProperty, evt) {
 
 			evt.preventDefault();
 			evt.stopPropagation();
 
-			if (this._dropItemIdProperty && idProperty != this._dropItemIdProperty) {
+			if (this._dropItemIdProperty && idProperty !== this._dropItemIdProperty) {
 				this._updatePositionData(idProperty);
 			} else {
-				this.removeBackgroundTimeoutHandler = setTimeout(
-					lang.hitch(this, this._removeDragAndDropBackground, evt.target), 750);
+				var rowNode = this._getRowNodeFromRowId(idProperty);
+				this._removeDragAndDropBackground(rowNode);
 			}
 
 			this._removeBorder();
@@ -252,31 +317,43 @@ define([
 			data.indexList = this._calcNodeIndex(this._nodeDrag);
 
 			if (data.indexList !== data.indexOld) {
-				this._emitEvt("DRAG_AND_DROP", data);
+				this._emitEvt('DRAG_AND_DROP', data);
 			}
 		},
 
 		_calcNodeIndex: function(node) {
 
-			var i = 0;
+			var listRows = Array.from(this.contentListNode.firstChild.childNodes);
 
-			while ((node = node.previousSibling) != null) {
-	 			i++;
-			}
-
-			return i;
+			return listRows.indexOf(node);
 		},
 
 		_updatePositionRow: function(row) {
 
-			// Reordena a la posición correcta
-			if (domClass.contains(this._nodeBorderLast, this.topBorderDragAndDropClass)) {
-				put(this._nodeBorderLast, "-", this._nodeDrag);
-			} if (domClass.contains(this._nodeBorderLast, this.bottomBorderDragAndDropClass)) {
-				put(this._nodeBorderLast, "+", this._nodeDrag);
+			if (!this._nodeDrag) {
+				return;
 			}
 
-			this._removeDragAndDropBackground(this._nodeDrag);
+			this._nodeDrag.addEventListener('animationend', lang.hitch(this, this._rowDragAnimationEndCallback), {
+				passive: true
+			});
+
+			// Reordena a la posición correcta
+			if (domClass.contains(this._nodeBorderLast, this.topBorderDragAndDropClass)) {
+				put(this._nodeBorderLast, '-', this._nodeDrag);
+				domClass.add(this._nodeDrag, [this.animatedClass, this.animatedFromBottom]);
+			} else if (domClass.contains(this._nodeBorderLast, this.bottomBorderDragAndDropClass)) {
+				put(this._nodeBorderLast, '+', this._nodeDrag);
+				domClass.add(this._nodeDrag, [this.animatedClass, this.animatedFromTop]);
+			}
+		},
+
+		_rowDragAnimationEndCallback: function(evt) {
+
+			var rowNode = evt.target;
+
+			domClass.remove(rowNode, [this.animatedClass, this.animatedFromBottom, this.animatedFromTop]);
+			this._removeDragAndDropBackground(rowNode);
 		},
 
 		_insertDragAndDropBackground: function(node) {
@@ -362,22 +439,6 @@ define([
 			return (!node[method] || node[method] !== this._nodeDrag);
 		},
 
-		/*_dragToBottom: function(id, node) {
-
-			this._idLastNode = id;
-			this._removeBorder();
-
-			if (node.nextSibling) {
-				put(node.nextSibling, "." + this.topBorderDragAndDropClass);
-				this._nodeBorderLast = node.nextSibling;
-			} else {
-				put(node, "." + this.bottomBorderDragAndDropClass);
-				this._nodeBorderLast = node;
-			}
-
-			this._dropCorrect = true;
-		},*/
-
 		_dragToNode: function(obj) {
 
 			var id = obj.id,
@@ -386,7 +447,7 @@ define([
 			this._idLastNode = id;
 			this._removeBorder();
 
-			put(node, "." + obj.nameClass);
+			put(node, '.' + obj.nameClass);
 
 			this._nodeBorderLast = node;
 			this._dropCorrect = true;
@@ -402,16 +463,15 @@ define([
 		_dragToEmptyBottomZone: function(id, node) {
 
 			// Si la última fila no es la misma que la arrastrada
-			if (this.contentListNode.lastChild.lastChild !== this._nodeDrag) {
-
-				this._resetDragPreparation(true);
-				put(this.contentListNode.lastChild.lastChild, "." + this.bottomBorderDragAndDropClass);
-				this._inside = false;
-				this._nodeBorderLast = this.contentListNode.lastChild.lastChild;
-				this._dropCorrect = true;
-
-				return true;
+			if (this.contentListNode.lastChild.lastChild === this._nodeDrag) {
+				return;
 			}
+
+			this._resetDragPreparation(true);
+			put(this.contentListNode.lastChild.lastChild, '.' + this.bottomBorderDragAndDropClass);
+			this._inside = false;
+			this._nodeBorderLast = this.contentListNode.lastChild.lastChild;
+			this._dropCorrect = true;
 		},
 
 		_isContentRowsContainer: function(pageY) {
@@ -428,8 +488,8 @@ define([
 		_removeBorder: function() {
 
 			if (this._nodeBorderLast) {
-				put(this._nodeBorderLast, "!" + this.topBorderDragAndDropClass);
-				put(this._nodeBorderLast, "!" + this.bottomBorderDragAndDropClass);
+				put(this._nodeBorderLast, '!' + this.topBorderDragAndDropClass);
+				put(this._nodeBorderLast, '!' + this.bottomBorderDragAndDropClass);
 
 				this._nodeBorderLast = null;
 			}

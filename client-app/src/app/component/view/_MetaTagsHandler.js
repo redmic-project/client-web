@@ -63,11 +63,13 @@ define([
 			//	tags:
 			//		private
 
-			if (this.metaTags) {
-				this._emitEvt('PUT_META_TAGS', {
-					view: this.ownChannel
-				});
+			if (!this.metaTags) {
+				return;
 			}
+
+			this._emitEvt('PUT_META_TAGS', {
+				view: this.ownChannel
+			});
 		}
 	});
 });

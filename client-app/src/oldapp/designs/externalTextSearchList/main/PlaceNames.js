@@ -101,6 +101,7 @@ define([
 
 			this.geoJsonLayerConfig = this._merge([{
 				parentChannel: this.getChannel(),
+				ownChannel: 'placenamesLayer',
 				mapChannel: this.mapChannel,
 				onEachFeature: lang.hitch(this, this.onEachFeature),
 				markerColor: 'purple',
@@ -145,7 +146,9 @@ define([
 
 			this.inherited(arguments);
 
-			this._publish(this._buildChannel(this.mapChannel, this.actions.ADD_LAYER), this.geoJsonLayer);
+			this._publish(this._buildChannel(this.mapChannel, 'ADD_LAYER'), {
+				layer: this.geoJsonLayer
+			});
 
 			this.clearButton = new Button({
 				iconClass: "fa fa-eraser",
@@ -223,12 +226,12 @@ define([
 			if (!this.noFixedZoom) {
 				obj.zoom = 10;
 
-				this._publish(this._buildChannel(this.mapChannel, this.actions.SET_CENTER_AND_ZOOM), obj);
+				this._publish(this._buildChannel(this.mapChannel, 'SET_CENTER_AND_ZOOM'), obj);
 			} else {
-				this._once(this._buildChannel(this.mapChannel, this.actions.GOT_ZOOM),
+				this._once(this._buildChannel(this.mapChannel, 'GOT_ZOOM'),
 					lang.hitch(this, this._subGotZoom, obj));
 
-				this._publish(this._buildChannel(this.mapChannel, this.actions.GET_ZOOM));
+				this._publish(this._buildChannel(this.mapChannel, 'GET_ZOOM'));
 			}
 
 			//this._emitEvt('CLEAR_LAYER');
@@ -246,7 +249,7 @@ define([
 				obj.zoom = 7;
 			}
 
-			this._publish(this._buildChannel(this.mapChannel, this.actions.SET_CENTER_AND_ZOOM), obj);
+			this._publish(this._buildChannel(this.mapChannel, 'SET_CENTER_AND_ZOOM'), obj);
 		},
 
 		onEachFeature: function(feature, layer) {
@@ -277,7 +280,7 @@ define([
 
 		_deleteElement: function(layer) {
 
-			this._publish(this._buildChannel(this.mapChannel, this.actions.REMOVE_LAYER), {
+			this._publish(this._buildChannel(this.mapChannel, 'REMOVE_LAYER'), {
 				layer: layer
 			});
 		},

@@ -2,7 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/detail/_GenerateReport'
-	, 'app/designs/details/main/_DetailsBase'
+	, 'src/detail/_DetailAdministrativeAncestor'
 	, 'src/redmicConfig'
 	, 'templates/ProgramInfo'
 	, 'templates/ProjectList'
@@ -10,13 +10,13 @@ define([
 	declare
 	, lang
 	, _GenerateReport
-	, _DetailsBase
+	, _DetailAdministrativeAncestor
 	, redmicConfig
-	, TemplateInfo
-	, TemplateProjects
+	, ProgramInfoTemplate
+	, ProjectListTemplate
 ) {
 
-	return declare([_DetailsBase, _GenerateReport], {
+	return declare([_DetailAdministrativeAncestor, _GenerateReport], {
 		//	summary:
 		//		Vista de detalle de programas.
 
@@ -24,50 +24,24 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.program,
-				activitiesTargetBase: redmicConfig.services.projectProgram,
 				reportService: 'program',
-				pathParent: redmicConfig.viewPaths.programCatalog
+				pathParent: redmicConfig.viewPaths.programCatalog,
+				templateInfo: ProgramInfoTemplate,
+				_descendantTargetBase: redmicConfig.services.projectProgram,
+				_descendantFields: redmicConfig.returnFields.project
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainConfigurations: function() {
+		_getAdditionalDescendantListConfig: function() {
 
-			this.target = [this.target];
-
-			this.widgetConfigs = this._merge([{
-				info: this._getInfoConfig({
-					template: TemplateInfo,
-					target: this.target[0]
-				}),
-				projectList: this._getActivitiesOrProjectsConfig({
-					title: 'projects',
-					target: this.activityTarget,
-					template: TemplateProjects,
-					href: redmicConfig.viewPaths.projectDetails,
-					height: 6
-				})
-			}, this.widgetConfigs || {}]);
-		},
-
-		_getActivityTargetData: function() {
-
-			this._emitEvt('REQUEST', {
-				method: 'POST',
-				target: this.target[1],
-				action: '_search',
-				query: {
-					returnFields: redmicConfig.returnFields.project
-				}
-			});
-		},
-
-		_dataAvailable: function(res, resWrapper) {
-
-			if (resWrapper.target === this.target[1]) {
-				this._dataToActivities(res);
-			}
+			return {
+				title: 'projects',
+				target: this.descendantTarget,
+				template: ProjectListTemplate,
+				href: redmicConfig.viewPaths.projectDetails
+			};
 		}
 	});
 });

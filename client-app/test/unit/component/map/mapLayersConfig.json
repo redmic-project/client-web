@@ -1,0 +1,91 @@
+{
+	"mapLayers": {
+		"grafcan-topografico": {
+			"basemap": true,
+			"order": 3,
+			"protocol": "WMS-C",
+			"url": "https://{s}.grafcan.es/ServicioWMS/MTI",
+			"props": {
+				"layers": "WMS_MTI",
+				"format": "image/png",
+				"subdomains": ["idecan2", "idecan3"],
+				"uppercase": true,
+				"attribution": "<a href=\"https://www.grafcan.es\" target=\"_blank\" title=\"Cartográfica de Canarias\">GRAFCAN</a>",
+				"minZoom": 5,
+				"maxZoom": 21
+			}
+		},
+		"grafcan-ortofoto": {
+			"basemap": true,
+			"order": 2,
+			"protocol": "WMS-C",
+			"url": "https://{s}.grafcan.es/ServicioWMS/OrtoExpress_bat",
+			"props": {
+				"layers": "WMS_OrtoExpress",
+				"format": "image/jpeg",
+				"uppercase": true,
+				"subdomains": ["idecan1", "idecan3"],
+				"attribution": "<a href=\"https://www.grafcan.es\" target=\"_blank\" title=\"Cartográfica de Canarias\">GRAFCAN</a>",
+				"minZoom": 5,
+				"maxZoom": 21
+			}
+		},
+		"eoc-map": {
+			"basemap": true,
+			"order": 1,
+			"protocol": "TMS",
+			"url": "https://tiles.geoservice.dlr.de/service/tms/1.0.0/{layers}@{crs}@{format}/{z}/{x}/{y}.{format}",
+			"props": {
+				"layers": "eoc:basemap",
+				"tms": true,
+				"crs": "EPSG:3857",
+				"format": "png",
+				"attribution": "<a href=\"https://geoservice.dlr.de\" target=\"_blank\" title=\"Earth Observation Center (EOC) of the German Aerospace Center (DLR)\">EOC Geoservice</a>",
+				"minZoom": 1,
+				"maxNativeZoom": 15,
+				"maxZoom": 21
+			}
+		},
+		"eoc-overlay": {
+			"optional": true,
+			"protocol": "TMS",
+			"url": "https://tiles.geoservice.dlr.de/service/tms/1.0.0/{layers}@{crs}@{format}/{z}/{x}/{y}.{format}",
+			"props": {
+				"layers": "eoc:baseoverlay",
+				"tms": true,
+				"crs": "EPSG:3857",
+				"format": "png",
+				"attribution": "<a href=\"https://geoservice.dlr.de\" target=\"_blank\" title=\"Earth Observation Center (EOC) of the German Aerospace Center (DLR)\">EOC Geoservice</a>",
+				"minZoom": 1,
+				"maxNativeZoom": 15,
+				"maxZoom": 21
+			}
+		},
+		"grid5000m": {
+			"protocol": "WMS-C",
+			"url": "https://atlas.redmic.es/geoserver/gg/wms",
+			"props": {
+				"layers": "grid5000m",
+				"format": "image/png",
+				"transparent": true,
+				"tiled": true,
+				"attribution": "<a href=\"https://redmic.es\" target=\"_blank\" title=\"Repositorio de datos marinos integrados de Canarias\">REDMIC</a>",
+				"minZoom": 7,
+				"maxZoom": 12
+			}
+		},
+		"grid1000m": {
+			"protocol": "WMS-C",
+			"url": "https://atlas.redmic.es/geoserver/gg/wms",
+			"props": {
+				"layers": "grid1000m",
+				"format": "image/png",
+				"transparent": true,
+				"tiled": true,
+				"attribution": "<a href=\"https://redmic.es\" target=\"_blank\" title=\"Repositorio de datos marinos integrados de Canarias\">REDMIC</a>",
+				"minZoom": 10,
+				"maxZoom": 15
+			}
+		}
+	}
+}

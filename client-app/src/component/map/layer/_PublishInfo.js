@@ -113,20 +113,16 @@ define([
 				return;
 			}
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.layer,
-					action: TRACK.action.click,
-					label: this.layerId + " [lat:" + lat + ", lng:" + lng + "]"
-				}
-			});
-
 			this._emitEvt('LAYER_QUERYING', {
 				layerId: this.layerId
 			});
 
 			this._requestLayerInfo(response);
+
+			this._emitEvt('TRACK', {
+				event: 'request_layer_featureinfo',
+				layer_name: this.layerLabel || this.layerId
+			});
 		},
 
 		_subInfoAvailable: function(response) {

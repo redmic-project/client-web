@@ -107,6 +107,13 @@ define([
 
 			var shareUrl = globalThis.location + '?settings-id=' + data.id;
 
+			this._emitEvt('TRACK', {
+				event: 'share',
+				method: 'href',
+				content_type: 'selection',
+				item_id: shareUrl
+			});
+
 			alertify.confirm(shareUrl,
 				lang.hitch(this, function(shareUrl) {
 

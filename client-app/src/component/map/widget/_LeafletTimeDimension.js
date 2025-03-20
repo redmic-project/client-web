@@ -2,6 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
+	, 'dojo/Deferred'
 	, 'leaflet'
 	, 'moment'
 	, 'put-selector'
@@ -13,6 +14,7 @@ define([
 	declare
 	, lang
 	, aspect
+	, Deferred
 	, L
 	, moment
 	, put
@@ -39,6 +41,7 @@ define([
 				timeDimensionMaxTime: moment().utc().startOf('day'),
 
 				getTimeDimensionExternalContainer: null,
+				reducedTimeDimensionClass: 'timeDimensionReduced',
 
 				_layersWithTimeDimension: {}
 			};
@@ -47,6 +50,32 @@ define([
 
 			aspect.before(this, '_addMapLayer', lang.hitch(this, this._addTimeDimensionMapLayer));
 			aspect.before(this, '_removeMapLayer', lang.hitch(this, this._removeTimeDimensionMapLayer));
+			aspect.before(this, '_resize', lang.hitch(this, this._resizeTimeDimension));
+		},
+
+		_resizeTimeDimension: function() {
+
+			if (!this._timeDimensionInstance) {
+				return;
+			}
+
+			this._evaluateLowWidthCondition();
+			this._updateTimeDimensionWidget();
+		},
+
+		_evaluateLowWidthCondition: function() {
+
+			var controlContainer = this._getTimeDimensionControlContainer();
+
+			if (!controlContainer) {
+				return;
+			}
+
+			if (this._getLowWidth()) {
+				put(controlContainer, '.' + this.reducedTimeDimensionClass);
+			} else {
+				put(controlContainer, '!' + this.reducedTimeDimensionClass);
+			}
 		},
 
 		_addTimeDimensionMapLayer: function(obj) {
@@ -63,12 +92,13 @@ define([
 				return;
 			}
 
-			var layerId = obj.layerId || (obj.layer && obj.layer.layerId);
+			var layerId = this._getLayerId(obj);
 
 			this._layersWithTimeDimension[layerId] = timeDefinition;
 
 			if (!this._timeDimensionInstance) {
 				this._addTimeDimensionWidget();
+				this._evaluateLowWidthCondition();
 			}
 
 			this._updateTimeDimensionWidget();
@@ -138,8 +168,8 @@ define([
 			return {
 				startMoment: startMoment,
 				endMoment: endMoment,
-				startTime: startMoment.valueOf(),
-				endTime: endMoment.valueOf()
+				startTime: startMoment.toDate(),
+				endTime: endMoment.toDate()
 			};
 		},
 
@@ -187,9 +217,20 @@ define([
 				speedStep: this.timeDimensionSpeedStep
 			}).addTo(this.map);
 
+			this._listenTimeDimensionEvents();
+
 			if (this.getTimeDimensionExternalContainer) {
 				this._manageTimeDimensionControlLocation();
 			}
+		},
+
+		_listenTimeDimensionEvents: function() {
+
+			var playerInstance = this._timeDimensionControlInstance._player;
+
+			playerInstance.on('play', lang.hitch(this, this._onTimeDimensionPlay));
+			playerInstance.on('stop', lang.hitch(this, this._onTimeDimensionStop));
+			playerInstance.on('speedchange', lang.hitch(this, this._onTimeDimensionSpeedChange));
 		},
 
 		_manageTimeDimensionControlLocation: function() {
@@ -213,7 +254,34 @@ define([
 				return;
 			}
 
-			put(externalContainer, this._timeDimensionControlInstance._container);
+			put(externalContainer, this._getTimeDimensionControlContainer());
+		},
+
+		_getTimeDimensionControlContainer: function() {
+
+			return this._timeDimensionControlInstance && this._timeDimensionControlInstance._container;
+		},
+
+		_onTimeDimensionPlay: function(_evt) {
+
+			this._emitEvt('TRACK', {
+				event: 'play_map_timedimension'
+			});
+		},
+
+		_onTimeDimensionStop: function(_evt) {
+
+			this._emitEvt('TRACK', {
+				event: 'pause_map_timedimension'
+			});
+		},
+
+		_onTimeDimensionSpeedChange: function(evt) {
+
+			this._emitEvt('TRACK', {
+				event: 'changespeed_map_timedimension',
+				value: 1000 / evt.transitionTime
+			});
 		},
 
 		_removeTimeDimensionWidget: function() {
@@ -226,24 +294,49 @@ define([
 
 		_getInnerLayer: function(layer, layerId) {
 
-			var originalLayer = this.inherited(arguments);
+			var originalInnerLayer = this.inherited(arguments);
 
-			if (!originalLayer || !this._layersWithTimeDimension[layerId]) {
-				return originalLayer;
+			if (!originalInnerLayer || !this._layersWithTimeDimension[layerId]) {
+				return originalInnerLayer;
 			}
 
-			var timeDimensionLayer = this._getLayerWithTimeDimensionWrapper(layerId, originalLayer);
+			if (originalInnerLayer.then) {
+				var timeDimensionLayerDfd = new Deferred();
 
-			// TODO parche para actualizar la instancia de la capa interna en el componente de capa, necesario para
-			// que responda a la hora de aplicarle cambios de parámetros, como el de la dimensión de elevación
-			layer.layer = timeDimensionLayer;
+				originalInnerLayer.then(lang.hitch(this, function(objArg, innerLayer) {
+
+					var dfd = objArg.dfd,
+						layer = objArg.layer,
+						layerId = objArg.layerId,
+						timeDimensionLayer = this._prepareLayerForUsageWithTimeDimension(layer, layerId, innerLayer);
+
+					dfd.resolve(timeDimensionLayer);
+				}, {
+					layer: layer,
+					layerId: layerId,
+					dfd: timeDimensionLayerDfd
+				}));
+
+				return timeDimensionLayerDfd;
+			}
+
+			return this._prepareLayerForUsageWithTimeDimension(layer, layerId, originalInnerLayer);
+		},
+
+		_prepareLayerForUsageWithTimeDimension: function(layer, layerId, innerLayer) {
+
+			var timeDimensionLayer = this._getLayerWithTimeDimensionWrapper(layerId, innerLayer);
+
+			this._publish(layer.getChannel('SET_PROPS'), {
+				layer: timeDimensionLayer
+			});
 
 			return timeDimensionLayer;
 		},
 
-		_getLayerWithTimeDimensionWrapper: function(layerId, originalLayer) {
+		_getLayerWithTimeDimensionWrapper: function(layerId, innerLayer) {
 
-			var layerWithoutTimeDimension = originalLayer.getBaseLayer ? originalLayer.getBaseLayer() : originalLayer;
+			var layerWithoutTimeDimension = innerLayer.getBaseLayer ? innerLayer.getBaseLayer() : innerLayer;
 
 			var timeDimensionLayer = L.timeDimension.layer.wms(layerWithoutTimeDimension, {
 				timeDimension: this._timeDimensionInstance

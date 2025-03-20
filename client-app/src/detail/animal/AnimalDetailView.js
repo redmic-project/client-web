@@ -7,7 +7,7 @@ define([
 	, 'src/component/browser/bars/Total'
 	, 'templates/AnimalSpecimenTag'
 	, 'templates/AnimalInfo'
-	, 'app/designs/details/main/_DetailsBase'
+	, 'src/detail/_DetailRelatedToActivity'
 ], function(
 	redmicConfig
 	, declare
@@ -17,10 +17,10 @@ define([
 	, Total
 	, TemplateAnimalSpecimenTag
 	, TemplateInfo
-	, _DetailsBase
+	, _DetailRelatedToActivity
 ) {
 
-	return declare(_DetailsBase, {
+	return declare(_DetailRelatedToActivity, {
 		//	summary:
 		//		Vista de detalle de animales.
 
@@ -37,20 +37,13 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_setConfigurations: function() {
-
-			this.viewPathsWidgets = {
-				activities: redmicConfig.viewPaths.activityDetails
-			};
-		},
-
 		_setMainConfigurations: function() {
 
-			this.widgetConfigs = this._merge([{
-				specimenTagList: this._getSpecimenTagsConfig()
-			}, this.widgetConfigs || {}]);
-
 			this.inherited(arguments);
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
+				specimenTagList: this._getSpecimenTagsConfig()
+			}]);
 		},
 
 		_getSpecimenTagsConfig: function() {
@@ -79,12 +72,12 @@ define([
 
 		_itemAvailable: function(res, resWrapper) {
 
+			this.inherited(arguments);
+
 			if (resWrapper.target === this.target[0]) {
 				this._dataToSpecimenTags(res);
 				return;
 			}
-
-			this.inherited(arguments);
 		},
 
 		_dataToSpecimenTags: function(response) {

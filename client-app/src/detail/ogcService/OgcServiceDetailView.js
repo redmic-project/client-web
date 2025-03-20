@@ -4,46 +4,42 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
+	, 'src/component/atlas/_AtlasDimensionsManagement'
 	, 'src/component/atlas/_AtlasLayersManagement'
 	, 'src/component/map/LeafletImpl'
 	, 'src/component/map/layer/WmsLayerImpl'
-	, 'RWidgets/RedmicUtilities'
 	, 'templates/ServiceOGCTitle'
 	, 'templates/ServiceOGCInfo'
 	, 'templates/ServiceOGCSourceInfo'
 	, 'templates/ServiceOGCImage'
-	, 'app/designs/details/main/_DetailsBase'
+	, 'src/detail/_DetailRelatedToActivity'
 ], function(
 	_Main
 	, redmicConfig
 	, declare
 	, lang
 	, TemplateDisplayer
+	, _AtlasDimensionsManagement
 	, _AtlasLayersManagement
 	, LeafletImpl
 	, WmsLayerImpl
-	, RedmicUtilities
 	, TemplateTitle
 	, TemplateInfo
 	, TemplateSourceInfo
 	, TemplateImage
-	, _DetailsBase
+	, _DetailRelatedToActivity
 ) {
 
-	return declare([_DetailsBase, _AtlasLayersManagement], {
+	return declare([_DetailRelatedToActivity, _AtlasDimensionsManagement, _AtlasLayersManagement], {
 		//	summary:
 		//		Vista detalle de servicios OGC.
 
 		constructor: function(args) {
 
-
 			this.config = {
 				atlasTarget: redmicConfig.services.atlasLayer,
 				activityTarget: redmicConfig.services.activity,
-				selectionTarget: redmicConfig.services.atlasLayerSelection,
-				activeTitleParent: true,
 				pathParent: redmicConfig.viewPaths.ogcServiceCatalog,
-				activityLocalTarget: 'activitiesLayer',
 				infoLayerTarget: 'infoLayerTarget',
 				sourceInfoLayerTarget: 'sourceInfoLayerTarget',
 				templateTitle: TemplateTitle,
@@ -55,18 +51,9 @@ define([
 			this.target = this.atlasTarget;
 		},
 
-		_setConfigurations: function() {
-
-			this.viewPathsWidgets = {
-				activities: '/catalog/{rank}-info/{id}'
-			};
-		},
-
 		_setMainConfigurations: function() {
 
 			this.inherited(arguments);
-
-			this.target.push(this.activityTarget);
 
 			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
 				info: {
@@ -92,8 +79,7 @@ define([
 				activityList: {
 					height: 3,
 					props: {
-						title: 'dataSource',
-						target: this.activityLocalTarget
+						title: 'dataSource'
 					}
 				},
 				spatialExtension: {
@@ -135,8 +121,6 @@ define([
 
 			this.inherited(arguments);
 
-			this._publish(this._getWidgetInstance('activityList').getChannel('CLEAR'));
-
 			this._publishMapBox('CLEAR');
 
 			if (this.layer) {
@@ -144,27 +128,28 @@ define([
 			}
 		},
 
-		_refreshModules: function() {
+		_prepareActivityTarget: function() {
 
-			this._checkPathVariableId();
-
-			this._emitEvt('GET', {
-				target: this.atlasTarget,
-				requesterId: this.ownChannel,
-				id: this.pathVariableId
-			});
+			this.target[1] = this.activityTarget;
 		},
 
-		_itemAvailable: function(response, resObj) {
+		_getActivityTargetData: function() {
 
-			var target = resObj.target,
+			return;
+		},
+
+		_itemAvailable: function(response, resWrapper) {
+
+			this.inherited(arguments);
+
+			var target = resWrapper.target,
 				data = response.data;
 
 			if (target === this.activityTarget) {
-				this._handleActivityItemAvailable(data);
-			} else {
-				this._handleAtlasItemAvailable(data);
+				return;
 			}
+
+			this._handleAtlasItemAvailable(data);
 		},
 
 		_handleAtlasItemAvailable: function(data) {
@@ -240,23 +225,14 @@ define([
 			this.layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: this._getWidgetInstance('spatialExtension').getChannel(),
-				layerDefinition: layerDefinition
+				innerLayerDefinition: layerDefinition
 			});
 
 			this._publishMapBox('ADD_LAYER', {
 				layer: this.layer,
 				layerLabel: data.alias || data.name,
+				atlasItem: data,
 				optional: true
-			});
-		},
-
-		_handleActivityItemAvailable: function(activity) {
-
-			activity.rank = RedmicUtilities.getActivityRankByPath(activity.path);
-
-			this._emitEvt('INJECT_ITEM', {
-				data: activity,
-				target: this.activityLocalTarget
 			});
 		}
 	});

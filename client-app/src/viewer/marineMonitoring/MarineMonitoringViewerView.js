@@ -70,7 +70,8 @@ define([
 				themesBrowserConfig: {
 					title: this.i18n.contents,
 					browserConfig: {
-						template: AtlasMixedListTemplate
+						template: AtlasMixedListTemplate,
+						disableDragHandlerOnCreation: true
 					}
 				}
 			}, this.atlasConfig || {}]);

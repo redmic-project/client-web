@@ -8,6 +8,11 @@ define({
 	, "showElevation": "Mostrar valores de elevación de la capa"
 	, "addLayerFirst": "Añade la capa al mapa primero"
 	, "navigateToLayerInfo": "Navegar a la vista de detalles de la capa"
+	, "checkSpeciesAtCatalog": "Consultar especie en catálogo"
+	, "checkAnimalAtCatalog": "Consultar animal en catálogo"
+	, "checkOrganisationAtCatalog": "Consultar organización en catálogo"
+	, "associatedObservationStations": "Estaciones de observación asociadas"
+	, "associatedObservationRegisters": "Registros de observación asociados en la estación"
 	, "userData": "Datos de usuario"
 	, "cancel": "Cancelar"
 	, "nextStep": "Siguiente"
@@ -129,6 +134,7 @@ define({
 	, "citationsAssociated": "Citas asociadas"
 	, "unitsAssociated": "Unidades asociadas"
 	, "unitsSelected": "Unidades seleccionadas"
+	, "goToCatalog": "Ir al catálogo"
 	, "speciesCatalogView": "Catálogo de especies"
 	, "activityCatalogView": "Catálogo de actividades"
 	, "animalCatalogView": "Catálogo de animales"
@@ -270,10 +276,6 @@ define({
 	, "bathymetry": "Batimetría"
 	, "identification": "Identificación"
 
-	, "misidentification": "Identificaciones erróneas"
-	, "misidentificationAdd": "Añadir nueva identificación errónea"
-	, "misidentificationPopup": "Identificado como"
-	, "misidentificationEdit": "Editando identificación errónea"
 	, "openViewer": "Abrir"
 
 	, "copy": "Copiar"
@@ -428,10 +430,10 @@ define({
 	, "layersCatalog": "Catálogo de capas"
 	, "addLayersToLoadInMap": "Añada capas desde el catálogo"
 	, "layersQueryResults": "Resultados de consulta sobre capas"
+	, "selectStationWithRegisteredData": "Seleccione una estación con datos registrados"
 
 	, "seaDepth": "Fondo"
 	, "legalValidity": "Validez legal"
-	, "containsMisidentification": "Contiene identificaciones erróneas"
 	, "animalName": "Nombre del animal"
 	, "protocols": "Protocolos"
 	, "protocolsAssociated": "Protocolos asociados"
@@ -440,7 +442,6 @@ define({
 	, "bibliographyForm": "Bibliografía"
 	, "levelProtectionForm": "Nivel de protección"
 	, "nameLayer": "Nombre de la capa"
-	, "speciesMisidentificationPlaceHolder": "Seleccione una especie"
 	, "speciesInvalid": "Especie a corregir"
 	, "speciesValid": "Especie válida"
 	, "correctionDocument": "Documento de corrección"
@@ -764,6 +765,8 @@ define({
 	, "organisation-catalog": "Organizaciones"
 	, "animal-catalog": "Animales"
 	, "raster-catalog": "Recursos ráster"
+	, "contact-catalog": "Contactos"
+	, "device-catalog": "Dispositivos"
 	, "confidence": "Fiabilidad"
 	, "sightings": "Avistamientos"
 	, "logout": "Cerrar sesión"
@@ -897,8 +900,6 @@ define({
 	, "items": "elementos"
 
 	, "marine-monitoring": "Monitorización marina"
-	, "real-time": "Datos en tiempo real"
-	, "goToDashboard": "Visualizar datos"
 	, "dashboard": "Dashboard"
 
 	, "trash-collection": "Inventario de basura"
@@ -1175,6 +1176,8 @@ define({
 	, "goToActivity": "Ir a actividad"
 	, "goToPlatform": "Ir a plataforma"
 
+	, "supersetDashboard": "Cuadro de mandos"
+
 	, "windrose": "Rosa de los vientos"
 	, "sliderSelector": "Selector desplazable"
 	, "dateFilter": "Filtro por fecha"
@@ -1276,7 +1279,7 @@ define({
 	, "speciesDistributionProductName": "Distribución de especies"
 	, "timeSeriesProductName": "Series temporales"
 	, "trashCollectionProductName": "Inventario de basura"
-	, "realTimeProductName": "Datos en tiempo real"
+	, "marineMonitoringProductName": "Monitorización marina"
 	, "bibliographyProductName": "Bibliografía"
 	, "speciesCatalogProductDescription": "Listado de especies sincronizado con WoRMS, pero centrado en la región de la Macaronesia. Incluye aquellas especies que se encuentran referenciadas en los datos recogidos en la plataforma."
 	, "atlasProductDescription": "Mapa interactivo con una selección de información relevante para los interesados en el mar y la costa, organizada por capas combinables: demarcaciones jurídicas, zonas de baño, áreas protegidas, pesquerías, batimetrías, etc."
@@ -1285,7 +1288,7 @@ define({
 	, "speciesDistributionProductDescription": "Visor interactivo sobre la distribución de las especies, representada en mallas o retículas de 0,5 - 10 km². Permite calcular el número total de especies presentes en cada cuadrícula, dato muy útil en estudios de biodiversidad y planificación territorial."
 	, "timeSeriesProductDescription": "Visor interactivo para series temporales de parámetros oceanográficos, recogidos en las diferentes actividades registradas en la plataforma. Los datos están asociados a una estación, fija o eventual, donde se recogen una serie de parámetros para su estudio."
 	, "trashCollectionProductDescription": "Visor interactivo centrado en datos de muestreo de recogida de basuras, fruto de diferentes campañas registradas en la plataforma. Se representa el transecto de recogida sobre el mapa y la composición cualitativa de los elementos recogidos en gráficas de frecuencia para cada elemento, acumulados, clasificación por tipología, etc."
-	, "realTimeProductDescription": "Visor interactivo de series de datos, que permite su consulta en tiempo real y del pasado reciente. Contiene en su mayoría datos meteorológicos, pudiendo visualizar diferentes parámetros por estación con sus respectivas representaciones gráficas."
+	, "marineMonitoringProductDescription": "Visor interactivo de variables ambientales que afectan al medio marino. Permite su representación mediante capas temáticas, con soporte multidimensional y con la capacidad de comparar con otras capas del catálogo."
 	, "bibliographyProductDescription": "Listado de gran cantidad de publicaciones científicas relacionadas con el medio marino en su ámbito de actuación. También se pueden encontrar manuales, textos legislativos y otros documentos relacionados con actividades concretas. Algunos de estos documentos se pueden consultar directamente en el visor, para otros se proporciona un enlace externo o simplemente sirve de escaparate para conocer de su existencia."
 
 	, "findDataInActivitiesStart": "Encuentra datos entre las"
@@ -1303,11 +1306,12 @@ define({
 	, "activityStarred": "Destacada"
 	, "normative": "Normativa"
 
-	, "redmic": "REDMIC"
-	, "topografico": "Topográfico"
-	, "ortofoto": "Ortofoto"
-	, "eoc-map": "Mundial"
-	, "eoc-overlay": "Nombres"
+	, "grafcan-topografico": "Topográfico"
+	, "grafcan-ortofoto": "Ortofoto"
+	, "grafcan-mundial": "Mundial"
+	, "eoc-map": "EOC"
+	, "eoc-overlay": "Nombres (EOC)"
+	, "osm-map": "OSM"
 
 	, "layerRefreshInterval": "Intervalo de auto-actualización de capa"
 	, "layerName": "Nombre de capa"
@@ -1344,7 +1348,7 @@ define({
 	, "leafletForwardButton": "Avanzar en el historial de localizaciones"
 	, "leafletBackButton": "Retroceder en el historial de localizaciones"
 
-	, "noFixedContent": "Sin contenido fijado"
+	, "noFixedContent": "Contenidos"
 
 	// Meta-tags
 	, "metaDefaultTitle": "Repositorio de Datos Marinos Integrados de Canarias"
@@ -1390,10 +1394,6 @@ define({
 	, "metaViewerChartsDescription": "Visor de series de datos temporales asociadas a estaciones de muestreo. Permite representar gráficamente datos como presión atmosférica, pluviometría, velocidad y dirección del viento, temperatura, salinidad, oxígeno disuelto..."
 	, "metaViewerTrashCollectionTitle": "Inventarios de basura"
 	, "metaViewerTrashCollectionDescription": "Visor de transectos y datos derivados de los inventarios de basura realizados en el entorno marino"
-	, "metaViewerRealTimeTitle": "Datos en tiempo real"
-	, "metaViewerRealTimeDescription": "Visor de estaciones que proveen datos en tiempo real sobre el entorno marino"
-	, "metaViewerRealTimeDashboardIdTitle": "Datos en tiempo real de la estación"
-	, "metaViewerRealTimeDashboardIdDescription": "Visor de los datos producidos por la estación"
 	, "metaViewerMarineMonitoringTitle": "Visor de monitorización marina"
 	, "metaViewerMarineMonitoringDescription": "Visor de variables ambientales que afectan al medio marino"
 	, "metaAtlasTitle": "Atlas"

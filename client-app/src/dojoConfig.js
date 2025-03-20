@@ -148,6 +148,10 @@ dojoConfig = {
 		location: 'dep/leaflet-nontiledlayer/dist',
 		main: 'NonTiledLayer'
 	},{
+		name: 'superset-sdk',
+		location: 'dep/superset-sdk/bundle',
+		main: 'index'
+	},{
 		name: 'wicket',
 		location: 'dep/wicket',
 		main: 'wicket-leaflet.min'

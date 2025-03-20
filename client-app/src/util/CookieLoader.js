@@ -95,34 +95,25 @@ define([
 			this._cookiesNotificationHandler && this._cookiesNotificationHandler.dismiss();
 
 			var isProduction = (/true/i).test(redmicConfig.getEnvVariableValue('envProduction'));
-			if (isProduction) {
-				this._googleAnalytics();
-			}
+
+			this._loadGoogleTagManager(isProduction);
 		},
 
-		_googleAnalytics: function() {
-			//	summary:
-			//		Carga los scripts de Google Analytics.
-			//	tags:
-			//		private
+		_loadGoogleTagManager: function(isProduction) {
 
-			var script = globalThis.document.createElement('script'),
-				gtagId = redmicConfig.googleAnalyticsId;
+			var gtmId = isProduction ? redmicConfig.googleTagManagerId : redmicConfig.googleTagManagerDevId,
+				headScript = `
+					(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+					new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+					j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+					'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+					})(window,document,'script','dataLayer','${gtmId}');
+				`,
+				headScriptElement = globalThis.document.createElement('script'),
+				headElement = globalThis.document.head;
 
-			script.async = true;
-			script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gtagId;
-
-			globalThis.document.head.appendChild(script);
-
-			globalThis.dataLayer = [];
-
-			globalThis.gtag = function() {
-
-				dataLayer.push(arguments);
-			};
-
-			gtag('js', new Date());
-			gtag('config', gtagId);
+			headScriptElement.innerHTML = headScript;
+			headElement.insertBefore(headScriptElement, headElement.firstChild);
 		}
 	});
 });

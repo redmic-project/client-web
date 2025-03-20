@@ -108,7 +108,7 @@ define([
 					{ layer:"grid100", label:"100x100", value:3 }
 				],
 
-				_currentZoomLevel: 7,
+				_currentZoomLevel: null,
 				grid5000MinZoom: 7,
 				grid1000MinZoom: 10,
 				grid500MinZoom: 11,
@@ -216,7 +216,7 @@ define([
 							icon: "fa-info-circle",
 							btnId: "details",
 							title: "info",
-							href: redmicConfig.viewPaths.speciesCatalogDetails
+							href: redmicConfig.viewPaths.speciesDetails
 						}]
 					}
 				},
@@ -387,25 +387,25 @@ define([
 			this.grid5000Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: mapChannel,
-				layerDefinition: 'grid5000m'
+				innerLayerDefinition: 'grid5000m'
 			});
 
 			this.grid1000Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: mapChannel,
-				layerDefinition: 'grid1000m'
+				innerLayerDefinition: 'grid1000m'
 			});
 
 			this.grid500Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: mapChannel,
-				layerDefinition: 'grid500m'
+				innerLayerDefinition: 'grid500m'
 			});
 
 			this.grid100Layer = new WmsLayerImpl({
 				parentChannel: this.getChannel(),
 				mapChannel: mapChannel,
-				layerDefinition: 'grid100m'
+				innerLayerDefinition: 'grid100m'
 			});
 		},
 
@@ -532,15 +532,6 @@ define([
 			this._currentZoomLevel = response.zoom;
 
 			this._checkZoomLevel();
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "speciesDistributionZoom-" + response.zoom
-				}
-			});
 		},
 
 		_checkZoomLevel: function() {
@@ -612,15 +603,6 @@ define([
 			var newLayer = this.layersGridInfo[value].layer;
 
 			this._changeGridLayer(newLayer, this[newLayer + "Layer"]);
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeGridSize" + newLayer
-				}
-			});
 		},
 
 		_changeGridLayer: function(newLayer, layerInstance) {
@@ -664,15 +646,6 @@ define([
 			});
 
 			this._updateDataLayer();
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeDistributionMode:" + this.mode[value].label
-				}
-			});
 
 			if (this.currentMode > 2) {
 				this._emitEvt('REMOVE_LAYER', {
@@ -723,15 +696,6 @@ define([
 			this._emitEvt('SET_LAYER_PROPS', {
 				confidences: confidences
 			});
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeDistributionConfidences" + confidences
-				}
-			});
 		},
 
 		_changePrecisionSlider: function(value) {
@@ -744,17 +708,6 @@ define([
 			};
 
 			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
-
-			if (value) {
-				this._emitEvt('TRACK', {
-					type: TRACK.type.event,
-					info: {
-						category: TRACK.category.button,
-						action: TRACK.action.click,
-						label: "changeDistributionPrecision:" + value.min + "-" + value.max
-					}
-				});
-			}
 		},
 
 		_changeZSlider: function(value) {
@@ -764,17 +717,6 @@ define([
 			};
 
 			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
-
-			if (value) {
-				this._emitEvt('TRACK', {
-					type: TRACK.type.event,
-					info: {
-						category: TRACK.category.button,
-						action: TRACK.action.click,
-						label: "changeDistributionDepth:" + value.min + "-" + value.max
-					}
-				});
-			}
 		},
 
 		_hideInputForm: function(inputKey, hide) {

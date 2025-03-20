@@ -20,9 +20,7 @@ define([
 				aggs: {
 					themeInspire: {
 						open: true,
-						terms: {
-							field: 'themeInspire.name'
-						}
+						field: 'themeInspire.name'
 					}
 				}
 			});
@@ -111,8 +109,10 @@ define([
 
 				Mediator.once(facets._buildChannel(facets.queryChannel, facets.actions.ADD_TO_QUERY), function() {
 
-					Mediator.once(facets._buildChannel(facets.loadingChannel, facets.actions.LOADED),
-						dfd.callback(function() {
+					let availableFacetsChannel = facets._buildChannel(facets.queryChannel,
+						facets.actions.AVAILABLE_FACETS);
+
+					Mediator.once(availableFacetsChannel, dfd.callback(function() {
 
 						assert.lengthOf(Object.keys(facets._facetsInstances), 1,
 							'No había una única instancia de grupo de agregación creada');
@@ -124,7 +124,7 @@ define([
 					assert.lengthOf(Object.keys(facets._facetsInstances), 0,
 						'Ya existía alguna instancia de grupo de agregación');
 
-					Mediator.publish(facets._buildChannel(facets.queryChannel, facets.actions.AVAILABLE_FACETS), {
+					Mediator.publish(availableFacetsChannel, {
 						'sterms#themeInspire': {
 							buckets: [{
 								key: 'Species distribution',
@@ -143,6 +143,9 @@ define([
 
 				Mediator.once(facets._buildChannel(facets.queryChannel, facets.actions.ADD_TO_QUERY), function() {
 
+					let availableFacetsChannel = facets._buildChannel(facets.queryChannel,
+						facets.actions.AVAILABLE_FACETS);
+
 					assert.lengthOf(Object.keys(facets.aggs), 1,
 						'No había una única definición de grupo de agregación tras actualizar');
 
@@ -155,8 +158,7 @@ define([
 					assert.include(facets._groupsOrder, 'themeInspire2',
 						'La clave en la ordenación de grupos de agregación no es la esperada tras actualizar');
 
-					Mediator.once(facets._buildChannel(facets.loadingChannel, facets.actions.LOADED),
-						dfd.callback(function() {
+					Mediator.once(availableFacetsChannel, dfd.callback(function() {
 
 						assert.lengthOf(Object.keys(facets._facetsInstances), 1,
 							'No había una única instancia de grupo de agregación creada tras actualizar');
@@ -165,7 +167,7 @@ define([
 							'La clave del grupo de agregación instanciado no es la esperada tras actualizar');
 					}));
 
-					Mediator.publish(facets._buildChannel(facets.queryChannel, facets.actions.AVAILABLE_FACETS), {
+					Mediator.publish(availableFacetsChannel, {
 						'sterms#themeInspire2': {
 							buckets: [{
 								key: 'Species distribution 2',

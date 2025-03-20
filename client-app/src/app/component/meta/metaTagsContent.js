@@ -104,14 +104,6 @@ define({
 		"title": "{i18n.metaViewerTrashCollectionTitle}",
 		"description": "{i18n.metaViewerTrashCollectionDescription}."
 	},
-	"/viewer/real-time": {
-		"title": "{i18n.metaViewerRealTimeTitle}",
-		"description": "{i18n.metaViewerRealTimeDescription}."
-	},
-	"/viewer/real-time-dashboard/{id}": {
-		"title": "{i18n.metaViewerRealTimeDashboardIdTitle} '{properties.site.name}'",
-		"description": "{i18n.metaViewerRealTimeDashboardIdDescription} '{properties.site.name}'. {properties.site.description}."
-	},
 	"/viewer/marine-monitoring": {
 		"title": "{i18n.metaViewerMarineMonitoringTitle}",
 		"description": "{i18n.metaViewerMarineMonitoringDescription}."

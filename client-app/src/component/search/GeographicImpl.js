@@ -73,15 +73,6 @@ define([
 				"bottomRightLat": evt._southWest.lat,
 				"bottomRightLon": evt._northEast.lng
 			});
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "openMapFilter"
-				}
-			});
 		}
 	});
 });

@@ -1,6 +1,5 @@
 define([
-	"app/base/views/extensions/_ListenActivityDataAndAccessByActivityCategory"
-	, "app/designs/base/_Main"
+	"app/designs/base/_Main"
 	, "app/designs/details/Controller"
 	, "app/designs/details/Layout"
 	, "app/designs/mapWithSideContent/main/Geographic"
@@ -8,8 +7,7 @@ define([
 	, "dojo/_base/lang"
 	, 'templates/ActivityLayerList'
 ], function(
-	_ListenActivityDataAndAccessByActivityCategory
-	, _Main
+	_Main
 	, Controller
 	, Layout
 	, Geographic
@@ -18,7 +16,7 @@ define([
 	, ActivityLayerList
 ) {
 
-	return declare([Layout, Controller, _Main, _ListenActivityDataAndAccessByActivityCategory], {
+	return declare([Layout, Controller, _Main], {
 		//	summary:
 		//		Vista detalle de ActivityLayerMap.
 
@@ -77,8 +75,6 @@ define([
 
 		_refreshModules: function() {
 
-			this._checkPathVariableId();
-
 			this._emitEvt('GET', {
 				target: this.target,
 				requesterId: this.ownChannel,
@@ -114,7 +110,7 @@ define([
 		_onToggleShowLayer: function(obj) {
 
 			if (obj.state) {
-				this._addMapLayer(obj.id);
+				this._addMapLayer(obj.id, obj.item);
 			} else {
 				this._removeMapLayer(obj.id);
 			}

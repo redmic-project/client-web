@@ -156,15 +156,6 @@ define([
 				this._globalClicksHandler.resume();
 				this.statusNotificationSidebarShown = true;
 				eventPublication = 'SHOW_NOTIFICATION_SIDEBAR';
-
-				this._emitEvt('TRACK', {
-					type: TRACK.type.event,
-					info: {
-						category: TRACK.category.button,
-						action: TRACK.action.click,
-						label: "openNotificationSidebar"
-					}
-				});
 			}
 
 			this._emitEvt(eventPublication, {

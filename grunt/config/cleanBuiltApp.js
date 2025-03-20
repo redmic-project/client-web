@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 			'draggabilly', 'dropzone', 'handlebars', 'iso8601-js-period', 'json-schema-ref-parser', 'L-areaselect',
 			'L-coordinates', 'L-draw', 'L-miniMap', 'L-navBar', 'L-timeDimension', 'leaflet', 'leaflet-nontiledlayer',
 			'mediatorjs', 'moment', 'packery', 'proj4', 'pruneCluster', 'put-selector', 'RWidgets', 'sockjs',
-			'stomp-websocket', 'templates', 'tv4', 'uuid', 'wicket'
+			'stomp-websocket', 'templates', 'tv4', 'uuid', 'superset-sdk', 'wicket'
 		],
 		recursiveDirectoriesToClean: [
 			'nls'

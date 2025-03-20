@@ -201,44 +201,29 @@ define([
 
 		_saveSelectionButtonCallback: function() {
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: 'saveSelection'
-				}
-			});
-
 			this._emitEvt('SAVE_SELECTION');
+
+			this._emitEvt('TRACK', {
+				event: 'save_user_selection'
+			});
 		},
 
 		_loadSavedSelectionsButtonCallback: function() {
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: 'loadSelection'
-				}
-			});
-
 			this._emitEvt('RESTORE_SELECTION');
+
+			this._emitEvt('TRACK', {
+				event: 'load_user_selection'
+			});
 		},
 
 		_clearSelectionButtonCallback: function() {
 
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: 'clearSelection'
-				}
-			});
-
 			this._emitEvt('CLEAR_SELECTION');
+
+			this._emitEvt('TRACK', {
+				event: 'clear_user_selection'
+			});
 		}
 	});
 });

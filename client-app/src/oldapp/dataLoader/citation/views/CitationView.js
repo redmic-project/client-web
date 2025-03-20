@@ -31,7 +31,7 @@ define([
 				idProperty: "uuid",
 				propsToClean: ["id", "uuid", "geometry.coordinates"],
 
-				documentDetailsPath: redmicConfig.viewPaths.documentDetails,
+				documentDetailsPath: redmicConfig.viewPaths.bibliographyDetails,
 
 				templateTarget: redmicConfig.services.citationByActivity,
 

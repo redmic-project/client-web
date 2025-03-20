@@ -2,6 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
+	, 'dojo/dom-class'
 	, 'app/designs/list/Controller'
 	, 'app/designs/list/layout/Layout'
 	, 'src/component/browser/_DragAndDrop'
@@ -12,6 +13,7 @@ define([
 	declare
 	, lang
 	, aspect
+	, domClass
 	, Controller
 	, Layout
 	, _DragAndDrop
@@ -31,8 +33,10 @@ define([
 				parentProperty: 'parent',
 				addThemesBrowserFirst: false,
 				omitThemesBrowser: false,
+				animatedClass: 'animate__animated',
+				animatedOnSelect: 'animate__headShake',
 
-				_activeLayers: {}, // indicador sobre si la capa está activada en el mapa o no
+				_activeLayers: {} // indicador sobre si la capa está activada en el mapa o no
 			};
 
 			lang.mixin(this, this.config, args);
@@ -55,6 +59,9 @@ define([
 
 			aspect.before(this, '_reportDeselection', lang.hitch(this, this._themesBrowserReportDeselection));
 			aspect.before(this, '_reportClearSelection', lang.hitch(this, this._themesBrowserReportClearSelection));
+
+			aspect.after(this, '_activateLayer', lang.hitch(this, this._themesBrowserActivateLayer));
+			aspect.after(this, '_deactivateLayer', lang.hitch(this, this._themesBrowserDeactivateLayer));
 		},
 
 		_themesBrowserAfterSetConfigurations: function() {
@@ -162,35 +169,61 @@ define([
 
 		_subThemesBrowserDragAndDrop: function(response) {
 
-			var item = response.item,
-				total = response.total,
-				indexOld = response.indexOld,
-				indexList = response.indexList;
+			var item = response.item;
 
-			if (!item && !total && !indexOld && !indexList) {
+			if (!item) {
 				return;
 			}
 
+			var indexList = response.indexList,
+				indexOld = response.indexOld;
+
+			if (indexList === null || isNaN(indexList) || indexList === indexOld) {
+				return;
+			}
+
+			var movedDown = indexList > indexOld,
+				automaticDrag = response.automaticDrag;
+
+			if (!automaticDrag) {
+				this._emitEvt('TRACK', {
+					event: 'reorder_layer',
+					layer_name: item.label,
+					layer_order: indexList
+				});
+			}
+
 			this._publish(this.getMapChannel('REORDER_LAYERS'), {
-				layerId: this._createLayerId(response.item.atlasItem),
-				newPosition: response.total - response.indexList,
-				oldPosition: response.total - response.indexOld
+				layerId: this._createLayerId(item.atlasItem),
+				index: response.indexList,
+				movedDown: movedDown
 			});
 		},
 
 		_onThemesBrowserAddLayerButtonClick: function(obj) {
 
 			var atlasLayerItem = obj.item,
-				mapLayerId = atlasLayerItem.mapLayerId,
 				state = obj.state,
-				order = obj.total - obj.indexList;
+				rowNode = obj.node;
 
 			if (!state) {
-				this._deactivateLayer(atlasLayerItem, order);
-				this._activeLayers[mapLayerId] = false;
+				this._emitEvt('TRACK', {
+					event: 'disable_layer',
+					layer_name: atlasLayerItem.label
+				});
+
+				domClass.remove(rowNode, [this.animatedClass, this.animatedOnSelect]);
+
+				this._deactivateLayer(atlasLayerItem);
 			} else {
-				this._activateLayer(atlasLayerItem, order);
-				this._activeLayers[mapLayerId] = true;
+				this._emitEvt('TRACK', {
+					event: 'enable_layer',
+					layer_name: atlasLayerItem.label
+				});
+
+				domClass.add(rowNode, [this.animatedClass, this.animatedOnSelect]);
+
+				this._activateLayer(atlasLayerItem);
 			}
 		},
 
@@ -199,20 +232,48 @@ define([
 			var parentItem = atlasLayerItem.atlasItem[this.parentProperty],
 				path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + atlasLayerItem.id;
 
+			this._emitEvt('TRACK', {
+				event: 'remove_layer',
+				layer_name: atlasLayerItem.label
+			});
+
 			this._emitEvt('DESELECT', [path]);
 		},
 
 		_onThemesBrowserElevationButtonClick: function(obj) {
+
+			var layerItem = obj.item,
+				layerLabel = layerItem && layerItem.label;
+
+			this._emitEvt('TRACK', {
+				event: 'show_layer_elevations',
+				layer_name: layerLabel
+			});
 
 			this._showLayerElevation(obj);
 		},
 
 		_onThemesBrowserLegendButtonClick: function(obj) {
 
+			var layerItem = obj.item,
+				layerLabel = layerItem && layerItem.label;
+
+			this._emitEvt('TRACK', {
+				event: 'show_layer_legend',
+				layer_name: layerLabel
+			});
+
 			this._toggleShowLayerLegend(obj);
 		},
 
 		_onThemesBrowserFitBoundsButtonClick: function(item) {
+
+			var layerLabel = item && item.label;
+
+			this._emitEvt('TRACK', {
+				event: 'fit_layer_bounds',
+				layer_name: layerLabel
+			});
 
 			this._fitBounds(item);
 		},
@@ -253,6 +314,47 @@ define([
 		_cleanRowSecondaryContainer: function(layerId, container) {
 
 			// TODO se usa para conectar con aspect desde las otras extensiones
+		},
+
+		_themesBrowserActivateLayer: function(_ret, args) {
+
+			var atlasLayerItem = args[0];
+
+			if (!atlasLayerItem) {
+				return;
+			}
+
+			var itemId = atlasLayerItem.id,
+				mapLayerId = atlasLayerItem.mapLayerId;
+
+			this._activeLayers[mapLayerId] = true;
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'UPDATE_DRAGGABLE_ITEM_ORDER'), {
+				id: itemId,
+				index: 0
+			});
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'ENABLE_DRAG_AND_DROP'), {
+				id: itemId
+			});
+		},
+
+		_themesBrowserDeactivateLayer: function(_ret, args) {
+
+			var atlasLayerItem = args[0];
+
+			if (!atlasLayerItem) {
+				return;
+			}
+
+			var itemId = atlasLayerItem.id,
+				mapLayerId = atlasLayerItem.mapLayerId;
+
+			this._activeLayers[mapLayerId] = false;
+
+			this._publish(this._themesBrowser.getChildChannel('browser', 'DISABLE_DRAG_AND_DROP'), {
+				id: itemId
+			});
 		}
 	});
 });

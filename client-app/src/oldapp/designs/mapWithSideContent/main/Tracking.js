@@ -60,8 +60,6 @@ define([
 				"class": "",
 
 				layersTarget: redmicConfig.services.pointTrackingCluster,
-				// TODO cuando se pidan por actividad, definir este en redmicConfig
-				//layersTarget: "/api/activities/{id}/tracking/cluster",
 				infoTarget: redmicConfig.services.trackingActivity,
 
 				mainEvents: {
@@ -96,10 +94,15 @@ define([
 				_layerIdPrefix: "tracking",
 				layerIdSeparator: "_",
 				_deltaProgress: 3600000,
-				formTemplate: 'viewers/views/templates/forms/Tracking'
+				formTemplate: 'viewers/views/templates/forms/Tracking',
+				timeMode: false
 			};
 
 			lang.mixin(this, this.config, args);
+
+			if (this.usePrivateTarget) {
+				this.layersTarget = redmicConfig.services.privatePointTrackingCluster;
+			}
 		},
 
 		_setMainConfigurations: function() {
@@ -108,7 +111,8 @@ define([
 				parentChannel: this.getChannel(),
 				template: this.formTemplate,
 				formContainerConfig: {
-					loadInputs: lang.hitch(this, this._loadInputsFormAndShow)
+					loadInputs: lang.hitch(this, this._loadInputsFormAndShow),
+					defaultTrackingMode: this.timeMode ? 1 : 0
 				}
 			}, this.formConfig || {}]);
 
@@ -246,15 +250,19 @@ define([
 			this.inputsForm = inputs;
 
 			for (var key in this.inputsForm) {
-				this._publish(this._buildChannel(this.inputsForm[key].channel, this.actions.SHOW), {
+				this._publish(this._buildChannel(this.inputsForm[key].channel, 'SHOW'), {
 					node: this.inputsForm[key].node
 				});
 
-				this._subscribe(this._buildChannel(this.inputsForm[key].channel, this.actions.VALUE_CHANGED),
+				this._subscribe(this._buildChannel(this.inputsForm[key].channel, 'VALUE_CHANGED'),
 					lang.hitch(this, this._subChanged));
 			}
 
-			this._publish(this._buildChannel(this.inputsForm.interval.channel, this.actions.HIDE));
+			if (this.timeMode) {
+				this._changeMode('1');
+			} else {
+				this._publish(this._buildChannel(this.inputsForm.interval.channel, 'HIDE'));
+			}
 		},
 
 		_subChanged: function(res) {
@@ -287,7 +295,7 @@ define([
 			this._activityIdByUuid[idProperty] = item.activityId;
 
 			var target = lang.replace(this.layersTarget, {
-					elementuuid: idProperty,	// TODO cuando se pidan por actividad, omitir este parámetro
+					elementuuid: idProperty,
 					activityid: this._activityIdByUuid[idProperty]
 				}),
 				infoTarget = lang.replace(this.infoTarget, {
@@ -463,7 +471,7 @@ define([
 			var value = res.value,
 				animate = false;
 
-			if (this._timeMode) {
+			if (this.timeMode) {
 				if (!value._isAMomentObject) {
 					value = moment(value);
 				}
@@ -508,7 +516,7 @@ define([
 				for (var lineId in layerItem) {
 					var lineItem = layerItem[lineId];
 
-					if (!this._timeMode) {
+					if (!this.timeMode) {
 						var count = lineItem.count;
 
 						if (!Utilities.isValidNumber(max) || count > max) {
@@ -530,7 +538,7 @@ define([
 
 			return {
 				max: max || 0,
-				min: !this._timeMode ? 0 : min || 0
+				min: !this.timeMode ? 0 : min || 0
 			};
 		},
 
@@ -570,7 +578,7 @@ define([
 
 			this._deltaProgress = value;
 
-			if (this._timeMode) {
+			if (this.timeMode) {
 				this._emitEvt('SET_PROGRESS_DELTA', {
 					value: this._deltaProgress
 				});
@@ -587,23 +595,14 @@ define([
 			});
 
 			if (newMode === '0') {
-				this._timeMode = false;
+				this.timeMode = false;
 				delta = 1;
-				this._publish(this._buildChannel(this.inputsForm.interval.channel, this.actions.HIDE));
+				this._publish(this._buildChannel(this.inputsForm.interval.channel, 'HIDE'));
 			} else {
-				this._timeMode = true;
-				this._publish(this._buildChannel(this.inputsForm.interval.channel, this.actions.SHOW));
+				this.timeMode = true;
+				this._publish(this._buildChannel(this.inputsForm.interval.channel, 'SHOW'));
 				delta = this._deltaProgress;
 			}
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeTrackingMode:" + (newMode === 0 ? "Step" : "Time")
-				}
-			});
 
 			for (var idProperty in this._layerInstances) {
 				var item = {activityId: this._activityIdByUuid[idProperty]};
@@ -628,15 +627,6 @@ define([
 				this._emitEvt('SHOW_DIRECTION_MARKERS');
 				this._markersAreShown = true;
 			}
-
-			this._emitEvt('TRACK', {
-				type: TRACK.type.event,
-				info: {
-					category: TRACK.category.button,
-					action: TRACK.action.click,
-					label: "changeTrackingMarkers:" + (value === 0 ? "Points" : "Direction")
-				}
-			});
 		},
 
 		_onHide: function() {

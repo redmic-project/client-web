@@ -46,13 +46,7 @@ define([
 		_addListButtonsEdition: function() {
 
 			var browserRowButtons = this._getBrowserButtons(),
-				buttons;
-
-			if (browserRowButtons && browserRowButtons.length) {
 				buttons = this._mergeInEditionButtons(browserRowButtons);
-			} else {
-				buttons = lang.clone(this.listButtonsEdition);
-			}
 
 			this._setBrowserButtons(buttons);
 			delete this.listButtonsEdition;

@@ -3,7 +3,7 @@ define([], function() {
 	//		Configuraciones y valores globales.
 
 	var retObj = {
-		'siteKeyReCaptcha': '6LfA6_0SAAAAACT3i8poH1NqztZCtIW1OahT0cXs',
+		'siteKeyReCaptcha': '6LefmUIUAAAAAA2BttWmfpK5lYMn5Bl53KFDdzPe',
 		'siteKeyForDebugReCaptcha': '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
 		'googleTagManagerId': 'GTM-PK5MH63C',
 		'googleTagManagerDevId': 'GTM-WJZRQZLZ'

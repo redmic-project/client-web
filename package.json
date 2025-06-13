@@ -1,6 +1,6 @@
 {
   "name": "@redmic-project/web",
-  "version": "0.28.0",
+  "version": "0.28.1",
   "author": "REDMIC",
   "homepage": "https://gitlab.com/redmic-project/client/web/blob/master/README.md",
   "description": "REDMIC web application",
@@ -75,7 +75,7 @@
     "moment": "2.30.1",
     "nib": "1.2.0",
     "packery": "2.1.2",
-    "pdfjs-dist-viewer-min": "3.11.174",
+    "pdfjs-dist": "https://github.com/mozilla/pdf.js.git#v5.3.31",
     "proj4": "2.15.0",
     "prunecluster": "https://github.com/pedroetb/PruneCluster.git",
     "put-selector": "0.3.6",

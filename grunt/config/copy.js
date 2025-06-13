@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 		srcLeafletPath = path.join(depPath, leafletPath),
 		distLeafletPath = path.join(distPath, destDir, leafletPath),
 
-		pdfjsPath = 'pdfjs',
+		pdfjsPath = 'pdfjs/build/generic',
 		srcPdfjsPath = path.join(depPath, pdfjsPath),
 		distPdfjsPath = path.join(distPath, destDir, pdfjsPath),
 		pdfjsWebName = 'web',
@@ -42,12 +42,15 @@ module.exports = function(grunt) {
 		pdfjs: {
 			files: [{
 				cwd: path.join(srcPdfjsPath, pdfjsWebName),
-				src: ['v*[^.map]', 'pdf.viewer.js', 'images/*', 'locale/es-ES/*', 'locale/en-GB/*'],
+				src: [
+					'viewer*[^.map]', 'images/*', 'locale/locale.json',
+					'locale/es-ES/*', 'locale/en-GB/*', 'locale/en-US/*'
+				],
 				dest: path.join(distPdfjsPath, pdfjsWebName),
 				expand: true
 			},{
 				cwd: path.join(srcPdfjsPath, pdfjsBuildName),
-				src: 'pdf.worker.js',
+				src: ['pdf.mjs', 'pdf.worker.mjs'],
 				dest: path.join(distPdfjsPath, pdfjsBuildName),
 				expand: true
 			}]

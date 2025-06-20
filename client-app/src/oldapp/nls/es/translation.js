@@ -490,7 +490,7 @@ define({
 	, "welcomeTo": "Bienvenido a"
 	, "favourites": "Favoritos"
 	, "lastActivities": "Últimas actividades"
-	, "contentSend": " REDMIC está en construcción. Si usted detecta cualquier problema o desea aportar alguna sugerencia, le agradeceríamos mucho que nos envíe un mensaje a través del "
+	, "contentSend": " Si usted detecta cualquier problema o desea aportar alguna sugerencia, le agradeceríamos mucho que nos envíe un mensaje a través del "
 	, "contentInfo1": "Ha accedido como"
 	, "contentInfo2": ". Para poder usar todas las funcionalidades debe "
 	, "contentInfo3": "."

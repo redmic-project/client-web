@@ -14,10 +14,14 @@ Una vez clonado el repositorio del proyecto en el entorno local de desarrollo y 
 ```sh
 npm install
 
-OAUTH_URL=https://redmic.grafcan.es/api/oauth \
+OAUTH_URL=https://api.ecomarcan.grafcan.es/api/oauth \
 OAUTH_CLIENT_ID=app \
 OAUTH_CLIENT_SECRET=secretKey \
-API_URL=https://redmic.grafcan.es/api \
+OID_URL=https://sso.ecomarcan.grafcan.es/realms/ecomarcan-dev/protocol/openid-connect \
+OID_CLIENT_ID=app \
+OID_CLIENT_SECRET=secretKey \
+API_URL=https://api.ecomarcan.grafcan.es/api \
+CONFIG_URL=https://s3.eu-west-1.amazonaws.com/mediastorage.redmicdev/public/config.json \
 PRODUCTION=0 \
 npm start -- --port=80
 ```

@@ -5,6 +5,9 @@ services:
       OAUTH_URL:
       OAUTH_CLIENT_ID:
       OAUTH_CLIENT_SECRET:
+      OID_URL:
+      OID_CLIENT_ID:
+      OID_CLIENT_SECRET:
       API_URL:
       CONFIG_URL:
       SITEMAP_URL:

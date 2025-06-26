@@ -400,8 +400,10 @@ define([
 		_onRequestPermissionError: function(res) {
 
 			var requestedTarget = res.url,
-				isGetTokenTarget = requestedTarget.indexOf(redmicConfig.services.getToken) !== -1,
-				isNotApiTarget = requestedTarget.indexOf(this._apiUrl) === -1;
+				isGetTokenTarget = requestedTarget.includes(redmicConfig.services.getOauthToken) ||
+					requestedTarget.includes(redmicConfig.services.getOidToken),
+
+				isNotApiTarget = !requestedTarget.includes(this._apiUrl);
 
 			if (isGetTokenTarget || isNotApiTarget) {
 				return;

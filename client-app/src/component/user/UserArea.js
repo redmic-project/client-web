@@ -2,6 +2,8 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'dojo/promise/all'
 	, 'put-selector'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
@@ -17,6 +19,8 @@ define([
 	redmicConfig
 	, declare
 	, lang
+	, Deferred
+	, PromiseAll
 	, put
 	, _Module
 	, _Show
@@ -48,7 +52,8 @@ define([
 				'class': 'userArea',
 				idProperty: 'id',
 				profileTarget: redmicConfig.services.profile,
-				_logoutTarget: redmicConfig.services.logout,
+				_oauthLogoutTarget: redmicConfig.services.logoutOauth,
+				_oidLogoutTarget: redmicConfig.services.logoutOid,
 				repositoryUrl: 'https://gitlab.com/redmic-project/client/web'
 			};
 
@@ -88,7 +93,7 @@ define([
 
 			if (this._checkUserIsRegistered()) {
 				this._initializeRegisteredUserArea();
-				this.target.push(this._logoutTarget);
+				this.target.push(this._oauthLogoutTarget, this._oidLogoutTarget);
 			} else {
 				this._initializeGuestUserArea();
 			}
@@ -149,7 +154,7 @@ define([
 				]
 			});
 
-			this._showMenu();
+			this._prepareMenuToShow();
 		},
 
 		_initializeUserImage: function() {
@@ -185,10 +190,10 @@ define([
 
 		_showAreaForRegisteredUser: function() {
 
-			this._once(this._buildChannel(this.credentialsChannel, this.actions.GOT_PROPS),
+			this._once(this._buildChannel(this.credentialsChannel, 'GOT_PROPS'),
 				lang.hitch(this, this._subDataCredentialsGotProps));
 
-			this._publish(this._buildChannel(this.credentialsChannel, this.actions.GET_PROPS), {
+			this._publish(this._buildChannel(this.credentialsChannel, 'GET_PROPS'), {
 				dataCredentials: true
 			});
 
@@ -203,7 +208,7 @@ define([
 			});
 		},
 
-		_showMenu: function() {
+		_prepareMenuToShow: function() {
 
 			this._publish(this.listMenu.getChannel('ADD_EVT'), {
 				sourceNode: this.domNode
@@ -242,13 +247,46 @@ define([
 				return;
 			}
 
-			var data = {
-				'token': Credentials.get('accessToken')
+			this._prepareLogoutDfd();
+			this._sendOauthLogoutRequest();
+			this._sendOidLogoutRequest();
+		},
+
+		_prepareLogoutDfd: function() {
+
+			this._logoutDfds = {};
+
+			this._logoutDfds[this._oauthLogoutTarget] = new Deferred();
+			this._logoutDfds[this._oidLogoutTarget] = new Deferred();
+
+			PromiseAll(Object.values(this._logoutDfds)).then(
+				lang.hitch(this, this._onLogoutSuccessful),
+				lang.hitch(this, this._onLogoutFailed));
+		},
+
+		_sendOauthLogoutRequest: function() {
+
+			const data = {
+				token: Credentials.get('accessToken')
 			};
+
+			this._sendLogoutRequest(data, this._oauthLogoutTarget);
+		},
+
+		_sendOidLogoutRequest: function() {
+
+			const data = {
+				token: Credentials.get('oidAccessToken')
+			};
+
+			this._sendLogoutRequest(data, this._oidLogoutTarget);
+		},
+
+		_sendLogoutRequest: function(data, target) {
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
-				target: this._logoutTarget,
+				target: target,
 				query: data,
 				requesterId: this.getOwnChannel()
 			});
@@ -256,43 +294,56 @@ define([
 
 		_errorAvailable: function(_err, status, resWrapper) {
 
-			var target = resWrapper.target;
+			const target = resWrapper.target;
 
-			if (target !== this._logoutTarget) {
+			if (target === this.profileTarget) {
 				return;
 			}
+
+			this._logoutDfds[target].reject(status);
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			const target = resWrapper.target;
+
+			if (target === this.profileTarget) {
+				this._onProfileDataAvailable(res.data);
+				return;
+			}
+
+			this._logoutDfds[target].resolve(res);
+		},
+
+		_onProfileDataAvailable: function(data) {
+
+			if (data instanceof Array) {
+				data = data[0];
+			}
+
+			this._prepareMenuToShow();
+		},
+
+		_onLogoutSuccessful: function() {
+
+			this._startLoading();
+			this._removeUserData();
+		},
+
+		_onLogoutFailed: function(status) {
 
 			this._emitEvt('TRACK', {
 				event: 'logout_error',
 				status: status
 			});
 
-			this._startLoading();
-			this._removeUserData();
+			console.error('Logout failed with status:', status);
 		},
 
 		_removeUserData: function() {
 
+			Credentials.set('oidAccessToken', null);
 			Credentials.set('accessToken', null);
-		},
-
-		_dataAvailable: function(response, resWrapper) {
-
-			var target = resWrapper.target;
-
-			if (target === this._logoutTarget) {
-				this._startLoading();
-				this._removeUserData();
-				return;
-			}
-
-			var data = response.data;
-
-			if (data instanceof Array) {
-				data = data[0];
-			}
-
-			this._showMenu();
 		},
 
 		_beforeHide: function() {

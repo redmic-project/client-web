@@ -20,8 +20,8 @@ define([
 
 		//	validProps: Array
 		//		Propiedades permitidas para el control del usuario.
-		validProps: ['accessToken', 'userId', 'userName', 'userEmail', 'userRole', 'allowedModules', 'cookiesAccepted',
-			'selectIds', 'externalConfig', 'externalConfigTimestamp'],
+		validProps: ['accessToken', 'oidAccessToken', 'userId', 'userName', 'userEmail', 'userRole', 'allowedModules',
+			'cookiesAccepted', 'selectIds', 'externalConfig', 'externalConfigTimestamp'],
 
 
 		constructor: function(args) {

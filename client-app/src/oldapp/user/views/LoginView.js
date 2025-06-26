@@ -1,11 +1,13 @@
 define([
 	'alertify'
-	, "app/user/views/_ExternalUserBaseView"
+	, 'app/user/views/_ExternalUserBaseView'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/text!./templates/Login.html"
-	, "src/util/Credentials"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
+	, 'dojo/promise/all'
+	, 'dojo/text!./templates/Login.html'
+	, 'src/util/Credentials'
 	, 'src/component/base/_Store'
 ], function(
 	alertify
@@ -13,6 +15,8 @@ define([
 	, redmicConfig
 	, declare
 	, lang
+	, Deferred
+	, PromiseAll
 	, template
 	, Credentials
 	, _Store
@@ -20,16 +24,12 @@ define([
 
 	return declare([_ExternalUserBaseView, _Store], {
 		//	Summary:
-		//		Vista de login
-		//
-		//	Description:
-		//		Permite identificarse para entrar a la aplicación.
-
+		//		Vista de login, permite identificarse para entrar a la aplicación.
 
 		constructor: function (args) {
 
 			this.config = {
-				ownChannel: "login",
+				ownChannel: 'login',
 				templateProps: {
 					templateString: template,
 					i18n: this.i18n,
@@ -37,10 +37,19 @@ define([
 					_onGuestAccess: lang.hitch(this, this._onGuestAccess),
 					_onKeyPress: lang.partial(this._onKeyPress, this)
 				},
-				target: redmicConfig.services.getToken
+				_oauthTarget: redmicConfig.services.getOauthToken,
+				_oidTarget: redmicConfig.services.getOidToken
 			};
 
 			lang.mixin(this, this.config, args);
+		},
+
+		_initialize: function() {
+
+			this.target = [
+				this._oauthTarget,
+				this._oidTarget
+			];
 		},
 
 		postCreate: function() {
@@ -48,13 +57,13 @@ define([
 			this.inherited(arguments);
 
 			// Si hemos entrado anteriormente, pone el correo usado por última vez
-			if (!Credentials.userIsGuest("userRole")) {
-				this.template.emailInputForm.set("value", Credentials.get("userEmail"));
+			if (!Credentials.userIsGuest('userRole')) {
+				this.template.emailInputForm.set('value', Credentials.get('userEmail'));
 			}
 			// Si hemos activado la cuenta anteriormente, informa al usuario
-			if (Credentials.has("accountActivated")) {
-				alertify.success(this.i18n.accountActivated, "");
-				Credentials.remove("accountActivated");
+			if (Credentials.has('accountActivated')) {
+				alertify.success(this.i18n.accountActivated, '');
+				Credentials.remove('accountActivated');
 			}
 		},
 
@@ -128,24 +137,50 @@ define([
 			//		values private: credenciales para obtener el token
 			//
 
-			var data = {
+			const data = {
 				username: values.email,
 				password: values.password
 			};
 
+			const options = {
+				data: data,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			};
+
+			this._getTokenDfds = {};
+
+			this._getTokenDfds[this._oauthTarget] = new Deferred();
+			this._getTokenDfds[this._oidTarget] = new Deferred();
+
+			PromiseAll(Object.values(this._getTokenDfds)).then(lang.hitch(this, this._onGotTokensSuccessfully));
+
 			this._emitEvt('REQUEST', {
 				method: 'POST',
-				target: this.target,
-				options: {
-					data: data,
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded'
-					}
-				}
+				target: this._oauthTarget,
+				options: options
+			});
+
+			this._emitEvt('REQUEST', {
+				method: 'POST',
+				target: this._oidTarget,
+				options: options
 			});
 		},
 
-		_dataAvailable: function(res) {
+		_dataAvailable: function(res, resWrapper) {
+
+			const target = resWrapper.target,
+				accessToken = res.data.access_token;
+
+			this._getTokenDfds[target].resolve(accessToken);
+		},
+
+		_onGotTokensSuccessfully: function(getTokenDfds) {
+
+			const oauthAccessToken = getTokenDfds[0],
+				oidAccessToken = getTokenDfds[1];
 
 			this._emitEvt('TRACK', {
 				event: 'login',
@@ -154,8 +189,8 @@ define([
 
 			this._startLoading();
 
-			var accessToken = res.data.access_token;
-			Credentials.set('accessToken', accessToken);
+			Credentials.set('oidAccessToken', oidAccessToken);
+			Credentials.set('accessToken', oauthAccessToken);
 		},
 
 		_errorAvailable: function(error, status) {

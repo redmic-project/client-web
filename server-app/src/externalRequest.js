@@ -4,10 +4,15 @@ const http = require('http'),
 	oauthUrl = process.env.OAUTH_URL,
 	oauthClientId = process.env.OAUTH_CLIENT_ID,
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
-	configUrl = process.env.CONFIG_URL,
-	sitemapUrl = process.env.SITEMAP_URL,
 
+	oidUrl = process.env.OID_URL,
+	oidClientId = process.env.OID_CLIENT_ID,
+	oidClientSecret = process.env.OID_CLIENT_SECRET,
+
+	configUrl = process.env.CONFIG_URL,
 	configExpirationMs = 3600000,
+
+	sitemapUrl = process.env.SITEMAP_URL,
 	sitemapExpirationMs = 36000000;
 
 let logger, configContent, configLastUpdated, sitemapContent, sitemapLastUpdated;
@@ -23,7 +28,7 @@ function onOwnRequestResponse(bindParams, internalRes) {
 
 	internalRes.on('end', (function(nestedBindParams, nestedChunks) {
 
-		let content = "";
+		let content = '';
 
 		for (let i = 0; i < nestedChunks.length; i++) {
 			content += nestedChunks[i].toString();
@@ -81,10 +86,31 @@ function onOauthTokenRequest(req, res) {
 	}
 
 	const getTokenUrl = oauthUrl + '/token',
-		reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https;
+		clientCredentials = oauthClientId + ':' + oauthClientSecret,
+		scope = 'write';
 
-	const clientCredentials = oauthClientId + ':' + oauthClientSecret,
-		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64');
+	onAuthTokenRequest({req, res, getTokenUrl, clientCredentials, scope});
+}
+
+function onOidTokenRequest(req, res) {
+
+	res.set('Content-Type', 'application/json');
+
+	if (!oidUrl || !oidUrl.length) {
+		logger.error('Missing OpenID URL, set it using OID_URL environment variable');
+		res.send('{}');
+		return;
+	}
+
+	const getTokenUrl = oidUrl + '/token',
+		clientCredentials = oidClientId + ':' + oidClientSecret;
+
+	onAuthTokenRequest({req, res, getTokenUrl, clientCredentials});
+}
+
+function onAuthTokenRequest(params) {
+
+	const base64ClientCredentials = Buffer.from(params.clientCredentials).toString('base64');
 
 	const options = {
 		method: 'POST',
@@ -94,45 +120,138 @@ function onOauthTokenRequest(req, res) {
 		}
 	};
 
+	const getTokenUrl = params.getTokenUrl,
+		req = params.req,
+		res = params.res,
+		scope = params.scope;
+
 	const bindParams = {
 		originalRes: res,
-		onError: onOauthRequestError
+		onError: onAuthTokenRequestError
 	};
 
-	const internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestResponse.bind(this,
-		bindParams));
+	const reqLibrary = getTokenUrl.indexOf('https') === -1 ? http : https,
+		internalReq = reqLibrary.request(getTokenUrl, options, onOwnRequestResponse.bind(this, bindParams));
 
-	internalReq.on('error', onOauthRequestError.bind(this, res));
+	internalReq.on('error', onAuthTokenRequestError.bind(this, res));
 
 	const body = req.body,
 		password = encodeURIComponent(body.password),
-		username = encodeURIComponent(body.username),
-		bodyData = 'grant_type=password&username=' + username + '&password=' + password + '&scope=write';
+		username = encodeURIComponent(body.username);
+
+	let bodyData = `grant_type=password&username=${username}&password=${password}`;
+
+	if (scope && scope.length) {
+		bodyData += `&scope=${scope}`;
+	}
 
 	internalReq.write(bodyData);
 	internalReq.end();
 }
 
-function onOauthRequestError(originalRes, err) {
+function onAuthTokenRequestError(originalRes, err) {
 
-	const error = JSON.parse(err),
-		errorType = error.error,
-		errorDescription = error.error_description;
-
-	if (errorType === 'invalid_grant') {
-		originalRes.set('Content-Type', 'application/json');
-
-		originalRes.status(401).send({
-			code: errorType,
-			description: errorDescription
-		});
-
-		logger.error(err);
-
+	if (this.statusCode < 500) {
+		onAuthTokenClientError.bind(this)(originalRes, err);
 		return;
 	}
 
 	onOwnRequestError.bind(this)(originalRes, err);
+}
+
+function onOauthRevokeRequest(req, res) {
+
+	res.set('Content-Type', 'application/json');
+
+	if (!oauthUrl || !oauthUrl.length) {
+		logger.error('Missing OAuth URL, set it using OAUTH_URL environment variable');
+		res.send('{}');
+		return;
+	}
+
+	const revokeTokenUrl = `${oauthUrl}/token/revoke`,
+		tokenToRevoke = req.body.token,
+		revokeTokenBodyData = `{"token":"${tokenToRevoke}"}`;
+
+	const revokeTokenHeaders = {
+		'Content-Type': 'application/json',
+		'Authorization': `Bearer ${tokenToRevoke}`
+	};
+
+	onAuthTokenRevoke({res, revokeTokenUrl, revokeTokenHeaders, revokeTokenBodyData});
+}
+
+function onOidRevokeRequest(req, res) {
+
+	res.set('Content-Type', 'application/json');
+
+	if (!oidUrl || !oidUrl.length) {
+		logger.error('Missing OpenID URL, set it using OID_URL environment variable');
+		res.send('{}');
+		return;
+	}
+
+	const revokeTokenUrl = `${oidUrl}/revoke`,
+		clientCredentials = `${oidClientId}:${oidClientSecret}`,
+		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
+		tokenToRevoke = req.body.token,
+		revokeTokenBodyData = `token=${tokenToRevoke}`;
+
+	const revokeTokenHeaders = {
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Authorization': `Basic ${base64ClientCredentials}`
+	};
+
+	onAuthTokenRevoke({res, revokeTokenUrl, revokeTokenHeaders, revokeTokenBodyData});
+}
+
+function onAuthTokenRevoke(params) {
+
+	const options = {
+		method: 'POST',
+		headers: params.revokeTokenHeaders
+	};
+
+	const revokeTokenUrl = params.revokeTokenUrl,
+		res = params.res;
+
+	const bindParams = {
+		originalRes: res,
+		onError: onAuthTokenRevokeError
+	};
+
+	const reqLibrary = revokeTokenUrl.indexOf('https') === -1 ? http : https;
+
+	const internalReq = reqLibrary.request(revokeTokenUrl, options, onOwnRequestResponse.bind(this, bindParams));
+
+	internalReq.on('error', onAuthTokenRevokeError.bind(this, res));
+
+	internalReq.write(params.revokeTokenBodyData);
+	internalReq.end();
+}
+
+function onAuthTokenRevokeError(originalRes, err) {
+
+	if (this.statusCode < 500) {
+		onAuthTokenClientError.bind(this)(originalRes, err);
+		return;
+	}
+
+	onOwnRequestError.bind(this)(originalRes, err);
+}
+
+function onAuthTokenClientError(originalRes, err) {
+
+	const error = JSON.parse(err);
+
+	originalRes.set('Content-Type', 'application/json');
+
+	originalRes.status(this.statusCode).send({
+		code: error.error,
+		description: error.error_description
+	});
+
+	logger.error(err);
 }
 
 function onConfigRequest(req, res) {
@@ -221,6 +340,9 @@ module.exports = function(loggerParameter) {
 
 	return {
 		onOauthTokenRequest: onOauthTokenRequest,
+		onOauthRevokeRequest: onOauthRevokeRequest,
+		onOidTokenRequest: onOidTokenRequest,
+		onOidRevokeRequest: onOidRevokeRequest,
 		onConfigRequest: onConfigRequest,
 		onSitemapRequest: onSitemapRequest
 	};

@@ -1,5 +1,6 @@
 const express = require('express'),
 	path = require('path'),
+	bodyParser = require('body-parser'),
 
 	production = !!parseInt(process.env.PRODUCTION, 10),
 	apiUrl = process.env.API_URL;
@@ -101,7 +102,10 @@ function exposeRoutes(app) {
 		.get('/robots.txt', onRobotsRequest)
 		.get(/^.+\.js$/, onNullableJsRequest)
 		.get(/.*/, onGeneralRequest)
+		.post('/oauth/revoke', bodyParser.json(), externalRequest.onOauthRevokeRequest)
 		.post('/oauth/token', externalRequest.onOauthTokenRequest)
+		.post('/oid/revoke', bodyParser.json(), externalRequest.onOidRevokeRequest)
+		.post('/oid/token', externalRequest.onOidTokenRequest)
 		.use(onUnknownRequest);
 }
 

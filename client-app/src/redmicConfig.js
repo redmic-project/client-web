@@ -225,9 +225,11 @@ define([], function() {
 		'speciesValidity': baseUri + 'speciesvalidities',
 		'themes': baseUri + 'themes',
 		'thematicType': baseUri + 'thematictypes',
-		'getToken': '/oauth/token',
+		'getOauthToken': '/oauth/token',
+		'logoutOauth': '/oauth/revoke',
+		'getOidToken': '/oid/token',
+		'logoutOid': '/oid/revoke',
 		'getExternalConfig': '/config',
-		'logout': baseUri + 'oauth/token/revoke',
 		'unit': baseUri + 'units',
 		'unitType': baseUri + 'unittypes',
 

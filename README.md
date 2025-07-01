@@ -14,6 +14,7 @@ Una vez clonado el repositorio del proyecto en el entorno local de desarrollo y 
 ```sh
 npm install
 
+PORT=80 \
 OAUTH_URL=https://api.ecomarcan.grafcan.es/api/oauth \
 OAUTH_CLIENT_ID=app \
 OAUTH_CLIENT_SECRET=secretKey \
@@ -23,7 +24,7 @@ OID_CLIENT_SECRET=secretKey \
 API_URL=https://api.ecomarcan.grafcan.es/api \
 CONFIG_URL=https://s3.eu-west-1.amazonaws.com/mediastorage.redmicdev/public/config.json \
 PRODUCTION=0 \
-npm start -- --port=80
+npm start
 ```
 
 Para poder arrancar usando el puerto 80, es necesario tener los permisos adecuados. Si el comando anterior falla por este motivo, ejecutar una vez lo siguiente para conceder permisos a NodeJS e intentarlo de nuevo:

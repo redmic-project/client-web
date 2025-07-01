@@ -4,14 +4,17 @@ FROM node:${NODE_IMAGE_TAG}
 
 LABEL maintainer="info@redmic.es"
 
-ENV NODE_ENV="production"
-
-EXPOSE 3050
-
 CMD ["server-app", "-b"]
 
+ARG PORT
+
+EXPOSE ${PORT}
+
+ENV NODE_ENV="production" \
+	PORT="${PORT}"
+
 HEALTHCHECK --interval=30s --timeout=15s --start-period=1m --retries=3 \
-	CMD wget --spider -q http://localhost:3050 || exit 1
+	CMD wget --spider -q http://127.0.0.1:${PORT} || exit 1
 
 ADD redmic-project-web-*.tgz /
 

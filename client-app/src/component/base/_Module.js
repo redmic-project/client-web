@@ -103,7 +103,8 @@ define([
 			META_TAGS: "metaTags",
 			LOADING: "loading",
 			ALERT: "alert",
-			COMMUNICATION: "communicationCenter"
+			COMMUNICATION: "communicationCenter",
+			SESSION: "session"
 		},
 
 		//	actionsPaused: Object
@@ -171,6 +172,8 @@ define([
 		//		Nombre del canal por donde se va a controlar el módulo de moduleStore
 		//	communicationChannel: String
 		//		Nombre del canal por donde se van a publicar las notificaciones.
+		//	sessionChannel: String
+		//		Nombre del canal por donde se gestiona la sesión del usuario autenticado.
 
 		//	i18n: Object
 		//		Traducciones globales
@@ -203,7 +206,8 @@ define([
 				metaTagsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.META_TAGS),
 				loadingChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.LOADING),
 				alertChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT),
-				communicationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION)
+				communicationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION),
+				sessionChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.SESSION)
 			};
 
 			lang.mixin(this, this.config);

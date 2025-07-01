@@ -2,8 +2,6 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/Deferred'
-	, 'dojo/promise/all'
 	, 'put-selector'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
@@ -19,8 +17,6 @@ define([
 	redmicConfig
 	, declare
 	, lang
-	, Deferred
-	, PromiseAll
 	, put
 	, _Module
 	, _Show
@@ -36,33 +32,46 @@ define([
 
 	return declare([_Module, _Show, _Store], {
 		//	summary:
-		//		Modulo para el menu de usuarios.
-		//	description:
-		//		Muestra un listado de opciones de usuario en un tooltip.
-
-		//	config: Object
-		//		Opciones por defecto.
+		//		Botón para el menú de usuario, que muestra un listado de opciones mediante tooltip.
 
 		constructor: function(args) {
 
 			this.config = {
 				ownChannel: 'userArea',
+				actions: {
+					USER_LOGOUT: 'userLogout',
+					USER_LOGGED_OUT: 'userLoggedOut',
+					USER_LOGOUT_ERROR: 'userLogoutError'
+				},
 
 				omitLoading: true,
 				'class': 'userArea',
 				idProperty: 'id',
-				profileTarget: redmicConfig.services.profile,
-				_oauthLogoutTarget: redmicConfig.services.logoutOauth,
-				_oidLogoutTarget: redmicConfig.services.logoutOid,
+				target: redmicConfig.services.profile,
 				repositoryUrl: 'https://gitlab.com/redmic-project/client/web'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
+		_defineSubscriptions: function() {
+
+			this.subscriptionsConfig.push({
+				channel: this._buildChannel(this.sessionChannel, 'USER_LOGGED_OUT'),
+				callback: '_subUserLoggedOut'
+			},{
+				channel: this._buildChannel(this.sessionChannel, 'USER_LOGOUT_ERROR'),
+				callback: '_subUserLogoutError'
+			},{
+				channel: this.listMenu.getChannel('EVENT_ITEM'),
+				callback: '_subEventItem'
+			});
+		},
+
 		_initialize: function() {
 
 			put(this.domNode, '[title=$]', this.i18n.user);
+
 			this.listMenuDefinition = declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip);
 
 			this._commonItems = {
@@ -89,11 +98,8 @@ define([
 				}
 			};
 
-			this.target = [this.profileTarget];
-
 			if (this._checkUserIsRegistered()) {
 				this._initializeRegisteredUserArea();
-				this.target.push(this._oauthLogoutTarget, this._oidLogoutTarget);
 			} else {
 				this._initializeGuestUserArea();
 			}
@@ -108,7 +114,7 @@ define([
 				omitLoading: true,
 				template: TemplateTopbarMenu,
 				'class': 'tooltipUser',
-				target: this.profileTarget
+				target: this.target
 			});
 
 			this.listMenu = new this.listMenuDefinition({
@@ -163,19 +169,11 @@ define([
 				parentChannel: this.getChannel(),
 				omitLoading: true,
 				template: TemplateTopbarImage,
-				target: this.profileTarget
+				target: this.target
 			});
 
 			this._publish(this.topbarImage.getChannel('SHOW'), {
 				node: this.domNode
-			});
-		},
-
-		_defineSubscriptions: function () {
-
-			this.subscriptionsConfig.push({
-				channel : this.listMenu.getChannel('EVENT_ITEM'),
-				callback: '_subEventItem'
 			});
 		},
 
@@ -204,7 +202,7 @@ define([
 
 			this._emitEvt('INJECT_DATA', {
 				data: req.dataCredentials,
-				target: this.profileTarget
+				target: this.target
 			});
 		},
 
@@ -234,121 +232,48 @@ define([
 			});
 		},
 
-		_logout: function () {
+		_endLoading: function() {
 
-			this._emitEvt('TRACK', {
-				event: 'logout'
-			});
+			this._emitEvt('LOADED');
+		},
+
+		_logout: function() {
+
+			this._requestUserLogout();
+		},
+
+		_requestUserLogout: function() {
 
 			this._startLoading();
 
-			if (!Credentials.get('accessToken')) {
-				this._removeUserData();
-				return;
-			}
-
-			this._prepareLogoutDfd();
-			this._sendOauthLogoutRequest();
-			this._sendOidLogoutRequest();
+			this._publish(this._buildChannel(this.sessionChannel, 'USER_LOGOUT'));
 		},
 
-		_prepareLogoutDfd: function() {
-
-			this._logoutDfds = {};
-
-			this._logoutDfds[this._oauthLogoutTarget] = new Deferred();
-			this._logoutDfds[this._oidLogoutTarget] = new Deferred();
-
-			PromiseAll(Object.values(this._logoutDfds)).then(
-				lang.hitch(this, this._onLogoutSuccessful),
-				lang.hitch(this, this._onLogoutFailed));
-		},
-
-		_sendOauthLogoutRequest: function() {
-
-			const data = {
-				token: Credentials.get('accessToken')
-			};
-
-			this._sendLogoutRequest(data, this._oauthLogoutTarget);
-		},
-
-		_sendOidLogoutRequest: function() {
-
-			const data = {
-				token: Credentials.get('oidAccessToken')
-			};
-
-			this._sendLogoutRequest(data, this._oidLogoutTarget);
-		},
-
-		_sendLogoutRequest: function(data, target) {
-
-			this._emitEvt('REQUEST', {
-				method: 'POST',
-				target: target,
-				query: data,
-				requesterId: this.getOwnChannel()
-			});
-		},
-
-		_errorAvailable: function(_err, status, resWrapper) {
-
-			const target = resWrapper.target;
-
-			if (target === this.profileTarget) {
-				return;
-			}
-
-			this._logoutDfds[target].reject(status);
-		},
-
-		_dataAvailable: function(res, resWrapper) {
-
-			const target = resWrapper.target;
-
-			if (target === this.profileTarget) {
-				this._onProfileDataAvailable(res.data);
-				return;
-			}
-
-			this._logoutDfds[target].resolve(res);
-		},
-
-		_onProfileDataAvailable: function(data) {
-
-			if (data instanceof Array) {
-				data = data[0];
-			}
+		_dataAvailable: function(res) {
 
 			this._prepareMenuToShow();
 		},
 
-		_onLogoutSuccessful: function() {
+		_subUserLoggedOut: function(_res) {
 
 			this._startLoading();
-			this._removeUserData();
+
+			this._emitEvt('TRACK', {
+				event: 'logout'
+			});
 		},
 
-		_onLogoutFailed: function(status) {
+		_subUserLogoutError: function(res) {
 
 			this._emitEvt('TRACK', {
 				event: 'logout_error',
-				status: status
+				status: res.status
 			});
-
-			console.error('Logout failed with status:', status);
-		},
-
-		_removeUserData: function() {
-
-			Credentials.set('oidAccessToken', null);
-			Credentials.set('accessToken', null);
 		},
 
 		_beforeHide: function() {
 
-			this._emitEvt('LOADED');
+			this._endLoading();
 		}
 	});
 });

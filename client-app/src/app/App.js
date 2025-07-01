@@ -9,6 +9,7 @@ define([
 	, 'src/app/component/layout/InnerLayoutImpl'
 	, 'src/app/component/layout/OuterLayoutImpl'
 	, 'src/app/component/Loading'
+	, 'src/app/component/session/Session'
 	, 'src/app/component/meta/MetaTags'
 	, 'src/app/component/ModuleStore'
 	, 'src/app/component/Router'
@@ -32,6 +33,7 @@ define([
 	, InnerLayoutImpl
 	, OuterLayoutImpl
 	, Loading
+	, Session
 	, MetaTags
 	, ModuleStore
 	, Router
@@ -158,6 +160,10 @@ define([
 			this._loading = new Loading({
 				parentChannel: parentChannel,
 				globalNode: rootNode
+			});
+
+			new Session({
+				parentChannel: parentChannel
 			});
 		},
 

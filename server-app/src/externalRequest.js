@@ -87,9 +87,9 @@ function onOauthTokenRequest(req, res) {
 
 	const getTokenUrl = oauthUrl + '/token',
 		clientCredentials = oauthClientId + ':' + oauthClientSecret,
-		scope = 'write';
+		internalReqBodyData = getOauthBodyData(req.body);
 
-	onAuthTokenRequest({req, res, getTokenUrl, clientCredentials, scope});
+	onAuthTokenRequest({res, getTokenUrl, clientCredentials, internalReqBodyData});
 }
 
 function onOidTokenRequest(req, res) {
@@ -103,9 +103,45 @@ function onOidTokenRequest(req, res) {
 	}
 
 	const getTokenUrl = oidUrl + '/token',
-		clientCredentials = oidClientId + ':' + oidClientSecret;
+		clientCredentials = oidClientId + ':' + oidClientSecret,
+		reqBody = req.body;
 
-	onAuthTokenRequest({req, res, getTokenUrl, clientCredentials});
+	let internalReqBodyData;
+
+	if (!!reqBody.refresh_token) {
+		internalReqBodyData = getOidRefreshTokenBodyData(reqBody);
+	} else {
+		internalReqBodyData = getOidPasswordBodyData(reqBody);
+	}
+
+	onAuthTokenRequest({res, getTokenUrl, clientCredentials, internalReqBodyData});
+}
+
+function getOauthBodyData(reqBody) {
+
+	const grantType = 'password',
+		scope = 'write',
+		password = encodeURIComponent(reqBody.password),
+		username = encodeURIComponent(reqBody.username);
+
+	return `grant_type=${grantType}&username=${username}&password=${password}&scope=${scope}`;
+}
+
+function getOidPasswordBodyData(reqBody) {
+
+	const grantType = 'password',
+		password = encodeURIComponent(reqBody.password),
+		username = encodeURIComponent(reqBody.username);
+
+	return `grant_type=${grantType}&username=${username}&password=${password}`;
+}
+
+function getOidRefreshTokenBodyData(reqBody) {
+
+	const grantType = 'refresh_token',
+		refreshToken = encodeURIComponent(reqBody.refresh_token);
+
+	return `grant_type=${grantType}&refresh_token=${refreshToken}`;
 }
 
 function onAuthTokenRequest(params) {
@@ -121,9 +157,8 @@ function onAuthTokenRequest(params) {
 	};
 
 	const getTokenUrl = params.getTokenUrl,
-		req = params.req,
 		res = params.res,
-		scope = params.scope;
+		internalReqBodyData = params.internalReqBodyData;
 
 	const bindParams = {
 		originalRes: res,
@@ -135,17 +170,7 @@ function onAuthTokenRequest(params) {
 
 	internalReq.on('error', onAuthTokenRequestError.bind(this, res));
 
-	const body = req.body,
-		password = encodeURIComponent(body.password),
-		username = encodeURIComponent(body.username);
-
-	let bodyData = `grant_type=password&username=${username}&password=${password}`;
-
-	if (scope && scope.length) {
-		bodyData += `&scope=${scope}`;
-	}
-
-	internalReq.write(bodyData);
+	internalReq.write(internalReqBodyData);
 	internalReq.end();
 }
 

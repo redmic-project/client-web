@@ -23,7 +23,6 @@ OID_CLIENT_ID=app \
 OID_CLIENT_SECRET=secretKey \
 API_URL=https://api.ecomarcan.grafcan.es/api \
 CONFIG_URL=https://s3.eu-west-1.amazonaws.com/mediastorage.redmicdev/public/config.json \
-PRODUCTION=0 \
 npm start
 ```
 

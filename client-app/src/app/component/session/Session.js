@@ -3,6 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/app/component/session/_Login'
 	, 'src/app/component/session/_Logout'
+	, 'src/app/component/session/_Refresh'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
 ], function(
@@ -10,11 +11,12 @@ define([
 	, lang
 	, _Login
 	, _Logout
+	, _Refresh
 	, _Module
 	, _Store
 ) {
 
-	return declare([_Module, _Store, _Login, _Logout], {
+	return declare([_Module, _Store, _Login, _Logout, _Refresh], {
 		//	summary:
 		//		Módulo para gestionar el inicio y fin de sesión del usuario, así como mantenerla activa.
 
@@ -24,9 +26,11 @@ define([
 				ownChannel: 'session',
 				events: {
 					USER_LOGGED_IN: 'userLoggedIn',
-					USER_LOGGED_OUT: 'userLoggedOut',
 					USER_LOGIN_ERROR: 'userLoginError',
-					USER_LOGOUT_ERROR: 'userLogoutError'
+					USER_LOGGED_OUT: 'userLoggedOut',
+					USER_LOGOUT_ERROR: 'userLogoutError',
+					USER_TOKEN_REFRESHED: 'userTokenRefreshed',
+					USER_REFRESH_ERROR: 'userRefreshError'
 				},
 				actions: {
 					USER_LOGIN: 'userLogin',
@@ -34,7 +38,9 @@ define([
 					USER_LOGIN_ERROR: 'userLoginError',
 					USER_LOGOUT: 'userLogout',
 					USER_LOGGED_OUT: 'userLoggedOut',
-					USER_LOGOUT_ERROR: 'userLogoutError'
+					USER_LOGOUT_ERROR: 'userLogoutError',
+					USER_TOKEN_REFRESHED: 'userTokenRefreshed',
+					USER_REFRESH_ERROR: 'userRefreshError'
 				}
 			};
 
@@ -61,27 +67,23 @@ define([
 				event: 'USER_LOGGED_OUT',
 				channel: this.getChannel('USER_LOGGED_OUT')
 			},{
+				event: 'USER_TOKEN_REFRESHED',
+				channel: this.getChannel('USER_TOKEN_REFRESHED')
+			},{
 				event: 'USER_LOGIN_ERROR',
 				channel: this.getChannel('USER_LOGIN_ERROR')
 			},{
 				event: 'USER_LOGOUT_ERROR',
 				channel: this.getChannel('USER_LOGOUT_ERROR')
+			},{
+				event: 'USER_REFRESH_ERROR',
+				channel: this.getChannel('USER_REFRESH_ERROR')
 			});
 		},
 
 		_initialize: function() {
 
-			this._loginTargets = [
-				this._oauthLoginTarget,
-				this._oidLoginTarget
-			];
-
-			this._logoutTargets = [
-				this._oauthLogoutTarget,
-				this._oidLogoutTarget
-			];
-
-			this.target = this._loginTargets.concat(this._logoutTargets);
+			this.target = [];
 		},
 
 		_subUserLogin: function(req) {
@@ -92,32 +94,6 @@ define([
 		_subUserLogout: function() {
 
 			this._userLogout();
-		},
-
-		_dataAvailable: function(res, resWrapper) {
-
-			const target = resWrapper.target;
-
-			if (this._loginTargets.includes(target)) {
-				this._loginDataAvailable(res, resWrapper);
-			} else if (this._logoutTargets.includes(target)) {
-				this._logoutDataAvailable(res, resWrapper);
-			} else {
-				console.error('Received data from unknown target:', target);
-			}
-		},
-
-		_errorAvailable: function(error, status, resWrapper) {
-
-			const target = resWrapper.target;
-
-			if (this._loginTargets.includes(target)) {
-				this._loginErrorAvailable(error, status, resWrapper);
-			} else if (this._logoutTargets.includes(target)) {
-				this._logoutErrorAvailable(error, status, resWrapper);
-			} else {
-				console.error('Received error from unknown target:', target);
-			}
 		}
 	});
 });

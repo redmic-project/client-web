@@ -106,6 +106,7 @@ function exposeRoutes(app) {
 		.post('/oauth/token', externalRequest.onOauthTokenRequest)
 		.post('/oid/revoke', bodyParser.json(), externalRequest.onOidRevokeRequest)
 		.post('/oid/token', externalRequest.onOidTokenRequest)
+		.post('/oid/refresh', bodyParser.json(), externalRequest.onOidTokenRequest)
 		.use(onUnknownRequest);
 }
 

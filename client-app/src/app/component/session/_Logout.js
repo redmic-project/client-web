@@ -1,6 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/aspect'
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
 	, 'src/redmicConfig'
@@ -8,6 +9,7 @@ define([
 ], function(
 	declare
 	, lang
+	, aspect
 	, Deferred
 	, PromiseAll
 	, redmicConfig
@@ -26,6 +28,15 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
+
+			aspect.after(this, '_initialize', lang.hitch(this, this._logoutInitialize));
+			aspect.before(this, '_dataAvailable', lang.hitch(this, this._logoutDataAvailable));
+			aspect.before(this, '_errorAvailable', lang.hitch(this, this._logoutErrorAvailable));
+		},
+
+		_logoutInitialize: function() {
+
+			this.target.push(this._oauthLogoutTarget, this._oidLogoutTarget);
 		},
 
 		_userLogout: function() {
@@ -86,15 +97,22 @@ define([
 
 		_logoutDataAvailable: function(res, resWrapper) {
 
-			const target = resWrapper.target,
-				logoutData = res.data;
+			const target = resWrapper.target;
 
-			this._logoutDfds[target].resolve(logoutData);
+			if (this._oauthLogoutTarget !== target && this._oidLogoutTarget !== target) {
+				return;
+			}
+
+			this._logoutDfds[target].resolve(res.data);
 		},
 
 		_logoutErrorAvailable: function(error, status, resWrapper) {
 
 			const target = resWrapper.target;
+
+			if (this._oauthLogoutTarget !== target && this._oidLogoutTarget !== target) {
+				return;
+			}
 
 			this._logoutDfds[target].reject({ error, status });
 		},
@@ -103,8 +121,7 @@ define([
 
 			this._emitEvt('USER_LOGGED_OUT', logoutData);
 
-			this._removeUserOidData();
-			this._removeUserOauthData();
+			this._removeUserSessionData();
 		},
 
 		_onLogoutFailure: function(errorData) {
@@ -112,14 +129,10 @@ define([
 			this._emitEvt('USER_LOGOUT_ERROR', errorData);
 		},
 
-		_removeUserOidData: function() {
+		_removeUserSessionData: function() {
 
-			Credentials.set('oidAccessToken', null);
-		},
-
-		_removeUserOauthData: function() {
-
-			Credentials.set('accessToken', null);
+			Credentials.remove('oidAccessToken');
+			Credentials.remove('accessToken');
 		},
 
 		_userIsLoggedIn: function() {

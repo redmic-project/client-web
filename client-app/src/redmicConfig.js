@@ -229,6 +229,7 @@ define([], function() {
 		'logoutOauth': '/oauth/revoke',
 		'getOidToken': '/oid/token',
 		'logoutOid': '/oid/revoke',
+		'refreshToken': '/oid/refresh',
 		'getExternalConfig': '/config',
 		'unit': baseUri + 'units',
 		'unitType': baseUri + 'unittypes',

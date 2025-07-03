@@ -57,10 +57,10 @@ define([
 		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel: this._buildChannel(this.sessionChannel, 'USER_LOGGED_OUT'),
+				channel: this._buildChannel(this.authChannel, 'USER_LOGGED_OUT'),
 				callback: '_subUserLoggedOut'
 			},{
-				channel: this._buildChannel(this.sessionChannel, 'USER_LOGOUT_ERROR'),
+				channel: this._buildChannel(this.authChannel, 'USER_LOGOUT_ERROR'),
 				callback: '_subUserLogoutError'
 			},{
 				channel: this.listMenu.getChannel('EVENT_ITEM'),
@@ -246,7 +246,7 @@ define([
 
 			this._startLoading();
 
-			this._publish(this._buildChannel(this.sessionChannel, 'USER_LOGOUT'));
+			this._publish(this._buildChannel(this.authChannel, 'USER_LOGOUT'));
 		},
 
 		_dataAvailable: function(res) {

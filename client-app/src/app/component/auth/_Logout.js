@@ -18,7 +18,7 @@ define([
 
 	return declare(null, {
 		//	summary:
-		//		Lógica relativa al cierre de sesión del usuario.
+		//		Lógica relativa a la finalización de la autenticación del usuario.
 
 		constructor: function(args) {
 
@@ -121,7 +121,7 @@ define([
 
 			this._emitEvt('USER_LOGGED_OUT', logoutData);
 
-			this._removeUserSessionData();
+			this._removeAuthData();
 		},
 
 		_onLogoutFailure: function(errorData) {
@@ -129,7 +129,9 @@ define([
 			this._emitEvt('USER_LOGOUT_ERROR', errorData);
 		},
 
-		_removeUserSessionData: function() {
+		_removeAuthData: function() {
+
+			this._removeAuthRefreshData();
 
 			Credentials.remove('oidAccessToken');
 			Credentials.remove('accessToken');

@@ -104,7 +104,7 @@ define([
 			LOADING: "loading",
 			ALERT: "alert",
 			COMMUNICATION: "communicationCenter",
-			SESSION: "session"
+			AUTH: "auth"
 		},
 
 		//	actionsPaused: Object
@@ -172,7 +172,7 @@ define([
 		//		Nombre del canal por donde se va a controlar el módulo de moduleStore
 		//	communicationChannel: String
 		//		Nombre del canal por donde se van a publicar las notificaciones.
-		//	sessionChannel: String
+		//	authChannel: String
 		//		Nombre del canal por donde se gestiona la sesión del usuario autenticado.
 
 		//	i18n: Object
@@ -207,7 +207,7 @@ define([
 				loadingChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.LOADING),
 				alertChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT),
 				communicationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION),
-				sessionChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.SESSION)
+				authChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.AUTH)
 			};
 
 			lang.mixin(this, this.config);

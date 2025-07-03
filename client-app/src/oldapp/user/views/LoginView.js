@@ -42,10 +42,10 @@ define([
 		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel: this._buildChannel(this.sessionChannel, 'USER_LOGGED_IN'),
+				channel: this._buildChannel(this.authChannel, 'USER_LOGGED_IN'),
 				callback: '_subUserLoggedIn'
 			},{
-				channel: this._buildChannel(this.sessionChannel, 'USER_LOGIN_ERROR'),
+				channel: this._buildChannel(this.authChannel, 'USER_LOGIN_ERROR'),
 				callback: '_subUserLoginError'
 			});
 		},
@@ -92,7 +92,7 @@ define([
 
 			this._startLoading();
 
-			this._publish(this._buildChannel(this.sessionChannel, 'USER_LOGIN'), {
+			this._publish(this._buildChannel(this.authChannel, 'USER_LOGIN'), {
 				user: data.email,
 				pass: data.password
 			});

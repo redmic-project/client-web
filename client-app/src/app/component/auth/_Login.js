@@ -18,7 +18,7 @@ define([
 
 	return declare(null, {
 		//	summary:
-		//		Lógica relativa al inicio de sesión del usuario.
+		//		Lógica relativa al establecimiento de la autenticación del usuario.
 
 		constructor: function(args) {
 
@@ -112,7 +112,7 @@ define([
 
 			this._emitEvt('USER_LOGGED_IN', tokensData);
 
-			this._updateUserSessionData(tokensData);
+			this._updateAuthData(tokensData);
 		},
 
 		_onLoginFailure: function(errorData) {
@@ -120,21 +120,23 @@ define([
 			this._emitEvt('USER_LOGIN_ERROR', errorData);
 		},
 
-		_updateUserSessionData: function(tokensData) {
+		_updateAuthData: function(tokensData) {
 
 			const oauthTokenData = tokensData[0],
 				oidTokenData = tokensData[1];
 
-			this._addUserOidData(oidTokenData);
-			this._addUserOauthData(oauthTokenData);
+			this._updateAuthOidData(oidTokenData);
+			this._updateAuthOauthData(oauthTokenData);
 		},
 
-		_addUserOidData: function(data) {
+		_updateAuthOidData: function(data) {
+
+			this._updateAuthRefreshData(data);
 
 			Credentials.set('oidAccessToken', data.access_token);
 		},
 
-		_addUserOauthData: function(data) {
+		_updateAuthOauthData: function(data) {
 
 			Credentials.set('accessToken', data.access_token);
 		}

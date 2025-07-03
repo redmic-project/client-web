@@ -1,9 +1,9 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/app/component/session/_Login'
-	, 'src/app/component/session/_Logout'
-	, 'src/app/component/session/_Refresh'
+	, 'src/app/component/auth/_Login'
+	, 'src/app/component/auth/_Logout'
+	, 'src/app/component/auth/_Refresh'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
 ], function(
@@ -18,12 +18,12 @@ define([
 
 	return declare([_Module, _Store, _Login, _Logout, _Refresh], {
 		//	summary:
-		//		Módulo para gestionar el inicio y fin de sesión del usuario, así como mantenerla activa.
+		//		Módulo para gestionar la autenticación del usuario, incluyendo inicio, fin y renovación.
 
 		constructor: function(args) {
 
 			this.config = {
-				ownChannel: 'session',
+				ownChannel: 'auth',
 				events: {
 					USER_LOGGED_IN: 'userLoggedIn',
 					USER_LOGIN_ERROR: 'userLoginError',

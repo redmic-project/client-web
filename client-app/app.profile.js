@@ -72,7 +72,6 @@ var profileObj = {
 		map: packagesMap,
 		async: true,
 		waitSeconds: 5,
-		requestProvider: 'dojo/request/registry',
 		selectorEngine: 'lite'
 	},
 
@@ -443,7 +442,7 @@ var profileObj = {
 				, 'dojo/NodeList-manipulate'
 				, 'dojo/NodeList-traverse'
 				, 'dojo/request/notify'
-				, 'dojo/request/registry'
+				, 'dojo/request/xhr'
 				, 'dojo/store/Observable'
 				, 'dojo/touch'
 				, 'dojo/window'

@@ -259,7 +259,7 @@ define([], function() {
 
 		'timeSeriesActivities': baseUri + 'timeseries/activities',
 		'activityTimeSeriesStations': baseUri + 'activities/{activityid}/timeseriesstations',
-		'activityObservationSeriesStations': baseUri + 'private/activities/{id}/observationseriesstations',
+		'acousticDetectionReceptors': baseUri + 'v1/acoustic-detection/activities/{id}/receptors',
 		'observationSeries': baseUri + 'private/observationseries',
 		'timeSeriesStations': baseUri + 'surveystations',
 		'surveyStationsTimeSeries': baseUri + 'datadefinitions/{datadefinitionid}/timeseries',

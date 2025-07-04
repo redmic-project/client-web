@@ -29,7 +29,7 @@ define([
 					TIMESERIES_DATA: 'timeseriesData'
 				},
 				target: redmicConfig.services.activity,
-				templateTargetChange: redmicConfig.services.activityObservationSeriesStations,
+				templateTargetChange: redmicConfig.services.acousticDetectionReceptors,
 				_activeRadius: false,
 				_showObservationsButtonClass: 'showObservations'
 			};

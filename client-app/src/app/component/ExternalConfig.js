@@ -146,8 +146,8 @@ define([
 
 		_setEmptyExternalConfig: function() {
 
-			Credentials.set('externalConfig', null);
-			Credentials.set('externalConfigTimestamp', null);
+			Credentials.remove('externalConfig');
+			Credentials.remove('externalConfigTimestamp');
 		},
 
 		_itemAvailable: function(res) {

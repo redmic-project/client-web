@@ -1,35 +1,33 @@
 define([
-	'src/redmicConfig'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/request'
+	, 'dojo/request/xhr'
 	, 'dojo/request/notify'
-	, 'dojo/request/registry'
+	, 'src/component/store/RestManager'
+	, 'src/redmicConfig'
 	, 'src/util/Credentials'
-	, './RestManager'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, lang
-	, request
-	, notify
-	, registry
-	, Credentials
+	, requestXhr
+	, requestNotify
 	, RestManager
+	, redmicConfig
+	, Credentials
 ) {
 
 	return declare(RestManager, {
 		//	summary:
-		//		Implementación del módulo RestManager, que provee métodos de comunicación mediante dojo/request.
+		//		Implementación del módulo RestManager, que provee métodos de comunicación mediante dojo/request/xhr.
 		//	description:
 		//		También maneja errores de permisos en peticiones y les añade cabeceras de autentificación.
 		//		Importante: el campo 'options' recibido en las peticiones desde otros módulos, sobreescribe directamente
 		//		las opciones que se usarán a su vez para realizar la petición HTTP.
 
 		//	_apiUrl: String
-		//		Prefijo de rutas hacia el servidor
-		//	_filteredUrls: Array
-		//		Define las URLs a las que no hay que añadirle caberas de autentificación
+		//		Prefijo de rutas hacia el servidor.
+		//	_filteredAuthPaths: Array
+		//		Define las rutas de URLs a las que no hay que añadirle cabeceras de autenticación.
 
 		constructor: function(args) {
 
@@ -49,13 +47,16 @@ define([
 				handleAs: 'json',
 
 				_apiUrl: redmicConfig.getEnvVariableValue('envApiUrl'),
-				_filteredUrls: [
+				_filteredAuthPaths: [
 					'token',
 					'reCaptcha',
 					'register',
 					'resettingRequest',
 					'resettingSetPassword',
 					'activateAccount'
+				],
+				_oidPaths: [
+					'acoustic-detection'
 				]
 			};
 
@@ -66,8 +67,7 @@ define([
 
 		_prepareRequestHandlers: function() {
 
-			notify('error', lang.hitch(this, this._requestErrorHandler));
-			registry.register(lang.hitch(this, this._preRequestHandler), request);
+			requestNotify('error', lang.hitch(this, this._requestErrorHandler));
 		},
 
 		_getTargetWithEndingSlash: function(target) {
@@ -81,7 +81,66 @@ define([
 
 		_launchRequest: function(url, options) {
 
-			return request(url, options).response;
+			const opts = this._getOptionsWithAuthIfNeeded(url, options);
+
+			return requestXhr(url, opts).response;
+		},
+
+		_getOptionsWithAuthIfNeeded: function(url, options) {
+
+			if (!this._requestedUrlNeedsAuth(url)) {
+				return options;
+			}
+
+			const authHeader = this._getAuthHeaderNeededByUrl(url);
+
+			if (!authHeader) {
+				return options;
+			}
+
+			if (!options.headers) {
+				options.headers = {};
+			}
+
+			options.headers.Authorization = authHeader;
+
+			return options;
+		},
+
+		_requestedUrlNeedsAuth: function(url) {
+
+			const isUrlToApi = url.includes(this._apiUrl);
+
+			if (!isUrlToApi) {
+				return false;
+			}
+
+			let urlSplitted = url.split('/'),
+				lastPathItem = urlSplitted.pop();
+
+			if (!lastPathItem.length) {
+				lastPathItem = urlSplitted.pop();
+			}
+
+			const lastPathItemWithoutParams = lastPathItem.split('?')[0];
+
+			return !this._filteredAuthPaths.includes(lastPathItemWithoutParams);
+		},
+
+		_getAuthHeaderNeededByUrl: function(url) {
+
+			let isOidPath = false;
+
+			for (let i = 0; i < this._oidPaths.length; i++) {
+				if (url.includes(this._oidPaths[i])) {
+					isOidPath = true;
+					break;
+				}
+			}
+
+			const accessToken = isOidPath ? Credentials.get('oidAccessToken') : Credentials.get('accessToken');
+
+			return accessToken ? `Bearer ${accessToken}` : null;
 		},
 
 		_getRequest: function(target, req) {
@@ -236,8 +295,8 @@ define([
 
 		_getSaveRequestTarget: function(target, req) {
 
-			var id = this._getItemIdFromSaveRequest(req),
-				targetWithSlash = this._getTargetWithEndingSlash(target);
+			const targetWithSlash = this._getTargetWithEndingSlash(target),
+				id = this._getItemIdFromSaveRequest(req);
 
 			if (!id) {
 				return targetWithSlash;
@@ -411,49 +470,13 @@ define([
 
 			// TODO notificar al usuario que intentó acceder a algo para lo que no tenía permiso (token caducado o con
 			// privilegios insuficientes)
-			Credentials.set('accessToken', null);
+			//Credentials.remove('accessToken');
 		},
 
 		_onRequestReachabilityError: function(res) {
 
 			// TODO notificar al usuario que hubo un error de conexión y ofrecerle recargar (para que pueda actuar
 			// sobre la página actual antes de recargar)
-		},
-
-		_preRequestHandler: function(url, options) {
-			//	summary:
-			//		Se ejecuta antes de hacer un request y nos permite añadir cabeceras
-			//	tags:
-			//		private
-			//	url:
-			//		url del servicio
-			//	options:
-			//		opciones del request (headers...)
-
-			var urlSplitted = url.split('/'),
-				lastUrlItem = urlSplitted.pop();
-
-			if (!lastUrlItem.length) {
-				lastUrlItem = urlSplitted.pop();
-			}
-
-			var lastUrlItemWithoutParams = lastUrlItem.split('?')[0],
-				isFilteredUrlItem = this._filteredUrls.indexOf(lastUrlItemWithoutParams) !== -1,
-				isUrlToServer = url.indexOf(this._apiUrl) !== -1,
-				urlNeedsAuth = isUrlToServer && !isFilteredUrlItem;
-
-			if (urlNeedsAuth) {
-				if (!options.headers) {
-					options.headers = {};
-				}
-
-				var accessToken = Credentials.get('accessToken');
-				if (accessToken) {
-					options.headers.Authorization = 'Bearer ' + accessToken;
-				}
-			}
-
-			return !!options.useXHR;
 		}
 	});
 });

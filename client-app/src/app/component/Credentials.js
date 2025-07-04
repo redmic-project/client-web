@@ -231,7 +231,7 @@ define([
 			var data = res.data[0];
 
 			if (!data) {
-				Credentials.set('accessToken', null);
+				Credentials.remove('accessToken');
 				return;
 			}
 

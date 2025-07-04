@@ -170,6 +170,5 @@ dojoConfig = {
 
 	async: true,
 	waitSeconds: 5,
-	requestProvider: 'dojo/request/registry',
 	selectorEngine: 'lite'
 };

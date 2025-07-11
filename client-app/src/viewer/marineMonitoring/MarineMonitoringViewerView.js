@@ -3,14 +3,13 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'moment'
-	, 'put-selector'
-	, 'app/designs/mapWithSideContent/Controller'
-	, 'app/designs/mapWithSideContent/layout/MapAndContentAndTopbar'
 	, 'src/component/base/_ExternalConfig'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
-	, 'src/component/atlas/Atlas'
-	, 'src/component/layout/TabsDisplayer'
-	, 'src/component/mapQuery/QueryOnMap'
+	, 'src/design/map/_AddAtlasComponent'
+	, 'src/design/map/_MapDesignController'
+	, 'src/design/map/_MapDesignWithTopbarAndContentLayout'
 	, 'src/redmicConfig'
 	, 'src/viewer/marineMonitoring/_ManageOgcServices'
 	, 'templates/AtlasMixedList'
@@ -19,52 +18,60 @@ define([
 	, lang
 	, Deferred
 	, moment
-	, put
-	, Controller
-	, Layout
 	, _ExternalConfig
+	, _Module
+	, _Show
 	, _Store
-	, Atlas
-	, TabsDisplayer
-	, QueryOnMap
+	, _AddAtlasComponent
+	, _MapDesignController
+	, _MapDesignWithTopbarAndContentLayout
 	, redmicConfig
 	, _ManageOgcServices
 	, AtlasMixedListTemplate
 ) {
 
-	return declare([Layout, Controller, _Store, _ManageOgcServices, _ExternalConfig], {
-		//	summary:
-		//		Vista de visor de monitorización marina. Proporciona un mapa principal y una serie de capas temáticas,
-		//		junto con el componente Atlas para cruzar datos.
+	return declare([_Module, _Show, _MapDesignController, _MapDesignWithTopbarAndContentLayout, _AddAtlasComponent,
+		_Store, _ManageOgcServices, _ExternalConfig
+	], {
+		// summary:
+		//   Vista de visor de monitorización marina. Proporciona un mapa principal y una serie de capas temáticas,
+		//   junto con el componente Atlas para cruzar datos, incluyendo soporte de consulta con dimensión temporal.
 
 		constructor: function(args) {
 
-			this.config = {
+			const defaultConfig = {
 				title: this.i18n.marineMonitoringViewerView,
 				ownChannel: 'marineMonitoringViewer',
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				_activityLayersTarget: 'activityLayersTarget',
 				externalConfigPropName: 'marineMonitoringViewerActivities',
-				_topbarNodeClassName: 'timeDimensionTopbarContainer'
+				_topbarNodeAdditionalClass: 'timeDimensionTopbarContainer'
 			};
 
-			lang.mixin(this, this.config, args);
+			lang.mixin(this, this._merge([this, defaultConfig, args]));
 		},
 
 		_setOwnCallbacksForEvents: function() {
+
+			this.inherited(arguments);
 
 			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
 		},
 
 		_setConfigurations: function() {
 
+			this.inherited(arguments);
+
+			this._externalContainerDfd = new Deferred();
+
+			this.topbarNodeClasses += `.${this._topbarNodeAdditionalClass}`;
+
 			this.mapConfig = this._merge([{
 				timeDimensionMinTime: moment().utc().startOf('day').subtract(30, 'days'),
-				getTimeDimensionExternalContainer: lang.hitch(this, this._getExternalContainer)
+				getTimeDimensionExternalContainer: () => this._externalContainerDfd
 			}, this.mapConfig || {}]);
 
 			this.atlasConfig = this._merge([{
-				parentChannel: this.getChannel(),
 				localTarget: this._activityLayersTarget,
 				addThemesBrowserFirst: true,
 				themesBrowserConfig: {
@@ -75,65 +82,19 @@ define([
 					}
 				}
 			}, this.atlasConfig || {}]);
-
-			this.queryOnMapConfig = this._merge([{
-				parentChannel: this.getChannel()
-			}, this.queryOnMapConfig || {}]);
-		},
-
-		_initialize: function() {
-
-			this._tabsDisplayer = new TabsDisplayer({
-				parentChannel: this.getChannel()
-			});
-
-			this.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
-			this.getMapChannel = lang.hitch(this.map, this.map.getChannel);
-
-			this._initializeAtlas();
-			this._initializeQueryOnMap();
-		},
-
-		_initializeAtlas: function() {
-
-			this.atlasConfig = this._merge([{
-				getMapChannel: this.getMapChannel,
-				addTabChannel: this.addTabChannel
-			}, this.atlasConfig || {}]);
-
-			this._atlas = new Atlas(this.atlasConfig);
-		},
-
-		_initializeQueryOnMap: function() {
-
-			this.queryOnMapConfig = this._merge([{
-				getMapChannel: this.getMapChannel,
-				tabsDisplayerChannel: this._tabsDisplayer.getChannel()
-			}, this.queryOnMapConfig || {}]);
-
-			this._queryOnMap = new QueryOnMap(this.queryOnMapConfig);
 		},
 
 		postCreate: function() {
 
 			this.inherited(arguments);
 
-			put(this.topbarNode, '.' + this._topbarNodeClassName);
-			this._externalContainerDfd = new Deferred();
-			this._externalContainerDfd.resolve(this.topbarNode);
+			const topbarNode = this.getLayoutNode('topbar');
+
+			this._externalContainerDfd.resolve(topbarNode);
 
 			this._emitEvt('GET_EXTERNAL_CONFIG', {
 				propertyName: this.externalConfigPropName
 			});
-
-			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
-				node: this.contentNode
-			});
-		},
-
-		_getExternalContainer: function() {
-
-			return this._externalContainerDfd;
 		},
 
 		_onGotExternalConfig: function(evt) {

@@ -118,7 +118,9 @@ define([
 				return;
 			}
 
-			this._onRefreshFailure({ error, status });
+			const errorCode = resWrapper.res.data.code;
+
+			this._onRefreshFailure({ error, errorCode, status });
 		},
 
 		_onRefreshSuccess: function(tokenData) {
@@ -131,6 +133,11 @@ define([
 		_onRefreshFailure: function(errorData) {
 
 			this._emitEvt('USER_REFRESH_ERROR', errorData);
+
+			if (errorData.status === 400 && errorData.errorCode === 'invalid_grant') {
+				console.log('  missing session, removing auth data!!');
+				this._removeAuthData();
+			}
 		},
 
 		_updateAuthRefreshData: function(data) {

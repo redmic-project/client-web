@@ -50,7 +50,9 @@ define([
 			//   Recibe un nodo de maquetación y un nombre de propiedad para referenciarlo.
 			//   Almacena el nodo para poder recuperarlo más adelante si no existía uno con ese nombre.
 
-			this._designLayoutNodes ??= {};
+			if (!this._designLayoutNodes) {
+				this._designLayoutNodes = {};
+			}
 
 			if (this._designLayoutNodes[nodePropName]) {
 				console.error(`Node with name ${nodePropName} already exists at design ${this.getChannel()}.`);

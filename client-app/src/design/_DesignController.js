@@ -47,7 +47,9 @@ define([
 
 			const propName = instancePropName || instance.getOwnChannel();
 
-			this._designComponentInstances ??= {};
+			if (!this._designComponentInstances) {
+				this._designComponentInstances = {};
+			}
 
 			if (this._designComponentInstances[propName]) {
 				console.error(`Instance with name ${propName} already exists at design ${this.getChannel()}.`);

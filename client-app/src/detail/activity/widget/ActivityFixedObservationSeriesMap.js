@@ -1,66 +1,81 @@
 define([
-	'app/designs/details/main/ActivityMap'
+	'app/base/views/extensions/_LocalSelectionView'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'dojo/query'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
+	, 'src/design/map/_AddAtlasComponent'
+	, 'src/design/map/_AddBrowserComponent'
+	, 'src/design/map/_AddMapLayerComponent'
+	, 'src/design/map/_MapDesignController'
+	, 'src/design/map/_MapDesignWithContentLayout'
 	, 'src/redmicConfig'
 	, 'templates/ObservationStationPopup'
 	, 'templates/ObservationStationList'
 ], function(
-	ActivityMap
+	_LocalSelectionView
 	, declare
 	, lang
-	, aspect
 	, query
+	, _Module
+	, _Show
+	, _Store
+	, _AddAtlasComponent
+	, _AddBrowserComponent
+	, _AddMapLayerComponent
+	, _MapDesignController
+	, _MapDesignWithContentLayout
 	, redmicConfig
 	, TemplatePopup
 	, TemplateList
 ) {
 
-	return declare(ActivityMap, {
+	return declare([_Module, _Show, _Store, _LocalSelectionView, _MapDesignController, _MapDesignWithContentLayout,
+		_AddAtlasComponent, _AddBrowserComponent, _AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar un mapa de puntos donde se registran observaciones.
 
 		constructor: function(args) {
 
-			this.config = {
+			const defaultConfig = {
 				actions: {
 					TIMESERIES_DATA: 'timeseriesData'
 				},
-				target: redmicConfig.services.activity,
-				templateTargetChange: redmicConfig.services.acousticDetectionReceptors,
-				_activeRadius: false,
+				mapLayerPopupTemplate: TemplatePopup,
+				_dataTarget: redmicConfig.services.acousticDetectionReceptors,
 				_showObservationsButtonClass: 'showObservations'
 			};
 
-			lang.mixin(this, this.config, args);
-
-			aspect.before(this, '_afterSetConfigurations', lang.hitch(this, this._setBaseConfigurations));
+			lang.mixin(this, this._merge([this, defaultConfig, args]));
 		},
 
-		_setBaseConfigurations: function() {
+		_setOwnCallbacksForEvents: function() {
 
-			this.widgetConfigs = this._merge([{
-				geographic: {
-					props: {
-						browserConfig: {
-							template: TemplateList,
-							rowConfig: {
-								buttonsConfig: {
-									listButton: [{
-										icon: 'fa-database',
-										btnId: 'showObservations',
-										returnItem: true,
-										href: '#activityFixedObservationSeriesList',
-										title: this.i18n.observations
-									}]
-								}
-							}
-						}
+			this.inherited(arguments);
+
+			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
+		},
+
+		_setConfigurations: function() {
+
+			this.inherited(arguments);
+
+			this._mergeComponentAttribute('browserConfig', {
+				template: TemplateList,
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+							icon: 'fa-database',
+							btnId: 'showObservations',
+							returnItem: true,
+							href: '#activityFixedObservationSeriesList',
+							title: this.i18n.observations
+						}]
 					}
 				}
-			}, this.widgetConfigs || {}], {
+			}, {
 				arrayMergingStrategy: 'concatenate'
 			});
 		},
@@ -69,10 +84,10 @@ define([
 
 			this.inherited(arguments);
 
-			this._subscribe(this.getChildChannel('layerInstance', 'POPUP_LOADED'),
+			this._subscribe(this.getComponentInstance('mapLayer').getChannel('POPUP_LOADED'),
 				lang.hitch(this, this._onStationPopupLoaded));
 
-			this._subscribe(this._getWidgetInstance('geographic').getChildChannel('browser', 'BUTTON_EVENT'),
+			this._subscribe(this.getComponentInstance('browser').getChannel('BUTTON_EVENT'),
 				lang.hitch(this, this._onBrowserButtonEvent));
 		},
 
@@ -98,24 +113,65 @@ define([
 			showChartsNode.onclick = lang.hitch(this, this._loadObservationSeriesData, popupData);
 		},
 
-		_getPopupContent: function(data) {
-
-			return TemplatePopup({
-				i18n: this.i18n,
-				feature: data.feature
-			});
-		},
-
 		_onBrowserButtonEvent: function(evt) {
 
-			if (evt.btnId === 'showObservations') {
-				this._loadObservationSeriesData(evt.item);
+			if (evt?.btnId !== 'showObservations') {
+				return;
 			}
+
+			this._loadObservationSeriesData(evt.item);
 		},
 
 		_loadObservationSeriesData: function(item) {
 
 			this._publish(this.getChannel('TIMESERIES_DATA'), item);
+		},
+
+		_onMeOrAncestorShown: function() {
+
+			const replacedTarget = this._getTargetWithVariableReplaced();
+
+			this._updateComponentTargetValues(replacedTarget);
+			this._requestDataFromReplacedTarget(replacedTarget);
+		},
+
+		_getTargetWithVariableReplaced: function() {
+
+			const replaceObj = {
+				id: this.pathVariableId
+			};
+
+			return lang.replace(this._dataTarget, replaceObj);
+		},
+
+		_updateComponentTargetValues: function(replacedTarget) {
+
+			const browserInstance = this.getComponentInstance('browser'),
+				searchInstance = this.getComponentInstance('search'),
+				mapLayerInstance = this.getComponentInstance('mapLayer');
+
+			this._publish(mapLayerInstance.getChannel('CHANGE_TARGET'), {
+				target: replacedTarget
+			});
+
+			this._publish(browserInstance.getChannel('UPDATE_TARGET'), {
+				target: replacedTarget,
+				refresh: true
+			});
+
+			this._publish(searchInstance.getChannel('UPDATE_TARGET'), {
+				target: replacedTarget,
+				refresh: true
+			});
+		},
+
+		_requestDataFromReplacedTarget: function(replacedTarget) {
+
+			this._emitEvt('REQUEST', {
+				method: 'GET',
+				target: replacedTarget,
+				options: {}
+			});
 		}
 	});
 });

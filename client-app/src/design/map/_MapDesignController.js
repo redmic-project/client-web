@@ -44,9 +44,9 @@ define([
 
 			this.inherited(arguments);
 
-			this.mapConfig = this._merge([{
+			this._mergeComponentAttribute('mapConfig', {
 				parentChannel: this.getChannel()
-			}, this.mapConfig || {}]);
+			});
 
 			this._MapComponentDefinition = this._prepareComponentDefinition(
 				[LeafletImpl], this.enabledMapExtensions, mapComponentExtensionDefinitions);

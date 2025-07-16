@@ -25,6 +25,16 @@ define([
 			return declare(baseDefinitionArray);
 		},
 
+		_mergeComponentAttribute: function(/*String*/ attrName, /*Object*/ objToMerge, /*Object?*/ mergeOpts) {
+			// summary:
+			//   Recibe un nombre de atributo, un objeto para mezclar con el valor actual del atributo y un objeto
+			//   opcional para configurar parámetros de la mezcla.
+			//   Asigna al atributo indicado el valor resultante entre la mezcla de su valor actual con el valor
+			//   recibido por parámetro, siguiendo las opciones de mezcla establecidas.
+
+			this[attrName] = this._merge([this[attrName] || {}, objToMerge], mergeOpts);
+		},
+
 		_initialize: function() {
 			// Método perteneciente al ciclo de vida de un componente.
 

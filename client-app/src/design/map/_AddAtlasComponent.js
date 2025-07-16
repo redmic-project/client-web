@@ -25,17 +25,17 @@ define([
 
 			const parentChannel = this.getChannel();
 
-			this.tabsDisplayerConfig = this._merge([{
+			this._mergeComponentAttribute('tabsDisplayerConfig', {
 				parentChannel
-			}, this.tabsDisplayerConfig || {}]);
+			});
 
-			this.atlasConfig = this._merge([{
+			this._mergeComponentAttribute('atlasConfig', {
 				parentChannel
-			}, this.atlasConfig || {}]);
+			});
 
-			this.queryOnMapConfig = this._merge([{
+			this._mergeComponentAttribute('queryOnMapConfig', {
 				parentChannel
-			}, this.queryOnMapConfig || {}]);
+			});
 		},
 
 		_createDesignControllerComponents: function() {
@@ -45,15 +45,21 @@ define([
 			const mapInstance = inheritedComponents.map,
 				getMapChannel = lang.hitch(mapInstance, mapInstance.getChannel);
 
-			const tabsDisplayer = this._createDesignTabDisplayerComponent(),
-				tabsDisplayerChannel = tabsDisplayer.getChannel(),
+			let tabsDisplayer = inheritedComponents.tabsDisplayer;
+
+			if (!tabsDisplayer) {
+				tabsDisplayer = this._createDesignTabDisplayerComponent();
+				lang.mixin(inheritedComponents, {tabsDisplayer});
+			}
+
+			const tabsDisplayerChannel = tabsDisplayer.getChannel(),
 				addTabChannel = tabsDisplayer.getChannel('ADD_TAB');
 
 			const atlas = this._createDesignAtlasComponent(getMapChannel, addTabChannel);
 
 			const queryOnMap = this._createDesignQueryOnMapComponent(getMapChannel, tabsDisplayerChannel);
 
-			return lang.mixin(inheritedComponents, {tabsDisplayer, atlas, queryOnMap});
+			return lang.mixin(inheritedComponents, {atlas, queryOnMap});
 		},
 
 		_createDesignTabDisplayerComponent: function() {
@@ -63,18 +69,18 @@ define([
 
 		_createDesignAtlasComponent: function(getMapChannel, addTabChannel) {
 
-			this.atlasConfig = this._merge([{
+			this._mergeComponentAttribute('atlasConfig', {
 				getMapChannel, addTabChannel
-			}, this.atlasConfig || {}]);
+			});
 
 			return new Atlas(this.atlasConfig);
 		},
 
 		_createDesignQueryOnMapComponent: function(getMapChannel, tabsDisplayerChannel) {
 
-			this.queryOnMapConfig = this._merge([{
+			this._mergeComponentAttribute('queryOnMapConfig', {
 				getMapChannel, tabsDisplayerChannel
-			}, this.queryOnMapConfig || {}]);
+			});
 
 			return new QueryOnMap(this.queryOnMapConfig);
 		},

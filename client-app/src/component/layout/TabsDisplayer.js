@@ -114,10 +114,11 @@ define([
 
 		_getTabNode: function(req) {
 
-			var props = this._getTabProps(req),
+			var prepend = req.prepend,
+				props = this._getTabProps(req),
 				node = new ContentPane(props);
 
-			this._container.addChild(node);
+			this._container.addChild(node, prepend ? 0 : null);
 
 			this._customizeTab(props);
 

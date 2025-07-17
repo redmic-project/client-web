@@ -537,20 +537,25 @@ define([
 
 		_setCenter: function(obj) {
 
-			var markerId = obj.markerId,
-				layer = this._getMarkerById(markerId),
-				objEmit = {
-					options: obj.options
-				};
+			const markerId = obj.markerId,
+				item = obj.item,
+				options = obj.options;
+
+			let layer = this._getMarkerById(markerId),
+				center;
 
 			if (layer) {
-				objEmit.center = layer.getLatLng();
+				center = layer.getLatLng();
 			} else {
 				layer = this._getMarkerInCluster(markerId);
-				objEmit.center = layer.averagePosition;
+				center = layer?.averagePosition;
 			}
 
-			this._emitEvt('SET_CENTER', objEmit);
+			if (!center) {
+				center = this._getLatLng(item?.coordinates?.[1], item?.coordinates?.[0]);
+			}
+
+			this._emitEvt('SET_CENTER', {center, options});
 		}
 	});
 });

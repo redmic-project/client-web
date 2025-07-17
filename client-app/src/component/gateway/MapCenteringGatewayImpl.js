@@ -53,6 +53,7 @@ define([
 
 			this._emitEvt('SET_CENTER', {
 				markerId: itemId,
+				item: item,
 				options: {
 					animate: true,
 					duration: this.centeringDuration

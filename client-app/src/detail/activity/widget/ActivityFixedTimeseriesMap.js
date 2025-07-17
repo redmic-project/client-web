@@ -1,6 +1,5 @@
 define([
-	'app/base/views/extensions/_LocalSelectionView'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/query'
 	, 'src/component/base/_Filter'
@@ -16,8 +15,7 @@ define([
 	, 'templates/SurveyStationTimeseriesPopup'
 	, 'templates/SurveyStationList'
 ], function(
-	_LocalSelectionView
-	, declare
+	declare
 	, lang
 	, query
 	, _Filter
@@ -34,8 +32,8 @@ define([
 	, TemplateList
 ) {
 
-	return declare([_Module, _Show, _Store, _Filter, _LocalSelectionView, _MapDesignController,
-		_MapDesignWithContentLayout, _AddAtlasComponent, _AddBrowserComponent, _AddMapLayerComponent], {
+	return declare([_Module, _Show, _Store, _Filter, _MapDesignController, _MapDesignWithContentLayout,
+		_AddAtlasComponent, _AddBrowserComponent, _AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar un mapa de estaciones que producen series de datos temporales.
 

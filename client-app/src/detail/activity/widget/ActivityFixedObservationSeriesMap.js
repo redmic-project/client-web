@@ -1,6 +1,5 @@
 define([
-	'app/base/views/extensions/_LocalSelectionView'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/query'
 	, 'src/component/base/_Module'
@@ -15,8 +14,7 @@ define([
 	, 'templates/ObservationStationPopup'
 	, 'templates/ObservationStationList'
 ], function(
-	_LocalSelectionView
-	, declare
+	declare
 	, lang
 	, query
 	, _Module
@@ -32,8 +30,8 @@ define([
 	, TemplateList
 ) {
 
-	return declare([_Module, _Show, _Store, _LocalSelectionView, _MapDesignController, _MapDesignWithContentLayout,
-		_AddAtlasComponent, _AddBrowserComponent, _AddMapLayerComponent], {
+	return declare([_Module, _Show, _Store, _MapDesignController, _MapDesignWithContentLayout, _AddAtlasComponent,
+		_AddBrowserComponent, _AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar un mapa de puntos donde se registran observaciones.
 

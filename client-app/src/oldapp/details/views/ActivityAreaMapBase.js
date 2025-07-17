@@ -1,75 +1,126 @@
 define([
-	"app/designs/details/main/ActivityMap"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/base/_Filter'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
+	, 'src/design/map/_AddAtlasComponent'
+	, 'src/design/map/_AddBrowserComponent'
+	, 'src/design/map/_AddMapLayerComponent'
+	, 'src/design/map/_MapDesignController'
+	, 'src/design/map/_MapDesignWithContentLayout'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "src/component/map/layer/GeoJsonLayerImpl"
-	, "templates/AreaPopup"
-	, "templates/AreaList"
+	, 'templates/AreaPopup'
+	, 'templates/AreaList'
 ], function(
-	ActivityMap
-	, redmicConfig
-	, declare
+	declare
 	, lang
-	, aspect
-	, GeoJsonLayerImpl
+	, _Filter
+	, _Module
+	, _Show
+	, _Store
+	, _AddAtlasComponent
+	, _AddBrowserComponent
+	, _AddMapLayerComponent
+	, _MapDesignController
+	, _MapDesignWithContentLayout
+	, redmicConfig
 	, TemplatePopup
 	, TemplateList
-){
-	return declare(ActivityMap, {
+) {
+
+	return declare([_Module, _Show, _Store, _Filter, _MapDesignController, _MapDesignWithContentLayout,
+		_AddAtlasComponent, _AddBrowserComponent, _AddMapLayerComponent], {
 		//	summary:
-		//
+		//		Widget para mostrar en un mapa las geometrías asociadas a una actividad.
 
-		constructor: function (args) {
+		constructor: function(args) {
 
-			this.config = {
-				target: redmicConfig.services.activity,
-				templateTargetChange: lang.replace(redmicConfig.services.areasByActivity, {activityid: '{id}'}),
-				templatePopup: TemplatePopup,
-				_activeRadius: false,
-				activityCategory: ["ar"],
-				definitionLayer: [GeoJsonLayerImpl]
+			const defaultConfig = {
+				_dataTarget: redmicConfig.services.areasByActivity,
+				mapLayerDefinition: 'geojson',
+				mapLayerPopupTemplate: TemplatePopup
 			};
 
-			lang.mixin(this, this.config, args);
-
-			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setBaseConfigurations));
+			lang.mixin(this, this._merge([this, defaultConfig, args]));
 		},
 
-		_setBaseConfigurations: function() {
+		_setOwnCallbacksForEvents: function() {
 
-			this.widgetConfigs = this._merge([{
-				geographic: {
-					props: {
-						browserConfig: {
-							template: TemplateList,
-							rowConfig: {
-								buttonsConfig: {
-									listButton: [{
-										icon: "fa-map-marker",
-										title: 'mapCentering',
-										btnId: "mapCentering",
-										returnItem: true
-									}]
-								}
-							}
-						}
-					}
-				}
-			}, this.widgetConfigs || {}]);
+			this.inherited(arguments);
 
-			this.layerConfig = this._merge([{
-				onEachFeature: lang.hitch(this, this._onEachFeature)
-			}, this.layerConfig || {}]);
+			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
 		},
 
-		_onEachFeature: function(feature, layer) {
+		_setConfigurations: function() {
 
-			layer.bindPopup(this.templatePopup({
-				feature: feature,
-				i18n: this.i18n
-			}));
+			this.inherited(arguments);
+
+			this.mergeComponentAttribute('browserConfig', {
+				template: TemplateList
+			});
+		},
+
+		_beforeInitialize: function() {
+
+			this.inherited(arguments);
+
+			const queryChannel = this.queryChannel;
+
+			this.mergeComponentAttribute('browserConfig', {
+				queryChannel
+			});
+
+			this.mergeComponentAttribute('searchConfig', {
+				queryChannel
+			});
+		},
+
+		_onMeOrAncestorShown: function() {
+
+			const replacedTarget = this._getTargetWithVariableReplaced();
+
+			this._updateComponentTargetValues(replacedTarget);
+			this._requestDataFromReplacedTarget(replacedTarget);
+		},
+
+		_getTargetWithVariableReplaced: function() {
+
+			const replaceObj = {
+				activityid: this.pathVariableId
+			};
+
+			return lang.replace(this._dataTarget, replaceObj);
+		},
+
+		_updateComponentTargetValues: function(replacedTarget) {
+
+			const browserInstance = this.getComponentInstance('browser'),
+				searchInstance = this.getComponentInstance('search'),
+				mapLayerInstance = this.getComponentInstance('mapLayer');
+
+			this._publish(mapLayerInstance.getChannel('CHANGE_TARGET'), {
+				target: replacedTarget
+			});
+
+			this._publish(browserInstance.getChannel('UPDATE_TARGET'), {
+				target: replacedTarget,
+				refresh: true
+			});
+
+			this._publish(searchInstance.getChannel('UPDATE_TARGET'), {
+				target: replacedTarget,
+				refresh: true
+			});
+		},
+
+		_requestDataFromReplacedTarget: function(replacedTarget) {
+
+			this._publish(this.getChannel('UPDATE_TARGET'), {
+				target: replacedTarget,
+				refresh: true
+			});
 		}
 	});
 });

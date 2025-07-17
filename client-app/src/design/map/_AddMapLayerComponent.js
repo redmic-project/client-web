@@ -53,11 +53,20 @@ define([
 				parentChannel,
 				selectorChannel: parentChannel,
 				idProperty: 'uuid',
-				categoryStyle: 'bubbles',
-				simpleSelection: true,
-				getMarkerCategory: lang.hitch(this, this._getMarkerCategory),
-				getPopupContent: lang.hitch(this, this._getPopupContent)
+				simpleSelection: true
 			});
+
+			if (this.mapLayerDefinition === 'cluster') {
+				this.mergeComponentAttribute('mapLayerConfig', {
+					categoryStyle: 'bubbles',
+					getMarkerCategory: lang.hitch(this, this._getMarkerCategory),
+					getPopupContent: lang.hitch(this, this._getPopupContent)
+				});
+			} else if (this.mapLayerDefinition === 'geojson') {
+				this.mergeComponentAttribute('mapLayerConfig', {
+					onEachFeature: lang.hitch(this, this._bindPopupToFeature)
+				});
+			}
 
 			this.mergeComponentAttribute('mapCenteringConfig', {
 				parentChannel
@@ -148,6 +157,14 @@ define([
 				i18n: this.i18n,
 				feature: data.feature
 			});
+		},
+
+		_bindPopupToFeature: function(feature, layer) {
+
+			layer.bindPopup(this.mapLayerPopupTemplate?.({
+				feature: feature,
+				i18n: this.i18n
+			}));
 		}
 	});
 });

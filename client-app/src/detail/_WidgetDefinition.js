@@ -1,16 +1,16 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/detail/activity/widget/ActivityTrackingMap'
-	, 'app/details/views/ActivityAreaMapBase'
-	, 'app/details/views/ActivityCitationMapBase'
+	, 'src/detail/activity/widget/ActivityAreaMap'
+	, 'src/detail/activity/widget/ActivityCitationMap'
 	, 'src/detail/activity/widget/ActivityFixedObservationSeriesList'
 	, 'src/detail/activity/widget/ActivityFixedObservationSeriesMap'
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesLineCharts'
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesMap'
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesWindrose'
-	, 'app/details/views/ActivityInfrastructureMapBase'
+	, 'src/detail/activity/widget/ActivityInfrastructureMap'
 	, 'app/details/views/ActivityLayerMapBase'
+	, 'src/detail/activity/widget/ActivityTrackingMap'
 	, 'src/util/Credentials'
 	, 'src/component/base/_Filter'
 	, 'src/component/browser/_ButtonsInRow'
@@ -31,16 +31,16 @@ define([
 ], function(
 	declare
 	, lang
-	, ActivityTrackingMap
-	, ActivityAreaMapBase
-	, ActivityCitationMapBase
+	, ActivityAreaMap
+	, ActivityCitationMap
 	, ActivityFixedObservationSeriesList
 	, ActivityFixedObservationSeriesMap
 	, ActivityFixedTimeseriesLineCharts
 	, ActivityFixedTimeseriesMap
 	, ActivityFixedTimeseriesWindrose
-	, ActivityInfrastructureMapBase
+	, ActivityInfrastructureMap
 	, ActivityLayerMapBase
+	, ActivityTrackingMap
 	, Credentials
 	, _Filter
 	, _ButtonsInRow
@@ -268,7 +268,7 @@ define([
 			return {
 				width: 6,
 				height: 6,
-				type: ActivityCitationMapBase,
+				type: ActivityCitationMap,
 				props: {
 					title: 'citations',
 					pathVariableId: this._activityData.id
@@ -314,7 +314,7 @@ define([
 			return {
 				width: 6,
 				height: 6,
-				type: ActivityInfrastructureMapBase,
+				type: ActivityInfrastructureMap,
 				props: {
 					title: 'infrastructures',
 					pathVariableId: this._activityData.id
@@ -327,7 +327,7 @@ define([
 			return {
 				width: 6,
 				height: 6,
-				type: ActivityAreaMapBase,
+				type: ActivityAreaMap,
 				props: {
 					title: 'area',
 					pathVariableId: this._activityData.id

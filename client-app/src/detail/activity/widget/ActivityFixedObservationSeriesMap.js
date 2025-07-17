@@ -62,7 +62,7 @@ define([
 
 			this.inherited(arguments);
 
-			this._mergeComponentAttribute('browserConfig', {
+			this.mergeComponentAttribute('browserConfig', {
 				template: TemplateList,
 				rowConfig: {
 					buttonsConfig: {
@@ -80,25 +80,29 @@ define([
 			});
 		},
 
-		_afterShow: function() {
+		_defineSubscriptions: function() {
 
 			this.inherited(arguments);
 
-			this._subscribe(this.getComponentInstance('mapLayer').getChannel('POPUP_LOADED'),
-				lang.hitch(this, this._onStationPopupLoaded));
+			const mapLayerInstance = this.getComponentInstance('mapLayer'),
+				browserInstance = this.getComponentInstance('browser');
 
-			this._subscribe(this.getComponentInstance('browser').getChannel('BUTTON_EVENT'),
-				lang.hitch(this, this._onBrowserButtonEvent));
+			this.subscriptionsConfig.push({
+				channel : mapLayerInstance.getChannel('POPUP_LOADED'),
+				callback: '_subMapLayerStationPopupLoaded'
+			},{
+				channel : browserInstance.getChannel('BUTTON_EVENT'),
+				callback: '_subBrowserShowObservationsButtonEvent',
+				options: {
+					predicate: (evt) => evt?.btnId === 'showObservations'
+				}
+			});
 		},
 
-		_onStationPopupLoaded: function(res) {
+		_subMapLayerStationPopupLoaded: function(res) {
 
-			if (!res) {
-				return;
-			}
-
-			var popupNode = res._contentNode,
-				popupData = res._source.feature.properties;
+			var popupNode = res?._contentNode,
+				popupData = res?._source?.feature?.properties;
 
 			if (!popupNode || !popupData) {
 				return;
@@ -113,11 +117,7 @@ define([
 			showChartsNode.onclick = lang.hitch(this, this._loadObservationSeriesData, popupData);
 		},
 
-		_onBrowserButtonEvent: function(evt) {
-
-			if (evt?.btnId !== 'showObservations') {
-				return;
-			}
+		_subBrowserShowObservationsButtonEvent: function(evt) {
 
 			this._loadObservationSeriesData(evt.item);
 		},

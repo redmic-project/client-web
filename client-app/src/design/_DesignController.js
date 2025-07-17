@@ -9,7 +9,7 @@ define([
 		//   Base común para los controladores de diseño.
 		//   Reúne funciones básicas usadas por todos los controladores de diseño.
 
-		_prepareComponentDefinition: function(/*Array*/ baseDefinitionArray, /*Object*/ extensionEnableFlags,
+		prepareComponentDefinition: function(/*Array*/ baseDefinitionArray, /*Object*/ extensionEnableFlags,
 			/*Object*/ extensionDefinitions) {
 			// summary:
 			//   Recibe un array de definiciones base del componente y dos objetos, uno de flags de activación y otro
@@ -25,7 +25,7 @@ define([
 			return declare(baseDefinitionArray);
 		},
 
-		_mergeComponentAttribute: function(/*String*/ attrName, /*Object*/ objToMerge, /*Object?*/ mergeOpts) {
+		mergeComponentAttribute: function(/*String*/ attrName, /*Object*/ objToMerge, /*Object?*/ mergeOpts) {
 			// summary:
 			//   Recibe un nombre de atributo, un objeto para mezclar con el valor actual del atributo y un objeto
 			//   opcional para configurar parámetros de la mezcla.
@@ -41,7 +41,7 @@ define([
 			this.inherited(arguments);
 
 			// Este método debe devolver un objeto con las instancias de los componentes, indexadas por su propName.
-			const componentInstances = this._createDesignControllerComponents?.();
+			const componentInstances = this.createDesignControllerComponents?.();
 
 			for (let key in componentInstances) {
 				this._setComponentInstance(componentInstances[key], key);

@@ -25,20 +25,20 @@ define([
 
 			const parentChannel = this.getChannel();
 
-			this._mergeComponentAttribute('tabsDisplayerConfig', {
+			this.mergeComponentAttribute('tabsDisplayerConfig', {
 				parentChannel
 			});
 
-			this._mergeComponentAttribute('atlasConfig', {
+			this.mergeComponentAttribute('atlasConfig', {
 				parentChannel
 			});
 
-			this._mergeComponentAttribute('queryOnMapConfig', {
+			this.mergeComponentAttribute('queryOnMapConfig', {
 				parentChannel
 			});
 		},
 
-		_createDesignControllerComponents: function() {
+		createDesignControllerComponents: function() {
 
 			let inheritedComponents = this.inherited(arguments);
 
@@ -69,7 +69,7 @@ define([
 
 		_createDesignAtlasComponent: function(getMapChannel, addTabChannel) {
 
-			this._mergeComponentAttribute('atlasConfig', {
+			this.mergeComponentAttribute('atlasConfig', {
 				getMapChannel, addTabChannel
 			});
 
@@ -78,14 +78,14 @@ define([
 
 		_createDesignQueryOnMapComponent: function(getMapChannel, tabsDisplayerChannel) {
 
-			this._mergeComponentAttribute('queryOnMapConfig', {
+			this.mergeComponentAttribute('queryOnMapConfig', {
 				getMapChannel, tabsDisplayerChannel
 			});
 
 			return new QueryOnMap(this.queryOnMapConfig);
 		},
 
-		_populateDesignLayoutNodes: function() {
+		populateDesignLayoutNodes: function() {
 
 			this.inherited(arguments);
 

@@ -36,13 +36,13 @@ define([
 			this.inherited(arguments);
 
 			// Este método debe devolver un objeto con los nodos de maquetación, indexados por su propName.
-			const layoutNodes = this._createDesignLayoutNodes?.();
+			const layoutNodes = this.createDesignLayoutNodes?.();
 
 			for (let propName in layoutNodes) {
 				this._setLayoutNode(layoutNodes[propName], propName);
 			}
 
-			this._populateDesignLayoutNodes?.();
+			this.populateDesignLayoutNodes?.();
 		},
 
 		_setLayoutNode: function(/*Object*/ node, /*String*/ nodePropName) {

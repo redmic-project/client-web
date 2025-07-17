@@ -49,7 +49,7 @@ define([
 
 			const parentChannel = this.getChannel();
 
-			this._mergeComponentAttribute('mapLayerConfig', {
+			this.mergeComponentAttribute('mapLayerConfig', {
 				parentChannel,
 				selectorChannel: parentChannel,
 				idProperty: 'uuid',
@@ -59,17 +59,17 @@ define([
 				getPopupContent: lang.hitch(this, this._getPopupContent)
 			});
 
-			this._mergeComponentAttribute('mapCenteringConfig', {
+			this.mergeComponentAttribute('mapCenteringConfig', {
 				parentChannel
 			});
 
 			const mapLayerComponentBaseDefinition = mapLayerComponentDefinitions[this.mapLayerDefinition];
 
-			this._MapLayerComponentDefinition = this._prepareComponentDefinition([mapLayerComponentBaseDefinition],
+			this._MapLayerComponentDefinition = this.prepareComponentDefinition([mapLayerComponentBaseDefinition],
 				this.enabledMapLayerExtensions, mapLayerComponentExtensionDefinitions);
 		},
 
-		_createDesignControllerComponents: function() {
+		createDesignControllerComponents: function() {
 
 			let inheritedComponents = this.inherited(arguments);
 
@@ -83,7 +83,7 @@ define([
 
 			const mapChannel = mapInstance.getChannel();
 
-			this._mergeComponentAttribute('mapLayerConfig', {
+			this.mergeComponentAttribute('mapLayerConfig', {
 				mapChannel
 			});
 
@@ -95,7 +95,7 @@ define([
 			return new MapCenteringGatewayImpl(this.mapCenteringConfig);
 		},
 
-		_populateDesignLayoutNodes: function() {
+		populateDesignLayoutNodes: function() {
 
 			this.inherited(arguments);
 

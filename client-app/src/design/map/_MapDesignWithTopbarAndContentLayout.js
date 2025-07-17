@@ -28,7 +28,7 @@ define([
 			lang.mixin(this, this._merge([this, defaultConfig, args]));
 		},
 
-		_createDesignLayoutNodes: function() {
+		createDesignLayoutNodes: function() {
 
 			const topbar = put(this.domNode, `div.${this.topbarNodeClasses}`),
 				center = put(this.domNode, `div.${this.centerNodeClasses}`),
@@ -38,7 +38,7 @@ define([
 			return {topbar, center, map, additionalContent};
 		},
 
-		_populateDesignLayoutNodes: function() {
+		populateDesignLayoutNodes: function() {
 
 			const mapPropName = 'map',
 				mapInstance = this.getComponentInstance(mapPropName),

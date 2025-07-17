@@ -44,15 +44,15 @@ define([
 
 			this.inherited(arguments);
 
-			this._mergeComponentAttribute('mapConfig', {
+			this.mergeComponentAttribute('mapConfig', {
 				parentChannel: this.getChannel()
 			});
 
-			this._MapComponentDefinition = this._prepareComponentDefinition(
+			this._MapComponentDefinition = this.prepareComponentDefinition(
 				[LeafletImpl], this.enabledMapExtensions, mapComponentExtensionDefinitions);
 		},
 
-		_createDesignControllerComponents: function() {
+		createDesignControllerComponents: function() {
 
 			const map = new this._MapComponentDefinition(this.mapConfig);
 

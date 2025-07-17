@@ -13,7 +13,7 @@ define([
 	, 'src/component/layout/TabsDisplayer'
 	, 'src/component/search/TextImpl'
 	, 'templates/DefaultList'
-], function (
+], function(
 	declare
 	, lang
 	, _ButtonsInRow
@@ -62,17 +62,17 @@ define([
 			const parentChannel = this.getChannel(),
 				target = this._getTarget?.();
 
-			this._mergeComponentAttribute('tabsDisplayerConfig', {
+			this.mergeComponentAttribute('tabsDisplayerConfig', {
 				parentChannel
 			});
 
-			this._mergeComponentAttribute('searchConfig', {
+			this.mergeComponentAttribute('searchConfig', {
 				parentChannel,
 				target,
 				itemLabel: null
 			});
 
-			this._mergeComponentAttribute('browserConfig', {
+			this.mergeComponentAttribute('browserConfig', {
 				parentChannel,
 				selectorChannel: parentChannel,
 				target,
@@ -94,12 +94,12 @@ define([
 				arrayMergingStrategy: 'concatenate'
 			});
 
-			this._BrowserComponentDefinition = this._prepareComponentDefinition(
+			this._BrowserComponentDefinition = this.prepareComponentDefinition(
 				[ListImpl, _Framework, _ButtonsInRow, _GeoJsonParser], this.enabledBrowserExtensions,
 				browserComponentExtensionDefinitions);
 		},
 
-		_createDesignControllerComponents: function() {
+		createDesignControllerComponents: function() {
 
 			let inheritedComponents = this.inherited(arguments);
 
@@ -141,7 +141,7 @@ define([
 			return new TextImpl(this.searchConfig);
 		},
 
-		_populateDesignLayoutNodes: function() {
+		populateDesignLayoutNodes: function() {
 
 			this.inherited(arguments);
 
@@ -173,7 +173,7 @@ define([
 			});
 		},
 
-		_defineSubscriptions: function () {
+		_defineSubscriptions: function() {
 
 			this.inherited(arguments);
 

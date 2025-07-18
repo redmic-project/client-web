@@ -38,6 +38,7 @@ define([
 		constructor: function(args) {
 
 			const defaultConfig = {
+				ownChannel: 'activityAreaMap',
 				_dataTarget: redmicConfig.services.areasByActivity,
 				mapLayerDefinition: 'geojson',
 				mapLayerPopupTemplate: TemplatePopup

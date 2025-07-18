@@ -38,6 +38,7 @@ define([
 		constructor: function(args) {
 
 			const defaultConfig = {
+				ownChannel: 'activityCitationMap',
 				enabledMapLayerExtensions: {
 					radius: true
 				},

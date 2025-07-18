@@ -30,9 +30,8 @@ define([
 	, AtlasMixedListTemplate
 ) {
 
-	return declare([_Module, _Show, _MapDesignController, _MapDesignWithTopbarAndContentLayout, _AddAtlasComponent,
-		_Store, _ManageOgcServices, _ExternalConfig
-	], {
+	return declare([_Module, _Show, _Store, _MapDesignController, _MapDesignWithTopbarAndContentLayout,
+		_AddAtlasComponent, _ManageOgcServices, _ExternalConfig], {
 		// summary:
 		//   Vista de visor de monitorización marina. Proporciona un mapa principal y una serie de capas temáticas,
 		//   junto con el componente Atlas para cruzar datos, incluyendo soporte de consulta con dimensión temporal.
@@ -43,7 +42,6 @@ define([
 				title: this.i18n.marineMonitoringViewerView,
 				ownChannel: 'marineMonitoringViewer',
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
-				_activityLayersTarget: 'activityLayersTarget',
 				externalConfigPropName: 'marineMonitoringViewerActivities',
 				_topbarNodeAdditionalClass: 'timeDimensionTopbarContainer'
 			};
@@ -66,13 +64,12 @@ define([
 
 			this.topbarNodeClasses += `.${this._topbarNodeAdditionalClass}`;
 
-			this.mapConfig = this._merge([{
+			this.mergeComponentAttribute('mapConfig', {
 				timeDimensionMinTime: moment().utc().startOf('day').subtract(30, 'days'),
 				getTimeDimensionExternalContainer: () => this._externalContainerDfd
-			}, this.mapConfig || {}]);
+			});
 
-			this.atlasConfig = this._merge([{
-				localTarget: this._activityLayersTarget,
+			this.mergeComponentAttribute('atlasConfig', {
 				addThemesBrowserFirst: true,
 				themesBrowserConfig: {
 					title: this.i18n.contents,
@@ -81,7 +78,7 @@ define([
 						disableDragHandlerOnCreation: true
 					}
 				}
-			}, this.atlasConfig || {}]);
+			});
 		},
 
 		postCreate: function() {
@@ -99,29 +96,9 @@ define([
 
 		_onGotExternalConfig: function(evt) {
 
-			var configValue = evt[this.externalConfigPropName];
+			const activities = evt[this.externalConfigPropName];
 
-			this._emitEvt('REQUEST', {
-				target: this.target,
-				action: '_search',
-				method: 'POST',
-				query: {
-					terms: {
-						activities: configValue
-					}
-				},
-				requesterId: this.getChannel()
-			});
-		},
-
-		_dataAvailable: function(res, resWrapper) {
-
-			var reqTerms = resWrapper.req.query.terms;
-			if (!reqTerms || !reqTerms.activities) {
-				return;
-			}
-
-			this._onActivityLayersData(res);
+			this._requestLayersDataFilteredByActivityIds(activities);
 		}
 	});
 });

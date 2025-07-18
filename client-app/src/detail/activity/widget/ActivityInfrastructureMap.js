@@ -38,6 +38,7 @@ define([
 		constructor: function(args) {
 
 			const defaultConfig = {
+				ownChannel: 'activityInfrastructureMap',
 				_dataTarget: redmicConfig.services.infrastructureByActivity,
 				mapLayerPopupTemplate: TemplatePopup
 			};

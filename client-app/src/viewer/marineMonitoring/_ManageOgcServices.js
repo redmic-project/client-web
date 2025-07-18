@@ -19,12 +19,47 @@ define([
 
 		constructor: function(args) {
 
-			this.config = {
+			const defaultConfig = {
 				target: redmicConfig.services.atlasLayer,
+				_localLayersTarget: 'ogcServicesLayerDataLocalTarget',
 				defaultLayerItemState: false
 			};
 
-			lang.mixin(this, this.config, args);
+			lang.mixin(this, this._merge([this, defaultConfig, args]));
+		},
+
+		_setConfigurations: function() {
+
+			this.inherited(arguments);
+
+			this.mergeComponentAttribute('atlasConfig', {
+				localTarget: this._localLayersTarget
+			});
+		},
+
+		_requestLayersDataFilteredByActivityIds: function(activities) {
+
+			this._emitEvt('REQUEST', {
+				target: this.target,
+				action: '_search',
+				method: 'POST',
+				query: {
+					terms: {activities}
+				},
+				requesterId: this.getChannel()
+			});
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			this.inherited(arguments);
+
+			var reqTerms = resWrapper.req.query.terms;
+			if (!reqTerms || !reqTerms.activities) {
+				return;
+			}
+
+			this._onActivityLayersData(res);
 		},
 
 		_onActivityLayersData: function(res) {
@@ -33,7 +68,7 @@ define([
 
 			this._emitEvt('INJECT_DATA', {
 				data: layersData,
-				target: this._activityLayersTarget
+				target: this._localLayersTarget
 			});
 		},
 

@@ -40,6 +40,7 @@ define([
 		constructor: function(args) {
 
 			const defaultConfig = {
+				ownChannel: 'activityFixedTimeseriesMap',
 				actions: {
 					TIMESERIES_DATA: 'timeseriesData'
 				},

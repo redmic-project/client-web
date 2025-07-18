@@ -9,7 +9,7 @@ define([
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesMap'
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesWindrose'
 	, 'src/detail/activity/widget/ActivityInfrastructureMap'
-	, 'app/details/views/ActivityLayerMapBase'
+	, 'src/detail/activity/widget/ActivityLayerMap'
 	, 'src/detail/activity/widget/ActivityTrackingMap'
 	, 'src/util/Credentials'
 	, 'src/component/base/_Filter'
@@ -39,7 +39,7 @@ define([
 	, ActivityFixedTimeseriesMap
 	, ActivityFixedTimeseriesWindrose
 	, ActivityInfrastructureMap
-	, ActivityLayerMapBase
+	, ActivityLayerMap
 	, ActivityTrackingMap
 	, Credentials
 	, _Filter
@@ -281,7 +281,7 @@ define([
 			return {
 				width: 6,
 				height: 6,
-				type: ActivityLayerMapBase,
+				type: ActivityLayerMap,
 				props: {
 					title: 'layers',
 					pathVariableId: this._activityData.id

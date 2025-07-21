@@ -151,7 +151,7 @@ define([], function() {
 		'register': baseUri + 'user/register',
 		'role': baseUri + 'user/roles',
 		'userSector': baseUri + 'user/sectors',
-		'profile': baseUri + 'user/profile',
+		'profile': baseUri + 'user/profile/',
 		'activateAccount': baseUri + 'user/activateAccount',
 		'changeUserSector': baseUri + 'user/profile/changeSector',
 		'changeEmail': baseUri + 'user/profile/changeEmail',

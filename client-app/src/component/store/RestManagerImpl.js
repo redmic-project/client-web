@@ -72,11 +72,11 @@ define([
 
 		_getTargetWithEndingSlash: function(target) {
 
-			if (target.indexOf('?') === -1 && target[target.length - 1] !== '/') {
-				target += '/';
+			if (target.includes('?') || target.endsWith('/')) {
+				return target;
 			}
 
-			return target;
+			return target + '/';
 		},
 
 		_launchRequest: function(url, options) {
@@ -153,14 +153,14 @@ define([
 
 		_getGetRequestTarget: function(target, req) {
 
-			var targetWithSlash = this._getTargetWithEndingSlash(target),
-				id = req.id;
+			const id = req.id,
+				idType = typeof id;
 
-			if (typeof id === 'string' || typeof id === 'number') {
-				return targetWithSlash + id;
+			if (idType === 'string' || idType === 'number') {
+				return this._getTargetWithEndingSlash(target) + id;
 			}
 
-			return targetWithSlash;
+			return target;
 		},
 
 		_getGetRequestOptions: function(req) {
@@ -190,10 +190,13 @@ define([
 
 		_getRequestRequestTarget: function(target, req) {
 
-			var targetWithSlash = this._getTargetWithEndingSlash(target),
-				action = req.action || '';
+			const action = req.action;
 
-			return targetWithSlash + action;
+			if (action?.length) {
+				return this._getTargetWithEndingSlash(target) + action;
+			}
+
+			return target;
 		},
 
 		_getRequestRequestOptions: function(req) {
@@ -295,14 +298,13 @@ define([
 
 		_getSaveRequestTarget: function(target, req) {
 
-			const targetWithSlash = this._getTargetWithEndingSlash(target),
-				id = this._getItemIdFromSaveRequest(req);
+			const id = this._getItemIdFromSaveRequest(req);
 
-			if (!id) {
-				return targetWithSlash;
+			if (id) {
+				return this._getTargetWithEndingSlash(target) + id;
 			}
 
-			return targetWithSlash + id;
+			return target;
 		},
 
 		_getItemIdFromSaveRequest: function(req) {
@@ -364,7 +366,7 @@ define([
 
 		_getRemoveRequestTarget: function(target, req) {
 
-			var targetWithSlash = this._getTargetWithEndingSlash(target),
+			const targetWithSlash = this._getTargetWithEndingSlash(target),
 				id = req.id;
 
 			return targetWithSlash + id;

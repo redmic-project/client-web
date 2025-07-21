@@ -77,6 +77,14 @@ define([
 			var atlasItems = res.data.data;
 
 			return atlasItems.map(lang.hitch(this, this._getAtlasLayerItemToInject));
+		},
+
+		_getAtlasLayerItemToInject: function(atlasItem) {
+
+			const inheritedAtlasItem = this.inherited(arguments),
+				providedByView = true;
+
+			return this._merge([inheritedAtlasItem, {providedByView}]);
 		}
 	});
 });

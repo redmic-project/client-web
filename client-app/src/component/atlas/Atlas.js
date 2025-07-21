@@ -90,10 +90,7 @@ define([
 								icon: 'fa-trash-o',
 								btnId: 'remove',
 								title: 'remove',
-								condition: function(atlasLayerItem) {
-
-									return !!atlasLayerItem.atlasItem.atlas;
-								},
+								condition: atlasLayerItem => !atlasLayerItem.providedByView,
 								returnItem: true
 							}]
 						}

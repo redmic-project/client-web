@@ -2,6 +2,9 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/gateway/MapCenteringGatewayImpl'
+	, 'src/component/map/layer/_AddFilter'
+	, 'src/component/map/layer/_ListenBounds'
+	, 'src/component/map/layer/_ListenZoom'
 	, 'src/component/map/layer/_RadiusOnClick'
 	, 'src/component/map/layer/GeoJsonLayerImpl'
 	, 'src/component/map/layer/PruneClusterLayerImpl'
@@ -9,6 +12,9 @@ define([
 	declare
 	, lang
 	, MapCenteringGatewayImpl
+	, _AddFilter
+	, _ListenBounds
+	, _ListenZoom
 	, _RadiusOnClick
 	, GeoJsonLayerImpl
 	, PruneClusterLayerImpl
@@ -20,6 +26,9 @@ define([
 	};
 
 	const mapLayerComponentExtensionDefinitions = {
+		filter: _AddFilter,
+		listenBounds: _ListenBounds,
+		listenZoom: _ListenZoom,
 		radius: _RadiusOnClick
 	};
 
@@ -35,6 +44,9 @@ define([
 			const defaultConfig = {
 				mapLayerDefinition: 'cluster',
 				enabledMapLayerExtensions: {
+					filter: false,
+					listenBounds: false,
+					listenZoom: false,
 					radius: false
 				},
 				mapLayerPopupTemplate: null

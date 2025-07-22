@@ -9,7 +9,7 @@ define([
 	, 'templates/SpeciesInfo'
 	, 'templates/SpeciesTitle'
 	, 'src/detail/_DetailRelatedToActivity'
-	, 'app/designs/details/main/SpeciesLocation'
+	, 'src/detail/species/widget/SpeciesLocationMap'
 ], function(
 	redmicConfig
 	, declare
@@ -21,7 +21,7 @@ define([
 	, TemplateInfo
 	, TemplateTitle
 	, _DetailRelatedToActivity
-	, SpeciesLocation
+	, SpeciesLocationMap
 ) {
 
 	return declare([_DetailRelatedToActivity, _GenerateReport], {
@@ -74,9 +74,9 @@ define([
 				},
 				documentList: documentListConfig,
 				map: {
-					width: 6,
-					height: 4,
-					type: SpeciesLocation,
+					width: 3,
+					height: 3,
+					type: SpeciesLocationMap,
 					props: {
 						title: 'location',
 						pathVariableId: this.pathVariableId

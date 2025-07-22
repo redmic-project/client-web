@@ -374,14 +374,13 @@ define([
 
 			this.d3LayerConfig.mapChannel = mapChannel;
 
-			var d3LayerDefinition = declare(declare([GridLayerImpl, _AddFilter, _PublishInfo])
-				.extend(_ListenBounds)).extend(_ListenZoom);
+			var d3LayerDefinition = declare([GridLayerImpl, _AddFilter, _PublishInfo, _ListenBounds, _ListenZoom]);
 			this.gridLayer = new d3LayerDefinition(this.d3LayerConfig);
 
 			this.pruneClusterLayerConfig.mapChannel = mapChannel;
 
-			var pruneClusterLayerDef = declare(declare([PruneClusterLayerImpl, _AddFilter, _RadiusOnClick])
-				.extend(_ListenBounds)).extend(_ListenZoom);
+			var pruneClusterLayerDef = declare([PruneClusterLayerImpl, _AddFilter, _RadiusOnClick, _ListenBounds,
+				_ListenZoom]);
 			this.pruneClusterLayer = new pruneClusterLayerDef(this.pruneClusterLayerConfig);
 
 			this.grid5000Layer = new WmsLayerImpl({

@@ -1,27 +1,31 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "RWidgets/Utilities"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'RWidgets/Utilities'
 ], function(
 	declare
 	, lang
 	, Utilities
-){
-	return {
+) {
+
+	return declare(null, {
 		//	summary:
-		//		Extensión de MapLayer para que escuche los cambios de zoom.
+		//		Extensión de MapLayer para que escuche los cambios de zoom del mapa.
 		//	description:
 		//		Permite escuchar los cambios de zoom directamente desde el módulo del mapa y recibir un zoom mínimo
 		//		para limitar su aparición en el mapa.
 
-		_initialize: function() {
+		constructor: function(args) {
 
-			this.actions.ZOOM_SET = 'zoomSet';
+			const defaultConfig = {
+				actions: {
+					ZOOM_SET: 'zoomSet'
+				},
+				minZoom: 0,
+				_currentZoom: 7
+			};
 
-			this._currentZoom = 7;
-			this.minZoom = 0;
-
-			this.inherited(arguments);
+			lang.mixin(this, this._merge([this, defaultConfig, args]));
 		},
 
 		_defineSubscriptions: function() {
@@ -29,7 +33,7 @@ define([
 			this.inherited(arguments);
 
 			this.subscriptionsConfig.push({
-				channel : this._buildChannel(this.mapChannel, this.actions.ZOOM_SET),
+				channel : this._buildChannel(this.mapChannel, 'ZOOM_SET'),
 				callback: '_subZoomSet'
 			});
 		},
@@ -47,13 +51,8 @@ define([
 
 			var originalReturn = this.inherited(arguments);
 
-			if (originalReturn || (Utilities.isValidNumber(this.minZoom) &&
-				Utilities.isValidNumber(this._currentZoom) && this.minZoom > this._currentZoom)) {
-
-				return true;
-			}
-
-			return false;
+			return originalReturn || (Utilities.isValidNumber(this.minZoom) &&
+				Utilities.isValidNumber(this._currentZoom) && this.minZoom > this._currentZoom);
 		}
-	};
+	});
 });

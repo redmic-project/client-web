@@ -169,7 +169,7 @@ define([
 			let feature = args.feature;
 
 			const activityData = resWrapper.res.data,
-				templatePopup = args.templatePopup
+				templatePopup = args.templatePopup,
 				dfd = args.dfd;
 
 			feature.properties.activity = activityData;

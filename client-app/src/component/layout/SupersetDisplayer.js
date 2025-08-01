@@ -7,6 +7,7 @@ define([
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
 	, 'src/redmicConfig'
+	, 'src/util/Credentials'
 	, 'superset-sdk'
 ], function(
 	declare
@@ -17,6 +18,7 @@ define([
 	, _Show
 	, _Store
 	, redmicConfig
+	, Credentials
 	, SupersetSdk
 ) {
 
@@ -108,7 +110,10 @@ define([
 			this._emitEvt('GET', {
 				target: this.target,
 				requesterId: this.getOwnChannel(),
-				id: this.dashboardConfig.id
+				id: this.dashboardConfig.id,
+				query: {
+					token: Credentials.get('oidAccessToken')
+				}
 			});
 
 			return this._guestToken;

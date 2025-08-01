@@ -55,6 +55,7 @@ define([
 					'resettingSetPassword',
 					'activateAccount'
 				],
+				// TODO medida temporal, mientras convivan oauth y keycloak
 				_oidPaths: [
 					'acoustic-detection'
 				]

@@ -1,37 +1,67 @@
 define([
 	'dojo/_base/declare'
+	, 'dojo/_base/lang'
 ], function (
 	declare
+	, lang
 ) {
 
 	return declare(null, {
 		// summary:
 		//   Base común para las maquetaciones de diseño.
-		//   Reúne funciones básicas usadas por todas las maquetaciones de diseño.
+		// description:
+		//   Reúne funciones básicas usadas por todas las maquetaciones de diseño. Se acopla al ciclo de vida de los
+		//   widgets Dijit de Dojo, aprovechando algunas fases. Las fases disponibles son:
+		//     constructor -> postMixInProperties -> buildRendering -> postCreate -> startup
 
-		buildRendering: function() {
-			// Método perteneciente al ciclo de vida de un widget Dojo.
+		postMixInProperties: function() {
+			// Método perteneciente al ciclo de vida de un widget Dijit.
 
 			this.inherited(arguments);
 
-			this.layoutClasses?.length && this._setLayoutClass(this.layoutClasses);
+			this._mergeOwnAttributes(this.params || {});
+		},
+
+		_mergeOwnAttributes: function(/*Object*/ args) {
+			// summary:
+			//   Recibe atributos definidos desde fuera para mezclarlos en profundidad dentro de la instancia.
+			// description:
+			//   Es importante que este método se llame desde la fase de postMixInProperties del componente, ya que
+			//   justo antes Dijit hace una primera mezcla de args en this, que no tiene en cuenta los cambios. Por
+			//   tanto, si se ejecuta antes, los cambios serán sobreescritos, y si se ejecuta después, puede ser
+			//   demasiado tarde para asignar algunos valores necesarios en otras fases tempranas.
+			//   Respetar siempre en la definición del método los posibles valores devueltos en llamadas heredadas,
+			//   para poder ir acumulando la configuración que aporta cada nivel.
+
+			const defaultConfig = this._getDesignDefaultConfig?.() || {};
+
+			lang.mixin(this, this._merge([this, defaultConfig, args]));
+		},
+
+		buildRendering: function() {
+			// Método perteneciente al ciclo de vida de un widget Dijit.
+
+			this.inherited(arguments);
+
+			this._setLayoutClass(this.layoutClasses);
 		},
 
 		_setLayoutClass: function(/*String*/ classNames) {
 			// summary:
 			//   Recibe un string con una o más clases CSS para aplicarlas al nodo principal de la maquetación.
-			//   Es importante que este método se llame antes de terminar la fase de buildRendering del componente,
-			//   en postCreate ya será demasiado tarde para que se apliquen los cambios.
+			// description:
+			//   Es importante que este método se llame desde la fase de buildRendering del componente, en postCreate
+			//   ya será demasiado tarde para que se apliquen los cambios.
 
 			if (!classNames?.length) {
 				return;
 			}
 
-			this.class = classNames.includes('.') ? classNames.replace(/\./g, ' ') : classNames;
+			this.class = classNames.split('.').join(' ');
 		},
 
 		postCreate: function() {
-			// Método perteneciente al ciclo de vida de un widget Dojo.
+			// Método perteneciente al ciclo de vida de un widget Dijit.
 
 			this.inherited(arguments);
 
@@ -48,7 +78,8 @@ define([
 		_setLayoutNode: function(/*Object*/ node, /*String*/ nodePropName) {
 			// summary:
 			//   Recibe un nodo de maquetación y un nombre de propiedad para referenciarlo.
-			//   Almacena el nodo para poder recuperarlo más adelante si no existía uno con ese nombre.
+			// description:
+			//   Almacena el nodo (si no existía uno con ese nombre) para poder recuperarlo más adelante.
 
 			if (!this._designLayoutNodes) {
 				this._designLayoutNodes = {};

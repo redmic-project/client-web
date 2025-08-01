@@ -7,6 +7,7 @@ define([
 	return declare(null, {
 		// summary:
 		//   Base común para los controladores de diseño.
+		// description:
 		//   Reúne funciones básicas usadas por todos los controladores de diseño.
 
 		prepareComponentDefinition: function(/*Array*/ baseDefinitionArray, /*Object*/ extensionEnableFlags,
@@ -18,7 +19,8 @@ define([
 
 			for (let enabledProp in extensionEnableFlags) {
 				if (extensionEnableFlags[enabledProp]) {
-					baseDefinitionArray.push(extensionDefinitions[enabledProp]);
+					const extensionDefinition = extensionDefinitions?.[enabledProp];
+					extensionDefinition && baseDefinitionArray.push(extensionDefinition);
 				}
 			}
 

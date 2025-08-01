@@ -1,59 +1,44 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
 ], function(
 	declare
 	, lang
-	, aspect
-){
+) {
+
 	return declare(null, {
-		//	summary:
-		//
-		//	description:
-		//
+		// summary:
+		//   Amplía proceso de entrada de datos para el manejo de datos de recolección de basura.
 
-		constructor: function(args) {
+		_addData: function(response) {
 
-			this.config = {
+			const clonedResponse = lang.clone(response);
 
-			};
-
-			lang.mixin(this, this.config, args);
-		},
-
-		_dataAvailable: function(response) {
-
-			if (!this._initData && this.initialDataSave) {
-				this._initData = lang.clone(response);
+			if (clonedResponse.data.features) {
+				clonedResponse.data.data = clonedResponse.data.features;
+				delete clonedResponse.data.features;
 			}
 
-			if (response.data.features) {
-				response.data.data = response.data.features;
-				delete response.data.features;
+			const data = response.data,
+				newData = data[0];
+
+			if (!newData) {
+				this.inherited(arguments);
+				return;
 			}
 
-			var data = response.data,
-				newData = lang.clone(data[0]);
-
-			for (var i = 1; i < data.length; i++) {
+			for (let i = 1; i < data.length; i++) {
 				data[i].data.splice(0,1);
 				newData.data = this._merge([data[i].data, newData.data || {}], {
 					arrayMergingStrategy: 'combine'
 				});
 			}
 
-			if (!newData) {
-				return;
-			}
+			newData.total = newData.data?.length;
 
-			newData.total = newData.data.length;
+			arguments[0] = {data: newData};
 
-			newData = {
-				data: newData
-			};
-
-			this._addData(newData);
+			this.inherited(arguments);
 		}
 	});
 });

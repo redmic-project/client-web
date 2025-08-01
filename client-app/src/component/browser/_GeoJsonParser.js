@@ -1,76 +1,57 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
 ], function(
 	declare
 	, lang
-	, aspect
-){
+) {
+
 	return declare(null, {
-		//	summary:
-		//
-		//	description:
-		//
+		// summary:
+		//   Amplía proceso de entrada de datos para el manejo de GeoJSON, aplanando su estructura para facilitar su
+		//   uso.
 
-		constructor: function(args) {
+		_addData: function(response) {
 
-			this.config = {
+			if (!response?.data?.features) {
+				this.inherited(arguments);
+			}
 
-			};
+			const clonedResponse = lang.clone(response);
 
-			lang.mixin(this, this.config, args);
+			clonedResponse.data.data = clonedResponse.data.features;
+			delete clonedResponse.data.features;
 
-			aspect.before(this, "_addItem", lang.hitch(this, this._addGeoJsonParserItem));
+			arguments[0] = clonedResponse;
+
+			this.inherited(arguments);
 		},
 
-		_dataAvailable: function(response) {
+		_addItem: function(item) {
 
-			if (!this._initData && this.initialDataSave) {
-				this._initData = lang.clone(response);
-			}
+			const coordinates = this._getCoordinates(item.geometry);
 
-			var data = lang.clone(response);
+			const itemData = this._merge([item, item.properties, {coordinates}]);
 
-			if (response.data.features) {
+			delete itemData.geometry;
+			delete itemData.properties;
 
-				data.data.data = data.data.features;
-				delete data.data.features;
-			}
+			arguments[0] = itemData;
 
-			this._addData(data);
-		},
-
-		_addGeoJsonParserItem: function(item) {
-
-			for (var key in item.properties) {
-
-				item[key] = item.properties[key];
-			}
-
-			delete item.properties;
-
-			var geometry = item.geometry;
-
-			if (geometry) {
-
-				geometry = this._getCoordinates(geometry);
-
-				if (geometry) {
-					item.coordinates = geometry;
-				}
-
-				delete item.geometry;
-			}
+			this.inherited(arguments);
 		},
 
 		_getCoordinates: function(geometry) {
 
-			if (geometry) {
-				var coordinates = geometry.coordinates;
-				if (geometry.type === "Point") {
-					return this._getFirstPointCoordinates(geometry.coordinates);
-				}
+			const geometryType = geometry?.type,
+				coordinates = geometry?.coordinates;
+
+			if (!coordinates?.length) {
+				return;
+			}
+
+			if (geometryType === 'Point') {
+				return this._getFirstPointCoordinates(coordinates);
 			}
 		},
 

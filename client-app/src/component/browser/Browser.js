@@ -194,7 +194,7 @@ define([
 
 		_subRefresh: function(res) {
 
-			if (res && res.initData && this._initData) {
+			if (res?.initData && this._initData) {
 				this._dataAvailable(lang.clone(this._initData));
 			}
 		},
@@ -253,7 +253,7 @@ define([
 
 		_clearData: function() {
 
-			for (var key in this._rows) {
+			for (let key in this._rows) {
 				this._removeRow(key);
 			}
 		},
@@ -274,7 +274,7 @@ define([
 
 		_removeData: function(ids) {
 
-			for (var i = 0; i < ids.length; i++) {
+			for (let i = 0; i < ids.length; i++) {
 				this._removeItem(ids[i]);
 			}
 		},
@@ -301,7 +301,7 @@ define([
 
 			this._configRow(item);
 
-			var RowDefinition = declare(this._defRow),
+			const RowDefinition = declare(this._defRow),
 				rowInstance = new RowDefinition(this.rowConfig);
 
 			this._setRow(idProperty, {
@@ -344,17 +344,11 @@ define([
 			this.template = template;
 		},
 
-		getNodeToShow: function() {
-
-			return this.domNode;
-		},
-
 		_getData: function() {
 
-			var data = [];
+			let data = [];
 
-			for (var key in this._rows) {
-
+			for (let key in this._rows) {
 				data.push(this._getRowData(key));
 			}
 
@@ -385,11 +379,11 @@ define([
 				return;
 			}
 
-			data = this._merge([this._rows[idProperty].data, data]);
+			const mergedData = this._merge([this._rows[idProperty].data, data]);
 
-			this._rows[idProperty].data = data;
+			this._rows[idProperty].data = mergedData;
 
-			return data;
+			return mergedData;
 		},
 
 		_setRowInstance: function(idProperty, instance) {
@@ -416,13 +410,9 @@ define([
 				return;
 			}
 
-			var row = this._getRow(idProperty);
+			const row = this._getRow(idProperty);
 
-			if (!row) {
-				return;
-			}
-
-			return row.data;
+			return row?.data;
 		},
 
 		_getRowInstance: function(idProperty) {
@@ -431,13 +421,9 @@ define([
 				return;
 			}
 
-			var row = this._getRow(idProperty);
+			const row = this._getRow(idProperty);
 
-			if (!row) {
-				return;
-			}
-
-			return row.instance;
+			return row?.instance;
 		},
 
 		_getRowChannel: function(idProperty) {
@@ -446,42 +432,28 @@ define([
 				return;
 			}
 
-			var instance = this._getRowInstance(idProperty);
+			const instance = this._getRowInstance(idProperty);
 
-			if (!instance) {
-				return;
-			}
-
-			return instance.getChannel();
+			return instance?.getChannel();
 		},
 
 		_isIdProperty: function(idProperty) {
 
-			if (idProperty === undefined || idProperty === null) {
-				return false;
-			}
-
-			return true;
+			return idProperty !== undefined && idProperty !== null;
 		},
 
 		_parserIndexData: function(response) {
 
-			var data = response.data;
+			const data = response.data?.data || response.data;
 
-			if (data.data) {
-				data = data.data;
-			}
-
-			return data;
+			return data.content || data;
 		},
 
 		_processNewData: function(response) {
 
-			var data = this._parserIndexData(response);
+			const data = this._parserIndexData(response);
 
-			for (var i = 0; i < data.length; i++) {
-				this._addItem(data[i]);
-			}
+			data?.forEach(dataItem => this._addItem(dataItem));
 		}
 	});
 });

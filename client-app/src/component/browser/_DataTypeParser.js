@@ -1,9 +1,7 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 ], function(
 	declare
-	, lang
 ) {
 
 	return declare(null, {
@@ -12,11 +10,9 @@ define([
 
 		_addData: function(response) {
 
-			const clonedResponse = lang.clone(response);
-
-			if (clonedResponse.data.features) {
-				clonedResponse.data.data = clonedResponse.data.features;
-				delete clonedResponse.data.features;
+			if (response.data.features) {
+				response.data.data = response.data.features;
+				delete response.data.features;
 			}
 
 			const data = response.data,
@@ -36,7 +32,7 @@ define([
 
 			newData.total = newData.data?.length;
 
-			arguments[0] = {data: newData};
+			response.data = newData;
 
 			this.inherited(arguments);
 		}

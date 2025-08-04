@@ -1,9 +1,7 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 ], function(
 	declare
-	, lang
 ) {
 
 	return declare(null, {
@@ -17,12 +15,8 @@ define([
 				this.inherited(arguments);
 			}
 
-			const clonedResponse = lang.clone(response);
-
-			clonedResponse.data.data = clonedResponse.data.features;
-			delete clonedResponse.data.features;
-
-			arguments[0] = clonedResponse;
+			response.data.data = response.data.features;
+			delete response.data.features;
 
 			this.inherited(arguments);
 		},
@@ -31,12 +25,10 @@ define([
 
 			const coordinates = this._getCoordinates(item.geometry);
 
-			const itemData = this._merge([item, item.properties, {coordinates}]);
+			item = this._merge([item, item.properties, {coordinates}]);
 
-			delete itemData.geometry;
-			delete itemData.properties;
-
-			arguments[0] = itemData;
+			delete item.geometry;
+			delete item.properties;
 
 			this.inherited(arguments);
 		},

@@ -8,7 +8,6 @@ define([
 	, 'src/design/map/_AddAtlasComponent'
 	, 'src/design/map/_AddBrowserComponent'
 	, 'src/design/map/_AddMapLayerComponent'
-	, 'src/design/map/_MapDesignController'
 	, 'src/design/map/_MapDesignWithContentLayout'
 	, 'src/redmicConfig'
 	, 'templates/AreaPopup'
@@ -23,15 +22,14 @@ define([
 	, _AddAtlasComponent
 	, _AddBrowserComponent
 	, _AddMapLayerComponent
-	, _MapDesignController
 	, _MapDesignWithContentLayout
 	, redmicConfig
 	, TemplatePopup
 	, TemplateList
 ) {
 
-	return declare([_Module, _Show, _Store, _Filter, _MapDesignController, _MapDesignWithContentLayout,
-		_AddAtlasComponent, _AddBrowserComponent, _AddMapLayerComponent], {
+	return declare([_Module, _Show, _Store, _Filter, _MapDesignWithContentLayout, _AddAtlasComponent,
+		_AddBrowserComponent, _AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar en un mapa las geometrías asociadas a una actividad.
 

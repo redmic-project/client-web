@@ -5,7 +5,6 @@ define([
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
 	, 'src/design/map/_AddAtlasComponent'
-	, 'src/design/map/_MapDesignController'
 	, 'src/design/map/_MapDesignWithContentLayout'
 	, 'src/viewer/marineMonitoring/_ManageOgcServices'
 	, 'templates/AtlasMixedList'
@@ -16,14 +15,12 @@ define([
 	, _Show
 	, _Store
 	, _AddAtlasComponent
-	, _MapDesignController
 	, _MapDesignWithContentLayout
 	, _ManageOgcServices
 	, AtlasMixedListTemplate
 ) {
 
-	return declare([_Module, _Show, _Store, _MapDesignController, _MapDesignWithContentLayout, _AddAtlasComponent,
-		_ManageOgcServices], {
+	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _ManageOgcServices], {
 		//	summary:
 		//		Widget para mostrar en un mapa las capas asociadas a una actividad.
 

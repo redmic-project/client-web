@@ -6,7 +6,6 @@ define([
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
 	, 'src/design/map/_AddMapLayerComponent'
-	, 'src/design/map/_MapDesignController'
 	, 'src/design/map/_MapDesignFullSizeLayout'
 	, 'src/redmicConfig'
 	, 'templates/SpeciesDistributionPopup'
@@ -19,14 +18,13 @@ define([
 	, _Show
 	, _Store
 	, _AddMapLayerComponent
-	, _MapDesignController
 	, _MapDesignFullSizeLayout
 	, redmicConfig
 	, SpeciesDistributionPopup
 	, TrackingSecondaryList
 ) {
 
-	return declare([_Module, _Show, _Store, _MapDesignController, _MapDesignFullSizeLayout, _AddMapLayerComponent], {
+	return declare([_Module, _Show, _Store, _MapDesignFullSizeLayout, _AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar en un mapa las localizaciones de una especie.
 

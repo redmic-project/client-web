@@ -1,13 +1,11 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'src/component/map/_LeafletDraw'
 	, 'src/component/map/_PlaceNamesButton'
 	, 'src/component/map/LeafletImpl'
 	, 'src/design/_DesignController'
-], function (
+], function(
 	declare
-	, lang
 	, _LeafletDraw
 	, _PlaceNamesButton
 	, LeafletImpl
@@ -19,25 +17,27 @@ define([
 		draw: _LeafletDraw
 	};
 
+	const defaultConfig = {
+		events: {
+			ADD_LAYER: 'addLayer',
+			REMOVE_LAYER: 'removeLayer'
+		},
+		enabledMapExtensions: {
+			toponyms: true,
+			draw: false
+		}
+	};
+
 	return declare(_DesignController, {
 		// summary:
 		//   Lógica de diseño para mostrar un componente mapa con extensiones opcionales.
 		//   Debe asociarse como mixin a un componente al instanciarlo.
 
-		constructor: function(args) {
+		_getDesignDefaultConfig: function() {
 
-			const defaultConfig = {
-				events: {
-					ADD_LAYER: 'addLayer',
-					REMOVE_LAYER: 'removeLayer'
-				},
-				enabledMapExtensions: {
-					toponyms: true,
-					draw: false
-				}
-			};
+			const inheritedDefaultConfig = this.inherited(arguments) || {};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			return this._merge([inheritedDefaultConfig, defaultConfig]);
 		},
 
 		_setConfigurations: function() {

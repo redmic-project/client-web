@@ -1,31 +1,33 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'put-selector'
 	, 'src/design/_DesignLayout'
+	, 'src/design/map/_MapDesignController'
 ], function(
 	declare
-	, lang
 	, put
 	, _DesignLayout
+	, _MapDesignController
 ) {
 
-	return declare(_DesignLayout, {
+	const defaultConfig = {
+		layoutClasses: 'designLayoutContainer.mapAndContentAndTopbarLayoutMapWithSideContentDesign',
+		topbarNodeClasses: 'mediumSolidContainer.rounded',
+		centerNodeClasses: 'mapCenterContainer',
+		mapNodeClasses: 'mediumSolidContainer.mapContainer.borderRadius',
+		additionalContentNodeClasses: 'mediumSolidContainer.mapSideContainer.borderRadius'
+	};
+
+	return declare([_MapDesignController, _DesignLayout], {
 		// summary:
 		//   Estructura de diseño para mostrar una barra superior y un componente adicional junto a un mapa.
 		//   Debe asociarse como mixin a un componente al instanciarlo.
 
-		constructor: function(args) {
+		_getDesignDefaultConfig: function() {
 
-			const defaultConfig = {
-				layoutClasses: 'designLayoutContainer.mapAndContentAndTopbarLayoutMapWithSideContentDesign',
-				topbarNodeClasses: 'mediumSolidContainer.rounded',
-				centerNodeClasses: 'mapCenterContainer',
-				mapNodeClasses: 'mediumSolidContainer.mapContainer.borderRadius',
-				additionalContentNodeClasses: 'mediumSolidContainer.mapSideContainer.borderRadius'
-			};
+			const inheritedDefaultConfig = this.inherited(arguments) || {};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			return this._merge([inheritedDefaultConfig, defaultConfig]);
 		},
 
 		createDesignLayoutNodes: function() {

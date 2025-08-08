@@ -36,23 +36,25 @@ define([
 		select: _Select
 	};
 
+	const defaultConfig = {
+		enabledBrowserExtensions: {
+			dragAndDrop: false,
+			hierarchicalSelect: false,
+			select: false
+		}
+	};
+
 	return declare(null, {
 		// summary:
 		//   Lógica de diseño para añadir un componente Browser, junto con otros para mostrarlo y filtrar contenido.
 		//   Debe asociarse como mixin a un componente al instanciarlo, junto con la parte de controlador y alguna
 		//   maquetación de este diseño.
 
-		constructor: function(args) {
+		_getDesignDefaultConfig: function() {
 
-			const defaultConfig = {
-				enabledBrowserExtensions: {
-					dragAndDrop: false,
-					hierarchicalSelect: false,
-					select: false
-				}
-			};
+			const inheritedDefaultConfig = this.inherited(arguments) || {};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			return this._merge([inheritedDefaultConfig, defaultConfig]);
 		},
 
 		_setConfigurations: function() {
@@ -101,7 +103,7 @@ define([
 
 		createDesignControllerComponents: function() {
 
-			let inheritedComponents = this.inherited(arguments);
+			const inheritedComponents = this.inherited(arguments);
 
 			let tabsDisplayer = inheritedComponents.tabsDisplayer;
 

@@ -8,7 +8,7 @@ define([
 	, 'src/component/map/layer/_RadiusOnClick'
 	, 'src/component/map/layer/GeoJsonLayerImpl'
 	, 'src/component/map/layer/PruneClusterLayerImpl'
-], function (
+], function(
 	declare
 	, lang
 	, MapCenteringGatewayImpl
@@ -32,6 +32,17 @@ define([
 		radius: _RadiusOnClick
 	};
 
+	const defaultConfig = {
+		mapLayerDefinition: 'cluster',
+		enabledMapLayerExtensions: {
+			filter: false,
+			listenBounds: false,
+			listenZoom: false,
+			radius: false
+		},
+		mapLayerPopupTemplate: null
+	};
+
 	return declare(null, {
 		// summary:
 		//   Lógica de diseño para añadir un componente MapLayer, junto con otros para comunicarlo y mostrar información
@@ -39,20 +50,11 @@ define([
 		//   Debe asociarse como mixin a un componente al instanciarlo, junto con la parte de controlador y alguna
 		//   maquetación de este diseño.
 
-		constructor: function(args) {
+		_getDesignDefaultConfig: function() {
 
-			const defaultConfig = {
-				mapLayerDefinition: 'cluster',
-				enabledMapLayerExtensions: {
-					filter: false,
-					listenBounds: false,
-					listenZoom: false,
-					radius: false
-				},
-				mapLayerPopupTemplate: null
-			};
+			const inheritedDefaultConfig = this.inherited(arguments) || {};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			return this._merge([inheritedDefaultConfig, defaultConfig]);
 		},
 
 		_setConfigurations: function() {
@@ -92,7 +94,7 @@ define([
 
 		createDesignControllerComponents: function() {
 
-			let inheritedComponents = this.inherited(arguments);
+			const inheritedComponents = this.inherited(arguments);
 
 			const mapLayer = this._createDesignMapLayerComponent(inheritedComponents.map),
 				mapCentering = this._createDesignMapCenteringComponent();

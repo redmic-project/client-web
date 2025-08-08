@@ -4,7 +4,6 @@ define([
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 	, 'src/design/map/_AddAtlasComponent'
-	, 'src/design/map/_MapDesignController'
 	, 'src/design/map/_MapDesignWithContentLayout'
 	, 'src/redmicConfig'
 ], function(
@@ -13,12 +12,11 @@ define([
 	, _Module
 	, _Show
 	, _AddAtlasComponent
-	, _MapDesignController
 	, _MapDesignWithContentLayout
 	, redmicConfig
 ) {
 
-	return declare([_Module, _Show, _MapDesignController, _MapDesignWithContentLayout, _AddAtlasComponent], {
+	return declare([_Module, _Show, _MapDesignWithContentLayout, _AddAtlasComponent], {
 		// summary:
 		//   Vista de visor atlas. Proporciona un mapa principal y un contenido secundario (componente Atlas) para
 		//   trabajar sobre el mapa.

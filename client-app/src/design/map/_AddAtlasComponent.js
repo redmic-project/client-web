@@ -4,7 +4,7 @@ define([
 	, 'src/component/atlas/Atlas'
 	, 'src/component/layout/TabsDisplayer'
 	, 'src/component/mapQuery/QueryOnMap'
-], function (
+], function(
 	declare
 	, lang
 	, Atlas
@@ -40,7 +40,7 @@ define([
 
 		createDesignControllerComponents: function() {
 
-			let inheritedComponents = this.inherited(arguments);
+			const inheritedComponents = this.inherited(arguments);
 
 			const mapInstance = inheritedComponents.map,
 				getMapChannel = lang.hitch(mapInstance, mapInstance.getChannel);

@@ -105,6 +105,8 @@ define([
 			if (total === undefined || total === null) {
 				if (data.data) {
 					total = data.data.total;
+				} else if (data.content) {
+					total = data.content.length;
 				} else {
 					total = data.length;
 				}

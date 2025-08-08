@@ -112,7 +112,6 @@ define([
 				browserExts: [_HierarchicalSelect],
 				selectionTarget: this.selectionTarget,
 				target: this.target,
-				classByList: '.borderList',
 				browserConfig: {
 					template: serviceOGCList,
 					rowConfig: {

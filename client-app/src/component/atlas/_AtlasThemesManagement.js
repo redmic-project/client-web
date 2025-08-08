@@ -3,10 +3,11 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'dojo/dom-class'
-	, 'app/designs/list/Controller'
-	, 'app/designs/list/layout/Layout'
-	, 'src/component/browser/_DragAndDrop'
-	, 'src/component/browser/bars/Total'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
+	, 'src/design/browser/_AddTotalBarComponent'
+	, 'src/design/browser/_BrowserWithTopbarDesignLayout'
 	, 'src/redmicConfig'
 	, 'templates/AtlasList'
 ], function(
@@ -14,10 +15,11 @@ define([
 	, lang
 	, aspect
 	, domClass
-	, Controller
-	, Layout
-	, _DragAndDrop
-	, Total
+	, _Module
+	, _Show
+	, _Store
+	, _AddTotalBarComponent
+	, _BrowserWithTopbarDesignLayout
 	, redmicConfig
 	, ListTemplate
 ) {
@@ -67,14 +69,13 @@ define([
 		_themesBrowserAfterSetConfigurations: function() {
 
 			this.themesBrowserConfig = this._merge([{
+				ownChannel: 'themesBrowser',
 				parentChannel: this.getChannel(),
-				classByList: '.borderList',
-				browserExts: [_DragAndDrop],
+				enabledBrowserExtensions: {
+					dragAndDrop: true
+				},
 				browserConfig: {
 					template: ListTemplate,
-					bars: [{
-						instance: Total
-					}],
 					insertInFront: true,
 					rowConfig: {
 						buttonsConfig: {
@@ -120,17 +121,21 @@ define([
 
 		_initializeThemesBrowser: function() {
 
-			var ThemesBrowser = declare([Layout, Controller]);
-			this._themesBrowser = new ThemesBrowser(this.themesBrowserConfig);
+			const ThemesBrowserDefinition = declare([_Module, _Show, _Store, _BrowserWithTopbarDesignLayout,
+				_AddTotalBarComponent]);
+
+			this._themesBrowser = new ThemesBrowserDefinition(this.themesBrowserConfig);
 		},
 
 		_defineThemesBrowserSubscriptions: function() {
 
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
 			this.subscriptionsConfig.push({
-				channel: this._themesBrowser.getChildChannel('browser', 'BUTTON_EVENT'),
+				channel: browserInstance.getChannel('BUTTON_EVENT'),
 				callback: '_subThemesBrowserButtonEvent'
 			},{
-				channel: this._themesBrowser.getChildChannel('browser', 'DRAG_AND_DROP'),
+				channel: browserInstance.getChannel('DRAG_AND_DROP'),
 				callback: '_subThemesBrowserDragAndDrop'
 			});
 		},
@@ -301,14 +306,18 @@ define([
 
 		_themesBrowserReportDeselection: function(id) {
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'REMOVE'), {
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('REMOVE'), {
 				ids: [id]
 			});
 		},
 
 		_themesBrowserReportClearSelection: function() {
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'CLEAR'));
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('CLEAR'));
 		},
 
 		_cleanRowSecondaryContainer: function(layerId, container) {
@@ -329,12 +338,14 @@ define([
 
 			this._activeLayers[mapLayerId] = true;
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'UPDATE_DRAGGABLE_ITEM_ORDER'), {
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('UPDATE_DRAGGABLE_ITEM_ORDER'), {
 				id: itemId,
 				index: 0
 			});
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'ENABLE_DRAG_AND_DROP'), {
+			this._publish(browserInstance.getChannel('ENABLE_DRAG_AND_DROP'), {
 				id: itemId
 			});
 		},
@@ -352,7 +363,9 @@ define([
 
 			this._activeLayers[mapLayerId] = false;
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'DISABLE_DRAG_AND_DROP'), {
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('DISABLE_DRAG_AND_DROP'), {
 				id: itemId
 			});
 		}

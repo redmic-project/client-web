@@ -1,32 +1,37 @@
 define([
 	'app/base/views/extensions/_AddCompositeSearchInTooltipFromTextSearch'
-	, 'app/designs/textSearchFacetsList/Controller'
-	, 'app/designs/textSearchFacetsList/Layout'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/browser/bars/Order'
-	, 'src/component/browser/bars/Total'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
+	, 'src/design/browser/_AddFacetComponent'
+	, 'src/design/browser/_AddOrderBarComponent'
+	, 'src/design/browser/_AddTotalBarComponent'
+	, 'src/design/browser/_BrowserWithTopbarAndFilterPanelDesignLayout'
 	, 'src/redmicConfig'
 	, 'templates/LoadingCustom'
 	, 'templates/ObservationFilterForm'
 	, 'templates/ObservationRegisterList'
 ], function(
 	_AddCompositeSearchInTooltipFromTextSearch
-	, TextSearchFacetsListController
-	, TextSearchFacetsListLayout
 	, declare
 	, lang
-	, Order
-	, Total
+	, _Module
+	, _Show
+	, _Store
+	, _AddFacetComponent
+	, _AddOrderBarComponent
+	, _AddTotalBarComponent
+	, _BrowserWithTopbarAndFilterPanelDesignLayout
 	, redmicConfig
 	, LoadingCustom
 	, TemplateFilter
 	, TemplateList
 ) {
 
-	return declare([
-		TextSearchFacetsListLayout, TextSearchFacetsListController, _AddCompositeSearchInTooltipFromTextSearch
-	], {
+	return declare([_Module, _Show, _Store, _BrowserWithTopbarAndFilterPanelDesignLayout, _AddTotalBarComponent,
+		_AddOrderBarComponent, _AddFacetComponent], {
 		//	summary:
 		//		Widget para mostrar un listado de las observaciones registradas en el punto seleccionado.
 
@@ -34,17 +39,18 @@ define([
 
 			this.config = {
 				ownChannel: 'activityFixedObservationSeriesList',
-				target: redmicConfig.services.observationSeries
+				actions: {
+					ADD_TO_QUERY: 'addToQuery'
+				},
+				target: redmicConfig.services.acousticDetectionEvents
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_afterSetConfigurations: function() {
+		_setConfigurations: function() {
 
-			this.filterConfig = this._merge([this.filterConfig || {}, {
-				serializeOnQueryUpdate: false
-			}]);
+			this.inherited(arguments);
 
 			this.browserConfig = this._merge([this.browserConfig || {}, {
 				template: TemplateList,
@@ -54,25 +60,25 @@ define([
 						message: this.i18n.selectStationWithRegisteredData,
 						iconClass: 'fr fr-no-data'
 					}
-				},
-				bars: [{
-					instance: Total
-				},{
-					instance: Order,
-					config: {
-						defaultOrderField: 'date',
-						options: [
-							{value: 'date'}
-						]
-					}
-				}]
+				}
 			}], {
 				arrayMergingStrategy: 'concatenate'
 			});
 
-			this.facetsConfig = this._merge([{
-				aggs: redmicConfig.aggregations.observationSeries
-			}, this.facetsConfig || {}]);
+			this.orderBarConfig = this._merge([this.orderBarConfig || {}, {
+				defaultOrderField: 'date',
+				options: [
+					{value: 'date'}
+				]
+			}], {
+				arrayMergingStrategy: 'concatenate'
+			});
+
+			this.facetConfig = this._merge([this.facetConfig || {}, {
+				aggs: redmicConfig.aggregations.acousticDetectionEvents,
+				propertyName: 'query',
+				search: lang.hitch(this, this._requestData)
+			}]);
 
 			this.textSearchConfig = this._merge([{
 				showExpandIcon: true
@@ -85,6 +91,8 @@ define([
 
 		_defineSubscriptions: function() {
 
+			this.inherited(arguments);
+
 			this.subscriptionsConfig.push({
 				channel : this.timeseriesDataChannel,
 				callback: '_subObservationStationSet'
@@ -95,40 +103,71 @@ define([
 
 			this.inherited(arguments);
 
-			this._setTitle('');
+			this._setBrowserTitle('');
 		},
 
-		_subObservationStationSet: function(data) {
+		_subObservationStationSet: function(stationData) {
 
-			var dataDefinitionId = this._getDataDefinitionId(data),
-				stationName = data.site && data.site.name;
+			this._updateObservationEventsTarget(stationData);
 
-			this._setTitle(stationName);
+			const stationName = stationData.site?.name || '';
+			this._setBrowserTitle(stationName);
 
-			this._publish(this.filter.getChannel('SET_PROPS'), {
-				serializeOnQueryUpdate: true
+			this._requestObservationEvents(stationData);
+		},
+
+		_setBrowserTitle: function(titleValue) {
+
+			this._publish(this.getChannel('SET_PROPS'), {
+				browserDesignTitle: titleValue
+			});
+		},
+
+		_updateObservationEventsTarget: function(stationData) {
+
+			const target = lang.replace(redmicConfig.services.acousticDetectionEvents, {
+				activityid: this.pathVariableId,
+				receptorid: stationData.id
 			});
 
-			this._emitEvt('ADD_TO_QUERY', {
-				query: {
-					terms: {
-						dataDefinition: dataDefinitionId
-					},
-					returnFields: redmicConfig.returnFields.observationSeries
-				}
+			this._publish(this.getChannel('SET_PROPS'), {
+				target
+			});
+		},
+
+		_requestObservationEvents: function(stationData) {
+
+			const dataDefinitionId = this._getDataDefinitionId(stationData);
+
+			const query = {
+				'data-definition': dataDefinitionId
+			};
+
+			this._lastObservationEventsQuery = query;
+
+			this._emitEvt('REQUEST', {
+				method: 'GET',
+				target: this.target,
+				query
 			});
 		},
 
 		_getDataDefinitionId: function(data) {
 
-			var measurements = data.measurements;
+			const countMeasurement = data.measurements.find(measurement => measurement.parameter?.id === 87);
 
-			var countMeasurement = measurements.find(function(measurement) {
+			return countMeasurement?.dataDefinition?.id;
+		},
 
-				return measurement.parameter && measurement.parameter.id === 87;
+		_requestData: function(newQueryData) {
+
+			const query = this._merge([this._lastObservationEventsQuery || {}, newQueryData?.query || {}]);
+
+			this._emitEvt('REQUEST', {
+				method: 'GET',
+				target: this.target,
+				query
 			});
-
-			return countMeasurement && countMeasurement.dataDefinition && countMeasurement.dataDefinition.id;
 		}
 	});
 });

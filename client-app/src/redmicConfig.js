@@ -260,7 +260,7 @@ define([], function() {
 		'timeSeriesActivities': baseUri + 'timeseries/activities',
 		'activityTimeSeriesStations': baseUri + 'activities/{activityid}/timeseriesstations',
 		'acousticDetectionReceptors': baseUri + 'v1/acoustic-detection/activities/{id}/receptors',
-		'observationSeries': baseUri + 'private/observationseries',
+		'acousticDetectionEvents': baseUri + 'v1/acoustic-detection/activities/{activityid}/receptors/{receptorid}/detections',
 		'timeSeriesStations': baseUri + 'surveystations',
 		'surveyStationsTimeSeries': baseUri + 'datadefinitions/{datadefinitionid}/timeseries',
 
@@ -360,18 +360,15 @@ define([], function() {
 				field: 'metricGroup.name'
 			}
 		},
-		observationSeries: {
+		acousticDetectionEvents: {
 			animal: {
-				field: 'observation.animal.name',
-				minCount: 1
+				field: 'animals'
 			},
 			species: {
-				field: 'observation.taxonomy.scientificName',
-				minCount: 1
+				field: 'taxons'
 			},
 			organisation: {
-				field: 'observation.organisation.name',
-				minCount: 1
+				field: 'organisations'
 			}
 		},
 		organisation: {
@@ -467,13 +464,7 @@ define([], function() {
 			'properties.measurements.unit.id', 'properties.measurements.unit.name',
 			'properties.measurements.dataDefinition.id', 'properties.measurements.dataDefinition.z'
 		],
-		timeSeriesStationsMap: ['geometry'],
-		observationSeries: [
-			'date', 'remark', 'observation.note', 'observation.animal.id', 'observation.animal.name',
-			'observation.taxonomy.id', 'observation.taxonomy.scientificName', 'observation.device.id',
-			'observation.device.name', 'observation.device.model', 'observation.organisation.id',
-			'observation.organisation.name'
-		]
+		timeSeriesStationsMap: ['geometry']
 	};
 
 	retObj.outerPaths = [

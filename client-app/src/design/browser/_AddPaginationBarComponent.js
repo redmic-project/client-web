@@ -62,12 +62,12 @@ define([
 			this._publish(browserInstance.getChannel('ADD_TOOLBAR_IN_FRAMEWORK'), {instance});
 		},
 
-		_onTargetPropSet: function(evt) {
+		_onTargetPropSet: function(changeObj) {
 
 			this.inherited(arguments);
 
 			const instance = this.getComponentInstance('paginationBar'),
-				target = evt.value;
+				target = changeObj.newValue;
 
 			this._publish(instance.getChannel('SET_PROPS'), {target});
 		}

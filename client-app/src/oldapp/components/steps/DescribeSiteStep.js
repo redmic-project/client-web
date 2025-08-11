@@ -160,13 +160,14 @@ define([
 
 			this._newIdStation = res.id;
 
-			this._publish(this.getChannel('UPDATE_TARGET'), {
-				target: lang.replace(this.replaceTarget, res),
-				refresh: true
+			this._publish(this.getChannel('SET_PROPS'), {
+				target: lang.replace(this.replaceTarget, res)
 			});
 		},
 
-		_updateTarget: function(obj) {
+		_onTargetPropSet: function() {
+
+			this.inherited(arguments);
 
 			this._emitEvt('GET', {
 				target: this._getTarget(),

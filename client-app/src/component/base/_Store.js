@@ -28,7 +28,6 @@ define([
 			ITEM_AVAILABLE: "itemAvailable",
 			INJECT_ITEM: "injectItem",
 			INJECT_DATA: "injectData",
-			UPDATE_TARGET: "updateTarget",
 			TARGET_LOADING: "targetLoading",
 			TARGET_LOADED: "targetLoaded"
 		},
@@ -62,9 +61,6 @@ define([
 				channel : this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
 				callback: "_subItemAvailable",
 				options: options
-			},{
-				channel : this.getChannel(this.actions.UPDATE_TARGET),
-				callback: "_subUpdateTarget"
 			});
 
 			!this.omitLoading && this.subscriptionsConfig.push({
@@ -131,32 +127,29 @@ define([
 			this._tryToEmitEvt('LOADED');
 		},
 
-		_subUpdateTarget: function(obj) {
+		_onSetPropTarget: function() {
+
+			this.inherited(arguments);
 
 			this._tryToEmitEvt('LOADED');
+		},
 
-			if (obj.refresh || this.target !== obj.target) {
-				this.target = obj.target;
+		_chkTargetAndRequester: function(res) {
 
-				this._updateTarget && this._updateTarget(obj);
-			}
+			return this._chkTargetIsMine(res) && this._chkRequesterIsMe(res);
 		},
 
 		_chkTargetLoadingIsMine: function(res) {
 
-			if (this._shouldOmitLoadingEvents()) {
-				return false;
-			}
-
-			return this._chkTargetAndRequester(res);
+			return !this._shouldOmitTargetLoading(res) && this._chkTargetAndRequester(res);
 		},
 
-		_subTargetLoading: function(res) {
+		_subTargetLoading: function() {
 
 			this._tryToEmitEvt('LOADING');
 		},
 
-		_subTargetLoaded: function(res) {
+		_subTargetLoaded: function() {
 
 			this._tryToEmitEvt('LOADED');
 		},

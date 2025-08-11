@@ -84,7 +84,6 @@ define([
 				},
 
 				seriesDataViewEvents: {
-					UPDATE_TARGET: "updateTarget",
 					SET_BUTTONS_PROPS: "setButtonsProps"
 				},
 
@@ -204,9 +203,6 @@ define([
 		_defineSeriesDataViewPublications: function () {
 
 			this.publicationsConfig.push({
-				event: 'UPDATE_TARGET',
-				channel: this.dataSeriesList.getChildChannel("browser", "UPDATE_TARGET")
-			},{
 				event: 'SET_BUTTONS_PROPS',
 				channel: this.dataDefinitionList.getChildChannel("iconKeypad", "SET_BUTTONS_PROPS")
 			});
@@ -306,6 +302,15 @@ define([
 			});
 
 			this._embedModule(this.embeddedContent, inputKey);
+		},
+
+		_onTargetPropSet: function(changeObj) {
+
+			this.inherited(arguments);
+
+			const target = changeObj.newValue;
+
+			this._publish(this.dataSeriesList.getChildChannel('SET_PROPS'), {target});
 		},
 
 		_itemAvailable: function(res, resWrapper) {

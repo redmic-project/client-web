@@ -47,7 +47,6 @@ define([
 				events: {
 					ADD_LAYER: "addLayer",
 					REMOVE_LAYER: "removeLayer",
-					UPDATE_TARGET: "updateTarget",
 					CLEAR: "clear",
 					REFRESH: "refresh",
 					CHANGE_BROWSER_NO_DATA_MESSAGE: "changeBrowserNoDataMessage"
@@ -58,7 +57,6 @@ define([
 
 				actions: {
 					REFRESH: "refresh",
-					UPDATE_TARGET: "updateTarget",
 					CLEAR: "clear"
 				},
 				classTopbar: "notFormZone marginBottomContainer"
@@ -112,9 +110,6 @@ define([
 				channel : this.browser.getChannel("BUTTON_EVENT"),
 				callback: "_subListBtnEvent"
 			},{
-				channel : this.getChannel("UPDATE_TARGET"),
-				callback: "_subUpdateTarget"
-			},{
 				channel : this.getChannel("CLEAR"),
 				callback: "_subClear"
 			},{
@@ -129,14 +124,8 @@ define([
 		_defineMainPublications: function () {
 
 			this.publicationsConfig.push({
-				event: 'UPDATE_TARGET',
-				channel: this.browser.getChannel("UPDATE_TARGET")
-			},{
 				event: 'CHANGE_BROWSER_NO_DATA_MESSAGE',
 				channel: this.browser.getChannel("UPDATE_NO_DATA_TEMPLATE")
-			},{
-				event: 'UPDATE_TARGET',
-				channel: this.geoJsonLayer.getChannel("UPDATE_TARGET")
 			});
 		},
 
@@ -157,9 +146,17 @@ define([
 			this.browserConfig.noDataMessage = this.browserCopyNoDataMessage;
 		},
 
-		_subUpdateTarget: function(req) {
+		_onTargetPropSet: function(changeObj) {
 
-			this._emitEvt("UPDATE_TARGET", req);
+			this.inherited(arguments);
+
+			this._updateComponentsTarget(changeObj.newValue);
+		},
+
+		_updateComponentsTarget: function(target) {
+
+			this._publish(this.browser.getChannel('SET_PROPS'), {target});
+			this._publish(this.geoJsonLayer.getChannel('SET_PROPS'), {target});
 		},
 
 		_subRefresh: function(req) {
@@ -190,11 +187,9 @@ define([
 
 				this._activityid = evt.value;
 
-				var obj = {
-					target: lang.replace(this.browserTarget, {activityid: evt.value})
-				};
+				const target = lang.replace(this.browserTarget, {activityid: evt.value});
 
-				this._emitEvt("UPDATE_TARGET", obj);
+				this._publish(this.getChannel('SET_PROPS'), {target});
 
 				this._emitEvt('REFRESH');
 			} else {

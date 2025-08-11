@@ -24,12 +24,10 @@ define([
 			this.config = {
 				idProperty: "id",
 				browserEvents: {
-					REFRESH: "refresh",
-					UPDATE_TARGET: "updateTarget"
+					REFRESH: "refresh"
 				},
 				browserActions: {
-					REFRESH: "refresh",
-					UPDATE_TARGET: "updateTarget"
+					REFRESH: "refresh"
 				},
 				browserExts: [],
 				browserBase: [ListImpl, _Framework, _ButtonsInRow],
@@ -42,7 +40,6 @@ define([
 			aspect.after(this, "_beforeInitialize", lang.hitch(this, this._initializeBrowser));
 			aspect.before(this, "_mixEventsAndActions", lang.hitch(this, this._mixBrowserEventsAndActions));
 			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._defineBrowserSubscriptions));
-			aspect.after(this, "_definePublications", lang.hitch(this, this._defineBrowserPublications));
 		},
 
 		_mixBrowserEventsAndActions: function () {
@@ -112,14 +109,6 @@ define([
 			this.subscriptionsConfig.push({
 				channel : this.browser.getChannel("BUTTON_EVENT"),
 				callback: "_subListBtnEvent"
-			});
-		},
-
-		_defineBrowserPublications: function() {
-
-			this.publicationsConfig.push({
-				event: 'UPDATE_TARGET',
-				channel: this.browser.getChannel("UPDATE_TARGET")
 			});
 		},
 

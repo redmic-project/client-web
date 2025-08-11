@@ -23,7 +23,6 @@ define([
 					ADD_TO_QUERY: 'addToQuery',
 					ADDED_TO_QUERY: 'addedToQuery',
 					REFRESH: 'refresh',
-					UPDATE_TARGET: 'updateTarget',
 					QUERY_CHANNEL_SET: 'queryChannelSet'
 				},
 				filterActions: {
@@ -31,8 +30,7 @@ define([
 					SERIALIZED: 'serialized',
 					//REQUEST_FILTER: 'requestFilter',
 					ADD_TO_QUERY: 'addToQuery',
-					REFRESH: 'refresh',
-					UPDATE_TARGET: 'updateTarget'
+					REFRESH: 'refresh'
 				}
 			};
 
@@ -107,9 +105,6 @@ define([
 			},{
 				event: 'REFRESH',
 				channel: this._buildChannel(queryChannel, this.actions.REFRESH)
-			},{
-				event: 'UPDATE_TARGET',
-				channel: this._buildChannel(queryChannel, this.actions.UPDATE_TARGET)
 			});
 		},
 
@@ -123,20 +118,13 @@ define([
 			this._handleFilterParams(res.data);
 		},
 
-		_subUpdateTarget: function(obj) {
-			// TODO no estoy seguro de la necesidad de pisar este método, ademas puede que se repitan acciones
+		_onTargetPropSet: function(changeObj) {
 
 			this.inherited(arguments);
 
-			this._emitEvt('UPDATE_TARGET', obj);
-		},
+			const target = changeObj.newValue;
 
-		_updateTarget: function(obj) {
-			// TODO no estoy seguro de la necesidad de pisar este método, ademas puede que se repitan acciones
-
-			this.inherited(arguments);
-
-			this._emitEvt('UPDATE_TARGET', obj);
+			this._publish(this._buildChannel(this.queryChannel, 'SET_PROPS'), {target});
 		},
 
 		_onQueryChannelPropSet: function(evt) {
@@ -149,13 +137,11 @@ define([
 
 			this._removeSubscriptions([
 				this._buildChannel(oldQueryChannel, this.actions.ADDED_TO_QUERY),
-				this._buildChannel(oldQueryChannel, this.actions.SERIALIZED)/*,
-				this._buildChannel(oldQueryChannel, this.actions.REQUEST_FILTER)*/
+				this._buildChannel(oldQueryChannel, this.actions.SERIALIZED)
 			]);
 			this._removePublications([
 				this._buildChannel(oldQueryChannel, this.actions.ADD_TO_QUERY),
-				this._buildChannel(oldQueryChannel, this.actions.REFRESH),
-				this._buildChannel(oldQueryChannel, this.actions.UPDATE_TARGET)
+				this._buildChannel(oldQueryChannel, this.actions.REFRESH)
 			]);
 		},
 

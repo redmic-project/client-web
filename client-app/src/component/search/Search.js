@@ -127,7 +127,7 @@ define([
 			this._emitEvt('SEARCH', obj);
 		},
 
-		_shouldOmitLoadingEvents: function() {
+		_shouldOmitTargetLoading: function() {
 
 			return true;
 		}

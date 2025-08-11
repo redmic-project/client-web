@@ -176,7 +176,9 @@ define([
 			return labels;
 		},
 
-		_onTargetPropSet: function(res) {
+		_onTargetPropSet: function() {
+
+			this.inherited(arguments);
 
 			this._clearDateRange();
 

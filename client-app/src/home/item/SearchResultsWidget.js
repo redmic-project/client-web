@@ -111,14 +111,16 @@ define([
 			});
 		},
 
-		_onTargetPropSet: function(evt) {
+		_onTargetPropSet: function(changeObj) {
 
-			this._setPropToChildModules(evt.prop, evt.value);
+			this.inherited(arguments);
+
+			this._setPropToChildModules(changeObj.propName, changeObj.newValue);
 		},
 
-		_onQueryChannelPropSet: function(evt) {
+		_onQueryChannelPropSet: function(changeObj) {
 
-			this._setPropToChildModules(evt.prop, evt.value);
+			this._setPropToChildModules(changeObj.propName, changeObj.newValue);
 		},
 
 		_setPropToChildModules: function(prop, value) {

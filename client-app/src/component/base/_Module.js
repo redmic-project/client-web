@@ -769,57 +769,69 @@ define([
 
 		_subSetProps: function(req) {
 
-			var propNames = [];
+			const propNames = [];
 
-			for (var prop in req) {
-				var value = this._getUnmutableValue(req[prop]),
-					oldValue = this[prop];
-
-				if (!this._checkPropIsShareable(prop)) {
-					console.error('Tried to set not settable property "%s" at module "%s"', prop, this.getChannel());
+			for (const [propName, propValue] of Object.entries(req)) {
+				if (!this._checkPropIsShareable(propName)) {
+					console.error('Tried to set not settable property "%s" at module "%s"', propName, this.getChannel());
 					continue;
 				}
 
-				if (value === oldValue) {
-					console.warn('Tried to update property "%s" using same value "%s" at module "%s"', prop, value,
-						this.getChannel());
-				}
+				propNames.push(propName);
 
-				this[prop] = value;
-				propNames.push(prop);
+				const newValue = this._getUnmutableValue(propValue),
+					oldValue = this[propName];
 
-				var evtKey = this._createEvent(prop + this.propSetSuffix),
-					methodName = '_on' + Utilities.capitalize(prop) + 'PropSet',
-					changeObj = {
-						prop: prop,
-						oldValue: oldValue,
-						value: value
-					};
-
-				this._emitEvt(evtKey, changeObj);
-				this[methodName] && this[methodName](changeObj);
+				this._propagateBeforeSetProp(propName, newValue, oldValue);
+				this._setProp(propName, newValue, oldValue);
+				this._propagateAfterPropSet(propName, newValue, oldValue);
 			}
 
-			this._emitEvt('PROPS_SET', {
-				propNames: propNames
-			});
+			this._emitEvt('PROPS_SET', {propNames});
 		},
 
 		_getUnmutableValue: function(value) {
 
-			var valueIsObject = value && typeof value === 'object';
+			const valueIsObject = value && typeof value === 'object',
+				objectHasLifecycle = value?.ownChannel || value?.ownerDocument || value?.constructor;
 
-			if (!valueIsObject) {
-				return value;
-			}
-
-			var objectHasLifecycle = value.ownChannel || value.ownerDocument || value.constructor;
-
-			if (objectHasLifecycle) {
+			if (!valueIsObject || objectHasLifecycle) {
 				return value;
 			}
 
 			return lang.clone(value);
+		},
+
+		_propagateBeforeSetProp: function(propName, newValue, oldValue) {
+
+			const methodName = `_onSetProp${Utilities.capitalize(propName)}`;
+
+			this[methodName]?.({propName, newValue, oldValue});
+		},
+
+		_setProp: function(propName, newValue, oldValue) {
+
+			if (newValue === oldValue) {
+				console.warn('Tried to update property "%s" using same value "%s" at module "%s"', propName, newValue,
+					this.getChannel());
+			}
+
+			this[propName] = newValue;
+		},
+
+		_propagateAfterPropSet: function(propName, newValue, oldValue) {
+
+			const evtKey = this._createEvent(propName + this.propSetSuffix),
+				methodName = `_on${Utilities.capitalize(propName)}PropSet`;
+
+			const changeObj = {
+				prop: propName, // TODO eliminar cuando se unifique el uso de los nombres de abajo
+				value: newValue, // TODO eliminar cuando se unifique el uso de los nombres de abajo
+				propName, newValue, oldValue
+			};
+
+			this._emitEvt(evtKey, changeObj);
+			this[methodName]?.(changeObj);
 		},
 
 		_subGetProps: function(req) {

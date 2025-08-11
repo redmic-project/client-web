@@ -82,12 +82,7 @@ define([
 				return;
 			}
 
-			this.target = target;
-
-			this._emitEvt('UPDATE_TARGET', {
-				target: target,
-				refresh: true
-			});
+			this._publish(this.getChannel('SET_PROPS'), {target});
 
 			this._getInfrastructure();
 		},

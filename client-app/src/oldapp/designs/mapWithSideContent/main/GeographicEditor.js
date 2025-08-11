@@ -85,7 +85,6 @@ define([
 			this.config = {
 				events: {
 					SET_FORM_PROPERTY: "setFormProperty",
-					UPDATE_TARGET: "updateTarget",
 					CLEAR: "clear"
 				},
 
@@ -262,15 +261,6 @@ define([
 				event: 'SET_FORM_PROPERTY',
 				channel: this.editor.getChannel("SET_PROPERTY_VALUE")
 			},{
-				event: 'UPDATE_TARGET',
-				channel: this.browser.getChannel("UPDATE_TARGET")
-			},{
-				event: 'UPDATE_TARGET',
-				channel: this.geoJsonLayer.getChannel("UPDATE_TARGET")
-			},{
-				event: 'UPDATE_TARGET',
-				channel: this.textSearch.getChannel("UPDATE_TARGET")
-			},{
 				event: 'CLEAR',
 				channel: this.textSearch.getChannel("RESET")
 			});
@@ -341,21 +331,27 @@ define([
 				return;
 			}
 
-			var newTarget = lang.replace(this.templateTarget, {
+			const target = lang.replace(this.templateTarget, {
 				id: this.pathVariableId
 			});
 
-			if (this.target === newTarget) {
+			if (this.target === target) {
 				return;
 			}
 
-			this.target = newTarget;
+			this._publish(this.getChannel('SET_PROPS'), {target});
 
-			this._emitEvt('UPDATE_TARGET', {
-				target: this.target
-			});
+			return target;
+		},
 
-			return newTarget;
+		_onTargetPropSet: function(changeObj) {
+
+			this.inherited(arguments);
+
+			const target = changeObj.newValue;
+			this._publish(this.browser.getChannel('SET_PROPS'), {target});
+			this._publish(this.geoJsonLayer.getChannel('SET_PROPS'), {target});
+			this._publish(this.textSearch.getChannel('SET_PROPS'), {target});
 		},
 
 		_createAtlas: function() {

@@ -37,9 +37,6 @@ define([
 	};
 
 	const defaultConfig = {
-		events: {
-			UPDATE_TARGET: 'updateTarget'
-		},
 		browserDefinition: 'list',
 		enabledBrowserExtensions: {
 			buttons: true,
@@ -100,18 +97,6 @@ define([
 			});
 		},
 
-		_definePublications: function() {
-
-			this.inherited(arguments);
-
-			const browserInstance = this.getComponentInstance('browser');
-
-			this.publicationsConfig.push({
-				event: 'UPDATE_TARGET',
-				channel: browserInstance.getChannel('UPDATE_TARGET')
-			});
-		},
-
 		_subBrowserButtonEvent: function(res) {
 
 			const btnId = res?.btnId || 'defaultButton',
@@ -125,12 +110,12 @@ define([
 			this._setBrowserDesignTitle?.(evt.value);
 		},
 
-		_onTargetPropSet: function(evt) {
+		_onTargetPropSet: function(changeObj) {
 
 			this.inherited(arguments);
 
 			const instance = this.getComponentInstance('browser'),
-				target = evt.value;
+				target = changeObj.newValue;
 
 			this._publish(instance.getChannel('SET_PROPS'), {target});
 		}

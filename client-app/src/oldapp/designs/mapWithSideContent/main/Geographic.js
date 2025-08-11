@@ -59,7 +59,6 @@ define([
 				mainEvents: {
 					ADD_LAYER: "addLayer",
 					REMOVE_LAYER: "removeLayer",
-					UPDATE_TARGET: "updateTarget",
 					CLEAR: "clear"
 				},
 
@@ -157,18 +156,10 @@ define([
 
 		_defineMainPublications: function () {
 
-			this.publicationsConfig.push({
-				event: 'UPDATE_TARGET',
-				channel: this.browser.getChannel("UPDATE_TARGET")
-			});
-
 			if (!this.notTextSearch) {
 				this.publicationsConfig.push({
 					event: 'CLEAR',
 					channel: this.textSearch.getChannel("RESET")
-				},{
-					event: 'UPDATE_TARGET',
-					channel: this.textSearch.getChannel("UPDATE_TARGET")
 				});
 			}
 		},
@@ -222,13 +213,16 @@ define([
 				target[0] = newTarget;
 			}
 
-			this._publish(this.getChannel('UPDATE_TARGET'), {
-				target: target,
-				refresh: true
-			});
+			this._publish(this.getChannel('SET_PROPS'), {target});
 		},
 
-		_updateTarget: function(obj) {
+		_onTargetPropSet: function(changeObj) {
+
+			this.inherited(arguments);
+
+			const target = changeObj.newValue;
+			this._publish(this.browser.getChannel('SET_PROPS'), {target});
+			this._publish(this.textSearch?.getChannel('SET_PROPS'), {target});
 
 			this._publish(this.map.getChannel("SET_CENTER_AND_ZOOM"), {
 				center: [28.5, -16.0],

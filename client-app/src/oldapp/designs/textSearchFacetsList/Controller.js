@@ -63,12 +63,12 @@ define([
 			this.facets = new FacetsImpl(this.facetsConfig);
 		},
 
-		_defineControllerPublications: function() {
+		_onTargetPropSet: function(changeObj) {
 
-			this.publicationsConfig.push({
-				event: 'UPDATE_TARGET',
-				channel: this.textSearch.getChannel("UPDATE_TARGET")
-			});
+			this.inherited(arguments);
+
+			const target = changeObj.newValue;
+			this._publish(this.textSearch.getChannel('SET_PROPS'), {target});
 		},
 
 		postCreate: function() {

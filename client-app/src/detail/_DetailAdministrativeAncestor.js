@@ -66,7 +66,7 @@ define([
 
 			let widgetInstance = this._getWidgetInstance('descendantList');
 
-			this._publish(widgetInstance.getChannel('UPDATE_TARGET'), {
+			this._publish(widgetInstance.getChannel('SET_PROPS'), {
 				target: this.target[1]
 			});
 

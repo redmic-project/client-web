@@ -213,7 +213,7 @@ define([
 
 				this.infoTarget = this.target + "/" + id;
 
-				this._publish(this.infoFilter.getChannel('UPDATE_TARGET'), {
+				this._publish(this.infoFilter.getChannel('SET_PROPS'), {
 					target: this.infoTarget
 				});
 

@@ -85,16 +85,15 @@ define([
 
 			const mapLayerInstance = this.getComponentInstance('mapLayer');
 
-			this._publish(mapLayerInstance.getChannel('CHANGE_TARGET'), {
+			this._publish(mapLayerInstance.getChannel('SET_PROPS'), {
 				target: replacedTarget
 			});
 		},
 
 		_requestDataFromReplacedTarget: function(replacedTarget) {
 
-			this._publish(this.getChannel('UPDATE_TARGET'), {
-				target: replacedTarget,
-				refresh: true
+			this._publish(this.getChannel('SET_PROPS'), {
+				target: replacedTarget
 			});
 		},
 

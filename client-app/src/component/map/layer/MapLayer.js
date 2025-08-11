@@ -42,7 +42,6 @@ define([
 				},
 				actions: {
 					CLEAR: "clear",
-					CHANGE_TARGET: "changeTarget",
 					ADD_LAYER: "addLayer",
 					REMOVE_LAYER: "removeLayer",
 					ADD_DATA: "addData",
@@ -80,9 +79,6 @@ define([
 			},{
 				channel : this.getChannel("CLEAR"),
 				callback: "_subClear"
-			},{
-				channel : this.getChannel("CHANGE_TARGET"),
-				callback: "_subChangeTarget"
 			},{
 				channel : this.getChannel("ADD_DATA"),
 				callback: "_subAddData"
@@ -164,22 +160,13 @@ define([
 			this.clear();
 		},
 
-		_updateTarget: function(obj) {
+		_onTargetPropSet: function() {
+
+			this.inherited(arguments);
 
 			if (!this.associatedIds) {// If associatedIds los datos no los trae este módulo
 				this._redraw();
 			}
-		},
-
-		// TODO: Cambiar por canal updateTarget de _store
-		_subChangeTarget: function(obj) {
-
-			this._changeTarget(obj);
-		},
-
-		_changeTarget: function(obj) {
-
-			this.target = obj.target || this.target;
 		},
 
 		_subAddData: function(request) {

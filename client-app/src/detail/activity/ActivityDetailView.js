@@ -57,7 +57,7 @@ define([
 
 			this.inherited(arguments);
 
-			this._publish(this._getWidgetInstance('info').getChannel('UPDATE_TARGET'), {
+			this._publish(this._getWidgetInstance('info').getChannel('SET_PROPS'), {
 				target: this._infoTarget
 			});
 		},

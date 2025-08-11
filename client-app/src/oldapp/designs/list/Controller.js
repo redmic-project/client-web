@@ -20,24 +20,6 @@ define([
 			};
 
 			lang.mixin(this, this.config);
-		},
-
-		_defineControllerSubscriptions: function() {
-
-			this.subscriptionsConfig.push({
-				channel : this.getChannel("UPDATE_TARGET"),
-				callback: "_subUpdateTarget"
-			});
-		},
-
-		postCreate: function() {
-
-			this.inherited(arguments);
-		},
-
-		_subUpdateTarget: function(req) {
-
-			this._emitEvt("UPDATE_TARGET", req);
 		}
 	});
 });

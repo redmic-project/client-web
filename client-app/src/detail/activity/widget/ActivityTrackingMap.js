@@ -87,9 +87,8 @@ define([
 
 			this.target[1] = target;
 
-			this._publish(this._trackingMap.getChannel("UPDATE_TARGET"), {
-				target: target,
-				refresh: true
+			this._publish(this._trackingMap.getChannel("SET_PROPS"), {
+				target: target
 			});
 		}
 	});

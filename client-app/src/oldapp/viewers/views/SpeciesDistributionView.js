@@ -619,7 +619,7 @@ define([
 
 			this._emitEvt('ADD_LAYER', {layer: layerInstance});
 
-			this._publish(this.gridLayer.getChannel("CHANGE_TARGET"), {
+			this._publish(this.gridLayer.getChannel("SET_PROPS"), {
 				target: this.gridLayerTarget + "/" + this.currentGridLayer
 			});
 

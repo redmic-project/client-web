@@ -158,26 +158,24 @@ define([
 			this._emitEvt("REMOVE_TOOLBAR_IN_FRAMEWORK");
 		},
 
-		_onFrameworkQueryChannelPropSet: function(evt) {
+		_onFrameworkQueryChannelPropSet: function(changeObj) {
 
-			this._setPropToBarModules(evt.prop, evt.value);
+			this._setPropToBarModules(changeObj.propName, changeObj.newValue);
 		},
 
-		_setPropToBarModules: function(prop, value) {
+		_onTargetPropSet: function(changeObj) {
 
-			var obj = {};
-			obj[prop] = value;
+			this.inherited(arguments);
 
-			for (var i = 0; i < this._barsIntances.length; i++) {
-				this._publish(this._barsIntances[i].getChannel('SET_PROPS'), obj);
-			}
+			this._setPropToBarModules(changeObj.propName, changeObj.newValue);
 		},
 
-		_updateTarget: function(obj) {
+		_setPropToBarModules: function(propName, newValue) {
 
-			for (var i = 0; i < this._barsIntances.length; i++) {
-				this._publish(this._barsIntances[i].getChannel("UPDATE_TARGET"), obj);
-			}
+			const obj = {};
+			obj[propName] = newValue;
+
+			this._barsIntances.forEach((barInstance) => this._publish(barInstance.getChannel('SET_PROPS'), obj));
 		}
 	});
 });

@@ -77,11 +77,6 @@ define([
 				this.associatedIds.indexOf(requesterId) !== -1);
 		},
 
-		_chkTargetAndRequester: function(response) {
-
-			return this._chkTargetIsMine(response) && this._chkRequesterIsMe(response);
-		},
-
 		_chkPublicationIsForMe: function(res) {
 
 			if (!res.id || res.id === this.getOwnChannel()) {

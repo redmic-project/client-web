@@ -79,28 +79,12 @@ define([
 			}, this.textSearchConfig || {}]);
 		},
 
-		_defineMainSubscriptions: function() {
-
-			this.subscriptionsConfig.push({
-				channel: this.getChannel("UPDATE_TARGET"),
-				callback: "_subUpdateTarget"
-			});
-		},
-
 		_defineMainPublications: function() {
 
 			this.publicationsConfig.push({
 				event: 'UPDATE_DATA',
 				channel: this.getChannel("UPDATE_DATA")
 			});
-		},
-
-		_subUpdateTarget: function(res) {
-
-			this.target = res.target;
-			this.editionTarget = res.editionTarget;
-
-			this._emitEvt('UPDATE_TARGET', res);
 		},
 
 		_shareCallback: function(data) {

@@ -95,11 +95,9 @@ define([
 			return false;
 		},
 
-		_changeTarget: function(obj) {
+		_onTargetPropSet: function() {
 
 			this.inherited(arguments);
-
-			this._emitEvt('UPDATE_TARGET', obj);
 
 			this._removeSizeQueryParameter();
 			this._redraw();

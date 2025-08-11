@@ -108,16 +108,6 @@ define([
 			this._updateCompletedStatus();
 		},
 
-		_definePublications: function () {
-
-			this.inherited(arguments);
-
-			this.publicationsConfig.push({
-				event: 'UPDATE_TARGET',
-				channel: this.geoJsonLayer.getChannel("UPDATE_TARGET")
-			});
-		},
-
 		postCreate: function() {
 
 			this.inherited(arguments);
@@ -156,6 +146,15 @@ define([
 					}
 				});
 			}
+		},
+
+		_onTargetPropSet: function(changeObj) {
+
+			this.inherited(arguments);
+
+			const target = changeObj.newValue;
+
+			this._publish(this.geoJsonLayer.getChannel('SET_PROPS'), {target});
 		},
 
 		_dataAvailable: function(response) {

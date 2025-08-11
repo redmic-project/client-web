@@ -32,12 +32,12 @@ define([
 			return lang.mixin(inheritedComponents, {facet});
 		},
 
-		_onTargetPropSet: function(evt) {
+		_onTargetPropSet: function(changeObj) {
 
 			this.inherited(arguments);
 
 			const instance = this.getComponentInstance('facet'),
-				target = evt.value;
+				target = changeObj.newValue;
 
 			this._publish(instance.getChannel('SET_PROPS'), {target});
 		}

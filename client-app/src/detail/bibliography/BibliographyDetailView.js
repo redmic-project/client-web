@@ -34,36 +34,35 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainOwnCallbacksForEvents: function() {
+		_setOwnCallbacksForEvents: function() {
+
+			this.inherited(arguments);
 
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onDocumentDetailsHidden));
 		},
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
 
-			this.widgetConfigs = this._merge([
-				this.widgetConfigs || {},
-				{
-					info: {
-						height: 4
-					},
-					activityList: {
-						height: 4
-					},
-					pdf: {
-						width: 6,
-						height: 6,
-						hidden: true,
-						type: DocumentPDF,
-						props: {
-							title: 'document',
-							pathVariableId: this.pathVariableId
-						}
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
+				info: {
+					height: 4
+				},
+				activityList: {
+					height: 4
+				},
+				pdf: {
+					width: 6,
+					height: 6,
+					hidden: true,
+					type: DocumentPDF,
+					props: {
+						title: 'document',
+						pathVariableId: this.pathVariableId
 					}
 				}
-			]);
+			}]);
 		},
 
 		_itemAvailable: function(res, resWrapper) {

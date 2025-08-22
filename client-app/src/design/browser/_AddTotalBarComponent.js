@@ -19,7 +19,7 @@ define([
 			this.inherited(arguments);
 
 			const parentChannel = this.getChannel(),
-				target = this._getTarget();
+				target = this.target;
 
 			this.mergeComponentAttribute('totalBarConfig', {
 				parentChannel, target

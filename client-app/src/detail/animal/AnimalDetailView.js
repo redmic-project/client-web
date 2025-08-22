@@ -37,7 +37,7 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
 

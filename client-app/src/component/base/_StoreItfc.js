@@ -20,7 +20,8 @@ define([
 				"_dataAvailable": {},
 				"_itemAvailable": {},
 				"_errorAvailable": {},
-				"_shouldOmitTargetLoading": {}
+				"_shouldOmitTargetLoading": {},
+				'_requestParamsChanged': {}
 			});
 		}
 	});

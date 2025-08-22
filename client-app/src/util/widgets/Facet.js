@@ -197,13 +197,9 @@ define([
 
 		_generateQuery: function() {
 
-			var queryTerm = {};
+			const queryTerm = {};
 
-			if (this.termSelection == 0) {
-				queryTerm = null;
-			} else {
-				queryTerm[this.termsFieldFacet] = this.termSelection;
-			}
+			queryTerm[this.termsFieldFacet] = this.termSelection;
 
 			this.emit(this.events.UPDATE_QUERY, queryTerm, this.label);
 		}

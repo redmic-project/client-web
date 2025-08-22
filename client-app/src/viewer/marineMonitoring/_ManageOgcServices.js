@@ -43,8 +43,10 @@ define([
 				target: this.target,
 				action: '_search',
 				method: 'POST',
-				query: {
-					terms: {activities}
+				params: {
+					query: {
+						terms: {activities}
+					}
 				},
 				requesterId: this.getChannel()
 			});
@@ -54,8 +56,7 @@ define([
 
 			this.inherited(arguments);
 
-			var reqTerms = resWrapper.req.query.terms;
-			if (!reqTerms || !reqTerms.activities) {
+			if (!resWrapper?.req?.params?.query?.terms?.activities) {
 				return;
 			}
 

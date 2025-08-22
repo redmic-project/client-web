@@ -24,9 +24,11 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
+
+			this.addTargetToArray(this.ancestorsTarget);
 
 			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
 				organisationList: this._getOrganisationsConfig(),

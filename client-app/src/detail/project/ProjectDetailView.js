@@ -27,7 +27,7 @@ define([
 				reportService: 'project',
 				pathParent: redmicConfig.viewPaths.projectCatalog,
 				templateInfo: ProjectInfoTemplate,
-				_descendantTargetBase: redmicConfig.services.activityProject,
+				descendantsTarget: redmicConfig.services.activityProject,
 				_descendantFields: redmicConfig.returnFields.activity
 			};
 
@@ -38,7 +38,7 @@ define([
 
 			return {
 				title: 'activities',
-				target: this.descendantTarget,
+				target: this.descendantsTarget,
 				template: ActivityListTemplate,
 				href: redmicConfig.viewPaths.activityDetails
 			};

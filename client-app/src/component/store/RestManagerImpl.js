@@ -55,6 +55,7 @@ define([
 					'resettingSetPassword',
 					'activateAccount'
 				],
+				_requestParams: {},
 				// TODO medida temporal, mientras convivan oauth y keycloak
 				_oidPaths: [
 					'acoustic-detection'
@@ -152,6 +153,14 @@ define([
 			return this._launchRequest(url, options);
 		},
 
+		_performGet: function(req, requesterChannel) {
+
+			const url = this._getTargetForGet(req, requesterChannel),
+				options = this._getOptionsForGet(req, requesterChannel);
+
+			return this._launchRequest(url, options);
+		},
+
 		_getGetRequestTarget: function(target, req) {
 
 			const id = req.id,
@@ -159,6 +168,20 @@ define([
 
 			if (idType === 'string' || idType === 'number') {
 				return this._getTargetWithEndingSlash(target) + id;
+			}
+
+			return target;
+		},
+
+		_getTargetForGet: function(req, requesterChannel) {
+
+			let target = this._getTargetWithPathParamsReplaced(req.target, requesterChannel);
+
+			const id = req.id,
+				idType = typeof id;
+
+			if (idType === 'string' || idType === 'number') {
+				target = this._getTargetWithEndingSlash(target) + id;
 			}
 
 			return target;
@@ -181,10 +204,37 @@ define([
 			}, options);
 		},
 
+		_getOptionsForGet: function(req, requesterChannel) {
+
+			const method = 'GET',
+				headers = lang.mixin({}, this.headers, req.headers || {}),
+				query = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel);
+
+			const options = {
+				method,
+				headers,
+				query,
+				sync: this.sync,
+				preventCache: this.preventCache,
+				timeout: this.timeout,
+				handleAs: this.handleAs
+			};
+
+			return this._merge([options, req.options || {}]);
+		},
+
 		_requestRequest: function(target, req) {
 
 			var url = this._getRequestRequestTarget(target, req),
 				options = this._getRequestRequestOptions(req);
+
+			return this._launchRequest(url, options);
+		},
+
+		_performRequest: function(req, requesterChannel) {
+
+			const url = this._getTargetForRequest(req, requesterChannel),
+				options = this._getOptionsForRequest(req, requesterChannel);
 
 			return this._launchRequest(url, options);
 		},
@@ -195,6 +245,18 @@ define([
 
 			if (action?.length) {
 				return this._getTargetWithEndingSlash(target) + action;
+			}
+
+			return target;
+		},
+
+		_getTargetForRequest: function(req, requesterChannel) {
+
+			let target = this._getTargetWithPathParamsReplaced(req.target, requesterChannel);
+
+			const action = req.action;
+			if (action?.length) {
+				target = this._getTargetWithEndingSlash(target) + action;
 			}
 
 			return target;
@@ -223,6 +285,41 @@ define([
 			} else {
 				options.query = query;
 			}
+
+			return lang.mixin(options, reqOptions);
+		},
+
+		_getOptionsForRequest: function(req, requesterChannel) {
+
+			const method = req.method || 'GET';
+
+			const reqHeaders = this._getRequestRequestHeaders(req),
+				headers = lang.mixin({}, this.headers, reqHeaders, req.headers || {});
+
+			const options = {
+				method,
+				headers,
+				sync: this.sync,
+				preventCache: this.preventCache,
+				timeout: this.timeout,
+				handleAs: this.handleAs
+			};
+
+			const queryData = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel);
+
+			if (method === 'POST') {
+				options.data = JSON.stringify(queryData, (_key, value) => {
+					if (value instanceof Array && !value.length) {
+						// evita arrays vacíos entre los valores
+						return;
+					}
+					return value;
+				});
+			} else {
+				options.query = queryData;
+			}
+
+			const reqOptions = req.options || {};
 
 			return lang.mixin(options, reqOptions);
 		},
@@ -480,6 +577,88 @@ define([
 
 			// TODO notificar al usuario que hubo un error de conexión y ofrecerle recargar (para que pueda actuar
 			// sobre la página actual antes de recargar)
+		},
+
+		_manageRequestParams: function(req, requesterChannel) {
+
+			const target = req.target,
+				reqParams = req.params || {},
+				sharedParams = reqParams.sharedParams;
+
+			delete reqParams.sharedParams;
+
+			// TODO temporal, convierte antiguo formato de query en el primer nivel al nuevo de params anidado
+			if (req.query && !reqParams.query) {
+				reqParams.query = req.query;
+				delete req.query;
+			}
+
+			// TODO aquí probar a escribir sólo en sharedChannel si es el caso, para no ser redundante!!
+			if (sharedParams) {
+				const sharedChannel = this._getSharedChannel(requesterChannel);
+
+				const sharedAddedRequestParams = this._mixinRequestParams(target, reqParams, sharedChannel);
+
+				return sharedAddedRequestParams;
+			}
+
+			const requesterAddedRequestParams = this._mixinRequestParams(target, reqParams, requesterChannel);
+
+			return requesterAddedRequestParams;
+		},
+
+		_mixinRequestParams: function(target, reqParams, requesterChannel) {
+
+			const prevParams = this._getRequestParams(target, requesterChannel),
+				nextParams = this._merge([prevParams, reqParams]);
+
+			this._setRequestParams(target, requesterChannel, nextParams);
+
+			return nextParams;
+		},
+
+		_getRequestParams: function(target, requesterChannel) {
+
+			return this._requestParams[requesterChannel]?.[target] ?? {
+				path: {},
+				query: {}
+			};
+		},
+
+		_setRequestParams: function(target, requesterChannel, params) {
+
+			this._requestParams[requesterChannel] = this._requestParams[requesterChannel] ?? {};
+
+			this._requestParams[requesterChannel][target] = params;
+		},
+
+		_getSharedChannel: function(requesterChannel) {
+
+			return requesterChannel.split(this.channelSeparator).slice(0, 2).join(this.channelSeparator);
+		},
+
+		_getTargetWithPathParamsReplaced: function(target, requesterChannel) {
+
+			const requesterRequestPathParams = this._getRequestParams(target, requesterChannel).path;
+
+			const sharedChannel = this._getSharedChannel(requesterChannel),
+				sharedRequestPathParams = this._getRequestParams(target, sharedChannel).path;
+
+			const apiUrl = this._apiUrl;
+
+			const pathParams = this._merge([{apiUrl}, sharedRequestPathParams, requesterRequestPathParams]);
+
+			return lang.replace(target, pathParams);
+		},
+
+		_getQueryDataWithQueryParamsReplaced: function(target, requesterChannel) {
+
+			const requesterRequestQueryParams = this._getRequestParams(target, requesterChannel).query;
+
+			const sharedChannel = this._getSharedChannel(requesterChannel),
+				sharedRequestQueryParams = this._getRequestParams(target, sharedChannel).query;
+
+			return this._merge([sharedRequestQueryParams, requesterRequestQueryParams]);
 		}
 	});
 });

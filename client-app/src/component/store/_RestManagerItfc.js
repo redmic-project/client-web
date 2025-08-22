@@ -18,11 +18,14 @@ define([
 
 			return lang.mixin(this.inherited(arguments), {
 				'_getRequest': {},
+				'_performGet': {},
 				'_requestRequest': {},
+				'_performRequest': {},
 				'_saveRequest': {},
 				'_removeRequest': {},
 				'_parseResponse': {},
-				'_parseError': {}
+				'_parseError': {},
+				'_manageRequestParams': {}
 			});
 		}
 	});

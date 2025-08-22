@@ -81,7 +81,9 @@ define([
 
 		_beforeShow: function() {
 
-			this._getFacets();
+			if (this.queryChannel) {
+				this._getFacets();
+			}
 		},
 
 		_subUpdateFacets: function(req) {
@@ -328,15 +330,12 @@ define([
 
 		_onFacetChangeEvent: function(queryTerm, title) {
 
-			var propertyPath = this._getAggregationGroupPropertyPath(title);
+			const propertyPath = this._getAggregationGroupPropertyPath(title),
+				queryTermValue = queryTerm?.[propertyPath];
 
-			if (queryTerm) {
-				this._addFacetToQuery(title, queryTerm);
-				this._selectionByAggregationGroup[title] = queryTerm[propertyPath];
-			} else {
-				this._removeFacetFromQuery(title);
-				this._selectionByAggregationGroup[title] = [];
-			}
+			this._selectionByAggregationGroup[title] = queryTermValue;
+
+			this._addFacetToQuery(title, queryTerm);
 
 			this._onNewSearch(this.query);
 		},
@@ -344,11 +343,6 @@ define([
 		_addFacetToQuery: function(title, queryTerm) {
 
 			this.query[title] = queryTerm;
-		},
-
-		_removeFacetFromQuery: function(title) {
-
-			delete this.query[title];
 		},
 
 		_onFacetShowMoreEvent: function(facetsGroupTitle) {

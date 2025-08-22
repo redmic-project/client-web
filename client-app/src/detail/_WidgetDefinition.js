@@ -13,16 +13,20 @@ define([
 	, 'src/detail/activity/widget/ActivityTrackingMap'
 	, 'src/util/Credentials'
 	, 'src/component/base/_Filter'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
 	, 'src/component/browser/_ButtonsInRow'
 	, 'src/component/browser/_Framework'
 	, 'src/component/browser/ListImpl'
-	, 'src/component/browser/bars/Pagination'
 	, 'src/component/browser/bars/Total'
 	, 'src/component/layout/genericDisplayer/GenericDisplayer'
 	, 'src/component/layout/SupersetDisplayer'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
 	, 'src/component/map/_ImportWkt'
 	, 'src/component/map/LeafletImpl'
+	, 'src/design/browser/_AddTotalBarComponent'
+	, 'src/design/browser/_BrowserFullSizeDesignLayout'
 	, 'src/redmicConfig'
 	, 'templates/ContactSet'
 	, 'templates/DocumentList'
@@ -43,16 +47,20 @@ define([
 	, ActivityTrackingMap
 	, Credentials
 	, _Filter
+	, _Module
+	, _Show
+	, _Store
 	, _ButtonsInRow
 	, _Framework
 	, ListImpl
-	, Pagination
 	, Total
 	, GenericDisplayer
 	, SupersetDisplayer
 	, TemplateDisplayer
 	, _ImportWkt
 	, LeafletImpl
+	, _AddTotalBarComponent
+	, _BrowserFullSizeDesignLayout
 	, redmicConfig
 	, TemplateContacts
 	, TemplateDocuments
@@ -81,23 +89,22 @@ define([
 			return {
 				width: 3,
 				height: 4,
-				type: declare([ListImpl, _Framework, _ButtonsInRow]),
+				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
 				props: {
 					title: 'organisations',
 					target: this.organisationTarget,
-					template: TemplateOrganisation,
-					bars: [{
-						instance: Total
-					}],
-					rowConfig: {
-						buttonsConfig: {
-							listButton: [{
-								icon: 'fa-info-circle',
-								btnId: 'details',
-								title: this.i18n.info,
-								href: redmicConfig.viewPaths.organisationDetails,
-								pathToItem: 'organisation'
-							}]
+					browserConfig: {
+						template: TemplateOrganisation,
+						rowConfig: {
+							buttonsConfig: {
+								listButton: [{
+									icon: 'fa-info-circle',
+									btnId: 'details',
+									title: this.i18n.info,
+									href: redmicConfig.viewPaths.organisationDetails,
+									pathToItem: 'organisation'
+								}]
+							}
 						}
 					}
 				}
@@ -109,23 +116,22 @@ define([
 			return {
 				width: 3,
 				height: 4,
-				type: declare([ListImpl, _Framework, _ButtonsInRow]),
+				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
 				props: {
 					title: 'platforms',
 					target: this.platformTarget,
-					template: TemplatePlatform,
-					bars: [{
-						instance: Total
-					}],
-					rowConfig: {
-						buttonsConfig: {
-							listButton: [{
-								icon: 'fa-info-circle',
-								btnId: 'details',
-								title: this.i18n.info,
-								href: redmicConfig.viewPaths.platformDetails,
-								pathToItem: 'platform'
-							}]
+					browserConfig: {
+						template: TemplatePlatform,
+						rowConfig: {
+							buttonsConfig: {
+								listButton: [{
+									icon: 'fa-info-circle',
+									btnId: 'details',
+									title: this.i18n.info,
+									href: redmicConfig.viewPaths.platformDetails,
+									pathToItem: 'platform'
+								}]
+							}
 						}
 					}
 				}
@@ -137,23 +143,22 @@ define([
 			return {
 				width: 3,
 				height: 4,
-				type: declare([ListImpl, _Framework, _ButtonsInRow]),
+				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
 				props: {
 					title: 'contacts',
 					target: this.contactTarget,
-					template: TemplateContacts,
-					bars: [{
-						instance: Total
-					}],
-					rowConfig: {
-						buttonsConfig: {
-							listButton: [{
-								icon: 'fa-info-circle',
-								btnId: 'details',
-								title: this.i18n.info,
-								href: redmicConfig.viewPaths.contactDetails,
-								pathToItem: 'contact'
-							}]
+					browserConfig: {
+						template: TemplateContacts,
+						rowConfig: {
+							buttonsConfig: {
+								listButton: [{
+									icon: 'fa-info-circle',
+									btnId: 'details',
+									title: this.i18n.info,
+									href: redmicConfig.viewPaths.contactDetails,
+									pathToItem: 'contact'
+								}]
+							}
 						}
 					}
 				}
@@ -165,22 +170,21 @@ define([
 			return {
 				width: 3,
 				height: 4,
-				type: declare([ListImpl, _Framework, _ButtonsInRow]),
+				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
 				props: {
 					title: 'documents',
 					target: this.documentTarget,
-					template: TemplateDocuments,
-					bars: [{
-						instance: Total
-					}],
-					rowConfig: {
-						buttonsConfig: {
-							listButton: [{
-								icon: 'fa-info-circle',
-								btnId: 'details',
-								title: this.i18n.info,
-								href: redmicConfig.viewPaths.bibliographyDetails
-							}]
+					browserConfig: {
+						template: TemplateDocuments,
+						rowConfig: {
+							buttonsConfig: {
+								listButton: [{
+									icon: 'fa-info-circle',
+									btnId: 'details',
+									title: this.i18n.info,
+									href: redmicConfig.viewPaths.bibliographyDetails
+								}]
+							}
 						}
 					}
 				}
@@ -192,33 +196,30 @@ define([
 			return {
 				width: config.width || 3,
 				height: config.height || 4,
-				type: declare([ListImpl, _Framework, _ButtonsInRow, _Filter]),
+				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
 				props: {
 					title: config.title,
-					bars: [{
-						instance: Total
-					},{
-						instance: Pagination
-					}],
 					target: config.target,
-					template: config.template,
-					rowConfig: {
-						buttonsConfig: {
-							listButton: [{
-								icon: 'fa-info-circle',
-								btnId: 'details',
-								title: this.i18n.info,
-								href: config.href,
-								condition: function(item) {
+					browserConfig: {
+						template: config.template,
+						rowConfig: {
+							buttonsConfig: {
+								listButton: [{
+									icon: 'fa-info-circle',
+									btnId: 'details',
+									title: this.i18n.info,
+									href: config.href,
+									condition: function(item) {
 
-									var accessibilityId = item && item.accessibility && item.accessibility.id,
-										browseableAccesibilities = [2], // libre
-										accessibilityIsBrowseable = accessibilityId &&
-											browseableAccesibilities.indexOf(accessibilityId) !== -1;
+										var accessibilityId = item && item.accessibility && item.accessibility.id,
+											browseableAccesibilities = [2], // libre
+											accessibilityIsBrowseable = accessibilityId &&
+												browseableAccesibilities.indexOf(accessibilityId) !== -1;
 
-									return accessibilityIsBrowseable || Credentials.userIsEditor();
-								}
-							}]
+										return accessibilityIsBrowseable || Credentials.userIsEditor();
+									}
+								}]
+							}
 						}
 					}
 				}

@@ -20,22 +20,38 @@ define([
 		//	summary:
 		//		Base común a todas las vistas de detalle.
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
+
+			this.inherited(arguments);
 
 			this.target = [this.target];
 
 			if (this.templateTitle) {
-				this.titleWidgetConfig = this._merge([{
+				this.titleWidgetConfig = this._merge([this.titleWidgetConfig || {}, {
 					template: this.templateTitle
-				}, this.titleWidgetConfig || {}]);
+				}]);
 			}
 
-			this.widgetConfigs = this._merge([{
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
 				info: this._getInfoConfig({
-					template: this.templateInfo,
-					target: this.target[0]
+					template: this.templateInfo
 				})
-			}, this.widgetConfigs || {}]);
+			}]);
+		},
+
+		addTargetToArray: function(/*string*/ target) {
+
+			if (!this.target) {
+				this.target = [];
+			}
+
+			if (typeof this.target === 'string') {
+				this.target = [this.target];
+			}
+
+			if (target?.length && this.target instanceof Array && !this.target.includes(target)) {
+				this.target.push(target);
+			}
 		},
 
 		_clearModules: function() {

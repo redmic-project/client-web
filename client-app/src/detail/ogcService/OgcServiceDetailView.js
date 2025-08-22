@@ -39,6 +39,7 @@ define([
 			this.config = {
 				atlasTarget: redmicConfig.services.atlasLayer,
 				activityTarget: redmicConfig.services.activity,
+				activitiesTargetBase: redmicConfig.services.activity,
 				pathParent: redmicConfig.viewPaths.ogcServiceCatalog,
 				infoLayerTarget: 'infoLayerTarget',
 				sourceInfoLayerTarget: 'sourceInfoLayerTarget',
@@ -51,7 +52,7 @@ define([
 			this.target = this.atlasTarget;
 		},
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
 
@@ -126,11 +127,6 @@ define([
 			if (this.layer) {
 				this._publish(this.layer.getChannel('DESTROY'));
 			}
-		},
-
-		_prepareActivityTarget: function() {
-
-			this.target[1] = this.activityTarget;
 		},
 
 		_getActivityTargetData: function() {

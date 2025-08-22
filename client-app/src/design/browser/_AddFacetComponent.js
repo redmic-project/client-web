@@ -18,9 +18,10 @@ define([
 
 			this.inherited(arguments);
 
-			const parentChannel = this.getChannel();
+			const parentChannel = this.getChannel(),
+				target = this.target;
 
-			this.mergeComponentAttribute('facetConfig', {parentChannel});
+			this.mergeComponentAttribute('facetConfig', {parentChannel, target});
 		},
 
 		createDesignControllerComponents: function() {

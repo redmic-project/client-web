@@ -74,7 +74,7 @@ define([
 			this.node = put(this.containerAttrs);
 			put(this.node, this.buttonAttrs + "." + this.icon + "[title=" + this.title + "]");
 
-			Mediator.publish(this.addButtonChannel, {
+			Mediator.publish(this.addButtonChannel, {}, {
 				button: this.node
 			});
 		},

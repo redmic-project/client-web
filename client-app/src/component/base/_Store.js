@@ -18,7 +18,8 @@ define([
 			REQUEST: "request",
 			GET: "get",
 			INJECT_ITEM: "injectItem",
-			INJECT_DATA: "injectData"
+			INJECT_DATA: "injectData",
+			ADD_REQUEST_PARAMS: 'addRequestParams'
 		},
 
 		storeActions: {
@@ -29,7 +30,9 @@ define([
 			INJECT_ITEM: "injectItem",
 			INJECT_DATA: "injectData",
 			TARGET_LOADING: "targetLoading",
-			TARGET_LOADED: "targetLoaded"
+			TARGET_LOADED: "targetLoaded",
+			ADD_REQUEST_PARAMS: 'addRequestParams',
+			REQUEST_PARAMS_CHANGED: 'requestParamsChanged'
 		},
 
 		constructor: function(args) {
@@ -49,33 +52,39 @@ define([
 
 		_defineStoreSubscriptions: function () {
 
-			var options = {
-					predicate: lang.hitch(this, this._chkTargetAndRequester)
-				};
+			const options = {
+				predicate: lang.hitch(this, this._chkTargetAndRequester)
+			};
 
 			this.subscriptionsConfig.push({
-				channel : this._buildChannel(this.storeChannel, this.actions.AVAILABLE),
-				callback: "_subAvailable",
-				options: options
+				channel : this._buildChannel(this.storeChannel, 'AVAILABLE'),
+				callback: '_subAvailable',
+				options
 			},{
-				channel : this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
-				callback: "_subItemAvailable",
-				options: options
+				channel : this._buildChannel(this.storeChannel, 'ITEM_AVAILABLE'),
+				callback: '_subItemAvailable',
+				options
+			},{
+				channel : this._buildChannel(this.storeChannel, 'REQUEST_PARAMS_CHANGED'),
+				callback: '_subRequestParamsChanged',
+				options
 			});
 
-			!this.omitLoading && this.subscriptionsConfig.push({
-				channel : this._buildChannel(this.storeChannel, this.actions.TARGET_LOADING),
-				callback: "_subTargetLoading",
-				options: {
+			if (!this.omitLoading) {
+				const loadingOpts = {
 					predicate: lang.hitch(this, this._chkTargetLoadingIsMine)
-				}
-			},{
-				channel : this._buildChannel(this.storeChannel, this.actions.TARGET_LOADED),
-				callback: "_subTargetLoaded",
-				options: {
-					predicate: lang.hitch(this, this._chkTargetLoadingIsMine)
-				}
-			});
+				};
+
+				this.subscriptionsConfig.push({
+					channel : this._buildChannel(this.storeChannel, 'TARGET_LOADING'),
+					callback: '_subTargetLoading',
+					options: loadingOpts
+				},{
+					channel : this._buildChannel(this.storeChannel, 'TARGET_LOADED'),
+					callback: '_subTargetLoaded',
+					options: loadingOpts
+				});
+			}
 
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
 		},
@@ -84,16 +93,19 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'REQUEST',
-				channel: this._buildChannel(this.storeChannel, this.actions.REQUEST)
+				channel: this._buildChannel(this.storeChannel, 'REQUEST')
 			},{
 				event: 'GET',
-				channel: this._buildChannel(this.storeChannel, this.actions.GET)
+				channel: this._buildChannel(this.storeChannel, 'GET')
 			},{
 				event: 'INJECT_ITEM',
-				channel: this._buildChannel(this.storeChannel, this.actions.INJECT_ITEM)
+				channel: this._buildChannel(this.storeChannel, 'INJECT_ITEM')
 			},{
 				event: 'INJECT_DATA',
-				channel: this._buildChannel(this.storeChannel, this.actions.INJECT_DATA)
+				channel: this._buildChannel(this.storeChannel, 'INJECT_DATA')
+			},{
+				event: 'ADD_REQUEST_PARAMS',
+				channel: this._buildChannel(this.storeChannel, 'ADD_REQUEST_PARAMS')
 			});
 
 			this._deleteDuplicatedChannels(this.publicationsConfig);
@@ -125,6 +137,11 @@ define([
 			}
 
 			this._tryToEmitEvt('LOADED');
+		},
+
+		_subRequestParamsChanged: function(res) {
+
+			this._requestParamsChanged(res);
 		},
 
 		_onSetPropTarget: function() {

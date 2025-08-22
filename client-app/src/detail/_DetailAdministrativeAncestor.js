@@ -1,10 +1,8 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'src/detail/_DetailAdministrative'
 ], function(
 	declare
-	, lang
 	, _DetailAdministrative
 ) {
 
@@ -12,16 +10,7 @@ define([
 		//	summary:
 		//		Base de vistas de detalle para las entidades proyecto y programa.
 
-		constructor: function(args) {
-
-			this.config = {
-				_descendantTargetLocal: 'administrativeDescendants'
-			};
-
-			lang.mixin(this, this.config, args);
-		},
-
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
 
@@ -44,8 +33,7 @@ define([
 
 			this.inherited(arguments);
 
-			this._prepareDescendantTarget();
-			this._refreshDescendantData();
+			this._requestDescendantData();
 		},
 
 		_showWidgets: function() {
@@ -55,50 +43,20 @@ define([
 			this._showWidget('descendantList');
 		},
 
-		_prepareDescendantTarget: function() {
-
-			this.target[1] = lang.replace(this._descendantTargetBase, {
-				id: this.pathVariableId
-			});
-		},
-
-		_refreshDescendantData: function() {
-
-			let widgetInstance = this._getWidgetInstance('descendantList');
-
-			this._publish(widgetInstance.getChannel('SET_PROPS'), {
-				target: this.target[1]
-			});
-
-			this._requestDescendantData();
-		},
-
 		_requestDescendantData: function() {
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
-				target: this.target[1],
+				target: this.descendantsTarget,
 				action: '_search',
-				query: {
-					returnFields: this._descendantFields
+				params: {
+					path: {
+						id: this.pathVariableId
+					},
+					query: {
+						returnFields: this._descendantFields
+					}
 				}
-			});
-		},
-
-		_dataAvailable: function(res, resWrapper) {
-
-			if (resWrapper.target !== this.target[1] || !res?.data) {
-				return;
-			}
-
-			this._dataToDescendantList(res.data);
-		},
-
-		_dataToDescendantList: function(data) {
-
-			this._emitEvt('INJECT_DATA', {
-				data: data,
-				target: this._descendantTargetLocal
 			});
 		}
 	});

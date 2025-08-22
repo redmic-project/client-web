@@ -13,6 +13,19 @@ define([
 
 	MediatorJS.prototype.channelSeparator = ":";
 
+	MediatorJS.prototype.publish = function(/*String*/ channelName, /*Object*/ componentInfo) {
+		// summary:
+		//   Amplía publish original para recibir y propagar información sobre el componente que hace la publicación.
+
+		const args = Array.prototype.slice.call(arguments, 2),
+			mediatorChannelInstance = this.getChannel(channelName);
+
+		args.push(mediatorChannelInstance);
+		args.push(componentInfo);
+
+		mediatorChannelInstance.publish(args);
+	};
+
 	MediatorJS.prototype.removeDescendantChannels = function(/*String*/ channel) {
 
 		var procedure = lang.hitch(this, this.remove),

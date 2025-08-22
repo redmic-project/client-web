@@ -26,40 +26,30 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.activity,
-				reportService: 'activity',
 				ancestorsTarget: redmicConfig.services.activityAncestors,
-				externalConfigPropName: 'detailLayouts.activity',
-				pathParent: redmicConfig.viewPaths.activityCatalog,
+				infoTarget: 'infoWidgetTarget',
 				templateInfo: ActivityInfoTemplate,
-				_infoTarget: 'infoWidgetTarget'
+				reportService: 'activity',
+				externalConfigPropName: 'detailLayouts.activity',
+				pathParent: redmicConfig.viewPaths.activityCatalog
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
 
-			this.widgetConfigs = this._merge([{
-				info: {},
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
 				spatialExtension: this._getSpatialExtensionConfig()
-			}, this.widgetConfigs || {}]);
+			}]);
 		},
 
-		_setMainOwnCallbacksForEvents: function() {
+		_setOwnCallbacksForEvents: function() {
 
 			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onActivityDetailsHidden));
-		},
-
-		_refreshModules: function() {
-
-			this.inherited(arguments);
-
-			this._publish(this._getWidgetInstance('info').getChannel('SET_PROPS'), {
-				target: this._infoTarget
-			});
 		},
 
 		_onGotExternalConfig: function(evt) {
@@ -69,20 +59,6 @@ define([
 			this._publish(this.getChannel('SET_PROPS'), {
 				detailLayouts: configValue
 			});
-		},
-
-		_addTargetToArray: function(target) {
-
-			if (this.target && this.target instanceof Array && !this.target.includes(target)) {
-				this.target.push(target);
-			}
-		},
-
-		_removeTargetFromArray: function(target) {
-
-			if (this.target && this.target instanceof Array && this.target.includes(target)) {
-				this.target.splice(this.target.indexOf(target), 1);
-			}
 		},
 
 		_itemAvailable: function(res) {
@@ -103,18 +79,17 @@ define([
 
 		_requestAncestorsData: function(res) {
 
-			this._ancestorsTarget = lang.replace(this.ancestorsTarget, {
-				path: res?.data?.path
-			});
-
-			this._addTargetToArray(this._ancestorsTarget);
-
 			this._emitEvt('REQUEST', {
 				method: 'POST',
-				target: this._ancestorsTarget,
+				target: this.ancestorsTarget,
 				action: '_search',
-				query: {
-					returnFields: ['id', 'path', 'name']
+				params: {
+					path: {
+						path: res?.data?.path
+					},
+					query: {
+						returnFields: ['id', 'path', 'name']
+					}
 				}
 			});
 		},
@@ -134,8 +109,6 @@ define([
 
 		_dataAvailable: function(res) {
 
-			this._removeTargetFromArray(this._ancestorsTarget);
-
 			var data = res.data,
 				ancestors = data.data;
 
@@ -148,7 +121,7 @@ define([
 
 			this._emitEvt('INJECT_DATA', {
 				data: this._activityData,
-				target: this._infoTarget
+				target: this.infoTarget
 			});
 		},
 
@@ -156,20 +129,15 @@ define([
 
 			var mapInstance = this._getWidgetInstance('spatialExtension');
 
-			this._once(mapInstance.getChannel('WKT_ADDED'), lang.hitch(this, function(res) {
-
-				this._lastWktLayer = res.layer;
-			}));
+			this._once(mapInstance.getChannel('WKT_ADDED'), (res) => this._lastWktLayer = res.layer);
 
 			this._publish(mapInstance.getChannel('ADD_WKT'), {
-				wkt: wkt,
+				wkt,
 				id: 'spatialExtension'
 			});
 		},
 
 		_onActivityDetailsHidden: function() {
-
-			this.target = [redmicConfig.services.activity];
 
 			if (this._lastWktLayer) {
 				var mapInstance = this._getWidgetInstance('spatialExtension');

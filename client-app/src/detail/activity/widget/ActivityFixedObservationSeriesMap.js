@@ -41,7 +41,7 @@ define([
 					TIMESERIES_DATA: 'timeseriesData'
 				},
 				mapLayerPopupTemplate: TemplatePopup,
-				_dataTarget: redmicConfig.services.acousticDetectionReceptors,
+				target: redmicConfig.services.acousticDetectionReceptors,
 				_showObservationsButtonClass: 'showObservations'
 			};
 
@@ -126,10 +126,7 @@ define([
 
 		_onMeOrAncestorShown: function() {
 
-			const replacedTarget = this._getTargetWithVariableReplaced();
-
-			this._updateComponentTargetValues(replacedTarget);
-			this._requestDataFromReplacedTarget(replacedTarget);
+			this._requestData();
 		},
 
 		_getTargetWithVariableReplaced: function() {
@@ -160,12 +157,19 @@ define([
 			});
 		},
 
-		_requestDataFromReplacedTarget: function(replacedTarget) {
+		_requestData: function() {
+
+			const path = {
+				id: this.pathVariableId
+			};
+
+			const target = this.target,
+				params = {path};
 
 			this._emitEvt('REQUEST', {
 				method: 'GET',
-				target: replacedTarget,
-				options: {}
+				target,
+				params
 			});
 		}
 	});

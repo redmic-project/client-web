@@ -630,7 +630,16 @@ define([
 					this.getChannel());
 			}
 
-			return Mediator.publish(chn, obj || {});
+			const info = this._getComponentInfo();
+
+			return Mediator.publish(chn, info, obj || {});
+		},
+
+		_getComponentInfo: function() {
+
+			const publisherChannel = this.getChannel();
+
+			return {publisherChannel};
 		},
 
 		_checkPublicationData: function(publication) {
@@ -660,7 +669,7 @@ define([
 
 		_publicationCallbackWrapper: function(item, evt) {
 
-			if (this._chkActionCanBeTriggered({ namespace: item.channel })) {
+			if (this._chkActionCanBeTriggered({ namespace: item.channel }, this._getComponentInfo())) {
 				lang.hitch(this, this[item.callback], item.channel, evt)();
 			}
 		},

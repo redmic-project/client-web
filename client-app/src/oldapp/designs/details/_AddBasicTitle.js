@@ -21,15 +21,16 @@ define([
 
 			lang.mixin(this, this.configAddBasicTitle, args);
 
-			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setAddBasicTitleConfigurations));
 			aspect.before(this, "_refreshModules", lang.hitch(this, this._beforeRefreshModulesAddBasicTitle));
 		},
 
-		_setAddBasicTitleConfigurations: function() {
+		_afterSetConfigurations: function() {
 
-			this.titleWidgetConfig = this._merge([{
+			this.inherited(arguments);
+
+			this.titleWidgetConfig = this._merge([this.titleWidgetConfig || {}, {
 				target: this.getOwnChannel() + "DetailsTitle"
-			}, this.titleWidgetConfig || {}]);
+			}]);
 		},
 
 		_beforeRefreshModulesAddBasicTitle: function() {

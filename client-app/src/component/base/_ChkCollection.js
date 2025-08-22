@@ -15,8 +15,8 @@ define([
 
 		_chkActionCanBeTriggered: function() {
 
-			var channel = arguments[arguments.length - 1].namespace,
-				action = channel.split(this.channelSeparator).pop();
+			var channel = arguments[arguments.length - 2]?.namespace,
+				action = channel?.split(this.channelSeparator).pop();
 
 			return this._chkModuleIsOn() && this._chkActionIsOn(action);
 		},
@@ -28,7 +28,7 @@ define([
 
 		_chkActionIsOn: function(action) {
 
-			return !this.actionsPaused[action];
+			return action?.length && !this.actionsPaused[action];
 		},
 
 		_chkTargetIsValid: function(obj) {

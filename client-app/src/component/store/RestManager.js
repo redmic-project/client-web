@@ -29,7 +29,8 @@ define([
 					REMOVE: 'remove',
 					TARGET_LOADING: 'targetLoading',
 					TARGET_LOADED: 'targetLoaded',
-					ABORT_ALL_LOADING: 'abortAllLoading'
+					ABORT_ALL_LOADING: 'abortAllLoading',
+					REQUEST_PARAMS_CHANGED: 'requestParamsChanged'
 				},
 				actions: {
 					REQUEST: 'request',
@@ -44,7 +45,9 @@ define([
 					REMOVED: 'removed',
 					TARGET_LOADING: 'targetLoading',
 					TARGET_LOADED: 'targetLoaded',
-					ABORT_ALL_LOADING: 'abortAllLoading'
+					ABORT_ALL_LOADING: 'abortAllLoading',
+					ADD_REQUEST_PARAMS: 'addRequestParams',
+					REQUEST_PARAMS_CHANGED: 'requestParamsChanged'
 				},
 
 				// TODO esto quizá no debería ir aquí, sino en el comunicador de errores
@@ -56,26 +59,30 @@ define([
 
 		_defineSubscriptions: function () {
 
-			var options = {
+			const options = {
 				predicate: lang.hitch(this, this._chkTargetIsValid)
 			};
 
 			this.subscriptionsConfig.push({
 				channel : this.getChannel('REQUEST'),
 				callback: '_subRequest',
-				options: options
+				options
 			},{
 				channel : this.getChannel('GET'),
 				callback: '_subGet',
-				options: options
+				options
 			},{
 				channel : this.getChannel('INJECT_DATA'),
 				callback: '_subInjectData',
-				options: options
+				options
 			},{
 				channel : this.getChannel('INJECT_ITEM'),
 				callback: '_subInjectItem',
-				options: options
+				options
+			},{
+				channel : this.getChannel('ADD_REQUEST_PARAMS'),
+				callback: '_subAddRequestParams',
+				options
 			},{
 				channel : this.getChannel('SAVE'),
 				callback: '_subSave',
@@ -106,6 +113,9 @@ define([
 				event: 'REQUEST',
 				channel: this.getChannel('AVAILABLE')
 			},{
+				event: 'REQUEST_PARAMS_CHANGED',
+				channel: this.getChannel('REQUEST_PARAMS_CHANGED')
+			},{
 				event: 'SAVE',
 				channel: this.getChannel('SAVED')
 			},{
@@ -123,13 +133,21 @@ define([
 			});
 		},
 
-		_subGet: function(req) {
+		_subGet: function(req, _mediatorChannel, componentInfo) {
 
 			this._emitLoading(req);
 
-			var target = this._getResolvedTarget(req.target);
+			/*var target = this._getResolvedTarget(req.target);
 
 			this._getRequest(target, req).then(
+				lang.hitch(this, this._handleGetSuccess, req),
+				lang.hitch(this, this._handleGetError, req));*/
+
+			const requesterChannel = this._getRequesterChannel(componentInfo);
+
+			this._manageRequestParams(req, requesterChannel);
+
+			this._performGet(req, requesterChannel).then(
 				lang.hitch(this, this._handleGetSuccess, req),
 				lang.hitch(this, this._handleGetError, req));
 		},
@@ -158,13 +176,21 @@ define([
 			});
 		},
 
-		_subRequest: function(req) {
+		_subRequest: function(req, _mediatorChannel, componentInfo) {
 
 			this._emitLoading(req);
 
-			var target = this._getResolvedTarget(req.target);
+			/*var target = this._getResolvedTarget(req.target);
 
 			this._requestRequest(target, req).then(
+				lang.hitch(this, this._handleRequestSuccess, req),
+				lang.hitch(this, this._handleRequestError, req));*/
+
+			const requesterChannel = this._getRequesterChannel(componentInfo);
+
+			this._manageRequestParams(req, requesterChannel);
+
+			this._performRequest(req, requesterChannel).then(
 				lang.hitch(this, this._handleRequestSuccess, req),
 				lang.hitch(this, this._handleRequestError, req));
 		},
@@ -221,6 +247,23 @@ define([
 			}
 
 			this._handleRequestSuccess(req, res);
+		},
+
+		_subAddRequestParams: function(req, _mediatorChannel, componentInfo) {
+
+			const requesterChannel = this._getRequesterChannel(componentInfo);
+
+			const params = this._manageRequestParams(req, requesterChannel);
+
+			const target = req.target,
+				addedParams = req.params;
+
+			this._emitEvt('REQUEST_PARAMS_CHANGED', {target, params, addedParams});
+		},
+
+		_getRequesterChannel: function(componentInfo) {
+
+			return componentInfo?.publisherChannel ?? '';
 		},
 
 		_chkValidSaveRequest: function(req) {

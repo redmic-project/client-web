@@ -39,9 +39,6 @@ define([
 
 			this.config = {
 				ownChannel: 'activityFixedObservationSeriesList',
-				actions: {
-					ADD_TO_QUERY: 'addToQuery'
-				},
 				target: redmicConfig.services.acousticDetectionEvents
 			};
 
@@ -108,8 +105,6 @@ define([
 
 		_subObservationStationSet: function(stationData) {
 
-			this._updateObservationEventsTarget(stationData);
-
 			const stationName = stationData.site?.name || '';
 			this._setBrowserTitle(stationName);
 
@@ -123,19 +118,12 @@ define([
 			});
 		},
 
-		_updateObservationEventsTarget: function(stationData) {
+		_requestObservationEvents: function(stationData) {
 
-			const target = lang.replace(redmicConfig.services.acousticDetectionEvents, {
+			const path = {
 				activityid: this.pathVariableId,
 				receptorid: stationData.id
-			});
-
-			this._publish(this.getChannel('SET_PROPS'), {
-				target
-			});
-		},
-
-		_requestObservationEvents: function(stationData) {
+			};
 
 			const dataDefinitionId = this._getDataDefinitionId(stationData);
 
@@ -143,13 +131,9 @@ define([
 				'data-definition': dataDefinitionId
 			};
 
-			this._lastObservationEventsQuery = query;
+			const params = {path, query};
 
-			this._emitEvt('REQUEST', {
-				method: 'GET',
-				target: this.target,
-				query
-			});
+			this._requestData(params);
 		},
 
 		_getDataDefinitionId: function(data) {
@@ -159,14 +143,14 @@ define([
 			return countMeasurement?.dataDefinition?.id;
 		},
 
-		_requestData: function(newQueryData) {
+		_requestData: function(params) {
 
-			const query = this._merge([this._lastObservationEventsQuery || {}, newQueryData?.query || {}]);
+			params.sharedParams = true;
 
 			this._emitEvt('REQUEST', {
 				method: 'GET',
 				target: this.target,
-				query
+				params
 			});
 		}
 	});

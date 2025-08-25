@@ -1,25 +1,24 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
 	, 'put-selector'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/base/_Store"
+	, 'src/component/browser/bars/_BarCommons'
 ], function(
 	declare
 	, lang
-	, aspect
 	, put
 	, _Module
 	, _Show
 	, _Store
-){
-	return declare([_Module, _Show, _Store], {
+	, _BarCommons
+) {
+
+	return declare([_Module, _Show, _Store, _BarCommons], {
 		//	summary:
-		//
-		//	description:
-		//
+		//		Componente que aporta un indicador de página y navegación entre ellas.
 
 		constructor: function(args) {
 
@@ -56,7 +55,7 @@ define([
 				channel : this.getChannel("RESET_PAGINATION"),
 				callback: "_subResetPagination"
 			},{
-				channel: this._buildChannel(this.browserChannel, this.actions.CLEAR),
+				channel: this._buildChannel(this.browserChannel, 'CLEAR'),
 				callback: "_subClearBrowser"
 			});
 		},
@@ -128,11 +127,29 @@ define([
 
 			this.inherited(arguments);
 
-			this._once(this._buildChannel(this.queryChannel, this.actions.GOT_PROPS),
-				lang.hitch(this, this._subModelChannelGotProps));
+			if (this.queryChannel) {
+				this._once(this._buildChannel(this.queryChannel, 'GOT_PROPS'),
+					lang.hitch(this, this._subModelChannelGotProps));
 
-			this._publish(this._buildChannel(this.queryChannel, this.actions.GET_PROPS), {
-				modelChannel: true
+				this._publish(this._buildChannel(this.queryChannel, 'GET_PROPS'), {
+					modelChannel: true
+				});
+
+				return;
+			}
+
+			const size = this.rowPerPage,
+				page = 0;
+
+			this._emitEvt('ADD_REQUEST_PARAMS', {
+				method: 'GET',
+				target: this.target,
+				params: {
+					query: {
+						size, page
+					},
+					sharedParams: true
+				}
 			});
 		},
 
@@ -141,7 +158,7 @@ define([
 			var modelChannel = res.modelChannel;
 
 			this._setSubscription({
-				channel: this._buildChannel(modelChannel, this.actions.VALUE_CHANGED),
+				channel: this._buildChannel(modelChannel, 'VALUE_CHANGED'),
 				callback: lang.hitch(this, this._subModelValueChanged)
 			});
 		},
@@ -321,27 +338,33 @@ define([
 		_goToPage: function(value) {
 
 			if (this.totalPages && value && value <= this.totalPages && value > 0) {
-				this._publishPagination(this._calcRank(value));
+				this._publishPagination(value);
 			}
 		},
 
-		_publishPagination: function(obj) {
+		_publishPagination: function(value) {
 
 			if (this.queryChannel) {
+				const query = this._calcRank(value);
 
 				this._updateDataByMe = true;
 
-				this._publish(this._buildChannel(this.queryChannel, this.actions.ADD_TO_QUERY), {
-					query: obj
+				this._publish(this._buildChannel(this.queryChannel, 'ADD_TO_QUERY'), {
+					query
 				});
+
+				return;
 			}
+
+			this._emitPaginationRequest(value);
 		},
 
 		_calcRank: function(value) {
 
 			var start = (value - 1) * this.rowPerPage,
 				obj = {
-					size: this.rowPerPage
+					size: this.rowPerPage,
+					page: value
 				};
 
 			if (start !== undefined && start !== null) {
@@ -351,23 +374,26 @@ define([
 			return obj;
 		},
 
-		getNodeToShow: function() {
+		_emitPaginationRequest: function(value) {
 
-			return this.domNode;
+			const page = value - 1,
+				size = this.rowPerPage;
+
+			this._emitEvt('REQUEST', {
+				method: 'GET',
+				target: this.target,
+				params: {
+					query: {
+						page, size
+					},
+					sharedParams: true
+				}
+			});
 		},
 
 		_dataAvailable: function(response) {
 
-			var data = response.data,
-				total = (data.total >= 0) ? data.total : response.total;
-
-			if ((total === undefined || total === null)) {
-				if (data.data) {
-					total = data.data.total;
-				} else {
-					total = data.length;
-				}
-			}
+			const total = this._getTotalValueFromResponse(response);
 
 			this._updateDataByMe = false;
 

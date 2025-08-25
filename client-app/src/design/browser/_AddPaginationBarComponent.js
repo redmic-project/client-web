@@ -19,11 +19,10 @@ define([
 			this.inherited(arguments);
 
 			const parentChannel = this.getChannel(),
-				target = this._getTarget(),
-				queryChannel = this.browserConfig.queryChannel;
+				target = this._getTarget();
 
 			this.mergeComponentAttribute('paginationBarConfig', {
-				parentChannel, target, queryChannel
+				parentChannel, target
 			});
 		},
 

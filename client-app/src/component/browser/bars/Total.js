@@ -1,25 +1,24 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
 	, 'put-selector'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/base/_Store"
+	, 'src/component/browser/bars/_BarCommons'
 ], function(
 	declare
 	, lang
-	, aspect
 	, put
 	, _Module
 	, _Show
 	, _Store
-){
-	return declare([_Module, _Show, _Store], {
+	, _BarCommons
+) {
+
+	return declare([_Module, _Show, _Store, _BarCommons], {
 		//	summary:
-		//
-		//	description:
-		//
+		//		Componente que aporta un contador del total de elementos disponibles.
 
 		constructor: function(args) {
 
@@ -45,10 +44,10 @@ define([
 				channel: this.getChannel("SET_TOTAL"),
 				callback: "_subSetTotal"
 			},{
-				channel: this._buildChannel(this.browserChannel, this.actions.CLEAR),
+				channel: this._buildChannel(this.browserChannel, 'CLEAR'),
 				callback: "_subClearBrowser"
 			},{
-				channel: this._buildChannel(this.browserChannel, this.actions.DATA_REMOVED),
+				channel: this._buildChannel(this.browserChannel, 'DATA_REMOVED'),
 				callback: "_subDataRemovedBrowser"
 			});
 		},
@@ -92,35 +91,18 @@ define([
 			this._setTotal(this.total - 1);
 		},
 
-		getNodeToShow: function() {
-
-			return this.domNode;
-		},
-
 		_dataAvailable: function(response) {
 
-			var data = response.data,
-				total = (data.total >= 0) ? data.total : response.total;
-
-			if (total === undefined || total === null) {
-				if (data.data) {
-					total = data.data.total;
-				} else if (data.content) {
-					total = data.content.length;
-				} else {
-					total = data.length;
-				}
-			}
-
+			const total = this._getTotalValueFromResponse(response);
 			this._setTotal(total);
 		},
 
 		_itemAvailable: function(response) {
 
-			this._once(this._buildChannel(this.browserChannel, this.actions.GOT_DATA),
+			this._once(this._buildChannel(this.browserChannel, 'GOT_DATA'),
 				lang.hitch(this, this._subBrowserGotData));
 
-			this._publish(this._buildChannel(this.browserChannel, this.actions.GET_DATA));
+			this._publish(this._buildChannel(this.browserChannel, 'GET_DATA'));
 		},
 
 		_subBrowserGotData: function(req) {

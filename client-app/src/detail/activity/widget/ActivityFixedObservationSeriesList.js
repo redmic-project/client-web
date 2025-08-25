@@ -7,6 +7,7 @@ define([
 	, 'src/component/base/_Store'
 	, 'src/design/browser/_AddFacetComponent'
 	, 'src/design/browser/_AddOrderBarComponent'
+	, 'src/design/browser/_AddPaginationBarComponent'
 	, 'src/design/browser/_AddTotalBarComponent'
 	, 'src/design/browser/_BrowserWithTopbarAndFilterPanelDesignLayout'
 	, 'src/redmicConfig'
@@ -22,6 +23,7 @@ define([
 	, _Store
 	, _AddFacetComponent
 	, _AddOrderBarComponent
+	, _AddPaginationBarComponent
 	, _AddTotalBarComponent
 	, _BrowserWithTopbarAndFilterPanelDesignLayout
 	, redmicConfig
@@ -31,7 +33,7 @@ define([
 ) {
 
 	return declare([_Module, _Show, _Store, _BrowserWithTopbarAndFilterPanelDesignLayout, _AddTotalBarComponent,
-		_AddOrderBarComponent, _AddFacetComponent], {
+		_AddOrderBarComponent, _AddPaginationBarComponent, _AddFacetComponent], {
 		//	summary:
 		//		Widget para mostrar un listado de las observaciones registradas en el punto seleccionado.
 

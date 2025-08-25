@@ -343,7 +343,7 @@ define([
 
 			this.inherited(arguments);
 
-			const target = this._getTarget()
+			const target = this._getTarget();
 
 			if (!target) {
 				return;

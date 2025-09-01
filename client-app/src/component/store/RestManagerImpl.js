@@ -308,13 +308,8 @@ define([
 			const queryData = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel);
 
 			if (method === 'POST') {
-				options.data = JSON.stringify(queryData, (_key, value) => {
-					if (value instanceof Array && !value.length) {
-						// evita arrays vacíos entre los valores
-						return;
-					}
-					return value;
-				});
+				options.data = JSON.stringify(queryData,
+					(key, value) => this._filterQueryParamsForRequestBodyData(key, value));
 			} else {
 				options.query = queryData;
 			}
@@ -322,6 +317,19 @@ define([
 			const reqOptions = req.options || {};
 
 			return lang.mixin(options, reqOptions);
+		},
+
+		_filterQueryParamsForRequestBodyData: function(_key, value) {
+
+			const isEmptyArray = value instanceof Array && !value.length,
+				isNullValue = value === null;
+
+			// evita arrays vacíos y valores nulos en los campos de filtro
+			if (isEmptyArray || isNullValue) {
+				return;
+			}
+
+			return value;
 		},
 
 		_getRequestRequestHeaders: function(req) {
@@ -593,7 +601,6 @@ define([
 				delete req.query;
 			}
 
-			// TODO aquí probar a escribir sólo en sharedChannel si es el caso, para no ser redundante!!
 			if (sharedParams) {
 				const sharedChannel = this._getSharedChannel(requesterChannel);
 
@@ -634,7 +641,13 @@ define([
 
 		_getSharedChannel: function(requesterChannel) {
 
-			return requesterChannel.split(this.channelSeparator).slice(0, 2).join(this.channelSeparator);
+			const splitter = this.channelSeparator,
+				viewChannelLength = 3,
+				sharedSuffix = '/sharedParams';
+
+			const viewChannel = requesterChannel.split(splitter).slice(0, viewChannelLength).join(splitter);
+
+			return `${viewChannel}${sharedSuffix}`;
 		},
 
 		_getTargetWithPathParamsReplaced: function(target, requesterChannel) {

@@ -213,7 +213,7 @@ define([
 			var schema = res.data;
 
 			if (this.filterSchema) {
-				schema = schema.schema;
+				schema = schema?.schema;
 			}
 
 			this._buildModelWithSchema(schema);

@@ -63,7 +63,7 @@ define([
 			this.modelConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this._getTarget(),
-				noSerializeNullValue: true,
+				noSerializeNullValue: false,
 				filterSchema: true,
 				props: {
 					serializeAdditionalProperties: true

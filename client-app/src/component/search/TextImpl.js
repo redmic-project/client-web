@@ -224,11 +224,13 @@ define([
 			var requesterId = action === '_suggest' ? this.getOwnChannel() : null;
 
 			this._emitEvt('REQUEST', {
+				method: this.methodSuggest,
 				target: this._getTarget(),
 				action: action,
 				requesterId: requesterId,
-				method: this.methodSuggest,
-				query: req.data
+				params: {
+					query: req.data
+				}
 			});
 		},
 

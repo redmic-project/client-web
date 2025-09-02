@@ -10,9 +10,10 @@ define([
 
 		_addData: function(response) {
 
+			// TODO evitar sobreescribir respuesta, en su lugar adaptar su lectura donde haga falta
 			if (response.data.features) {
 				response.data.data = response.data.features;
-				delete response.data.features;
+				//delete response.data.features;
 			}
 
 			const data = response.data,

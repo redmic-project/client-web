@@ -171,7 +171,7 @@ define([], function() {
 		'uploadDocuments': baseMediastorageUploads + 'documents',
 		'uploadData': baseMediastorageUploads + 'data',
 
-		'infrastructureByActivity': baseUri + 'activities/{id}/infrastructures',
+		'infrastructureByActivity': baseUri + 'activities/{id}/infrastructures/_search',
 		'infrastructureType': baseUri + 'infrastructuretypes',
 		'interest': baseUri + 'interests',
 		'intervalUnit': baseUri + 'intervalunits',

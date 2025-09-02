@@ -1,7 +1,6 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/base/_Filter'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
@@ -15,7 +14,6 @@ define([
 ], function(
 	declare
 	, lang
-	, _Filter
 	, _Module
 	, _Show
 	, _Store
@@ -28,8 +26,8 @@ define([
 	, TemplateList
 ) {
 
-	return declare([_Module, _Show, _Store, _Filter, _MapDesignWithContentLayout, _AddAtlasComponent,
-		_AddBrowserComponent, _AddMapLayerComponent], {
+	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _AddBrowserComponent,
+		_AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar en un mapa las ubicaciones de infraestructuras asociadas a una actividad.
 
@@ -37,7 +35,7 @@ define([
 
 			const defaultConfig = {
 				ownChannel: 'activityInfrastructureMap',
-				_dataTarget: redmicConfig.services.infrastructureByActivity,
+				target: redmicConfig.services.infrastructureByActivity,
 				mapLayerPopupTemplate: TemplatePopup
 			};
 
@@ -73,82 +71,27 @@ define([
 			});
 		},
 
-		_beforeInitialize: function() {
-
-			this.inherited(arguments);
-
-			const queryChannel = this.queryChannel;
-
-			this.mergeComponentAttribute('browserConfig', {
-				queryChannel
-			});
-
-			this.mergeComponentAttribute('searchConfig', {
-				queryChannel
-			});
-		},
-
-		_defineSubscriptions: function() {
-
-			this.inherited(arguments);
-
-			const browserInstance = this.getComponentInstance('browser');
-
-			this.subscriptionsConfig.push({
-				channel : browserInstance.getChannel('BUTTON_EVENT'),
-				callback: '_subBrowserInfrastructureUrlButtonEvent',
-				options: {
-					predicate: (evt) => evt?.btnId === 'infrastructureUrl'
-				}
-			});
-		},
-
-		_subBrowserInfrastructureUrlButtonEvent: function(res) {
+		_infrastructureUrlCallback: function(res) {
 
 			globalThis.open(res.item?.url, '_blank');
 		},
 
 		_onMeOrAncestorShown: function() {
 
-			const replacedTarget = this._getTargetWithVariableReplaced();
-
-			this._updateComponentTargetValues(replacedTarget);
-			this._requestDataFromReplacedTarget(replacedTarget);
+			this._requestData();
 		},
 
-		_getTargetWithVariableReplaced: function() {
+		_requestData: function() {
 
-			const replaceObj = {
+			const path = {
 				id: this.pathVariableId
 			};
 
-			return lang.replace(this._dataTarget, replaceObj);
-		},
+			const method = 'POST',
+				target = this.target,
+				params = {path};
 
-		_updateComponentTargetValues: function(replacedTarget) {
-
-			const browserInstance = this.getComponentInstance('browser'),
-				searchInstance = this.getComponentInstance('search'),
-				mapLayerInstance = this.getComponentInstance('mapLayer');
-
-			this._publish(mapLayerInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-
-			this._publish(browserInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-
-			this._publish(searchInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-		},
-
-		_requestDataFromReplacedTarget: function(replacedTarget) {
-
-			this._publish(this.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
+			this._emitEvt('REQUEST', {method, target, params});
 		}
 	});
 });

@@ -39,8 +39,7 @@ define([
 			listenBounds: false,
 			listenZoom: false,
 			radius: false
-		},
-		mapLayerPopupTemplate: null
+		}
 	};
 
 	return declare(null, {
@@ -66,6 +65,7 @@ define([
 			this.mergeComponentAttribute('mapLayerConfig', {
 				parentChannel,
 				selectorChannel: parentChannel,
+				target: this.target,
 				idProperty: 'uuid',
 				simpleSelection: true
 			});

@@ -34,30 +34,7 @@ define([
 	, _ModuleItfc
 ) {
 
-	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter, _ManageClickEvent], {
-		//	summary:
-		//		Base común para todos los módulos.
-		//	description:
-		//		Permite definir los atributos y métodos comunes entre los módulos.
-
-		//	subscriptions: Object
-		//		Estructura para almacenar las subscripciones del módulo o la vista.
-		//	publications: Object
-		//		Estructura para almacenar las publicaciones del módulo o la vista.
-
-		//	subscriptionsConfig: Array
-		//		Estructura para almacenar las subscripciones propias del módulo o vista.
-		//	publicationsConfig: Array
-		//		Estructura para almacenar las publicaciones propias del módulo o vista.
-
-		//	events: Object
-		//		Estructura para almacenar los nombres de los eventos del módulo o vista.
-		//	actions: Object
-		//		Estructura para almacenar los nombres de las acciones del módulo o vista.
-
-		//	commonEvents: Object
-		//		Estructura para almacenar los nombres de los eventos comunes a todos los módulos
-		//		y vistas.
+	const defaultConfig = {
 		commonEvents: {
 			CONNECT: "connect",
 			DISCONNECT: "disconnect",
@@ -67,9 +44,6 @@ define([
 			PROPS_SET: "propsSet",
 			DESTROY: "destroy"
 		},
-		//	commonActions: Object
-		//		Estructura para almacenar los nombres de las acciones comunes a todos los módulos
-		//		y vistas.
 		commonActions: {
 			CONNECT: "connect",
 			DISCONNECT: "disconnect",
@@ -85,10 +59,6 @@ define([
 			DESTROY: "destroy",
 			DESTROYED: "destroyed"
 		},
-
-		//	globalOwnChannels: Object
-		//		Estructura para almacenar los ownChannel de los módulos que se instancian
-		//		globalmente.
 		globalOwnChannels: {
 			ROUTER: "router",
 			STORE: "data",
@@ -107,6 +77,52 @@ define([
 			AUTH: "auth"
 		},
 
+		rootChannel: "app",
+		innerAppOwnChannel: 'innerApp',
+		outerAppOwnChannel: 'outerApp',
+		channelSeparator: Mediator.channelSeparator,
+
+		i18n: i18n,
+
+		ownChannel: "module",
+		parentChannel: "",
+		ownChannelSeparator: "-",
+		childPathSeparator: ".",
+		propSetSuffix: "Set",
+
+		_childrenActionsAllowedToListen: ['CONNECTED', 'DISCONNECTED', 'DESTROYED'],
+		_childrenActionDfdsNameSuffix: 'ChildrenActionDfds'
+	};
+
+	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter, _ManageClickEvent], {
+		// summary:
+		//   Base común para todos los componentes.
+		// description:
+		//   Permite definir los atributos y métodos comunes entre los componentes.
+		//   Se acopla al ciclo de vida de los widgets Dijit de Dojo. Las fases disponibles son:
+		//     constructor -> postMixInProperties -> buildRendering -> postCreate -> startup
+
+		//	events: Object
+		//		Estructura para almacenar los nombres de los eventos del módulo o vista.
+		//	actions: Object
+		//		Estructura para almacenar los nombres de las acciones del módulo o vista.
+		//	commonEvents: Object
+		//		Estructura para almacenar los nombres de los eventos comunes a todos los módulos
+		//		y vistas.
+		//	commonActions: Object
+		//		Estructura para almacenar los nombres de las acciones comunes a todos los módulos
+		//		y vistas.
+		//	globalOwnChannels: Object
+		//		Estructura para almacenar los ownChannel de los módulos que se instancian
+		//		globalmente.
+		//	subscriptions: Object
+		//		Estructura para almacenar las subscripciones del módulo o la vista.
+		//	publications: Object
+		//		Estructura para almacenar las publicaciones del módulo o la vista.
+		//	subscriptionsConfig: Array
+		//		Estructura para almacenar las subscripciones propias del módulo o vista.
+		//	publicationsConfig: Array
+		//		Estructura para almacenar las publicaciones propias del módulo o vista.
 		//	actionsPaused: Object
 		//		Estructura para almacenar los nombres de las acciones pausadas.
 		//	associatedIds: Array
@@ -115,38 +131,27 @@ define([
 		//		'target'.
 		//	statusFlags: Object
 		//		Flags para indicar el estado y circunstancias actuales del módulo.
-
 		//	rootChannel: String
 		//		Canal de comunicación correspondiente a la raíz de la aplicación (base para todos
 		//		los demás).
-		rootChannel: "app",
-
 		//	innerAppOwnChannel: String
 		//		Terminación del canal de comunicación correspondiente al módulo "innerApp", encargado de contener los
 		//		elementos que se encuentran en la parte interna (sidebar, vistas...). Es hijo a su vez de la raíz
 		//		de la aplicación.
-		innerAppOwnChannel: 'innerApp',
-
 		//	outerAppOwnChannel: String
 		//		Terminación del canal de comunicación correspondiente al módulo "outerApp", encargado de contener los
 		//		elementos que se encuentran en la parte externa (login, register...). Es hijo a su vez de la raíz
 		//		de la aplicación.
-		outerAppOwnChannel: 'outerApp',
-
 		//	ownChannel: String
 		//		Canal de comunicación correspondiente al módulo.
 		//	parentChannel: String
 		//		Canal de comunicación correspondiente al padre del módulo o vista (por defecto,
 		//		vacío).
-
 		//	channelSeparator: String
 		//		Separador de niveles de los canales. Por ejemplo, se coloca entre el canal del módulo padre y el
 		//		ownChannel del módulo hijo cuando este se instancia.
-		channelSeparator: Mediator.channelSeparator,
-
 		//	ownChannelSeparator: String
 		//		Separador entre el ownChannel definido y el id de la instancia.
-
 		//	propSetSuffix: String
 		//		Sufijo añadido a las propiedades para generar el evento disparado tras su seteo.
 		//	_childrenModules: Object
@@ -157,7 +162,6 @@ define([
 		//	_childrenActionDfdsNameSuffix: String
 		//		Sufijo aplicado al nombre del atributo que almacena los deferred para esperar por publicaciones por
 		//		parte de los hijos.
-
 		//	routerChannel: String
 		//		Nombre del canal por donde se van a gestionar los cambios de ruta.
 		//	storeChannel: String
@@ -174,43 +178,44 @@ define([
 		//		Nombre del canal por donde se van a publicar las notificaciones.
 		//	authChannel: String
 		//		Nombre del canal por donde se gestiona la sesión del usuario autenticado.
-
 		//	i18n: Object
 		//		Traducciones globales
-		i18n: i18n,
 
 		constructor: function() {
 
-			this.config = {
-				subscriptions: {},
-				publications: {},
-				events: {},
-				actions: {},
-				actionsPaused: {},
-				associatedIds: [],
-				statusFlags: {},
-				ownChannel: "module",
-				parentChannel: "",
-				ownChannelSeparator: "-",
-				childPathSeparator: ".",
-				propSetSuffix: "Set",
-				_childrenModules: {},
-				_childrenActionsAllowedToListen: ['CONNECTED', 'DISCONNECTED', 'DESTROYED'],
-				_childrenActionDfdsNameSuffix: 'ChildrenActionDfds',
+			this._mergeOwnAttributes(defaultConfig);
 
-				routerChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ROUTER),
-				storeChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.STORE),
-				credentialsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.CREDENTIALS),
-				analyticsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ANALYTICS),
-				moduleStoreChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.MODULE_STORE),
-				metaTagsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.META_TAGS),
-				loadingChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.LOADING),
-				alertChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT),
-				communicationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION),
-				authChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.AUTH)
-			};
+			this._prepareComponentInternalStructures();
+			this._prepareComponentGlobalChannels();
 
-			lang.mixin(this, this.config);
+			aspect.before(this, "postCreate", lang.hitch(this, this._postCreateMediator));
+			aspect.after(this, "_initialize", lang.hitch(this, this._initializeModule));
+		},
+
+		_prepareComponentInternalStructures: function() {
+
+			this.events = {};
+			this.actions = {};
+			this.subscriptions = {};
+			this.publications = {};
+			this.actionsPaused = {};
+			this.associatedIds = [];
+			this.statusFlags = {};
+			this._childrenModules = {};
+		},
+
+		_prepareComponentGlobalChannels: function() {
+
+			this.routerChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.ROUTER);
+			this.storeChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.STORE);
+			this.credentialsChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.CREDENTIALS);
+			this.analyticsChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.ANALYTICS);
+			this.moduleStoreChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.MODULE_STORE);
+			this.metaTagsChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.META_TAGS);
+			this.loadingChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.LOADING);
+			this.alertChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT);
+			this.communicationChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION);
+			this.authChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.AUTH);
 
 			this.outerAppChannel = this._buildChannel(this.rootChannel, this.outerAppOwnChannel);
 			this.innerAppChannel = this._buildChannel(this.rootChannel, this.innerAppOwnChannel);
@@ -219,9 +224,31 @@ define([
 			this.taskChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.TASK);
 			this.socketChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.SOCKET);
 			this.notificationChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.NOTIFICATION);
+		},
 
-			aspect.after(this, "_initialize", lang.hitch(this, this._initializeModule));
-			aspect.before(this, "postCreate", lang.hitch(this, this._postCreateMediator));
+		postMixInProperties: function() {
+			// summary:
+			//   Método perteneciente al ciclo de vida de un widget Dijit.
+			// description:
+			//   Respetar siempre en la definición del método las posibles definiciones heredadas, llamando siempre a
+			//   this.inherited(arguments) en último lugar, para ejecutar la lógica aquí definida y que prevalezcan los
+			//   valores procedentes del exterior.
+
+			this.params && this._mergeOwnAttributes(this.params);
+
+			this.inherited(arguments);
+		},
+
+		_mergeOwnAttributes: function(/*Object*/ args) {
+			// summary:
+			//   Recibe atributos definidos desde fuera para mezclarlos en profundidad dentro de la instancia.
+			// description:
+			//   Es importante que este método se llame desde la fase de postMixInProperties del componente, ya que
+			//   justo antes Dijit hace una primera mezcla de args en this, que no tiene en cuenta los cambios. Por
+			//   tanto, si se ejecuta antes, los cambios serán sobreescritos, y si se ejecuta después, puede ser
+			//   demasiado tarde para asignar algunos valores necesarios en otras fases tempranas.
+
+			lang.mixin(this, this._merge([this, args]));
 		},
 
 		_setModuleConfigurations: function() {
@@ -242,6 +269,11 @@ define([
 		},
 
 		buildRendering: function() {
+			// summary:
+			//   Método perteneciente al ciclo de vida de un widget Dijit.
+			// description:
+			//   Respetar siempre en la definición del método las posibles definiciones heredadas, llamando siempre a
+			//   this.inherited(arguments) en primer lugar para ejecutar la lógica aquí definida.
 
 			this.inherited(arguments);
 
@@ -369,6 +401,16 @@ define([
 			this._minimalInitialize();
 			this._beforeInitialize();
 			this._initialize();
+		},
+
+		mergeComponentAttribute: function(/*String*/ attrName, /*Object*/ objToMerge, /*Object?*/ mergeOpts) {
+			// summary:
+			//   Recibe un nombre de atributo, un objeto para mezclar con el valor actual del atributo y un objeto
+			//   opcional para configurar parámetros de la mezcla.
+			//   Asigna al atributo indicado el valor resultante entre la mezcla de su valor actual con el valor
+			//   recibido por parámetro, siguiendo las opciones de mezcla establecidas.
+
+			this[attrName] = this._merge([this[attrName] || {}, objToMerge], mergeOpts);
 		},
 
 		getOwnChannel: function() {

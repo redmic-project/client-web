@@ -12,7 +12,33 @@ define([
 	, _Show
 	, _Store
 	, put
-){
+) {
+
+	const defaultConfig = {
+		actions: {
+			SHOW: "show",
+			HIDE: "hide",
+			NOTIFICATION: "Notification",
+			NOTIFICATION_DELETE: "notificationDelete",
+			NOTIFICATION_DELETED: "notificationDeleted",
+			COUNT_NOTIFICATION: "countNotification",
+			REFRESH_STATUS: "refreshStatus"
+		},
+		events: {
+			COUNT_NOTIFICATION: "countNotification",
+			REFRESH_STATUS: "refreshStatus"
+		},
+		ownChannel: "notificationSidebar",
+		items: [],
+		_shownSidebar: false,
+		_hideInProgress: false,
+		noResetSpanCount: false,
+		readNotifications: {
+			count: 0,
+			types: {}
+		}
+	};
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Módulo encargado de procesar las notificaciones de los demás.
@@ -22,34 +48,11 @@ define([
 		//	config: Object
 		//		Opciones por defecto.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				actions: {
-					SHOW: "show",
-					HIDE: "hide",
-					NOTIFICATION: "Notification",
-					NOTIFICATION_DELETE: "notificationDelete",
-					NOTIFICATION_DELETED: "notificationDeleted",
-					COUNT_NOTIFICATION: "countNotification",
-					REFRESH_STATUS: "refreshStatus"
-				},
-				events: {
-					COUNT_NOTIFICATION: "countNotification",
-					REFRESH_STATUS: "refreshStatus"
-				},
-				ownChannel: "notificationSidebar",
-				items: [],
-				_shownSidebar: false,
-				_hideInProgress: false,
-				noResetSpanCount: false,
-				readNotifications: {
-					count: 0,
-					types: {}
-				}
-			};
+			this._mergeOwnAttributes(defaultConfig);
 
-			lang.mixin(this, this.config, args);
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {

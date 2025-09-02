@@ -1,34 +1,34 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'put-selector'
 	, './GenericDisplayer'
 ], function (
 	declare
-	, lang
 	, put
 	, GenericDisplayer
 ) {
+
+	const defaultConfig = {
+		topbarClass: 'topZone',
+		titleClass: 'titleZone',
+		titleContentClass: 'titleContent',
+		topbarContentClass: 'topbarContent',
+
+		title: 'contentWithTopbar',
+
+		_topbarContentNodes: {}
+	};
 
 	return declare(GenericDisplayer, {
 		//	summary:
 		//		Implementación del módulo que permite mostrar un contenido genérico (módulo o no) junto con una barra
 		//		superior.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				topbarClass: 'topZone',
-				titleClass: 'titleZone',
-				titleContentClass: 'titleContent',
-				topbarContentClass: 'topbarContent',
+			this._mergeOwnAttributes(defaultConfig);
 
-				title: 'contentWithTopbar',
-
-				_topbarContentNodes: {}
-			};
-
-			lang.mixin(this, this.config, args);
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function () {

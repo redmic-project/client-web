@@ -12,6 +12,33 @@ define([
 	, _ResultsBrowser
 ) {
 
+	const defaultConfig = {
+		ownChannel: 'queryOnMap',
+		events: {
+			HIDE_LAYERS_INFO: 'hideLayersInfo',
+			ADD_INFO_DATA: 'addInfoData',
+			ADD_NEW_TEMPLATES: 'addNewTemplates',
+			SHOW_LAYERS_INFO: 'showLayersInfo',
+			SET_MAP_QUERYABLE_CURSOR: 'setMapQueryableCursor'
+		},
+		actions: {
+			HIDE_LAYERS_INFO: 'hideLayersInfo',
+			ADD_INFO_DATA: 'addInfoData',
+			ADD_NEW_TEMPLATES: 'addNewTemplates',
+			SHOW_LAYERS_INFO: 'showLayersInfo'
+		},
+
+		_tabsDisplayerActions: {
+			ADD_TAB: 'addTab',
+			SHOW_TAB: 'showTab'
+		},
+
+		getMapChannel: null,
+
+		_queryableLayersLoaded: 0,
+		_layersWaiting: 0
+	};
+
 	return declare([_Module, _ContentManagement, _ResultsBrowser], {
 		//	summary:
 		//		Módulo para gestionar las consultas sobre el mapa.
@@ -19,38 +46,13 @@ define([
 		//		Escucha las publicaciones de pulsación sobre el mapa, lanza peticiones de información sobre ese punto
 		//		para las capas presentes y recibe los resultados.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				ownChannel: 'queryOnMap',
-				events: {
-					HIDE_LAYERS_INFO: 'hideLayersInfo',
-					ADD_INFO_DATA: 'addInfoData',
-					ADD_NEW_TEMPLATES: 'addNewTemplates',
-					SHOW_LAYERS_INFO: 'showLayersInfo',
-					SET_MAP_QUERYABLE_CURSOR: 'setMapQueryableCursor'
-				},
-				actions: {
-					HIDE_LAYERS_INFO: 'hideLayersInfo',
-					ADD_INFO_DATA: 'addInfoData',
-					ADD_NEW_TEMPLATES: 'addNewTemplates',
-					SHOW_LAYERS_INFO: 'showLayersInfo'
-				},
+			this._mergeOwnAttributes(defaultConfig);
 
-				_tabsDisplayerActions: {
-					ADD_TAB: 'addTab',
-					SHOW_TAB: 'showTab'
-				},
+			this.title = this.i18n.layersQueryResults;
 
-				getMapChannel: null,
-
-				title: this.i18n.layersQueryResults,
-
-				_queryableLayersLoaded: 0,
-				_layersWaiting: 0
-			};
-
-			lang.mixin(this, this.config, args);
+			this.inherited(arguments);
 
 			if (!this.getMapChannel) {
 				console.error('Map channel not defined for QueryOnMap "%s"', this.getChannel());

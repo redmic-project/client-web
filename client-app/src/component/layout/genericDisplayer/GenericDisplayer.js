@@ -1,41 +1,55 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'put-selector'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 ], function (
 	declare
-	, lang
 	, put
 	, _Module
 	, _Show
 ) {
 
+	const defaultConfig = {
+		ownChannel: 'genericDisplayer',
+		events: {
+			'ADD_CONTENT': 'addContent'
+		},
+		actions: {
+			'ADD_CONTENT': 'addContent',
+			'ADD_TOPBAR_CONTENT': 'addTopbarContent',
+			'REMOVE_TOPBAR_CONTENT': 'removeTopbarContent'
+		},
+
+		layoutClass: 'genericDisplayer',
+		contentClass: 'centerZone',
+		additionalLayoutClasses: null,
+		additionalContentClasses: null
+	};
+
 	return declare([_Module, _Show], {
 		//	summary:
 		//		Módulo que permite mostrar un contenido genérico que reciba, ya sea otro módulo o un nodo simple.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				ownChannel: 'genericDisplayer',
-				events: {
-					'ADD_CONTENT': 'addContent'
-				},
-				actions: {
-					'ADD_CONTENT': 'addContent',
-					'ADD_TOPBAR_CONTENT': 'addTopbarContent',
-					'REMOVE_TOPBAR_CONTENT': 'removeTopbarContent'
-				},
+			this._mergeOwnAttributes(defaultConfig);
 
-				layoutClass: 'genericDisplayer',
-				contentClass: 'centerZone',
-				additionalLayoutClasses: null,
-				additionalContentClasses: null,
-			};
+			// TODO por algún motivo, si el atributo content es una instancia de componente Browser, la mezcla de
+			// parámetros sufre un bucle infinito, seguramente por alguna referencia cíclica en sus estructuras.
+			// Mantener este parche hasta que se solucione o se deje de pasar la instancia al construir este componente
+			// (publicarla posteriormente en su lugar, o recibir su channel para gestionarla sin recibir la instancia).
+			let externalContent;
+			if (this.params?.content) {
+				externalContent = this.params.content;
+				delete this.params.content;
+			}
 
-			lang.mixin(this, this.config, args);
+			this.inherited(arguments);
+
+			if (externalContent) {
+				this.content = externalContent;
+			}
 		},
 
 		_defineSubscriptions: function () {
@@ -47,6 +61,8 @@ define([
 		},
 
 		postCreate: function() {
+
+			this.inherited(arguments);
 
 			var ownNode = this.getNodeToShow(),
 				layoutClasses = this.layoutClass,

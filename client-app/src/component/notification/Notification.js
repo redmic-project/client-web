@@ -18,6 +18,47 @@ define([
 	, put
 ) {
 
+	const defaultConfig = {
+		actions: {
+			ERROR: "error",
+			COMMUNICATION_SEND: "communicationSend",
+			TOGGLE_SHOW: "toggleShow",
+			NOTIFICATION: "Notification",
+			COUNT_NOTIFICATION: "countNotification",
+			NOTIFICATION_DELETE: "notificationDelete",
+			NOTIFICATION_DELETED: "notificationDeleted"
+		},
+		events: {
+			NOTIFICATION: "Notification",
+			NOTIFICATION_DELETED: "notificationDelete",
+			SHOW_NOTIFICATION_SIDEBAR: "showNotificationSidebar",
+			HIDE_NOTIFICATION_SIDEBAR: "hideNotificationSidebar"
+		},
+		ownChannel: "notification",
+		targetNotificationSidebar: "notificationSidebar",
+		_countNotification: 0,
+		statusNotificationSidebarShown: false,
+		alertWithId: {},
+		items: [{
+			target: "task",
+			icon: "fa-tasks",
+			type: TaskNotification,
+			channel: this.taskChannel
+		}/*, {
+			target: "message",
+			icon: "fa-envelope-o",
+			channel: "",
+			listButton: [{
+				icon: "fa-trash",
+				btnId: "remove",
+				title: "remove",
+				returnItem: true
+			}]
+		}*/],
+		notificationIconClass: 'fa.fa-bell.animate__animated',
+		notificationIconAnimationClass: 'animate__swing'
+	};
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Módulo encargado de procesar las notificaciones de los demás.
@@ -27,50 +68,11 @@ define([
 		//	config: Object
 		//		Opciones por defecto.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				actions: {
-					ERROR: "error",
-					COMMUNICATION_SEND: "communicationSend",
-					TOGGLE_SHOW: "toggleShow",
-					NOTIFICATION: "Notification",
-					COUNT_NOTIFICATION: "countNotification",
-					NOTIFICATION_DELETE: "notificationDelete",
-					NOTIFICATION_DELETED: "notificationDeleted"
-				},
-				events: {
-					NOTIFICATION: "Notification",
-					NOTIFICATION_DELETED: "notificationDelete",
-					SHOW_NOTIFICATION_SIDEBAR: "showNotificationSidebar",
-					HIDE_NOTIFICATION_SIDEBAR: "hideNotificationSidebar"
-				},
-				ownChannel: "notification",
-				targetNotificationSidebar: "notificationSidebar",
-				_countNotification: 0,
-				statusNotificationSidebarShown: false,
-				alertWithId: {},
-				items: [{
-					target: "task",
-					icon: "fa-tasks",
-					type: TaskNotification,
-					channel: this.taskChannel
-				}/*, {
-					target: "message",
-					icon: "fa-envelope-o",
-					channel: "",
-					listButton: [{
-						icon: "fa-trash",
-						btnId: "remove",
-						title: "remove",
-						returnItem: true
-					}]
-				}*/],
-				notificationIconClass: 'fa.fa-bell.animate__animated',
-				notificationIconAnimationClass: 'animate__swing'
-			};
+			this._mergeOwnAttributes(defaultConfig);
 
-			lang.mixin(this, this.config, args);
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {

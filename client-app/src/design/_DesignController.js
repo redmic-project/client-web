@@ -1,9 +1,7 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
-], function (
+], function(
 	declare
-	, lang
 ) {
 
 	return declare(null, {
@@ -11,22 +9,6 @@ define([
 		//   Base común para los controladores de diseño.
 		// description:
 		//   Reúne funciones básicas usadas por todos los controladores de diseño.
-
-		_mergeOwnAttributes: function(/*Object*/ args) {
-			// summary:
-			//   Recibe atributos definidos desde fuera para mezclarlos en profundidad dentro de la instancia.
-			// description:
-			//   Es importante que este método se llame desde la fase de postMixInProperties del componente, ya que
-			//   justo antes Dijit hace una primera mezcla de args en this, que no tiene en cuenta los cambios. Por
-			//   tanto, si se ejecuta antes, los cambios serán sobreescritos, y si se ejecuta después, puede ser
-			//   demasiado tarde para asignar algunos valores necesarios en otras fases tempranas.
-			//   Respetar siempre en la definición del método los posibles valores devueltos en llamadas heredadas,
-			//   para poder ir acumulando la configuración que aporta cada nivel.
-
-			const defaultConfig = this._getDesignDefaultConfig?.() || {};
-
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
-		},
 
 		prepareComponentDefinition: function(/*Array*/ baseDefinitionArray, /*Object*/ extensionEnableFlags,
 			/*Object*/ extensionDefinitions) {
@@ -43,16 +25,6 @@ define([
 			}
 
 			return declare(baseDefinitionArray);
-		},
-
-		mergeComponentAttribute: function(/*String*/ attrName, /*Object*/ objToMerge, /*Object?*/ mergeOpts) {
-			// summary:
-			//   Recibe un nombre de atributo, un objeto para mezclar con el valor actual del atributo y un objeto
-			//   opcional para configurar parámetros de la mezcla.
-			//   Asigna al atributo indicado el valor resultante entre la mezcla de su valor actual con el valor
-			//   recibido por parámetro, siguiendo las opciones de mezcla establecidas.
-
-			this[attrName] = this._merge([this[attrName] || {}, objToMerge], mergeOpts);
 		},
 
 		_initialize: function() {

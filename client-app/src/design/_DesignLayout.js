@@ -9,15 +9,15 @@ define([
 		//   Base común para las maquetaciones de diseño.
 		// description:
 		//   Reúne funciones básicas usadas por todas las maquetaciones de diseño. Se acopla al ciclo de vida de los
-		//   widgets Dijit de Dojo, aprovechando algunas fases. Las fases disponibles son:
-		//     constructor -> postMixInProperties -> buildRendering -> postCreate -> startup
+		//   componentes, aprovechando algunas fases.
 
 		postMixInProperties: function() {
 			// Método perteneciente al ciclo de vida de un widget Dijit.
 
-			this.inherited(arguments);
+			const defaultConfig = this._getDesignDefaultConfig?.();
+			defaultConfig && this._mergeOwnAttributes(defaultConfig);
 
-			this._mergeOwnAttributes(this.params || {});
+			this.inherited(arguments);
 		},
 
 		buildRendering: function() {

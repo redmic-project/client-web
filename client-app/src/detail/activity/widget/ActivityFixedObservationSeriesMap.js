@@ -28,24 +28,26 @@ define([
 	, TemplateList
 ) {
 
+	const defaultConfig = {
+		ownChannel: 'activityFixedObservationSeriesMap',
+		actions: {
+			TIMESERIES_DATA: 'timeseriesData'
+		},
+		mapLayerPopupTemplate: TemplatePopup,
+		target: redmicConfig.services.acousticDetectionReceptors,
+		_showObservationsButtonClass: 'showObservations'
+	};
+
 	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _AddBrowserComponent,
 		_AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar un mapa de puntos donde se registran observaciones.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			const defaultConfig = {
-				ownChannel: 'activityFixedObservationSeriesMap',
-				actions: {
-					TIMESERIES_DATA: 'timeseriesData'
-				},
-				mapLayerPopupTemplate: TemplatePopup,
-				target: redmicConfig.services.acousticDetectionReceptors,
-				_showObservationsButtonClass: 'showObservations'
-			};
+			this._mergeOwnAttributes(defaultConfig);
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {
@@ -73,7 +75,7 @@ define([
 					}
 				}
 			}, {
-				arrayMergingStrategy: 'concatenate'
+				arrayMergingStrategy: 'overwrite'
 			});
 		},
 
@@ -81,18 +83,11 @@ define([
 
 			this.inherited(arguments);
 
-			const mapLayerInstance = this.getComponentInstance('mapLayer'),
-				browserInstance = this.getComponentInstance('browser');
+			const mapLayerInstance = this.getComponentInstance('mapLayer');
 
 			this.subscriptionsConfig.push({
 				channel : mapLayerInstance.getChannel('POPUP_LOADED'),
 				callback: '_subMapLayerStationPopupLoaded'
-			},{
-				channel : browserInstance.getChannel('BUTTON_EVENT'),
-				callback: '_subBrowserShowObservationsButtonEvent',
-				options: {
-					predicate: (evt) => evt?.btnId === 'showObservations'
-				}
 			});
 		},
 
@@ -114,7 +109,7 @@ define([
 			showChartsNode.onclick = lang.hitch(this, this._loadObservationSeriesData, popupData);
 		},
 
-		_subBrowserShowObservationsButtonEvent: function(evt) {
+		_showObservationsCallback: function(evt) {
 
 			this._loadObservationSeriesData(evt.item);
 		},
@@ -129,48 +124,17 @@ define([
 			this._requestData();
 		},
 
-		_getTargetWithVariableReplaced: function() {
-
-			const replaceObj = {
-				id: this.pathVariableId
-			};
-
-			return lang.replace(this._dataTarget, replaceObj);
-		},
-
-		_updateComponentTargetValues: function(replacedTarget) {
-
-			const browserInstance = this.getComponentInstance('browser'),
-				searchInstance = this.getComponentInstance('search'),
-				mapLayerInstance = this.getComponentInstance('mapLayer');
-
-			this._publish(mapLayerInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-
-			this._publish(browserInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-
-			this._publish(searchInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-		},
-
 		_requestData: function() {
 
 			const path = {
 				id: this.pathVariableId
 			};
 
-			const target = this.target,
+			const method = 'GET',
+				target = this.target,
 				params = {path};
 
-			this._emitEvt('REQUEST', {
-				method: 'GET',
-				target,
-				params
-			});
+			this._emitEvt('REQUEST', {method, target, params});
 		}
 	});
 });

@@ -1183,35 +1183,41 @@ define([
 			//		Mezcla dos o más objetos y devuelve el resultado, sin alterar los objetos originales.
 			//	description:
 			//		Realiza la mezcla desde la derecha (final del array) hacia la izquierda (principio del array), por
-			//		lo que las propiedades de los últimos objetos se impondrán a las de los primeros.
-			//
-			//		Acepta opciones adicionales para concretar su funcionamiento.
+			//		lo que las propiedades de los últimos objetos se impondrán sobre las de los primeros.
+			//		Acepta opciones adicionales para concretar su funcionamiento, pasándolas directamente hacia
+			// 		deepmerge. También acepta dos opciones propias para personalizar su funcionamiento:
 			//		Con 'cloneDescendants' se puede forzar el clonado recursivo de los objetos a mezclar (por defecto,
 			//		se usan los anidados originales para disminuir la carga).
 			//		Con 'arrayMergingStrategy' se puede alterar el comportamiento de mezclado para los arrays. Permite
-			//		elegir entre 'combine' (se combinan todos los elementos de los arrays coincidentes) y 'overwrite'
-			//		(por defecto, se sobreescribe cualquier array coincidente).
+			//		elegir entre 'combine' (se combinan todos los elementos de los arrays coincidentes), 'overwrite'
+			//		(por defecto, se sobreescribe cualquier array coincidente) y 'concatenate' (acumula todos los
+			//		elementos de los arrays coincidentes).
 
-			options = options || {};
+			const clone = options?.cloneDescendants ?? false,
+				arrayMergingStrategy = options?.arrayMergingStrategy ?? 'overwrite',
+				isMergeableObject = this._isMergeableObject,
+				deepmergeOptions = {clone, isMergeableObject};
 
-			var cloneDescendants = options.cloneDescendants || false,
-				arrayMergingStrategy = options.arrayMergingStrategy || "overwrite",
-
-				deepmergeOptions = {
-					clone: cloneDescendants
-				};
-
-			if (arrayMergingStrategy === "combine") {
+			if (arrayMergingStrategy === 'combine') {
 				// comportamiento por defecto de deepmerge, no se define
-			} else if (arrayMergingStrategy === "overwrite") {
+			} else if (arrayMergingStrategy === 'overwrite') {
 				deepmergeOptions.arrayMerge = lang.hitch(this, this._overwritingArrayMerge);
-			} else if (arrayMergingStrategy === "concatenate") {
+			} else if (arrayMergingStrategy === 'concatenate') {
 				deepmergeOptions.arrayMerge = lang.hitch(this, this._concatenateArrayMerge);
 			}
+
+			delete options?.cloneDescendants;
+			delete options?.arrayMergingStrategy;
 
 			lang.mixin(deepmergeOptions, options);
 
 			return deepmerge.all(objects, deepmergeOptions);
+		},
+
+		_isMergeableObject: function(value) {
+
+			// Inspirado por https://github.com/jonschlinkert/is-plain-object
+			return !!value?.constructor?.prototype?.hasOwnProperty('isPrototypeOf');
 		},
 
 		_overwritingArrayMerge: function(destinationArray, sourceArray, options) {

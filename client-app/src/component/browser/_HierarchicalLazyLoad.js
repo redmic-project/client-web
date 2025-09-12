@@ -105,7 +105,7 @@ define([
 
 			var row = this._getRow(idProperty),
 				item = row.data,
-				objRequest,	target;
+				target, objRequest, path;
 
 			this._pathGenerateParent = item[this.pathProperty];
 
@@ -114,9 +114,10 @@ define([
 			}
 
 			if (!target) {
-				target = lang.replace(this.targetChildren, {
+				target = this.targetChildren;
+				path = {
 					id: Utilities.getDeepProp(item, this.parentIdProperty)
-				});
+				};
 			}
 
 			this._lastTarget = this.target;
@@ -126,11 +127,14 @@ define([
 				method: 'POST',
 				target: target,
 				action: '_search',
-				requesterId: this.getOwnChannel()
+				requesterId: this.getOwnChannel(),
+				params: {
+					path
+				}
 			};
 
 			if (this.queryDataChildren) {
-				objRequest.query = this.queryDataChildren;
+				objRequest.params.query = this.queryDataChildren;
 			}
 
 			this._emitEvt('REQUEST', objRequest);

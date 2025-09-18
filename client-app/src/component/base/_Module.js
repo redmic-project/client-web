@@ -1206,8 +1206,12 @@ define([
 				deepmergeOptions.arrayMerge = lang.hitch(this, this._concatenateArrayMerge);
 			}
 
-			delete options?.cloneDescendants;
-			delete options?.arrayMergingStrategy;
+			if (options && options.cloneDescendants) {
+				delete options.cloneDescendants;
+			}
+			if (options && options.arrayMergingStrategy) {
+				delete options.arrayMergingStrategy;
+			}
 
 			lang.mixin(deepmergeOptions, options);
 

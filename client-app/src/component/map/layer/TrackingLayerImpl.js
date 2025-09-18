@@ -8,10 +8,9 @@ define([
 	, 'dojo/mouse'
 	, 'dojo/on'
 	, 'dojo/promise/all'
+	, 'src/component/map/layer/_D3Expansion'
+	, 'src/component/map/layer/MapLayer'
 	, 'src/component/map/layer/TrackingLine'
-	, 'RWidgets/Utilities'
-	, './_D3Expansion'
-	, './MapLayer'
 ], function(
 	d3
 	, declare
@@ -22,11 +21,47 @@ define([
 	, mouse
 	, on
 	, all
-	, TrackingLine
-	, Utilities
 	, _D3Expansion
 	, MapLayer
-){
+	, TrackingLine
+) {
+
+	const defaultConfig = {
+		svgClass: 'trackingSvg',
+		svgHoverClass: 'onHover',
+		_childHoverClass: 'childIsOnHover',
+
+		drawFullTrack: false,
+
+		_trackingLineInstances: {},
+		_trackingLineInstancesByChannel: {},
+		_subsToLines: {},
+		_pubsToLines: {},
+
+		_elementPropName: 'element',
+		_elementIdPropName: 'uuid',
+
+		ownChannel: 'trackingLayer',
+
+		trackingLayerEvents: {
+			GO_TO_POSITION: 'goToPosition',
+			REDRAW: 'redraw',
+			ADJUST_POSITION: 'adjustPosition',
+			SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
+			HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
+			GET_CLICKED_POINTS_IDS: 'getClickedPointsIds'
+		},
+		trackingLayerActions: {
+			DRAW_ALL: 'drawAll',
+			GO_TO_POSITION: 'goToPosition',
+			SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
+			HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
+			ZOOM_SET: 'zoomSet',
+			ZOOM_START: 'zoomStart',
+			DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
+		}
+	};
+
 	return declare([MapLayer, _D3Expansion], {
 		//	summary:
 		//		Implementación de capa para datos de tipo tracking.
@@ -42,50 +77,19 @@ define([
 		//	drawFullTrack: Boolean
 		//		Flag para dibujar directamente toda la capa.
 
-		constructor: function(args) {
-
-			this.config = {
-				svgClass: 'trackingSvg',
-				svgHoverClass: 'onHover',
-				_childHoverClass: 'childIsOnHover',
-
-				drawFullTrack: false,
-
-				_trackingLineInstances: {},
-				_trackingLineInstancesByChannel: {},
-				_subsToLines: {},
-				_pubsToLines: {},
-
-				_elementPropName: 'element',
-				_elementIdPropName: 'uuid',
-
-				ownChannel: 'trackingLayer',
-
-				trackingLayerEvents: {
-					GO_TO_POSITION: 'goToPosition',
-					REDRAW: 'redraw',
-					ADJUST_POSITION: 'adjustPosition',
-					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
-					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
-					GET_CLICKED_POINTS_IDS: 'getClickedPointsIds'
-				},
-				trackingLayerActions: {
-					DRAW_ALL: 'drawAll',
-					GO_TO_POSITION: 'goToPosition',
-					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
-					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
-					ZOOM_SET: 'zoomSet',
-					ZOOM_START: 'zoomStart',
-					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
-				}
-			};
-
-			lang.mixin(this, this.config, args);
+		constructor: function() {
 
 			this._expandD3(d3);
 
 			aspect.before(this, '_mixEventsAndActions', lang.hitch(this, this._mixTrackingLayerEventsAndActions));
 			aspect.after(this, '_defineSubscriptions', lang.hitch(this, this._defineTrackingLayerSubscriptions));
+		},
+
+		postMixInProperties: function() {
+
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_mixTrackingLayerEventsAndActions: function() {
@@ -126,20 +130,31 @@ define([
 
 		_initialize: function() {
 
-			var transform = d3.geoTransform({
-				point: lang.partial(function(self, x, y) {
-
-					self._projectPoint(x, y, self._mapInstance, this.stream);
-				}, this)
+			const transform = d3.geoTransform({
+				point: lang.partial(this._pointTransform, this)
 			});
 
 			this._pathGenerator = d3.geoPath(transform);
 		},
 
-		_projectPoint: function(x, y, map, stream) {
+		_pointTransform: function(self, x, y) {
+			// TODO unificar con mismo método presente en GridLayerImpl
 
-			var point = map.latLngToLayerPoint(this._getLatLng(y, x));
-			stream.point(point.x, point.y);
+			if (!self.mapChannel) {
+				return;
+			}
+
+			const layerPointDfd = new Deferred();
+
+			self._once(self._buildChannel(self.mapChannel, 'GOT_LAYER_POINT'),
+				(res) => layerPointDfd.resolve(res?.layerPoint));
+
+			self._publish(self._buildChannel(self.mapChannel, 'GET_LAYER_POINT'), {
+				lat: y,
+				lng: x
+			});
+
+			layerPointDfd.then((layerPoint) => layerPoint && this.stream.point(layerPoint.x, layerPoint.y));
 		},
 
 		_getLatLng: function(lat, lng) {
@@ -281,10 +296,10 @@ define([
 
 			return new TrackingLine({
 				parentChannel: this.getChannel(),
-				fillColor: this.fillColor,	// TODO este y otros parámetros seteables desde fuera, deberían pasarse en un objeto para mezclar
+				fillColor: this.fillColor,
 				svg: this._svg,
 				pathGenerator: this._pathGenerator,
-				mapInstance: this._mapInstance
+				mapChannel: this.mapChannel
 			});
 		},
 
@@ -551,13 +566,17 @@ define([
 				return;
 			}
 
+			const path = this.infoTargetPathParams ?? {};
+
+			const query = {
+				ids
+			};
+
 			this._emitEvt('REQUEST', {
 				method: 'POST',
 				target: target,
 				action: '_mget',
-				query: {
-					ids: ids
-				},
+				params: {path, query},
 				requesterId: this.getOwnChannel()
 			});
 		},

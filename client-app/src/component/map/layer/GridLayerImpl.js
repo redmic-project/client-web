@@ -1,46 +1,54 @@
 define([
 	'd3'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
+	, 'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'dojo/aspect'
+	, 'dojo/Deferred'
 	, 'leaflet'
-	, "src/util/Credentials"
-	, "src/component/filter/Filter"
-	, "./MapLayer"
+	, 'src/component/filter/Filter'
+	, 'src/component/map/layer/MapLayer'
+	, 'src/util/Credentials'
 ], function(
 	d3
 	, declare
 	, lang
 	, aspect
+	, Deferred
 	, L
-	, Credentials
 	, Filter
 	, MapLayer
-){
+	, Credentials
+) {
+
+	const defaultConfig = {
+		ownChannel: 'gridLayer',
+
+		scale:{
+			grid5000: {zoom:8, factor:200},
+			grid1000: {zoom:11, factor:50},
+			grid500: {zoom:12, factor:25},
+			grid100: {zoom:14, factor:5}
+		},
+		currentGridLayer: 'grid5000',
+		currentMode: 0,
+		confidences: [1, 2, 3, 4]
+	};
+
 	return declare(MapLayer, {
 		//	summary:
 		//		Implementación de capa de rejilla.
 
-		constructor: function(args) {
-
-			this.config = {
-				scale:{
-					"grid5000": {zoom:8, factor:200},
-					"grid1000": {zoom:11, factor:50},
-					"grid500": {zoom:12, factor:25},
-					"grid100": {zoom:14, factor:5}
-				},
-				currentGridLayer: "grid5000",
-				currentMode: 0,
-				confidences: [1, 2, 3, 4],
-
-				ownChannel: "gridLayer"
-			};
-
-			lang.mixin(this, this.config, args);
+		constructor: function() {
 
 			aspect.before(this, "_initialize", lang.hitch(this, this._initializeGridLayerImpl));
 			aspect.before(this, "_afterSetConfigurations", lang.hitch(this, this._setGridLayerConfigurations));
+		},
+
+		postMixInProperties: function() {
+
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setGridLayerConfigurations: function() {
@@ -93,11 +101,8 @@ define([
 			this._globalG = this.svg.append("svg:g")
 				.attr("class", "leaflet-zoom-hide");
 
-			var transform = d3.geoTransform({
-				point: lang.partial(function(self, x, y) {
-
-					self._projectPoint(x, y, this.stream);
-				}, this)
+			const transform = d3.geoTransform({
+				point: lang.partial(this._pointTransform, this)
 			});
 
 			this.path = d3.geoPath(transform);
@@ -124,11 +129,24 @@ define([
 			this._redrawByZoom(geoJsonData, feature, text);
 		},
 
-		_projectPoint: function(x, y, stream) {
-			// Use Leaflet to implement a D3 geometric transformation.
+		_pointTransform: function(self, x, y) {
+			// TODO unificar con mismo método presente en TrackingLayerImpl
 
-			var point = this._mapInstance.latLngToLayerPoint(new L.LatLng(y, x));
-			stream.point(point.x, point.y);
+			if (!self.mapChannel) {
+				return;
+			}
+
+			const layerPointDfd = new Deferred();
+
+			self._once(self._buildChannel(self.mapChannel, 'GOT_LAYER_POINT'),
+				(res) => layerPointDfd.resolve(res?.layerPoint));
+
+			self._publish(self._buildChannel(self.mapChannel, 'GET_LAYER_POINT'), {
+				lat: y,
+				lng: x
+			});
+
+			layerPointDfd.then((layerPoint) => layerPoint && this.stream.point(layerPoint.x, layerPoint.y));
 		},
 
 		_getTextContent: function(d) {

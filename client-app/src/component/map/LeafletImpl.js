@@ -7,11 +7,11 @@ define([
 	, 'leaflet'
 	, 'put-selector'
 	, 'src/redmicConfig'
-	, "./_LeafletImplItfc"
-	, './_LeafletWidgetsManagement'
-	, "./_ListenContainers"
-	, "./_OverlayLayersManagement"
-	, "./Map"
+	, "src/component/map/_LeafletImplItfc"
+	, 'src/component/map/_LeafletWidgetsManagement'
+	, "src/component/map/_ListenContainers"
+	, "src/component/map/_OverlayLayersManagement"
+	, "src/component/map/Map"
 ], function(
 	declare
 	, lang
@@ -28,24 +28,24 @@ define([
 	, MapModule
 ) {
 
+	const defaultConfig = {
+		queryableClass: 'leaflet-queryable',
+		omitContainerSizeCheck: false,
+		_mapNodeValidSizeInterval: 100,
+		_infoForAddedLayers: {}
+	};
+
 	return declare([MapModule, _LeafletImplItfc, _LeafletWidgetsManagement, _ListenContainers, _OverlayLayersManagement], {
 		//	summary:
 		//		Implementación de mapa Leaflet.
 		//	description:
 		//		Proporciona la fachada para trabajar con Leaflet.
 
+		postMixInProperties: function() {
 
-		constructor: function(args) {
+			this._mergeOwnAttributes(defaultConfig);
 
-			this.config = {
-				queryableClass: "leaflet-queryable",
-				omitContainerSizeCheck: false,
-
-				_mapNodeValidSizeInterval: 100,
-				_infoForAddedLayers: {}
-			};
-
-			lang.mixin(this, this.config, args);
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {
@@ -369,6 +369,26 @@ define([
 			if (nodeType && nodeType.toLowerCase() === 'img') {
 				this._onOverlayLayerRemovedFromPane(node);
 			}
+		},
+
+		getLatLng: function(lat, lng) {
+
+			if (!lat || !lng) {
+				return;
+			}
+
+			return new L.latLng(lat, lng);
+		},
+
+		getLayerPoint: function(lat, lng) {
+
+			if (!lat || !lng || !this.map) {
+				return;
+			};
+
+			const latLng = this.getLatLng(lat, lng);
+
+			return this.map.latLngToLayerPoint(latLng);
 		}
 	});
 });

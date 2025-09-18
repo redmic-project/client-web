@@ -3,14 +3,59 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
+	, 'dojo/Deferred'
 	, 'RWidgets/Utilities'
 ], function(
 	d3
 	, declare
 	, lang
 	, aspect
+	, Deferred
 	, Utilities
-){
+) {
+
+	const defaultConfig = {
+		axesRadius: 4,
+		axesRadiusMultiplier: 2.5,
+		clusterAxesRadiusMultiplier: 1.5,
+		axesGrowingTransitionDuration: 300,
+		axesShrinkingTransitionDuration: 500,
+		circleGroupClass: 'trackingAxesGroup',
+		startMarkerClass: 'trackingStartPosition',
+		currentPositionClass: 'trackingCurrentPosition',
+		endPositionClass: 'endOfTrack',
+		markerClass: 'trackMarker',
+
+		_positionMarker: null,
+		_defsElementPrefix: 'trackMarker',
+		_defsElementIdSeparator: '_',
+
+		trackingMarkersManagementEvents: {
+		},
+		trackingMarkersManagementActions: {
+			SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
+			HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers'
+		},
+
+		_defsData: [{
+			name: 'arrow',
+			path: 'M0,0 m-3,-3 L7,0 L-3,3 Z',
+			viewbox: '-3 -3 10 6'
+		},{
+			name: 'plane',
+			path: 'M0,0 L-3,-5 L7,0 L-3,5 Z',
+			viewbox: '-3 -5 10 10'
+		},{
+			name: 'stub',
+			path: 'M0,0 m-1,-5 L1,-5 L1,5 L-1,5 Z',
+			viewbox: '-1 -5 2 10'
+		},{
+			name: 'square',
+			path: 'M0,0 m-5,-5 L5,-5 L5,5 L-5,5 Z',
+			viewbox: '-5 -5 10 10'
+		}]
+	};
+
 	return declare(null, {
 		//	summary:
 		//		Extensión de la línea de tracking para gestionar sus distintos marcadores.
@@ -44,56 +89,10 @@ define([
 		//		Prefijo usado en los ids de los marcadores.
 		//	_defsElementIdSeparator: String
 		//		Separador usado en los prefijos de los ids de los marcadores.
-
 		//	_defsData: Array
 		//		Definiciones de los distintos marcadores disponibles.
-		_defsData: [{
-			name: 'arrow',
-			path: 'M0,0 m-3,-3 L7,0 L-3,3 Z',
-			viewbox: '-3 -3 10 6'
-		},{
-			name: 'plane',
-			path: 'M0,0 L-3,-5 L7,0 L-3,5 Z',
-			viewbox: '-3 -5 10 10'
-		},{
-			name: 'stub',
-			path: 'M0,0 m-1,-5 L1,-5 L1,5 L-1,5 Z',
-			viewbox: '-1 -5 2 10'
-		},{
-			name: 'square',
-			path: 'M0,0 m-5,-5 L5,-5 L5,5 L-5,5 Z',
-			viewbox: '-5 -5 10 10'
-		}],
 
-		constructor: function(args) {
-
-			this._trackingMarkersConfig = {
-				axesRadius: 4,
-				axesRadiusMultiplier: 2.5,
-				clusterAxesRadiusMultiplier: 1.5,
-				axesGrowingTransitionDuration: 300,
-				axesShrinkingTransitionDuration: 500,
-				circleGroupClass: 'trackingAxesGroup',
-				startMarkerClass: 'trackingStartPosition',
-				currentPositionClass: 'trackingCurrentPosition',
-				endPositionClass: 'endOfTrack',
-				markerClass: 'trackMarker',
-
-				_positionMarker: null,
-				_defsElementPrefix: 'trackMarker',
-				_defsElementIdSeparator: '_',
-
-				trackingMarkersManagementEvents: {
-				},
-				trackingMarkersManagementActions: {
-					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
-					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers'
-				}
-			};
-
-			lang.mixin(this, this._trackingMarkersConfig, args);
-
-			this._positionOffset = this.axesRadius * this.axesRadiusMultiplier * this.clusterAxesRadiusMultiplier;
+		constructor: function() {
 
 			aspect.before(this, '_mixEventsAndActions', lang.hitch(this,
 				this._mixTrackingMarkersManagementEventsAndActions));
@@ -102,6 +101,15 @@ define([
 				this._defineTrackingMarkersManagementSubscriptions));
 
 			aspect.after(this, '_clear', lang.hitch(this, this._clearTrackingMarkersManagement));
+		},
+
+		postMixInProperties: function() {
+
+			this._mergeOwnAttributes(defaultConfig);
+
+			this._positionOffset = this.axesRadius * this.axesRadiusMultiplier * this.clusterAxesRadiusMultiplier;
+
+			this.inherited(arguments);
 		},
 
 		_mixTrackingMarkersManagementEventsAndActions: function() {
@@ -243,30 +251,61 @@ define([
 			return this.axesRadius;
 		},
 
+		_getPointForCoordinatesAt: function(lineStringFeature, /*Integer?*/ pos) {
+
+			const dfd = new Deferred();
+
+			if (!lineStringFeature) {
+				dfd.reject();
+				return dfd;
+			}
+
+			const coords = this._getCoordinates(lineStringFeature),
+				i = Utilities.isValidNumber(pos) ? pos : coords.length - 1,
+				coord = coords[i];
+
+			if (!coord || !this.mapChannel) {
+				dfd.reject();
+				return dfd;
+			}
+
+			this._once(this._buildChannel(this.mapChannel, 'GOT_LAYER_POINT'),
+				(res) => dfd.resolve(res?.layerPoint));
+
+			this._publish(this._buildChannel(this.mapChannel, 'GET_LAYER_POINT'), {
+				lat: coord[1],
+				lng: coord[0]
+			});
+
+			return dfd;
+		},
+
 		_updatePositionMarker: function(args) {
 
-			var lineStringFeature = args.lineStringFeature,
+			const lineStringFeature = args.lineStringFeature,
 				pos = args.pos,
 				animate = args.animate,
 				duration = args.duration,
-				lastPoint = this._getPointForCoordinatesAt(lineStringFeature, pos);
+				lastPointDfd = this._getPointForCoordinatesAt(lineStringFeature, pos);
 
-			if (!lastPoint) {
+			if (!lastPointDfd) {
 				return;
 			}
 
-			if (!this._positionMarker) {
-				this._createPositionMarker(lastPoint);
-			} else {
-				this._updateExistingPositionMarker({
-					lineStringFeature: lineStringFeature,
-					pos: pos,
-					animate: animate,
-					duration: duration || this.transitionDuration,
-					lastPoint: lastPoint
-				});
-			}
+			lastPointDfd.then((lastPoint) => {
 
+				if (!this._positionMarker) {
+					this._createPositionMarker(lastPoint);
+				} else {
+					this._updateExistingPositionMarker({
+						lineStringFeature: lineStringFeature,
+						pos: pos,
+						animate: animate,
+						duration: duration || this.transitionDuration,
+						lastPoint: lastPoint
+					});
+				}
+			});
 		},
 
 		_createPositionMarker: function(point) {
@@ -375,22 +414,21 @@ define([
 
 		_createAxis: function(lineStringFeature, /*Integer?*/ pos, animate) {
 
-			var point = this._getPointForCoordinatesAt(lineStringFeature, pos),
+			const pointDfd = this._getPointForCoordinatesAt(lineStringFeature, pos),
 				id = this._getIdByPosition(pos);
 
-			if (!point) {
+			if (!pointDfd) {
 				return;
 			}
 
-			var radiusValue = this._getAxisRadius(pos),
-				radius = animate ? 0 : radiusValue,
-				circle = this._createCircleMarker({
-					point: point,
-					radius: radius,
-					id: id
-				});
+			pointDfd.then((point) => {
 
-			animate && radiusValue && this._animateCircle(circle, radiusValue);
+				const radiusValue = this._getAxisRadius(pos),
+					radius = animate ? 0 : radiusValue,
+					circle = this._createCircleMarker({point, radius, id});
+
+				animate && radiusValue && this._animateCircle(circle, radiusValue);
+			});
 		},
 
 		_filterAxesOutsideClickedArea: function(args, d, i) {

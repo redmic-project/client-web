@@ -294,22 +294,26 @@ define([
 
 			this._activityIdByUuid[idProperty] = item.activityId;
 
-			var target = lang.replace(this.layersTarget, {
-					elementuuid: idProperty,
-					activityid: this._activityIdByUuid[idProperty]
-				}),
-				infoTarget = lang.replace(this.infoTarget, {
-					id: this._activityIdByUuid[idProperty]
-				}),
-				layerId = this._generateLayerId(idProperty),
-				color = this._getFreeColor(idProperty, item),
+			const targetPathParams = {
+				elementuuid: idProperty,
+				activityid: this._activityIdByUuid[idProperty]
+			};
+
+			const infoTargetPathParams = {
+				id: this._activityIdByUuid[idProperty]
+			};
+
+			const layerId = this._generateLayerId(idProperty),
+				fillColor = this._getFreeColor(idProperty, item),
 				definition = this.TrackingClusterLayer;
 
 			this._layerInstances[idProperty] = new definition(this._configByLayerInstance({
-				target: target,
-				infoTarget: infoTarget,
-				fillColor: color,
-				layerId: layerId,
+				target: this.layersTarget,
+				infoTarget: this.infoTarget,
+				targetPathParams,
+				infoTargetPathParams,
+				fillColor,
+				layerId,
 				layerLabel: layerId
 			}));
 		},

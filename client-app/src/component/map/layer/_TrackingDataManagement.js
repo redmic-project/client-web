@@ -10,7 +10,20 @@ define([
 	, aspect
 	, moment
 	, Utilities
-){
+) {
+
+	const defaultConfig = {
+		axesPropsPropName: 'axesProps',
+		startDatePropName: 'startDate',
+		endDatePropName: 'endDate',
+
+		_lineStringFeature: null,
+
+		_lastClusterPosition: 0,
+		_lastItemInCluster: 0,
+		_itemsReviewedInPrevClusters: 0
+	};
+
 	return declare(null, {
 		//	summary:
 		//		Extensión de la línea de tracking para gestionar la información a representar.
@@ -25,23 +38,16 @@ define([
 		//	_itemsReviewedInPrevClusters: Integer
 		//		Contador de elementos (dentro de los cluster) revisados hasta la posición actual.
 
-		constructor: function(args) {
-
-			this._trackingDataManagementConfig = {
-				axesPropsPropName: 'axesProps',
-				startDatePropName: 'startDate',
-				endDatePropName: 'endDate',
-
-				_lineStringFeature: null,
-
-				_lastClusterPosition: 0,
-				_lastItemInCluster: 0,
-				_itemsReviewedInPrevClusters: 0
-			};
-
-			lang.mixin(this, this._trackingDataManagementConfig, args);
+		constructor: function() {
 
 			aspect.after(this, '_clear', lang.hitch(this, this._clearTrackingDataManagement));
+		},
+
+		postMixInProperties: function() {
+
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_addData: function(feature) {

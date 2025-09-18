@@ -7,9 +7,9 @@ define([
 	, 'dojo/on'
 	, 'leaflet'
 	, 'src/component/base/_Module'
+	, 'src/component/map/layer/_TrackingDataManagement'
+	, 'src/component/map/layer/_TrackingMarkersManagement'
 	, 'RWidgets/Utilities'
-	, './_TrackingDataManagement'
-	, './_TrackingMarkersManagement'
 ], function(
 	d3
 	, declare
@@ -19,10 +19,46 @@ define([
 	, on
 	, L
 	, _Module
-	, Utilities
 	, _TrackingDataManagement
 	, _TrackingMarkersManagement
-){
+	, Utilities
+) {
+
+	const defaultConfig = {
+		idProperty: 'uuid',
+		idsProperty: 'uuids',
+		transitionDuration: 1000,
+		transitionEase: d3.easeLinear,
+		groupClass: 'trackingLineGroup',
+		groupHoverClass: 'onHover',
+		lineClass: 'trackingPath',
+		banClass: 'hidden',
+		fillColor: 'orange',
+		trailLength: null,
+
+		_lastPosition: 0,
+		_pathTransition: null,
+
+		ownChannel: 'trackingLine',
+		events: {
+			DRAWN: 'drawn',
+			GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
+			DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
+		},
+		actions: {
+			ADD_DATA: 'addData',
+			DRAW_UNTIL_POSITION: 'drawUntilPosition',
+			DRAWN: 'drawn',
+			REDRAW: 'redraw',
+			ADJUST_POSITION: 'adjustPosition',
+			GET_CLICKED_POINTS_IDS: 'getClickedPointsIds',
+			GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
+			DATA_BOUNDS_UPDATED: 'dataBoundsUpdated',
+			GET_LAYER_POINT: 'getLayerPoint',
+			GOT_LAYER_POINT: 'gotLayerPoint'
+		}
+	};
+
 	return declare([_Module, _TrackingDataManagement, _TrackingMarkersManagement], {
 		//	summary:
 		//		Módulo para representar gráficamente los datos que componen una línea de tracking.
@@ -55,42 +91,11 @@ define([
 		//	_trackIsBanned: Boolean
 		//		Indica si el track ha sido desautorizado para mostrarse.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				idProperty: 'uuid',
-				idsProperty: 'uuids',
-				transitionDuration: 1000,
-				transitionEase: d3.easeLinear,
-				groupClass: 'trackingLineGroup',
-				groupHoverClass: 'onHover',
-				lineClass: 'trackingPath',
-				banClass: 'hidden',
-				fillColor: 'orange',
-				trailLength: null,
+			this._mergeOwnAttributes(defaultConfig);
 
-				_lastPosition: 0,
-				_pathTransition: null,
-
-				ownChannel: 'trackingLine',
-				events: {
-					DRAWN: 'drawn',
-					GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
-					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
-				},
-				actions: {
-					ADD_DATA: 'addData',
-					DRAW_UNTIL_POSITION: 'drawUntilPosition',
-					DRAWN: 'drawn',
-					REDRAW: 'redraw',
-					ADJUST_POSITION: 'adjustPosition',
-					GET_CLICKED_POINTS_IDS: 'getClickedPointsIds',
-					GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
-					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
-				}
-			};
-
-			lang.mixin(this, this.config, args);
+			this.inherited(arguments);
 		},
 
 		_mixEventsAndActions: function() {
@@ -185,13 +190,6 @@ define([
 			return this._group.append('svg:path')
 				.attr('class', this.lineClass)
 				.attr('marker-start', this._getMarkerSelector('start'));
-		},
-
-		_getLatLng: function(lat, lng) {
-
-			if (lat && lng) {
-				return new L.latLng(lat, lng);
-			}
 		},
 
 		_subAddData: function(req) {
@@ -512,23 +510,6 @@ define([
 			}
 
 			return lengthAt;
-		},
-
-		_getPointForCoordinatesAt: function(lineStringFeature, /*Integer?*/ pos) {
-
-			if (!lineStringFeature) {
-				return;
-			}
-
-			var coords = this._getCoordinates(lineStringFeature),
-				i = Utilities.isValidNumber(pos) ? pos : coords.length - 1,
-				coord = coords[i];
-
-			if (!coord || !this.mapInstance) {
-				return;
-			}
-
-			return this.mapInstance.latLngToLayerPoint(this._getLatLng(coord[1], coord[0]));
 		},
 
 		_drawTrack: function(lineStringFeature) {

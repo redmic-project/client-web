@@ -3,9 +3,9 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, 'dojo/Deferred'
 	, 'leaflet'
 	, 'src/component/filter/Filter'
+	, 'src/component/map/layer/_D3MapProjection'
 	, 'src/component/map/layer/MapLayer'
 	, 'src/util/Credentials'
 ], function(
@@ -13,9 +13,9 @@ define([
 	, declare
 	, lang
 	, aspect
-	, Deferred
 	, L
 	, Filter
+	, _D3MapProjection
 	, MapLayer
 	, Credentials
 ) {
@@ -34,7 +34,7 @@ define([
 		confidences: [1, 2, 3, 4]
 	};
 
-	return declare(MapLayer, {
+	return declare([MapLayer, _D3MapProjection], {
 		//	summary:
 		//		Implementación de capa de rejilla.
 
@@ -95,17 +95,12 @@ define([
 
 		addData: function(geoJsonData, moduleContext) {
 
-			this.svg = d3.select(this._mapInstance.getPanes().overlayPane)
-				.append("svg:svg");
+			this.svg = this._getSvgElement();
 
 			this._globalG = this.svg.append("svg:g")
 				.attr("class", "leaflet-zoom-hide");
 
-			const transform = d3.geoTransform({
-				point: lang.partial(this._pointTransform, this)
-			});
-
-			this.path = d3.geoPath(transform);
+			this.path = this._getGeoPath();
 
 			var featureG = this._globalG.selectAll("path")
 				.data(geoJsonData.features)
@@ -127,26 +122,6 @@ define([
 
 			this._mapInstance.on("viewreset", lang.hitch(this, this._redrawByZoom, geoJsonData, feature, text));
 			this._redrawByZoom(geoJsonData, feature, text);
-		},
-
-		_pointTransform: function(self, x, y) {
-			// TODO unificar con mismo método presente en TrackingLayerImpl
-
-			if (!self.mapChannel) {
-				return;
-			}
-
-			const layerPointDfd = new Deferred();
-
-			self._once(self._buildChannel(self.mapChannel, 'GOT_LAYER_POINT'),
-				(res) => layerPointDfd.resolve(res?.layerPoint));
-
-			self._publish(self._buildChannel(self.mapChannel, 'GET_LAYER_POINT'), {
-				lat: y,
-				lng: x
-			});
-
-			layerPointDfd.then((layerPoint) => layerPoint && this.stream.point(layerPoint.x, layerPoint.y));
 		},
 
 		_getTextContent: function(d) {

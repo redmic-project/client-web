@@ -1,6 +1,5 @@
 define([
-	'd3'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'dojo/Deferred'
@@ -9,11 +8,11 @@ define([
 	, 'dojo/on'
 	, 'dojo/promise/all'
 	, 'src/component/map/layer/_D3Expansion'
+	, 'src/component/map/layer/_D3MapProjection'
 	, 'src/component/map/layer/MapLayer'
 	, 'src/component/map/layer/TrackingLine'
 ], function(
-	d3
-	, declare
+	declare
 	, lang
 	, aspect
 	, Deferred
@@ -22,6 +21,7 @@ define([
 	, on
 	, all
 	, _D3Expansion
+	, _D3MapProjection
 	, MapLayer
 	, TrackingLine
 ) {
@@ -62,7 +62,7 @@ define([
 		}
 	};
 
-	return declare([MapLayer, _D3Expansion], {
+	return declare([MapLayer, _D3Expansion, _D3MapProjection], {
 		//	summary:
 		//		Implementación de capa para datos de tipo tracking.
 		//	description:
@@ -78,8 +78,6 @@ define([
 		//		Flag para dibujar directamente toda la capa.
 
 		constructor: function() {
-
-			this._expandD3(d3);
 
 			aspect.before(this, '_mixEventsAndActions', lang.hitch(this, this._mixTrackingLayerEventsAndActions));
 			aspect.after(this, '_defineSubscriptions', lang.hitch(this, this._defineTrackingLayerSubscriptions));
@@ -130,31 +128,7 @@ define([
 
 		_initialize: function() {
 
-			const transform = d3.geoTransform({
-				point: lang.partial(this._pointTransform, this)
-			});
-
-			this._pathGenerator = d3.geoPath(transform);
-		},
-
-		_pointTransform: function(self, x, y) {
-			// TODO unificar con mismo método presente en GridLayerImpl
-
-			if (!self.mapChannel) {
-				return;
-			}
-
-			const layerPointDfd = new Deferred();
-
-			self._once(self._buildChannel(self.mapChannel, 'GOT_LAYER_POINT'),
-				(res) => layerPointDfd.resolve(res?.layerPoint));
-
-			self._publish(self._buildChannel(self.mapChannel, 'GET_LAYER_POINT'), {
-				lat: y,
-				lng: x
-			});
-
-			layerPointDfd.then((layerPoint) => layerPoint && this.stream.point(layerPoint.x, layerPoint.y));
+			this._pathGenerator = this._getGeoPath();
 		},
 
 		_getLatLng: function(lat, lng) {
@@ -174,9 +148,8 @@ define([
 
 		_createElements: function() {
 
-			this._svg = d3.select(this._mapInstance.getPanes().overlayPane)
-				.append('svg:svg')
-					.attr('class', this.svgClass);
+			this._svg = this._getSvgElement();
+			this._svg.attr('class', this.svgClass);
 
 			this._createEventListeners();
 		},

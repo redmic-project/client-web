@@ -1,9 +1,9 @@
 define([
-	'dojo/_base/declare'
-	, 'dojo/_base/lang'
+	'd3'
+	, 'dojo/_base/declare'
 ], function(
-	declare
-	, lang
+	d3
+	, declare
 ){
 	return declare(null, {
 		//	summary:
@@ -12,12 +12,12 @@ define([
 		//		Desde la capa en que se importe esta extensión, se debe llamar al método '_expandD3' pasándole la
 		//		instancia de D3 que queremos ampliar.
 
-		_expandD3: function(d3) {
+		constructor: function() {
 
-			this._expandD3SelectionMethods(d3);
+			this._expandD3SelectionMethods();
 		},
 
-		_expandD3SelectionMethods: function(d3) {
+		_expandD3SelectionMethods: function() {
 
 			d3.selection.prototype.moveToFront = this._d3SelectionMoveToFront;
 			d3.selection.prototype.moveUp = this._d3SelectionMoveUp;

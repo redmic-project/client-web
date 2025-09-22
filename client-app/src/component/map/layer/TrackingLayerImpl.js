@@ -156,7 +156,11 @@ define([
 
 				delete this._trackingLineInstances[featureId];
 				delete this._trackingLineInstancesByChannel[lineOwnChannel];
+
+				this._removeSubscriptions(this._subsToLines[lineOwnChannel]);
 				delete this._subsToLines[lineOwnChannel];
+
+				this._removePublications(this._pubsToLines[lineOwnChannel]);
 				delete this._pubsToLines[lineOwnChannel];
 			});
 		},

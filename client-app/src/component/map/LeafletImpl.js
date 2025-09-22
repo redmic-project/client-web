@@ -384,7 +384,7 @@ define([
 
 			if (!lat || !lng || !this.map) {
 				return;
-			};
+			}
 
 			const latLng = this.getLatLng(lat, lng);
 

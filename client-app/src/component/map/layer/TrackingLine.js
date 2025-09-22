@@ -5,7 +5,6 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/mouse'
 	, 'dojo/on'
-	, 'leaflet'
 	, 'src/component/base/_Module'
 	, 'src/component/map/layer/_TrackingDataManagement'
 	, 'src/component/map/layer/_TrackingMarkersManagement'
@@ -17,7 +16,6 @@ define([
 	, Deferred
 	, mouse
 	, on
-	, L
 	, _Module
 	, _TrackingDataManagement
 	, _TrackingMarkersManagement

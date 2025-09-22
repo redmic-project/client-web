@@ -15,7 +15,8 @@ define([
 	, 'src/component/form/FormContainerImpl'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'src/component/layout/TabsDisplayer'
-	, "src/component/map/layer/_AddFilter"
+	, "src/component/map/layer/_RequestData"
+	, "src/component/map/layer/_ListenZoom"
 	, "src/component/map/layer/_PublishInfo"
 	, "src/component/map/layer/TrackingLayerImpl"
 	, "src/component/mapQuery/QueryOnMap"
@@ -36,7 +37,8 @@ define([
 	, FormContainerImpl
 	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
-	, _AddFilter
+	, _RequestData
+	, _ListenZoom
 	, _PublishInfo
 	, TrackingLayerImpl
 	, QueryOnMap
@@ -128,7 +130,7 @@ define([
 
 		_initializeMain: function() {
 
-			this.TrackingClusterLayer = declare([TrackingLayerImpl, _AddFilter, _PublishInfo]);
+			this.TrackingClusterLayer = declare([TrackingLayerImpl, _RequestData, _PublishInfo, _ListenZoom]);
 
 			this.progressSlider = new ProgressSlider({
 				parentChannel: this.getChannel(),

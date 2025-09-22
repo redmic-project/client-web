@@ -56,8 +56,6 @@ define([
 			GO_TO_POSITION: 'goToPosition',
 			SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
 			HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
-			ZOOM_SET: 'zoomSet',
-			ZOOM_START: 'zoomStart',
 			DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
 		}
 	};
@@ -106,14 +104,6 @@ define([
 			};
 
 			this.subscriptionsConfig.push({
-				channel: this._buildChannel(this.mapChannel, this.actions.ZOOM_START),
-				callback: '_subZoomStart',
-				options: options
-			},{
-				channel: this._buildChannel(this.mapChannel, this.actions.ZOOM_SET),
-				callback: '_subZoomSet',
-				options: options
-			},{
 				channel: this.getChannel('GO_TO_POSITION'),
 				callback: '_subGoToPosition',
 				options: options
@@ -129,13 +119,6 @@ define([
 		_initialize: function() {
 
 			this._pathGenerator = this._getGeoPath();
-		},
-
-		_getLatLng: function(lat, lng) {
-
-			if (lat && lng) {
-				return new L.latLng(lat, lng);
-			}
 		},
 
 		_afterLayerAdded: function() {
@@ -156,9 +139,26 @@ define([
 
 		_afterLayerRemoved: function() {
 
-			//this.clear();
+			this._clear();
+		},
+
+		_clear: function() {
+
 			this._svg.remove();
 			this._svg = null;
+
+			Object.keys(this._trackingLineInstances).forEach((featureId) => {
+
+				const lineInstance = this._trackingLineInstances[featureId],
+					lineOwnChannel = lineInstance.getOwnChannel();
+
+				this._publish(lineInstance.getChannel('DESTROY'));
+
+				delete this._trackingLineInstances[featureId];
+				delete this._trackingLineInstancesByChannel[lineOwnChannel];
+				delete this._subsToLines[lineOwnChannel];
+				delete this._pubsToLines[lineOwnChannel];
+			});
 		},
 
 		_createEventListeners: function() {
@@ -259,10 +259,7 @@ define([
 
 		_getFeatureId: function(feature) {
 
-			var props = feature && feature.properties,
-				element = props && props[this._elementPropName];
-
-			return element && element[this._elementIdPropName];
+			return feature?.properties?.[this._elementPropName]?.[this._elementIdPropName];
 		},
 
 		_createTrackingLine: function() {
@@ -374,12 +371,6 @@ define([
 			}
 		},
 
-		_subZoomStart: function(res) {
-// TODO unificar con listenZoom
-
-			this._onZoomStart(res);
-		},
-
 		_onZoomStart: function(res) {
 
 			this._emitEvt('LAYER_LOADING');
@@ -387,19 +378,11 @@ define([
 			this._removeHoverEffects();
 		},
 
-		_subZoomSet: function(res) {
-// TODO unificar con listenZoom
+		_onZoomSet: function(zoom, res) {
 
-			this._onZoomSet(res);
-		},
-
-		_onZoomSet: function(res) {
-
-			this._emitEvt('ADD_TO_QUERY', {
-				query: {
-					terms: {
-						zoomLevel: res.zoom
-					}
+			this._redraw({
+				terms: {
+					zoomLevel: zoom
 				}
 			});
 		},

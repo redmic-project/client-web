@@ -10,17 +10,6 @@ define([
 	, _BrowserDesignController
 ) {
 
-	const defaultConfig = {
-		layoutClasses: 'designLayoutContainer.layoutListDesign',
-		topNodeClasses: 'topZone',
-		titleNodeClasses: 'titleZone',
-		titleSpanNodeClasses: 'designLayoutTitle',
-		keypadNodeClasses: 'keypadZone',
-		centerNodeClasses: 'centerZone',
-		browserNodeClasses: 'listZone.noBorderList',
-		browserDesignTitle: 'list'
-	};
-
 	return declare([_BrowserDesignController, _DesignLayout], {
 		// summary:
 		//   Estructura de diseño para mostrar un listado junto con una barra superior, para título y otros.
@@ -28,6 +17,17 @@ define([
 		//   Debe asociarse como mixin a un componente al instanciarlo.
 
 		_getDesignDefaultConfig: function() {
+
+			const defaultConfig = {
+				layoutClasses: 'designLayoutContainer.layoutListDesign',
+				topNodeClasses: 'topZone',
+				titleNodeClasses: 'titleZone',
+				titleSpanNodeClasses: 'designLayoutTitle',
+				keypadNodeClasses: 'keypadZone',
+				centerNodeClasses: 'centerZone',
+				browserNodeClasses: 'listZone.noBorderList',
+				browserDesignTitle: 'list'
+			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
 

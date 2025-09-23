@@ -28,22 +28,22 @@ define([
 	, TemplateList
 ) {
 
-	const defaultConfig = {
-		ownChannel: 'activityFixedObservationSeriesMap',
-		actions: {
-			TIMESERIES_DATA: 'timeseriesData'
-		},
-		mapLayerPopupTemplate: TemplatePopup,
-		target: redmicConfig.services.acousticDetectionReceptors,
-		_showObservationsButtonClass: 'showObservations'
-	};
-
 	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _AddBrowserComponent,
 		_AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar un mapa de puntos donde se registran observaciones.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				ownChannel: 'activityFixedObservationSeriesMap',
+				actions: {
+					TIMESERIES_DATA: 'timeseriesData'
+				},
+				mapLayerPopupTemplate: TemplatePopup,
+				target: redmicConfig.services.acousticDetectionReceptors,
+				_showObservationsButtonClass: 'showObservations'
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

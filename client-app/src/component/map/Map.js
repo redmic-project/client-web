@@ -16,88 +16,6 @@ define([
 	, uuid
 ) {
 
-	const defaultConfig = {
-		ownChannel: 'map',
-		events: {
-			LAYER_ADD: 'layerAdd',
-			LAYER_REMOVE: 'layerRemove',
-			LAYER_REMOVE_FAIL: 'layerRemoveFail',
-			BASE_LAYER_CHANGE: 'baseLayerChange',
-			BASE_LAYER_CHANGE_FAIL: 'baseLayerChangeFail',
-			PAN: 'pan',
-			MOVE_START: 'moveStart',
-			ZOOM_END: 'zoomEnd',
-			CLICK: 'click',
-			BBOX_CHANGE: 'bBoxChange',
-			POPUP_OPEN: 'popupOpen',
-			POPUP_CLOSE: 'popupClose',
-			ZOOM_START: 'zoomStart',
-			GOT_ZOOM: 'gotZoom',
-			LAYER_ADDED_FORWARDED: 'layerAddedForwarded',
-			LAYER_REMOVED_FORWARDED: 'layerRemovedForwarded',
-			LAYER_INFO_FORWARDED: 'layerInfoForwarded',
-			LAYER_QUERYING_FORWARDED: 'layerQueryingForwarded',
-			LAYER_ADDED_TO_PANE: 'layerAddedToPane',
-			LAYER_REMOVED_FROM_PANE: 'layerRemovedFromPane',
-			GOT_LAYER_POINT: 'gotLayerPoint'
-		},
-		actions: {
-			ADD_LAYER: 'addLayer',
-			REMOVE_LAYER: 'removeLayer',
-			CHANGE_BASE_LAYER: 'changeBaseLayer',
-			SET_CENTER: 'setCenter',
-			SET_ZOOM: 'setZoom',
-			GOT_ZOOM: 'gotZoom',
-			GET_ZOOM: 'getZoom',
-			SET_CENTER_AND_ZOOM: 'setCenterAndZoom',
-			FIT_BOUNDS: 'fitBounds',
-			LAYER_ADDED: 'layerAdded',
-			LAYER_REMOVED: 'layerRemoved',
-			BASE_LAYER_CHANGED: 'baseLayerChanged',
-			MOVE_START: 'moveStart',
-			CENTER_SET: 'centerSet',
-			ZOOM_SET: 'zoomSet',
-			BBOX_CHANGED: 'bBoxChanged',
-			POPUP_OPENED: 'popupOpened',
-			POPUP_CLOSED: 'popupClosed',
-			MAP_CLICKED: 'mapClicked',
-			CLOSE_POPUP: 'closePopup',
-			ADD_BUTTON: 'addButton',
-			LAYER_LOADING: 'layerLoading',
-			LAYER_LOADED: 'layerLoaded',
-			REORDER_LAYERS: 'reorderLayers',
-			ZOOM_START: 'zoomStart',
-			LAYER_INFO: 'layerInfo',
-			LAYER_INFO_FORWARDED: 'layerInfoForwarded',
-			LAYER_QUERYING: 'layerQuerying',
-			LAYER_QUERYING_FORWARDED: 'layerQueryingForwarded',
-			LAYER_ADDED_FORWARDED: 'layerAddedForwarded',
-			LAYER_ADDED_CONFIRMED: 'layerAddedConfirmed',
-			LAYER_REMOVED_FORWARDED: 'layerRemovedForwarded',
-			LAYER_REMOVED_CONFIRMED: 'layerRemovedConfirmed',
-			SET_QUERYABLE_CURSOR: 'setQueryableCursor',
-			MAP_SHOWN: 'mapShown',
-			MAP_HIDDEN: 'mapHidden',
-			CLEAR: 'clear',
-			GET_LAYER_POINT: 'getLayerPoint',
-			GOT_LAYER_POINT: 'gotLayerPoint'
-		},
-
-		defaultCenter: [28.3, -16.0],
-		defaultZoom: 7,
-		initialBounds: [[27.3, -18.3], [29.5, -13.1]],
-
-		minZoom: 1,
-		maxZoom: 21,
-
-		_overlayLayers: {},
-		_optionalLayerKeys: [],
-		_baseLayerKeys: [],
-		_baseLayerInstances: {},
-
-		_lastAtlasLayerOrder: 0
-	};
-
 	return declare([_Module, _MapItfc, _Show, _StaticLayersManagement], {
 		//	summary:
 		//		Módulo de cliente para visualización de mapas.
@@ -105,6 +23,89 @@ define([
 		//		Permite trabajar con un mapa para representar datos geográficos, en forma de capas superpuestas.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				ownChannel: 'map',
+				events: {
+					LAYER_ADD: 'layerAdd',
+					LAYER_REMOVE: 'layerRemove',
+					LAYER_REMOVE_FAIL: 'layerRemoveFail',
+					BASE_LAYER_CHANGE: 'baseLayerChange',
+					BASE_LAYER_CHANGE_FAIL: 'baseLayerChangeFail',
+					PAN: 'pan',
+					MOVE_START: 'moveStart',
+					ZOOM_END: 'zoomEnd',
+					CLICK: 'click',
+					BBOX_CHANGE: 'bBoxChange',
+					POPUP_OPEN: 'popupOpen',
+					POPUP_CLOSE: 'popupClose',
+					ZOOM_START: 'zoomStart',
+					GOT_ZOOM: 'gotZoom',
+					LAYER_ADDED_FORWARDED: 'layerAddedForwarded',
+					LAYER_REMOVED_FORWARDED: 'layerRemovedForwarded',
+					LAYER_INFO_FORWARDED: 'layerInfoForwarded',
+					LAYER_QUERYING_FORWARDED: 'layerQueryingForwarded',
+					LAYER_ADDED_TO_PANE: 'layerAddedToPane',
+					LAYER_REMOVED_FROM_PANE: 'layerRemovedFromPane',
+					GOT_LAYER_POINT: 'gotLayerPoint'
+				},
+				actions: {
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer',
+					CHANGE_BASE_LAYER: 'changeBaseLayer',
+					SET_CENTER: 'setCenter',
+					SET_ZOOM: 'setZoom',
+					GOT_ZOOM: 'gotZoom',
+					GET_ZOOM: 'getZoom',
+					SET_CENTER_AND_ZOOM: 'setCenterAndZoom',
+					FIT_BOUNDS: 'fitBounds',
+					LAYER_ADDED: 'layerAdded',
+					LAYER_REMOVED: 'layerRemoved',
+					BASE_LAYER_CHANGED: 'baseLayerChanged',
+					MOVE_START: 'moveStart',
+					CENTER_SET: 'centerSet',
+					ZOOM_SET: 'zoomSet',
+					BBOX_CHANGED: 'bBoxChanged',
+					POPUP_OPENED: 'popupOpened',
+					POPUP_CLOSED: 'popupClosed',
+					MAP_CLICKED: 'mapClicked',
+					CLOSE_POPUP: 'closePopup',
+					ADD_BUTTON: 'addButton',
+					LAYER_LOADING: 'layerLoading',
+					LAYER_LOADED: 'layerLoaded',
+					REORDER_LAYERS: 'reorderLayers',
+					ZOOM_START: 'zoomStart',
+					LAYER_INFO: 'layerInfo',
+					LAYER_INFO_FORWARDED: 'layerInfoForwarded',
+					LAYER_QUERYING: 'layerQuerying',
+					LAYER_QUERYING_FORWARDED: 'layerQueryingForwarded',
+					LAYER_ADDED_FORWARDED: 'layerAddedForwarded',
+					LAYER_ADDED_CONFIRMED: 'layerAddedConfirmed',
+					LAYER_REMOVED_FORWARDED: 'layerRemovedForwarded',
+					LAYER_REMOVED_CONFIRMED: 'layerRemovedConfirmed',
+					SET_QUERYABLE_CURSOR: 'setQueryableCursor',
+					MAP_SHOWN: 'mapShown',
+					MAP_HIDDEN: 'mapHidden',
+					CLEAR: 'clear',
+					GET_LAYER_POINT: 'getLayerPoint',
+					GOT_LAYER_POINT: 'gotLayerPoint'
+				},
+
+				defaultCenter: [28.3, -16.0],
+				defaultZoom: 7,
+				initialBounds: [[27.3, -18.3], [29.5, -13.1]],
+				pepe: [1,2,3],
+
+				minZoom: 1,
+				maxZoom: 21,
+
+				_overlayLayers: {},
+				_optionalLayerKeys: [],
+				_baseLayerKeys: [],
+				_baseLayerInstances: {},
+
+				_lastAtlasLayerOrder: 0
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

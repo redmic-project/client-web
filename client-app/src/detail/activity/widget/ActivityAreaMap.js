@@ -33,7 +33,7 @@ define([
 		//	summary:
 		//		Widget para mostrar en un mapa las geometrías asociadas a una actividad.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				ownChannel: 'activityAreaMap',
@@ -42,7 +42,9 @@ define([
 				mapLayerPopupTemplate: TemplatePopup
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {

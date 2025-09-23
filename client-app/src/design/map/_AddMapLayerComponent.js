@@ -32,16 +32,6 @@ define([
 		radius: _RadiusOnClick
 	};
 
-	const defaultConfig = {
-		mapLayerDefinition: 'cluster',
-		enabledMapLayerExtensions: {
-			filter: false,
-			listenBounds: false,
-			listenZoom: false,
-			radius: false
-		}
-	};
-
 	return declare(null, {
 		// summary:
 		//   Lógica de diseño para añadir un componente MapLayer, junto con otros para comunicarlo y mostrar información
@@ -50,6 +40,16 @@ define([
 		//   maquetación de este diseño.
 
 		_getDesignDefaultConfig: function() {
+
+			const defaultConfig = {
+				mapLayerDefinition: 'cluster',
+				enabledMapLayerExtensions: {
+					filter: false,
+					listenBounds: false,
+					listenZoom: false,
+					radius: false
+				}
+			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
 

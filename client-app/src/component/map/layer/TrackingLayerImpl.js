@@ -26,40 +26,6 @@ define([
 	, TrackingLine
 ) {
 
-	const defaultConfig = {
-		svgClass: 'trackingSvg',
-		svgHoverClass: 'onHover',
-		_childHoverClass: 'childIsOnHover',
-
-		drawFullTrack: false,
-
-		_trackingLineInstances: {},
-		_trackingLineInstancesByChannel: {},
-		_subsToLines: {},
-		_pubsToLines: {},
-
-		_elementPropName: 'element',
-		_elementIdPropName: 'uuid',
-
-		ownChannel: 'trackingLayer',
-
-		trackingLayerEvents: {
-			GO_TO_POSITION: 'goToPosition',
-			REDRAW: 'redraw',
-			ADJUST_POSITION: 'adjustPosition',
-			SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
-			HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
-			GET_CLICKED_POINTS_IDS: 'getClickedPointsIds'
-		},
-		trackingLayerActions: {
-			DRAW_ALL: 'drawAll',
-			GO_TO_POSITION: 'goToPosition',
-			SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
-			HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
-			DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
-		}
-	};
-
 	return declare([MapLayer, _D3Expansion, _D3MapProjection], {
 		//	summary:
 		//		Implementación de capa para datos de tipo tracking.
@@ -82,6 +48,40 @@ define([
 		},
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				svgClass: 'trackingSvg',
+				svgHoverClass: 'onHover',
+				_childHoverClass: 'childIsOnHover',
+
+				drawFullTrack: false,
+
+				_trackingLineInstances: {},
+				_trackingLineInstancesByChannel: {},
+				_subsToLines: {},
+				_pubsToLines: {},
+
+				_elementPropName: 'element',
+				_elementIdPropName: 'uuid',
+
+				ownChannel: 'trackingLayer',
+
+				trackingLayerEvents: {
+					GO_TO_POSITION: 'goToPosition',
+					REDRAW: 'redraw',
+					ADJUST_POSITION: 'adjustPosition',
+					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
+					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
+					GET_CLICKED_POINTS_IDS: 'getClickedPointsIds'
+				},
+				trackingLayerActions: {
+					DRAW_ALL: 'drawAll',
+					GO_TO_POSITION: 'goToPosition',
+					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
+					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
+					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
+				}
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

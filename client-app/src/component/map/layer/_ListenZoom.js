@@ -8,16 +8,6 @@ define([
 	, Utilities
 ) {
 
-	const defaultConfig = {
-		actions: {
-			ZOOM_START: 'zoomStart',
-			ZOOM_SET: 'zoomSet',
-			GET_ZOOM: 'getZoom',
-			GOT_ZOOM: 'gotZoom'
-		},
-		minZoom: 0
-	};
-
 	return declare(null, {
 		//	summary:
 		//		Extensión de MapLayer para que escuche los cambios de zoom del mapa.
@@ -26,6 +16,16 @@ define([
 		//		para limitar su aparición en el mapa.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				actions: {
+					ZOOM_START: 'zoomStart',
+					ZOOM_SET: 'zoomSet',
+					GET_ZOOM: 'getZoom',
+					GOT_ZOOM: 'gotZoom'
+				},
+				minZoom: 0
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

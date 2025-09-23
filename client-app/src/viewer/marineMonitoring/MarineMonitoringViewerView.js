@@ -34,7 +34,7 @@ define([
 		//   Vista de visor de monitorización marina. Proporciona un mapa principal y una serie de capas temáticas,
 		//   junto con el componente Atlas para cruzar datos, incluyendo soporte de consulta con dimensión temporal.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				title: this.i18n.marineMonitoringViewerView,
@@ -44,7 +44,9 @@ define([
 				_topbarNodeAdditionalClass: 'timeDimensionTopbarContainer'
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {

@@ -28,7 +28,7 @@ define([
 		//	summary:
 		//		Widget para mostrar en un mapa las localizaciones de una especie.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				ownChannel: 'speciesLocationMap',
@@ -41,7 +41,9 @@ define([
 				_dataTarget: redmicConfig.services.speciesLocation
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {

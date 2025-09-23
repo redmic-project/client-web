@@ -32,23 +32,6 @@ define([
 	, ProgressBar
 ) {
 
-	const defaultConfig = {
-		actions: {
-			NOTIFICATION: "Notification",
-			NOTIFICATION_DELETED: "notificationDeleted",
-			BUTTON_EVENT: "btnEvent",
-			REMOVE: 'remove'
-		},
-		target: "task",
-		events: {
-			BUTTON_EVENT: "btnEvent",
-			REMOVE_TASK: "removeTask"
-		},
-		ownChannel: "taskNotification",
-		idProperty: "id",
-		'class': 'flexContainer notificationList'
-	};
-
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Módulo encargado de procesar las notificaciones de los demás.
@@ -59,6 +42,23 @@ define([
 		//		Opciones por defecto.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				actions: {
+					NOTIFICATION: "Notification",
+					NOTIFICATION_DELETED: "notificationDeleted",
+					BUTTON_EVENT: "btnEvent",
+					REMOVE: 'remove'
+				},
+				target: "task",
+				events: {
+					BUTTON_EVENT: "btnEvent",
+					REMOVE_TASK: "removeTask"
+				},
+				ownChannel: "taskNotification",
+				idProperty: "id",
+				'class': 'flexContainer notificationList'
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

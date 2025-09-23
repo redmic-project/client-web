@@ -10,17 +10,17 @@ define([
 	, _MapDesignController
 ) {
 
-	const defaultConfig = {
-		layoutClasses: 'designLayoutContainer.mapDesignFullSizeLayout',
-		mapNodeClasses: 'mediumSolidContainer.mapContainer.borderRadius'
-	};
-
 	return declare([_MapDesignController, _DesignLayout], {
 		// summary:
 		//   Estructura de diseño para mostrar un mapa a tamaño completo.
 		//   Debe asociarse como mixin a un componente al instanciarlo.
 
 		_getDesignDefaultConfig: function() {
+
+			const defaultConfig = {
+				layoutClasses: 'designLayoutContainer.mapDesignFullSizeLayout',
+				mapNodeClasses: 'mediumSolidContainer.mapContainer.borderRadius'
+			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
 

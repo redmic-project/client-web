@@ -10,20 +10,20 @@ define([
 	, _MapDesignController
 ) {
 
-	const defaultConfig = {
-		layoutClasses: 'designLayoutContainer.mapAndContentAndTopbarLayoutMapWithSideContentDesign',
-		topbarNodeClasses: 'mediumSolidContainer.rounded',
-		centerNodeClasses: 'mapCenterContainer',
-		mapNodeClasses: 'mediumSolidContainer.mapContainer.borderRadius',
-		additionalContentNodeClasses: 'mediumSolidContainer.mapSideContainer.borderRadius'
-	};
-
 	return declare([_MapDesignController, _DesignLayout], {
 		// summary:
 		//   Estructura de diseño para mostrar una barra superior y un componente adicional junto a un mapa.
 		//   Debe asociarse como mixin a un componente al instanciarlo.
 
 		_getDesignDefaultConfig: function() {
+
+			const defaultConfig = {
+				layoutClasses: 'designLayoutContainer.mapAndContentAndTopbarLayoutMapWithSideContentDesign',
+				topbarNodeClasses: 'mediumSolidContainer.rounded',
+				centerNodeClasses: 'mapCenterContainer',
+				mapNodeClasses: 'mediumSolidContainer.mapContainer.borderRadius',
+				additionalContentNodeClasses: 'mediumSolidContainer.mapSideContainer.borderRadius'
+			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
 

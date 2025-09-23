@@ -17,7 +17,7 @@ define([
 		//		Extensión para el manejo de los datos de servicios OGC vinculados a actividades, permitiendo generar
 		//		capas para el mapa y su control.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				target: redmicConfig.services.atlasLayer,
@@ -25,7 +25,9 @@ define([
 				defaultLayerItemState: false
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setConfigurations: function() {

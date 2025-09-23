@@ -34,66 +34,6 @@ define([
 	, _ModuleItfc
 ) {
 
-	const defaultConfig = {
-		commonEvents: {
-			CONNECT: "connect",
-			DISCONNECT: "disconnect",
-			STATUS: "status",
-			TRACK: "track",
-			GOT_PROPS: "gotProps",
-			PROPS_SET: "propsSet",
-			DESTROY: "destroy"
-		},
-		commonActions: {
-			CONNECT: "connect",
-			DISCONNECT: "disconnect",
-			CONNECTED: "connected",
-			DISCONNECTED: "disconnected",
-			ERROR: "error",
-			GETSTATUS: "getStatus",
-			GOTSTATUS: "gotStatus",
-			TRACK: "track",
-			SET_PROPS: "setProps",
-			GET_PROPS: "getProps",
-			GOT_PROPS: "gotProps",
-			DESTROY: "destroy",
-			DESTROYED: "destroyed"
-		},
-		globalOwnChannels: {
-			ROUTER: "router",
-			STORE: "data",
-			SELECTOR: "selection",
-			CREDENTIALS: "credentials",
-			EXTERNAL_CONFIG: "externalConfig",
-			ANALYTICS: "analytics",
-			MODULE_STORE: "moduleStore",
-			TASK: "task",
-			NOTIFICATION: "notification",
-			SOCKET: "socket",
-			META_TAGS: "metaTags",
-			LOADING: "loading",
-			ALERT: "alert",
-			COMMUNICATION: "communicationCenter",
-			AUTH: "auth"
-		},
-
-		rootChannel: "app",
-		innerAppOwnChannel: 'innerApp',
-		outerAppOwnChannel: 'outerApp',
-		channelSeparator: Mediator.channelSeparator,
-
-		i18n: i18n,
-
-		ownChannel: "module",
-		parentChannel: "",
-		ownChannelSeparator: "-",
-		childPathSeparator: ".",
-		propSetSuffix: "Set",
-
-		_childrenActionsAllowedToListen: ['CONNECTED', 'DISCONNECTED', 'DESTROYED'],
-		_childrenActionDfdsNameSuffix: 'ChildrenActionDfds'
-	};
-
 	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter, _ManageClickEvent], {
 		// summary:
 		//   Base común para todos los componentes.
@@ -182,6 +122,66 @@ define([
 		//		Traducciones globales
 
 		constructor: function() {
+
+			const defaultConfig = {
+				commonEvents: {
+					CONNECT: "connect",
+					DISCONNECT: "disconnect",
+					STATUS: "status",
+					TRACK: "track",
+					GOT_PROPS: "gotProps",
+					PROPS_SET: "propsSet",
+					DESTROY: "destroy"
+				},
+				commonActions: {
+					CONNECT: "connect",
+					DISCONNECT: "disconnect",
+					CONNECTED: "connected",
+					DISCONNECTED: "disconnected",
+					ERROR: "error",
+					GETSTATUS: "getStatus",
+					GOTSTATUS: "gotStatus",
+					TRACK: "track",
+					SET_PROPS: "setProps",
+					GET_PROPS: "getProps",
+					GOT_PROPS: "gotProps",
+					DESTROY: "destroy",
+					DESTROYED: "destroyed"
+				},
+				globalOwnChannels: {
+					ROUTER: "router",
+					STORE: "data",
+					SELECTOR: "selection",
+					CREDENTIALS: "credentials",
+					EXTERNAL_CONFIG: "externalConfig",
+					ANALYTICS: "analytics",
+					MODULE_STORE: "moduleStore",
+					TASK: "task",
+					NOTIFICATION: "notification",
+					SOCKET: "socket",
+					META_TAGS: "metaTags",
+					LOADING: "loading",
+					ALERT: "alert",
+					COMMUNICATION: "communicationCenter",
+					AUTH: "auth"
+				},
+
+				rootChannel: "app",
+				innerAppOwnChannel: 'innerApp',
+				outerAppOwnChannel: 'outerApp',
+				channelSeparator: Mediator.channelSeparator,
+
+				i18n: i18n,
+
+				ownChannel: "module",
+				parentChannel: "",
+				ownChannelSeparator: "-",
+				childPathSeparator: ".",
+				propSetSuffix: "Set",
+
+				_childrenActionsAllowedToListen: ['CONNECTED', 'DISCONNECTED', 'DESTROYED'],
+				_childrenActionDfdsNameSuffix: 'ChildrenActionDfds'
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

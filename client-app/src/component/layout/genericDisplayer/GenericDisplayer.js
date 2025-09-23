@@ -10,28 +10,28 @@ define([
 	, _Show
 ) {
 
-	const defaultConfig = {
-		ownChannel: 'genericDisplayer',
-		events: {
-			'ADD_CONTENT': 'addContent'
-		},
-		actions: {
-			'ADD_CONTENT': 'addContent',
-			'ADD_TOPBAR_CONTENT': 'addTopbarContent',
-			'REMOVE_TOPBAR_CONTENT': 'removeTopbarContent'
-		},
-
-		layoutClass: 'genericDisplayer',
-		contentClass: 'centerZone',
-		additionalLayoutClasses: null,
-		additionalContentClasses: null
-	};
-
 	return declare([_Module, _Show], {
 		//	summary:
 		//		Módulo que permite mostrar un contenido genérico que reciba, ya sea otro módulo o un nodo simple.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				ownChannel: 'genericDisplayer',
+				events: {
+					'ADD_CONTENT': 'addContent'
+				},
+				actions: {
+					'ADD_CONTENT': 'addContent',
+					'ADD_TOPBAR_CONTENT': 'addTopbarContent',
+					'REMOVE_TOPBAR_CONTENT': 'removeTopbarContent'
+				},
+
+				layoutClass: 'genericDisplayer',
+				contentClass: 'centerZone',
+				additionalLayoutClasses: null,
+				additionalContentClasses: null
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

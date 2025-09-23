@@ -17,23 +17,23 @@ define([
 		draw: _LeafletDraw
 	};
 
-	const defaultConfig = {
-		events: {
-			ADD_LAYER: 'addLayer',
-			REMOVE_LAYER: 'removeLayer'
-		},
-		enabledMapExtensions: {
-			toponyms: true,
-			draw: false
-		}
-	};
-
 	return declare(_DesignController, {
 		// summary:
 		//   Lógica de diseño para mostrar un componente mapa con extensiones opcionales.
 		//   Debe asociarse como mixin a un componente al instanciarlo.
 
 		_getDesignDefaultConfig: function() {
+
+			const defaultConfig = {
+				events: {
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer'
+				},
+				enabledMapExtensions: {
+					toponyms: true,
+					draw: false
+				}
+			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
 

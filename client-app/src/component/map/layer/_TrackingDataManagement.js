@@ -12,18 +12,6 @@ define([
 	, Utilities
 ) {
 
-	const defaultConfig = {
-		axesPropsPropName: 'axesProps',
-		startDatePropName: 'startDate',
-		endDatePropName: 'endDate',
-
-		_lineStringFeature: null,
-
-		_lastClusterPosition: 0,
-		_lastItemInCluster: 0,
-		_itemsReviewedInPrevClusters: 0
-	};
-
 	return declare(null, {
 		//	summary:
 		//		Extensión de la línea de tracking para gestionar la información a representar.
@@ -44,6 +32,18 @@ define([
 		},
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				axesPropsPropName: 'axesProps',
+				startDatePropName: 'startDate',
+				endDatePropName: 'endDate',
+
+				_lineStringFeature: null,
+
+				_lastClusterPosition: 0,
+				_lastItemInCluster: 0,
+				_itemsReviewedInPrevClusters: 0
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

@@ -22,41 +22,6 @@ define([
 	, Utilities
 ) {
 
-	const defaultConfig = {
-		idProperty: 'uuid',
-		idsProperty: 'uuids',
-		transitionDuration: 1000,
-		transitionEase: d3.easeLinear,
-		groupClass: 'trackingLineGroup',
-		groupHoverClass: 'onHover',
-		lineClass: 'trackingPath',
-		banClass: 'hidden',
-		fillColor: 'orange',
-		trailLength: null,
-
-		_lastPosition: 0,
-		_pathTransition: null,
-
-		ownChannel: 'trackingLine',
-		events: {
-			DRAWN: 'drawn',
-			GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
-			DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
-		},
-		actions: {
-			ADD_DATA: 'addData',
-			DRAW_UNTIL_POSITION: 'drawUntilPosition',
-			DRAWN: 'drawn',
-			REDRAW: 'redraw',
-			ADJUST_POSITION: 'adjustPosition',
-			GET_CLICKED_POINTS_IDS: 'getClickedPointsIds',
-			GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
-			DATA_BOUNDS_UPDATED: 'dataBoundsUpdated',
-			GET_LAYER_POINT: 'getLayerPoint',
-			GOT_LAYER_POINT: 'gotLayerPoint'
-		}
-	};
-
 	return declare([_Module, _TrackingDataManagement, _TrackingMarkersManagement], {
 		//	summary:
 		//		Módulo para representar gráficamente los datos que componen una línea de tracking.
@@ -90,6 +55,41 @@ define([
 		//		Indica si el track ha sido desautorizado para mostrarse.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				idProperty: 'uuid',
+				idsProperty: 'uuids',
+				transitionDuration: 1000,
+				transitionEase: d3.easeLinear,
+				groupClass: 'trackingLineGroup',
+				groupHoverClass: 'onHover',
+				lineClass: 'trackingPath',
+				banClass: 'hidden',
+				fillColor: 'orange',
+				trailLength: null,
+
+				_lastPosition: 0,
+				_pathTransition: null,
+
+				ownChannel: 'trackingLine',
+				events: {
+					DRAWN: 'drawn',
+					GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
+					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
+				},
+				actions: {
+					ADD_DATA: 'addData',
+					DRAW_UNTIL_POSITION: 'drawUntilPosition',
+					DRAWN: 'drawn',
+					REDRAW: 'redraw',
+					ADJUST_POSITION: 'adjustPosition',
+					GET_CLICKED_POINTS_IDS: 'getClickedPointsIds',
+					GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
+					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated',
+					GET_LAYER_POINT: 'getLayerPoint',
+					GOT_LAYER_POINT: 'gotLayerPoint'
+				}
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

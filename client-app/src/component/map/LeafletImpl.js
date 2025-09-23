@@ -28,13 +28,6 @@ define([
 	, MapModule
 ) {
 
-	const defaultConfig = {
-		queryableClass: 'leaflet-queryable',
-		omitContainerSizeCheck: false,
-		_mapNodeValidSizeInterval: 100,
-		_infoForAddedLayers: {}
-	};
-
 	return declare([MapModule, _LeafletImplItfc, _LeafletWidgetsManagement, _ListenContainers, _OverlayLayersManagement], {
 		//	summary:
 		//		Implementación de mapa Leaflet.
@@ -42,6 +35,13 @@ define([
 		//		Proporciona la fachada para trabajar con Leaflet.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				queryableClass: 'leaflet-queryable',
+				omitContainerSizeCheck: false,
+				_mapNodeValidSizeInterval: 100,
+				_infoForAddedLayers: {}
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

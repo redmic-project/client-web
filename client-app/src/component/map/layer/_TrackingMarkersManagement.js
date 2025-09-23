@@ -14,48 +14,6 @@ define([
 	, Utilities
 ) {
 
-	const defaultConfig = {
-		axesRadius: 4,
-		axesRadiusMultiplier: 2.5,
-		clusterAxesRadiusMultiplier: 1.5,
-		axesGrowingTransitionDuration: 300,
-		axesShrinkingTransitionDuration: 500,
-		circleGroupClass: 'trackingAxesGroup',
-		startMarkerClass: 'trackingStartPosition',
-		currentPositionClass: 'trackingCurrentPosition',
-		endPositionClass: 'endOfTrack',
-		markerClass: 'trackMarker',
-
-		_positionMarker: null,
-		_defsElementPrefix: 'trackMarker',
-		_defsElementIdSeparator: '_',
-
-		trackingMarkersManagementEvents: {
-		},
-		trackingMarkersManagementActions: {
-			SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
-			HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers'
-		},
-
-		_defsData: [{
-			name: 'arrow',
-			path: 'M0,0 m-3,-3 L7,0 L-3,3 Z',
-			viewbox: '-3 -3 10 6'
-		},{
-			name: 'plane',
-			path: 'M0,0 L-3,-5 L7,0 L-3,5 Z',
-			viewbox: '-3 -5 10 10'
-		},{
-			name: 'stub',
-			path: 'M0,0 m-1,-5 L1,-5 L1,5 L-1,5 Z',
-			viewbox: '-1 -5 2 10'
-		},{
-			name: 'square',
-			path: 'M0,0 m-5,-5 L5,-5 L5,5 L-5,5 Z',
-			viewbox: '-5 -5 10 10'
-		}]
-	};
-
 	return declare(null, {
 		//	summary:
 		//		Extensión de la línea de tracking para gestionar sus distintos marcadores.
@@ -104,6 +62,48 @@ define([
 		},
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				axesRadius: 4,
+				axesRadiusMultiplier: 2.5,
+				clusterAxesRadiusMultiplier: 1.5,
+				axesGrowingTransitionDuration: 300,
+				axesShrinkingTransitionDuration: 500,
+				circleGroupClass: 'trackingAxesGroup',
+				startMarkerClass: 'trackingStartPosition',
+				currentPositionClass: 'trackingCurrentPosition',
+				endPositionClass: 'endOfTrack',
+				markerClass: 'trackMarker',
+
+				_positionMarker: null,
+				_defsElementPrefix: 'trackMarker',
+				_defsElementIdSeparator: '_',
+
+				trackingMarkersManagementEvents: {
+				},
+				trackingMarkersManagementActions: {
+					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
+					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers'
+				},
+
+				_defsData: [{
+					name: 'arrow',
+					path: 'M0,0 m-3,-3 L7,0 L-3,3 Z',
+					viewbox: '-3 -3 10 6'
+				},{
+					name: 'plane',
+					path: 'M0,0 L-3,-5 L7,0 L-3,5 Z',
+					viewbox: '-3 -5 10 10'
+				},{
+					name: 'stub',
+					path: 'M0,0 m-1,-5 L1,-5 L1,5 L-1,5 Z',
+					viewbox: '-1 -5 2 10'
+				},{
+					name: 'square',
+					path: 'M0,0 m-5,-5 L5,-5 L5,5 L-5,5 Z',
+					viewbox: '-5 -5 10 10'
+				}]
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

@@ -8,23 +8,23 @@ define([
 	, GenericDisplayer
 ) {
 
-	const defaultConfig = {
-		topbarClass: 'topZone',
-		titleClass: 'titleZone',
-		titleContentClass: 'titleContent',
-		topbarContentClass: 'topbarContent',
-
-		title: 'contentWithTopbar',
-
-		_topbarContentNodes: {}
-	};
-
 	return declare(GenericDisplayer, {
 		//	summary:
 		//		Implementación del módulo que permite mostrar un contenido genérico (módulo o no) junto con una barra
 		//		superior.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				topbarClass: 'topZone',
+				titleClass: 'titleZone',
+				titleContentClass: 'titleContent',
+				topbarContentClass: 'topbarContent',
+
+				title: 'contentWithTopbar',
+
+				_topbarContentNodes: {}
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

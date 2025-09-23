@@ -36,14 +36,6 @@ define([
 		select: _Select
 	};
 
-	const defaultConfig = {
-		enabledBrowserExtensions: {
-			dragAndDrop: false,
-			hierarchicalSelect: false,
-			select: false
-		}
-	};
-
 	return declare(null, {
 		// summary:
 		//   Lógica de diseño para añadir un componente Browser, junto con otros para mostrarlo y filtrar contenido.
@@ -51,6 +43,14 @@ define([
 		//   maquetación de este diseño.
 
 		_getDesignDefaultConfig: function() {
+
+			const defaultConfig = {
+				enabledBrowserExtensions: {
+					dragAndDrop: false,
+					hierarchicalSelect: false,
+					select: false
+				}
+			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
 

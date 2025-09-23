@@ -33,7 +33,7 @@ define([
 		//	summary:
 		//		Widget para mostrar en un mapa las ubicaciones de citas asociadas a una actividad.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				ownChannel: 'activityCitationMap',
@@ -44,7 +44,9 @@ define([
 				mapLayerPopupTemplate: TemplatePopup
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {

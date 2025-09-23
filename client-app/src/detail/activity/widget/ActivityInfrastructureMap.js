@@ -31,7 +31,7 @@ define([
 		//	summary:
 		//		Widget para mostrar en un mapa las ubicaciones de infraestructuras asociadas a una actividad.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				ownChannel: 'activityInfrastructureMap',
@@ -39,7 +39,9 @@ define([
 				mapLayerPopupTemplate: TemplatePopup
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {

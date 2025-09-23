@@ -1,6 +1,5 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 	, 'src/design/map/_AddAtlasComponent'
@@ -8,7 +7,6 @@ define([
 	, 'src/redmicConfig'
 ], function(
 	declare
-	, lang
 	, _Module
 	, _Show
 	, _AddAtlasComponent
@@ -23,7 +21,7 @@ define([
 		// description:
 		//   Permite cargar diferentes capas temáticas al mapa, manipularlas y trabajar con los datos que proveen.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				title: this.i18n.atlasViewerView,
@@ -31,7 +29,9 @@ define([
 				selectionTarget: redmicConfig.services.atlasLayerSelection
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		}
 	});
 });

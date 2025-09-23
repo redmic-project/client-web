@@ -14,7 +14,7 @@ define([
 		//	description:
 		//		Permite escuchar los cambios de BBox directamente desde el módulo del mapa.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				actions: {
@@ -23,7 +23,9 @@ define([
 				timeoutBBox: 200
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function() {

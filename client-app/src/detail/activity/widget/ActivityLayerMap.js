@@ -24,13 +24,15 @@ define([
 		//	summary:
 		//		Widget para mostrar en un mapa las capas asociadas a una actividad.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				ownChannel: 'activityLayerMap'
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {

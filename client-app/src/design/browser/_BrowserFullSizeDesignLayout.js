@@ -10,12 +10,6 @@ define([
 	, _BrowserDesignController
 ) {
 
-	const defaultConfig = {
-		layoutClasses: 'designLayoutContainer.layoutListDesign',
-		centerNodeClasses: 'centerZone',
-		browserNodeClasses: 'listZone.noBorderList'
-	};
-
 	return declare([_BrowserDesignController, _DesignLayout], {
 		// summary:
 		//   Estructura de diseño para mostrar un listado a tamaño completo.
@@ -23,6 +17,12 @@ define([
 		//   Debe asociarse como mixin a un componente al instanciarlo.
 
 		_getDesignDefaultConfig: function() {
+
+			const defaultConfig = {
+				layoutClasses: 'designLayoutContainer.layoutListDesign',
+				centerNodeClasses: 'centerZone',
+				browserNodeClasses: 'listZone.noBorderList'
+			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
 

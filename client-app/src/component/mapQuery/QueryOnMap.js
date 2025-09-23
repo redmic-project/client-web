@@ -12,33 +12,6 @@ define([
 	, _ResultsBrowser
 ) {
 
-	const defaultConfig = {
-		ownChannel: 'queryOnMap',
-		events: {
-			HIDE_LAYERS_INFO: 'hideLayersInfo',
-			ADD_INFO_DATA: 'addInfoData',
-			ADD_NEW_TEMPLATES: 'addNewTemplates',
-			SHOW_LAYERS_INFO: 'showLayersInfo',
-			SET_MAP_QUERYABLE_CURSOR: 'setMapQueryableCursor'
-		},
-		actions: {
-			HIDE_LAYERS_INFO: 'hideLayersInfo',
-			ADD_INFO_DATA: 'addInfoData',
-			ADD_NEW_TEMPLATES: 'addNewTemplates',
-			SHOW_LAYERS_INFO: 'showLayersInfo'
-		},
-
-		_tabsDisplayerActions: {
-			ADD_TAB: 'addTab',
-			SHOW_TAB: 'showTab'
-		},
-
-		getMapChannel: null,
-
-		_queryableLayersLoaded: 0,
-		_layersWaiting: 0
-	};
-
 	return declare([_Module, _ContentManagement, _ResultsBrowser], {
 		//	summary:
 		//		Módulo para gestionar las consultas sobre el mapa.
@@ -47,6 +20,33 @@ define([
 		//		para las capas presentes y recibe los resultados.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				ownChannel: 'queryOnMap',
+				events: {
+					HIDE_LAYERS_INFO: 'hideLayersInfo',
+					ADD_INFO_DATA: 'addInfoData',
+					ADD_NEW_TEMPLATES: 'addNewTemplates',
+					SHOW_LAYERS_INFO: 'showLayersInfo',
+					SET_MAP_QUERYABLE_CURSOR: 'setMapQueryableCursor'
+				},
+				actions: {
+					HIDE_LAYERS_INFO: 'hideLayersInfo',
+					ADD_INFO_DATA: 'addInfoData',
+					ADD_NEW_TEMPLATES: 'addNewTemplates',
+					SHOW_LAYERS_INFO: 'showLayersInfo'
+				},
+
+				_tabsDisplayerActions: {
+					ADD_TAB: 'addTab',
+					SHOW_TAB: 'showTab'
+				},
+
+				getMapChannel: null,
+
+				_queryableLayersLoaded: 0,
+				_layersWaiting: 0
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

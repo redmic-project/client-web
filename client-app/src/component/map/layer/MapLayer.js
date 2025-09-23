@@ -10,54 +10,6 @@ define([
 	, _MapLayerItfc
 ) {
 
-	const defaultConfig = {
-		target: null,
-		idProperty: 'id',
-		bounds: null,
-		_mapInstance: null,
-		_errorData: 0,
-		ownChannel: 'mapLayer',
-		events: {
-			ADD_LAYER: 'addLayer',
-			LAYER_ADDED: 'layerAdded',
-			REMOVE_LAYER: 'removeLayer',
-			LAYER_REMOVED: 'layerRemoved',
-			CLICK: 'click',
-			PRE_CLICK: 'preClick',
-			MOUSE_OVER: 'mouseOver',
-			FIT_BOUNDS: 'fitBounds',
-			SET_CENTER: 'setCenter',
-			LAYER_LOADING: 'layerLoading',
-			LAYER_LOADED: 'layerLoaded',
-			LAYER_LEGEND: 'layerLegend',
-			POPUP_LOADED: 'popupLoaded'
-		},
-		actions: {
-			CLEAR: 'clear',
-			ADD_LAYER: 'addLayer',
-			REMOVE_LAYER: 'removeLayer',
-			ADD_DATA: 'addData',
-			POPUP_CLOSED: 'popupClosed',
-			POPUP_LOADED: 'popupLoaded',
-			MAP_CLICKED: 'mapClicked',
-			LAYER_LOADING: 'layerLoading',
-			LAYER_LOADED: 'layerLoaded',
-			LAYER_LEGEND: 'layerLegend',
-			LAYER_ADDED: 'layerAdded',
-			LAYER_ADDED_FORWARDED: 'layerAddedForwarded',
-			LAYER_REMOVED: 'layerRemoved',
-			LAYER_REMOVED_FORWARDED: 'layerRemovedForwarded',
-			DELETE_INSTANCE: 'deleteInstance',
-			ANIMATE_MARKER: 'animateMarker',
-			FIT_BOUNDS: 'fitBounds',
-			SET_CENTER: 'setCenter',
-			MAP_SHOWN: 'mapShown',
-			MAP_HIDDEN: 'mapHidden',
-			GET_LAYER_POINT: 'getLayerPoint',
-			GOT_LAYER_POINT: 'gotLayerPoint'
-		}
-	};
-
 	return declare([_Module, _MapLayerItfc, _Store], {
 		//	summary:
 		//		Módulo de capa para un mapa.
@@ -65,6 +17,54 @@ define([
 		//		Permite trabajar con una capa de mapa sobre el módulo Map.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				target: null,
+				idProperty: 'id',
+				bounds: null,
+				_mapInstance: null,
+				_errorData: 0,
+				ownChannel: 'mapLayer',
+				events: {
+					ADD_LAYER: 'addLayer',
+					LAYER_ADDED: 'layerAdded',
+					REMOVE_LAYER: 'removeLayer',
+					LAYER_REMOVED: 'layerRemoved',
+					CLICK: 'click',
+					PRE_CLICK: 'preClick',
+					MOUSE_OVER: 'mouseOver',
+					FIT_BOUNDS: 'fitBounds',
+					SET_CENTER: 'setCenter',
+					LAYER_LOADING: 'layerLoading',
+					LAYER_LOADED: 'layerLoaded',
+					LAYER_LEGEND: 'layerLegend',
+					POPUP_LOADED: 'popupLoaded'
+				},
+				actions: {
+					CLEAR: 'clear',
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer',
+					ADD_DATA: 'addData',
+					POPUP_CLOSED: 'popupClosed',
+					POPUP_LOADED: 'popupLoaded',
+					MAP_CLICKED: 'mapClicked',
+					LAYER_LOADING: 'layerLoading',
+					LAYER_LOADED: 'layerLoaded',
+					LAYER_LEGEND: 'layerLegend',
+					LAYER_ADDED: 'layerAdded',
+					LAYER_ADDED_FORWARDED: 'layerAddedForwarded',
+					LAYER_REMOVED: 'layerRemoved',
+					LAYER_REMOVED_FORWARDED: 'layerRemovedForwarded',
+					DELETE_INSTANCE: 'deleteInstance',
+					ANIMATE_MARKER: 'animateMarker',
+					FIT_BOUNDS: 'fitBounds',
+					SET_CENTER: 'setCenter',
+					MAP_SHOWN: 'mapShown',
+					MAP_HIDDEN: 'mapHidden',
+					GET_LAYER_POINT: 'getLayerPoint',
+					GOT_LAYER_POINT: 'gotLayerPoint'
+				}
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

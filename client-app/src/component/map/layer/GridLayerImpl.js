@@ -20,20 +20,6 @@ define([
 	, Credentials
 ) {
 
-	const defaultConfig = {
-		ownChannel: 'gridLayer',
-
-		scale:{
-			grid5000: {zoom:8, factor:200},
-			grid1000: {zoom:11, factor:50},
-			grid500: {zoom:12, factor:25},
-			grid100: {zoom:14, factor:5}
-		},
-		currentGridLayer: 'grid5000',
-		currentMode: 0,
-		confidences: [1, 2, 3, 4]
-	};
-
 	return declare([MapLayer, _D3MapProjection], {
 		//	summary:
 		//		Implementación de capa de rejilla.
@@ -45,6 +31,20 @@ define([
 		},
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				ownChannel: 'gridLayer',
+
+				scale:{
+					grid5000: {zoom:8, factor:200},
+					grid1000: {zoom:11, factor:50},
+					grid500: {zoom:12, factor:25},
+					grid100: {zoom:14, factor:5}
+				},
+				currentGridLayer: 'grid5000',
+				currentMode: 0,
+				confidences: [1, 2, 3, 4]
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

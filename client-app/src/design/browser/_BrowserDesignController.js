@@ -36,18 +36,6 @@ define([
 		select: _Select
 	};
 
-	const defaultConfig = {
-		browserDefinition: 'list',
-		enabledBrowserExtensions: {
-			buttons: true,
-			dragAndDrop: false,
-			framework: true,
-			geoJson: false,
-			hierarchicalSelect: false,
-			select: false
-		}
-	};
-
 	return declare(_DesignController, {
 		// summary:
 		//   Lógica de diseño para mostrar un componente listado con extensiones opcionales.
@@ -55,6 +43,18 @@ define([
 		//   Debe ser incluido por cada una de las maquetaciones de este diseño.
 
 		_getDesignDefaultConfig: function() {
+
+			const defaultConfig = {
+				browserDefinition: 'list',
+				enabledBrowserExtensions: {
+					buttons: true,
+					dragAndDrop: false,
+					framework: true,
+					geoJson: false,
+					hierarchicalSelect: false,
+					select: false
+				}
+			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
 

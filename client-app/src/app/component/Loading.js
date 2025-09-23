@@ -14,29 +14,6 @@ define([
 	, LoadingTemplate
 ) {
 
-	const defaultConfig = {
-		ownChannel: 'loading',
-		events: {
-			LOADING_DRAWN: 'loadingDrawn',
-			LOADED: 'loaded'
-		},
-		actions: {
-			LOADING: 'loading',
-			LOADING_DRAWN: 'loadingDrawn',
-			LOADED: 'loaded',
-			LOAD_FINISHED: 'loadFinished',
-			ABORT_ALL_LOADING: 'abortAllLoading'
-		},
-
-		_activeGlobalLoadings: 0,
-
-		globalNode: null,
-		loadingClass: 'loadingWrapper',
-		globalLoadingClass: 'loadingWrapperGlobal',
-		instantLoadingClass: 'instantLoading',
-		loadingAttr: 'loading'
-	};
-
 	return declare(_Module, {
 		//	summary:
 		//		Módulo para representar cuando otros módulos están esperando a que ocurra algo.
@@ -44,6 +21,29 @@ define([
 		//		Escucha las peticiones de 'cargando' y 'cargado' de todos los módulos.
 
 		postMixInProperties: function() {
+
+			const defaultConfig = {
+				ownChannel: 'loading',
+				events: {
+					LOADING_DRAWN: 'loadingDrawn',
+					LOADED: 'loaded'
+				},
+				actions: {
+					LOADING: 'loading',
+					LOADING_DRAWN: 'loadingDrawn',
+					LOADED: 'loaded',
+					LOAD_FINISHED: 'loadFinished',
+					ABORT_ALL_LOADING: 'abortAllLoading'
+				},
+
+				_activeGlobalLoadings: 0,
+
+				globalNode: null,
+				loadingClass: 'loadingWrapper',
+				globalLoadingClass: 'loadingWrapperGlobal',
+				instantLoadingClass: 'instantLoading',
+				loadingAttr: 'loading'
+			};
 
 			this._mergeOwnAttributes(defaultConfig);
 

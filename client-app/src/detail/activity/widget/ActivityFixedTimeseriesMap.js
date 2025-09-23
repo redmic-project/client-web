@@ -35,7 +35,7 @@ define([
 		//	summary:
 		//		Widget para mostrar un mapa de estaciones que producen series de datos temporales.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
 			const defaultConfig = {
 				ownChannel: 'activityFixedTimeseriesMap',
@@ -47,7 +47,9 @@ define([
 				_showChartsButtonClass: 'showCharts'
 			};
 
-			lang.mixin(this, this._merge([this, defaultConfig, args]));
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {

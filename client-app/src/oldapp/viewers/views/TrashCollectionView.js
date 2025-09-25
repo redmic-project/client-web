@@ -18,7 +18,7 @@ define([
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'src/component/layout/TabsDisplayer'
 	, "src/component/map/layer/GeoJsonLayerImpl"
-	, "src/component/map/layer/_AddFilter"
+	, "src/component/map/layer/_RequestData"
 	, "src/component/mapQuery/QueryOnMap"
 	, "src/component/search/TextImpl"
 	, "templates/ActivityList"
@@ -44,7 +44,7 @@ define([
 	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
 	, GeoJsonLayerImpl
-	, _AddFilter
+	, _RequestData
 	, QueryOnMap
 	, TextImpl
 	, TemplateList
@@ -133,6 +133,9 @@ define([
 			this._tabsDisplayer = new TabsDisplayer({
 				parentChannel: this.getChannel()
 			});
+
+
+			this.LayerDefinition = declare([GeoJsonLayerImpl, _RequestData]);
 
 			var TrashDetailsDefinition = declare(TrashDetails).extend(_ShowInPopup);
 			this.trashDetails = new TrashDetailsDefinition({
@@ -230,38 +233,41 @@ define([
 
 		_createLayerInstance: function(item) {
 
-			var target = lang.replace(this.layersTarget, {activityid: item}),
-				infoTarget = target,
-				layerId = this._layerIdPrefix + this.layerIdSeparator + item,
-				LayerDefinition = declare([GeoJsonLayerImpl, _AddFilter]);
+			const target = this.layersTarget,
+				layerId = this._layerIdPrefix + this.layerIdSeparator + item;
 
-			this._layerInstances[item] = new LayerDefinition({
+			const targetPathParams = {
+				activityid: item
+			};
+
+			this._layerInstances[item] = new this.LayerDefinition({
 				parentChannel: this.getChannel(),
 				mapChannel: this.map.getChannel(),
-				geoJsonStyle: {
-					color: "red",
-					weight: 5
-				},
-				target: target,
-				infoTarget: infoTarget,
-				layerId: layerId,
+				markerColor: 'red',
+				target,
+				targetPathParams,
+				layerId,
 				layerLabel: layerId,
 				filterConfig: {
 					modelChannel: this.modelChannel
 				},
-				onEachFeature: lang.hitch(this, function(feature, layer) {
-					layer.on("click", lang.hitch(this, function(innerFeature) {
-						this._publish(this.trashDetails.getChannel("SHOW"), {
-							data: {
-								id: innerFeature.id,
-								parentId: innerFeature.uuid,
-								grandparentId: innerFeature.properties.activityId,
-								feature: innerFeature
-							}
-						});
-					}, feature));
-				})
+				onEachFeature: lang.hitch(this, this._layerOnEachFeature)
 			});
+		},
+
+		_layerOnEachFeature: function(feature, layer) {
+
+			layer.on('click', lang.hitch(this, function(innerFeature) {
+
+				this._publish(this.trashDetails.getChannel('SHOW'), {
+					data: {
+						id: innerFeature.id,
+						parentId: innerFeature.uuid,
+						grandparentId: innerFeature.properties.activityId,
+						feature: innerFeature
+					}
+				});
+			}, feature));
 		},
 
 		_removeDataLayer: function(item) {

@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
-	, './_RestManagerItfc'
+	, 'src/component/store/_RestManagerItfc'
 ], function(
 	redmicConfig
 	, declare
@@ -18,9 +18,9 @@ define([
 		//	description:
 		//		Permite manejar las peticiones de datos y su respuesta, así como las operaciones de escritura y borrado.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				ownChannel: 'data',
 				events: {
 					GET: 'get',
@@ -54,7 +54,9 @@ define([
 				defaultErrorDescription: 'Error'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function () {
@@ -137,12 +139,6 @@ define([
 
 			this._emitLoading(req);
 
-			/*var target = this._getResolvedTarget(req.target);
-
-			this._getRequest(target, req).then(
-				lang.hitch(this, this._handleGetSuccess, req),
-				lang.hitch(this, this._handleGetError, req));*/
-
 			const requesterChannel = this._getRequesterChannel(componentInfo);
 
 			this._manageRequestParams(req, requesterChannel);
@@ -179,12 +175,6 @@ define([
 		_subRequest: function(req, _mediatorChannel, componentInfo) {
 
 			this._emitLoading(req);
-
-			/*var target = this._getResolvedTarget(req.target);
-
-			this._requestRequest(target, req).then(
-				lang.hitch(this, this._handleRequestSuccess, req),
-				lang.hitch(this, this._handleRequestError, req));*/
 
 			const requesterChannel = this._getRequesterChannel(componentInfo);
 

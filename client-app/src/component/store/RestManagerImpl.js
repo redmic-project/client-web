@@ -29,9 +29,9 @@ define([
 		//	_filteredAuthPaths: Array
 		//		Define las rutas de URLs a las que no hay que añadirle cabeceras de autenticación.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				idProperty: 'id',
 				limitDefault: 100,
 				sortParamName: 'sort',
@@ -62,7 +62,14 @@ define([
 				]
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
 
 			this._prepareRequestHandlers();
 		},
@@ -145,32 +152,12 @@ define([
 			return accessToken ? `Bearer ${accessToken}` : null;
 		},
 
-		_getRequest: function(target, req) {
-
-			var url = this._getGetRequestTarget(target, req),
-				options = this._getGetRequestOptions(req);
-
-			return this._launchRequest(url, options);
-		},
-
 		_performGet: function(req, requesterChannel) {
 
 			const url = this._getTargetForGet(req, requesterChannel),
 				options = this._getOptionsForGet(req, requesterChannel);
 
 			return this._launchRequest(url, options);
-		},
-
-		_getGetRequestTarget: function(target, req) {
-
-			const id = req.id,
-				idType = typeof id;
-
-			if (idType === 'string' || idType === 'number') {
-				return this._getTargetWithEndingSlash(target) + id;
-			}
-
-			return target;
 		},
 
 		_getTargetForGet: function(req, requesterChannel) {
@@ -185,23 +172,6 @@ define([
 			}
 
 			return target;
-		},
-
-		_getGetRequestOptions: function(req) {
-
-			var headers = lang.mixin({}, this.headers, req.headers || {}),
-				query = lang.mixin({}, req.query || {}),
-				options = req.options || {};
-
-			return lang.mixin({
-				method: 'GET',
-				headers: headers,
-				query: query,
-				sync: this.sync,
-				preventCache: this.preventCache,
-				timeout: this.timeout,
-				handleAs: this.handleAs
-			}, options);
 		},
 
 		_getOptionsForGet: function(req, requesterChannel) {
@@ -223,31 +193,12 @@ define([
 			return this._merge([options, req.options || {}]);
 		},
 
-		_requestRequest: function(target, req) {
-
-			var url = this._getRequestRequestTarget(target, req),
-				options = this._getRequestRequestOptions(req);
-
-			return this._launchRequest(url, options);
-		},
-
 		_performRequest: function(req, requesterChannel) {
 
 			const url = this._getTargetForRequest(req, requesterChannel),
 				options = this._getOptionsForRequest(req, requesterChannel);
 
 			return this._launchRequest(url, options);
-		},
-
-		_getRequestRequestTarget: function(target, req) {
-
-			const action = req.action;
-
-			if (action?.length) {
-				return this._getTargetWithEndingSlash(target) + action;
-			}
-
-			return target;
 		},
 
 		_getTargetForRequest: function(req, requesterChannel) {
@@ -260,33 +211,6 @@ define([
 			}
 
 			return target;
-		},
-
-		_getRequestRequestOptions: function(req) {
-
-			var requestHeaders = this._getRequestRequestHeaders(req),
-				headers = lang.mixin({}, this.headers, requestHeaders, req.headers || {}),
-				requestQuery = this._getRequestRequestQuery(req),
-				query = lang.mixin({}, requestQuery, req.query || {}),
-				reqOptions = req.options || {},
-				method = req.method || 'GET';
-
-			var options = {
-				method: method,
-				headers: headers,
-				sync: this.sync,
-				preventCache: this.preventCache,
-				timeout: this.timeout,
-				handleAs: this.handleAs
-			};
-
-			if (method === 'POST') {
-				options.data = JSON.stringify(query);
-			} else {
-				options.query = query;
-			}
-
-			return lang.mixin(options, reqOptions);
 		},
 
 		_getOptionsForRequest: function(req, requesterChannel) {

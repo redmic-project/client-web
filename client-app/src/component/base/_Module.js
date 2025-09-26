@@ -1220,8 +1220,22 @@ define([
 
 		_isMergeableObject: function(value) {
 
+			if (!value) {
+				return false;
+			}
+
+			const isArray = Array.isArray(value);
+			if (isArray) {
+				return true;
+			}
+
 			// Inspirado por https://github.com/jonschlinkert/is-plain-object
-			return !!value?.constructor?.prototype?.hasOwnProperty('isPrototypeOf');
+			const isPlainObject = value.constructor?.prototype?.hasOwnProperty('isPrototypeOf');
+			if (isPlainObject) {
+				return true;
+			}
+
+			return false;
 		},
 
 		_overwritingArrayMerge: function(destinationArray, sourceArray, options) {

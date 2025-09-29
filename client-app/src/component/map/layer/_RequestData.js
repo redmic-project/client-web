@@ -21,7 +21,7 @@ define([
 
 			// TODO realmente se quiere evitar límites? puede causar fallos en el lado del servicio
 			// preferible mostrar aviso si se llega al límite
-			const query = queryObj ?? {size: null};
+			const query = queryObj ?? {size: null, qFlags: [1]};
 
 			this._emitEvt('ADD_REQUEST_PARAMS', {
 				target: this.target,

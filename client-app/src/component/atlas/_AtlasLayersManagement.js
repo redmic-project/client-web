@@ -262,16 +262,17 @@ define([
 
 		_getMapLayerComponentConfiguration: function(atlasItem) {
 
-			var layerId = this._createLayerId(atlasItem),
+			const layerId = this._createLayerId(atlasItem),
 				layerLabel = this._createLayerLabel(atlasItem),
+				mapChannel = this.getMapChannel?.() ?? null,
 				innerLayerDefinition = this._getLayerDefinitionByProtocol(atlasItem);
 
 			return {
 				parentChannel: this.getChannel(),
-				mapChannel: this.getMapChannel ? this.getMapChannel() : null,
-				innerLayerDefinition: innerLayerDefinition,
-				layerId: layerId,
-				layerLabel: layerLabel,
+				mapChannel,
+				innerLayerDefinition,
+				layerId,
+				layerLabel,
 				queryable: atlasItem.queryable,
 				refresh: atlasItem.refresh,
 				dimensions: this._getAtlasLayerDimensions(atlasItem)

@@ -39,6 +39,14 @@ define([
 			});
 		},
 
+		_initialize: function() {
+
+			this.inherited(arguments);
+
+			const mapInstance = this.getComponentInstance('map');
+			this.getMapChannel = mapInstance ? lang.hitch(mapInstance, mapInstance.getChannel) : null;
+		},
+
 		_requestLayersDataFilteredByActivityIds: function(activities) {
 
 			this._emitEvt('REQUEST', {

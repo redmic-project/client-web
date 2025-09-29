@@ -15,16 +15,18 @@ define([
 		//		Permite interpretar las configuraciones de capas procedentes del servicio atlas, para generar
 		//		configuraciones de capa que puedan mostrarse en el mapa.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				layerIdSeparator: '_',
 				themeSeparator: '-',
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				defaultLayerItemState: true
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_getLayerDefinitionByProtocol: function(atlasLayer) {

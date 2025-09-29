@@ -36,6 +36,8 @@ define([
 
 		postMixInProperties: function() {
 
+			this.inherited(arguments);
+
 			const defaultConfig = {
 				title: this.i18n.marineMonitoringViewerView,
 				ownChannel: 'marineMonitoringViewer',
@@ -45,8 +47,6 @@ define([
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
-
-			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {

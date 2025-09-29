@@ -19,6 +19,8 @@ define([
 
 		postMixInProperties: function() {
 
+			this.inherited(arguments);
+
 			const defaultConfig = {
 				target: redmicConfig.services.atlasLayer,
 				_localLayersTarget: 'ogcServicesLayerDataLocalTarget',
@@ -26,8 +28,6 @@ define([
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
-
-			this.inherited(arguments);
 		},
 
 		_setConfigurations: function() {

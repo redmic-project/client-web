@@ -53,9 +53,15 @@ define([
 		//	summary:
 		//		Módulo de Atlas, con un catálogo de capas para añadir al mapa y un listado de gestión de las añadidas.
 
-		constructor: function(args) {
+		constructor: function() {
 
-			this.config = {
+			aspect.before(this, '_createAtlasMapLayerInstance',
+				lang.hitch(this, this._beforeCreateAtlasMapLayerInstance));
+		},
+
+		postMixInProperties: function() {
+
+			const defaultConfig = {
 				ownChannel: 'atlas',
 
 				events: {
@@ -72,15 +78,14 @@ define([
 				_layerIdsById: {} // correspondencia entre ids de las capas con sus layerIds
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.before(this, '_createAtlasMapLayerInstance',
-				lang.hitch(this, this._beforeCreateAtlasMapLayerInstance));
+			this.inherited(arguments);
 		},
 
 		_setConfigurations: function() {
 
-			this.themesBrowserConfig = this._merge([{
+			this.mergeComponentAttribute('themesBrowserConfig', {
 				title: this.i18n.selectedLayers,
 				target: this.localTarget,
 				browserConfig: {
@@ -103,7 +108,7 @@ define([
 						}
 					}
 				}
-			}, this.themesBrowserConfig || {}], {
+			}, {
 				arrayMergingStrategy: 'concatenate'
 			});
 

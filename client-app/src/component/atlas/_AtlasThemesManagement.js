@@ -28,9 +28,9 @@ define([
 		//	summary:
 		//		Gestión de capas temáticas de atlas cargadas en el mapa.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				pathSeparator: '.',
 				parentProperty: 'parent',
 				addThemesBrowserFirst: false,
@@ -41,13 +41,13 @@ define([
 				_activeLayers: {} // indicador sobre si la capa está activada en el mapa o no
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			if (this.omitThemesBrowser) {
-				return;
+			this.inherited(arguments);
+
+			if (!this.omitThemesBrowser) {
+				this._prepareThemesBrowserCallbacks();
 			}
-
-			this._prepareThemesBrowserCallbacks();
 		},
 
 		_prepareThemesBrowserCallbacks: function() {
@@ -68,7 +68,7 @@ define([
 
 		_themesBrowserAfterSetConfigurations: function() {
 
-			this.themesBrowserConfig = this._merge([{
+			this.mergeComponentAttribute('themesBrowserConfig', {
 				ownChannel: 'themesBrowser',
 				parentChannel: this.getChannel(),
 				enabledBrowserExtensions: {
@@ -114,7 +114,8 @@ define([
 						}
 					}
 				}
-			}, this.themesBrowserConfig || {}], {
+			}, {
+				avoidOverwrite: true,
 				arrayMergingStrategy: 'concatenate'
 			});
 		},

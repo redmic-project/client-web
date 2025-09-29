@@ -1,41 +1,40 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
 	, "./_PublishInfoItfc"
 ], function(
 	declare
 	, lang
-	, aspect
 	, _PublishInfoItfc
-){
+) {
+
 	return declare(_PublishInfoItfc, {
 		//	summary:
 		//		Extensión de MapLayer para consumir y publicar información de la capa.
 
+		postMixInProperties: function() {
 
-		queryable: true,
-		layerId: "layerId",
+			const defaultConfig = {
+				events: {
+					LAYER_INFO: "layerInfo",
+					LAYER_QUERYING: "layerQuerying"
+				},
 
-		publishInfoEvents: {
-			LAYER_INFO: "layerInfo",
-			LAYER_QUERYING: "layerQuerying"
-		},
+				actions: {
+					MAP_CLICKED: "mapClicked",
+					LAYER_INFO: "layerInfo",
+					LAYER_INFO_FORWARDED: "layerInfoForwarded",
+					LAYER_QUERYING: "layerQuerying",
+					LAYER_QUERYING_FORWARDED: "layerQueryingForwarded"
+				},
 
-		publishInfoActions: {
-			MAP_CLICKED: "mapClicked",
-			LAYER_INFO: "layerInfo",
-			LAYER_INFO_FORWARDED: "layerInfoForwarded",
-			LAYER_QUERYING: "layerQuerying",
-			LAYER_QUERYING_FORWARDED: "layerQueryingForwarded"
-		},
+				queryable: true,
+				layerId: "layerId"
+			};
 
+			this._mergeOwnAttributes(defaultConfig);
 
-		constructor: function(args) {
-
-			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixPublishInfoEventsAndActions));
-			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._definePublishInfoSubscriptions));
-			aspect.after(this, "_definePublications", lang.hitch(this, this._definePublishInfoPublications));
+			this.inherited(arguments);
 		},
 
 		_mixPublishInfoEventsAndActions: function () {
@@ -46,7 +45,9 @@ define([
 			delete this.publishInfoActions;
 		},
 
-		_definePublishInfoSubscriptions: function () {
+		_defineSubscriptions: function() {
+
+			this.inherited(arguments);
 
 			this.subscriptionsConfig.push({
 				channel: this._buildChannel(this.mapChannel, this.actions.MAP_CLICKED),
@@ -71,7 +72,9 @@ define([
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
 		},
 
-		_definePublishInfoPublications: function () {
+		_definePublications: function() {
+
+			this.inherited(arguments);
 
 			this.publicationsConfig.push({
 				event: 'LAYER_INFO',

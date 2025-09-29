@@ -17,6 +17,8 @@ define([
 
 		postMixInProperties: function() {
 
+			this.inherited(arguments);
+
 			const defaultConfig = {
 				actions: {
 					ZOOM_START: 'zoomStart',
@@ -28,8 +30,6 @@ define([
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
-
-			this.inherited(arguments);
 		},
 
 		postCreate: function() {

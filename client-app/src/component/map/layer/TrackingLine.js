@@ -96,15 +96,6 @@ define([
 			this.inherited(arguments);
 		},
 
-		_mixEventsAndActions: function() {
-
-			lang.mixin(this.events, this.trackingBaseEvents);
-			lang.mixin(this.actions, this.trackingBaseActions);
-
-			delete this.trackingBaseEvents;
-			delete this.trackingBaseActions;
-		},
-
 		_defineSubscriptions: function() {
 
 			var options = {

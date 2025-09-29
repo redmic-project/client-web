@@ -1,7 +1,6 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'dojo/Deferred'
 	, 'dojo/dom-class'
 	, 'dojo/mouse'
@@ -14,7 +13,6 @@ define([
 ], function(
 	declare
 	, lang
-	, aspect
 	, Deferred
 	, domClass
 	, mouse
@@ -41,13 +39,9 @@ define([
 		//	drawFullTrack: Boolean
 		//		Flag para dibujar directamente toda la capa.
 
-		constructor: function() {
-
-			aspect.before(this, '_mixEventsAndActions', lang.hitch(this, this._mixTrackingLayerEventsAndActions));
-			aspect.after(this, '_defineSubscriptions', lang.hitch(this, this._defineTrackingLayerSubscriptions));
-		},
-
 		postMixInProperties: function() {
+
+			this.inherited(arguments);
 
 			const defaultConfig = {
 				svgClass: 'trackingSvg',
@@ -66,7 +60,7 @@ define([
 
 				ownChannel: 'trackingLayer',
 
-				trackingLayerEvents: {
+				events: {
 					GO_TO_POSITION: 'goToPosition',
 					REDRAW: 'redraw',
 					ADJUST_POSITION: 'adjustPosition',
@@ -74,7 +68,8 @@ define([
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
 					GET_CLICKED_POINTS_IDS: 'getClickedPointsIds'
 				},
-				trackingLayerActions: {
+
+				actions: {
 					DRAW_ALL: 'drawAll',
 					GO_TO_POSITION: 'goToPosition',
 					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
@@ -84,20 +79,11 @@ define([
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
+		},
+
+		_defineSubscriptions: function() {
 
 			this.inherited(arguments);
-		},
-
-		_mixTrackingLayerEventsAndActions: function() {
-
-			lang.mixin(this.events, this.trackingLayerEvents);
-			lang.mixin(this.actions, this.trackingLayerActions);
-
-			delete this.trackingLayerEvents;
-			delete this.trackingLayerActions;
-		},
-
-		_defineTrackingLayerSubscriptions: function() {
 
 			var options = {
 				predicate: lang.hitch(this, this._chkLayerAdded)

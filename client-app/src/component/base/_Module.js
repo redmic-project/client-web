@@ -409,8 +409,20 @@ define([
 			//   opcional para configurar parámetros de la mezcla.
 			//   Asigna al atributo indicado el valor resultante entre la mezcla de su valor actual con el valor
 			//   recibido por parámetro, siguiendo las opciones de mezcla establecidas.
+			//   Permite el paso de la opción mergeOpts.avoidOverwrite para preservar los valores de las propiedades
+			//   pre-existentes en el atributo.
 
-			this[attrName] = this._merge([this[attrName] || {}, objToMerge], mergeOpts);
+			const avoidOverwrite = mergeOpts?.avoidOverwrite ?? false;
+			if (mergeOpts && mergeOpts.avoidOverwrite !== undefined) {
+				delete mergeOpts.avoidOverwrite;
+			}
+
+			const objects = [this[attrName] || {}, objToMerge];
+			if (avoidOverwrite) {
+				objects.reverse();
+			}
+
+			this[attrName] = this._merge(objects, mergeOpts);
 		},
 
 		getOwnChannel: function() {
@@ -1193,29 +1205,38 @@ define([
 			//		(por defecto, se sobreescribe cualquier array coincidente) y 'concatenate' (acumula todos los
 			//		elementos de los arrays coincidentes).
 
-			const clone = options?.cloneDescendants ?? false,
-				arrayMergingStrategy = options?.arrayMergingStrategy ?? 'overwrite',
-				isMergeableObject = this._isMergeableObject,
-				deepmergeOptions = {clone, isMergeableObject};
+			const deepmergeOptions = this._getMergeOptions(options);
 
-			if (arrayMergingStrategy === 'combine') {
-				// comportamiento por defecto de deepmerge, no se define
-			} else if (arrayMergingStrategy === 'overwrite') {
-				deepmergeOptions.arrayMerge = lang.hitch(this, this._overwritingArrayMerge);
-			} else if (arrayMergingStrategy === 'concatenate') {
-				deepmergeOptions.arrayMerge = lang.hitch(this, this._concatenateArrayMerge);
-			}
+			return deepmerge.all(objects, deepmergeOptions);
+		},
 
-			if (options && options.cloneDescendants) {
+		_getMergeOptions: function(options) {
+
+			const isMergeableObject = this._isMergeableObject;
+
+			const clone = options?.cloneDescendants ?? false;
+			if (options && options.cloneDescendants !== undefined) {
 				delete options.cloneDescendants;
 			}
-			if (options && options.arrayMergingStrategy) {
+
+			const arrayMergingStrategy = options?.arrayMergingStrategy ?? 'overwrite';
+			if (options && options.arrayMergingStrategy !== undefined) {
 				delete options.arrayMergingStrategy;
 			}
 
+			let arrayMerge;
+			if (arrayMergingStrategy === 'overwrite') {
+				arrayMerge = this._overwritingArrayMerge;
+			} else if (arrayMergingStrategy === 'concatenate') {
+				arrayMerge = this._concatenateArrayMerge;
+			} else if (arrayMergingStrategy === 'combine') {
+				// comportamiento por defecto de deepmerge, no se define
+			}
+
+			const deepmergeOptions = {isMergeableObject, clone, arrayMerge};
 			lang.mixin(deepmergeOptions, options);
 
-			return deepmerge.all(objects, deepmergeOptions);
+			return deepmergeOptions;
 		},
 
 		_isMergeableObject: function(value) {

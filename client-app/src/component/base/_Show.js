@@ -762,7 +762,6 @@ define([
 		_onModuleShow: function() {
 
 			this._setShown(true);
-			!this._getPreviouslyShown() && this._setPreviouslyShown(true);
 
 			var response = {
 				moduleChannel: this.getChannel()
@@ -770,6 +769,8 @@ define([
 
 			this._prepareOnMeOrAncestorShown(response);
 			this._propagateActionToChildren('ANCESTOR_SHOWN', response);
+
+			this._setPreviouslyShown(true);
 		},
 
 		_onModuleHide: function() {

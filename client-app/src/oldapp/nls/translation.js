@@ -1,6 +1,7 @@
 define({
 	root: {
 		"ok": "Agree"
+		, "unknownDevice": "Unknown device"
 		, "contents": "Contents"
 		, "providedByAtlas": "Content provided by atlas"
 		, "providedByView": "Content provided by this product"

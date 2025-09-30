@@ -1,5 +1,6 @@
 define({
 	"ok": "Aceptar"
+	, "unknownDevice": "Dispositivo desconocido"
 	, "contents": "Contenidos"
 	, "providedByAtlas": "Contenido provisto por atlas"
 	, "providedByView": "Contenido provisto por este producto"

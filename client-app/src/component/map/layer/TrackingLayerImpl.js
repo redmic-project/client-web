@@ -370,11 +370,20 @@ define([
 
 		_onZoomSet: function(zoom, res) {
 
-			this._redraw({
+			const query = {
 				terms: {
 					zoomLevel: zoom
 				}
+			};
+
+			this._emitEvt('ADD_REQUEST_PARAMS', {
+				target: this.target,
+				params: {
+					query
+				}
 			});
+
+			this._redraw();
 		},
 
 		_getAllDrawnDfd: function() {

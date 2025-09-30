@@ -1,27 +1,40 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
+	'dojo/_base/declare'
 ], function(
 	declare
-	, lang
 ) {
 
 	return declare(null, {
 		// summary:
 		//   Extensión para realizar consultas de datos desde una capa.
 
+		postMixInProperties: function() {
+
+			this.inherited(arguments);
+
+			const defaultConfig = {
+				_requestDataTimeoutMs: 100
+			};
+
+			this._mergeOwnAttributes(defaultConfig);
+		},
+
 		postCreate: function() {
 
 			this.inherited(arguments);
 
+			this._addDefaultRequestParams();
 			this._redraw();
 		},
 
-		_redraw: function(queryObj) {
+		_addDefaultRequestParams: function() {
 
 			// TODO realmente se quiere evitar límites? puede causar fallos en el lado del servicio
 			// preferible mostrar aviso si se llega al límite
-			const query = queryObj ?? {size: null, qFlags: [1]};
+			const query = {
+				size: null,
+				qFlags: [1]
+			};
 
 			this._emitEvt('ADD_REQUEST_PARAMS', {
 				target: this.target,
@@ -29,6 +42,11 @@ define([
 					query
 				}
 			});
+		},
+
+		_redraw: function() {
+
+			this.inherited(arguments);
 
 			if (this._shouldAbortRequest()) {
 				this._emitEvt('LAYER_LOADED');
@@ -36,20 +54,21 @@ define([
 			}
 
 			clearTimeout(this.timeoutRedrawHandler);
-			this.timeoutRedrawHandler = setTimeout(lang.hitch(this, this._redrawRequestData), 100);
+			this.timeoutRedrawHandler = setTimeout(() => this._redrawRequestData(), this._requestDataTimeoutMs);
 		},
 
 		_redrawRequestData: function() {
 
 			this._emitEvt('LAYER_LOADING');
 
-			const path = this.targetPathParams ?? {};
+			const path = this.targetPathParams ?? {},
+				query = this.targetQueryParams ?? {};
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
 				target: this.target,
 				action: '_search',
-				params: {path},
+				params: {path, query},
 				requesterId: this.getOwnChannel()
 			});
 		},
@@ -62,6 +81,20 @@ define([
 		},
 
 		_onTargetPropSet: function() {
+
+			this.inherited(arguments);
+
+			this._redraw();
+		},
+
+		_onTargetPathParamsPropSet: function(res) {
+
+			this.inherited(arguments);
+
+			this._redraw();
+		},
+
+		_onTargetQueryParamsPropSet: function(res) {
 
 			this.inherited(arguments);
 

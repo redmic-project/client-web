@@ -30,20 +30,20 @@ define([
 
 		postMixInProperties: function() {
 
+			this.inherited(arguments);
+
 			const defaultConfig = {
 				ownChannel: 'speciesLocationMap',
 				enabledMapLayerExtensions: {
-					filter: true,
+					requestData: true,
 					listenBounds: true,
 					listenZoom: true,
 					radius: true
 				},
-				_dataTarget: redmicConfig.services.speciesLocation
+				target: redmicConfig.services.speciesLocation
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
-
-			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {
@@ -58,53 +58,56 @@ define([
 			this.inherited(arguments);
 
 			this.mergeComponentAttribute('mapLayerConfig', {
-				filterConfig: {
-					initQuery: {
+				target: this.target,
+				targetPathParams: {
+					id: this.pathVariableId
+				}
+			});
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
+			this._emitEvt('ADD_REQUEST_PARAMS', {
+				target: this.target,
+				params: {
+					query: {
 						returnFields: ['geometry', 'id', 'uuid', 'properties.collect.radius']
-					}
+					},
+					sharedParams: true
 				}
 			});
 		},
 
 		_onMeOrAncestorShown: function() {
 
-			const replacedTarget = this._getTargetWithVariableReplaced();
+			if (!this._getPreviouslyShown()) {
+				return;
+			}
 
-			this._updateComponentTargetValues(replacedTarget);
-			this._requestDataFromReplacedTarget(replacedTarget);
+			this._updateRequestParams();
 		},
 
-		_getTargetWithVariableReplaced: function() {
-
-			const replaceObj = {
-				id: this.pathVariableId
-			};
-
-			return lang.replace(this._dataTarget, replaceObj);
-		},
-
-		_updateComponentTargetValues: function(replacedTarget) {
+		_updateRequestParams: function() {
 
 			const mapLayerInstance = this.getComponentInstance('mapLayer');
 
 			this._publish(mapLayerInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-		},
-
-		_requestDataFromReplacedTarget: function(replacedTarget) {
-
-			this._publish(this.getChannel('SET_PROPS'), {
-				target: replacedTarget
+				targetPathParams: {
+					id: this.pathVariableId
+				}
 			});
 		},
 
 		_getMarkerCategory: function(feature) {
 
-			if (feature._meta.category && feature._meta.category == 'ci') {
-				return 0;
-			} else {
+			if (!feature?._meta?.category) {
 				return 1;
+			}
+
+			if (feature._meta.category === 'ci') {
+				return 0;
 			}
 		},
 
@@ -165,11 +168,11 @@ define([
 
 		_parseActivityPopupData: function(args, resWrapper) {
 
-			let feature = args.feature;
-
-			const activityData = resWrapper.res.data,
+			const feature = args.feature,
 				templatePopup = args.templatePopup,
 				dfd = args.dfd;
+
+			const activityData = resWrapper.res.data;
 
 			feature.properties.activity = activityData;
 
@@ -181,8 +184,9 @@ define([
 
 		_parseLocationData: function(args, resWrapper) {
 
-			const feature = resWrapper.res.data,
-				templatePopup = args.templatePopup,
+			const feature = resWrapper.res.data;
+
+			const templatePopup = args.templatePopup,
 				dfd = args.dfd;
 
 			dfd.resolve(templatePopup({

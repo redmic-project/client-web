@@ -23,7 +23,7 @@ define([
 	, 'src/component/form/FormContainerImpl'
 	, 'src/component/layout/TabsDisplayer'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, "src/component/map/layer/_AddFilter"
+	, "src/component/map/layer/_RequestData"
 	, "src/component/map/layer/_ListenBounds"
 	, "src/component/map/layer/_ListenZoom"
 	, "src/component/map/layer/_RadiusOnClick"
@@ -64,7 +64,7 @@ define([
 	, FormContainerImpl
 	, TabsDisplayer
 	, GenericWithTopbarDisplayerImpl
-	, _AddFilter
+	, _RequestData
 	, _ListenBounds
 	, _ListenZoom
 	, _RadiusOnClick
@@ -303,13 +303,14 @@ define([
 			this._createSpeciesCatalog();
 			this._createSpeciesTree();
 			this._createSettingsForm();
-			this._createMapLayers();
+
+			const getMapChannel = lang.hitch(this.map, this.map.getChannel);
+
+			this._createMapLayers(getMapChannel);
 
 			this._tabsDisplayer = new TabsDisplayer({
 				parentChannel: this.getChannel()
 			});
-
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
 
 			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
 			this.atlasConfig.getMapChannel = getMapChannel;
@@ -367,43 +368,44 @@ define([
 			});
 		},
 
-		_createMapLayers: function() {
+		_createMapLayers: function(getMapChannel) {
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel),
+			const parentChannel = this.getChannel(),
 				mapChannel = getMapChannel();
 
 			this.d3LayerConfig.mapChannel = mapChannel;
 
-			var d3LayerDefinition = declare([GridLayerImpl, _AddFilter, _PublishInfo, _ListenBounds, _ListenZoom]);
-			this.gridLayer = new d3LayerDefinition(this.d3LayerConfig);
+			this.gridLayer = new declare([
+				GridLayerImpl, _RequestData, _PublishInfo, _ListenBounds, _ListenZoom
+			])(this.d3LayerConfig);
 
 			this.pruneClusterLayerConfig.mapChannel = mapChannel;
 
-			var pruneClusterLayerDef = declare([PruneClusterLayerImpl, _AddFilter, _RadiusOnClick, _ListenBounds,
-				_ListenZoom]);
-			this.pruneClusterLayer = new pruneClusterLayerDef(this.pruneClusterLayerConfig);
+			this.pruneClusterLayer = new declare([
+				PruneClusterLayerImpl, _RequestData, _RadiusOnClick, _ListenBounds, _ListenZoom
+			])(this.pruneClusterLayerConfig);
 
 			this.grid5000Layer = new WmsLayerImpl({
-				parentChannel: this.getChannel(),
-				mapChannel: mapChannel,
+				parentChannel,
+				mapChannel,
 				innerLayerDefinition: 'grid5000m'
 			});
 
 			this.grid1000Layer = new WmsLayerImpl({
-				parentChannel: this.getChannel(),
-				mapChannel: mapChannel,
+				parentChannel,
+				mapChannel,
 				innerLayerDefinition: 'grid1000m'
 			});
 
 			this.grid500Layer = new WmsLayerImpl({
-				parentChannel: this.getChannel(),
-				mapChannel: mapChannel,
+				parentChannel,
+				mapChannel,
 				innerLayerDefinition: 'grid500m'
 			});
 
 			this.grid100Layer = new WmsLayerImpl({
-				parentChannel: this.getChannel(),
-				mapChannel: mapChannel,
+				parentChannel,
+				mapChannel,
 				innerLayerDefinition: 'grid100m'
 			});
 		},
@@ -411,9 +413,6 @@ define([
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this.map.getChannel("SHOWN"),
-				callback: "_subMapShown"
-			},{
 				channel : this.map.getChannel("ZOOM_SET"),
 				callback: "_subMapZoomSet",
 				options: {
@@ -488,30 +487,35 @@ define([
 
 		_updateDataLayer: function(/*response*/) {
 
-			var instance = this[this.currentMode < 3 ? "gridLayer" : "pruneClusterLayer"],
-				selectIds = Credentials.get("selectIds");
+			const selectIds = Credentials.get("selectIds");
 
-			if (selectIds && selectIds[this.selectionTarget]) {
-
-				this.selectIds = selectIds[this.selectionTarget];
-
-				var obj = {
-					"terms": {
-						"selection": this.selectIds
-					}
-				};
-
-				// TODO cuando los terms en el schema esten con propiedades borrar el if
-				if (this.currentMode === 3) {
-					if (this.precision) {
-						obj.precision = this.precision;
-					}
-				} else {
-					obj.terms.confidences = this.confidences;
-				}
-
-				this._publish(instance.getChannel("REFRESH"), obj);
+			if (!selectIds || !selectIds[this.selectionTarget]) {
+				return;
 			}
+
+			this.selectIds = selectIds[this.selectionTarget];
+
+			const query = {
+				"terms": {
+					"selection": this.selectIds
+				}
+			};
+
+			// TODO cuando los terms en el schema esten con propiedades borrar el if
+			if (this.currentMode === 3) {
+				if (this.precision) {
+					query.precision = this.precision;
+				}
+				query.qFlags = null; // TODO parche para evitar fallo en servicio, no acepta qFlags predefinido en capa
+			} else {
+				query.terms.confidences = this.confidences;
+			}
+
+			const mapLayerInstance = this[this.currentMode < 3 ? "gridLayer" : "pruneClusterLayer"];
+
+			this._publish(mapLayerInstance.getChannel('SET_PROPS'), {
+				targetQueryParams: query
+			});
 		},
 
 		_clearSelection: function(response) {
@@ -519,11 +523,6 @@ define([
 			this._publish(this.gridLayer.getChannel("CLEAR"));
 
 			this._publish(this.pruneClusterLayer.getChannel("CLEAR"));
-		},
-
-		_subMapShown: function(response) {
-
-			this.mapInstance = response.instance;
 		},
 
 		_subMapZoomSet: function(response) {
@@ -685,10 +684,12 @@ define([
 			this.confidences = confidences;
 
 			// TODO cuando los terms en el schema esten con propiedades, cambiar lo de selection
-			this._publish(this.gridLayer.getChannel("REFRESH"), {
-				"terms": {
-					"selection": this.selectIds,
-					"confidences": this.confidences
+			this._publish(this.gridLayer.getChannel('SET_PROPS'), {
+				targetQueryParams: {
+					"terms": {
+						"selection": this.selectIds,
+						"confidences": this.confidences
+					}
 				}
 			});
 
@@ -699,23 +700,23 @@ define([
 
 		_changePrecisionSlider: function(value) {
 
-			var obj = {
+			const targetQueryParams = {
 				terms: {
 					selection: this.selectIds
 				},
 				precision: value
 			};
 
-			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
+			this._publish(this.pruneClusterLayer.getChannel('SET_PROPS'), {targetQueryParams});
 		},
 
 		_changeZSlider: function(value) {
 
-			var obj = {
+			const targetQueryParams = {
 				z: value
 			};
 
-			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
+			this._publish(this.pruneClusterLayer.getChannel('SET_PROPS'), {targetQueryParams});
 		},
 
 		_hideInputForm: function(inputKey, hide) {

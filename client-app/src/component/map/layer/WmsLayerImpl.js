@@ -104,6 +104,8 @@ define([
 
 		_redraw: function() {
 
+			this.inherited(arguments);
+
 			if (!this.layer) {
 				return;
 			}

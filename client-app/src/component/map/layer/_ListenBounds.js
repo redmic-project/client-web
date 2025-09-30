@@ -50,14 +50,23 @@ define([
 
 			this.bounds = bbox;
 
-			this._redraw({
+			const query = {
 				bbox: {
 					topLeftLat: this.bounds._northEast.lat,
 					topLeftLon: this.bounds._southWest.lng,
 					bottomRightLat: this.bounds._southWest.lat,
 					bottomRightLon: this.bounds._northEast.lng
 				}
+			};
+
+			this._emitEvt('ADD_REQUEST_PARAMS', {
+				target: this.target,
+				params: {
+					query
+				}
 			});
+
+			this._redraw();
 		}
 	});
 });

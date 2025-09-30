@@ -2,7 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/gateway/MapCenteringGatewayImpl'
-	, 'src/component/map/layer/_AddFilter'
+	, 'src/component/map/layer/_RequestData'
 	, 'src/component/map/layer/_ListenBounds'
 	, 'src/component/map/layer/_ListenZoom'
 	, 'src/component/map/layer/_RadiusOnClick'
@@ -12,7 +12,7 @@ define([
 	declare
 	, lang
 	, MapCenteringGatewayImpl
-	, _AddFilter
+	, _RequestData
 	, _ListenBounds
 	, _ListenZoom
 	, _RadiusOnClick
@@ -26,7 +26,7 @@ define([
 	};
 
 	const mapLayerComponentExtensionDefinitions = {
-		filter: _AddFilter,
+		requestData: _RequestData,
 		listenBounds: _ListenBounds,
 		listenZoom: _ListenZoom,
 		radius: _RadiusOnClick
@@ -44,7 +44,7 @@ define([
 			const defaultConfig = {
 				mapLayerDefinition: 'cluster',
 				enabledMapLayerExtensions: {
-					filter: false,
+					requestData: false,
 					listenBounds: false,
 					listenZoom: false,
 					radius: false

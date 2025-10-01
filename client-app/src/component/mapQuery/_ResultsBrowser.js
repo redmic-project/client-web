@@ -1,7 +1,6 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'src/component/base/_Show'
 	, 'src/component/layout/nestedContent/NestedBrowsersImpl'
 	, 'src/component/layout/dataDisplayer/DataDisplayer'
@@ -9,7 +8,6 @@ define([
 ], function(
 	declare
 	, lang
-	, aspect
 	, _Show
 	, NestedBrowsersImpl
 	, DataDisplayer
@@ -20,21 +18,20 @@ define([
 		//	summary:
 		//		Extensión del módulo para mostrar los resultados de consulta en listados jerárquicos dinámicos.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				'class': 'queryOnMapContainer'
 			};
 
-			lang.mixin(this, this.config, args);
-
-			aspect.after(this, '_beforeInitialize', lang.hitch(this, this._initializeResultsBrowser));
-			aspect.after(this, '_definePublications', lang.hitch(this, this._defineResultsBrowserPublications));
-			aspect.after(this, '_setOwnCallbacksForEvents',
-				lang.hitch(this, this._setResultsBrowserOwnCallbacksForEvents));
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
-		_initializeResultsBrowser: function() {
+		_initialize: function() {
+
+			this.inherited(arguments);
 
 			this._layersInfo = new NestedBrowsersImpl({
 				parentChannel: this.getChannel(),
@@ -57,7 +54,9 @@ define([
 			});
 		},
 
-		_defineResultsBrowserPublications: function() {
+		_definePublications: function() {
+
+			this.inherited(arguments);
 
 			this.publicationsConfig.push({
 				event: 'HIDE_LAYERS_INFO',
@@ -71,7 +70,9 @@ define([
 			});
 		},
 
-		_setResultsBrowserOwnCallbacksForEvents: function() {
+		_setOwnCallbacksForEvents: function() {
+
+			this.inherited(arguments);
 
 			this._onEvt('SHOW_LAYERS_INFO', lang.hitch(this, this._showResultsAndHidePlaceholder));
 			this._onEvt('HIDE_LAYERS_INFO', lang.hitch(this, this._hideResultsAndShowPlaceholder));

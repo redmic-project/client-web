@@ -20,45 +20,48 @@ define([
 	, SpeciesDistributionCitation
 ) {
 
+	const TemplatesByTypeGroup = {
+		//	Podemos sobreescribir las plantillas genéricas de las capas
+		//	de atlas especificando el nombre de la capa completo
+		//'el-batimetriaIslasParent': AtlasPrimaryList',
+		//'el-batimetriaIslasChildren': AtlasBathymetry',
+
+		'defaultParent': AtlasPrimaryList,
+		'defaultChildren': AtlasSecondaryList,
+
+		'trackingParent': TrackingPrimaryList,
+		'trackingChildren': TrackingSecondaryList,
+
+		'taxonDistributionParent': SpeciesDistributionPrimaryList,
+		'taxonDistributionChildren': {
+			'ci': SpeciesDistributionCitation,
+			'at': TrackingSecondaryList
+		},
+
+		'sd-sightings-taxon-yearChildren': AtlasRedpromarSecondaryList,
+		'sd-exotic-species-sightingChildren': AtlasRedpromarSecondaryList
+	};
+
 	return declare(null, {
 		//	summary:
 		//		Extensión del módulo para las tareas de identificar tipos de datos y correspondencia de capas con
 		//		plantillas específicas.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				layerIdSeparator: '_',
 				layerIdPrefix: 'layer-',
 				layerThemeSeparator: '-',
 				typeGroupProperty: 'dataType',
 				parentTemplateSuffix: 'Parent',
 				childrenTemplateSuffix: 'Children',
-
-				_templatesByTypeGroup: {
-					//	Podemos sobreescribir las plantillas genéricas de las capas
-					//	de atlas especificando el nombre de la capa completo
-					//'el-batimetriaIslasParent': AtlasPrimaryList',
-					//'el-batimetriaIslasChildren': AtlasBathymetry',
-
-					'defaultParent': AtlasPrimaryList,
-					'defaultChildren': AtlasSecondaryList,
-
-					'trackingParent': TrackingPrimaryList,
-					'trackingChildren': TrackingSecondaryList,
-
-					'taxonDistributionParent': SpeciesDistributionPrimaryList,
-					'taxonDistributionChildren': {
-						'ci': SpeciesDistributionCitation,
-						'at': TrackingSecondaryList
-					},
-
-					'sd-sightings-taxon-yearChildren': AtlasRedpromarSecondaryList,
-					'sd-exotic-species-sightingChildren': AtlasRedpromarSecondaryList
-				}
+				_templatesByTypeGroup: TemplatesByTypeGroup
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
 		_getLayerTemplatesDefinition: function(layerId) {

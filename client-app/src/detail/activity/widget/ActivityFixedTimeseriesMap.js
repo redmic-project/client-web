@@ -2,7 +2,6 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/query'
-	, 'src/component/base/_Filter'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
@@ -17,7 +16,6 @@ define([
 	declare
 	, lang
 	, query
-	, _Filter
 	, _Module
 	, _Show
 	, _Store
@@ -30,8 +28,8 @@ define([
 	, TemplateList
 ) {
 
-	return declare([_Module, _Show, _Store, _Filter, _MapDesignWithContentLayout, _AddAtlasComponent,
-		_AddBrowserComponent, _AddMapLayerComponent], {
+	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _AddBrowserComponent,
+		_AddMapLayerComponent], {
 		//	summary:
 		//		Widget para mostrar un mapa de estaciones que producen series de datos temporales.
 
@@ -42,7 +40,7 @@ define([
 				actions: {
 					TIMESERIES_DATA: 'timeseriesData'
 				},
-				_dataTarget: redmicConfig.services.activityTimeSeriesStations,
+				target: redmicConfig.services.activityTimeSeriesStations,
 				mapLayerPopupTemplate: TemplatePopup,
 				_showChartsButtonClass: 'showCharts'
 			};
@@ -81,21 +79,6 @@ define([
 			});
 		},
 
-		_beforeInitialize: function() {
-
-			this.inherited(arguments);
-
-			const queryChannel = this.queryChannel;
-
-			this.mergeComponentAttribute('browserConfig', {
-				queryChannel
-			});
-
-			this.mergeComponentAttribute('searchConfig', {
-				queryChannel
-			});
-		},
-
 		_defineSubscriptions: function() {
 
 			this.inherited(arguments);
@@ -112,6 +95,26 @@ define([
 				options: {
 					predicate: (evt) => evt?.btnId === 'showCharts'
 				}
+			});
+		},
+
+		_onMeOrAncestorShown: function() {
+
+			this._requestData();
+		},
+
+		_requestData: function() {
+
+			const path = {
+				activityid: this.pathVariableId
+			};
+
+			const sharedParams = true;
+
+			this._emitEvt('REQUEST', {
+				method: 'POST',
+				target: this.target,
+				params: {path, sharedParams}
 			});
 		},
 
@@ -141,49 +144,6 @@ define([
 		_loadTimeseriesData: function(item) {
 
 			this._publish(this.getChannel('TIMESERIES_DATA'), item);
-		},
-
-		_onMeOrAncestorShown: function() {
-
-			const replacedTarget = this._getTargetWithVariableReplaced();
-
-			this._updateComponentTargetValues(replacedTarget);
-			this._requestDataFromReplacedTarget(replacedTarget);
-		},
-
-		_getTargetWithVariableReplaced: function() {
-
-			const replaceObj = {
-				activityid: this.pathVariableId
-			};
-
-			return lang.replace(this._dataTarget, replaceObj);
-		},
-
-		_updateComponentTargetValues: function(replacedTarget) {
-
-			const browserInstance = this.getComponentInstance('browser'),
-				searchInstance = this.getComponentInstance('search'),
-				mapLayerInstance = this.getComponentInstance('mapLayer');
-
-			this._publish(mapLayerInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-
-			this._publish(browserInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-
-			this._publish(searchInstance.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
-		},
-
-		_requestDataFromReplacedTarget: function(replacedTarget) {
-
-			this._publish(this.getChannel('SET_PROPS'), {
-				target: replacedTarget
-			});
 		}
 	});
 });

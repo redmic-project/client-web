@@ -108,7 +108,7 @@ define([], function() {
 		'citationByDocuments': baseUri + 'documents/{id}/citations',
 		'calibrations': baseUri + 'calibrations',
 		'citationAll': baseUri + 'citations',
-		'citationByActivity': baseUri + 'activities/{id}/citations',
+		'citationByActivity': baseUri + 'activities/{id}/citations/_search',
 		'condition': baseUri + 'conditions',
 		'confidence': baseUri + 'confidences',
 		'contact': baseUri + 'contacts',
@@ -258,7 +258,7 @@ define([], function() {
 		'vFlag': baseUri + 'vflags',
 
 		'timeSeriesActivities': baseUri + 'timeseries/activities',
-		'activityTimeSeriesStations': baseUri + 'activities/{activityid}/timeseriesstations',
+		'activityTimeSeriesStations': baseUri + 'activities/{activityid}/timeseriesstations/_search',
 		'acousticDetectionReceptors': baseUri + 'v1/acoustic-detection/activities/{id}/receptors',
 		'acousticDetectionEvents': baseUri + 'v1/acoustic-detection/activities/{activityid}/receptors/{receptorid}/detections',
 		'timeSeriesStations': baseUri + 'surveystations',
@@ -279,7 +279,7 @@ define([], function() {
 
 		'attributesByInfrastructure': baseUri + 'activities/{activityid}/infrastructures/{id}/attributes',
 
-		'areasByActivity': baseUri + 'activities/{activityid}/areas',
+		'areasByActivity': baseUri + 'activities/{activityid}/areas/_search',
 		'areasPropertiesByActivity': baseUri + 'activities/{activityid}/areas/properties',
 
 		'areaClassifications': baseUri + 'areaclassifications',

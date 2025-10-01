@@ -58,7 +58,6 @@ define([
 			this.inherited(arguments);
 
 			this.mergeComponentAttribute('mapLayerConfig', {
-				target: this.target,
 				targetPathParams: {
 					id: this.pathVariableId
 				}

@@ -304,18 +304,18 @@ define([
 			this._createSpeciesTree();
 			this._createSettingsForm();
 
-			const getMapChannel = lang.hitch(this.map, this.map.getChannel);
+			const mapChannel = this.map.getChannel();
 
-			this._createMapLayers(getMapChannel);
+			this._createMapLayers(mapChannel);
 
 			this._tabsDisplayer = new TabsDisplayer({
 				parentChannel: this.getChannel()
 			});
 
 			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
-			this.atlasConfig.getMapChannel = getMapChannel;
+			this.atlasConfig.mapChannel = mapChannel;
 
-			this.queryOnMapConfig.getMapChannel = getMapChannel;
+			this.queryOnMapConfig.mapChannel = mapChannel;
 			this.queryOnMapConfig.tabsDisplayerChannel = this._tabsDisplayer.getChannel();
 		},
 
@@ -368,10 +368,9 @@ define([
 			});
 		},
 
-		_createMapLayers: function(getMapChannel) {
+		_createMapLayers: function(mapChannel) {
 
-			const parentChannel = this.getChannel(),
-				mapChannel = getMapChannel();
+			const parentChannel = this.getChannel();
 
 			this.d3LayerConfig.mapChannel = mapChannel;
 

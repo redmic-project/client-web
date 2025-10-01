@@ -64,12 +64,9 @@ define([
 
 			this.inherited(arguments);
 
-			if (!this.getMapChannel) {
+			if (!this.mapChannel) {
 				console.error('Map channel not defined for QueryOnMap "%s"', this.getChannel());
 			}
-
-			// TODO cuando venga así desde fuera (string en lugar de función), quitar y usar directamente
-			this.mapChannel = this.getMapChannel?.();
 		},
 
 		_defineSubscriptions: function() {

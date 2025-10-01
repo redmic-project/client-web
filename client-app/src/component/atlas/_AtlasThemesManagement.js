@@ -199,7 +199,7 @@ define([
 				});
 			}
 
-			this._publish(this.getMapChannel('REORDER_LAYERS'), {
+			this._publish(this._buildChannel(this.mapChannel, 'REORDER_LAYERS'), {
 				layerId: this._createLayerId(item.atlasItem),
 				index: response.indexList,
 				movedDown: movedDown
@@ -295,7 +295,7 @@ define([
 				southWest = this._getLatLng(coordinates[0]),
 				northEast = this._getLatLng(coordinates[2]);
 
- 			this._publish(this.getMapChannel('FIT_BOUNDS'), {
+ 			this._publish(this._buildChannel(this.mapChannel, 'FIT_BOUNDS'), {
 				bounds: L.latLngBounds(southWest, northEast)
 			});
 		},

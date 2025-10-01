@@ -69,6 +69,15 @@ define([
 					REMOVE_LAYER: 'removeLayer'
 				},
 
+				actions: {
+					// Map actions
+					LAYER_REMOVED: 'layerRemoved',
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer',
+					FIT_BOUNDS: 'fitBounds',
+					REORDER_LAYERS: 'reorderLayers'
+				},
+
 				_itemsSelected: {},
 				localTarget: 'localAtlas',
 				target: redmicConfig.services.atlasLayer,
@@ -169,12 +178,12 @@ define([
 
 		_defineSubscriptions: function() {
 
-			if (!this.getMapChannel) {
+			if (!this.mapChannel) {
 				console.error('Map channel not defined for atlas "%s"', this.getChannel());
 			}
 
 			this.subscriptionsConfig.push({
-				channel : this.getMapChannel('LAYER_REMOVED'),
+				channel : this._buildChannel(this.mapChannel, 'LAYER_REMOVED'),
 				callback: '_subLayerRemoved'
 			},{
 				channel : this.catalogView.getChildChannel('browser', 'BUTTON_EVENT'),
@@ -186,10 +195,10 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'ADD_LAYER',
-				channel: this.getMapChannel('ADD_LAYER')
+				channel: this._buildChannel(this.mapChannel, 'ADD_LAYER')
 			},{
 				event: 'REMOVE_LAYER',
-				channel: this.getMapChannel('REMOVE_LAYER')
+				channel: this._buildChannel(this.mapChannel, 'REMOVE_LAYER')
 			});
 		},
 

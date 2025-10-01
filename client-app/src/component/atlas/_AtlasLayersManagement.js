@@ -264,7 +264,7 @@ define([
 
 			const layerId = this._createLayerId(atlasItem),
 				layerLabel = this._createLayerLabel(atlasItem),
-				mapChannel = this.getMapChannel?.() ?? null,
+				mapChannel = this.mapChannel,
 				innerLayerDefinition = this._getLayerDefinitionByProtocol(atlasItem);
 
 			return {

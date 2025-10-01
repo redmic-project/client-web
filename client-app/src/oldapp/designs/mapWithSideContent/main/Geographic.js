@@ -183,17 +183,17 @@ define([
 
 		_createAtlas: function() {
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+			const mapChannel = this.map.getChannel();
 
 			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
+				mapChannel,
 				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
 			this._queryOnMap = new QueryOnMap({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
+				mapChannel,
 				tabsDisplayerChannel: this._tabsDisplayer.getChannel()
 			});
 		},

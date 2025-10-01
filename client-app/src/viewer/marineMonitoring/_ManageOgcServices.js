@@ -44,7 +44,7 @@ define([
 			this.inherited(arguments);
 
 			const mapInstance = this.getComponentInstance('map');
-			this.getMapChannel = mapInstance ? lang.hitch(mapInstance, mapInstance.getChannel) : null;
+			this.mapChannel = mapInstance?.getChannel();
 		},
 
 		_requestLayersDataFilteredByActivityIds: function(activities) {

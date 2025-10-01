@@ -43,7 +43,7 @@ define([
 			const inheritedComponents = this.inherited(arguments);
 
 			const mapInstance = inheritedComponents.map,
-				getMapChannel = lang.hitch(mapInstance, mapInstance.getChannel);
+				mapChannel = mapInstance?.getChannel();
 
 			let tabsDisplayer = inheritedComponents.tabsDisplayer;
 
@@ -55,9 +55,9 @@ define([
 			const tabsDisplayerChannel = tabsDisplayer.getChannel(),
 				addTabChannel = tabsDisplayer.getChannel('ADD_TAB');
 
-			const atlas = this._createDesignAtlasComponent(getMapChannel, addTabChannel);
+			const atlas = this._createDesignAtlasComponent(mapChannel, addTabChannel);
 
-			const queryOnMap = this._createDesignQueryOnMapComponent(getMapChannel, tabsDisplayerChannel);
+			const queryOnMap = this._createDesignQueryOnMapComponent(mapChannel, tabsDisplayerChannel);
 
 			return lang.mixin(inheritedComponents, {atlas, queryOnMap});
 		},
@@ -67,19 +67,19 @@ define([
 			return new TabsDisplayer(this.tabsDisplayerConfig);
 		},
 
-		_createDesignAtlasComponent: function(getMapChannel, addTabChannel) {
+		_createDesignAtlasComponent: function(mapChannel, addTabChannel) {
 
 			this.mergeComponentAttribute('atlasConfig', {
-				getMapChannel, addTabChannel
+				mapChannel, addTabChannel
 			});
 
 			return new Atlas(this.atlasConfig);
 		},
 
-		_createDesignQueryOnMapComponent: function(getMapChannel, tabsDisplayerChannel) {
+		_createDesignQueryOnMapComponent: function(mapChannel, tabsDisplayerChannel) {
 
 			this.mergeComponentAttribute('queryOnMapConfig', {
-				getMapChannel, tabsDisplayerChannel
+				mapChannel, tabsDisplayerChannel
 			});
 
 			return new QueryOnMap(this.queryOnMapConfig);

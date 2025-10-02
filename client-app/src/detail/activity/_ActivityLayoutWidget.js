@@ -22,7 +22,7 @@ define([
 					TIMESERIES_LINE_CHARTS_DATA: 'timeseriesLineChartsData',
 					TIMESERIES_WINDROSE_DATA: 'timeseriesWindroseData'
 				},
-				_detailLayoutWidgets: []
+				_layoutWidgets: []
 			};
 
 			lang.mixin(this, this.config, args);
@@ -35,7 +35,7 @@ define([
 
 			if (!activityDetailLayouts?.length) {
 				// TODO medida temporal por retrocompatibilidad con activityCategory
-				this._prepareActivityCategoryCustomWidgets();
+				this._prepareActivityCategoryLayoutWidgets();
 				return;
 			}
 
@@ -54,7 +54,7 @@ define([
 				layoutCheckGrants = layout?.checkGrants ?? false;
 
 			if (!layoutCheckGrants) {
-				this._prepareDetailLayoutWidgets(layoutType, layoutConfig);
+				this._prepareLayoutWidgets(layoutType, layoutConfig);
 				return;
 			}
 
@@ -85,7 +85,7 @@ define([
 
 			layoutConfig.accessGranted = true;
 
-			this._prepareDetailLayoutWidgets(layoutType, layoutConfig);
+			this._prepareLayoutWidgets(layoutType, layoutConfig);
 		},
 
 		_onLayoutNotGranted: function(layout, rejectedGrants) {
@@ -94,119 +94,95 @@ define([
 			// Ofrecerle identificarse.
 		},
 
-		_prepareDetailLayoutWidgets: function(detailLayout, layoutConfig) {
+		_prepareLayoutWidgets: function(layoutType, layoutConfig) {
 
-			let prepareWidgetsMethod;
+			const capitalizedLayoutType = layoutType.charAt(0).toUpperCase() + layoutType.slice(1),
+				prepareWidgetsMethod = `_prepare${capitalizedLayoutType}LayoutWidgets`;
 
-			if (detailLayout === 'citationMap') {
-				prepareWidgetsMethod = '_prepareCitationActivityWidgets';
-			} else if (detailLayout === 'ogcLayerMap') {
-				prepareWidgetsMethod = '_prepareMapLayerActivityWidgets';
-			} else if (detailLayout === 'trackingMap') {
-				prepareWidgetsMethod = '_prepareTrackingActivityWidgets';
-			} else if (detailLayout === 'infrastructureMap') {
-				prepareWidgetsMethod = '_prepareInfrastructureActivityWidgets';
-			} else if (detailLayout === 'areaMap') {
-				prepareWidgetsMethod = '_prepareAreaActivityWidgets';
-			} else if (detailLayout === 'featureMap') {
-				prepareWidgetsMethod = '_prepareFixedObservationSeriesActivityWidgets';
-			} else if (detailLayout === 'featureTimeseriesMapChart') {
-				prepareWidgetsMethod = '_prepareFixedTimeseriesActivityWidgets';
-			} else if (detailLayout === 'embeddedContent') {
-				prepareWidgetsMethod = '_prepareEmbeddedContentsActivityWidgets';
-			} else if (detailLayout === 'supersetDashboard') {
-				prepareWidgetsMethod = '_prepareSupersetDashboardActivityWidget';
-			}
-
-			if (!prepareWidgetsMethod) {
-				console.warn('Tried to get widgets for "%s" detail layout, but none found!', detailLayout);
-				return;
-			}
-
-			this[prepareWidgetsMethod](layoutConfig);
+			this[prepareWidgetsMethod]?.(layoutConfig);
 		},
 
-		_prepareActivityCategoryCustomWidgets: function() {
+		_prepareActivityCategoryLayoutWidgets: function() {
 			// TODO borrar cuando se deje de usar activityCategory
 
 			const activityCategory = this._activityData.activityCategory;
 
 			if (activityCategory === 'ci') {
-				this._prepareCitationActivityWidgets();
+				this._prepareCitationMapLayoutWidgets();
 			} else if (activityCategory === 'ml') {
-				this._prepareMapLayerActivityWidgets();
+				this._prepareOgcLayerMapLayoutWidgets();
 			} else if (['tr', 'at', 'pt'].indexOf(activityCategory) !== -1) {
-				this._prepareTrackingActivityWidgets();
+				this._prepareTrackingMapLayoutWidgets();
 			} else if (activityCategory === 'if') {
-				this._prepareInfrastructureActivityWidgets();
+				this._prepareInfrastructureMapLayoutWidgets();
 			} else if (activityCategory === 'ar') {
-				this._prepareAreaActivityWidgets();
+				this._prepareAreaMapLayoutWidgets();
 			} else if (activityCategory === 'ft') {
-				this._prepareFixedTimeseriesActivityWidgets();
+				this._prepareFeatureTimeseriesMapChartLayoutWidgets();
 			} else if (activityCategory === 'ec') {
-				this._prepareEmbeddedContentsActivityWidgets();
+				this._prepareEmbeddedContentLayoutWidgets();
 			}
 		},
 
-		_prepareCitationActivityWidgets: function(layoutConfig) {
+		_prepareCitationMapLayoutWidgets: function(layoutConfig) {
 
 			const key = 'activityCitation',
 				config = this._getActivityCitationConfig(layoutConfig);
 
-			this._addCustomWidget(key, config);
+			this._addLayoutWidget(key, config);
 		},
 
-		_prepareMapLayerActivityWidgets: function(layoutConfig) {
+		_prepareOgcLayerMapLayoutWidgets: function(layoutConfig) {
 
 			const key = 'activityMapLayer',
 				config = this._getActivityMapLayerConfig(layoutConfig);
 
-			this._addCustomWidget(key, config);
+			this._addLayoutWidget(key, config);
 		},
 
-		_prepareTrackingActivityWidgets: function(layoutConfig) {
+		_prepareTrackingMapLayoutWidgets: function(layoutConfig) {
 
 			const key = 'activityTracking',
 				config = this._getActivityTrackingConfig(layoutConfig);
 
-			this._addCustomWidget(key, config);
+			this._addLayoutWidget(key, config);
 		},
 
-		_prepareInfrastructureActivityWidgets: function(layoutConfig) {
+		_prepareInfrastructureMapLayoutWidgets: function(layoutConfig) {
 
 			const key = 'activityInfrastructure',
 				config = this._getActivityInfrastructureConfig(layoutConfig);
 
-			this._addCustomWidget(key, config);
+			this._addLayoutWidget(key, config);
 		},
 
-		_prepareAreaActivityWidgets: function(layoutConfig) {
+		_prepareAreaMapLayoutWidgets: function(layoutConfig) {
 
 			const key = 'activityArea',
 				config = this._getActivityAreaConfig(layoutConfig);
 
-			this._addCustomWidget(key, config);
+			this._addLayoutWidget(key, config);
 		},
 
-		_prepareFixedObservationSeriesActivityWidgets: function(layoutConfig) {
+		_prepareFeatureMapLayoutWidgets: function(layoutConfig) {
 
 			const mapKey = 'activityFixedObservationSeriesMap',
 				mapConfig = this._getActivityFixedObservationSeriesMapConfig(layoutConfig);
 
-			this._addCustomWidget(mapKey, mapConfig);
+			this._addLayoutWidget(mapKey, mapConfig);
 
 			const listKey = 'activityFixedObservationSeriesList',
 				listConfig = this._getActivityFixedObservationSeriesListConfig(mapKey, layoutConfig);
 
-			this._addCustomWidget(listKey, listConfig);
+			this._addLayoutWidget(listKey, listConfig);
 		},
 
-		_prepareFixedTimeseriesActivityWidgets: function(layoutConfig) {
+		_prepareFeatureTimeseriesMapChartLayoutWidgets: function(layoutConfig) {
 
 			const mapKey = 'activityFixedTimeseriesMap',
 				mapConfig = this._getActivityFixedTimeseriesMapConfig(layoutConfig);
 
-			this._addCustomWidget(mapKey, mapConfig);
+			this._addLayoutWidget(mapKey, mapConfig);
 
 			const timeseriesDataChannel = this._getWidgetInstance(mapKey).getChannel('TIMESERIES_DATA');
 
@@ -236,7 +212,7 @@ define([
 			}
 			this._lineChartsWidgetKey = lineChartsKey;
 
-			this._addCustomWidget(lineChartsKey, lineChartsConfig);
+			this._addLayoutWidget(lineChartsKey, lineChartsConfig);
 
 			this._publish(lineChartsDataChannel, data);
 		},
@@ -294,14 +270,14 @@ define([
 
 			this._windroseWidgetKeys.push(windroseKey);
 
-			this._addCustomWidget(windroseKey, windroseConfig);
+			this._addLayoutWidget(windroseKey, windroseConfig);
 
 			this._publish(windroseDataChannel, {
 				measurements: args.measurements
 			});
 		},
 
-		_prepareEmbeddedContentsActivityWidgets: function(layoutConfig) {
+		_prepareEmbeddedContentLayoutWidgets: function(layoutConfig) {
 
 			const embeddedContents = this._activityData.embeddedContents,
 				layoutEmbeddedContent = layoutConfig?.content;
@@ -321,33 +297,33 @@ define([
 					node = embeddedContentParentNode.firstChild,
 					config = this._getActivityEmbeddedContentsConfig(node, i, layoutConfig);
 
-				this._addCustomWidget(key, config);
+				this._addLayoutWidget(key, config);
 			}
 		},
 
-		_prepareSupersetDashboardActivityWidget: function(layoutConfig) {
+		_prepareSupersetDashboardLayoutWidgets: function(layoutConfig) {
 
 			const dashboardId = layoutConfig.id,
 				key = 'superset-' + dashboardId,
 				config = this._getSupersetDashboardConfig(layoutConfig);
 
-			this._addCustomWidget(key, config);
+			this._addLayoutWidget(key, config);
 		},
 
-		_addCustomWidget: function(key, config) {
+		_addLayoutWidget: function(key, config) {
 
 			this._addWidget(key, config);
-			this._detailLayoutWidgets.push(key);
+			this._layoutWidgets.push(key);
 		},
 
-		_removeCustomWidgets: function() {
+		_removeLayoutWidgets: function() {
 
-			if (!this._detailLayoutWidgets) {
+			if (!this._layoutWidgets) {
 				return;
 			}
 
-			while (this._detailLayoutWidgets.length) {
-				const key = this._detailLayoutWidgets.pop();
+			while (this._layoutWidgets.length) {
+				const key = this._layoutWidgets.pop();
 				this._destroyWidget(key);
 			}
 		}

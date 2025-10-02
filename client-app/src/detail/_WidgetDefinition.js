@@ -18,8 +18,6 @@ define([
 	, 'src/component/base/_Store'
 	, 'src/component/browser/_ButtonsInRow'
 	, 'src/component/browser/_Framework'
-	, 'src/component/browser/ListImpl'
-	, 'src/component/browser/bars/Total'
 	, 'src/component/layout/genericDisplayer/GenericDisplayer'
 	, 'src/component/layout/SupersetDisplayer'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
@@ -52,8 +50,6 @@ define([
 	, _Store
 	, _ButtonsInRow
 	, _Framework
-	, ListImpl
-	, Total
 	, GenericDisplayer
 	, SupersetDisplayer
 	, TemplateDisplayer

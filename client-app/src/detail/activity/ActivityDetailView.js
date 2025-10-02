@@ -142,7 +142,7 @@ define([
 		_onActivityDetailsHidden: function() {
 
 			this._removeSpatialExtension();
-			this._removeCustomWidgets();
+			this._removeLayoutWidgets();
 		},
 
 		_removeSpatialExtension: function() {

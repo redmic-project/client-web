@@ -99,7 +99,7 @@ define([
 					}
 				},
 				legend: {
-					width: 3,
+					width: 2,
 					height: 4,
 					type: TemplateDisplayer,
 					props: {

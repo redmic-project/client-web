@@ -5,7 +5,7 @@ define([
 	, 'app/designs/details/_AddWidgetSelector'
 	, 'app/designs/details/_AddTitle'
 	, 'dojo/_base/declare'
-	, 'src/detail/_WidgetDefinition'
+	, 'src/detail/_DetailWidgetDefinition'
 ], function(
 	_Main
 	, Controller
@@ -13,10 +13,10 @@ define([
 	, _AddWidgetSelector
 	, _AddTitle
 	, declare
-	, _WidgetDefinition
+	, _DetailWidgetDefinition
 ) {
 
-	return declare([Layout, Controller, _Main, _AddTitle, _AddWidgetSelector, _WidgetDefinition], {
+	return declare([Layout, Controller, _Main, _AddTitle, _AddWidgetSelector, _DetailWidgetDefinition], {
 		//	summary:
 		//		Base común a todas las vistas de detalle.
 
@@ -32,11 +32,24 @@ define([
 				}]);
 			}
 
-			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
-				info: this._getInfoConfig({
-					template: this.templateInfo
-				})
+			this._infoPrepareDetailWidget();
+		},
+
+		_infoPrepareDetailWidget: function() {
+
+			const configProps = {
+				template: this.templateInfo,
+				target: this.infoTarget || this.target,
+				associatedIds: [this.ownChannel],
+				shownOption: this.shownOptionInfo
+			};
+
+			const info = this._merge([this._getInfoConfig(configProps), {
+				width: 3,
+				height: 'fitContent'
 			}]);
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {info}]);
 		},
 
 		addTargetToArray: function(/*string*/ target) {

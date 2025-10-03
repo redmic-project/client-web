@@ -1,12 +1,10 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'src/detail/_Detail'
 	, 'src/redmicConfig'
 	, 'templates/ActivityList'
 ], function(
 	declare
-	, lang
 	, _Detail
 	, redmicConfig
 	, TemplateActivities
@@ -21,16 +19,25 @@ define([
 			this.inherited(arguments);
 
 			this.addTargetToArray(this.ancestorsTarget);
-			//this.addTargetToArray(this.activitiesTargetBase);
 
-			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
-				activityList: this._getActivitiesOrProjectsConfig({
-					title: 'activities',
-					target: this.activitiesTargetBase,
-					template: TemplateActivities,
-					href: redmicConfig.viewPaths.activityDetails
-				})
+			this._activityListPrepareDetailWidget();
+		},
+
+		_activityListPrepareDetailWidget: function() {
+
+			const configProps = {
+				title: 'activities',
+				target: this.activitiesTargetBase,
+				template: TemplateActivities,
+				href: redmicConfig.viewPaths.activityDetails
+			};
+
+			const activityList = this._merge([this._getActivitiesOrProjectsConfig(configProps), {
+				width: 3,
+				height: 4
 			}]);
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {activityList}]);
 		},
 
 		_clearModules: function() {

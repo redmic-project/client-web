@@ -14,12 +14,24 @@ define([
 
 			this.inherited(arguments);
 
-			let additionalConfig = this._getAdditionalDescendantListConfig();
+			this._descendantListPrepareDetailWidget();
+		},
 
-			this.widgetConfigs = this._merge([{
+		_descendantListPrepareDetailWidget: function() {
+
+			const additionalConfig = this._merge([this._getAdditionalDescendantListConfig(), {
+				target: this.descendantsTarget
+			}]);
+
+			const descendantList = this._merge([this._getActivitiesOrProjectsConfig(additionalConfig), {
+				width: 3,
+				height: 4
+			}]);
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
 				info: {},
-				descendantList: this._getActivitiesOrProjectsConfig(additionalConfig)
-			}, this.widgetConfigs || {}]);
+				descendantList
+			}]);
 		},
 
 		_clearModules: function() {

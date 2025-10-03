@@ -38,7 +38,6 @@ define([
 
 			return {
 				title: 'projects',
-				target: this.descendantsTarget,
 				template: ProjectListTemplate,
 				href: redmicConfig.viewPaths.projectDetails
 			};

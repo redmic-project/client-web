@@ -41,9 +41,18 @@ define([
 
 			this.inherited(arguments);
 
-			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
-				spatialExtension: this._getSpatialExtensionConfig()
+			this._spatialExtensionPrepareDetailWidget();
+		},
+
+		_spatialExtensionPrepareDetailWidget: function() {
+
+			const spatialExtension = this._merge([this._getSpatialExtensionConfig(), {
+				width: 3,
+				height: 2,
+				hidden: true
 			}]);
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {spatialExtension}]);
 		},
 
 		_setOwnCallbacksForEvents: function() {

@@ -38,7 +38,6 @@ define([
 
 			return {
 				title: 'activities',
-				target: this.descendantsTarget,
 				template: ActivityListTemplate,
 				href: redmicConfig.viewPaths.activityDetails
 			};

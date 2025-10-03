@@ -54,9 +54,17 @@ define([
 				target: this.titleWidgetTarget
 			}]);
 
-			var documentListConfig = this._merge([this._getDocumentsConfig(), {
+			this._speciesPrepareDetailWidgets();
+		},
+
+		_speciesPrepareDetailWidgets: function() {
+
+			const documentList = this._merge([this._getDocumentsConfig({
+				target: this.documentTarget
+			}), {
+				width: 3,
+				height: 4,
 				props: {
-					target: this.documentTarget,
 					noDataMessage: TemplateCustom({
 						message: this.i18n.noAssociatedDocuments,
 						iconClass: 'fr fr-no-data'
@@ -64,23 +72,19 @@ define([
 				}
 			}]);
 
-			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
-				info: {
-					height: 5
-				},
-				activityList: {
-					height: 3
-				},
-				documentList: documentListConfig,
-				map: {
-					width: 3,
-					height: 3,
-					type: SpeciesLocationMap,
-					props: {
-						title: 'location',
-						pathVariableId: this.pathVariableId
-					}
+			const map = {
+				width: 3,
+				height: 3,
+				type: SpeciesLocationMap,
+				props: {
+					title: 'location',
+					pathVariableId: this.pathVariableId
 				}
+			};
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
+				documentList,
+				map
 			}]);
 		},
 

@@ -58,7 +58,7 @@ define([
 			const processedLayout = {
 				type: layoutType,
 				config: layoutConfig
-			}
+			};
 
 			if (!layoutCheckGrants) {
 				this._prepareLayoutWidgets(processedLayout);

@@ -7,7 +7,7 @@ define([
 	, 'src/component/browser/bars/Total'
 	, 'templates/AnimalSpecimenTag'
 	, 'templates/AnimalInfo'
-	, 'src/detail/_DetailRelatedToActivity'
+	, 'src/detail/_Detail'
 ], function(
 	redmicConfig
 	, declare
@@ -17,10 +17,10 @@ define([
 	, Total
 	, TemplateAnimalSpecimenTag
 	, TemplateInfo
-	, _DetailRelatedToActivity
+	, _Detail
 ) {
 
-	return declare(_DetailRelatedToActivity, {
+	return declare(_Detail, {
 		//	summary:
 		//		Vista de detalle de animales.
 
@@ -28,7 +28,6 @@ define([
 
 			this.config = {
 				target: redmicConfig.services.animal,
-				activitiesTargetBase: redmicConfig.services.activityAnimals,
 				templateInfo: TemplateInfo,
 				pathParent: redmicConfig.viewPaths.animalCatalog,
 				specimenTagsTarget: 'specimenTags'

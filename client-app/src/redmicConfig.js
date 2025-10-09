@@ -239,7 +239,6 @@ define([], function() {
 		'timeSeriesWindRose': baseUri + 'time-series/view/activities/{id}/windrose',
 
 		'activityOrganisations': baseUri + 'organisations/{id}/activities',
-		'activityAnimals': baseUri + 'platforms/{id}/activities', // TODO cambiar al servicio bueno cuando exista
 		'activityPlatforms': baseUri + 'platforms/{id}/activities',
 		'activityDocuments': baseUri + 'documents/{id}/activities',
 		'activityContacts': baseUri + 'contacts/{id}/activities',

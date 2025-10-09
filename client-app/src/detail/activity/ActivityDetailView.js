@@ -2,23 +2,21 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/base/_ExternalConfig'
+	, 'src/detail/_CustomLayout'
 	, 'src/detail/_DetailAdministrative'
 	, 'src/detail/_GenerateReport'
-	, 'src/detail/activity/_ActivityLayoutWidget'
 	, 'templates/ActivityInfo'
 ], function(
 	redmicConfig
 	, declare
 	, lang
-	, _ExternalConfig
+	, _CustomLayout
 	, _DetailAdministrative
 	, _GenerateReport
-	, _ActivityLayoutWidget
 	, ActivityInfoTemplate
 ) {
 
-	return declare([_DetailAdministrative, _ActivityLayoutWidget, _ExternalConfig, _GenerateReport], {
+	return declare([_DetailAdministrative, _CustomLayout, _GenerateReport], {
 		//	summary:
 		//		Vista de detalle de actividades.
 
@@ -30,7 +28,7 @@ define([
 				infoTarget: 'infoWidgetTarget',
 				templateInfo: ActivityInfoTemplate,
 				reportService: 'activity',
-				externalConfigPropName: 'detailLayouts.activity',
+				layoutConfigPropName: 'detailLayouts.activity',
 				pathParent: redmicConfig.viewPaths.activityCatalog
 			};
 
@@ -57,7 +55,6 @@ define([
 
 		_setOwnCallbacksForEvents: function() {
 
-			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onActivityDetailsHidden));
 		},
 
@@ -70,8 +67,11 @@ define([
 
 			this._prepareSpatialExtension();
 
-			this._emitEvt('GET_EXTERNAL_CONFIG', {
-				propertyName: this.externalConfigPropName
+			this._emitEvt('GET_WIDGETS_CONFIG', {
+				externalConfigPropName: this.layoutConfigPropName,
+				activityCategory: this._activityData?.activityCategory,
+				entityId: this._activityData?.id,
+				entityName: 'activity'
 			});
 		},
 
@@ -109,15 +109,6 @@ define([
 			this._showWidget(widgetKey);
 		},
 
-		_onGotExternalConfig: function(evt) {
-
-			const configValue = evt[this.externalConfigPropName];
-
-			this._publish(this.getChannel('SET_PROPS'), {
-				detailLayouts: configValue
-			});
-		},
-
 		_dataAvailable: function(res) {
 
 			const ancestorsData = res.data.data;
@@ -151,7 +142,6 @@ define([
 		_onActivityDetailsHidden: function() {
 
 			this._removeSpatialExtension();
-			this._removeLayoutWidgets();
 		},
 
 		_removeSpatialExtension: function() {

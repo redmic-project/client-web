@@ -41,10 +41,13 @@ define([
 
 			this.config = {
 				ownChannel: 'activityFixedObservationSeriesList',
-				target: redmicConfig.services.acousticDetectionEvents
+				dataTarget: redmicConfig.services.acousticDetectionEvents,
+				stationDataTarget: 'stationData'
 			};
 
 			lang.mixin(this, this.config, args);
+
+			this.target = [this.dataTarget, this.stationDataTarget];
 		},
 
 		_setConfigurations: function() {
@@ -88,16 +91,6 @@ define([
 			}]);
 		},
 
-		_defineSubscriptions: function() {
-
-			this.inherited(arguments);
-
-			this.subscriptionsConfig.push({
-				channel : this.timeseriesDataChannel,
-				callback: '_subObservationStationSet'
-			});
-		},
-
 		postCreate: function() {
 
 			this.inherited(arguments);
@@ -105,7 +98,18 @@ define([
 			this._setBrowserTitle('');
 		},
 
-		_subObservationStationSet: function(stationData) {
+		_itemAvailable: function(res, resWrapper) {
+
+			this.inherited(arguments);
+
+			if (resWrapper.target !== this.stationDataTarget) {
+				return;
+			}
+
+			this._onObservationStationSet(res.data);
+		},
+
+		_onObservationStationSet: function(stationData) {
 
 			const stationName = stationData.site?.name || '';
 			this._setBrowserTitle(stationName);
@@ -151,7 +155,7 @@ define([
 
 			this._emitEvt('REQUEST', {
 				method: 'GET',
-				target: this.target,
+				target: this.dataTarget,
 				params
 			});
 		}

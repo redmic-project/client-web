@@ -37,11 +37,9 @@ define([
 
 			const defaultConfig = {
 				ownChannel: 'activityFixedObservationSeriesMap',
-				actions: {
-					TIMESERIES_DATA: 'timeseriesData'
-				},
 				mapLayerPopupTemplate: TemplatePopup,
 				target: redmicConfig.services.acousticDetectionReceptors,
+				stationDataTarget: 'stationData',
 				_showObservationsButtonClass: 'showObservations'
 			};
 
@@ -69,7 +67,7 @@ define([
 							icon: 'fa-database',
 							btnId: 'showObservations',
 							returnItem: true,
-							href: '#activityFixedObservationSeriesList',
+							href: '#fixedObservationSeriesList',
 							title: this.i18n.observations
 						}]
 					}
@@ -116,7 +114,10 @@ define([
 
 		_loadObservationSeriesData: function(item) {
 
-			this._publish(this.getChannel('TIMESERIES_DATA'), item);
+			this._emitEvt('INJECT_ITEM', {
+				target: this.stationDataTarget,
+				data: item
+			});
 		},
 
 		_onMeOrAncestorShown: function() {

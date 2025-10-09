@@ -35,7 +35,7 @@ define([
 					ACCEPT_COOKIES: 'acceptCookies',
 					REQUEST_FAILED: 'requestFailed',
 					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities',
-					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
+					GOT_USER_GRANTS_FOR_ENTITY: 'gotUserGrantsForEntity'
 				},
 				actions: {
 					GET_CREDENTIALS: 'getCredentials',
@@ -50,8 +50,8 @@ define([
 					REQUEST_FAILED: 'requestFailed',
 					HAS_USER_EDITION_CAPABILITIES: 'hasUserEditionCapabilities',
 					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities',
-					GET_USER_GRANTS_FOR_ACTIVITY: 'getUserGrantsForActivity',
-					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
+					GET_USER_GRANTS_FOR_ENTITY: 'getUserGrantsForEntity',
+					GOT_USER_GRANTS_FOR_ENTITY: 'gotUserGrantsForEntity'
 				},
 
 				target: redmicConfig.services.profile,
@@ -102,8 +102,8 @@ define([
 				channel : this.getChannel('HAS_USER_EDITION_CAPABILITIES'),
 				callback: '_subHasUserEditionCapabilities'
 			},{
-				channel : this.getChannel('GET_USER_GRANTS_FOR_ACTIVITY'),
-				callback: '_subGetUserGrantsForActivity'
+				channel : this.getChannel('GET_USER_GRANTS_FOR_ENTITY'),
+				callback: '_subGetUserGrantsForEntity'
 			});
 		},
 
@@ -131,8 +131,8 @@ define([
 				event: 'USER_HAS_EDITION_CAPABILITIES',
 				channel: this.getChannel('USER_HAS_EDITION_CAPABILITIES')
 			},{
-				event: 'GOT_USER_GRANTS_FOR_ACTIVITY',
-				channel: this.getChannel('GOT_USER_GRANTS_FOR_ACTIVITY')
+				event: 'GOT_USER_GRANTS_FOR_ENTITY',
+				channel: this.getChannel('GOT_USER_GRANTS_FOR_ENTITY')
 			});
 		},
 
@@ -178,13 +178,14 @@ define([
 			});
 		},
 
-		_subGetUserGrantsForActivity: function(req) {
+		_subGetUserGrantsForEntity: function(req) {
 			// TODO consultar contra el servidor utilizando id de actividad y usuario
 
-			var activityId = req.activityId,
+			const entityId = req.entityId,
+				entityName = req.entityName,
 				accessGranted = Credentials.userIsEditor();
 
-			this._emitEvt('GOT_USER_GRANTS_FOR_ACTIVITY', {
+			this._emitEvt('GOT_USER_GRANTS_FOR_ENTITY', {
 				accessGranted: accessGranted
 			});
 		},

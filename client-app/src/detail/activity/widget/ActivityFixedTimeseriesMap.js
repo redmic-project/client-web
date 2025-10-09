@@ -37,10 +37,8 @@ define([
 
 			const defaultConfig = {
 				ownChannel: 'activityFixedTimeseriesMap',
-				actions: {
-					TIMESERIES_DATA: 'timeseriesData'
-				},
 				target: redmicConfig.services.activityTimeSeriesStations,
+				stationDataTarget: 'stationData',
 				mapLayerPopupTemplate: TemplatePopup,
 				_showChartsButtonClass: 'showCharts'
 			};
@@ -69,7 +67,7 @@ define([
 							icon: 'fa-bar-chart',
 							title: this.i18n.charts,
 							btnId: 'showCharts',
-							href: '#activityFixedTimeseriesLineCharts',
+							href: '#fixedTimeseriesLineCharts',
 							returnItem: true
 						}]
 					}
@@ -143,7 +141,10 @@ define([
 
 		_loadTimeseriesData: function(item) {
 
-			this._publish(this.getChannel('TIMESERIES_DATA'), item);
+			this._emitEvt('INJECT_ITEM', {
+				target: this.stationDataTarget,
+				data: item
+			});
 		}
 	});
 });

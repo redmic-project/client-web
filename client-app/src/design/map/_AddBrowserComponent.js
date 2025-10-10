@@ -150,6 +150,7 @@ define([
 			const browserWrapperInstance = this.getComponentInstance('browserWrapper'),
 				browserWrapperChannel = browserWrapperInstance.getChannel();
 
+			// TODO contemplar omisión de search
 			const searchInstance = this.getComponentInstance('search');
 
 			this._publish(browserWrapperInstance.getChannel('ADD_TOPBAR_CONTENT'), {

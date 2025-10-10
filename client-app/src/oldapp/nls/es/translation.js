@@ -1,5 +1,9 @@
 define({
 	"ok": "Aceptar"
+	, "acoustic-detection": "Detección acústica"
+	, "totalReceptors": "Receptores desplegados"
+	, "totalAnimals": "Individuos detectados"
+	, "totalDetections": "Total de detecciones"
 	, "unknownDevice": "Dispositivo desconocido"
 	, "contents": "Contenidos"
 	, "providedByAtlas": "Contenido provisto por atlas"

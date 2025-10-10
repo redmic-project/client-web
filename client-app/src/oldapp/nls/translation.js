@@ -1,6 +1,10 @@
 define({
 	root: {
 		"ok": "Agree"
+		, "acoustic-detection": "Acoustic detection"
+		, "totalReceptors": "Deployed receptors"
+		, "totalAnimals": "Detected individuals"
+		, "totalDetections": "Total detections"
 		, "unknownDevice": "Unknown device"
 		, "contents": "Contents"
 		, "providedByAtlas": "Content provided by atlas"

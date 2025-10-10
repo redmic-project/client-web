@@ -198,7 +198,7 @@ define([
 			return {
 				type: AcousticDetectionMap,
 				props: {
-					title: 'acoustic-detections',
+					title: 'acoustic-detection',
 					activityIds: config.activityIds
 				}
 			};

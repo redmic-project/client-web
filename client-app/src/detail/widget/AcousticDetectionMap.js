@@ -37,7 +37,8 @@ define([
 				ownChannel: 'acousticDetectionMap',
 				target: redmicConfig.services.acousticDistribution,
 				mapLayerPopupTemplate: AcousticDetectionPopupTemplate,
-				activityIds: []
+				activityIds: [],
+				idProperty: 'id'
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
@@ -57,7 +58,16 @@ define([
 			this.inherited(arguments);
 
 			this.mergeComponentAttribute('browserConfig', {
-				template: AcousticDetectionListTemplate
+				template: AcousticDetectionListTemplate,
+				idProperty: this.idProperty
+			});
+
+			this.mergeComponentAttribute('mapLayerConfig', {
+				idProperty: this.idProperty
+			});
+
+			this.mergeComponentAttribute('mapCenteringConfig', {
+				idProperty: this.idProperty
 			});
 		},
 

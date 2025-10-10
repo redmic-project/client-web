@@ -55,6 +55,8 @@ define([
 
 		_setOwnCallbacksForEvents: function() {
 
+			this.inherited(arguments);
+
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onActivityDetailsHidden));
 		},
 

@@ -74,6 +74,11 @@ define([
 
 		_addLayoutWidget: function(key, config) {
 
+			if (this._layoutWidgets?.includes(key)) {
+				console.error('Tried to add duplicated widget "%s" at component "%s"', key, this.getChannel());
+				return;
+			}
+
 			this._addWidget(key, config);
 			this._layoutWidgets.push(key);
 		},

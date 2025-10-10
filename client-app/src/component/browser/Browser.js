@@ -453,7 +453,13 @@ define([
 
 			const data = this._parserIndexData(response);
 
-			data?.forEach(dataItem => this._addItem(dataItem));
+			data?.forEach((dataItem, index) => {
+
+				if (!dataItem[this.idProperty]) {
+					dataItem[this.idProperty] = index + 1;
+				}
+				this._addItem(dataItem);
+			});
 		}
 	});
 });

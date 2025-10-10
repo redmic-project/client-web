@@ -16,7 +16,7 @@ define([
 			let total = resPage?.totalElements ?? resData?.total ?? response.total;
 
 			if (total === undefined || total === null) {
-				total = resData?.content?.length ?? resData?.data?.total ?? resData.length;
+				total = resData?.content?.length ?? resData?.data?.total ?? resData?.data?.length ?? resData.length;
 			}
 
 			return total;

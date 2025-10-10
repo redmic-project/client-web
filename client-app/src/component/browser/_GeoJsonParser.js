@@ -26,7 +26,7 @@ define([
 
 			const coordinates = this._getCoordinates(item.geometry);
 
-			item = this._merge([item, item.properties, {coordinates}]);
+			item = this._merge([item, item.properties ?? {}, {coordinates}]);
 
 			delete item.geometry;
 			delete item.properties;

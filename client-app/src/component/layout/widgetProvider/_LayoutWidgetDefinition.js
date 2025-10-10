@@ -10,6 +10,7 @@ define([
 	, 'src/detail/activity/widget/ActivityInfrastructureMap'
 	, 'src/detail/activity/widget/ActivityLayerMap'
 	, 'src/detail/activity/widget/ActivityTrackingMap'
+	, 'src/detail/widget/AcousticDetectionMap'
 	, 'src/component/base/_Filter'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
@@ -33,6 +34,7 @@ define([
 	, ActivityInfrastructureMap
 	, ActivityLayerMap
 	, ActivityTrackingMap
+	, AcousticDetectionMap
 	, _Filter
 	, _Module
 	, _Show
@@ -187,6 +189,17 @@ define([
 				props: {
 					title: 'windrose',
 					pathVariableId: config.pathVariableId
+				}
+			};
+		},
+
+		_getAcousticDetectionMapConfig: function(config) {
+
+			return {
+				type: AcousticDetectionMap,
+				props: {
+					title: 'acoustic-detections',
+					activityIds: config.activityIds
 				}
 			};
 		}

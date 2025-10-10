@@ -1,22 +1,24 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/detail/_GenerateReport'
+	, 'src/detail/_CustomLayout'
 	, 'src/detail/_DetailAdministrativeAncestor'
+	, 'src/detail/_GenerateReport'
 	, 'src/redmicConfig'
 	, 'templates/ActivityList'
 	, 'templates/ProjectInfo'
 ], function(
 	declare
 	, lang
-	, _GenerateReport
+	, _CustomLayout
 	, _DetailAdministrativeAncestor
+	, _GenerateReport
 	, redmicConfig
 	, ActivityListTemplate
 	, ProjectInfoTemplate
 ) {
 
-	return declare([_DetailAdministrativeAncestor, _GenerateReport], {
+	return declare([_DetailAdministrativeAncestor, _CustomLayout, _GenerateReport], {
 		//	summary:
 		//		Vista de detalle de proyectos.
 
@@ -41,6 +43,17 @@ define([
 				template: ActivityListTemplate,
 				href: redmicConfig.viewPaths.activityDetails
 			};
+		},
+
+		_itemAvailable: function(res) {
+
+			this.inherited(arguments);
+
+			this._emitEvt('GET_WIDGETS_CONFIG', {
+				externalConfigPropName: 'detailLayouts.project',
+				entityId: res.data?.id,
+				entityName: 'project'
+			});
 		}
 	});
 });

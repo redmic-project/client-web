@@ -336,6 +336,21 @@ define([
 			const config = this._merge([windowConfig, this._getSupersetDashboardConfig(layoutConfig)]);
 
 			this._publishLayoutWidget(key, config);
+		},
+
+		_acousticDetectionMapPrepareLayoutWidgets: function(layoutConfig) {
+
+			const key = 'acousticDetectionMap';
+
+			const windowConfig = {
+				width: 6,
+				height: 6,
+				hidden: true
+			};
+
+			const config = this._merge([windowConfig, this._getAcousticDetectionMapConfig(layoutConfig)]);
+
+			this._publishLayoutWidget(key, config);
 		}
 	});
 });

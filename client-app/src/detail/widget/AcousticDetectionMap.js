@@ -79,8 +79,7 @@ define([
 		_requestData: function() {
 
 			const query = {
-				// TODO cambiar a minúsculas
-				activityIds: this.activityIds
+				'activity-ids': this.activityIds
 			};
 
 			this._emitEvt('REQUEST', {

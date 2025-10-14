@@ -2,13 +2,13 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
-	, 'wicket'
-
 	, 'leaflet'
+	, 'wicket'
 ], function(
 	declare
 	, lang
 	, aspect
+	, _L
 	, wicket
 ) {
 

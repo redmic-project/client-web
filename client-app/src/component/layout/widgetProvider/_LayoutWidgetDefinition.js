@@ -11,17 +11,8 @@ define([
 	, 'src/detail/activity/widget/ActivityLayerMap'
 	, 'src/detail/activity/widget/ActivityTrackingMap'
 	, 'src/detail/widget/AcousticDetectionMap'
-	, 'src/component/base/_Filter'
-	, 'src/component/base/_Module'
-	, 'src/component/base/_Show'
-	, 'src/component/base/_Store'
-	, 'src/component/browser/_ButtonsInRow'
-	, 'src/component/browser/_Framework'
 	, 'src/component/layout/genericDisplayer/GenericDisplayer'
 	, 'src/component/layout/SupersetDisplayer'
-	, 'src/component/map/_ImportWkt'
-	, 'src/design/browser/_AddTotalBarComponent'
-	, 'src/design/browser/_BrowserFullSizeDesignLayout'
 ], function(
 	declare
 	, ActivityAreaMap
@@ -35,17 +26,8 @@ define([
 	, ActivityLayerMap
 	, ActivityTrackingMap
 	, AcousticDetectionMap
-	, _Filter
-	, _Module
-	, _Show
-	, _Store
-	, _ButtonsInRow
-	, _Framework
 	, GenericDisplayer
 	, SupersetDisplayer
-	, _ImportWkt
-	, _AddTotalBarComponent
-	, _BrowserFullSizeDesignLayout
 ) {
 
 	return declare(null, {

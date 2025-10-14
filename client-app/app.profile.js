@@ -1,6 +1,6 @@
-var includeLocales = ['es', 'en'];
+const includeLocales = ['es', 'en'];
 
-var packagesMap = {
+const packagesMap = {
 	'd3Tip/d3-v6-tip.min': {
 		'd3-selection': 'd3'
 	},
@@ -9,17 +9,17 @@ var packagesMap = {
 	}
 };
 
-var amdTagger = function(filename) {
+const amdTagger = function(filename) {
 
 	return /\.js$/.test(filename);
 };
 
-var copyOnlyTagger = function() {
+const copyOnlyTagger = function() {
 
 	return true;
 };
 
-var ignoreAllButExceptionsTagger = function(desiredModuleId, _filename, mid) {
+const ignoreAllButExceptionsTagger = function(desiredModuleId, _filename, mid) {
 
 	if (desiredModuleId instanceof Array) {
 		return desiredModuleId.indexOf(mid) === -1;
@@ -28,12 +28,12 @@ var ignoreAllButExceptionsTagger = function(desiredModuleId, _filename, mid) {
 	return mid !== desiredModuleId;
 };
 
-var declarativeTagger = function(filename) {
+const declarativeTagger = function(filename) {
 
 	return /\.htm(l)?$/.test(filename);
 };
 
-var profileObj = {
+const profileObj = {
 	basePath: '.',
 	releaseDir: 'dist',
 	releaseName: 'js',
@@ -447,14 +447,16 @@ var profileObj = {
 				, 'dojo/touch'
 				, 'dojo/window'
 			]
-		},
-		'src/app/App': {
-			includeLocales: includeLocales
 		}
 	}
 };
 
-var viewLayers = {
+const componentLayers = {
+	'src/app/App': {}
+	, 'src/component/layout/widgetProvider/WidgetProvider': {}
+};
+
+const viewLayers = {
 	// especiales
 	'src/error/404': {}
 	, 'src/error/NoSupportBrowser': {}
@@ -556,15 +558,24 @@ var viewLayers = {
 	, 'app/edition/views/LoadDataDocumentEditionView': {}
 };
 
-var viewLayerDefaultConfig = {
-	includeLocales: includeLocales
-};
-
 var profile = (function() {
 
-	for (var viewLayer in viewLayers) {
-		var viewLayerConfig = viewLayers[viewLayer];
-		profileObj.layers[viewLayer] = { ...viewLayerConfig, ...viewLayerDefaultConfig };
+	const layerDefaultConfig = {
+		includeLocales
+	};
+
+	for (let componentLayer in componentLayers) {
+		profileObj.layers[componentLayer] = {
+			...componentLayers[componentLayer],
+			...layerDefaultConfig
+		};
+	}
+
+	for (let viewLayer in viewLayers) {
+		profileObj.layers[viewLayer] = {
+			...viewLayers[viewLayer],
+			...layerDefaultConfig
+		};
 	}
 
 	return profileObj;

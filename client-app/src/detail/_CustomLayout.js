@@ -1,11 +1,11 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/layout/widgetProvider/WidgetProvider'
+	, 'dojo/Deferred'
 ], function(
 	declare
 	, lang
-	, WidgetProvider
+	, Deferred
 ) {
 
 	return declare(null, {
@@ -33,6 +33,7 @@ define([
 
 			this.inherited(arguments);
 
+			this._getWidgetsConfigHandler = this._onceEvt('GET_WIDGETS_CONFIG', (obj) => this._onGetWidgetsConfig(obj));
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onCustomLayoutHidden));
 		},
 
@@ -40,29 +41,45 @@ define([
 
 			this.inherited(arguments);
 
+			const dfd = new Deferred();
+
+			require(['src/component/layout/widgetProvider/WidgetProvider'],
+				(WidgetProvider) => this._onWidgetProviderRequired(WidgetProvider, dfd));
+
+			this._widgetProviderDfd = dfd;
+
+			return dfd;
+		},
+
+		_onGetWidgetsConfig: function(obj) {
+
+			if (this._widgetProviderDfd && !this._widgetProviderDfd.isFulfilled()) {
+				this._widgetProviderDfd.then(() => this._emitEvt('GET_WIDGETS_CONFIG', obj));
+				return;
+			}
+
+			console.error('WidgetProvider component not available, failed to get widgets configuration!');
+		},
+
+		_onWidgetProviderRequired: function(WidgetProvider, dfd) {
+
 			this._widgetProvider = new WidgetProvider({
 				parentChannel: this.getChannel()
 			});
-		},
 
-		_defineSubscriptions: function() {
-
-			this.inherited(arguments);
-
-			this.subscriptionsConfig.push({
+			this._setSubscription({
 				channel: this._widgetProvider.getChannel('GOT_WIDGET_CONFIG'),
 				callback: '_subGotWidgetConfig'
 			});
-		},
 
-		_definePublications: function() {
-
-			this.inherited(arguments);
-
-			this.publicationsConfig.push({
+			this._setPublication({
 				event: 'GET_WIDGETS_CONFIG',
 				channel: this._widgetProvider.getChannel('GET_WIDGETS_CONFIG')
 			});
+
+			this._getWidgetsConfigHandler?.remove?.();
+
+			dfd.resolve();
 		},
 
 		_subGotWidgetConfig: function(res) {

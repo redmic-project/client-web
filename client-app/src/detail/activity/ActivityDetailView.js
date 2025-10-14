@@ -2,6 +2,8 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/component/map/_ImportWkt'
+	, 'src/component/map/LeafletImpl'
 	, 'src/detail/_CustomLayout'
 	, 'src/detail/_DetailAdministrative'
 	, 'src/detail/_GenerateReport'
@@ -10,6 +12,8 @@ define([
 	redmicConfig
 	, declare
 	, lang
+	, _ImportWkt
+	, LeafletImpl
 	, _CustomLayout
 	, _DetailAdministrative
 	, _GenerateReport
@@ -39,18 +43,29 @@ define([
 
 			this.inherited(arguments);
 
-			this._spatialExtensionPrepareDetailWidget();
-		},
-
-		_spatialExtensionPrepareDetailWidget: function() {
-
-			const spatialExtension = this._merge([this._getSpatialExtensionConfig(), {
-				width: 3,
-				height: 2,
-				hidden: true
+			this.widgetConfigs = this._merge([{
+				info: {},
+				spatialExtension: {}
+			},
+			this.widgetConfigs ?? {},
+			{
+				spatialExtension: {
+					width: 3,
+					height: 2,
+					hidden: true,
+					type: declare([LeafletImpl, _ImportWkt]),
+					props: {
+						title: 'spatialExtension',
+						omitContainerSizeCheck: true,
+						maxZoom: 15,
+						coordinatesViewer: false,
+						navBar: false,
+						miniMap: false,
+						scaleBar: false,
+						measureTools: false
+					}
+				}
 			}]);
-
-			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {spatialExtension}]);
 		},
 
 		_setOwnCallbacksForEvents: function() {

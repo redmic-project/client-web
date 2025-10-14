@@ -10,7 +10,7 @@ define([
 	, 'src/detail/activity/widget/ActivityInfrastructureMap'
 	, 'src/detail/activity/widget/ActivityLayerMap'
 	, 'src/detail/activity/widget/ActivityTrackingMap'
-	, 'src/detail/widget/AcousticDetectionMap'
+	, 'src/detail/project/widget/ProjectAcousticDetectionMap'
 	, 'src/component/layout/genericDisplayer/GenericDisplayer'
 	, 'src/component/layout/SupersetDisplayer'
 ], function(
@@ -25,7 +25,7 @@ define([
 	, ActivityInfrastructureMap
 	, ActivityLayerMap
 	, ActivityTrackingMap
-	, AcousticDetectionMap
+	, ProjectAcousticDetectionMap
 	, GenericDisplayer
 	, SupersetDisplayer
 ) {
@@ -178,7 +178,7 @@ define([
 		_getAcousticDetectionMapConfig: function(config) {
 
 			return {
-				type: AcousticDetectionMap,
+				type: ProjectAcousticDetectionMap,
 				props: {
 					title: 'acoustic-detection',
 					activityIds: config.activityIds

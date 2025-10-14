@@ -4,8 +4,6 @@ define([
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
 	, 'src/component/layout/templateDisplayer/TemplateDisplayer'
-	, 'src/component/map/_ImportWkt'
-	, 'src/component/map/LeafletImpl'
 	, 'src/design/browser/_AddTotalBarComponent'
 	, 'src/design/browser/_BrowserFullSizeDesignLayout'
 	, 'src/redmicConfig'
@@ -20,8 +18,6 @@ define([
 	, _Show
 	, _Store
 	, TemplateDisplayer
-	, _ImportWkt
-	, LeafletImpl
 	, _AddTotalBarComponent
 	, _BrowserFullSizeDesignLayout
 	, redmicConfig
@@ -31,6 +27,8 @@ define([
 	, TemplateOrganisation
 	, TemplatePlatform
 ) {
+
+	const BrowserDesign = declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]);
 
 	return declare(null, {
 		// summary:
@@ -51,7 +49,7 @@ define([
 			};
 
 			return {
-				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
+				type: BrowserDesign,
 				props: {
 					title: 'organisations',
 					target: config.target,
@@ -78,7 +76,7 @@ define([
 			};
 
 			return {
-				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
+				type: BrowserDesign,
 				props: {
 					title: 'platforms',
 					target: config.target,
@@ -105,7 +103,7 @@ define([
 			};
 
 			return {
-				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
+				type: BrowserDesign,
 				props: {
 					title: 'contacts',
 					target: config.target,
@@ -131,7 +129,7 @@ define([
 			};
 
 			return {
-				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
+				type: BrowserDesign,
 				props: {
 					title: 'documents',
 					target: config.target,
@@ -167,7 +165,7 @@ define([
 			};
 
 			return {
-				type: declare([_Module, _Show, _Store, _BrowserFullSizeDesignLayout, _AddTotalBarComponent]),
+				type: BrowserDesign,
 				props: {
 					title: config.title,
 					target: config.target,
@@ -191,23 +189,6 @@ define([
 					target: config.target,
 					associatedIds: config.associatedIds,
 					shownOption: config.shownOption
-				}
-			};
-		},
-
-		_getSpatialExtensionConfig: function(config) {
-
-			return {
-				type: declare([LeafletImpl, _ImportWkt]),
-				props: {
-					title: 'spatialExtension',
-					omitContainerSizeCheck: true,
-					maxZoom: 15,
-					coordinatesViewer: false,
-					navBar: false,
-					miniMap: false,
-					scaleBar: false,
-					measureTools: false
 				}
 			};
 		}

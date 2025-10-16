@@ -1,6 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
 	, 'src/redmicConfig'
@@ -8,6 +9,7 @@ define([
 ], function(
 	declare
 	, lang
+	, Deferred
 	, _Module
 	, _Store
 	, redmicConfig
@@ -54,11 +56,15 @@ define([
 					GOT_USER_GRANTS_FOR_ENTITY: 'gotUserGrantsForEntity'
 				},
 
-				target: redmicConfig.services.profile,
+				_profileTarget: redmicConfig.services.profile,
+				_tokenPayloadTarget: redmicConfig.services.getTokenPayload,
+
 				_loginPath: '/login'
 			};
 
 			lang.mixin(this, this.config, args);
+
+			this.target = [this._profileTarget, this._tokenPayloadTarget];
 
 			this._initializeCredentials();
 			this._listenCredentials();
@@ -179,15 +185,38 @@ define([
 		},
 
 		_subGetUserGrantsForEntity: function(req) {
-			// TODO consultar contra el servidor utilizando id de actividad y usuario
 
-			const entityId = req.entityId,
-				entityName = req.entityName,
-				accessGranted = Credentials.userIsEditor();
+			this._getTokenPayload().then(tokenPayload => this._evaluateUserGrants(tokenPayload, req));
+		},
+
+		_getTokenPayload: function() {
+
+			if (!this._tokenPayloadDfd) {
+				this._tokenPayloadDfd = new Deferred();
+				this._requestTokenPayload();
+			}
+
+			return this._tokenPayloadDfd;
+		},
+
+		_evaluateUserGrants: function(payload, req) {
+
+			const allowedRoles = this._getAllowedRoles(req),
+				userRoles = payload?.resource_access?.['web-client']?.roles;
+
+			const accessGranted = allowedRoles?.some(role => userRoles?.includes(role)) ?? false;
 
 			this._emitEvt('GOT_USER_GRANTS_FOR_ENTITY', {
-				accessGranted: accessGranted
+				accessGranted
 			});
+		},
+
+		_getAllowedRoles: function(req) {
+
+			const idPlaceholder = '{id}',
+				idValue = req.entityId;
+
+			return req.roles?.map(role => role.replace(idPlaceholder, idValue));
 		},
 
 		_onAccessTokenChanged: function(evt) {
@@ -223,13 +252,53 @@ define([
 			//		private
 
 			this._emitEvt('GET', {
-				target: this.target
+				target: this._profileTarget
+			});
+		},
+
+		_requestTokenPayload: function() {
+			// summary:
+			//   Permite obtener el contenido del JWT del usuario pidiéndoselo al servidor para su verificación
+			// tags:
+			//   private
+
+			const token = Credentials.get('oidAccessToken');
+
+			this._emitEvt('REQUEST', {
+				method: 'POST',
+				target: this._tokenPayloadTarget,
+				params: {
+					query: {
+						token
+					}
+				}
 			});
 		},
 
 		_itemAvailable: function(res) {
 
-			var data = res.data[0];
+			this._onProfileItemAvailable(res);
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			if (resWrapper.target !== this._tokenPayloadTarget) {
+				return;
+			}
+
+			this._onTokenPayloadDataAvailable(res);
+		},
+
+		_errorAvailable: function(err, status, resWrapper) {
+
+			if (resWrapper.target === this._profileTarget) {
+				this._onProfileErrorAvailable();
+			}
+		},
+
+		_onProfileItemAvailable: function(res) {
+
+			const data = res.data[0];
 
 			if (!data) {
 				Credentials.remove('accessToken');
@@ -249,9 +318,16 @@ define([
 			});
 		},
 
-		_errorAvailable: function(err) {
+		_onProfileErrorAvailable: function() {
 
 			this._emitEvt('REQUEST_FAILED');
+		},
+
+		_onTokenPayloadDataAvailable: function(res) {
+
+			const payload = res.data;
+
+			this._tokenPayloadDfd?.resolve(payload);
 		}
 	});
 });

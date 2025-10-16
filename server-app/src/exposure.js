@@ -1,9 +1,12 @@
 const express = require('express'),
 	path = require('path'),
 	bodyParser = require('body-parser'),
+	jwt = require('jsonwebtoken'),
 
 	production = !!parseInt(process.env.PRODUCTION, 10),
-	apiUrl = process.env.API_URL;
+	apiUrl = process.env.API_URL,
+	oidPemPublicKey = process.env.OID_PEM_PUBLIC_KEY,
+	oidPemPublicKeyWrap = `-----BEGIN PUBLIC KEY-----\n${oidPemPublicKey}\n-----END PUBLIC KEY-----`;
 
 let logger, params, version, robotsContent, externalRequest;
 
@@ -92,6 +95,41 @@ function onUnknownRequest(_req, res, _next) {
 	res.redirect('/404');
 }
 
+function onOidTokenPayloadRequest(req, res) {
+
+	const token = req.body.token;
+
+	res.set('Content-Type', 'application/json');
+
+	if (token?.length) {
+		jwt.verify(token, oidPemPublicKeyWrap, (err, decoded) => jwtVerifyCallback(err, decoded, res));
+		return;
+	}
+
+	res.status(400).send({
+		code: 'Client error',
+		description: 'Something went wrong. Please, check your request and try again.'
+	});
+
+	logger.error('Missing "token" parameter at request body');
+}
+
+function jwtVerifyCallback(err, verifiedPayload, res) {
+
+	if (!err) {
+		res.send(verifiedPayload);
+		return;
+	}
+
+	res.status(500).send({
+		code: 'Server error',
+		description: 'Something went wrong at server. Please, try again.'
+	});
+
+	const errorMessage = err instanceof Object ? err.toString() : err;
+	logger.error(errorMessage);
+}
+
 function exposeRoutes(app) {
 
 	app.get('/activateAccount/:token', onActivateAccountRequest)
@@ -107,6 +145,7 @@ function exposeRoutes(app) {
 		.post('/oid/revoke', bodyParser.json(), externalRequest.onOidRevokeRequest)
 		.post('/oid/token', externalRequest.onOidTokenRequest)
 		.post('/oid/refresh', bodyParser.json(), externalRequest.onOidTokenRequest)
+		.post('/oid/payload', bodyParser.json(), onOidTokenPayloadRequest)
 		.use(onUnknownRequest);
 }
 

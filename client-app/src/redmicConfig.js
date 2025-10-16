@@ -230,6 +230,7 @@ define([], function() {
 		'getOidToken': '/oid/token',
 		'logoutOid': '/oid/revoke',
 		'refreshToken': '/oid/refresh',
+		'getTokenPayload': '/oid/payload',
 		'getExternalConfig': '/config',
 		'unit': baseUri + 'units',
 		'unitType': baseUri + 'unittypes',

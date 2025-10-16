@@ -10,6 +10,7 @@ services:
       OID_URL:
       OID_CLIENT_ID:
       OID_CLIENT_SECRET:
+      OID_PEM_PUBLIC_KEY:
       API_URL:
       CONFIG_URL:
       SITEMAP_URL:

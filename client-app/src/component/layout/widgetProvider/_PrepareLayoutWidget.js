@@ -51,7 +51,7 @@ define([
 			}
 
 			const layoutConfig = layout?.config ?? {},
-				layoutCheckGrants = layout?.checkGrants ?? false;
+				layoutRoles = layout?.roles ?? false;
 
 			layoutConfig.pathVariableId = entityData.entityId;
 
@@ -60,7 +60,7 @@ define([
 				config: layoutConfig
 			};
 
-			if (!layoutCheckGrants) {
+			if (!layoutRoles) {
 				this._prepareLayoutWidgets(processedLayout);
 				return;
 			}
@@ -71,16 +71,19 @@ define([
 				(resolvedGrants) => this._onLayoutGranted(processedLayout, resolvedGrants),
 				(rejectedGrants) => this._onLayoutNotGranted(processedLayout, rejectedGrants));
 
-			this._checkUserGrantsForEntityData(entityData, dfd);
+			this._checkUserGrantsForEntityData(entityData, layoutRoles, dfd);
 		},
 
-		_checkUserGrantsForEntityData: function(entityData, dfd) {
+		_checkUserGrantsForEntityData: function(entityData, roles, dfd) {
 
 			this._once(this._buildChannel(this.credentialsChannel, 'GOT_USER_GRANTS_FOR_ENTITY'), (res) => {
 				res?.accessGranted ? dfd.resolve(res) : dfd.reject(res);
 			});
 
-			this._publish(this._buildChannel(this.credentialsChannel, 'GET_USER_GRANTS_FOR_ENTITY'), entityData);
+			this._publish(this._buildChannel(this.credentialsChannel, 'GET_USER_GRANTS_FOR_ENTITY'), {
+				...entityData,
+				roles
+			});
 		},
 
 		_onLayoutGranted: function(layout, resolvedGrants) {

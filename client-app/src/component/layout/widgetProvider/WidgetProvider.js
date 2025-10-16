@@ -59,11 +59,9 @@ define([
 
 		_subGetWidgetsConfig: function(req) {
 
+			this._currentWidgetRequestData = req;
+
 			const propertyName = req.externalConfigPropName;
-
-			this._currentPropertyName = propertyName;
-
-			this._currentEntityData = req;
 
 			this._emitEvt('GET_EXTERNAL_CONFIG', {propertyName});
 		},
@@ -71,10 +69,22 @@ define([
 
 		_onGotExternalConfig: function(evt) {
 
-			const configValue = evt[this._currentEntityData.externalConfigPropName];
-			delete this._currentEntityData.externalConfigPropName;
+			if (!this._currentWidgetRequestData) {
+				return;
+			}
 
-			this._processDetailLayouts(this._currentEntityData, configValue);
+			const widgetRequestData = {
+				entityId: this._currentWidgetRequestData.entityId,
+				entityName: this._currentWidgetRequestData.entityName,
+				activityCategory: this._currentWidgetRequestData.activityCategory
+			};
+
+			const propertyName = this._currentWidgetRequestData.externalConfigPropName,
+				externalConfigValue = evt[propertyName] ?? {};
+
+			delete this._currentWidgetRequestData;
+
+			this._processDetailLayouts(widgetRequestData, externalConfigValue);
 		},
 
 		_publishLayoutWidget(key, config) {

@@ -21,6 +21,7 @@ OAUTH_CLIENT_SECRET=secretKey \
 OID_URL=https://sso.ecomarcan.grafcan.es/realms/ecomarcan-dev/protocol/openid-connect \
 OID_CLIENT_ID=app \
 OID_CLIENT_SECRET=secretKey \
+OID_PEM_PUBLIC_KEY=MIIchangemeAQAB \
 API_URL=https://api.ecomarcan.grafcan.es/api \
 CONFIG_URL=https://s3.eu-west-1.amazonaws.com/mediastorage.redmicdev/public/config.json \
 npm start

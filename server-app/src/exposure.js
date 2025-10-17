@@ -1,168 +1,8 @@
 const express = require('express'),
 	path = require('path'),
-	bodyParser = require('body-parser'),
-	jwt = require('jsonwebtoken'),
+	bodyParser = require('body-parser');
 
-	production = !!parseInt(process.env.PRODUCTION, 10),
-	apiUrl = process.env.API_URL,
-	oidPemPublicKey = process.env.OID_PEM_PUBLIC_KEY,
-	oidPemPublicKeyWrap = `-----BEGIN PUBLIC KEY-----\n${oidPemPublicKey}\n-----END PUBLIC KEY-----`;
-
-let logger, params, version, robotsContent, externalRequest;
-
-function getLang(req) {
-
-	return req && req.headers && req.headers['content-language'] || params.lang;
-}
-
-function getEnv(req) {
-
-	return {
-		version: version,
-		useBuilt: params.useBuilt,
-		debug: params.debug,
-		apiUrl: apiUrl,
-		production: production,
-		lang: getLang(req)
-	};
-}
-
-function onGeneralRequest(req, res) {
-
-	res.render('index', {
-		env: getEnv(req)
-	});
-}
-
-function onActivateAccountRequest(req, res) {
-
-	res.render('activateAccount', {
-		env: getEnv(req),
-		token: req.params.token
-	});
-}
-
-function onNoSupportBrowserRequest(req, res) {
-
-	res.render('noSupportBrowser', {
-		env: getEnv(req)
-	});
-}
-
-function on404Request(req, res) {
-
-	res.status(404);
-	res.render('404', {
-		env: getEnv(req)
-	});
-}
-
-function onRobotsRequest(req, res) {
-
-	res.set('Content-Type', 'text/plain');
-
-	if (!robotsContent || !robotsContent.length) {
-		const userAgentLine = 'User-agent: *\n';
-
-		robotsContent = userAgentLine;
-
-		if (production) {
-			const apiPath = '/api',
-				disallowApiLine = 'Disallow: ' + apiPath + '\n',
-				allowAllLine = 'Allow: /\n',
-				sitemapPath = 'https://' + req.hostname + '/sitemap.xml',
-				sitemapLine = 'Sitemap: ' + sitemapPath;
-
-			robotsContent += disallowApiLine + allowAllLine + '\n' + sitemapLine;
-		} else {
-			const disallowAllLine = 'Disallow: /';
-
-			robotsContent += disallowAllLine;
-		}
-	}
-
-	res.send(robotsContent);
-}
-
-function onNullableJsRequest(_req, res) {
-
-	res.set('Content-Type', 'text/javascript');
-	res.send('');
-}
-
-function onUnknownRequest(_req, res, _next) {
-
-	res.redirect('/404');
-}
-
-function onOidTokenPayloadRequest(req, res) {
-
-	const token = req.body.token;
-
-	res.set('Content-Type', 'application/json');
-
-	if (token?.length) {
-		jwt.verify(token, oidPemPublicKeyWrap, (err, decoded) => jwtVerifyCallback(err, decoded, res));
-		return;
-	}
-
-	res.status(400).send({
-		code: 'Client error',
-		description: 'Something went wrong. Please, check your request and try again.'
-	});
-
-	logger.error('Missing "token" parameter at request body');
-}
-
-function jwtVerifyCallback(err, verifiedPayload, res) {
-
-	if (!err) {
-		res.send(verifiedPayload);
-		return;
-	}
-
-	res.status(500).send({
-		code: 'Server error',
-		description: 'Something went wrong at server. Please, try again.'
-	});
-
-	const errorMessage = err instanceof Object ? err.toString() : err;
-	logger.error(errorMessage);
-}
-
-function exposeRoutes(app) {
-
-	app.get('/activateAccount/:token', onActivateAccountRequest)
-		.get('/noSupportBrowser', onNoSupportBrowserRequest)
-		.get('/404', on404Request)
-		.get('/config', externalRequest.onConfigRequest)
-		.get('/sitemap.xml', externalRequest.onSitemapRequest)
-		.get('/robots.txt', onRobotsRequest)
-		.get(/^.+\.js$/, onNullableJsRequest)
-		.get(/.*/, onGeneralRequest)
-		.post('/oauth/revoke', bodyParser.json(), externalRequest.onOauthRevokeRequest)
-		.post('/oauth/token', externalRequest.onOauthTokenRequest)
-		.post('/oid/revoke', bodyParser.json(), externalRequest.onOidRevokeRequest)
-		.post('/oid/token', externalRequest.onOidTokenRequest)
-		.post('/oid/refresh', bodyParser.json(), externalRequest.onOidTokenRequest)
-		.post('/oid/payload', bodyParser.json(), onOidTokenPayloadRequest)
-		.use(onUnknownRequest);
-}
-
-function exposeContents(app, directoryName) {
-
-	const pathOptions = {
-		maxAge: 600000,
-		index: false
-	};
-
-	const exposedPath = path.join(__dirname, '../..', directoryName),
-		staticPropName = 'static',
-		servedPath = express[staticPropName](exposedPath, pathOptions);
-
-	app.use(servedPath)
-		.use('/' + directoryName, servedPath);
-}
+let params, commonCallbacks, dataCallbacks, authCallbacks;
 
 function expose(app) {
 
@@ -181,13 +21,49 @@ function expose(app) {
 	exposeRoutes(app);
 }
 
+function exposeContents(app, directoryName) {
+
+	const pathOptions = {
+		maxAge: 600000,
+		index: false
+	};
+
+	const exposedPath = path.join(__dirname, '../..', directoryName),
+		staticPropName = 'static',
+		servedPath = express[staticPropName](exposedPath, pathOptions);
+
+	app.use(servedPath)
+		.use('/' + directoryName, servedPath);
+}
+
+function exposeRoutes(app) {
+
+	app.get('/activateAccount/:token', commonCallbacks.onActivateAccountRequest)
+		.get('/noSupportBrowser', commonCallbacks.onNoSupportBrowserRequest)
+		.get('/404', commonCallbacks.on404Request)
+		.get('/robots.txt', commonCallbacks.onRobotsRequest)
+		.get('/config', dataCallbacks.onConfigRequest)
+		.get('/sitemap.xml', dataCallbacks.onSitemapRequest)
+		.get(/^.+\.js$/, commonCallbacks.onNullableJsRequest)
+		.get(/.*/, commonCallbacks.onGeneralRequest)
+		.post('/oauth/revoke', bodyParser.json(), authCallbacks.onOauthRevokeRequest)
+		.post('/oauth/token', authCallbacks.onOauthTokenRequest)
+		.post('/oid/revoke', bodyParser.json(), authCallbacks.onOidRevokeRequest)
+		.post('/oid/token', authCallbacks.onOidTokenRequest)
+		.post('/oid/refresh', bodyParser.json(), authCallbacks.onOidTokenRequest)
+		.post('/oid/payload', bodyParser.json(), authCallbacks.onOidTokenPayloadRequest)
+		.use(commonCallbacks.onUnknownRequest);
+}
+
 module.exports = function(loggerParameter, paramsParameter, versionParameter) {
 
-	logger = loggerParameter;
-	params = paramsParameter;
-	version = versionParameter;
+	const externalRequest = require('./externalRequest')(loggerParameter);
 
-	externalRequest = require('./externalRequest')(logger);
+	params = paramsParameter;
+
+	commonCallbacks = require('./common-callbacks')(loggerParameter, params, versionParameter);
+	dataCallbacks = require('./data-callbacks')(loggerParameter, externalRequest);
+	authCallbacks = require('./auth-callbacks')(loggerParameter, externalRequest);
 
 	return {
 		exposeApp: expose

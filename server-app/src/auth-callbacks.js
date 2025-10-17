@@ -256,10 +256,10 @@ function jwtVerifyCallback(err, verifiedPayload, res) {
 	logger.error(errorMessage);
 }
 
-module.exports = function(loggerParameter, externalRequest) {
+module.exports = function(loggerParameter, externalRequestParameter) {
 
 	logger = loggerParameter;
-	externalRequest = externalRequest;
+	externalRequest = externalRequestParameter;
 
 	return {
 		onOauthTokenRequest,

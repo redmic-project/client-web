@@ -193,7 +193,14 @@ define([
 
 			if (!this._tokenPayloadDfd) {
 				this._tokenPayloadDfd = new Deferred();
-				this._requestTokenPayload();
+
+				const token = Credentials.get('oidAccessToken');
+
+				if (token?.length) {
+					this._requestTokenPayload(token);
+				} else {
+					this._tokenPayloadDfd.resolve();
+				}
 			}
 
 			return this._tokenPayloadDfd;
@@ -256,13 +263,11 @@ define([
 			});
 		},
 
-		_requestTokenPayload: function() {
+		_requestTokenPayload: function(token) {
 			// summary:
 			//   Permite obtener el contenido del JWT del usuario pidiéndoselo al servidor para su verificación
 			// tags:
 			//   private
-
-			const token = Credentials.get('oidAccessToken');
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',

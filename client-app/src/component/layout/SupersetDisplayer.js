@@ -73,7 +73,7 @@ define([
 			this._prepareDashboardConfig();
 
 			let tokenDfd = this._getGuestToken();
-			tokenDfd.then(lang.hitch(this, this._prepareDashboardInstance));
+			tokenDfd.then(() => this._prepareDashboardInstance(), () => this._missingUserToken());
 		},
 
 		_prepareDashboardConfig: function() {
@@ -107,16 +107,32 @@ define([
 
 			this._guestToken = new Deferred();
 
+			const userToken = Credentials.get('oidAccessToken');
+
+			if (userToken?.length) {
+				this._requestGuestToken(userToken);
+			} else {
+				this._guestToken.reject();
+			}
+
+			return this._guestToken;
+		},
+
+		_missingUserToken: function() {
+
+			// TODO
+		},
+
+		_requestGuestToken: function(token) {
+
 			this._emitEvt('GET', {
 				target: this.target,
 				requesterId: this.getOwnChannel(),
 				id: this.dashboardConfig.id,
 				query: {
-					token: Credentials.get('oidAccessToken')
+					token
 				}
 			});
-
-			return this._guestToken;
 		},
 
 		_prepareDashboardInstance: function() {

@@ -118,6 +118,8 @@ define([
 		//		Nombre del canal por donde se van a publicar las notificaciones.
 		//	authChannel: String
 		//		Nombre del canal por donde se gestiona la sesión del usuario autenticado.
+		//	externalConfigChannel: String
+		//		Nombre del canal por donde se comunican las configuraciones externas.
 		//	i18n: Object
 		//		Traducciones globales
 
@@ -216,6 +218,7 @@ define([
 			this.alertChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT);
 			this.communicationChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION);
 			this.authChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.AUTH);
+			this.externalConfigChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.EXTERNAL_CONFIG),
 
 			this.outerAppChannel = this._buildChannel(this.rootChannel, this.outerAppOwnChannel);
 			this.innerAppChannel = this._buildChannel(this.rootChannel, this.innerAppOwnChannel);
@@ -899,17 +902,37 @@ define([
 
 		_subGetProps: function(req) {
 
-			var props = {};
+			const props = {};
 
-			for (var prop in req) {
-				if (this._checkPropIsShareable(prop)) {
-					props[prop] = this[prop];
-				} else {
-					console.error("Tried to get not gettable property '%s' at module '%s'", prop, this.getChannel());
-				}
+			for (let prop in req) {
+				props[prop] = this._getProp(prop);
 			}
 
-			this._emitEvt("GOT_PROPS", props);
+			all(props).then(propValues => this._emitEvt('GOT_PROPS', propValues));
+		},
+
+		_getProp: function(/*String*/ propName) {
+
+			const dfd = new Deferred();
+
+			if (!this._checkPropIsShareable(propName)) {
+				console.error("Tried to get not gettable property '%s' at module '%s'", prop, this.getChannel());
+				dfd.resolve();
+				return dfd;
+			}
+
+			const getPropCustomMethod = this[`_${propName}GetProp`];
+			if (getPropCustomMethod) {
+				getPropCustomMethod.call(this, dfd, propName);
+				return dfd;
+			}
+
+			const propValue = this[propName];
+			if (propValue === undefined) {
+				console.error(`Tried to get undefined property "${propName}" at module "${this.getChannel()}"`);
+			}
+			dfd.resolve(propValue);
+			return dfd;
 		},
 
 		_subChildActionDone: function(res, channelInfo) {

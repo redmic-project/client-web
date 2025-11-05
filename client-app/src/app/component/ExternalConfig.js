@@ -1,14 +1,14 @@
 define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
-	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
 	, 'src/util/Credentials'
 ], function(
 	redmicConfig
 	, declare
-	, lang
+	, Deferred
 	, _Module
 	, _Store
 	, Credentials
@@ -18,53 +18,47 @@ define([
 		//	Summary:
 		//		Módulo para manejar las variables de configuración externas, procedentes del servidor.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				ownChannel: 'externalConfig',
 				events: {
-					GOT_CONFIG: 'gotConfig',
 					REMOVE: 'remove',
 					REQUEST_FAILED: 'requestFailed'
 				},
 				actions: {
-					GET_CONFIG: 'getConfig',
-					GOT_CONFIG: 'gotConfig',
 					REMOVED: 'removed',
 					REQUEST_FAILED: 'requestFailed'
 				},
 
 				target: redmicConfig.services.getExternalConfig,
-				externalConfigExpirationMs: 3600000,
-				_gettingExternalConfig: false
+				localConfigExpirationMs: 3600000,
+				remoteForceRefresh: true
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {
 
 			if (!Credentials.get('externalConfig')) {
-				this._setEmptyExternalConfig();
+				this._deleteExternalConfig();
 			}
 
 			this._listenLocalStorage();
 		},
 
-		_defineSubscriptions: function() {
+		_listenLocalStorage: function() {
 
-			this.subscriptionsConfig.push({
-				channel : this.getChannel('GET_CONFIG'),
-				callback: '_subGetConfig'
-			});
+			Credentials.on('changed:externalConfig', evt => this._onExternalConfigChanged(evt));
+			Credentials.on('removed:externalConfig', () => this._onExternalConfigRemoved());
 		},
 
 		_definePublications: function() {
 
 			this.publicationsConfig.push({
-				event: 'GOT_CONFIG',
-				channel: this.getChannel('GOT_CONFIG')
-			},{
 				event: 'REMOVE',
 				channel: this.getChannel('REMOVED')
 			},{
@@ -73,66 +67,63 @@ define([
 			});
 		},
 
-		_listenLocalStorage: function() {
-
-			Credentials.on('changed:externalConfig', lang.hitch(this, this._onExternalConfigChanged));
-			Credentials.on('removed:externalConfig', lang.hitch(this, this._onExternalConfigRemoved));
-		},
-
 		postCreate: function() {
+
+			this.inherited(arguments);
 
 			this._getExternalConfig();
 		},
 
-		_subGetConfig: function(req) {
+		_getExternalConfig: function() {
 
-			this._getExternalConfig(req);
-		},
-
-		_getExternalConfig: function(req) {
-
-			var currentExternalConfig = Credentials.get('externalConfig'),
-				currentExternalConfigTimestamp = Credentials.get('externalConfigTimestamp'),
-				forceLocalRefresh = req && req.forceLocalRefresh;
+			const currentExternalConfig = Credentials.get('externalConfig'),
+				currentExternalConfigTimestamp = Credentials.get('externalConfigTimestamp');
 
 			if (currentExternalConfig && currentExternalConfigTimestamp) {
-				var configNotExpired = currentExternalConfigTimestamp >= Date.now() - this.externalConfigExpirationMs;
-				if (configNotExpired && !forceLocalRefresh) {
-					this._emitGotConfig(currentExternalConfig);
+				const configNotExpired = currentExternalConfigTimestamp >= Date.now() - this.localConfigExpirationMs;
+				if (configNotExpired) {
+					this._setExternalConfig(currentExternalConfig);
 					return;
 				}
 			}
 
-			if (this._gettingExternalConfig) {
-				return;
-			}
+			this._requestExternalConfig();
+		},
 
-			this._gettingExternalConfig = true;
+		_requestExternalConfig: function() {
 
-			var forceRemoteRefresh = req && req.forceRemoteRefresh,
-				query = {};
+			this._externalConfigDfd = new Deferred();
 
-			if (forceRemoteRefresh) {
-				query.forceRefresh = true;
-			}
+			const forceRefresh = this.remoteForceRefresh,
+				query = { forceRefresh };
 
 			this._emitEvt('GET', {
 				target: this.target,
-				query: query,
+				params: { query },
 				requesterId: this.getOwnChannel()
 			});
 		},
 
-		_emitGotConfig: function(data) {
+		_externalConfigGetProp: function(dfd, _propName) {
 
-			this._emitEvt('GOT_CONFIG', {
-				config: data
-			});
+			if (this.externalConfig) {
+				dfd.resolve(this.externalConfig);
+				return;
+			}
+
+			if (!this._externalConfigDfd) {
+				this._requestExternalConfig();
+			}
+
+			this._externalConfigDfd.then(
+				config => dfd.resolve(config),
+				() => dfd.resolve()
+			);
 		},
 
 		_onExternalConfigChanged: function(evt) {
 
-			var value = evt.value;
+			const value = evt.value;
 
 			if (!value) {
 				this._onExternalConfigRemoved();
@@ -144,36 +135,42 @@ define([
 			this._emitEvt('REMOVE');
 		},
 
-		_setEmptyExternalConfig: function() {
+		_setExternalConfig: function(config) {
+
+			this.externalConfig = config;
+		},
+
+		_deleteExternalConfig: function() {
 
 			Credentials.remove('externalConfig');
 			Credentials.remove('externalConfigTimestamp');
+
+			delete this.externalConfig;
 		},
 
 		_itemAvailable: function(res) {
 
-			this._gettingExternalConfig = false;
-
-			var data = res.data;
+			const data = res.data;
 
 			if (!data) {
 				this._onExternalConfigRemoved();
+				this._externalConfigDfd.reject();
 				return;
 			}
 
-			var timestamp = Date.now();
+			const timestamp = Date.now();
 
 			Credentials.set('externalConfig', data);
 			Credentials.set('externalConfigTimestamp', timestamp);
 
-			this._emitGotConfig(data);
+			this._setExternalConfig(data);
+			this._externalConfigDfd.resolve(data);
 		},
 
 		_errorAvailable: function(err) {
 
-			this._gettingExternalConfig = false;
-
 			this._emitEvt('REQUEST_FAILED', err);
+			this._externalConfigDfd.reject(err);
 		}
 	});
 });

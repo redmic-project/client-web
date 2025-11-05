@@ -24,14 +24,8 @@ define([
 
 				externalConfigActions: {
 					GOT_EXTERNAL_CONFIG: 'gotExternalConfig',
-					GET_CONFIG: 'getConfig',
-					GOT_CONFIG: 'gotConfig',
 					REQUEST_FAILED: 'requestFailed'
-				},
-
-				externalConfigChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.EXTERNAL_CONFIG),
-
-				_requestedExternalConfigProperty: null
+				}
 			};
 
 			lang.mixin(this, this.config, args);
@@ -58,9 +52,6 @@ define([
 		_defineExternalConfigSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel: this._buildChannel(this.externalConfigChannel, this.actions.GOT_CONFIG),
-				callback: '_subGotExternalConfig'
-			},{
 				channel: this._buildChannel(this.externalConfigChannel, this.actions.REQUEST_FAILED),
 				callback: '_subExternalConfigRequestFailed'
 			});
@@ -71,9 +62,6 @@ define([
 		_defineExternalConfigPublications: function() {
 
 			this.publicationsConfig.push({
-				event: 'GET_EXTERNAL_CONFIG',
-				channel: this._buildChannel(this.externalConfigChannel, this.actions.GET_CONFIG)
-			},{
 				event: 'GOT_EXTERNAL_CONFIG',
 				channel: this.getChannel('GOT_EXTERNAL_CONFIG')
 			});
@@ -88,18 +76,26 @@ define([
 
 		_onGetExternalConfigEvt: function(evt) {
 
-			this._requestedExternalConfigProperty = evt.propertyName;
+			const requestedConfigPropName = evt.propertyName,
+				propName = 'externalConfig';
+
+			const gotPropsChannel = this._buildChannel(this.externalConfigChannel, 'GOT_PROPS');
+			this._once(gotPropsChannel, res => {
+				this._onceGotPropsFromExternalConfig(res[propName], requestedConfigPropName)
+			});
+
+			const getPropsChannel = this._buildChannel(this.externalConfigChannel, 'GET_PROPS');
+			this._publish(getPropsChannel, { [propName]: true });
 		},
 
-		_subGotExternalConfig: function(res) {
+		_onceGotPropsFromExternalConfig: function(config, configProp) {
 
-			var config = res.config,
-				configProp = this._requestedExternalConfigProperty,
-				configToEmit;
+			let configToEmit;
 
 			if (configProp) {
-				configToEmit = {};
-				configToEmit[configProp] = Utilities.getDeepProp(config, configProp);
+				configToEmit = {
+					[configProp]: Utilities.getDeepProp(config, configProp)
+				};
 			} else {
 				configToEmit = config;
 			}

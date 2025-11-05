@@ -80,9 +80,9 @@ define([
 				propName = 'externalConfig';
 
 			const gotPropsChannel = this._buildChannel(this.externalConfigChannel, 'GOT_PROPS');
-			this._once(gotPropsChannel, res => {
+			this._once(gotPropsChannel, res =>
 				this._onceGotPropsFromExternalConfig(res[propName], requestedConfigPropName)
-			});
+			);
 
 			const getPropsChannel = this._buildChannel(this.externalConfigChannel, 'GET_PROPS');
 			this._publish(getPropsChannel, { [propName]: true });

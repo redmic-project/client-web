@@ -4,7 +4,6 @@ define([
 	, 'dojo/aspect'
 	, 'dojo/Deferred'
 	, 'put-selector'
-	, 'src/component/base/_ExternalConfig'
 	, 'src/component/map/layer/_LayerProtocols'
 ], function(
 	declare
@@ -12,11 +11,10 @@ define([
 	, aspect
 	, Deferred
 	, put
-	, _ExternalConfig
 	, _LayerProtocols
 ) {
 
-	return declare([_LayerProtocols, _ExternalConfig], {
+	return declare(_LayerProtocols, {
 		//	summary:
 		//		Permite trabajar con definiciones estáticas de capas para módulo Map.
 		//	description:

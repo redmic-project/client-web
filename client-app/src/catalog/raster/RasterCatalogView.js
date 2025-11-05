@@ -3,16 +3,14 @@ define([
 	, 'app/designs/embeddedContent/Layout'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/base/_ExternalConfig'
 ], function(
 	EmbeddedContentController
 	, EmbeddedContentLayout
 	, declare
 	, lang
-	, _ExternalConfig
 ) {
 
-	return declare([EmbeddedContentLayout, EmbeddedContentController, _ExternalConfig], {
+	return declare([EmbeddedContentLayout, EmbeddedContentController], {
 		//	summary:
 		//		Vista de catálogo de recursos ráster.
 		//	description:

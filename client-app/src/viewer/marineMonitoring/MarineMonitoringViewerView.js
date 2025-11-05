@@ -3,7 +3,6 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'moment'
-	, 'src/component/base/_ExternalConfig'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
@@ -17,7 +16,6 @@ define([
 	, lang
 	, Deferred
 	, moment
-	, _ExternalConfig
 	, _Module
 	, _Show
 	, _Store
@@ -29,7 +27,7 @@ define([
 ) {
 
 	return declare([_Module, _Show, _Store, _MapDesignWithTopbarAndContentLayout, _AddAtlasComponent,
-		_ManageOgcServices, _ExternalConfig], {
+		_ManageOgcServices], {
 		// summary:
 		//   Vista de visor de monitorización marina. Proporciona un mapa principal y una serie de capas temáticas,
 		//   junto con el componente Atlas para cruzar datos, incluyendo soporte de consulta con dimensión temporal.

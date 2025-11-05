@@ -1,20 +1,18 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/base/_ExternalConfig'
 	, 'src/component/base/_Module'
 	, 'src/component/layout/widgetProvider/_LayoutWidgetDefinition'
 	, 'src/component/layout/widgetProvider/_PrepareLayoutWidget'
 ], function(
 	declare
 	, lang
-	, _ExternalConfig
 	, _Module
 	, _LayoutWidgetDefinition
 	, _PrepareLayoutWidget
 ) {
 
-	return declare([_Module, _LayoutWidgetDefinition, _PrepareLayoutWidget, _ExternalConfig], {
+	return declare([_Module, _LayoutWidgetDefinition, _PrepareLayoutWidget], {
 		// summary:
 		//   Componente que centraliza las definiciones de widgets, para ser provistos bajo demanda.
 

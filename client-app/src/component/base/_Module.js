@@ -10,6 +10,7 @@ define([
 	, "dojo/on"
 	, "dojo/promise/all"
 	, "RWidgets/Utilities"
+	, 'src/component/base/_ExternalConfig'
 	, "src/util/Mediator"
 	, "./_ChkCollection"
 	, "./_CommunicationCenter"
@@ -27,6 +28,7 @@ define([
 	, on
 	, all
 	, Utilities
+	, _ExternalConfig
 	, Mediator
 	, _ChkCollection
 	, _CommunicationCenter
@@ -34,7 +36,9 @@ define([
 	, _ModuleItfc
 ) {
 
-	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter, _ManageClickEvent], {
+	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter, _ManageClickEvent,
+		_ExternalConfig
+	], {
 		// summary:
 		//   Base común para todos los componentes.
 		// description:

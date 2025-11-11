@@ -4,21 +4,21 @@ define([
 	, 'dojo/dom'
 	, 'put-selector'
 	, 'src/app/component/Analytics'
+	, 'src/app/component/auth/Auth'
 	, 'src/app/component/Credentials'
 	, 'src/app/component/ExternalConfig'
 	, 'src/app/component/layout/InnerLayoutImpl'
 	, 'src/app/component/layout/OuterLayoutImpl'
 	, 'src/app/component/Loading'
-	, 'src/app/component/auth/Auth'
 	, 'src/app/component/meta/MetaTags'
 	, 'src/app/component/ModuleStore'
+	, 'src/app/component/request/RestManagerImpl'
 	, 'src/app/component/Router'
 	, 'src/app/util/CheckBrowser'
-	, 'src/component/notification/CommunicationCenter'
-	, 'src/component/notification/Alert'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
-	, 'src/component/store/RestManagerImpl'
+	, 'src/component/notification/Alert'
+	, 'src/component/notification/CommunicationCenter'
 	, 'src/redmicConfig'
 	, 'src/util/CookieLoader'
 	, 'templates/LoadingCustom'
@@ -28,21 +28,21 @@ define([
 	, dom
 	, put
 	, Analytics
+	, Auth
 	, Credentials
 	, ExternalConfig
 	, InnerLayoutImpl
 	, OuterLayoutImpl
 	, Loading
-	, Auth
 	, MetaTags
 	, ModuleStore
+	, RestManagerImpl
 	, Router
 	, CheckBrowser
-	, CommunicationCenter
-	, Alert
 	, _Module
 	, _Store
-	, RestManagerImpl
+	, Alert
+	, CommunicationCenter
 	, redmicConfig
 	, CookieLoader
 	, LoadingCustomTemplate

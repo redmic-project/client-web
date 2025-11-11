@@ -1,6 +1,6 @@
 define([
 	'src/util/Mediator'
-	, 'src/component/store/RestManagerImpl'
+	, 'src/app/component/request/RestManagerImpl'
 
 ], function(
 	Mediator

@@ -10,8 +10,7 @@ define([
 
 	return declare(null, {
 		//	summary:
-		//		Aplicación de componentes adicionales para la vista detalle de Activity, en función del tipo de layout
-		//		establecido según su identificador. Si no está establecido, se decide según su categoría.
+		//		Base para vistas detalle personalizables con widgets provistos por el componente WidgetProvider.
 
 		postMixInProperties: function() {
 

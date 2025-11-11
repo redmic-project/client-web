@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/request/xhr'
 	, 'dojo/request/notify'
-	, 'src/component/store/RestManager'
+	, 'src/app/component/request/RestManager'
 	, 'src/redmicConfig'
 	, 'src/util/Credentials'
 ], function(

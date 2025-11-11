@@ -2,14 +2,14 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/app/component/request/_RestManagerItfc'
 	, 'src/component/base/_Module'
-	, 'src/component/store/_RestManagerItfc'
 ], function(
 	redmicConfig
 	, declare
 	, lang
-	, _Module
 	, _RestManagerItfc
+	, _Module
 ) {
 
 	return declare([_Module, _RestManagerItfc], {

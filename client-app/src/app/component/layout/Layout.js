@@ -1,12 +1,10 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'src/app/component/layout/_LayoutItfc'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 ], function(
 	declare
-	, lang
 	, _LayoutItfc
 	, _Module
 	, _Show
@@ -18,10 +16,9 @@ define([
 		//	Description:
 		//		Recibe órdenes para mostrar en pantalla los diferentes módulos de la aplicación.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				ownChannel: 'app',
+			const defaultConfig = {
 				events: {
 					MODULE_SHOWN: 'moduleShown'
 				},
@@ -31,7 +28,9 @@ define([
 				}
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function() {
@@ -52,18 +51,18 @@ define([
 
 		_setOwnCallbacksForEvents: function() {
 
-			this._onEvt('HIDE', lang.hitch(this, this._onAppHide));
+			this._onEvt('HIDE', () => this._onAppHide());
 		},
 
 		_subShowModule: function(req) {
 
-			var moduleKey = req.moduleKey,
+			const moduleKey = req.moduleKey,
 				moduleInstance = req.moduleInstance;
 
-			this._once(moduleInstance.getChannel('SHOWN'), lang.hitch(this, this._onModuleShown, moduleKey));
+			this._once(moduleInstance.getChannel('SHOWN'), () => this._onModuleShown(moduleKey));
 
 			this._publish(moduleInstance.getChannel('SHOW'), {
-				node: this._getNode(),
+				node: this._getContentNode(),
 				metaTags: true
 			});
 		},

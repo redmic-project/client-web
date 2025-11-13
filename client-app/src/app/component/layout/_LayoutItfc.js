@@ -18,7 +18,7 @@ define([
 
 			return lang.mixin(this.inherited(arguments), {
 				'_doResize': {},
-				'_getNode': {},
+				'_getContentNode': {},
 				'_onAppHide': {}
 			});
 		}

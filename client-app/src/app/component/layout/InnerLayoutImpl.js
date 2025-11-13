@@ -1,10 +1,7 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'dojo/dom-class'
 	, 'put-selector'
-	, 'src/util/Credentials'
 	, 'src/app/component/layout/Layout'
 	, 'src/app/component/sidebar/MainSidebarImpl'
 	, 'src/app/component/Topbar'
@@ -12,13 +9,11 @@ define([
 	, 'src/component/selection/Selector'
 	, 'src/component/socket/Socket'
 	, 'src/component/socket/Task'
+	, 'src/util/Credentials'
 ], function(
 	declare
-	, lang
-	, aspect
 	, domClass
 	, put
-	, Credentials
 	, Layout
 	, MainSidebarImpl
 	, Topbar
@@ -26,6 +21,7 @@ define([
 	, Selector
 	, Socket
 	, Task
+	, Credentials
 ) {
 
 	return declare(Layout, {
@@ -37,70 +33,64 @@ define([
 		//		Inicialmente, crea los módulos y estructuras necesarias para la parte interna de la app. También se
 		//		encarga de actualizar el estado de sidebar.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				ownChannel: this.innerAppOwnChannel,
+				events: {
+					UPDATE_ACTIVE: 'updateActive'
+				},
+				actions: {
+					UPDATE_ACTIVE: 'updateActive',
+					TOGGLE_SIDEBAR: 'toggleSidebar'
+				},
 				'class': 'mainContainer',
 				reducedWidthClass: 'reducedWidth',
 				contentContainerClass: 'contentContainer',
 				collapseButtonClass: 'collapseSidebarButton',
 				uncollapsedSidebarClass: 'uncollapsedSidebar',
-				overlaySidebarBackgroundClass: 'overlaySidebarBackground',
-
-				innerAppEvents: {
-					UPDATE_ACTIVE: 'updateActive'
-				},
-				innerAppActions: {
-					UPDATE_ACTIVE: 'updateActive',
-					TOGGLE_SIDEBAR: 'toggleSidebar'
-				}
+				overlaySidebarBackgroundClass: 'overlaySidebarBackground'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.after(this, '_mixEventsAndActions', lang.hitch(this, this._mixEventsAndActionsInnerApp));
-			aspect.after(this, '_setOwnCallbacksForEvents', lang.hitch(this,
-				this._setInnerAppOwnCallbacksForEvents));
-
-			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineInnerAppSubscriptions));
-			aspect.before(this, '_definePublications', lang.hitch(this, this._defineInnerAppPublications));
+			this.inherited(arguments);
 		},
 
-		_mixEventsAndActionsInnerApp: function () {
+		_setOwnCallbacksForEvents: function() {
 
-			lang.mixin(this.events, this.innerAppEvents);
-			lang.mixin(this.actions, this.innerAppActions);
-			delete this.innerAppEvents;
-			delete this.innerAppActions;
+			this.inherited(arguments);
+
+			this._onEvt('MODULE_SHOWN', evt => this._onAppModuleShown(evt));
+			this._onEvt('RESIZE', () => this._onAppResize());
 		},
 
-		_setInnerAppOwnCallbacksForEvents: function() {
-
-			this._onEvt('MODULE_SHOWN', lang.hitch(this, this._onAppModuleShown));
-			this._onEvt('RESIZE', lang.hitch(this, this._onAppResize));
-		},
-
-		_defineInnerAppSubscriptions: function() {
+		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
 				channel: this.getChannel('TOGGLE_SIDEBAR'),
 				callback: '_subToggleSidebar',
 				options: {
-					predicate: lang.hitch(this, this._chkModuleCanResize)
+					predicate: () => this._chkModuleCanResize()
 				}
 			});
+
+			this.inherited(arguments);
 		},
 
-		_defineInnerAppPublications: function() {
+		_definePublications: function() {
 
 			this.publicationsConfig.push({
 				event: 'UPDATE_ACTIVE',
 				channel: this.sidebar.getChannel('UPDATE_ACTIVE')
 			});
+
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {
+
+			this.inherited(arguments);
 
 			this._createStructure();
 			this._createModules();
@@ -141,7 +131,7 @@ define([
 				return;
 			}
 
-			var overlayMainSidebarIsOpen = domClass.contains(this.ownerDocumentBody, this.uncollapsedSidebarClass);
+			const overlayMainSidebarIsOpen = domClass.contains(this.ownerDocumentBody, this.uncollapsedSidebarClass);
 
 			if (overlayMainSidebarIsOpen) {
 				this._appClickHandler.resume();
@@ -161,7 +151,7 @@ define([
 			//	summary:
 			//		Manda a actualizar el item activo del sidebar
 
-			var moduleKey = evt.key;
+			const moduleKey = evt.key;
 
 			this._emitEvt('UPDATE_ACTIVE', {
 				path: moduleKey
@@ -221,11 +211,11 @@ define([
 
 		_createListeners: function() {
 
-			this._appClickHandler = this._listenGlobalClicks(lang.hitch(this, this._onAppClicked));
+			this._appClickHandler = this._listenGlobalClicks((evt) => this._onAppClicked(evt));
 			this._appClickHandler.pause();
 		},
 
-		_getNode: function() {
+		_getContentNode: function() {
 			//	summary:
 			//		Retorna el nodo donde se van a mostrar los módulos.
 			//	tags:
@@ -283,7 +273,7 @@ define([
 
 		_onAppClicked: function(evt) {
 
-			var nodeDoesNotBelongToMainSidebar = !this._checkClickBelongsToNode(evt, this.sidebar.domNode),
+			const nodeDoesNotBelongToMainSidebar = !this._checkClickBelongsToNode(evt, this.sidebar.domNode),
 				nodeBelongsToSidebarOverlay = this._checkClickBelongsToNode(evt, this._overlaySidebarBackground);
 
 			if (nodeDoesNotBelongToMainSidebar && nodeBelongsToSidebarOverlay) {

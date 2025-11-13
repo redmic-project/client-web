@@ -1,6 +1,5 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'dojo/dom'
 	, 'put-selector'
 	, 'src/app/component/Analytics'
@@ -16,7 +15,6 @@ define([
 	, 'src/app/component/Router'
 	, 'src/app/util/CheckBrowser'
 	, 'src/component/base/_Module'
-	, 'src/component/base/_Store'
 	, 'src/component/notification/Alert'
 	, 'src/component/notification/CommunicationCenter'
 	, 'src/redmicConfig'
@@ -24,7 +22,6 @@ define([
 	, 'templates/LoadingCustom'
 ], function(
 	declare
-	, lang
 	, dom
 	, put
 	, Analytics
@@ -40,7 +37,6 @@ define([
 	, Router
 	, CheckBrowser
 	, _Module
-	, _Store
 	, Alert
 	, CommunicationCenter
 	, redmicConfig
@@ -48,14 +44,13 @@ define([
 	, LoadingCustomTemplate
 ) {
 
-	var rootNode = dom.byId('rootContainer'),
+	const rootNode = dom.byId('rootContainer'),
 		nativeLoadingNode = dom.byId('loadingContainer');
 
-	var hideNativeLoadingNode = function() {
+	const hideNativeLoadingNode = function() {
 
 		if (nativeLoadingNode) {
 			put('!', nativeLoadingNode);
-			nativeLoadingNode = undefined;
 		}
 	};
 
@@ -94,9 +89,9 @@ define([
 		//	_prevModuleKey: String
 		//		Clave del módulo antiguo dentro de moduleStore.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				ownChannel: this.rootChannel,
 				events: {
 					GET_CREDENTIALS: 'getCredentials',
@@ -112,58 +107,60 @@ define([
 				_reconnectTimeout: 10000
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {
 
-			var parentChannel = this.getChannel();
+			const parentChannel = this.getChannel();
 
 			this._router = new Router({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			new CookieLoader();
 
 			new RestManagerImpl({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			new CommunicationCenter({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			new Alert({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			new Analytics({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			new MetaTags({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			this._credentials = new Credentials({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			this._externalConfig = new ExternalConfig({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			this._moduleStore = new ModuleStore({
-				parentChannel: parentChannel
+				parentChannel
 			});
 
 			this._loading = new Loading({
-				parentChannel: parentChannel,
+				parentChannel,
 				globalNode: rootNode
 			});
 
 			new Auth({
-				parentChannel: parentChannel
+				parentChannel
 			});
 		},
 
@@ -209,6 +206,8 @@ define([
 
 		postCreate: function() {
 
+			this.inherited(arguments);
+
 			this._emitEvt('GET_CREDENTIALS');
 		},
 
@@ -235,27 +234,33 @@ define([
 				this._showReconnectingMessage();
 			}
 
-			setTimeout(lang.hitch(this, this._emitEvt, 'GET_CREDENTIALS'), this._reconnectTimeout);
+			setTimeout(() => this._emitEvt('GET_CREDENTIALS'), this._reconnectTimeout);
 		},
 
 		_subChangeModule: function(req) {
 
-			var route = req.route,
-				locationQuery = req.locationQuery,
-				routeChanged = this._changeModule(route);
+			const route = req.route;
 
-			if (!routeChanged) {
+			this._currModuleKey = route;
+			if (this._currModuleKey === this._prevModuleKey) {
 				return;
 			}
+			this._prevModuleKey = route;
+
+			this._once(this._loading.getChannel('LOADING_DRAWN'), () => this._onLoadingDrawn());
+
+			this._publish(this._loading.getChannel('LOADING'), {
+				instant: !this._currModuleInstance
+			});
 
 			this._emitEvt('MODULE_CHANGED', {
-				route: route
+				route
 			});
 		},
 
 		_showReconnectingMessage: function() {
 
-			var template = LoadingCustomTemplate({
+			const template = LoadingCustomTemplate({
 				message: this.i18n.tryingToReconnect,
 				iconClass: 'hourglass-spin'
 			});
@@ -264,31 +269,6 @@ define([
 			this._reconnectingMessageNode.innerHTML = template;
 
 			hideNativeLoadingNode();
-		},
-
-		_changeModule: function(route) {
-			//	summary:
-			//		Actualiza el módulo que se visualiza.
-			//	tags:
-			//		private
-			//	route:
-			//		ruta del nuevo módulo
-
-			this._currModuleKey = route;
-
-			if (this._currModuleKey === this._prevModuleKey) {
-				return false;
-			}
-
-			this._prevModuleKey = this._currModuleKey;
-
-			this._once(this._loading.getChannel('LOADING_DRAWN'), lang.hitch(this, this._onLoadingDrawn));
-
-			this._publish(this._loading.getChannel('LOADING'), {
-				instant: !this._currModuleInstance
-			});
-
-			return true;
 		},
 
 		_onLoadingDrawn: function() {
@@ -328,18 +308,15 @@ define([
 			//	tags:
 			//		private
 
-			if (!instance || !instance.getChannel) {
+			if (!instance?.getChannel) {
 				this._publish(this._router.getChannel('GO_TO_ERROR_ROUTE'), {});
 				return;
 			}
 
 			this._currModuleInstance = instance;
+			this._once(instance.getChannel('DESTROYED'), () => this._onModuleDestroyed(this._currModuleKey));
 
-			this._once(this._currModuleInstance.getChannel('DESTROYED'), lang.hitch(this, this._onModuleDestroyed,
-				this._currModuleKey));
-
-			this._once(this._currLayoutInstance.getChannel('MODULE_SHOWN'), lang.hitch(this, this._onModuleShown));
-
+			this._once(this._currLayoutInstance.getChannel('MODULE_SHOWN'), () => this._onModuleShown());
 			this._publish(this._currLayoutInstance.getChannel('SHOW_MODULE'), {
 				moduleKey: this._currModuleKey,
 				moduleInstance: instance
@@ -352,7 +329,7 @@ define([
 			//	tags:
 			//		private
 
-			this._once(this._currModuleInstance.getChannel('HIDDEN'), lang.hitch(this, this._onModuleHidden));
+			this._once(this._currModuleInstance.getChannel('HIDDEN'), () => this._onModuleHidden());
 
 			this._publish(this._currModuleInstance.getChannel('HIDE'));
 		},
@@ -401,7 +378,7 @@ define([
 			//	layout:
 			//		Instancia del layout a mostrar
 
-			this._once(layout.getChannel('SHOWN'), lang.hitch(this, this._onLayoutShown));
+			this._once(layout.getChannel('SHOWN'), () => this._onLayoutShown());
 
 			this._publish(layout.getChannel('SHOW'), {
 				node: rootNode
@@ -427,7 +404,7 @@ define([
 				return;
 			}
 
-			this._once(this._currLayoutInstance.getChannel('HIDDEN'), lang.hitch(this, this._onLayoutHidden));
+			this._once(this._currLayoutInstance.getChannel('HIDDEN'), () => this._onLayoutHidden());
 			this._publish(this._currLayoutInstance.getChannel('HIDE'));
 		},
 
@@ -438,7 +415,7 @@ define([
 			//	tags:
 			//		private
 
-			this._once(this._currLayoutInstance.getChannel('DESTROYED'), lang.hitch(this, this._onLayoutDestroyed));
+			this._once(this._currLayoutInstance.getChannel('DESTROYED'), () => this._onLayoutDestroyed());
 			this._publish(this._currLayoutInstance.getChannel('DESTROY'));
 		},
 
@@ -447,21 +424,19 @@ define([
 			delete this._currLayoutInstance;
 		},
 
-		_onModuleShown: function(/*Object*/ res) {
+		_onModuleShown: function() {
 
 			this._publish(this._loading.getChannel('LOADED'));
 		},
 
-		_onModuleHidden: function(/*Object*/ res) {
+		_onModuleHidden: function() {
 			//	summary:
 			//		Se ejecuta cuando el módulo actual se ha terminado de cerrar. Lo desconecta y abre el siguiente
 			//		módulo tras recibir la confirmación de desconexión del actual.
 			//	tags:
 			//		private
-			//	res:
-			//		Respuesta recibida en la suscripción
 
-			this._once(this._currModuleInstance.getChannel('DISCONNECTED'), lang.hitch(this, this._openModule));
+			this._once(this._currModuleInstance.getChannel('DISCONNECTED'), () => this._openModule());
 			this._publish(this._currModuleInstance.getChannel('DISCONNECT'));
 		},
 

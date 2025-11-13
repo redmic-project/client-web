@@ -1,13 +1,11 @@
 define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'src/app/component/request/_RestManagerItfc'
 	, 'src/component/base/_Module'
 ], function(
 	redmicConfig
 	, declare
-	, lang
 	, _RestManagerItfc
 	, _Module
 ) {
@@ -62,46 +60,40 @@ define([
 		_defineSubscriptions: function () {
 
 			const options = {
-				predicate: lang.hitch(this, this._chkTargetIsValid)
+				predicate: (req) => this._chkTargetIsValid(req)
 			};
 
 			this.subscriptionsConfig.push({
-				channel : this.getChannel('REQUEST'),
+				channel: this.getChannel('REQUEST'),
 				callback: '_subRequest',
 				options
 			},{
-				channel : this.getChannel('GET'),
+				channel: this.getChannel('GET'),
 				callback: '_subGet',
 				options
 			},{
-				channel : this.getChannel('INJECT_DATA'),
+				channel: this.getChannel('INJECT_DATA'),
 				callback: '_subInjectData',
 				options
 			},{
-				channel : this.getChannel('INJECT_ITEM'),
+				channel: this.getChannel('INJECT_ITEM'),
 				callback: '_subInjectItem',
 				options
 			},{
-				channel : this.getChannel('ADD_REQUEST_PARAMS'),
+				channel: this.getChannel('ADD_REQUEST_PARAMS'),
 				callback: '_subAddRequestParams',
 				options
 			},{
-				channel : this.getChannel('SAVE'),
+				channel: this.getChannel('SAVE'),
 				callback: '_subSave',
 				options: {
-					predicate: lang.hitch(this, function(req) {
-
-						return this._chkTargetIsValid(req) && this._chkValidSaveRequest(req);
-					})
+					predicate: (req) => this._chkValidSaveRequest(req)
 				}
 			},{
-				channel : this.getChannel('REMOVE'),
+				channel: this.getChannel('REMOVE'),
 				callback: '_subRemove',
 				options: {
-					predicate: lang.hitch(this, function(req) {
-
-						return this._chkTargetIsValid(req) && this._chkValidRemoveRequest(req);
-					})
+					predicate: (req) => this._chkValidRemoveRequest(req)
 				}
 			});
 		},
@@ -143,33 +135,13 @@ define([
 
 			this._manageRequestParams(req, requesterChannel);
 
+			const evtName = 'GET',
+				notifySuccess = false,
+				notifyError = true;
+
 			this._performGet(req, requesterChannel).then(
-				lang.hitch(this, this._handleGetSuccess, req),
-				lang.hitch(this, this._handleGetError, req));
-		},
-
-		_handleGetSuccess: function(req, res) {
-
-			var response = this._parseResponse(res);
-
-			this._emitResponse({
-				req: req,
-				res: response,
-				evtName: 'GET'
-			});
-		},
-
-		_handleGetError: function(req, res) {
-
-			var response = this._parseError(res);
-
-			this._emitError(response);
-
-			this._emitResponse({
-				req: req,
-				res: response,
-				evtName: 'GET'
-			});
+				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
+				(res) => this._handleError({ evtName, notifyError }, req, res));
 		},
 
 		_subRequest: function(req, _mediatorChannel, componentInfo) {
@@ -180,63 +152,47 @@ define([
 
 			this._manageRequestParams(req, requesterChannel);
 
+			const evtName = 'REQUEST',
+				notifySuccess = false,
+				notifyError = true;
+
 			this._performRequest(req, requesterChannel).then(
-				lang.hitch(this, this._handleRequestSuccess, req),
-				lang.hitch(this, this._handleRequestError, req));
-		},
-
-		_handleRequestSuccess: function(req, res) {
-
-			var response = this._parseResponse(res);
-
-			this._emitResponse({
-				req: req,
-				res: response,
-				evtName: 'REQUEST'
-			});
-		},
-
-		_handleRequestError: function(req, res) {
-
-			var response = this._parseError(res);
-
-			this._emitError(response);
-
-			this._emitResponse({
-				req: req,
-				res: response,
-				evtName: 'REQUEST'
-			});
+				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
+				(res) => this._handleError({ evtName, notifyError }, req, res));
 		},
 
 		_subInjectItem: function(req) {
 
-			var data = req.data;
-
-			if (!data) {
-				data = [];
-			}
-
-			this._handleGetSuccess(req, {
+			const res = {
 				status: 200,
-				data: data
-			});
+				data: req.data || {}
+			};
+
+			const evtName = 'GET',
+				notifySuccess = false;
+
+			this._handleSuccess({ evtName, notifySuccess }, req, res);
 		},
 
 		_subInjectData: function(req) {
 
-			var res = {
+			const res = {
 				status: 200,
 				data: req.data || []
 			};
 
+			// TODO esta variable no se usa, eliminarla o asignarla a req o res?
 			var total = req.data ? (req.total || req.data.length) : 0;
 
+			// TODO por qué se borra? comprobar si es necesario
 			if (req.total) {
 				delete req.total;
 			}
 
-			this._handleRequestSuccess(req, res);
+			const evtName = 'REQUEST',
+				notifySuccess = false;
+
+			this._handleSuccess({ evtName, notifySuccess }, req, res);
 		},
 
 		_subAddRequestParams: function(req, _mediatorChannel, componentInfo) {
@@ -258,7 +214,11 @@ define([
 
 		_chkValidSaveRequest: function(req) {
 
-			var condition = !!req.data;
+			if (!this._chkTargetIsValid(req)) {
+				return false;
+			}
+
+			const condition = !!req.data;
 
 			if (!condition) {
 				console.error('Invalid save request at module "%s": %O', this.getChannel(), req);
@@ -273,44 +233,22 @@ define([
 
 			var target = this._getResolvedTarget(req.target);
 
+			const evtName = 'SAVE',
+				notifySuccess = !req.omitSuccessNotification ?? true,
+				notifyError = true;
+
 			this._saveRequest(target, req).then(
-				lang.hitch(this, this._handleSaveSuccess, req),
-				lang.hitch(this, this._handleSaveError, req));
-		},
-
-		_handleSaveSuccess: function(req, res) {
-
-			var response = this._parseResponse(res);
-
-			if (!req.omitSuccessNotification) {
-				this._notifySuccess();
-			}
-
-			this._emitResponse({
-				req: req,
-				res: response,
-				evtName: 'SAVE'
-			});
-		},
-
-		_handleSaveError: function(req, res) {
-
-			var response = this._parseError(res);
-
-			console.error(response.error);
-
-			this._emitError(response);
-
-			this._emitResponse({
-				req: req,
-				res: response,
-				evtName: 'SAVE'
-			});
+				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
+				(res) => this._handleError({ evtName, notifyError }, req, res));
 		},
 
 		_chkValidRemoveRequest: function(req) {
 
-			var condition = !!req.id;
+			if (!this._chkTargetIsValid(req)) {
+				return false;
+			}
+
+			const condition = !!req.id;
 
 			if (!condition) {
 				console.error('Invalid remove request at module "%s": %O', this.getChannel(), req);
@@ -325,40 +263,17 @@ define([
 
 			var target = this._getResolvedTarget(req.target);
 
+			const evtName = 'REMOVE',
+				notifySuccess = !req.omitSuccessNotification ?? true,
+				notifyError = true;
+
 			this._removeRequest(target, req).then(
-				lang.hitch(this, this._handleRemoveSuccess, req),
-				lang.hitch(this, this._handleRemoveError, req));
-		},
-
-		_handleRemoveSuccess: function(req, res) {
-
-			var response = this._parseResponse(res);
-
-			if (!req.omitSuccessNotification) {
-				this._notifySuccess();
-			}
-
-			this._emitResponse({
-				req: req,
-				res: response,
-				evtName: 'REMOVE'
-			});
-		},
-
-		_handleRemoveError: function(req, res) {
-
-			var response = this._parseError(res);
-
-			this._emitError(response);
-
-			this._emitResponse({
-				req: req,
-				res: response,
-				evtName: 'REMOVE'
-			});
+				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
+				(res) => this._handleError({ evtName, notifyError }, req, res));
 		},
 
 		_getResolvedTarget: function(target) {
+			// TODO eliminar esto
 
 			return redmicConfig.getServiceUrl(target);
 		},
@@ -371,56 +286,79 @@ define([
 			});
 		},
 
-		_emitLoaded: function(req) {
+		_handleSuccess: function(handleConfig, req, originalRes) {
 
-			this._emitEvt('TARGET_LOADED', {
-				target: req.target,
-				requesterId: req.requesterId
+			const res = this._parseResponse(originalRes),
+				evtName = handleConfig.evtName,
+				notify = handleConfig.notifySuccess;
+
+			notify && this._notifySuccess(res);
+
+			this._emitResponse({ req, res, evtName });
+		},
+
+		_handleError: function(handleConfig, req, originalRes) {
+
+			const res = this._parseError(originalRes),
+				evtName = handleConfig.evtName,
+				notify = handleConfig.notifyError;
+
+			notify && this._notifyError(res);
+
+			this._emitResponse({ req, res, evtName });
+		},
+
+		_notifySuccess: function(response) {
+
+			const description = this.i18n.success;
+
+			this._emitEvt('COMMUNICATION', {
+				type: 'alert',
+				level: 'success',
+				description
 			});
 		},
 
-		_emitResponse: function(params) {
+		_notifyError: function(response) {
 
-			var req = params.req,
-				res = params.res,
-				evtName = params.evtName;
+			const status = response.status;
 
-			var response = {
-				target: req.target,
-				requesterId: req.requesterId,
-				req: req,
-				res: res
-			};
-
-			this._emitLoaded(req);
-
-			this._emitEvt(evtName, response);
-		},
-
-		_emitError: function(response) {
-
-			var status = response.status,
-				error = response.error,
-				description = error || this.defaultErrorDescription;
+			let description = response.error ?? this.defaultErrorDescription;
 
 			if (status) {
-				description += ' - <a href="/feedback/' + status + '" target="_blank">' + this.i18n.contact + '</a>';
+				description += ` - <a href="/feedback/${status}" target="_blank">${this.i18n.contact}</a>`;
 			}
 
 			this._emitEvt('COMMUNICATION', {
 				type: 'alert',
 				level: 'error',
-				description: description,
+				description,
 				timeout: 0
 			});
 		},
 
-		_notifySuccess: function() {
+		_emitResponse: function(params) {
 
-			this._emitEvt('COMMUNICATION', {
-				type: 'alert',
-				level: 'success',
-				description: this.i18n.success
+			const req = params.req,
+				res = params.res,
+				target = req.target,
+				requesterId = req.requesterId;
+
+			this._emitLoaded(req);
+
+			this._emitEvt(params.evtName, {
+				target,
+				requesterId,
+				req,
+				res
+			});
+		},
+
+		_emitLoaded: function(req) {
+
+			this._emitEvt('TARGET_LOADED', {
+				target: req.target,
+				requesterId: req.requesterId
 			});
 		}
 	});

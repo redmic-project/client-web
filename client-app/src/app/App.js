@@ -123,7 +123,8 @@ define([
 			new CookieLoader();
 
 			new RestManagerImpl({
-				parentChannel
+				parentChannel,
+				apiUrl: redmicConfig.getEnvVariableValue('envApiUrl'),
 			});
 
 			new CommunicationCenter({

@@ -78,6 +78,10 @@ define([
 
 		_getSharedChannel: function(requesterChannel) {
 
+			if (!requesterChannel) {
+				return;
+			}
+
 			const splitter = this.channelSeparator,
 				viewChannelLength = 3,
 				sharedSuffix = '/sharedParams';

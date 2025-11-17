@@ -1,9 +1,7 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 ], function(
 	declare
-	, lang
 ) {
 
 	return declare(null, {
@@ -57,7 +55,7 @@ define([
 		_getOptionsForGet: function(req, requesterChannel) {
 
 			const method = 'GET',
-				headers = lang.mixin({}, this.headers, req.headers || {}),
+				headers = this._merge([{}, this.headers, req.headers ?? {}]),
 				query = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel);
 
 			const options = {
@@ -70,7 +68,7 @@ define([
 				handleAs: this.handleAs
 			};
 
-			return this._merge([options, req.options || {}]);
+			return this._merge([options, req.options ?? {}]);
 		},
 
 		_performRequest: function(req, requesterChannel) {
@@ -95,10 +93,10 @@ define([
 
 		_getOptionsForRequest: function(req, requesterChannel) {
 
-			const method = req.method || 'GET';
+			const method = req.method ?? 'GET';
 
 			const reqHeaders = this._getRequestRequestHeaders(req),
-				headers = lang.mixin({}, this.headers, reqHeaders, req.headers || {});
+				headers = this._merge([{}, this.headers, reqHeaders, req.headers ?? {}]);
 
 			const options = {
 				method,
@@ -118,9 +116,7 @@ define([
 				options.query = queryData;
 			}
 
-			const reqOptions = req.options || {};
-
-			return lang.mixin(options, reqOptions);
+			return this._merge([options, req.options ?? {}]);
 		},
 
 		_filterQueryParamsForRequestBodyData: function(_key, value) {
@@ -181,7 +177,7 @@ define([
 				for (var i = 0; i < sort.length; i++) {
 					var sortItem = sort[i],
 						attributeName = sortItem.attribute,
-						descendingDirection = sortItem.descending || false,
+						descendingDirection = sortItem.descending ?? false,
 						directionPrefix = descendingDirection ? this.descendingPrefix : this.ascendingPrefix;
 
 					if (i > 0) {
@@ -198,20 +194,24 @@ define([
 			return query;
 		},
 
-		_saveRequest: function(target, req) {
+		_performSave: function(req) {
 
-			var url = this._getSaveRequestTarget(target, req),
-				options = this._getSaveRequestOptions(req);
+			const url = this._getTargetForSave(req),
+				options = this._getOptionsForSave(req);
 
 			return this._launchRequest(url, options);
 		},
 
-		_getSaveRequestTarget: function(target, req) {
+		_getTargetForSave: function(req) {
 
-			const id = this._getItemIdFromSaveRequest(req);
+			const idValue = this._getItemIdFromSaveRequest(req),
+				idType = typeof idValue;
 
-			if (id) {
-				return this._getTargetWithEndingSlash(target) + id;
+			let target = this._getTargetWithPathParamsReplaced(req.target);
+			target = this._getTargetWithEndingSlash(target);
+
+			if (idType === 'string' || idType === 'number') {
+				target += idValue;
 			}
 
 			return target;
@@ -219,82 +219,82 @@ define([
 
 		_getItemIdFromSaveRequest: function(req) {
 
-			var data = req.data,
-				idProperty = req.idProperty || this.idProperty,
-				idInReq = req[idProperty],
-				idInReqData = data[idProperty];
+			const idPropName = req.idProperty ?? this.idProperty;
 
-			return idInReq || idInReqData;
+			return req[idPropName] ?? req.data[idPropName];
 		},
 
-		_getSaveRequestOptions: function(req) {
+		_getOptionsForSave: function(req) {
 
-			var method = this._getSaveRequestMethod(req),
+			const method = this._getSaveRequestMethod(req),
 				saveHeaders = this._getSaveRequestHeaders(req),
-				headers = lang.mixin({}, this.headers, saveHeaders, req.headers || {}),
-				data = JSON.stringify(req.data),
-				options = req.options || {};
+				headers = this._merge([{}, this.headers, saveHeaders, req.headers ?? {}]),
+				data = JSON.stringify(req.data);
 
-			return lang.mixin({
-				method: method,
-				headers: headers,
-				data: data,
+			const options = {
+				method,
+				headers,
+				data,
 				sync: this.sync,
 				preventCache: this.preventCache,
 				timeout: this.timeout,
 				handleAs: this.handleAs
-			}, options);
+			};
+
+			return this._merge([options, req.options ?? {}]);
 		},
 
 		_getSaveRequestMethod: function(req) {
 			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
 			// reciba directamente el método de consulta listo para usar.
 
-			var id = this._getItemIdFromSaveRequest(req);
+			const idValue = this._getItemIdFromSaveRequest(req);
 
-			return id ? 'PUT' : 'POST';
+			return idValue ? 'PUT' : 'POST';
 		},
 
 		_getSaveRequestHeaders: function(req) {
 			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
 			// reciban directamente las cabeceras listas para usar.
 
-			var headers = {
+			const headers = {
 				'Content-Type': 'application/json'
 			};
 
 			return headers;
 		},
 
-		_removeRequest: function(target, req) {
+		_performRemove: function(req) {
 
-			var url = this._getRemoveRequestTarget(target, req),
-				options = this._getRemoveRequestOptions(req);
+			const url = this._getTargetForRemove(req),
+				options = this._getOptionsForRemove(req);
 
 			return this._launchRequest(url, options);
 		},
 
-		_getRemoveRequestTarget: function(target, req) {
+		_getTargetForRemove: function(req) {
 
-			const targetWithSlash = this._getTargetWithEndingSlash(target),
-				id = req.id;
+			const target = this._getTargetWithPathParamsReplaced(req.target),
+				idValue = req.id;
 
-			return targetWithSlash + id;
+			return this._getTargetWithEndingSlash(target) + idValue;
 		},
 
-		_getRemoveRequestOptions: function(req) {
+		_getOptionsForRemove: function(req) {
 
-			var headers = lang.mixin({}, this.headers, req.headers || {}),
-				options = req.options || {};
+			const method = 'DELETE',
+				headers = this._merge([{}, this.headers, req.headers ?? {}]);
 
-			return lang.mixin({
-				method: 'DELETE',
-				headers: headers,
+			const options = {
+				method,
+				headers,
 				sync: this.sync,
 				preventCache: this.preventCache,
 				timeout: this.timeout,
 				handleAs: this.handleAs
-			}, options);
+			};
+
+			return this._merge([options, req.options ?? {}]);
 		},
 
 		_getTargetWithEndingSlash: function(target) {

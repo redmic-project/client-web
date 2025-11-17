@@ -231,13 +231,11 @@ define([
 
 			this._emitLoading(req);
 
-			var target = this._getResolvedTarget(req.target);
-
 			const evtName = 'SAVE',
 				notifySuccess = !req.omitSuccessNotification ?? true,
 				notifyError = true;
 
-			this._saveRequest(target, req).then(
+			this._performSave(req).then(
 				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
 				(res) => this._handleError({ evtName, notifyError }, req, res));
 		},
@@ -261,21 +259,13 @@ define([
 
 			this._emitLoading(req);
 
-			var target = this._getResolvedTarget(req.target);
-
 			const evtName = 'REMOVE',
 				notifySuccess = !req.omitSuccessNotification ?? true,
 				notifyError = true;
 
-			this._removeRequest(target, req).then(
+			this._performRemove(req).then(
 				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
 				(res) => this._handleError({ evtName, notifyError }, req, res));
-		},
-
-		_getResolvedTarget: function(target) {
-			// TODO eliminar esto
-
-			return redmicConfig.getServiceUrl(target);
 		},
 
 		_emitLoading: function(req) {

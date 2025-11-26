@@ -1,11 +1,9 @@
 define([
-	'src/redmicConfig'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'src/app/component/request/_RestManagerItfc'
 	, 'src/component/base/_Module'
 ], function(
-	redmicConfig
-	, declare
+	declare
 	, _RestManagerItfc
 	, _Module
 ) {

@@ -36,10 +36,14 @@ define([
 
 		_setOwnCallbacksForEvents: function() {
 
+			this.inherited(arguments);
+
 			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
 		},
 
 		_defineSubscriptions: function() {
+
+			this.inherited(arguments);
 
 			this.subscriptionsConfig.push({
 				channel : this.getChannel('GET_WIDGETS_CONFIG'),
@@ -48,6 +52,8 @@ define([
 		},
 
 		_definePublications: function() {
+
+			this.inherited(arguments);
 
 			this.publicationsConfig.push({
 				event: 'GOT_WIDGET_CONFIG',

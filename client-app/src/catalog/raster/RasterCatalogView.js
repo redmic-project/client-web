@@ -2,12 +2,10 @@ define([
 	'app/designs/embeddedContent/Controller'
 	, 'app/designs/embeddedContent/Layout'
 	, 'dojo/_base/declare'
-	, 'dojo/_base/lang'
 ], function(
 	EmbeddedContentController
 	, EmbeddedContentLayout
 	, declare
-	, lang
 ) {
 
 	return declare([EmbeddedContentLayout, EmbeddedContentController], {
@@ -16,19 +14,23 @@ define([
 		//	description:
 		//		Permite integrar la herramienta externa STAC Browser como contenido incrustado.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				embeddedContentUrl: null,
 				embeddedContentUrlPropertyName: 'rasterCatalogViewEmbeddedContentUrl'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setOwnCallbacksForEvents: function() {
 
-			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onGotExternalConfig));
+			this.inherited(arguments);
+
+			this._onEvt('GOT_EXTERNAL_CONFIG', evt => this._onGotExternalConfig(evt));
 		},
 
 		postCreate: function() {

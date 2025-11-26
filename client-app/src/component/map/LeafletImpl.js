@@ -141,6 +141,8 @@ define([
 
 		_setOwnCallbacksForEvents: function() {
 
+			this.inherited(arguments);
+
 			this._onEvt('PAN', lang.hitch(this, function(evt) {
 
 				if (!this._anyPopupOpened) {

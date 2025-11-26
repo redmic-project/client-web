@@ -196,9 +196,15 @@ define([
 
 		_afterMapLoaded: function() {
 
+			this._addContainerListeners();
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
 			this._loadBaseLayers();
 			this._loadOptionalLayers();
-			this._addContainerListeners();
 		},
 
 		_onMapNodeValidSize: function() {

@@ -141,8 +141,7 @@ define([
 				.attr('transform', d => {
 
 					const centroid = this.path.centroid(d);
-
-					return `translate(${centroid[0]},${centroid[1]})`
+					return `translate(${centroid[0]},${centroid[1]})`;
 				})
 				.text(d => this._getTextContent.call(this, d));
 

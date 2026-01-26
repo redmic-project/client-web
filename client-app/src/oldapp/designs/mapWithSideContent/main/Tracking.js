@@ -301,6 +301,10 @@ define([
 				activityid: this._activityIdByUuid[idProperty]
 			};
 
+			const targetQueryParams = {
+				qFlags: [1]
+			};
+
 			const infoTargetPathParams = {
 				id: this._activityIdByUuid[idProperty]
 			};
@@ -313,6 +317,7 @@ define([
 				target: this.layersTarget,
 				infoTarget: this.infoTarget,
 				targetPathParams,
+				targetQueryParams,
 				infoTargetPathParams,
 				fillColor,
 				layerId,

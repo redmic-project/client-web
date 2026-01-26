@@ -119,7 +119,7 @@ define([
 
 			if (category === 0) {
 				templatePopup = SpeciesDistributionPopup;
-				targetPopup = redmicConfig.services.citationAll;
+				targetPopup = redmicConfig.services.citationInfo;
 				parseData = this._parseCitationData;
 			} else {
 				templatePopup = TrackingSecondaryList;

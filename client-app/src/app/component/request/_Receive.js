@@ -83,11 +83,12 @@ define([
 
 		_onRequestPermissionError: function(res) {
 
-			const url = res.url,
-				isGetTokenTarget = url.includes(redmicConfig.services.getOauthToken) ||
-					url.includes(redmicConfig.services.getOidToken),
+			const url = res.url;
 
-				isNotApiTarget = !requestedTarget.includes(this.apiUrl);
+			const isGetTokenTarget = url.includes(redmicConfig.services.getOauthToken) ||
+				url.includes(redmicConfig.services.getOidToken);
+
+			const isNotApiTarget = !url.includes(this.apiUrl);
 
 			if (isGetTokenTarget || isNotApiTarget) {
 				return;

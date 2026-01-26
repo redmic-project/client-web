@@ -107,7 +107,8 @@ define([], function() {
 		'censingStatus': baseUri + 'censingstatuses',
 		'citationByDocuments': baseUri + 'documents/{id}/citations',
 		'calibrations': baseUri + 'calibrations',
-		'citationAll': baseUri + 'citations',
+		'citationInfo': baseUri + 'citations',
+		'citationAll': baseUri + 'citations/_search',
 		'citationByActivity': baseUri + 'activities/{id}/citations/_search',
 		'condition': baseUri + 'conditions',
 		'confidence': baseUri + 'confidences',
@@ -119,6 +120,8 @@ define([], function() {
 		'device': baseUri + 'devices',
 		'deviceType': baseUri + 'devicetypes',
 		'distribution': baseUri + 'distributions',
+		'distributionData': baseUri + 'distributions/{grid}/_search',
+		'distributionInfo': baseUri + 'distributions/{grid}/{tile}/_search',
 		'documentType': baseUri + 'documenttypes',
 		'downloadFile': baseUri + 'mediastorage/download',
 		'ecology': baseUri + 'ecologies',
@@ -137,7 +140,7 @@ define([], function() {
 		'subphylum': baseUri + 'taxons/subphylums',
 		'status': baseUri + 'taxons/statuses',
 		'species': baseUri + 'taxons/species',
-		'speciesLocation': baseUri + 'taxons/species/{id}/locations',
+		'speciesLocation': baseUri + 'taxons/species/{id}/locations/_search',
 		'taxonAncestors': baseUri + 'taxons/{path}/ancestors',
 		'documentByMisidentification': baseUri + 'taxons/misidentifications/{id}/documents',
 		'activitiesBySpecies': baseUri + 'taxons/species/{id}/activities',
@@ -202,7 +205,7 @@ define([], function() {
 		'elementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}',
 		'trackElementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track',
 		'pointTrackElementTracking': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track/{id}',
-		'pointTrackingCluster': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track/cluster',
+		'pointTrackingCluster': baseUri + 'activities/{activityid}/tracking/elements/{elementuuid}/track/cluster/_search',
 		'privatePointTrackingCluster': baseUri + 'private/activities/{activityid}/tracking/elements/{elementuuid}/track/cluster',
 		'animalTrackingActivity': baseUri + 'activities/{activityid}/animaltracking',
 		'platformTrackingActivity': baseUri + 'activities/{activityid}/platformtracking',
@@ -266,7 +269,7 @@ define([], function() {
 		'surveyStationsTimeSeries': baseUri + 'datadefinitions/{datadefinitionid}/timeseries',
 
 		'activityObjectCollectingSeriesStations': baseUri +
-			'activities/{activityid}/objectcollectingseriesstations',
+			'activities/{activityid}/objectcollectingseriesstations/_search',
 
 		'objectCollectingSeries': baseUri + 'time-series/view/objectcollectingseries',
 		'objectCollectingSeriesByDataDefinition': baseUri +

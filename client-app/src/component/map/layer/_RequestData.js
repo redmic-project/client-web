@@ -32,8 +32,7 @@ define([
 			// TODO realmente se quiere evitar límites? puede causar fallos en el lado del servicio
 			// preferible mostrar aviso si se llega al límite
 			const query = {
-				size: null,
-				qFlags: [1]
+				size: null
 			};
 
 			this._emitEvt('ADD_REQUEST_PARAMS', {
@@ -67,7 +66,6 @@ define([
 			this._emitEvt('REQUEST', {
 				method: 'POST',
 				target: this.target,
-				action: '_search',
 				params: {path, query},
 				requesterId: this.getOwnChannel()
 			});

@@ -147,7 +147,8 @@ define([
 					}
 				}],
 
-				gridLayerTarget: redmicConfig.services.distribution,
+				gridLayerDataTarget: redmicConfig.services.distributionData,
+				gridLayerInfoTarget: redmicConfig.services.distributionInfo,
 				elasticTarget: redmicConfig.services.species,
 				taxonsTarget: redmicConfig.services.taxons,
 				speciesListTarget: "speciesDistributionListSpecies",
@@ -163,7 +164,8 @@ define([
 				browserPageSize: 25,
 
 				events: {
-					SET_LAYER_PROPS: "setLayerProps"
+					SET_GRID_LAYER_PROPS: "setGridLayerProps",
+					SET_MARKER_LAYER_PROPS: "setMarkerLayerProps"
 				},
 
 				actions: {
@@ -256,9 +258,12 @@ define([
 			this.d3LayerConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				layerId: "taxonDistribution",
-				target: this.gridLayerTarget + "/" + this.currentGridLayer,
+				currentGridLayer: this.currentGridLayer,
+				target: this.gridLayerDataTarget,
+				infoTarget: this.gridLayerInfoTarget,
 				externalShouldAbortRequest: lang.hitch(this, this._shouldAbortRequestForDataLayer),
-				confidences: this.confidences
+				confidences: this.confidences,
+				minZoom: this.grid5000MinZoom
 			}, this.d3LayerConfig || {}]);
 
 			this.pruneClusterLayerConfig = this._merge([{
@@ -423,10 +428,10 @@ define([
 		_definePublications: function () {
 
 			this.publicationsConfig.push({
-				event: 'SET_LAYER_PROPS',
+				event: 'SET_GRID_LAYER_PROPS',
 				channel : this.gridLayer.getChannel("SET_PROPS")
 			},{
-				event: 'SET_LAYER_PROPS',
+				event: 'SET_MARKER_LAYER_PROPS',
 				channel : this.pruneClusterLayer.getChannel("SET_PROPS")
 			});
 		},
@@ -434,11 +439,6 @@ define([
 		postCreate: function() {
 
 			this.inherited(arguments);
-
-			this._publish(this.gridLayer.getChannel('SET_PROPS'), {
-				minZoom: this.grid5000MinZoom,
-				currentGridLayer: this.currentGridLayer
-			});
 
 			this._emitEvt('ADD_LAYER', {layer: this.gridLayer});
 			this._emitEvt('ADD_LAYER', {layer: this.pruneClusterLayer});
@@ -486,35 +486,43 @@ define([
 
 		_updateDataLayer: function(/*response*/) {
 
-			const selectIds = Credentials.get("selectIds");
+			//selectionId = Credentials.get("selectIds")[this.target.replace("/" + this.currentGridLayer, "")];
+			const selectIds = Credentials.get("selectIds"),
+				selection = selectIds?.[this.selectionTarget];
 
-			if (!selectIds || !selectIds[this.selectionTarget]) {
+			if (!selection) {
 				return;
 			}
 
-			this.selectIds = selectIds[this.selectionTarget];
+			this.selection = selection;
 
 			const query = {
 				"terms": {
-					"selection": this.selectIds
+					"selection": this.selection
 				}
 			};
 
-			// TODO cuando los terms en el schema esten con propiedades borrar el if
 			if (this.currentMode === 3) {
-				if (this.precision) {
-					query.precision = this.precision;
-				}
-				query.qFlags = null; // TODO parche para evitar fallo en servicio, no acepta qFlags predefinido en capa
+				this._emitEvt('SET_MARKER_LAYER_PROPS', {
+					targetQueryParams: {
+						terms: {
+							selection: this.selection
+						},
+						precision: this.precision
+					}
+				});
 			} else {
-				query.terms.confidences = this.confidences;
+				this._emitEvt('SET_GRID_LAYER_PROPS', {
+					targetQueryParams: {
+						terms: {
+							selection: this.selection,
+							confidences: this.confidences
+						},
+						qFlags: [1]
+					},
+					selection: this.selection
+				});
 			}
-
-			const mapLayerInstance = this[this.currentMode < 3 ? "gridLayer" : "pruneClusterLayer"];
-
-			this._publish(mapLayerInstance.getChannel('SET_PROPS'), {
-				targetQueryParams: query
-			});
 		},
 
 		_clearSelection: function(response) {
@@ -536,7 +544,7 @@ define([
 			var limit = this[this.currentGridLayer + "MinZoom"],
 				zoom = this._currentZoomLevel;
 
-			this._emitEvt('SET_LAYER_PROPS', {
+			this._emitEvt('SET_GRID_LAYER_PROPS', {
 				minZoom: limit
 			});
 
@@ -564,7 +572,7 @@ define([
 				parseData = function(resWrapper) {
 					obj.feature = resWrapper.res.data;
 
-					if (obj.feature.properties.activityId) {
+					if (obj.feature.properties?.activityId) {
 						this._once(this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
 							lang.hitch(this, parseDataActivity));
 
@@ -587,7 +595,7 @@ define([
 			this._once(this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE), lang.hitch(this, parseData));
 
 			this._emitEvt("GET", {
-				target: redmicConfig.services.citationAll,
+				target: redmicConfig.services.citationInfo,
 				requesterId: this.getOwnChannel(),
 				id: data.feature.uuid
 			});
@@ -610,16 +618,12 @@ define([
 
 			this.currentGridLayer = newLayer;
 
-			this._emitEvt('SET_LAYER_PROPS', {
+			this._emitEvt('SET_GRID_LAYER_PROPS', {
 				minZoom: this[this.currentGridLayer + "MinZoom"],
 				currentGridLayer: this.currentGridLayer
 			});
 
 			this._emitEvt('ADD_LAYER', {layer: layerInstance});
-
-			this._publish(this.gridLayer.getChannel("SET_PROPS"), {
-				target: this.gridLayerTarget + "/" + this.currentGridLayer
-			});
 
 			this._checkZoomLevel();
 		},
@@ -638,7 +642,7 @@ define([
 
 			this.currentMode = newMode;
 
-			this._emitEvt('SET_LAYER_PROPS', {
+			this._emitEvt('SET_GRID_LAYER_PROPS', {
 				currentMode: this.currentMode
 			});
 
@@ -682,27 +686,17 @@ define([
 
 			this.confidences = confidences;
 
-			// TODO cuando los terms en el schema esten con propiedades, cambiar lo de selection
-			this._publish(this.gridLayer.getChannel('SET_PROPS'), {
-				targetQueryParams: {
-					"terms": {
-						"selection": this.selectIds,
-						"confidences": this.confidences
-					}
-				}
-			});
-
-			this._emitEvt('SET_LAYER_PROPS', {
-				confidences: confidences
+			this._emitEvt('SET_GRID_LAYER_PROPS', {
+				confidences
 			});
 		},
 
 		_changePrecisionSlider: function(value) {
 
 			const targetQueryParams = {
-				terms: {
-					selection: this.selectIds
-				},
+				/*terms: {
+					selection: this.selection
+				},*/
 				precision: value
 			};
 

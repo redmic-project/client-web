@@ -121,8 +121,7 @@ define([
 
 		_filterQueryParamsForRequestBodyData: function(_key, value) {
 			// summary:
-			//   Evita el paso hacia los parámetros de filtrado de valores nulos, arrays vacíos y objetos con todas sus
-			//   propiedades con valor nulo.
+			//   Evita el paso hacia los parámetros de filtrado de valores nulos y arrays vacíos.
 
 			const isNullValue = value === null;
 			if (isNullValue) {
@@ -131,11 +130,6 @@ define([
 
 			const isEmptyArray = value instanceof Array && !value.length;
 			if (isEmptyArray) {
-				return;
-			}
-
-			const isObjectWithNullProps = value instanceof Object && !Object.values(value).some(v => v !== null);
-			if (isObjectWithNullProps) {
 				return;
 			}
 

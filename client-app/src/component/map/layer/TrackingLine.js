@@ -153,23 +153,29 @@ define([
 
 		_createEventListeners: function() {
 
-			this._onEnterCallback && this._onEnterCallback.remove();
-			this._onLeaveCallback && this._onLeaveCallback.remove();
+			this._onEnterCallback?.remove();
+			this._onLeaveCallback?.remove();
 
-			var gNode = this._group.node();
+			const gNode = this._group.node();
 
-			this._onEnterCallback = on(gNode, mouse.enter, lang.hitch(this, this._addHoverEffects));
-			this._onLeaveCallback = on(gNode, mouse.leave, lang.hitch(this, this._removeHoverEffects));
+			this._onLeaveCallback = on(gNode, mouse.leave, () => this._removeHoverEffects());
+			this._onEnterCallback = on(gNode, mouse.enter, () => this._addHoverEffects());
 		},
 
 		_addHoverEffects: function() {
 
-			this._group
-				.attr('class', this.groupClass + ' ' + this.groupHoverClass)
-				.moveToFront();
+			if (this._group.attr('class').includes(this.groupHoverClass)) {
+				return;
+			}
+
+			this._group.attr('class', this.groupClass + ' ' + this.groupHoverClass);
 		},
 
 		_removeHoverEffects: function() {
+
+			if (!this._group.attr('class').includes(this.groupHoverClass)) {
+				return;
+			}
 
 			this._group.attr('class', this.groupClass);
 		},

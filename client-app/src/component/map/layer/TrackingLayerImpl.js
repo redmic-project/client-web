@@ -153,20 +153,24 @@ define([
 
 		_createEventListeners: function() {
 
-			this._onEnterCallback && this._onEnterCallback.remove();
-			this._onLeaveCallback && this._onLeaveCallback.remove();
+			this._onEnterCallback?.remove();
+			this._onLeaveCallback?.remove();
 
-			var svgNode = this._svg.node();
+			const svgNode = this._svg.node();
 
-			this._onEnterCallback = on(svgNode, mouse.enter, lang.hitch(this, this._addHoverEffects));
-			this._onLeaveCallback = on(svgNode, mouse.leave, lang.hitch(this, this._removeHoverEffects));
+			this._onLeaveCallback = on(svgNode, mouse.leave, () => this._removeHoverEffects());
+			this._onEnterCallback = on(svgNode, mouse.enter, () => this._addHoverEffects());
 		},
 
 		_addHoverEffects: function() {
 
-			var svgNode = this._svg.node(),
-				svgParentNode = svgNode && svgNode.parentNode;
+			const svgNode = this._svg.node();
 
+			if (!svgNode || this._svg.attr('class').includes(this.svgHoverClass)) {
+				return;
+			}
+
+			const svgParentNode = svgNode.parentNode;
 			svgParentNode && domClass.add(svgParentNode, this._childHoverClass);
 
 			this._svg
@@ -176,9 +180,13 @@ define([
 
 		_removeHoverEffects: function() {
 
-			var svgNode = this._svg.node(),
-				svgParentNode = svgNode && svgNode.parentNode;
+			const svgNode = this._svg.node();
 
+			if (!svgNode || !this._svg.attr('class').includes(this.svgHoverClass)) {
+				return;
+			}
+
+			const svgParentNode = svgNode.parentNode;
 			svgParentNode && domClass.remove(svgParentNode, this._childHoverClass);
 
 			this._svg.attr('class', this.svgClass);

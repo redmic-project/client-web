@@ -58,7 +58,7 @@ define([
 				},
 				modelConfig: {
 					noSerializeNullValue: true,
-					filterSchema: true
+					idForGet: '_search/_schema'
 				},
 				buttonsConfig: {
 					submit: {

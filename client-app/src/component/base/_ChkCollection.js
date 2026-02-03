@@ -54,17 +54,17 @@ define([
 
 		_targetIsMine: function(target) {
 
-			var cleanTarget = this._cleanTrailingSlash(target);
+			const cleanTarget = this._cleanTrailingSlash(target);
 
 			if (target.length === cleanTarget.length) {
 				target += '/';
 			}
 
 			if (this.target instanceof Array) {
-				return this.target.indexOf(target) !== -1 || this.target.indexOf(cleanTarget) !== -1;
+				return this.target.includes(target) || this.target.includes(cleanTarget);
 			}
 
-			return this.target === target || this.target === cleanTarget;
+			return this.target && (this.target === target || this.target === cleanTarget);
 		},
 
 		_chkRequesterIsMe: function(res) {

@@ -78,10 +78,6 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-
-			if (this.filterSchema) {
-				this.idForGet = '_search/_schema';
-			}
 		},
 
 		_defineSubscriptions: function() {
@@ -191,9 +187,24 @@ define([
 
 			this.inherited(arguments);
 
+			// Si ya tengo el esquema, construyo el modelo
 			if (this.schema) {
 				this._buildModelWithSchema(this.schema);
-			} else if (this.target.indexOf(redmicConfig.apiUrlVariable) !== -1 ||
+				return;
+			}
+
+			// Si no tengo el esquema, pero existe una correspondencia con mi target, lo solicito
+			const schemaTarget = this._getSchemaTarget();
+			if (schemaTarget) {
+				this._emitEvt('GET', {
+					target: schemaTarget,
+					requesterId: this.getOwnChannel()
+				});
+				return;
+			}
+
+			// TODO antiguo, eliminar! Si no tengo el esquema, le añado un sufijo conocido a mi target y lo solicito
+			if (this.target.indexOf(redmicConfig.apiUrlVariable) !== -1 ||
 				this.target.indexOf('undefined') !== -1) {
 
 				this._emitEvt("GET", {
@@ -204,17 +215,24 @@ define([
 			}
 		},
 
-		_itemAvailable: function(res, resWrapper) {
+		_getSchemaTarget: function() {
 
-			if (resWrapper.requesterId !== this.getOwnChannel()) {
-				return;
-			}
+			return redmicConfig.schemas[this.target];
+		},
 
-			var schema = res.data;
+		_targetIsMine: function(target) {
 
-			if (this.filterSchema) {
-				schema = schema?.schema;
-			}
+			return this.inherited(arguments) || this._schemaTargetIsMine(target);
+		},
+
+		_schemaTargetIsMine: function(target) {
+
+			return this._getSchemaTarget() === target;
+		},
+
+		_itemAvailable: function(res, _resWrapper) {
+
+			const schema = res.data?.schema;
 
 			this._buildModelWithSchema(schema);
 		},

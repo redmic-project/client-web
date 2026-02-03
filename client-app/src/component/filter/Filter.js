@@ -64,7 +64,7 @@ define([
 				parentChannel: this.getChannel(),
 				target: this._getTarget(),
 				noSerializeNullValue: false,
-				filterSchema: true,
+				idForGet: '_search/_schema',
 				props: {
 					serializeAdditionalProperties: true
 				}

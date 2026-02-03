@@ -496,19 +496,13 @@ define([
 
 			this.selection = selection;
 
-			const query = {
-				"terms": {
-					"selection": this.selection
-				}
-			};
-
 			if (this.currentMode === 3) {
 				this._emitEvt('SET_MARKER_LAYER_PROPS', {
 					targetQueryParams: {
 						terms: {
 							selection: this.selection
 						},
-						precision: this.precision
+						precision: this.precision || null,
 					}
 				});
 			} else {

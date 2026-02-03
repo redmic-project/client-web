@@ -48,55 +48,50 @@ define([
 		},
 
 		_serialize: function(noSerializeNullValue) {
-			//	summary:
-			//		Serializador de la propiedad de tipo array.
-			//	returns:
-			//		Valor.
+			// summary:
+			//   Serializador de la propiedad de tipo array.
+			// returns:
+			//   Valor.
 
-			var retObj = [];
+			const retObj = [];
 
-			for (var i in this._items) {
-				var item = this._items[i];
+			for (let i in this._items) {
+				const item = this._items[i];
 				if (item.serialize) {
 					retObj.push(item.serialize(noSerializeNullValue));
 				}
 			}
 
-			if (retObj.length === 0 && this._isTypeNull()) {
+			if (!retObj.length && this._nullTypeIsAllowed()) {
 				return null;
 			}
 
-			return retObj;	// return Array
+			return retObj; // return Array
 		},
 
 		_deserialize: function(/*Any*/ value, /*Boolean?*/ toInitValue) {
-			//	summary:
-			//		Deserializador de los elementos de la propiedad de tipo array.
-			//	value:
-			//		Valor.
-			//	toInitValue:
-			//		Flag para poner el valor como inicial o no.
+			// summary:
+			//   Deserializador de los elementos de la propiedad de tipo array.
+			// value:
+			//   Valor.
+			// toInitValue:
+			//   Flag para poner el valor como inicial o no.
 
 			// Si llega un array de elementos, se añade poco a poco
-
 			if (value instanceof Array) {
-
 				if (toInitValue && !value.length) {
 					this._initValue = this.serialize();
 				}
 
-				for (var i = 0; i < value.length; i++) {
-					this.addValue(value[i], toInitValue);
-				}
-			} else if (value === null && this._isTypeNull()) {
-
+				value.forEach(item => this.addValue(item, toInitValue));
+			} else if (value === null && this._nullTypeIsAllowed()) {
 				if (toInitValue) {
 					this._initValue = [];
 				}
 
 				this._clearContent();
-			// Si no llega un array, preservamos el valor no apto
 			} else {
+				// Si no llega un array, preservamos el valor no apto
 				console.error("Tried to deserialize an unsuitable array '%O' at model '%s' with this schema:", value,
 					this.get("modelName"), this.get("schema"));
 
@@ -574,10 +569,10 @@ define([
 		},
 
 		_evaluateHasChanged: function(value, initValue) {
-			//	summary:
-			//		Devuelve si el valor ha cambiado con respecto al original de la instancia.
+			// summary:
+			//   Devuelve si el valor ha cambiado con respecto al original de la instancia.
 
-			if (this._isTypeNull() && !value && (!initValue || initValue.length === 0)) {
+			if (this._nullTypeIsAllowed() && !value && !initValue?.length) {
 				return false;
 			}
 
@@ -585,10 +580,9 @@ define([
 				return true;
 			}
 
-			var itemUuid, instance;
-			for (itemUuid in this._items) {
-				instance = this._items[itemUuid];
-				if (instance.get && instance.get("hasChanged")) {
+			for (let itemUuid in this._items) {
+				const instance = this._items[itemUuid];
+				if (instance.get?.('hasChanged')) {
 					return true;
 				}
 			}

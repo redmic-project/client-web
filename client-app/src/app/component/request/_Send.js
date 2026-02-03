@@ -1,7 +1,9 @@
 define([
 	'dojo/_base/declare'
+	, 'dojo/Deferred'
 ], function(
 	declare
+	, Deferred
 ) {
 
 	return declare(null, {
@@ -33,9 +35,16 @@ define([
 		_performGet: function(req, requesterChannel) {
 
 			const url = this._getTargetForGet(req, requesterChannel),
-				options = this._getOptionsForGet(req, requesterChannel);
+				optionsDfd = this._getOptionsForGet(req, requesterChannel),
+				getResponseDfd = new Deferred();
 
-			return this._launchRequest(url, options);
+			optionsDfd.then(options => {
+				this._launchRequest(url, options).then(
+					getResponse => getResponseDfd.resolve(getResponse),
+					getError => getResponseDfd.reject(getError));
+			});
+
+			return getResponseDfd;
 		},
 
 		_getTargetForGet: function(req, requesterChannel) {
@@ -55,28 +64,38 @@ define([
 		_getOptionsForGet: function(req, requesterChannel) {
 
 			const method = 'GET',
-				headers = this._merge([{}, this.headers, req.headers ?? {}]),
-				query = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel);
+				headers = this._merge([{}, this.headers, req.headers ?? {}]);
 
 			const options = {
 				method,
 				headers,
-				query,
 				sync: this.sync,
 				preventCache: this.preventCache,
 				timeout: this.timeout,
 				handleAs: this.handleAs
 			};
 
-			return this._merge([options, req.options ?? {}]);
+			const queryDfd = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel),
+				optionsDfd = new Deferred();
+
+			queryDfd.then(query => optionsDfd.resolve(this._merge([options, {query}, req.options ?? {}])));
+
+			return optionsDfd;
 		},
 
 		_performRequest: function(req, requesterChannel) {
 
 			const url = this._getTargetForRequest(req, requesterChannel),
-				options = this._getOptionsForRequest(req, requesterChannel);
+				optionsDfd = this._getOptionsForRequest(req, requesterChannel),
+				requestResponseDfd = new Deferred();
 
-			return this._launchRequest(url, options);
+			optionsDfd.then(options => {
+				this._launchRequest(url, options).then(
+					requestResponse => requestResponseDfd.resolve(requestResponse),
+					requestError => requestResponseDfd.reject(requestError));
+			});
+
+			return requestResponseDfd;
 		},
 
 		_getTargetForRequest: function(req, requesterChannel) {
@@ -93,9 +112,8 @@ define([
 
 		_getOptionsForRequest: function(req, requesterChannel) {
 
-			const method = req.method ?? 'GET';
-
-			const reqHeaders = this._getRequestRequestHeaders(req),
+			const method = req.method ?? 'GET',
+				reqHeaders = this._getRequestRequestHeaders(req),
 				headers = this._merge([{}, this.headers, reqHeaders, req.headers ?? {}]);
 
 			const options = {
@@ -107,16 +125,21 @@ define([
 				handleAs: this.handleAs
 			};
 
-			const queryData = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel);
+			const queryDfd = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel),
+				optionsDfd = new Deferred();
 
-			if (method === 'POST') {
-				options.data = JSON.stringify(queryData,
-					(key, value) => this._filterQueryParamsForRequestBodyData(key, value));
-			} else {
-				options.query = queryData;
-			}
+			queryDfd.then(query => {
+				if (method === 'POST') {
+					options.data = JSON.stringify(query,
+						(key, value) => this._filterQueryParamsForRequestBodyData(key, value));
+				} else {
+					options.query = query;
+				}
 
-			return this._merge([options, req.options ?? {}]);
+				optionsDfd.resolve(this._merge([options, req.options ?? {}]));
+			});
+
+			return optionsDfd;
 		},
 
 		_filterQueryParamsForRequestBodyData: function(_key, value) {
@@ -166,36 +189,6 @@ define([
 
 				headers.Range = headers['X-Range'] = rangeHeader;
 			}
-		},
-
-		_getRequestRequestQuery: function(req) {
-			// TODO es posible que esta funcionalidad quepa mejor en _Store, antes de publicar, para que aquí se
-			// reciban directamente los parámetros de consulta listos para usar.
-
-			var sort = req.sort,
-				query = {};
-
-			if (sort) {
-				var sortValue = '(';
-
-				for (var i = 0; i < sort.length; i++) {
-					var sortItem = sort[i],
-						attributeName = sortItem.attribute,
-						descendingDirection = sortItem.descending ?? false,
-						directionPrefix = descendingDirection ? this.descendingPrefix : this.ascendingPrefix;
-
-					if (i > 0) {
-						sortValue += ',';
-					}
-					sortValue += encodeURIComponent(directionPrefix) + encodeURIComponent(attributeName);
-				}
-
-				sortValue += ')';
-
-				query[this.sortParamName] = sortValue;
-			}
-
-			return query;
 		},
 
 		_performSave: function(req) {

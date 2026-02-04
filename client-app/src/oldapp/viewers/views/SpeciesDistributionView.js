@@ -269,17 +269,8 @@ define([
 			this.pruneClusterLayerConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: redmicConfig.services.citationAll,
-				filterConfig: {
-					initQuery: {
-						returnFields: ["geometry", "id", "uuid", "properties.collect.radius"]/*,
-						terms: {
-							precision: this.precision
-						},
-						z: {
-							min: -5000,
-							max: 5000
-						}*/
-					}
+				targetQueryParams: {
+					returnFields: ["geometry", "id", "uuid", "properties.collect.radius"]
 				},
 				categoryStyle: "bubbles",
 				idProperty: "uuid",
@@ -688,13 +679,10 @@ define([
 		_changePrecisionSlider: function(value) {
 
 			const targetQueryParams = {
-				/*terms: {
-					selection: this.selection
-				},*/
 				precision: value
 			};
 
-			this._publish(this.pruneClusterLayer.getChannel('SET_PROPS'), {targetQueryParams});
+			this._emitEvt('SET_MARKER_LAYER_PROPS', {targetQueryParams});
 		},
 
 		_changeZSlider: function(value) {
@@ -703,7 +691,7 @@ define([
 				z: value
 			};
 
-			this._publish(this.pruneClusterLayer.getChannel('SET_PROPS'), {targetQueryParams});
+			this._emitEvt('SET_MARKER_LAYER_PROPS', {targetQueryParams});
 		},
 
 		_hideInputForm: function(inputKey, hide) {

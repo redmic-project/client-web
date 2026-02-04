@@ -18,14 +18,14 @@ define([
 
 		// _requestParams: Object
 		//   Contiene los parámetros recibidos para las URLs de consulta, indexados por channel y target.
-		// _queryModelsByTarget: Object
+		// _queryModels: Object
 		//   Contiene las instancias de los modelos con esquema de paŕametros de consulta, indexados por target.
 
 		postMixInProperties: function() {
 
 			const defaultConfig = {
 				_requestParams: {},
-				_queryModelsByTarget: {}
+				_queryModels: {}
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
@@ -141,7 +141,7 @@ define([
 
 		_getQueryModel: function(target, queryParams) {
 
-			const modelInstance = this._queryModelsByTarget[target] ?? this._createQueryModel(target);
+			const modelInstance = this._queryModels[target] ?? this._createQueryModel(target);
 
 			this._publish(modelInstance.getChannel('DESERIALIZE'), {
 				data: queryParams
@@ -160,7 +160,9 @@ define([
 				}
 			};
 
-			return this._queryModelsByTarget[target] = new ModelImpl(this.modelConfig);
+			this._queryModels[target] = new ModelImpl(this.modelConfig);
+
+			return this._queryModels[target];
 		}
 	});
 });

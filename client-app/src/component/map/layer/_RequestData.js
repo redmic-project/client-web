@@ -29,17 +29,18 @@ define([
 
 		_addDefaultRequestParams: function() {
 
-			// TODO realmente se quiere evitar límites? puede causar fallos en el lado del servicio
-			// preferible mostrar aviso si se llega al límite
-			const query = {
+			const path = this._merge([{
+			}, this.targetPathParams ?? {}]);
+
+			const query = this._merge([{
+				// TODO realmente se quiere evitar límites? puede causar fallos en el lado del servicio
+				// preferible mostrar aviso si se llega al límite
 				size: null
-			};
+			}, this.targetQueryParams ?? {}]);
 
 			this._emitEvt('ADD_REQUEST_PARAMS', {
 				target: this.target,
-				params: {
-					query
-				}
+				params: {path, query}
 			});
 		},
 

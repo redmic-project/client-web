@@ -1,28 +1,22 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/Deferred'
 	, 'dojo/dom-class'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
-	, 'src/component/base/_Store'
-	, 'src/redmicConfig'
 	, 'src/util/Credentials'
 	, 'superset-sdk'
 ], function(
 	declare
 	, lang
-	, Deferred
 	, domClass
 	, _Module
 	, _Show
-	, _Store
-	, redmicConfig
 	, Credentials
 	, SupersetSdk
 ) {
 
-	return declare([_Module, _Show, _Store], {
+	return declare([_Module, _Show], {
 		//	summary:
 		//		Cargador de dashboards de Superset.
 		//	description:
@@ -38,7 +32,6 @@ define([
 				events: {
 				},
 				ownChannel: 'supersetDisplayer',
-				target: redmicConfig.services.getSupersetToken,
 				className: 'supersetDashboard'
 			};
 
@@ -58,6 +51,8 @@ define([
 
 		postCreate: function() {
 
+			this.inherited(arguments);
+
 			if (!this.dashboardConfig) {
 				console.error('Missing dashboard configuration for SupersetDisplayer!');
 				return;
@@ -71,9 +66,7 @@ define([
 		_prepareDashboard: function() {
 
 			this._prepareDashboardConfig();
-
-			let tokenDfd = this._getGuestToken();
-			tokenDfd.then(() => this._prepareDashboardInstance(), () => this._missingUserToken());
+			this._prepareDashboardInstance();
 		},
 
 		_prepareDashboardConfig: function() {
@@ -91,48 +84,16 @@ define([
 
 		_getDashboardConfig: function() {
 
-			this.dashboardConfig.dashboardUiConfig.urlParams = this._merge([
-				this.dashboardConfig.dashboardUiConfig.urlParams, {
-					activityid: this.pathVariableId
-				}
-			]);
+			const urlParams = this._merge([this.dashboardConfig.dashboardUiConfig.urlParams, {
+				activityid: this.pathVariableId
+			}]);
+
+			this.dashboardConfig.dashboardUiConfig.urlParams = urlParams;
 
 			return this._merge([this.dashboardConfig, {
 				mountPoint: this.getNodeToShow(),
-				fetchGuestToken: lang.hitch(this, this._fetchGuestToken)
+				fetchGuestToken: () => Credentials.get('oidAccessToken')
 			}]);
-		},
-
-		_getGuestToken: function() {
-
-			this._guestToken = new Deferred();
-
-			const userToken = Credentials.get('oidAccessToken');
-
-			if (userToken?.length) {
-				this._requestGuestToken(userToken);
-			} else {
-				this._guestToken.reject();
-			}
-
-			return this._guestToken;
-		},
-
-		_missingUserToken: function() {
-
-			// TODO
-		},
-
-		_requestGuestToken: function(token) {
-
-			this._emitEvt('GET', {
-				target: this.target,
-				requesterId: this.getOwnChannel(),
-				id: this.dashboardConfig.id,
-				query: {
-					token
-				}
-			});
 		},
 
 		_prepareDashboardInstance: function() {
@@ -142,11 +103,6 @@ define([
 			this._supersetInstance.then(lang.hitch(this, this._onSupersetDashboardReady));
 		},
 
-		_fetchGuestToken: function() {
-
-			return this._guestToken;
-		},
-
 		_onSupersetDashboardReady: function(evt) {
 
 			this._supersetUnmount = evt.unmount;
@@ -154,9 +110,7 @@ define([
 
 		_clearDashboard: function() {
 
-			if (this._supersetUnmount) {
-				this._supersetUnmount();
-			}
+			this._supersetUnmount?.();
 		},
 
 		_subChangeDashboard: function(req) {
@@ -170,17 +124,6 @@ define([
 		_subClear: function(_req) {
 
 			this._clearDashboard();
-		},
-
-		_itemAvailable: function(res) {
-
-			let token = res?.data?.token;
-
-			if (token) {
-				this._guestToken.resolve(token);
-			} else {
-				this._guestToken.reject('No token available');
-			}
 		},
 
 		getNodeToShow: function() {

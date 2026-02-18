@@ -70,8 +70,7 @@ define([
 
 			this.mergeComponentAttribute('searchConfig', {
 				parentChannel,
-				target,
-				id: this.pathVariableId
+				target
 			});
 
 			this.mergeComponentAttribute('browserConfig', {

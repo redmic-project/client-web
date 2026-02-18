@@ -17,7 +17,8 @@ define([
 		postMixInProperties: function() {
 
 			const defaultConfig = {
-				searchFields: null
+				getRequestPathParams: null,
+				getRequestQueryParams: null
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
@@ -29,31 +30,25 @@ define([
 
 			this.inherited(arguments);
 
-			this._onEvt('SEARCH', obj => this._onSearchEvent(obj));
+			this._onEvt('SEARCH', obj => this._onSearchEvent(obj.value));
 		},
 
-		_onSearchEvent: function(/*Object*/ searchObj) {
+		_onSearchEvent: function(/*String*/ value) {
 
 			this.inherited(arguments);
 
 			this._emitEvt('REQUEST', {
 				target: this._getTarget(),
-				params: this._createSearchRequestParams(searchObj)
+				params: this._createSearchRequestParams(value)
 			});
 		},
 
-		_createSearchRequestParams: function(searchObj) {
+		_createSearchRequestParams: function(value) {
 
 			this.inherited(arguments);
 
-			const path = {
-				id: this.id
-			};
-
-			const query = {
-				text: searchObj.value,
-				searchFields: this.searchFields
-			};
+			const path = this.getRequestPathParams?.(value) ?? {};
+			const query = this.getRequestQueryParams?.(value) ?? {text: value};
 
 			return {path, query};
 		},

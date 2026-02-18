@@ -30,8 +30,8 @@ define([
 
 	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _AddBrowserComponent,
 		_AddMapLayerComponent], {
-		//	summary:
-		//		Widget para mostrar un mapa de puntos donde se registran observaciones.
+		// summary:
+		//   Widget para mostrar un mapa de puntos donde se registran observaciones.
 
 		postMixInProperties: function() {
 
@@ -75,6 +75,12 @@ define([
 			}, {
 				arrayMergingStrategy: 'overwrite'
 			});
+
+			const getPathParams = () => ({id: this.pathVariableId});
+			this.mergeComponentAttribute('searchConfig', {
+				getRequestPathParams: getPathParams,
+				getSuggestionsPathParams: getPathParams
+			});
 		},
 
 		_defineSubscriptions: function() {
@@ -91,7 +97,7 @@ define([
 
 		_subMapLayerStationPopupLoaded: function(res) {
 
-			var popupNode = res?._contentNode,
+			const popupNode = res?._contentNode,
 				popupData = res?._source?.feature?.properties;
 
 			if (!popupNode || !popupData) {
@@ -99,7 +105,7 @@ define([
 			}
 			popupData.id = popupData.id ?? res?._source?.feature?.id;
 
-			var showChartsNode = query('.' + this._showObservationsButtonClass, popupNode)[0];
+			const showChartsNode = query('.' + this._showObservationsButtonClass, popupNode)[0];
 
 			if (!showChartsNode) {
 				return;

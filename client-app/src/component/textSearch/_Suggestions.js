@@ -25,11 +25,12 @@ define([
 				suggestionItemClass: 'suggestion',
 				suggestionHighlightedClass: 'highlighted',
 
+				suggestionsTarget: null,
 				suggestionsRequestMethod: 'GET',
-				suggestionsTargetSuffix: 'suggestions',
-
-				itemLabel: null,
-				requestSuggestionsTimeout: 300
+				requestSuggestionsTimeout: 300,
+				getSuggestionItemLabel: null,
+				getSuggestionsPathParams: null,
+				getSuggestionsQueryParams: null
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
@@ -130,23 +131,21 @@ define([
 
 			this._emitEvt('REQUEST', {
 				method: this.suggestionsRequestMethod,
-				target: `${this._getTarget()}/${this.suggestionsTargetSuffix}`,
+				target: this._getSuggestionsTarget(),
 				requesterId: this.getOwnChannel(),
 				params: this._createSuggestionsRequestParams(value)
 			});
 		},
 
+		_getSuggestionsTarget: function() {
+
+			return this.suggestionsTarget ?? `${this._getTarget()}/suggestions`;
+		},
+
 		_createSuggestionsRequestParams: function(value) {
 
-			const path = {
-				id: this.id
-			};
-
-			const query = {
-				text: value,
-				fields: this.suggestFields,
-				highlightFields: this.highlightField
-			};
+			const path = this.getSuggestionsPathParams?.(value) ?? {};
+			const query = this.getSuggestionsQueryParams?.(value) ?? {text: value};
 
 			return {path, query};
 		},
@@ -158,7 +157,7 @@ define([
 
 		_suggestionsTargetIsMine: function(target) {
 
-			return `${this._getTarget()}/${this.suggestionsTargetSuffix}` === target;
+			return this._getSuggestionsTarget() === target;
 		},
 
 		_dataAvailable: function(res, resWrapper) {
@@ -257,19 +256,19 @@ define([
 
 		_getSuggestionLabel: function(item) {
 
-			if (typeof this.itemLabel === 'function') {
-				return this.itemLabel(item);
+			if (typeof this.getSuggestionItemLabel === 'function') {
+				return this.getSuggestionItemLabel(item);
 			}
 
-			if (typeof this.itemLabel !== 'string') {
+			if (typeof this.getSuggestionItemLabel !== 'string') {
 				return item;
 			}
 
-			if (this.itemLabel.includes('{')) {
-				return lang.replace(this.itemLabel, item);
+			if (this.getSuggestionItemLabel.includes('{')) {
+				return lang.replace(this.getSuggestionItemLabel, item);
 			}
 
-			return item[this.itemLabel];
+			return item[this.getSuggestionItemLabel];
 		},
 
 		_highlightSuggestion: function(suggestionNode) {

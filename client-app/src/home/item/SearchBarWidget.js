@@ -6,7 +6,7 @@ define([
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
 	, 'src/component/layout/dataDisplayer/DataDisplayer'
-	, 'src/component/search/TextImpl'
+	, 'src/component/textSearch/TextSearchSuggestionsExpansionRequestImpl'
 ], function(
 	redmicConfig
 	, declare
@@ -15,7 +15,7 @@ define([
 	, _Module
 	, _Show
 	, DataDisplayer
-	, TextImpl
+	, TextSearchSuggestionsExpansionRequestImpl
 ) {
 
 	return declare([_Module, _Show, _Filter], {
@@ -51,12 +51,15 @@ define([
 			this.textSearchConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
-				queryChannel: this.queryChannel,
-				legacyMode: false,
-				showExpandIcon: true
+				suggestionsRequestMethod: 'POST',
+				suggestionsTarget: `${this.target}/_suggest`,
+				getSuggestionsQueryParams: value => ({suggest: {text: value}})
+				//queryChannel: this.queryChannel,
+				//legacyMode: false,
+				//showExpandIcon: true
 			}, this.textSearchConfig || {}]);
 
-			this.textSearch = new TextImpl(this.textSearchConfig);
+			this.textSearch = new TextSearchSuggestionsExpansionRequestImpl(this.textSearchConfig);
 
 			this._infoInstance = new DataDisplayer({
 				parentChannel: this.getChannel(),

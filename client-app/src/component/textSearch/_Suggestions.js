@@ -38,6 +38,13 @@ define([
 			this.inherited(arguments);
 		},
 
+		_setOwnCallbacksForEvents: function() {
+
+			this.inherited(arguments);
+
+			this._onEvt('ME_OR_ANCESTOR_HIDDEN', () => this._closeSuggestionsContainer());
+		},
+
 		postCreate: function() {
 
 			this.inherited(arguments);
@@ -340,6 +347,10 @@ define([
 		},
 
 		_onGlobalScrollEvent: function(evt) {
+
+			if (evt.target === this._suggestionsContainer) {
+				return;
+			}
 
 			this._closeSuggestionsContainer();
 		},

@@ -11,7 +11,7 @@ define([
 	, 'src/component/browser/ListImpl'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'src/component/layout/TabsDisplayer'
-	, 'src/component/search/TextImpl'
+	, 'src/component/textSearch/TextSearchSuggestionsRequestImpl'
 	, 'templates/DefaultList'
 ], function(
 	declare
@@ -26,7 +26,7 @@ define([
 	, ListImpl
 	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
-	, TextImpl
+	, TextSearchSuggestionsRequestImpl
 	, TemplateDefaultList
 ) {
 
@@ -71,7 +71,7 @@ define([
 			this.mergeComponentAttribute('searchConfig', {
 				parentChannel,
 				target,
-				itemLabel: null
+				id: this.pathVariableId
 			});
 
 			this.mergeComponentAttribute('browserConfig', {
@@ -140,7 +140,7 @@ define([
 
 		_createDesignSearchComponent: function() {
 
-			return new TextImpl(this.searchConfig);
+			return new TextSearchSuggestionsRequestImpl(this.searchConfig);
 		},
 
 		populateDesignLayoutNodes: function() {

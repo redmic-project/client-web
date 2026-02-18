@@ -5,9 +5,7 @@ define([
 	, "dojo/Evented"
 	, 'put-selector'
 	, "dojo/dom-attr"
-	, "dojo/dom-construct"
 	, "dojo/dom-geometry"
-	, "dojo/query"
 ], function(
 	declare
 	, _WidgetBase
@@ -15,13 +13,8 @@ define([
 	, Evented
 	, put
 	, domAttr
-	, domConstruct
 	, domGeom
-	, query
 ) {
-	var cleanSpace = function(text) {
-		return text && text.trim();
-	};
 
 	return declare([_WidgetBase, Evented], {
 
@@ -36,7 +29,6 @@ define([
 				originalValue: '',
 				suggestFields: null,
 				sizeSuggets: null,
-				suggestionsContainerClass: 'suggestions',
 				hiddenClass: 'hidden',
 				innerButtonsContainerClass: 'innerButtons',
 				outerButtonsContainerClass: 'outerButtons',
@@ -59,22 +51,6 @@ define([
 					EXECUTE: "execute",
 					REFRESH: "refresh",
 					EXPAND_SEARCH: 'expandSearch'
-				},
-				createQuery: function(text, fields) {
-
-					var queryObj = {
-						'text': text
-					};
-
-					if (fields) {
-						queryObj.fields = fields;
-					}
-
-					if (this.sizeSuggets) {
-						queryObj.size = this.sizeSuggets;
-					}
-
-					return queryObj;
 				}
 			};
 
@@ -138,17 +114,6 @@ define([
 			}
 		},
 
-		_createSuggestions: function() {
-
-			var suggestionsNodeExists = query('div.' + this.suggestionsContainerClass, this.ownerDocumentBody);
-
-			if (suggestionsNodeExists.length !== 0) {
-				this.boxSuggestionsNode = suggestionsNodeExists[0];
-			} else {
-				this.boxSuggestionsNode = put(this.ownerDocumentBody, 'div.' + this.suggestionsContainerClass);
-			}
-		},
-
 		_inputNodeNoFocus: function() {
 
 			setTimeout(lang.hitch(this, this._restartLastValueInput), 300);
@@ -162,7 +127,7 @@ define([
 				this._selectCharCorrect(keyCode);
 			}
 
-			if (cleanSpace(this.getValueInput()).length !== 0) {
+			if (this.getValueInput().length) {
 				this._activeRemoveText();
 			} else {
 				this._closeSuggestion();
@@ -196,7 +161,7 @@ define([
 
 				clearTimeout(this.searchChangedTimeout);
 				this.searchChangedTimeout = setTimeout(lang.hitch(this, this.emit,
-					this.events.SEARCH_CHANGED, cleanSpace(this.getValueInput())), 200);
+					this.events.SEARCH_CHANGED, this.getValueInput()), 200);
 			}
 		},
 
@@ -248,7 +213,7 @@ define([
 
 		_newSearch: function(newSearch) {
 
-			var value = this.getValueInput().trim();
+			var value = this.getValueInput();
 
 			if (newSearch || this.lastSearch !== value) {
 				if (!value || value.length > 1) {
@@ -285,26 +250,41 @@ define([
 		_requestSuggestions: function(textValue) {
 
 			this.originalValue = textValue;
-			//Solicitar las sugerencias
 
 			if (textValue.length > 1) {
-				this.emit(this.events.REQUEST_SUGGESTS, this.createQuery(textValue, this.suggestFields));
+				this.emit(this.events.REQUEST_SUGGESTS, this._createQuery(textValue, this.suggestFields));
 			}
 		},
 
-		_addSuggestions: function(/*JSON*/ suggestions) {
+		_createQuery: function(text, fields) {
 
-			this._openSuggestion();
+			var queryObj = {
+				'text': text
+			};
 
-			var tamSuggets = suggestions.length;
-			for (var i = 0; i < tamSuggets; i++){
-				var node = this._createSuggest(suggestions[i]);
-				this._addEventsSugget(node);
+			if (fields) {
+				queryObj.fields = fields;
 			}
 
-			if (tamSuggets === 0) {
-				this._closeSuggestion();
+			if (this.sizeSuggets) {
+				queryObj.size = this.sizeSuggets;
 			}
+
+			return queryObj;
+		},
+
+		_addSuggestions: function(/*Array*/ suggestions) {
+
+			if (!suggestions?.length) {
+				return;
+			}
+
+			this._openSuggestions();
+
+			suggestions.forEach(suggestion => {
+				const node = this._createSuggest(suggestion);
+				this._listenSuggestionEvents(node);
+			});
 		},
 
 		_createSuggest: function(item) {
@@ -331,13 +311,13 @@ define([
 			return item;
 		},
 
-		_addEventsSugget: function(spanNode) {
+		_listenSuggestionEvents: function(node) {
 
-			spanNode.onclick = lang.hitch(this, this._selectSuggestion, spanNode);
-			spanNode.focus = lang.hitch(this, this._selectSuggetFocus, spanNode, true);
-			spanNode.onblur = lang.hitch(this, this._deselectSuggetFocus, spanNode, true);
-			spanNode.onmouseover = lang.hitch(this, this._selectSuggetFocus, spanNode, false);
-			spanNode.onmouseout = lang.hitch(this, this._deselectSuggetFocus, spanNode, false);
+			node.onclick = lang.hitch(this, this._selectSuggestion, node);
+			node.focus = lang.hitch(this, this._selectSuggetFocus, node, true);
+			node.onblur = lang.hitch(this, this._deselectSuggetFocus, node, true);
+			node.onmouseover = lang.hitch(this, this._selectSuggetFocus, node, false);
+			node.onmouseout = lang.hitch(this, this._deselectSuggetFocus, node, false);
 		},
 
 		_selectSuggetFocus: function(spanNode, change) {
@@ -370,39 +350,53 @@ define([
 			this.emit(this.events.NEW_SEARCH, value);
 		},
 
-		_cleanChildrenNode: function(node) {
-
-			domConstruct.destroy(node);
-		},
-
 		_closeSuggestion: function() {
 
 			this.focusIn = -1;
-			this._cleanChildrenNode(this.boxSuggestionsNode);
-			put(this.domNode, '!' + this.suggestionsShownClass);
+			this._hideSuggestions();
 
 			this.emit(this.events.CLOSED);
 		},
 
-		_openSuggestion: function() {
+		_openSuggestions: function() {
 
-			this._cleanChildrenNode(this.boxSuggestionsNode);
 			this._createSuggestions();
 
-			var positionNode = domGeom.position(this.domNode);
-			var obj = {
+			const positionNode = domGeom.position(this.domNode);
+
+			domAttr.set(this.boxSuggestionsNode, 'style', {
 				top: (positionNode.y + positionNode.h) + 'px',
 				left: positionNode.x + 'px',
 				width: positionNode.w + 'px'
-			};
-			domAttr.set(this.boxSuggestionsNode, 'style', obj);
+			});
 
-			put(this.domNode, '.' + this.suggestionsShownClass);
+			this._showSuggestions();
+		},
+
+		_createSuggestions: function() {
+
+			if (this.boxSuggestionsNode) {
+				this.boxSuggestionsNode.replaceChildren();
+				return;
+			}
+
+			const suggestionsContainerClass = `suggestions.${this.hiddenClass}`;
+			this.boxSuggestionsNode = put(this.ownerDocumentBody, `div.${suggestionsContainerClass}`);
+		},
+
+		_showSuggestions: function() {
+
+			this.boxSuggestionsNode && put(this.boxSuggestionsNode, `!${this.hiddenClass}`);
+		},
+
+		_hideSuggestions: function() {
+
+			this.boxSuggestionsNode && put(this.boxSuggestionsNode, `.${this.hiddenClass}`);
 		},
 
 		getValueInput: function() {
 
-			return this.inputNode.value;
+			return this.inputNode.value?.trim();
 		},
 
 		setValueInput: function(text) {
@@ -424,11 +418,6 @@ define([
 			if (!value) {
 				this._desactiveRemoveText();
 			}
-		},
-
-		setI18n: function(i18n){
-
-			this.i18n = i18n;
 		},
 
 		_reset: function() {

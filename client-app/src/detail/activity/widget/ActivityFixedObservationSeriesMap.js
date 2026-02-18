@@ -97,6 +97,7 @@ define([
 			if (!popupNode || !popupData) {
 				return;
 			}
+			popupData.id = popupData.id ?? res?._source?.feature?.id;
 
 			var showChartsNode = query('.' + this._showObservationsButtonClass, popupNode)[0];
 

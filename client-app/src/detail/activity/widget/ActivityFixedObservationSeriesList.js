@@ -133,6 +133,10 @@ define([
 
 			const dataDefinitionId = this._getDataDefinitionId(stationData);
 
+			if (!dataDefinitionId) {
+				return;
+			}
+
 			const query = {
 				'data-definition': dataDefinitionId
 			};
@@ -144,7 +148,7 @@ define([
 
 		_getDataDefinitionId: function(data) {
 
-			const countMeasurement = data.measurements.find(measurement => measurement.parameter?.id === 87);
+			const countMeasurement = data.measurements?.find(measurement => measurement.parameter?.id === 87);
 
 			return countMeasurement?.dataDefinition?.id;
 		},

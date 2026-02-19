@@ -9,10 +9,8 @@ define([
 ) {
 
 	return declare([_Module, _RestManagerItfc], {
-		//	summary:
-		//		Módulo encargado de la entrada/salida con respecto a servicios externos.
-		//	description:
-		//		Permite manejar las peticiones de datos y su respuesta, así como las operaciones de escritura y borrado.
+		// summary:
+		//   Componente encargado de la entrada/salida de datos, para consulta, escritura y borrado.
 
 		postMixInProperties: function() {
 
@@ -58,7 +56,7 @@ define([
 		_defineSubscriptions: function () {
 
 			const options = {
-				predicate: (req) => this._chkTargetIsValid(req)
+				predicate: req => this._chkTargetIsValid(req)
 			};
 
 			this.subscriptionsConfig.push({
@@ -85,13 +83,13 @@ define([
 				channel: this.getChannel('SAVE'),
 				callback: '_subSave',
 				options: {
-					predicate: (req) => this._chkValidSaveRequest(req)
+					predicate: req => this._chkValidSaveRequest(req)
 				}
 			},{
 				channel: this.getChannel('REMOVE'),
 				callback: '_subRemove',
 				options: {
-					predicate: (req) => this._chkValidRemoveRequest(req)
+					predicate: req => this._chkValidRemoveRequest(req)
 				}
 			});
 		},
@@ -121,7 +119,7 @@ define([
 				channel: this.getChannel('TARGET_LOADED')
 			},{
 				event: 'ABORT_ALL_LOADING',
-				channel: this._buildChannel(this.loadingChannel, this.actions.ABORT_ALL_LOADING)
+				channel: this._buildChannel(this.loadingChannel, 'ABORT_ALL_LOADING')
 			});
 		},
 
@@ -138,8 +136,8 @@ define([
 				notifyError = true;
 
 			this._performGet(req, requesterChannel).then(
-				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
-				(res) => this._handleError({ evtName, notifyError }, req, res));
+				res => this._handleSuccess({ evtName, notifySuccess }, req, res),
+				res => this._handleError({ evtName, notifyError }, req, res));
 		},
 
 		_subRequest: function(req, _mediatorChannel, componentInfo) {
@@ -155,15 +153,15 @@ define([
 				notifyError = true;
 
 			this._performRequest(req, requesterChannel).then(
-				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
-				(res) => this._handleError({ evtName, notifyError }, req, res));
+				res => this._handleSuccess({ evtName, notifySuccess }, req, res),
+				res => this._handleError({ evtName, notifyError }, req, res));
 		},
 
 		_subInjectItem: function(req) {
 
 			const res = {
 				status: 200,
-				data: req.data || {}
+				data: req.data ?? {}
 			};
 
 			const evtName = 'GET',
@@ -176,7 +174,7 @@ define([
 
 			const res = {
 				status: 200,
-				data: req.data || []
+				data: req.data ?? []
 			};
 
 			// TODO esta variable no se usa, eliminarla o asignarla a req o res?
@@ -234,8 +232,8 @@ define([
 				notifyError = true;
 
 			this._performSave(req).then(
-				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
-				(res) => this._handleError({ evtName, notifyError }, req, res));
+				res => this._handleSuccess({ evtName, notifySuccess }, req, res),
+				res => this._handleError({ evtName, notifyError }, req, res));
 		},
 
 		_chkValidRemoveRequest: function(req) {
@@ -262,8 +260,8 @@ define([
 				notifyError = true;
 
 			this._performRemove(req).then(
-				(res) => this._handleSuccess({ evtName, notifySuccess }, req, res),
-				(res) => this._handleError({ evtName, notifyError }, req, res));
+				res => this._handleSuccess({ evtName, notifySuccess }, req, res),
+				res => this._handleError({ evtName, notifyError }, req, res));
 		},
 
 		_emitLoading: function(req) {

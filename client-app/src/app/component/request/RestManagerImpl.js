@@ -19,15 +19,8 @@ define([
 ) {
 
 	return declare([RestManager, _Send, _Receive, _Auth, _Params], {
-		//	summary:
-		//		Implementación del módulo RestManager, que provee métodos de comunicación mediante dojo/request/xhr.
-		//	description:
-		//		También maneja errores de permisos en peticiones y les añade cabeceras de autenticación.
-		//		Importante: el campo 'options' recibido en las peticiones desde otros módulos, sobreescribe directamente
-		//		las opciones que se usarán a su vez para realizar la petición HTTP.
-
-		//	apiUrl: String
-		//		Prefijo de rutas hacia el servidor.
+		// summary:
+		//   Implementación del componente RestManager, que provee comunicación mediante dojo/request/xhr.
 
 		postCreate: function() {
 

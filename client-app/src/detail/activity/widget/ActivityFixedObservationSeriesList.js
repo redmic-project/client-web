@@ -8,6 +8,7 @@ define([
 	, 'src/design/browser/_AddFacetComponent'
 	, 'src/design/browser/_AddOrderBarComponent'
 	, 'src/design/browser/_AddPaginationBarComponent'
+	, 'src/design/browser/_AddTextSearchComponent'
 	, 'src/design/browser/_AddTotalBarComponent'
 	, 'src/design/browser/_BrowserWithTopbarAndFilterPanelDesignLayout'
 	, 'src/redmicConfig'
@@ -24,6 +25,7 @@ define([
 	, _AddFacetComponent
 	, _AddOrderBarComponent
 	, _AddPaginationBarComponent
+	, _AddTextSearchComponent
 	, _AddTotalBarComponent
 	, _BrowserWithTopbarAndFilterPanelDesignLayout
 	, redmicConfig
@@ -33,7 +35,7 @@ define([
 ) {
 
 	return declare([_Module, _Show, _Store, _BrowserWithTopbarAndFilterPanelDesignLayout, _AddTotalBarComponent,
-		_AddOrderBarComponent, _AddPaginationBarComponent, _AddFacetComponent], {
+		_AddOrderBarComponent, _AddPaginationBarComponent, _AddFacetComponent, _AddTextSearchComponent], {
 		//	summary:
 		//		Widget para mostrar un listado de las observaciones registradas en el punto seleccionado.
 
@@ -83,7 +85,10 @@ define([
 			}]);
 
 			this.textSearchConfig = this._merge([{
-				showExpandIcon: true
+				getSuggestionsPathParams: () => ({
+					activityid: this.pathVariableId,
+					receptorid: this._stationId
+				}),
 			}, this.textSearchConfig || {}]);
 
 			this.compositeConfig = this._merge([this.compositeConfig || {}, {
@@ -126,9 +131,11 @@ define([
 
 		_requestObservationEvents: function(stationData) {
 
+			this._stationId = stationData.id;
+
 			const path = {
 				activityid: this.pathVariableId,
-				receptorid: stationData.id
+				receptorid: this._stationId
 			};
 
 			const dataDefinitionId = this._getDataDefinitionId(stationData);

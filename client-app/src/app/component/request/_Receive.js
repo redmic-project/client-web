@@ -7,8 +7,8 @@ define([
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Lógica de recepción de respuestas a peticiones del componente RestManager.
+		// summary:
+		//   Lógica de recepción de respuestas a peticiones del componente RestManager.
 
 		_parseResponse: function(res) {
 

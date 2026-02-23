@@ -84,13 +84,6 @@ define([
 				search: lang.hitch(this, this._requestData)
 			}]);
 
-			this.textSearchConfig = this._merge([{
-				getSuggestionsPathParams: () => ({
-					activityid: this.pathVariableId,
-					receptorid: this._stationId
-				}),
-			}, this.textSearchConfig || {}]);
-
 			this.compositeConfig = this._merge([this.compositeConfig || {}, {
 				template: TemplateFilter
 			}]);
@@ -131,11 +124,9 @@ define([
 
 		_requestObservationEvents: function(stationData) {
 
-			this._stationId = stationData.id;
-
 			const path = {
 				activityid: this.pathVariableId,
-				receptorid: this._stationId
+				receptorid: stationData.id
 			};
 
 			const dataDefinitionId = this._getDataDefinitionId(stationData);

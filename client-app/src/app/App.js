@@ -11,7 +11,7 @@ define([
 	, 'src/app/component/Loading'
 	, 'src/app/component/meta/MetaTags'
 	, 'src/app/component/ModuleStore'
-	, 'src/app/component/request/RestManagerImpl'
+	, 'src/app/component/request/RestManagerXhrImpl'
 	, 'src/app/component/Router'
 	, 'src/app/util/CheckBrowser'
 	, 'src/component/base/_Module'
@@ -33,7 +33,7 @@ define([
 	, Loading
 	, MetaTags
 	, ModuleStore
-	, RestManagerImpl
+	, RestManagerXhrImpl
 	, Router
 	, CheckBrowser
 	, _Module
@@ -122,7 +122,7 @@ define([
 
 			new CookieLoader();
 
-			new RestManagerImpl({
+			new RestManagerXhrImpl({
 				parentChannel,
 				apiUrl: redmicConfig.getEnvVariableValue('envApiUrl'),
 			});

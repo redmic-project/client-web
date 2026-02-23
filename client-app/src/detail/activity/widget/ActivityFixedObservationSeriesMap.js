@@ -75,12 +75,6 @@ define([
 			}, {
 				arrayMergingStrategy: 'overwrite'
 			});
-
-			const getPathParams = () => ({id: this.pathVariableId});
-			this.mergeComponentAttribute('searchConfig', {
-				getRequestPathParams: getPathParams,
-				getSuggestionsPathParams: getPathParams
-			});
 		},
 
 		_defineSubscriptions: function() {
@@ -140,7 +134,7 @@ define([
 
 			const method = 'GET',
 				target = this.target,
-				params = {path};
+				params = {path, sharedParams: true};
 
 			this._emitEvt('REQUEST', {method, target, params});
 		}

@@ -36,51 +36,21 @@ define([
 		_manageRequestParams: function(req, requesterChannel) {
 
 			const target = req.target,
-				reqParams = req.params ?? {},
-				sharedParams = reqParams.sharedParams;
+				sharedParams = !!req.params?.sharedParams;
 
-			delete reqParams.sharedParams;
-
-			// TODO temporal, convierte antiguo formato de query en el primer nivel al nuevo de params anidado
-			if (req.query && !reqParams.query) {
-				reqParams.query = req.query;
-				delete req.query;
-			}
+			const reqParams = {
+				path: {...req.params?.path},
+				query: {...req.params?.query ?? req.query /*TODO temporal, recupera antiguo formato de query*/}
+			};
 
 			if (sharedParams) {
-				const sharedChannel = this._getSharedChannel(requesterChannel),
-					sharedAddedRequestParams = this._mixinRequestParams(target, reqParams, sharedChannel);
-
-				return sharedAddedRequestParams;
+				const sharedChannel = this._getSharedChannel(requesterChannel);
+				this._mixinRequestParams(target, reqParams, sharedChannel);
+			} else {
+				this._mixinRequestParams(target, reqParams, requesterChannel);
 			}
 
-			const requesterAddedRequestParams = this._mixinRequestParams(target, reqParams, requesterChannel);
-			return requesterAddedRequestParams;
-		},
-
-		_mixinRequestParams: function(target, reqParams, requesterChannel) {
-
-			const prevParams = this._getRequestParams(target, requesterChannel),
-				nextParams = this._merge([prevParams, reqParams]);
-
-			this._setRequestParams(target, requesterChannel, nextParams);
-
-			return nextParams;
-		},
-
-		_getRequestParams: function(target, requesterChannel) {
-
-			return this._requestParams[requesterChannel]?.[target] ?? {
-				path: {},
-				query: {}
-			};
-		},
-
-		_setRequestParams: function(target, requesterChannel, params) {
-
-			this._requestParams[requesterChannel] = this._requestParams[requesterChannel] ?? {};
-
-			this._requestParams[requesterChannel][target] = params;
+			this._emitRequestParamsChanged(target, requesterChannel, reqParams);
 		},
 
 		_getSharedChannel: function(requesterChannel) {
@@ -98,28 +68,59 @@ define([
 			return `${viewChannel}${sharedSuffix}`;
 		},
 
+		_mixinRequestParams: function(target, reqParams, requesterChannel) {
+
+			const prevParams = this._getRequestParams(target, requesterChannel),
+				nextParams = this._merge([prevParams, reqParams]);
+
+			this._setRequestParams(target, requesterChannel, nextParams);
+		},
+
+		_getRequestParams: function(target, requesterChannel) {
+
+			return this._requestParams[requesterChannel]?.[target] ?? {
+				path: {},
+				query: {}
+			};
+		},
+
+		_setRequestParams: function(target, requesterChannel, params) {
+
+			this._requestParams[requesterChannel] = this._requestParams[requesterChannel] ?? {};
+
+			this._requestParams[requesterChannel][target] = params;
+		},
+
+		_emitRequestParamsChanged: function(target, requesterChannel, addedParams) {
+
+			const params = this._getMergedRequestParams(target, requesterChannel);
+
+			this._emitEvt('REQUEST_PARAMS_CHANGED', {target, addedParams, params});
+		},
+
+		_getMergedRequestParams: function(target, requesterChannel) {
+
+			const requesterRequestParams = this._getRequestParams(target, requesterChannel),
+				sharedRequestParams = this._getRequestParams(target, this._getSharedChannel(requesterChannel));
+
+			const path = this._merge([sharedRequestParams.path, requesterRequestParams.path]),
+				query = this._merge([sharedRequestParams.query, requesterRequestParams.query]);
+
+			return {path, query};
+		},
+
 		_getTargetWithPathParamsReplaced: function(target, requesterChannel) {
 
-			const requesterRequestPathParams = this._getRequestParams(target, requesterChannel).path;
-
-			const sharedChannel = this._getSharedChannel(requesterChannel),
-				sharedRequestPathParams = this._getRequestParams(target, sharedChannel).path;
-
-			const apiUrl = this.apiUrl;
-
-			const pathParams = this._merge([{apiUrl}, sharedRequestPathParams, requesterRequestPathParams]);
+			const apiUrl = this.apiUrl,
+				mergedRequestPathParams = this._getMergedRequestParams(target, requesterChannel).path,
+				pathParams = this._merge([{apiUrl}, mergedRequestPathParams]);
 
 			return lang.replace(target, pathParams);
 		},
 
-		_getQueryDataWithQueryParamsReplaced: function(target, requesterChannel) {
+		_getQueryDataFromQueryParams: function(target, requesterChannel) {
 
-			const requesterRequestQueryParams = this._getRequestParams(target, requesterChannel).query;
-
-			const sharedChannel = this._getSharedChannel(requesterChannel),
-				sharedRequestQueryParams = this._getRequestParams(target, sharedChannel).query;
-
-			const mergedRequestQueryParams = this._merge([sharedRequestQueryParams, requesterRequestQueryParams]),
+			const mergedRequestQueryParams = this._getMergedRequestParams(target, requesterChannel).query,
 				queryDfd = new Deferred();
 
 			if (!this._targetHasSchema(target)) {
@@ -139,13 +140,11 @@ define([
 			return !!redmicConfig.schemas[target];
 		},
 
-		_getQueryModel: function(target, queryParams) {
+		_getQueryModel: function(target, data) {
 
 			const modelInstance = this._queryModels[target] ?? this._createQueryModel(target);
 
-			this._publish(modelInstance.getChannel('DESERIALIZE'), {
-				data: queryParams
-			});
+			this._publish(modelInstance.getChannel('DESERIALIZE'), {data});
 
 			return modelInstance;
 		},

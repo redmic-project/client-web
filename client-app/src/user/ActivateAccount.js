@@ -14,7 +14,7 @@ define([
 	, RedmicLocalStorage
 ) {
 
-	// TODO falta aquí solamente por quitar 'dojo/request', el resto se han centralizado en RestManagerImpl. Se podrá
+	// TODO falta aquí solamente por quitar 'dojo/request', el resto se han centralizado en RestManager. Se podrá
 	// quitar cuando esto se convierta en una View y se gestione igual que otras vistas de 'src/user/', en lugar de
 	// gestionar por ruta separada y capturar el valor del token desde plantilla pug
 

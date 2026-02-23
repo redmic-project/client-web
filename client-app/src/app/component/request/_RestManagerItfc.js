@@ -9,21 +9,13 @@ define([
 ) {
 
 	return declare(_Itfc, {
-		//	summary:
-		//		Interfaz de RestManager.
-		//	description:
-		//		Define los métodos que debe poseer el módulo o la implementación.
+		// summary:
+		//   Interfaz de RestManager.
 
 		_getMethodsToImplement: function() {
 
 			return lang.mixin(this.inherited(arguments), {
-				'_performGet': {},
-				'_performRequest': {},
-				'_performSave': {},
-				'_performRemove': {},
-				'_parseResponse': {},
-				'_parseError': {},
-				'_manageRequestParams': {}
+				'_launchRequest': {}
 			});
 		}
 	});

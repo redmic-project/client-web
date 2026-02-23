@@ -1,14 +1,22 @@
 define([
 	'dojo/_base/declare'
+	, 'src/app/component/request/_Auth'
+	, 'src/app/component/request/_Params'
+	, 'src/app/component/request/_Receive'
 	, 'src/app/component/request/_RestManagerItfc'
+	, 'src/app/component/request/_Send'
 	, 'src/component/base/_Module'
 ], function(
 	declare
+	, _Auth
+	, _Params
+	, _Receive
 	, _RestManagerItfc
+	, _Send
 	, _Module
 ) {
 
-	return declare([_Module, _RestManagerItfc], {
+	return declare([_Module, _Send, _Receive, _Params, _Auth, _RestManagerItfc], {
 		// summary:
 		//   Componente encargado de la entrada/salida de datos, para consulta, escritura y borrado.
 
@@ -195,12 +203,7 @@ define([
 
 			const requesterChannel = this._getRequesterChannel(componentInfo);
 
-			const params = this._manageRequestParams(req, requesterChannel);
-
-			const target = req.target,
-				addedParams = req.params;
-
-			this._emitEvt('REQUEST_PARAMS_CHANGED', {target, params, addedParams});
+			this._manageRequestParams(req, requesterChannel);
 		},
 
 		_getRequesterChannel: function(componentInfo) {

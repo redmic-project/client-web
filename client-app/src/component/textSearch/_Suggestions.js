@@ -151,10 +151,20 @@ define([
 
 		_createSuggestionsRequestParams: function(value) {
 
-			const path = this.getSuggestionsPathParams?.(value) ?? {};
-			const query = this.getSuggestionsQueryParams?.(value) ?? {text: value};
+			const path = this._getSuggestionsPathParams(value),
+				query = this._getSuggestionsQueryParams(value);
 
 			return {path, query};
+		},
+
+		_getSuggestionsPathParams: function(text) {
+
+			return this.getSuggestionsPathParams?.(text) ?? this._suggestionsPathParams ?? {};
+		},
+
+		_getSuggestionsQueryParams: function(text) {
+
+			return this.getSuggestionsQueryParams?.(text) ?? {...this._suggestionsQueryParams, text};
 		},
 
 		_targetIsMine: function(target) {
@@ -165,6 +175,25 @@ define([
 		_suggestionsTargetIsMine: function(target) {
 
 			return this._getSuggestionsTarget() === target;
+		},
+
+		_requestParamsChanged: function(res) {
+
+			this.inherited(arguments);
+
+			if (res.target !== this._getTarget()) {
+				return;
+			}
+
+			const path = res.params.path;
+			if (path) {
+				this._suggestionsPathParams = path;
+			}
+
+			const query = res.params.query;
+			if (query) {
+				this._suggestionsQueryParams = query;
+			}
 		},
 
 		_dataAvailable: function(res, resWrapper) {

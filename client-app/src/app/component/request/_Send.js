@@ -7,8 +7,8 @@ define([
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Lógica de preparación del envío de peticiones del componente RestManager.
+		// summary:
+		//   Lógica de preparación del envío de peticiones del componente RestManager.
 
 		postMixInProperties: function() {
 
@@ -35,10 +35,12 @@ define([
 		_performGet: function(req, requesterChannel) {
 
 			const url = this._getTargetForGet(req, requesterChannel),
+				authHeaders = this._getAuthHeaders(url),
 				optionsDfd = this._getOptionsForGet(req, requesterChannel),
 				getResponseDfd = new Deferred();
 
 			optionsDfd.then(options => {
+				this._addAuthHeadersToOptions(options, authHeaders);
 				this._launchRequest(url, options).then(
 					getResponse => getResponseDfd.resolve(getResponse),
 					getError => getResponseDfd.reject(getError));
@@ -64,7 +66,7 @@ define([
 		_getOptionsForGet: function(req, requesterChannel) {
 
 			const method = 'GET',
-				headers = this._merge([{}, this.headers, req.headers ?? {}]);
+				headers = this._merge([this.headers ?? {}, req.headers ?? {}]);
 
 			const options = {
 				method,
@@ -75,7 +77,7 @@ define([
 				handleAs: this.handleAs
 			};
 
-			const queryDfd = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel),
+			const queryDfd = this._getQueryDataFromQueryParams(req.target, requesterChannel),
 				optionsDfd = new Deferred();
 
 			queryDfd.then(query => optionsDfd.resolve(this._merge([options, {query}, req.options ?? {}])));
@@ -86,10 +88,12 @@ define([
 		_performRequest: function(req, requesterChannel) {
 
 			const url = this._getTargetForRequest(req, requesterChannel),
+				authHeaders = this._getAuthHeaders(url),
 				optionsDfd = this._getOptionsForRequest(req, requesterChannel),
 				requestResponseDfd = new Deferred();
 
 			optionsDfd.then(options => {
+				this._addAuthHeadersToOptions(options, authHeaders);
 				this._launchRequest(url, options).then(
 					requestResponse => requestResponseDfd.resolve(requestResponse),
 					requestError => requestResponseDfd.reject(requestError));
@@ -114,7 +118,7 @@ define([
 
 			const method = req.method ?? 'GET',
 				reqHeaders = this._getRequestRequestHeaders(req),
-				headers = this._merge([{}, this.headers, reqHeaders, req.headers ?? {}]);
+				headers = this._merge([this.headers ?? {}, reqHeaders, req.headers ?? {}]);
 
 			const options = {
 				method,
@@ -125,7 +129,7 @@ define([
 				handleAs: this.handleAs
 			};
 
-			const queryDfd = this._getQueryDataWithQueryParamsReplaced(req.target, requesterChannel),
+			const queryDfd = this._getQueryDataFromQueryParams(req.target, requesterChannel),
 				optionsDfd = new Deferred();
 
 			queryDfd.then(query => {
@@ -194,8 +198,10 @@ define([
 		_performSave: function(req) {
 
 			const url = this._getTargetForSave(req),
+				authHeaders = this._getAuthHeaders(url),
 				options = this._getOptionsForSave(req);
 
+			this._addAuthHeadersToOptions(options, authHeaders);
 			return this._launchRequest(url, options);
 		},
 
@@ -225,7 +231,7 @@ define([
 
 			const method = this._getSaveRequestMethod(req),
 				saveHeaders = this._getSaveRequestHeaders(req),
-				headers = this._merge([{}, this.headers, saveHeaders, req.headers ?? {}]),
+				headers = this._merge([this.headers ?? {}, saveHeaders, req.headers ?? {}]),
 				data = JSON.stringify(req.data);
 
 			const options = {
@@ -264,8 +270,10 @@ define([
 		_performRemove: function(req) {
 
 			const url = this._getTargetForRemove(req),
+				authHeaders = this._getAuthHeaders(url),
 				options = this._getOptionsForRemove(req);
 
+			this._addAuthHeadersToOptions(options, authHeaders);
 			return this._launchRequest(url, options);
 		},
 
@@ -280,7 +288,7 @@ define([
 		_getOptionsForRemove: function(req) {
 
 			const method = 'DELETE',
-				headers = this._merge([{}, this.headers, req.headers ?? {}]);
+				headers = this._merge([this.headers ?? {}, req.headers ?? {}]);
 
 			const options = {
 				method,

@@ -7,11 +7,11 @@ define([
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Lógica de autenticación del componente RestManager.
+		// summary:
+		//   Lógica de autenticación del componente RestManager.
 
-		//	_filteredAuthPaths: Array
-		//		Define las rutas de URLs a las que no hay que añadirle cabeceras de autenticación.
+		// _filteredAuthPaths: Array
+		//   Define las rutas de URLs a las que no hay que añadirle cabeceras de autenticación.
 
 		postMixInProperties: function() {
 
@@ -35,25 +35,31 @@ define([
 			this.inherited(arguments);
 		},
 
-		_getOptionsWithAuthIfNeeded: function(url, options) {
+		_getAuthHeaders: function(url) {
 
 			if (!this._requestedUrlNeedsAuth(url)) {
-				return options;
+				return;
 			}
 
-			const authHeader = this._getAuthHeaderNeededByUrl(url);
+			const authHeaderName = 'Authorization',
+				authHeaderValue = this._getAuthHeaderNeededByUrl(url);
 
-			if (!authHeader) {
-				return options;
+			if (!authHeaderValue) {
+				return;
 			}
 
-			if (!options.headers) {
-				options.headers = {};
+			return {
+				[authHeaderName]: authHeaderValue
+			};
+		},
+
+		_addAuthHeadersToOptions: function(options, authHeaders) {
+
+			if (!authHeaders || !options) {
+				return;
 			}
 
-			options.headers.Authorization = authHeader;
-
-			return options;
+			options.headers = this._merge([options.headers ?? {}, authHeaders]);
 		},
 
 		_requestedUrlNeedsAuth: function(url) {

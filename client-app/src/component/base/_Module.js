@@ -110,6 +110,8 @@ define([
 		//		Nombre del canal por donde se van a gestionar los cambios de ruta.
 		//	storeChannel: String
 		//		Nombre del canal por donde se van a recibir los datos.
+		//	selectionManagerChannel: String
+		//		Nombre del canal por donde se van a seleccionar los elementos.
 		//	selectorChannel: String
 		//		Nombre del canal por donde se van a seleccionar los items.
 		//	credentialsChannel: String
@@ -157,6 +159,7 @@ define([
 				globalOwnChannels: {
 					ROUTER: "router",
 					STORE: "data",
+					SELECTION_MANAGER: "selectionManager",
 					SELECTOR: "selection",
 					CREDENTIALS: "credentials",
 					EXTERNAL_CONFIG: "externalConfig",
@@ -222,7 +225,9 @@ define([
 			this.alertChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT);
 			this.communicationChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION);
 			this.authChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.AUTH);
-			this.externalConfigChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.EXTERNAL_CONFIG),
+			this.externalConfigChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.EXTERNAL_CONFIG);
+			this.selectionManagerChannel = this._buildChannel(this.rootChannel,
+				this.globalOwnChannels.SELECTION_MANAGER);
 
 			this.outerAppChannel = this._buildChannel(this.rootChannel, this.outerAppOwnChannel);
 			this.innerAppChannel = this._buildChannel(this.rootChannel, this.innerAppOwnChannel);

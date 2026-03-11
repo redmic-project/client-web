@@ -12,6 +12,7 @@ define([
 	, 'src/app/component/meta/MetaTags'
 	, 'src/app/component/ModuleStore'
 	, 'src/app/component/request/RestManagerXhrImpl'
+	, 'src/app/component/select/SelectionManager'
 	, 'src/app/component/Router'
 	, 'src/app/util/CheckBrowser'
 	, 'src/component/base/_Module'
@@ -34,6 +35,7 @@ define([
 	, MetaTags
 	, ModuleStore
 	, RestManagerXhrImpl
+	, SelectionManager
 	, Router
 	, CheckBrowser
 	, _Module
@@ -161,6 +163,10 @@ define([
 			});
 
 			new Auth({
+				parentChannel
+			});
+
+			new SelectionManager({
 				parentChannel
 			});
 		},

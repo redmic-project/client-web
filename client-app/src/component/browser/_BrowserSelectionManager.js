@@ -100,7 +100,6 @@ define([
 				target = this._getSelectionTarget(),
 				selectEvent = this.simpleSelection ? 'SELECT_SINGLE_ITEM' : 'SELECT_ITEM';
 
-			console.log('sele', selectEvent, {itemId, item, target})
 			this._emitEvt(selectEvent, {itemId, item, target});
 		},
 
@@ -110,7 +109,6 @@ define([
 				item = req.item,
 				target = this._getSelectionTarget();
 
-			console.log('desele', {itemId, item, target})
 			this._emitEvt('DESELECT_ITEM', {itemId, item, target});
 		},
 

@@ -1,95 +1,85 @@
 define([
-	"app/designs/mapWithSideContent/main/Tracking"
-	, "app/designs/mapWithSideContent/main/_TrackingWithListByFilter"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
+	, 'src/component/base/_SelectionManager'
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
+	, 'src/design/map/_AddAtlasComponent'
+	, 'src/design/map/_AddQueryOnMapComponent'
+	, 'src/design/map/_AddTrackingComponents'
+	, 'src/design/map/_MapDesignWithTopbarAndContentLayout'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
 ], function(
-	Tracking
-	, _TrackingWithListByFilter
+	declare
+	, lang
 	, _Module
+	, _SelectionManager
 	, _Show
 	, _Store
+	, _AddAtlasComponent
+	, _AddQueryOnMapComponent
+	, _AddTrackingComponents
+	, _MapDesignWithTopbarAndContentLayout
 	, redmicConfig
-	, declare
-	, lang
 ) {
 
-	return declare([_Module, _Show, _Store], {
-		//	summary:
-		//		Widget para mostrar un mapa con datos de seguimiento y controles de reproducción.
+	return declare([_Module, _Show, _Store, _SelectionManager, _MapDesignWithTopbarAndContentLayout,
+		_AddTrackingComponents, _AddAtlasComponent, _AddQueryOnMapComponent], {
+		// summary:
+		//   Widget para mostrar un mapa con datos de seguimiento y controles de reproducción.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				ownChannel: 'activityTrackingMap',
-				target: [redmicConfig.services.activity]
+				target: redmicConfig.services.elementsTrackingActivity,
+				method: 'POST',
+				layersTarget: redmicConfig.services.pointTrackingCluster,
+				infoTarget: redmicConfig.services.trackingActivity,
+				timeMode: true
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
+			// TODO temporal, hasta que se unifiquen servicios
 			if (this.usePrivateTarget) {
-				this.baseTargetChildren = redmicConfig.services.privateElementsTrackingActivity;
-			} else {
-				this.baseTargetChildren = redmicConfig.services.elementsTrackingActivity;
+				this.target = redmicConfig.services.acousticTrackingAnimals;
+				this.method = 'GET';
+
+				this.layersTarget = redmicConfig.services.acousticTrackingAnimalTrack;
+				this.infoTarget = redmicConfig.services.acousticTrackingPointInfo;
 			}
 		},
 
 		_setOwnCallbacksForEvents: function() {
 
+			this.inherited(arguments);
+
 			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
 			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onMeOrAncestorHidden));
 		},
 
-		_initialize: function() {
-
-			this._trackingMap = new declare([Tracking, _TrackingWithListByFilter])({
-				parentChannel: this.getChannel(),
-				usePrivateTarget: this.usePrivateTarget,
-				timeMode: true
-			});
-		},
-
-		getNodeToShow: function() {
-
-			return this._trackingMap.getNodeToShow();
-		},
-
 		_onMeOrAncestorShown: function() {
 
-			this._refreshCurrentData();
+			this.inherited(arguments);
+
+			this._requestData();
 		},
 
-		_onMeOrAncestorHidden: function() {
+		_requestData: function() {
 
-			this._publish(this._trackingMap.getChannel('CLEAR'));
-		},
-
-		_refreshCurrentData: function() {
-
-			this._publish(this._trackingMap.getChannel("SET_PROPS"), {
-				pathVariableId: this.pathVariableId
-			});
-
-			this._emitEvt('GET', {
-				target: this.target[0],
-				requesterId: this.ownChannel,
+			const path = {
 				id: this.pathVariableId
-			});
-		},
+			};
 
-		_itemAvailable: function(item) {
+			const method = this.method,
+				target = this.target,
+				params = {path, sharedParams: true};
 
-			var target = lang.replace(this.baseTargetChildren, item.data);
-
-			this.target[1] = target;
-
-			this._publish(this._trackingMap.getChannel("SET_PROPS"), {
-				target: target
-			});
+			this._emitEvt('REQUEST', {method, target, params});
 		}
 	});
 });

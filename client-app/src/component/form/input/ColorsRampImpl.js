@@ -133,8 +133,6 @@ define([
 
 		_valueChanged: function(res) {
 
-			//console.log(res);
-
 			var value = res.value || res[this.propertyName];
 
 			this.contentTemplateNode.innerHTML = templateFilterColorRamp({

@@ -200,13 +200,11 @@ define([], function() {
 		'animalTracking': '{apiUrl}/animaltracking',
 		'pointTrackingActivities': '{apiUrl}/tracking/activities',
 		'trackingActivity': '{apiUrl}/activities/{id}/tracking',
-		'elementsTrackingActivity': '{apiUrl}/activities/{id}/tracking/elements',
-		'privateElementsTrackingActivity': '{apiUrl}/private/activities/{id}/tracking/elements',
+		'elementsTrackingActivity': '{apiUrl}/activities/{id}/tracking/elements/_search',
 		'elementTracking': '{apiUrl}/activities/{activityid}/tracking/elements/{elementuuid}',
 		'trackElementTracking': '{apiUrl}/activities/{activityid}/tracking/elements/{elementuuid}/track',
 		'pointTrackElementTracking': '{apiUrl}/activities/{activityid}/tracking/elements/{elementuuid}/track/{id}',
 		'pointTrackingCluster': '{apiUrl}/activities/{activityid}/tracking/elements/{elementuuid}/track/cluster/_search',
-		'privatePointTrackingCluster': '{apiUrl}/private/activities/{activityid}/tracking/elements/{elementuuid}/track/cluster',
 		'animalTrackingActivity': '{apiUrl}/activities/{activityid}/animaltracking',
 		'platformTrackingActivity': '{apiUrl}/activities/{activityid}/platformtracking',
 		'pointType': '{apiUrl}/pointtypes',
@@ -262,9 +260,14 @@ define([], function() {
 
 		'timeSeriesActivities': '{apiUrl}/timeseries/activities',
 		'activityTimeSeriesStations': '{apiUrl}/activities/{activityid}/timeseriesstations/_search',
+
 		'acousticDetectionReceptors': '{apiUrl}/v1/acoustic-detection/activities/{id}/receptors',
 		'acousticDetectionEvents': '{apiUrl}/v1/acoustic-detection/activities/{activityid}/receptors/{receptorid}/detections',
 		'acousticDistribution': '{apiUrl}/v1/acoustic-detection/stats/distribution',
+		'acousticTrackingAnimals': '{apiUrl}/v1/acoustic-detection/activities/{id}/animal-trackings/animals',
+		'acousticTrackingAnimalTrack': '{apiUrl}/v1/acoustic-detection/activities/{activityId}/animal-trackings/animals/{animalId}',
+		'acousticTrackingPointInfo': '{apiUrl}/v1/acoustic-detection/activities/{activityId}/animal-trackings/{id}',
+
 		'timeSeriesStations': '{apiUrl}/surveystations',
 		'surveyStationsTimeSeries': '{apiUrl}/datadefinitions/{datadefinitionid}/timeseries',
 

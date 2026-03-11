@@ -137,7 +137,7 @@ define([
 
 		_cancelCallback: function(id) {
 
-			//console.log("cancel con id = ", id);
+			// TODO
 		},
 
 		_subRemove: function(res) {

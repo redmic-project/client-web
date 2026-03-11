@@ -167,7 +167,11 @@ define([
 
 		_removeItemIdFromSelection: function(target, itemId) {
 
-			delete this._selection[target]?.itemIds?.[itemId];
+			const selectionItems = this._selection[target]?.itemIds;
+
+			if (selectionItems) {
+				delete selectionItems[itemId];
+			}
 		},
 
 		_performGetSelection: function(req, requesterChannel) {

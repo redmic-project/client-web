@@ -104,7 +104,7 @@ define([
 
 		_highlightOnDesiredSuggestion: function(/*String*/ defaultSibling, /*String*/ desiredSibling) {
 
-			if (!this._suggestionsContainer.hasChildNodes()) {
+			if (!this._suggestionsContainer?.hasChildNodes()) {
 				return;
 			}
 

@@ -51,6 +51,7 @@ define([
 
 		_getTargetForGet: function(req, requesterChannel) {
 
+			// TODO la propiedad 'id' desaparecerá, en su lugar se definirán todos los target por completo
 			let target = this._getTargetWithPathParamsReplaced(req.target, requesterChannel);
 
 			const id = req.id,
@@ -104,11 +105,12 @@ define([
 
 		_getTargetForRequest: function(req, requesterChannel) {
 
-			let target = this._getTargetWithPathParamsReplaced(req.target, requesterChannel);
+			const target = this._getTargetWithPathParamsReplaced(req.target, requesterChannel);
 
+			// TODO la propiedad 'action' desaparecerá, en su lugar se definirán todos los target por completo
 			const action = req.action;
-			if (action?.length) {
-				target = this._getTargetWithEndingSlash(target) + action;
+			if (action?.length && !target.includes(action)) {
+				return this._getTargetWithEndingSlash(target) + action;
 			}
 
 			return target;
@@ -207,6 +209,7 @@ define([
 
 		_getTargetForSave: function(req) {
 
+			// TODO la propiedad 'idProperty' e 'id' desaparecerán, en su lugar se definirán todos los target por completo
 			const idValue = this._getItemIdFromSaveRequest(req),
 				idType = typeof idValue;
 
@@ -279,6 +282,7 @@ define([
 
 		_getTargetForRemove: function(req) {
 
+			// TODO la propiedad 'id' desaparecerá, en su lugar se definirán todos los target por completo
 			const target = this._getTargetWithPathParamsReplaced(req.target),
 				idValue = req.id;
 

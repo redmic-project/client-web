@@ -1,5 +1,7 @@
 define([
 	'dojo/_base/declare'
+	, 'src/component/layout/genericDisplayer/GenericDisplayer'
+	, 'src/component/layout/SupersetDisplayer'
 	, 'src/detail/activity/widget/ActivityAreaMap'
 	, 'src/detail/activity/widget/ActivityCitationMap'
 	, 'src/detail/activity/widget/ActivityFixedObservationSeriesList'
@@ -11,10 +13,10 @@ define([
 	, 'src/detail/activity/widget/ActivityLayerMap'
 	, 'src/detail/activity/widget/ActivityTrackingMap'
 	, 'src/detail/project/widget/ProjectAcousticDetectionMap'
-	, 'src/component/layout/genericDisplayer/GenericDisplayer'
-	, 'src/component/layout/SupersetDisplayer'
 ], function(
 	declare
+	, GenericDisplayer
+	, SupersetDisplayer
 	, ActivityAreaMap
 	, ActivityCitationMap
 	, ActivityFixedObservationSeriesList
@@ -26,8 +28,6 @@ define([
 	, ActivityLayerMap
 	, ActivityTrackingMap
 	, ProjectAcousticDetectionMap
-	, GenericDisplayer
-	, SupersetDisplayer
 ) {
 
 	return declare(null, {

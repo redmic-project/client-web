@@ -68,15 +68,15 @@ define([
 			const dfd = new Deferred();
 
 			dfd.then(
-				(resolvedGrants) => this._onLayoutGranted(processedLayout, resolvedGrants),
-				(rejectedGrants) => this._onLayoutNotGranted(processedLayout, rejectedGrants));
+				resolvedGrants => this._onLayoutGranted(processedLayout, resolvedGrants),
+				rejectedGrants => this._onLayoutNotGranted(processedLayout, rejectedGrants));
 
 			this._checkUserGrantsForEntityData(entityData, layoutRoles, dfd);
 		},
 
 		_checkUserGrantsForEntityData: function(entityData, roles, dfd) {
 
-			this._once(this._buildChannel(this.credentialsChannel, 'GOT_USER_GRANTS_FOR_ENTITY'), (res) => {
+			this._once(this._buildChannel(this.credentialsChannel, 'GOT_USER_GRANTS_FOR_ENTITY'), res => {
 				res?.accessGranted ? dfd.resolve(res) : dfd.reject(res);
 			});
 

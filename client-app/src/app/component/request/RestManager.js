@@ -61,7 +61,7 @@ define([
 			this.inherited(arguments);
 		},
 
-		_defineSubscriptions: function () {
+		_defineSubscriptions: function() {
 
 			const options = {
 				predicate: req => this._chkTargetIsValid(req)

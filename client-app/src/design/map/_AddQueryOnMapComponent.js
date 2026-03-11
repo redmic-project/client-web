@@ -1,19 +1,18 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/atlas/Atlas'
+	, 'src/component/mapQuery/QueryOnMap'
 	, 'src/design/map/_AddTabsDisplayerComponent'
 ], function(
 	declare
 	, lang
-	, Atlas
+	, QueryOnMap
 	, _AddTabsDisplayerComponent
 ) {
 
 	return declare(_AddTabsDisplayerComponent, {
 		// summary:
-		//   Lógica de diseño para añadir un componente Atlas, junto con otros para mostrarlo y para gestionar
-		//   pulsaciones sobre el mapa.
+		//   Lógica de diseño para añadir un componente QueryOnMap, para gestionar pulsaciones sobre el mapa.
 		//   Debe asociarse como mixin a un componente al instanciarlo, junto con la parte de controlador y alguna
 		//   maquetación de este diseño.
 
@@ -23,7 +22,7 @@ define([
 
 			const parentChannel = this.getChannel();
 
-			this.mergeComponentAttribute('atlasConfig', {
+			this.mergeComponentAttribute('queryOnMapConfig', {
 				parentChannel
 			});
 		},
@@ -36,20 +35,20 @@ define([
 				mapChannel = mapInstance?.getChannel();
 
 			const tabsDisplayer = inheritedComponents.tabsDisplayer,
-				addTabChannel = tabsDisplayer?.getChannel('ADD_TAB');
+				tabsDisplayerChannel = tabsDisplayer?.getChannel();
 
-			const atlas = this._createDesignAtlasComponent(mapChannel, addTabChannel);
+			const queryOnMap = this._createDesignQueryOnMapComponent(mapChannel, tabsDisplayerChannel);
 
-			return lang.mixin(inheritedComponents, {atlas});
+			return lang.mixin(inheritedComponents, {queryOnMap});
 		},
 
-		_createDesignAtlasComponent: function(mapChannel, addTabChannel) {
+		_createDesignQueryOnMapComponent: function(mapChannel, tabsDisplayerChannel) {
 
-			this.mergeComponentAttribute('atlasConfig', {
-				mapChannel, addTabChannel
+			this.mergeComponentAttribute('queryOnMapConfig', {
+				mapChannel, tabsDisplayerChannel
 			});
 
-			return new Atlas(this.atlasConfig);
+			return new QueryOnMap(this.queryOnMapConfig);
 		}
 	});
 });

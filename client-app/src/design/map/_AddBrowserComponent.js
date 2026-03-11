@@ -1,42 +1,48 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/component/browser/_BrowserSelectionManager'
 	, 'src/component/browser/_ButtonsInRow'
 	, 'src/component/browser/_DragAndDrop'
 	, 'src/component/browser/_Framework'
 	, 'src/component/browser/_GeoJsonParser'
 	, 'src/component/browser/_HierarchicalSelect'
+	, 'src/component/browser/_MultiTemplate'
 	, 'src/component/browser/_Select'
 	, 'src/component/browser/bars/Total'
 	, 'src/component/browser/ListImpl'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, 'src/component/layout/TabsDisplayer'
 	, 'src/component/textSearch/TextSearchSuggestionsRequestImpl'
+	, 'src/design/map/_AddTabsDisplayerComponent'
 	, 'templates/DefaultList'
 ], function(
 	declare
 	, lang
+	, _BrowserSelectionManager
 	, _ButtonsInRow
 	, _DragAndDrop
 	, _Framework
 	, _GeoJsonParser
 	, _HierarchicalSelect
+	, _MultiTemplate
 	, _Select
 	, Total
 	, ListImpl
 	, GenericWithTopbarDisplayerImpl
-	, TabsDisplayer
 	, TextSearchSuggestionsRequestImpl
+	, _AddTabsDisplayerComponent
 	, TemplateDefaultList
 ) {
 
 	const browserComponentExtensionDefinitions = {
 		dragAndDrop: _DragAndDrop,
 		hierarchicalSelect: _HierarchicalSelect,
-		select: _Select
+		multiTemplate: _MultiTemplate,
+		select: _Select,
+		selectionManager: _BrowserSelectionManager
 	};
 
-	return declare(null, {
+	return declare(_AddTabsDisplayerComponent, {
 		// summary:
 		//   Lógica de diseño para añadir un componente Browser, junto con otros para mostrarlo y filtrar contenido.
 		//   Debe asociarse como mixin a un componente al instanciarlo, junto con la parte de controlador y alguna
@@ -48,8 +54,11 @@ define([
 				enabledBrowserExtensions: {
 					dragAndDrop: false,
 					hierarchicalSelect: false,
-					select: false
-				}
+					select: false,
+					selectionManager: false,
+					multiTemplate: false
+				},
+				browserTabIconClass: 'fa fa-table'
 			};
 
 			const inheritedDefaultConfig = this.inherited(arguments) || {};
@@ -64,10 +73,6 @@ define([
 			const parentChannel = this.getChannel(),
 				target = this._getTarget?.();
 
-			this.mergeComponentAttribute('tabsDisplayerConfig', {
-				parentChannel
-			});
-
 			this.mergeComponentAttribute('searchConfig', {
 				parentChannel,
 				target
@@ -81,9 +86,9 @@ define([
 				rowConfig: {
 					buttonsConfig: {
 						listButton: [{
-							icon: "fa-map-marker",
+							icon: 'fa-map-marker',
 							title: 'mapCentering',
-							btnId: "mapCentering",
+							btnId: 'mapCentering',
 							returnItem: true
 						}]
 					}
@@ -104,23 +109,11 @@ define([
 
 			const inheritedComponents = this.inherited(arguments);
 
-			let tabsDisplayer = inheritedComponents.tabsDisplayer;
-
-			if (!tabsDisplayer) {
-				tabsDisplayer = this._createDesignTabDisplayerComponent();
-				lang.mixin(inheritedComponents, {tabsDisplayer});
-			}
-
 			const browser = this._createDesignBrowserComponent(),
 				browserWrapper = this._createDesignBrowserWrapperComponent(browser),
 				search = this._createDesignSearchComponent(browserWrapper);
 
 			return lang.mixin(inheritedComponents, {browserWrapper, browser, search});
-		},
-
-		_createDesignTabDisplayerComponent: function() {
-
-			return new TabsDisplayer(this.tabsDisplayerConfig);
 		},
 
 		_createDesignBrowserComponent: function() {
@@ -142,6 +135,13 @@ define([
 			return new TextSearchSuggestionsRequestImpl(this.searchConfig);
 		},
 
+		_setOwnCallbacksForEvents: function() {
+
+			this.inherited(arguments);
+
+			this.on('ME_OR_ANCESTOR_HIDDEN', () => this._addBrowserComponentOnHide());
+		},
+
 		populateDesignLayoutNodes: function() {
 
 			this.inherited(arguments);
@@ -156,22 +156,17 @@ define([
 				content: searchInstance
 			});
 
-			const tabsDisplayerInstance = this.getComponentInstance('tabsDisplayer'),
-				additionalContentNode = this.getLayoutNode('additionalContent');
+			const tabsDisplayerInstance = this.getComponentInstance('tabsDisplayer');
 
 			this._publish(tabsDisplayerInstance.getChannel('ADD_TAB'), {
 				title: this.browserConfig.title || this.i18n.geographicData,
-				iconClass: 'fa fa-table',
+				iconClass: this.browserTabIconClass,
 				channel: browserWrapperChannel,
 				prepend: true
 			});
 
 			this._publish(tabsDisplayerInstance.getChannel('SHOW_TAB'), {
 				channel: browserWrapperChannel
-			});
-
-			this._publish(tabsDisplayerInstance.getChannel('SHOW'), {
-				node: additionalContentNode
 			});
 		},
 
@@ -189,11 +184,18 @@ define([
 
 		_subDesignBrowserComponentButtonEvent: function(evt) {
 
-			var publicCallback = `${evt.btnId}Callback`,
+			const publicCallback = `${evt.btnId}Callback`,
 				privateCallback = `_${evt.btnId}Callback`;
 
 			this[publicCallback]?.(evt);
 			this[privateCallback]?.(evt);
+		},
+
+		_addBrowserComponentOnHide: function() {
+
+			const browserInstance = this.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('CLEAR'));
 		}
 	});
 });

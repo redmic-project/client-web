@@ -73,12 +73,12 @@ define([
 			if (this.mapLayerDefinition === 'cluster') {
 				this.mergeComponentAttribute('mapLayerConfig', {
 					categoryStyle: 'bubbles',
-					getMarkerCategory: lang.hitch(this, this._getMarkerCategory),
-					getPopupContent: lang.hitch(this, this._getPopupContent)
+					getMarkerCategory: feature => this._getMarkerCategory(feature),
+					getPopupContent: data => this._getPopupContent(data)
 				});
 			} else if (this.mapLayerDefinition === 'geojson') {
 				this.mergeComponentAttribute('mapLayerConfig', {
-					onEachFeature: lang.hitch(this, this._bindPopupToFeature)
+					onEachFeature: (feature, layer) => this._bindPopupToFeature(feature, layer)
 				});
 			}
 
@@ -176,7 +176,7 @@ define([
 		_bindPopupToFeature: function(feature, layer) {
 
 			layer.bindPopup(this.mapLayerPopupTemplate?.({
-				feature: feature,
+				feature,
 				i18n: this.i18n
 			}));
 		}

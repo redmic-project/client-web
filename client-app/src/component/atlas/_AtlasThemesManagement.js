@@ -33,7 +33,6 @@ define([
 			const defaultConfig = {
 				pathSeparator: '.',
 				parentProperty: 'parent',
-				addThemesBrowserFirst: false,
 				omitThemesBrowser: false,
 				animatedClass: 'animate__animated',
 				animatedOnSelect: 'animate__headShake',
@@ -56,8 +55,7 @@ define([
 			aspect.before(this, '_initialize', lang.hitch(this, this._initializeThemesBrowser));
 			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineThemesBrowserSubscriptions));
 
-			var aspectMethod = this.addThemesBrowserFirst ? 'before' : 'after';
-			aspect[aspectMethod](this, '_addTabs', lang.hitch(this, this._addThemesBrowserTabs));
+			aspect.before(this, '_addTabs', lang.hitch(this, this._addThemesBrowserTabs));
 
 			aspect.before(this, '_reportDeselection', lang.hitch(this, this._themesBrowserReportDeselection));
 			aspect.before(this, '_reportClearSelection', lang.hitch(this, this._themesBrowserReportClearSelection));

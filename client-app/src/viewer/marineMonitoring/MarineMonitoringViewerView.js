@@ -7,6 +7,7 @@ define([
 	, 'src/component/base/_Show'
 	, 'src/component/base/_Store'
 	, 'src/design/map/_AddAtlasComponent'
+	, 'src/design/map/_AddQueryOnMapComponent'
 	, 'src/design/map/_MapDesignWithTopbarAndContentLayout'
 	, 'src/redmicConfig'
 	, 'src/viewer/marineMonitoring/_ManageOgcServices'
@@ -20,14 +21,15 @@ define([
 	, _Show
 	, _Store
 	, _AddAtlasComponent
+	, _AddQueryOnMapComponent
 	, _MapDesignWithTopbarAndContentLayout
 	, redmicConfig
 	, _ManageOgcServices
 	, AtlasMixedListTemplate
 ) {
 
-	return declare([_Module, _Show, _Store, _MapDesignWithTopbarAndContentLayout, _AddAtlasComponent,
-		_ManageOgcServices], {
+	return declare([_Module, _Show, _Store, _MapDesignWithTopbarAndContentLayout, _ManageOgcServices,
+		_AddAtlasComponent, _AddQueryOnMapComponent], {
 		// summary:
 		//   Vista de visor de monitorización marina. Proporciona un mapa principal y una serie de capas temáticas,
 		//   junto con el componente Atlas para cruzar datos, incluyendo soporte de consulta con dimensión temporal.
@@ -68,7 +70,6 @@ define([
 			});
 
 			this.mergeComponentAttribute('atlasConfig', {
-				addThemesBrowserFirst: true,
 				themesBrowserConfig: {
 					title: this.i18n.contents,
 					browserConfig: {

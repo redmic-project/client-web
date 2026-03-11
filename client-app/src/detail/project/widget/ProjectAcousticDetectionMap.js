@@ -7,6 +7,7 @@ define([
 	, 'src/design/map/_AddAtlasComponent'
 	, 'src/design/map/_AddBrowserComponent'
 	, 'src/design/map/_AddMapLayerComponent'
+	, 'src/design/map/_AddQueryOnMapComponent'
 	, 'src/design/map/_MapDesignWithContentLayout'
 	, 'src/redmicConfig'
 	, 'templates/AcousticDetectionPopup'
@@ -20,14 +21,15 @@ define([
 	, _AddAtlasComponent
 	, _AddBrowserComponent
 	, _AddMapLayerComponent
+	, _AddQueryOnMapComponent
 	, _MapDesignWithContentLayout
 	, redmicConfig
 	, AcousticDetectionPopupTemplate
 	, AcousticDetectionListTemplate
 ) {
 
-	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _AddBrowserComponent,
-		_AddMapLayerComponent], {
+	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _AddQueryOnMapComponent,
+		_AddBrowserComponent, _AddMapLayerComponent], {
 		// summary:
 		//   Widget para mostrar en un mapa la distribución generalizada de detecciones acústicas de un proyecto, en
 		//   base a los datos registrados en sus actividades.

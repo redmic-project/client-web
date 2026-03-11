@@ -11,13 +11,11 @@ define([
 
 		_addData: function(response) {
 
-			if (!response?.data?.features) {
-				this.inherited(arguments);
+			if (response?.data?.features) {
+				// TODO evitar sobreescribir respuesta, en su lugar adaptar su lectura donde haga falta
+				response.data.data = response.data.features;
+				//delete response.data.features;
 			}
-
-			// TODO evitar sobreescribir respuesta, en su lugar adaptar su lectura donde haga falta
-			response.data.data = response.data.features;
-			//delete response.data.features;
 
 			this.inherited(arguments);
 		},

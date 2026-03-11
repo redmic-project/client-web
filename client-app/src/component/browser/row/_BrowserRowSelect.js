@@ -38,11 +38,7 @@ define([
 
 			lang.mixin(this, this.config, args);
 
-			if (!this.simpleSelection) {
-				this.selectionIconClass = 'checkboxIcon';
-			} else {
-				this.selectionIconClass = 'radioButtonIcon';
-			}
+			this.selectionIconClass = this.simpleSelection ? 'radioButtonIcon' : 'checkboxIcon';
 
 			if (!this.selectionIdProperty) {
 				this.selectionIdProperty = this.idProperty;
@@ -141,10 +137,10 @@ define([
 				return;
 			}
 
-			this.selectNode.onclick = lang.hitch(this, this._eventChecked, item[this.selectionIdProperty]);
+			this.selectNode.onclick = lang.hitch(this, this._eventChecked, item);
 		},
 
-		_eventChecked: function(idProperty, e) {
+		_eventChecked: function(item, e) {
 
 			var action = 'SELECT';
 
@@ -153,7 +149,8 @@ define([
 			}
 
 			this._emitEvt(action, {
-				idProperty: idProperty
+				idProperty: item[this.selectionIdProperty],
+				item
 			});
 		},
 

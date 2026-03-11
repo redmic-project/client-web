@@ -364,15 +364,6 @@ define([
 			this._rows[idProperty] = this._merge([this._rows[idProperty] || {}, obj || {}]);
 		},
 
-		_setRowData: function(idProperty, data) {
-
-			if (!this._isIdProperty(idProperty) || !this._rows[idProperty]) {
-				return;
-			}
-
-			this._rows[idProperty].data = data;
-		},
-
 		_mergeRowData: function(idProperty, data) {
 
 			if (!this._isIdProperty(idProperty) || !this._rows[idProperty]) {
@@ -444,16 +435,16 @@ define([
 
 		_parserIndexData: function(response) {
 
-			const data = response.data?.data || response.data;
+			const data = response.data?.data ?? response.data;
 
-			return data.content || data;
+			return data.content ?? data.body ?? data;
 		},
 
 		_processNewData: function(response) {
 
 			const data = this._parserIndexData(response);
 
-			data?.forEach((dataItem, index) => {
+			data?.forEach?.((dataItem, index) => {
 
 				if (!dataItem[this.idProperty]) {
 					dataItem[this.idProperty] = index + 1;

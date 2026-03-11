@@ -95,34 +95,42 @@ define([
 
 			this._rescueOldInstance(item);
 
-			var idProperty = this._getItemIdProperty(item),
-				rowInstance = this._addOrUpdateRow(item),
-				obj = {
-					node: this.rowsContainerNode
-				};
+			const idProperty = this._getItemIdProperty(item),
+				rowInstance = this._addOrUpdateRow(item);
 
-			obj.data = this._getRowData(idProperty);
-
-			if (this.insertInFront) {
-				obj.inFront = true;
+			if (!rowInstance) {
+				return;
 			}
 
-			rowInstance && this._publish(rowInstance.getChannel('SHOW'), obj);
+			const rowData = this._merge([this._getRowData(idProperty), item]);
+
+			if (rowInstance._getShown()) {
+				this._publish(rowInstance.getChannel('UPDATE_DATA'), {
+					data: rowData
+				});
+				return;
+			}
+
+			const showProps = {
+				node: this.rowsContainerNode,
+				data: rowData,
+				inFront: !!this.insertInFront
+			};
+
+			this._publish(rowInstance.getChannel('SHOW'), showProps);
 		},
 
 		_addOrUpdateRow: function(item) {
 
-			var idProperty = this._getItemIdProperty(item),
-				rowInstance = this._getRowInstance(idProperty);
+			const idProperty = this._getItemIdProperty(item);
 
+			let rowInstance = this._getRowInstance(idProperty);
 			if (!rowInstance) {
 				this._addRow(idProperty, item);
 				rowInstance = this._getRowInstance(idProperty);
 			} else {
-				item = this._mergeRowData(idProperty, item);
-
 				this._publish(rowInstance.getChannel('UPDATE_TEMPLATE'), {
-					template: this._getTemplate(item)
+					template: this._getTemplate(this._mergeRowData(idProperty, item))
 				});
 			}
 

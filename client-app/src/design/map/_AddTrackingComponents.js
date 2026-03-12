@@ -133,11 +133,20 @@ define([
 			const itemId = res.itemId;
 
 			this._releaseColor(itemId);
-
-			this._removeTrackingLayer?.(itemId);
 			this._updateBrowserItem(itemId, {
 				color: null
 			});
+
+			this._removeTrackingLayer?.(itemId);
+			this._applyTrackingDataLimits();
+		},
+
+		_onSelectionCleared: function(_res) {
+
+			this.inherited(arguments);
+
+			this._removeAllColorUsage();
+			this._removeAllTrackingLayers?.();
 		},
 
 		_getFreeColor: function(itemId) {
@@ -149,6 +158,11 @@ define([
 				this._colorsUsage[itemId] = this._availableColors.indexOf(color);
 			}
 			return color;
+		},
+
+		_getUsedColor: function(itemId) {
+
+			return this._availableColors[this._colorsUsage[itemId]];
 		},
 
 		_releaseColor: function(itemId) {
@@ -234,9 +248,14 @@ define([
 			delete this._trackingDataLimits[itemId];
 		},
 
-		// TODO sigue aqui
-		_startupColorIcon: function(nodeIcon, item) {
+		_removeAllColorUsage: function() {
 
+			Object.keys(this._colorsUsage).forEach(itemId => {
+				this._releaseColor(itemId);
+				this._updateBrowserItem(itemId, {
+					color: null
+				});
+			});
 		}
 	});
 });

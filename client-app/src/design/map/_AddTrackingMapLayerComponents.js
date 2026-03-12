@@ -246,10 +246,14 @@ define([
 			const delta = value === '0' ? 1 : this._deltaProgress;
 
 			for (let uuid in this._layerInstances) {
+				const activityId = this._activityIdByUuid[uuid],
+					color = this._getUsedColor?.(uuid);
+
 				this._removeTrackingLayer(uuid);
 				this._addTrackingLayer({
 					uuid,
-					activityId: this._activityIdByUuid[uuid]
+					activityId,
+					color
 				});
 			}
 
@@ -311,6 +315,11 @@ define([
 		},
 
 		_addTrackingMapLayerComponentsOnHide: function() {
+
+			this._removeAllTrackingLayers();
+		},
+
+		_removeAllTrackingLayers: function() {
 
 			for (let uuid in this._layerInstances) {
 				this._removeTrackingLayer(uuid);

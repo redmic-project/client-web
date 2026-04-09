@@ -52,7 +52,7 @@ define([
 			return this._chkTargetIsValid(res) && this._targetIsMine(response.target);
 		},
 
-		_targetIsMine: function(target) {
+		_targetIsMine: function(target, /*string?*/ customOwnTarget) {
 
 			const cleanTarget = this._cleanTrailingSlash(target);
 
@@ -60,11 +60,12 @@ define([
 				target += '/';
 			}
 
-			if (this.target instanceof Array) {
-				return this.target.includes(target) || this.target.includes(cleanTarget);
+			const ownTarget = customOwnTarget ?? this.target;
+			if (ownTarget instanceof Array) {
+				return ownTarget.includes(target) || ownTarget.includes(cleanTarget);
 			}
 
-			return this.target && (this.target === target || this.target === cleanTarget);
+			return ownTarget && (ownTarget === target || ownTarget === cleanTarget);
 		},
 
 		_chkRequesterIsMe: function(res) {

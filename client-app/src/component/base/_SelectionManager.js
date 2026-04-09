@@ -43,7 +43,7 @@ define([
 			this.inherited(arguments);
 
 			const options = {
-				predicate: req => this._chkTargetIsValid(req)
+				predicate: req => this._chkSelectionTargetIsMine(req)
 			};
 
 			this.subscriptionsConfig.push({
@@ -85,6 +85,13 @@ define([
 				event: 'SELECT_SINGLE_ITEM',
 				channel: this._buildChannel(this.selectionManagerChannel, 'SELECT_SINGLE_ITEM')
 			});
+		},
+
+		_chkSelectionTargetIsMine: function(res) {
+
+			const customOwnTarget = this._getSelectionTarget();
+
+			return this._chkTargetIsValid(res) && this._targetIsMine(res.target, customOwnTarget);
 		},
 
 		_subItemSelected: function(res) {

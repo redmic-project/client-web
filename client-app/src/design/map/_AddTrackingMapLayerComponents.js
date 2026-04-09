@@ -167,14 +167,18 @@ define([
 
 		_removeTrackingLayer: function(uuid) {
 
-			this._removeSubsAndPubsForLayer(uuid);
-			this._removeLayerAssociatedData(uuid);
-			this._removeLayerInstance(uuid);
+			const layerInstance = this._layerInstances[uuid];
+			if (!layerInstance) {
+				console.warn(`Tried to remove missing tracking layer '${uuid}'`);
+				return;
+			}
+
+			this._removeSubsAndPubsForLayer(layerInstance);
+			this._removeLayerAssociatedData(layerInstance);
+			this._removeLayerInstance(layerInstance, uuid);
 		},
 
-		_removeSubsAndPubsForLayer: function(uuid) {
-
-			const layerInstance = this._layerInstances[uuid];
+		_removeSubsAndPubsForLayer: function(layerInstance) {
 
 			this._removeSubscriptions([
 				layerInstance.getChannel('DATA_BOUNDS_UPDATED')
@@ -188,17 +192,13 @@ define([
 			]);
 		},
 
-		_removeLayerAssociatedData: function(uuid) {
+		_removeLayerAssociatedData: function(layerInstance) {
 
-			const layerInstance = this._layerInstances[uuid],
-				layerId = layerInstance.getOwnChannel();
-
+			const layerId = layerInstance.getOwnChannel();
 			this._deleteTrackingItemLimits(layerId);
 		},
 
-		_removeLayerInstance: function(uuid) {
-
-			const layerInstance = this._layerInstances[uuid];
+		_removeLayerInstance: function(layerInstance, uuid) {
 
 			this._publish(layerInstance.getChannel('CLEAR'));
 			this._emitEvt('REMOVE_LAYER', {

@@ -170,6 +170,7 @@ define([
 
 				this._addItem(item);
 
+				//idProperty = item[this.childrenIdProperty];
 				idProperty = item[this.idProperty];
 				this._addRow(idProperty, item);
 

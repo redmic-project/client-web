@@ -1,21 +1,25 @@
 define([
 	'dojo/_base/declare'
+	, 'src/component/browser/_BrowserSelectionManager'
 	, 'src/component/browser/_ButtonsInRow'
 	, 'src/component/browser/_DragAndDrop'
 	, 'src/component/browser/_Framework'
 	, 'src/component/browser/_GeoJsonParser'
 	, 'src/component/browser/_HierarchicalSelect'
+	, 'src/component/browser/_MultiTemplate'
 	, 'src/component/browser/_Select'
 	, 'src/component/browser/HierarchicalImpl'
 	, 'src/component/browser/ListImpl'
 	, 'src/design/_DesignController'
 ], function (
 	declare
+	, _BrowserSelectionManager
 	, _ButtonsInRow
 	, _DragAndDrop
 	, _Framework
 	, _GeoJsonParser
 	, _HierarchicalSelect
+	, _MultiTemplate
 	, _Select
 	, HierarchicalImpl
 	, ListImpl
@@ -33,7 +37,9 @@ define([
 		framework: _Framework,
 		geoJson: _GeoJsonParser,
 		hierarchicalSelect: _HierarchicalSelect,
-		select: _Select
+		multiTemplate: _MultiTemplate,
+		select: _Select,
+		selectionManager: _BrowserSelectionManager
 	};
 
 	return declare(_DesignController, {
@@ -52,7 +58,9 @@ define([
 					framework: true,
 					geoJson: false,
 					hierarchicalSelect: false,
-					select: false
+					multiTemplate: false,
+					select: false,
+					selectionManager: false
 				}
 			};
 

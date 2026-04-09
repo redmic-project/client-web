@@ -6,10 +6,13 @@ define([
 	, 'src/component/browser/_DragAndDrop'
 	, 'src/component/browser/_Framework'
 	, 'src/component/browser/_GeoJsonParser'
+	, 'src/component/browser/_HierarchicalLazyLoad'
 	, 'src/component/browser/_HierarchicalSelect'
+	, 'src/component/browser/_HierarchicalSelectionManager'
 	, 'src/component/browser/_MultiTemplate'
 	, 'src/component/browser/_Select'
 	, 'src/component/browser/bars/Total'
+	, 'src/component/browser/HierarchicalImpl'
 	, 'src/component/browser/ListImpl'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'src/component/textSearch/TextSearchSuggestionsRequestImpl'
@@ -23,10 +26,13 @@ define([
 	, _DragAndDrop
 	, _Framework
 	, _GeoJsonParser
+	, _HierarchicalLazyLoad
 	, _HierarchicalSelect
+	, _HierarchicalSelectionManager
 	, _MultiTemplate
 	, _Select
 	, Total
+	, HierarchicalImpl
 	, ListImpl
 	, GenericWithTopbarDisplayerImpl
 	, TextSearchSuggestionsRequestImpl
@@ -34,9 +40,20 @@ define([
 	, TemplateDefaultList
 ) {
 
+	// TODO tratar de integrar diseño browser general aquí, para no redefinir cosas
+	const browserComponentDefinitions = {
+		list: ListImpl,
+		hierarchical: HierarchicalImpl
+	};
+
 	const browserComponentExtensionDefinitions = {
+		buttons: _ButtonsInRow,
 		dragAndDrop: _DragAndDrop,
+		framework: _Framework,
+		geoJson: _GeoJsonParser,
+		hierarchicalLazyLoad: _HierarchicalLazyLoad,
 		hierarchicalSelect: _HierarchicalSelect,
+		hierarchicalSelectionManager: _HierarchicalSelectionManager,
 		multiTemplate: _MultiTemplate,
 		select: _Select,
 		selectionManager: _BrowserSelectionManager
@@ -51,12 +68,18 @@ define([
 		_getDesignDefaultConfig: function() {
 
 			const defaultConfig = {
+				browserDefinition: 'list',
 				enabledBrowserExtensions: {
+					buttons: true,
 					dragAndDrop: false,
+					framework: true,
+					geoJson: true,
+					hierarchicalLazyLoad: false,
 					hierarchicalSelect: false,
+					hierarchicalSelectionManager: false,
+					multiTemplate: false,
 					select: false,
-					selectionManager: false,
-					multiTemplate: false
+					selectionManager: false
 				},
 				browserTabIconClass: 'fa fa-table'
 			};
@@ -100,9 +123,10 @@ define([
 				arrayMergingStrategy: 'concatenate'
 			});
 
-			this._BrowserComponentDefinition = this.prepareComponentDefinition(
-				[ListImpl, _Framework, _ButtonsInRow, _GeoJsonParser], this.enabledBrowserExtensions,
-				browserComponentExtensionDefinitions);
+			const browserComponentBaseDefinition = browserComponentDefinitions[this.browserDefinition];
+
+			this._BrowserComponentDefinition = this.prepareComponentDefinition([browserComponentBaseDefinition],
+				this.enabledBrowserExtensions, browserComponentExtensionDefinitions);
 		},
 
 		createDesignControllerComponents: function() {

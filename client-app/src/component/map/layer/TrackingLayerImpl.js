@@ -194,8 +194,10 @@ define([
 
 		_addNewData: function(geoJsonData, moduleContext) {
 
-			if (geoJsonData.features) {
-				this._svg && this.addData(geoJsonData, this);
+			if (geoJsonData?.features) {
+				if (geoJsonData.features.length && this._svg) {
+					this.addData(geoJsonData, this);
+				}
 			} else {
 				console.error('Unexpected data format', geoJsonData);
 			}

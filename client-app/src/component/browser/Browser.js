@@ -444,13 +444,15 @@ define([
 
 			const data = this._parserIndexData(response);
 
-			data?.forEach?.((dataItem, index) => {
+			data?.forEach?.((item, index) => this._processNewItem(item, index));
+		},
 
-				if (!dataItem[this.idProperty]) {
-					dataItem[this.idProperty] = index + 1;
-				}
-				this._addItem(dataItem);
-			});
+		_processNewItem: function(item, index) {
+
+			if (!item[this.idProperty]) {
+				item[this.idProperty] = index + 1;
+			}
+			this._addItem(item);
 		}
 	});
 });

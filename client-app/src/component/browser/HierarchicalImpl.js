@@ -194,11 +194,19 @@ define([
 			this._processNewData(response);
 		},
 
+		_processNewItem: function(item, index) {
+
+			this.inherited(arguments);
+		},
+
 		_addItem: function(item) {
 
-			var idProperty = item[this.idProperty],
-				rowInstance = this._getRowInstance(idProperty);
+			const idProperty = item[this.idProperty];
+			if (!idProperty) {
+				return;
+			}
 
+			const rowInstance = this._getRowInstance(idProperty);
 			if (!rowInstance) {
 				this._addRowItem(item);
 			} else {
@@ -335,20 +343,20 @@ define([
 
 			row.children = children;
 			row.pendingChildren = !!leaves;
-			row.leaves = item[this.leavesProperty];
+			row.leaves = leaves;
 		},
 
 		_checkParentAndAddChild: function(item) {
 
 			var idProperty = item[this.idProperty],
 				path = item[this.pathProperty],
-				pathSplit = path.split(this.pathSeparator);
+				pathSplit = path?.split(this.pathSeparator);
 
-			pathSplit.pop();
-
-			if (pathSplit.length <= 1) {
+			if (!pathSplit || pathSplit.length < 3) {
 				return;
 			}
+
+			pathSplit.pop();
 
 			var pathParent = pathSplit.join('.'),
 				idPropertyParent = pathParent;

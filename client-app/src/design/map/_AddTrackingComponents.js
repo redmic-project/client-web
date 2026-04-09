@@ -115,7 +115,7 @@ define([
 			this.inherited(arguments);
 
 			const itemId = res.itemId,
-				activityId = this.pathVariableId,
+				activityId = this.pathVariableId ?? itemId,
 				color = this._getFreeColor(itemId);
 
 			this._addTrackingLayer?.({

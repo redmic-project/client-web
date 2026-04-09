@@ -59,7 +59,6 @@ define([
 			this.inherited(arguments);
 
 			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
-			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onMeOrAncestorHidden));
 		},
 
 		_onMeOrAncestorShown: function() {

@@ -22,12 +22,15 @@ define([
 
 		_addItem: function(item) {
 
-			const coordinates = this._getCoordinates(item.geometry);
+			if (item?.geometry) {
+				const coordinates = this._getCoordinates(item.geometry),
+					properties = item.properties ?? {};
 
-			item = this._merge([item, item.properties ?? {}, {coordinates}]);
+				item = this._merge([item, {coordinates, properties}]);
 
-			delete item.geometry;
-			delete item.properties;
+				delete item.geometry;
+				delete item.properties;
+			}
 
 			this.inherited(arguments);
 		},

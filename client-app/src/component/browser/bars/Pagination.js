@@ -37,7 +37,10 @@ define([
 					SET_TOTAL: "setTotal",
 					RESET_PAGINATION: "resetPagination",
 					CLEAR: "clear"
-				}
+				},
+
+				requestMethod: 'GET',
+				requestQueryOffsetParamName: 'page'
 			};
 
 			lang.mixin(this, this.config);
@@ -138,16 +141,17 @@ define([
 				return;
 			}
 
-			const size = this.rowPerPage,
-				page = 0;
+			this._applyInitialPagination();
+		},
+
+		_applyInitialPagination: function() {
+
+			const query = this._getPaginationRequestQueryParams(1);
 
 			this._emitEvt('ADD_REQUEST_PARAMS', {
-				method: 'GET',
 				target: this.target,
 				params: {
-					query: {
-						size, page
-					},
+					query,
 					sharedParams: true
 				}
 			});
@@ -374,21 +378,41 @@ define([
 			return obj;
 		},
 
-		_emitPaginationRequest: function(value) {
+		_emitPaginationRequest: function(pageValue) {
 
-			const page = value - 1,
-				size = this.rowPerPage;
+			const method = this.requestMethod,
+				query = this._getPaginationRequestQueryParams(pageValue);
 
 			this._emitEvt('REQUEST', {
-				method: 'GET',
+				method,
 				target: this.target,
 				params: {
-					query: {
-						page, size
-					},
+					query,
 					sharedParams: true
 				}
 			});
+		},
+
+		_getPaginationRequestQueryParams: function(pageValue) {
+
+			const size = this.rowPerPage,
+				pageIndex = pageValue - 1,
+				offsetParamName = this.requestQueryOffsetParamName;
+
+			let offsetParamValue;
+
+			if (offsetParamName === 'page') {
+				offsetParamValue = pageIndex;
+			} else if (offsetParamName === 'from') {
+				offsetParamValue = pageIndex * size;
+			} else {
+				console.warn(`Unknown pagination offset param name: ${offsetParamName}`);
+			}
+
+			return {
+				size,
+				[offsetParamName]: offsetParamValue
+			};
 		},
 
 		_dataAvailable: function(response) {

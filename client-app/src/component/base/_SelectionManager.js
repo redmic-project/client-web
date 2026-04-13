@@ -43,7 +43,7 @@ define([
 			this.inherited(arguments);
 
 			const options = {
-				predicate: req => this._chkSelectionTargetIsMine(req)
+				predicate: req => this._chkSelectionManagerTargetIsMine(req)
 			};
 
 			this.subscriptionsConfig.push({
@@ -87,7 +87,7 @@ define([
 			});
 		},
 
-		_chkSelectionTargetIsMine: function(res) {
+		_chkSelectionManagerTargetIsMine: function(res) {
 
 			const customOwnTarget = this._getSelectionTarget();
 

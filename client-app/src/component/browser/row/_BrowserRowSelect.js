@@ -101,7 +101,7 @@ define([
 
 		_select: function() {
 
-			if (this._isSelect()) {
+			if (this._selected) {
 				return;
 			}
 
@@ -142,25 +142,10 @@ define([
 
 		_eventChecked: function(item, e) {
 
-			var action = 'SELECT';
+			const action = this._selected ? 'DESELECT' : 'SELECT',
+				idProperty = item[this.selectionIdProperty];
 
-			if (this._isSelect()) {
-				action = 'DESELECT';
-			}
-
-			this._emitEvt(action, {
-				idProperty: item[this.selectionIdProperty],
-				item
-			});
-		},
-
-		_isSelect: function() {
-
-			if (this._selected) {
-				return true;
-			}
-
-			return false;
+			this._emitEvt(action, {idProperty, item});
 		},
 
 		_selectChangeBackground: function() {

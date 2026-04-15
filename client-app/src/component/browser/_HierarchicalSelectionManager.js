@@ -61,17 +61,13 @@ define([
 		_addItemWithoutInstanceSelect: function(retObj, args) {
 
 			var path = args[0],
-				row = this._getRow(path),
-				item = row.data,
-				idProperty = item[this.idProperty];
+				row = this._getRow(path);
 
 			row.selected = {};
 			row.mixed = {};
-
-			this._selectRow(idProperty);
 		},
 
-		_parentWithRowPendingSelect: function(idProperty, item) {
+		_parentWithRowPendingSelect: function(idProperty, _item) {
 
 			var row = this._getRow(idProperty),
 				rowPending = this._rowsPending[idProperty] || {};
@@ -82,8 +78,6 @@ define([
 
 			row.selected = rowPending.selected || {};
 			row.mixed = rowPending.mixed || {};
-
-			this._selectRow(idProperty);
 		},
 
 		_hierarchicalSelectRow: function(idProperty) {

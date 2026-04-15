@@ -196,6 +196,11 @@ define([
 
 		_processNewItem: function(item, index) {
 
+			if (!item[this.pathProperty]) {
+				item[this.pathProperty] = `root.${item[this.idProperty]}`;
+				item[this.leavesProperty] = 1;
+			}
+
 			this.inherited(arguments);
 		},
 

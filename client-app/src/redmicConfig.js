@@ -198,7 +198,7 @@ define([], function() {
 		'platform': '{apiUrl}/platforms',
 		'platformType': '{apiUrl}/platformtypes',
 		'animalTracking': '{apiUrl}/animaltracking',
-		'pointTrackingActivities': '{apiUrl}/tracking/activities',
+		'pointTrackingActivities': '{apiUrl}/tracking/activities/_search',
 		'trackingActivity': '{apiUrl}/activities/{id}/tracking',
 		'elementsTrackingActivity': '{apiUrl}/activities/{id}/tracking/elements/_search',
 		'elementTracking': '{apiUrl}/activities/{activityid}/tracking/elements/{elementuuid}',

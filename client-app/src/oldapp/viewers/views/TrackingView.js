@@ -1,268 +1,111 @@
 define([
-	"app/designs/mapWithSideContent/main/Tracking"
-	, "app/designs/mapWithSideContent/main/_TrackingByFilter"
-	, "app/designs/mapWithSideContent/main/_TrackingWithList"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_SelectionManager'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
+	, 'src/design/map/_AddAtlasComponent'
+	, 'src/design/map/_AddQueryOnMapComponent'
+	, 'src/design/map/_AddTrackingComponents'
+	, 'src/design/map/_MapDesignWithTopbarAndContentLayout'
 	, 'src/redmicConfig'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "dojo/aspect"
-	, "src/component/base/_Selection"
-	, "src/component/browser/_ButtonsInRow"
-	, "src/component/browser/_HierarchicalLazyLoad"
-	, "src/component/browser/_HierarchicalSelect"
-	, "src/component/browser/_Framework"
-	, "src/component/browser/_MultiTemplate"
-	, "src/component/browser/_Select"
-	, "src/component/browser/HierarchicalImpl"
-	, "src/component/browser/ListImpl"
-	, "src/component/browser/bars/Pagination"
-	, "src/component/browser/bars/SelectionBox"
-	, "src/component/browser/bars/Total"
-	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, "src/component/search/TextImpl"
-	, "templates/ActivityList"
-	, "templates/LoadingCustom"
 ], function(
-	Tracking
-	, _TrackingByFilter
-	, _TrackingWithList
-	, redmicConfig
-	, declare
+	declare
 	, lang
-	, aspect
-	, _Selection
-	, _ButtonsInRow
-	, _HierarchicalLazyLoad
-	, _HierarchicalSelect
-	, _Framework
-	, _MultiTemplate
-	, _Select
-	, HierarchicalImpl
-	, ListImpl
-	, Pagination
-	, SelectionBox
-	, Total
-	, GenericWithTopbarDisplayerImpl
-	, TextImpl
-	, templateActivityList
-	, LoadingCustom
+	, _Module
+	, _SelectionManager
+	, _Show
+	, _Store
+	, _AddAtlasComponent
+	, _AddQueryOnMapComponent
+	, _AddTrackingComponents
+	, _MapDesignWithTopbarAndContentLayout
+	, redmicConfig
 ) {
 
-	return declare([Tracking, _TrackingWithList, _TrackingByFilter, _Selection], {
-		//	summary:
-		//		Vista de Tracking.
-		//	description:
-		//		Permite visualizar seguimientos.
+	return declare([_Module, _Show, _Store, _SelectionManager, _MapDesignWithTopbarAndContentLayout,
+		_AddTrackingComponents, _AddAtlasComponent, _AddQueryOnMapComponent], {
+		// summary:
+		//   Vista general de actividades con datos de seguimiento, para mostrarlos sobre un mapa con controles de
+		//   reproducción.
 
-		constructor: function (args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				target: redmicConfig.services.pointTrackingActivities,
-				pathSeparator: ".",
-				targetBrowserWork: "browserWork",
-				idProperty: 'id',
-				browserWorkExts: [_ButtonsInRow, _HierarchicalSelect, _MultiTemplate],
-				browserWorkBase: [HierarchicalImpl, _HierarchicalLazyLoad, _Framework]
+			this.inherited(arguments);
+
+			const defaultConfig = {
+				browserDefinition: 'hierarchical',
+				enabledBrowserExtensions: {
+					hierarchicalLazyLoad: true,
+					hierarchicalSelectionManager: true,
+					multiTemplate: true
+				},
+
+				activityTarget: redmicConfig.services.pointTrackingActivities,
+				target: redmicConfig.services.elementsTrackingActivity,
+				layersTarget: redmicConfig.services.pointTrackingCluster,
+				infoTarget: redmicConfig.services.trackingActivity,
+
+				_activityIdProperty: 'id',
+				_trackingIdProperty: 'uuid',
+				_trackingPathProperty: 'trackingPath'
 			};
 
-			lang.mixin(this, this.config, args);
-
-			aspect.before(this, "_serializedFilter", lang.hitch(this, this._beforeSerializedFilter));
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
 		_setConfigurations: function() {
 
-			this.searchConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				target: this.target,
-				itemLabel: null
-			}, this.searchConfig || {}]);
+			this.inherited(arguments);
 
-			this.browserConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				target: this.target,
-				template: templateActivityList,
-				selectorChannel: this.selectorChannel,
-				rowConfig: {
-					buttonsConfig: {
-						listButton: [{
-							icon: "fa-info-circle",
-							btnId: "details",
-							title: "info",
-							href: redmicConfig.viewPaths.activityDetails
-						}]
-					}
-				},
-				bars: [{
-					instance: Total
-				},{
-					instance: SelectionBox
-				},{
-					instance: Pagination
-				}]
-			}, this.browserConfig || {}]);
-
-			this.browserWorkConfig = this._merge([{
-				targetChildren: redmicConfig.services.elementsTrackingActivity,
-				parentIdProperty: 'id',
-				childrenIdProperty: 'uuid',
+			this.mergeComponentAttribute('browserConfig', {
+				target: this.activityTarget,
+				targetChildren: this.target,
+				selectionTarget: this.target,
+				idProperty: this._activityIdProperty,
+				pathProperty: this._trackingPathProperty,
 				conditionParentProperty: 'activityType',
-				generatePath: true,
-				noDataMessage: {
-					definition: LoadingCustom,
-					props: {
-						message: this.i18n.selectActivitiesToTracking,
-						iconClass: "fa fa-tasks",
-						clickable: true
-					}
+				parentIdProperty: this._activityIdProperty,
+				childrenIdProperty: this._trackingIdProperty,
+				rowConfig: {
+					selectionIdProperty: this._trackingPathProperty
 				}
-			}, this.browserWorkConfig || {}]);
-		},
-
-		_initialize: function() {
-
-			this._createActivityCatalog();
-		},
-
-		_createActivityCatalog: function() {
-
-			this.searchConfig.queryChannel = this.queryChannel;
-			this.textSearch = new TextImpl(this.searchConfig);
-
-			this.browserConfig.queryChannel = this.queryChannel;
-			var BrowserDefinition = declare([ListImpl, _Framework, _Select]);
-			this.browser = new BrowserDefinition(this.browserConfig);
-
-			this._activityBrowserWithTopbar = new GenericWithTopbarDisplayerImpl({
-				parentChannel: this.getChannel(),
-				content: this.browser,
-				title: this.i18n.activityCatalogView
-			});
-
-			this._publish(this._activityBrowserWithTopbar.getChannel('ADD_TOPBAR_CONTENT'), {
-				content: this.textSearch
 			});
 		},
 
-		_defineSubscriptions: function () {
-
-			this.subscriptionsConfig.push({
-				channel: this.browserWork.getChannel("NO_DATA_MSG_CLICKED"),
-				callback: "_subBrowserWorkNoDataMsgClicked"
-			});
-		},
-
-		_fillSideContent: function() {
-
-			var addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
-
-			this._publish(addTabChannel, {
-				title: this.i18n.activityCatalogView,
-				iconClass: 'fa fa-tasks',
-				channel: this._activityBrowserWithTopbar.getChannel()
-			});
+		_setOwnCallbacksForEvents: function() {
 
 			this.inherited(arguments);
+
+			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
 		},
 
-		_select: function(item) {
+		_onMeOrAncestorShown: function() {
 
-			if (!item) {
-				return;
-			}
+			this.inherited(arguments);
 
-			this._itemInList(item);
+			this._clearTrackingComponents?.();
+			this._requestActivityData();
 		},
 
-		_itemInList: function(item) {
+		_requestActivityData: function() {
 
-			var id = this._getIdFromPath(item);
+			const method = 'POST',
+				target = this.activityTarget,
+				params = {sharedParams: true};
 
-			this._once(this.browser.getChannel("GOT_ITEM"), lang.hitch(this, this._subGotItem, id));
-
-			this._publish(this.browser.getChannel("GET_ITEM"), {
-				idProperty: id
-			});
+			this._emitEvt('REQUEST', {method, target, params});
 		},
 
-		_subGotItem: function(id, obj) {
+		_getActivityIdFromSelectionResponse: function(res) {
 
-			var item = obj.item;
-
-			if (item) {
-				this._injectItemInBrowserWork(item);
-			} else {
-				this._emitEvt('GET', {
-					target: this.target,
-					requesterId: this.getOwnChannel(),
-					id: id
-				});
-			}
+			return res?.itemId?.split('.')?.[1];
 		},
 
-		_deselect: function(item) {
+		_getTrackingItemIdFromSelectionResponse: function(res) {
 
-			var obj = {},
-				activityId = this._getIdFromPath(item);
-
-			obj.idProperty = this._generatePath(activityId);
-
-			this._cleanElementByActivity(activityId);
-			this._publish(this.browserWork.getChannel("REMOVE_ITEM"), obj);
-		},
-
-		_cleanElementByActivity: function(activityId) {
-
-			var items = [];
-
-			for (var key in this._activityIdByUuid) {
-				if (this._activityIdByUuid[key] === activityId) {
-					items.push(this._generatePath(activityId, key));
-				}
-			}
-
-			this._publish(this._buildChannel(this.selectorChannel, this.actions.DESELECT), {
-				items: items,
-				target: this.targetBrowserWork
-			});
-		},
-
-		_itemAvailable: function(item) {
-
-			this._injectItemInBrowserWork(item.data);
-		},
-
-		_clearSelection: function(response) {
-
-			this._clear();
-		},
-
-		_subBrowserWorkNoDataMsgClicked: function(res) {
-
-			this._publish(this._tabsDisplayer.getChannel('SHOW_TAB'), {
-				channel: this._activityBrowserWithTopbar.getChannel()
-			});
-		},
-
-		_beforeShow: function() {
-
-			this._emitEvt('REFRESH');
-		},
-
-		_beforeSerializedFilter: function(req) {
-
-			var data = req.data,
-				queryDataChildren = {};
-
-			for (var key in data) {
-				if (data[key] !== null) {
-					queryDataChildren[key] = data[key];
-				}
-			}
-
-			this._publish(this.browserWork.getChannel("SET_QUERY_DATA_CHILDREN"), {
-				query: queryDataChildren
-			});
+			return res?.item?.[this._trackingIdProperty];
 		}
 	});
 });

@@ -58,6 +58,17 @@ define([
 			this.rowConfig = this._merge([this.rowConfig || {}, obj]);
 		},
 
+		_getItemIdFromSelectionResponse: function(res) {
+
+			const item = res?.item;
+
+			if (this._checkItemBelongRootLevel(item)) {
+				return item?.[this.idProperty] ?? res?.itemId;
+			} else {
+				return item?.[this.childrenIdProperty] ?? res?.itemId;
+			}
+		},
+
 		_addItemWithoutInstanceSelect: function(retObj, args) {
 
 			var path = args[0],

@@ -141,16 +141,17 @@ define([
 			}
 
 			const data = res.data?.data;
-			this._addChildrenData(data);
+			data && this._addChildrenData(data);
 		},
 
 		_addChildrenData: function(data) {
 
-			var rowParent = this._getRow(this._currentParentPath.split(this.pathSeparator).pop());
+			const parentItemId = this._currentParentPath?.split(this.pathSeparator).pop(),
+				parentRow = this._getRow(parentItemId);
 
-			if (rowParent) {
-				rowParent.data[this.leavesProperty] = data.length;
-				rowParent.pendingChildren = false;
+			if (parentRow) {
+				parentRow.data[this.leavesProperty] = data.length;
+				parentRow.pendingChildren = false;
 			}
 
 			for (var i = 0; i < data.length; i++) {

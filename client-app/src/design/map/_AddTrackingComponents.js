@@ -92,8 +92,7 @@ define([
 							},
 							condition: item => item.activityType || item.platformType || item.lifeStage
 						}]
-					},
-					selectionIdProperty: this.idProperty
+					}
 				},
 				idProperty: this.idProperty,
 				existsPropertyWithTemplate: true,
@@ -115,25 +114,28 @@ define([
 			this.inherited(arguments);
 
 			const itemId = res.itemId,
-				activityId = this.pathVariableId ?? itemId,
-				color = this._getFreeColor(itemId);
+				activityId = this.pathVariableId ?? this._getActivityIdFromSelectionResponse?.(res) ?? itemId,
+				trackingItemId = this._getTrackingItemIdFromSelectionResponse?.(res) ?? itemId,
+				trackingItemIdPropName = this.idProperty,
+				color = this._getFreeColor(trackingItemId);
 
 			this._addTrackingLayer?.({
-				[this.idProperty]: itemId,
+				[trackingItemIdPropName]: trackingItemId,
 				activityId,
 				color
 			});
-			this._updateBrowserItem(itemId, {color});
+			this._updateBrowserItem(trackingItemId, {...res.item, color});
 		},
 
 		_onItemDeselected: function(res) {
 
 			this.inherited(arguments);
 
-			const itemId = res.itemId;
+			const itemId = this._getTrackingItemIdFromSelectionResponse?.(res) ?? res.itemId;
 
 			this._releaseColor(itemId);
 			this._updateBrowserItem(itemId, {
+				...res.item,
 				color: null
 			});
 
@@ -144,6 +146,11 @@ define([
 		_onSelectionCleared: function(_res) {
 
 			this.inherited(arguments);
+
+			this._clearTrackingComponents();
+		},
+
+		_clearTrackingComponents: function() {
 
 			this._removeAllColorUsage();
 			this._removeAllTrackingLayers?.();

@@ -112,9 +112,14 @@ define([
 			this._emitEvt('DESELECT_ITEM', {itemId, item, target});
 		},
 
+		_getItemIdFromSelectionResponse: function(res) {
+
+			return res?.itemId;
+		},
+
 		_onItemSelected: function(res) {
 
-			const itemId = res?.itemId;
+			const itemId = this._getItemIdFromSelectionResponse(res);
 			this._selectRow(itemId);
 		},
 
@@ -160,7 +165,7 @@ define([
 
 		_onItemDeselected: function(res) {
 
-			const itemId = res?.itemId;
+			const itemId = this._getItemIdFromSelectionResponse(res);
 			this._deselectRow(itemId);
 		},
 

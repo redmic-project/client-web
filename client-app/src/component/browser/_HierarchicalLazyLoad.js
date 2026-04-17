@@ -150,7 +150,9 @@ define([
 				parentRow = this._getRow(parentItemId);
 
 			if (parentRow) {
+				// TODO a veces se usa row.data.leaves y a veces row.leaves, habría que unificarlo
 				parentRow.data[this.leavesProperty] = data.length;
+				parentRow[this.leavesProperty] = data.length;
 				parentRow.pendingChildren = false;
 			}
 

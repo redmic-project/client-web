@@ -232,7 +232,7 @@ define([
 
 		_itemAvailable: function(res, _resWrapper) {
 
-			const schema = res.data?.schema;
+			const schema = res.data?.schema ?? res.data;
 
 			this._buildModelWithSchema(schema);
 		},

@@ -24,6 +24,7 @@ define([
 	, redmicConfig
 ) {
 
+	// TODO usar textSearch sin sugerencias, tocando diseño para hacerlo más modular!!!
 	return declare([_Module, _Show, _Store, _SelectionManager, _MapDesignWithTopbarAndContentLayout,
 		_AddTrackingComponents, _AddAtlasComponent, _AddQueryOnMapComponent], {
 		// summary:
@@ -37,6 +38,7 @@ define([
 				ownChannel: 'activityTrackingMap',
 				target: redmicConfig.services.elementsTrackingActivity,
 				method: 'POST',
+				getRequestQueryParams: text => (text ? {text: {text}} : {text: null}),
 				layersTarget: redmicConfig.services.pointTrackingCluster,
 				infoTarget: redmicConfig.services.trackingActivity,
 				timeMode: true
@@ -48,10 +50,21 @@ define([
 			if (this.usePrivateTarget) {
 				this.target = redmicConfig.services.acousticTrackingAnimals;
 				this.method = 'GET';
+				this.getRequestQueryParams = null;
 
 				this.layersTarget = redmicConfig.services.acousticTrackingAnimalTrack;
 				this.infoTarget = redmicConfig.services.acousticTrackingPointInfo;
 			}
+		},
+
+		_setConfigurations: function() {
+
+			this.inherited(arguments);
+
+			this.mergeComponentAttribute('searchConfig', {
+				requestMethod: this.method,
+				getRequestQueryParams: this.getRequestQueryParams
+			});
 		},
 
 		_setOwnCallbacksForEvents: function() {

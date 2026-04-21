@@ -17,6 +17,7 @@ define([
 		postMixInProperties: function() {
 
 			const defaultConfig = {
+				requestMethod: 'GET',
 				getRequestPathParams: null,
 				getRequestQueryParams: null
 			};
@@ -38,6 +39,7 @@ define([
 			this.inherited(arguments);
 
 			this._emitEvt('REQUEST', {
+				method: this.requestMethod,
 				target: this._getTarget(),
 				params: this._createSearchRequestParams(value)
 			});
@@ -48,7 +50,7 @@ define([
 			this.inherited(arguments);
 
 			const path = this.getRequestPathParams?.(value) ?? {};
-			const query = this.getRequestQueryParams?.(value) ?? {text: value};
+			const query = this.getRequestQueryParams?.(value) ?? {text: value || null};
 
 			return {path, query};
 		},

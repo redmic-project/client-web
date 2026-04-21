@@ -2,15 +2,11 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/dom-class'
 	, 'put-selector'
-	, 'src/component/textSearch/_Request'
-	, 'src/component/textSearch/_Suggestions'
 	, 'src/component/textSearch/TextSearch'
 ], function(
 	declare
 	, domClass
 	, put
-	, _Request
-	, _Suggestions
 	, TextSearch
 ) {
 

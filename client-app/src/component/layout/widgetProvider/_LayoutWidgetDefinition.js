@@ -9,6 +9,7 @@ define([
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesLineCharts'
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesMap'
 	, 'src/detail/activity/widget/ActivityFixedTimeseriesWindrose'
+	, 'src/detail/activity/widget/ActivityGeoRasterMap'
 	, 'src/detail/activity/widget/ActivityInfrastructureMap'
 	, 'src/detail/activity/widget/ActivityLayerMap'
 	, 'src/detail/activity/widget/ActivityTrackingMap'
@@ -24,6 +25,7 @@ define([
 	, ActivityFixedTimeseriesLineCharts
 	, ActivityFixedTimeseriesMap
 	, ActivityFixedTimeseriesWindrose
+	, ActivityGeoRasterMap
 	, ActivityInfrastructureMap
 	, ActivityLayerMap
 	, ActivityTrackingMap
@@ -64,6 +66,19 @@ define([
 					title: 'tracking',
 					pathVariableId: config.pathVariableId,
 					usePrivateTarget: config.accessGranted ?? false
+				}
+			};
+		},
+
+		_getGeoRasterMapConfig: function(config) {
+
+			return {
+				type: ActivityGeoRasterMap,
+				props: {
+					title: 'geoRaster',
+					pathVariableId: config.pathVariableId,
+					sourceUrl: config.url,
+					sourceLabel: config.label
 				}
 			};
 		},

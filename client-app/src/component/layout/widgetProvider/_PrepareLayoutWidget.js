@@ -181,6 +181,20 @@ define([
 			this._publishLayoutWidget(key, config);
 		},
 
+		_geoRasterMapPrepareLayoutWidgets: function(layoutConfig) {
+
+			const key = 'geoRasterMap';
+
+			const windowConfig = {
+				width: 6,
+				height: 6
+			};
+
+			const config = this._merge([windowConfig, this._getGeoRasterMapConfig(layoutConfig)]);
+
+			this._publishLayoutWidget(key, config);
+		},
+
 		_infrastructureMapPrepareLayoutWidgets: function(layoutConfig) {
 
 			const key = 'infrastructureMap';

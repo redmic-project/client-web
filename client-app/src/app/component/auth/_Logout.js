@@ -24,7 +24,7 @@ define([
 
 			this.config = {
 				_oauthLogoutTarget: redmicConfig.services.logoutOauth,
-				_oidLogoutTarget: redmicConfig.services.logoutOid
+				_oidcLogoutTarget: redmicConfig.services.logoutOidc
 			};
 
 			lang.mixin(this, this.config, args);
@@ -36,7 +36,7 @@ define([
 
 		_logoutInitialize: function() {
 
-			this.target.push(this._oauthLogoutTarget, this._oidLogoutTarget);
+			this.target.push(this._oauthLogoutTarget, this._oidcLogoutTarget);
 		},
 
 		_userLogout: function() {
@@ -52,7 +52,7 @@ define([
 
 			this._prepareLogoutDfd();
 			this._sendOauthLogoutRequest();
-			this._sendOidLogoutRequest();
+			this._sendOidcLogoutRequest();
 		},
 
 		_prepareLogoutDfd: function() {
@@ -60,7 +60,7 @@ define([
 			this._logoutDfds = {};
 
 			this._logoutDfds[this._oauthLogoutTarget] = new Deferred();
-			this._logoutDfds[this._oidLogoutTarget] = new Deferred();
+			this._logoutDfds[this._oidcLogoutTarget] = new Deferred();
 
 			PromiseAll(Object.values(this._logoutDfds)).then(
 				lang.hitch(this, this._onLogoutSuccess),
@@ -76,13 +76,13 @@ define([
 			this._sendLogoutRequest(data, this._oauthLogoutTarget);
 		},
 
-		_sendOidLogoutRequest: function() {
+		_sendOidcLogoutRequest: function() {
 
 			const data = {
-				token: Credentials.get('oidAccessToken')
+				token: Credentials.get('oidcAccessToken')
 			};
 
-			this._sendLogoutRequest(data, this._oidLogoutTarget);
+			this._sendLogoutRequest(data, this._oidcLogoutTarget);
 		},
 
 		_sendLogoutRequest: function(data, target) {
@@ -99,7 +99,7 @@ define([
 
 			const target = resWrapper.target;
 
-			if (this._oauthLogoutTarget !== target && this._oidLogoutTarget !== target) {
+			if (this._oauthLogoutTarget !== target && this._oidcLogoutTarget !== target) {
 				return;
 			}
 
@@ -110,7 +110,7 @@ define([
 
 			const target = resWrapper.target;
 
-			if (this._oauthLogoutTarget !== target && this._oidLogoutTarget !== target) {
+			if (this._oauthLogoutTarget !== target && this._oidcLogoutTarget !== target) {
 				return;
 			}
 
@@ -133,7 +133,7 @@ define([
 
 			this._removeAuthRefreshData();
 
-			Credentials.remove('oidAccessToken');
+			Credentials.remove('oidcAccessToken');
 			Credentials.remove('accessToken');
 		},
 

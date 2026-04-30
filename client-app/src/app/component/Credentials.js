@@ -194,7 +194,7 @@ define([
 			if (!this._tokenPayloadDfd) {
 				this._tokenPayloadDfd = new Deferred();
 
-				const token = Credentials.get('oidAccessToken');
+				const token = Credentials.get('oidcAccessToken');
 
 				if (token?.length) {
 					this._requestTokenPayload(token);

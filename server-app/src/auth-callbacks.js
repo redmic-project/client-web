@@ -6,11 +6,11 @@ const http = require('http'),
 	oauthClientId = process.env.OAUTH_CLIENT_ID,
 	oauthClientSecret = process.env.OAUTH_CLIENT_SECRET,
 
-	oidUrl = process.env.OID_URL,
-	oidClientId = process.env.OID_CLIENT_ID,
-	oidClientSecret = process.env.OID_CLIENT_SECRET,
-	oidPemPublicKey = process.env.OID_PEM_PUBLIC_KEY,
-	oidPemPublicKeyWrap = `-----BEGIN PUBLIC KEY-----\n${oidPemPublicKey}\n-----END PUBLIC KEY-----`;
+	oidcUrl = process.env.OIDC_URL,
+	oidcClientId = process.env.OIDC_CLIENT_ID,
+	oidcClientSecret = process.env.OIDC_CLIENT_SECRET,
+	oidcPemPublicKey = process.env.OIDC_PEM_PUBLIC_KEY,
+	oidcPemPublicKeyWrap = `-----BEGIN PUBLIC KEY-----\n${oidcPemPublicKey}\n-----END PUBLIC KEY-----`;
 
 let logger, externalRequest;
 
@@ -63,32 +63,32 @@ function onOauthRevokeRequest(req, res) {
 	onAuthTokenRevoke({res, revokeTokenUrl, revokeTokenHeaders, revokeTokenBodyData});
 }
 
-function onOidTokenRequest(req, res) {
+function onOidcTokenRequest(req, res) {
 
 	res.set('Content-Type', 'application/json');
 
-	if (!oidUrl || !oidUrl.length) {
-		logger.error('Missing OpenID URL, set it using OID_URL environment variable');
+	if (!oidcUrl || !oidcUrl.length) {
+		logger.error('Missing OpenID URL, set it using OIDC_URL environment variable');
 		res.send('{}');
 		return;
 	}
 
-	const getTokenUrl = oidUrl + '/token',
-		clientCredentials = oidClientId + ':' + oidClientSecret,
+	const getTokenUrl = oidcUrl + '/token',
+		clientCredentials = oidcClientId + ':' + oidcClientSecret,
 		reqBody = req.body;
 
 	let internalReqBodyData;
 
 	if (!!reqBody.refresh_token) {
-		internalReqBodyData = getOidRefreshTokenBodyData(reqBody);
+		internalReqBodyData = getOidcRefreshTokenBodyData(reqBody);
 	} else {
-		internalReqBodyData = getOidPasswordBodyData(reqBody);
+		internalReqBodyData = getOidcPasswordBodyData(reqBody);
 	}
 
 	onAuthTokenRequest({res, getTokenUrl, clientCredentials, internalReqBodyData});
 }
 
-function getOidPasswordBodyData(reqBody) {
+function getOidcPasswordBodyData(reqBody) {
 
 	const grantType = 'password',
 		password = encodeURIComponent(reqBody.password),
@@ -97,7 +97,7 @@ function getOidPasswordBodyData(reqBody) {
 	return `grant_type=${grantType}&username=${username}&password=${password}`;
 }
 
-function getOidRefreshTokenBodyData(reqBody) {
+function getOidcRefreshTokenBodyData(reqBody) {
 
 	const grantType = 'refresh_token',
 		refreshToken = encodeURIComponent(reqBody.refresh_token);
@@ -147,18 +147,18 @@ function onAuthTokenRequestError(originalRes, err) {
 	externalRequest.onOwnRequestError.bind(this)(originalRes, err);
 }
 
-function onOidRevokeRequest(req, res) {
+function onOidcRevokeRequest(req, res) {
 
 	res.set('Content-Type', 'application/json');
 
-	if (!oidUrl || !oidUrl.length) {
-		logger.error('Missing OpenID URL, set it using OID_URL environment variable');
+	if (!oidcUrl || !oidcUrl.length) {
+		logger.error('Missing OpenID URL, set it using OIDC_URL environment variable');
 		res.send('{}');
 		return;
 	}
 
-	const revokeTokenUrl = `${oidUrl}/revoke`,
-		clientCredentials = `${oidClientId}:${oidClientSecret}`,
+	const revokeTokenUrl = `${oidcUrl}/revoke`,
+		clientCredentials = `${oidcClientId}:${oidcClientSecret}`,
 		base64ClientCredentials = Buffer.from(clientCredentials).toString('base64'),
 		tokenToRevoke = req.body.token,
 		revokeTokenBodyData = `token=${tokenToRevoke}`;
@@ -221,14 +221,14 @@ function onAuthTokenClientError(originalRes, err) {
 	logger.error(err);
 }
 
-function onOidTokenPayloadRequest(req, res) {
+function onOidcTokenPayloadRequest(req, res) {
 
 	const token = req.body.token;
 
 	res.set('Content-Type', 'application/json');
 
 	if (token?.length) {
-		jwt.verify(token, oidPemPublicKeyWrap, (err, decoded) => jwtVerifyCallback(err, decoded, res));
+		jwt.verify(token, oidcPemPublicKeyWrap, (err, decoded) => jwtVerifyCallback(err, decoded, res));
 		return;
 	}
 
@@ -264,8 +264,8 @@ module.exports = function(loggerParameter, externalRequestParameter) {
 	return {
 		onOauthTokenRequest,
 		onOauthRevokeRequest,
-		onOidTokenRequest,
-		onOidRevokeRequest,
-		onOidTokenPayloadRequest
+		onOidcTokenRequest,
+		onOidcRevokeRequest,
+		onOidcTokenPayloadRequest
 	};
 };

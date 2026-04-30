@@ -1,7 +1,7 @@
 # REDMIC web client
 
 | Metric | Master | Dev |
-|:-:|:-:|:-:|
+| :-: | :-: | :-: |
 | CI status | [![pipeline status](https://gitlab.com/redmic-project/client/web/badges/master/pipeline.svg)](https://gitlab.com/redmic-project/client/web/commits/master) | [![pipeline status](https://gitlab.com/redmic-project/client/web/badges/dev/pipeline.svg)](https://gitlab.com/redmic-project/client/web/commits/dev) |
 | Test coverage | - | [![coverage report](https://gitlab.com/redmic-project/client/web/badges/dev/coverage.svg)](https://gitlab.com/redmic-project/client/web/commits/dev) |
 
@@ -18,10 +18,10 @@ PORT=80 \
 OAUTH_URL=https://api.ecomarcan.grafcan.es/api/oauth \
 OAUTH_CLIENT_ID=app \
 OAUTH_CLIENT_SECRET=secretKey \
-OID_URL=https://sso.ecomarcan.grafcan.es/realms/ecomarcan-dev/protocol/openid-connect \
-OID_CLIENT_ID=app \
-OID_CLIENT_SECRET=secretKey \
-OID_PEM_PUBLIC_KEY=MIIchangemeAQAB \
+OIDC_URL=https://sso.ecomarcan.grafcan.es/realms/ecomarcan-dev/protocol/openid-connect \
+OIDC_CLIENT_ID=app \
+OIDC_CLIENT_SECRET=secretKey \
+OIDC_PEM_PUBLIC_KEY=MIIchangemeAQAB \
 API_URL=https://api.ecomarcan.grafcan.es/api \
 CONFIG_URL=https://s3.eu-west-1.amazonaws.com/mediastorage.redmicdev/public/config.json \
 npm start

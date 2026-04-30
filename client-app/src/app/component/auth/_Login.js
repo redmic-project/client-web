@@ -24,7 +24,7 @@ define([
 
 			this.config = {
 				_oauthLoginTarget: redmicConfig.services.getOauthToken,
-				_oidLoginTarget: redmicConfig.services.getOidToken
+				_oidcLoginTarget: redmicConfig.services.getOidcToken
 			};
 
 			lang.mixin(this, this.config, args);
@@ -36,7 +36,7 @@ define([
 
 		_loginInitialize: function() {
 
-			this.target.push(this._oauthLoginTarget, this._oidLoginTarget);
+			this.target.push(this._oauthLoginTarget, this._oidcLoginTarget);
 		},
 
 		_userLogin: function(loginData) {
@@ -50,7 +50,7 @@ define([
 			this._getTokenDfds = {};
 
 			this._getTokenDfds[this._oauthLoginTarget] = new Deferred();
-			this._getTokenDfds[this._oidLoginTarget] = new Deferred();
+			this._getTokenDfds[this._oidcLoginTarget] = new Deferred();
 
 			PromiseAll(Object.values(this._getTokenDfds)).then(
 				lang.hitch(this, this._onLoginSuccess),
@@ -80,7 +80,7 @@ define([
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
-				target: this._oidLoginTarget,
+				target: this._oidcLoginTarget,
 				options: options,
 				requesterId: this.getOwnChannel()
 			});
@@ -90,7 +90,7 @@ define([
 
 			const target = resWrapper.target;
 
-			if (this._oauthLoginTarget !== target && this._oidLoginTarget !== target) {
+			if (this._oauthLoginTarget !== target && this._oidcLoginTarget !== target) {
 				return;
 			}
 
@@ -101,7 +101,7 @@ define([
 
 			const target = resWrapper.target;
 
-			if (this._oauthLoginTarget !== target && this._oidLoginTarget !== target) {
+			if (this._oauthLoginTarget !== target && this._oidcLoginTarget !== target) {
 				return;
 			}
 
@@ -123,17 +123,17 @@ define([
 		_updateAuthData: function(tokensData) {
 
 			const oauthTokenData = tokensData[0],
-				oidTokenData = tokensData[1];
+				oidcTokenData = tokensData[1];
 
-			this._updateAuthOidData(oidTokenData);
+			this._updateAuthOidcData(oidcTokenData);
 			this._updateAuthOauthData(oauthTokenData);
 		},
 
-		_updateAuthOidData: function(data) {
+		_updateAuthOidcData: function(data) {
 
 			this._updateAuthRefreshData(data);
 
-			Credentials.set('oidAccessToken', data.access_token);
+			Credentials.set('oidcAccessToken', data.access_token);
 		},
 
 		_updateAuthOauthData: function(data) {

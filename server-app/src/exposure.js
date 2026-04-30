@@ -48,10 +48,10 @@ function exposeRoutes(app) {
 		.get(/.*/, commonCallbacks.onGeneralRequest)
 		.post('/oauth/revoke', bodyParser.json(), authCallbacks.onOauthRevokeRequest)
 		.post('/oauth/token', authCallbacks.onOauthTokenRequest)
-		.post('/oid/revoke', bodyParser.json(), authCallbacks.onOidRevokeRequest)
-		.post('/oid/token', authCallbacks.onOidTokenRequest)
-		.post('/oid/refresh', bodyParser.json(), authCallbacks.onOidTokenRequest)
-		.post('/oid/payload', bodyParser.json(), authCallbacks.onOidTokenPayloadRequest)
+		.post('/oidc/revoke', bodyParser.json(), authCallbacks.onOidcRevokeRequest)
+		.post('/oidc/token', authCallbacks.onOidcTokenRequest)
+		.post('/oidc/refresh', bodyParser.json(), authCallbacks.onOidcTokenRequest)
+		.post('/oidc/payload', bodyParser.json(), authCallbacks.onOidcTokenPayloadRequest)
 		.use(commonCallbacks.onUnknownRequest);
 }
 

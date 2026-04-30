@@ -21,7 +21,7 @@ define([
 		//	validProps: Array
 		//		Propiedades permitidas para el control del usuario.
 		validProps: [
-			'accessToken', 'oidAccessToken', 'expiresAt', 'refreshToken', 'refreshExpiresAt',
+			'accessToken', 'oidcAccessToken', 'expiresAt', 'refreshToken', 'refreshExpiresAt',
 			'userId', 'userName', 'userEmail', 'userRole', 'allowedModules', 'cookiesAccepted',
 			'selectIds', 'externalConfig', 'externalConfigTimestamp'
 		],

@@ -25,7 +25,7 @@ define([
 					'activateAccount'
 				],
 				// TODO medida temporal, mientras convivan oauth y keycloak
-				_oidPaths: [
+				_oidcPaths: [
 					'acoustic-detection'
 				]
 			};
@@ -84,16 +84,16 @@ define([
 
 		_getAuthHeaderNeededByUrl: function(url) {
 
-			let isOidPath = false;
+			let isOidcPath = false;
 
-			for (let i = 0; i < this._oidPaths.length; i++) {
-				if (url.includes(this._oidPaths[i])) {
-					isOidPath = true;
+			for (let i = 0; i < this._oidcPaths.length; i++) {
+				if (url.includes(this._oidcPaths[i])) {
+					isOidcPath = true;
 					break;
 				}
 			}
 
-			const accessToken = isOidPath ? Credentials.get('oidAccessToken') : Credentials.get('accessToken');
+			const accessToken = isOidcPath ? Credentials.get('oidcAccessToken') : Credentials.get('accessToken');
 
 			return accessToken ? `Bearer ${accessToken}` : null;
 		}

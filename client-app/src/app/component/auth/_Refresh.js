@@ -124,7 +124,7 @@ define([
 
 			this._emitEvt('USER_TOKEN_REFRESHED', tokenData);
 
-			this._updateAuthOidData(tokenData);
+			this._updateAuthOidcData(tokenData);
 		},
 
 		_onRefreshFailure: function(errorData) {

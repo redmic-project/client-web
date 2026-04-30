@@ -92,7 +92,7 @@ define([
 
 			return this._merge([this.dashboardConfig, {
 				mountPoint: this.getNodeToShow(),
-				fetchGuestToken: () => Credentials.get('oidAccessToken')
+				fetchGuestToken: () => Credentials.get('oidcAccessToken')
 			}]);
 		},
 

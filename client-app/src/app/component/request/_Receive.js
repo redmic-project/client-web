@@ -86,7 +86,7 @@ define([
 			const url = res.url;
 
 			const isGetTokenTarget = url.includes(redmicConfig.services.getOauthToken) ||
-				url.includes(redmicConfig.services.getOidToken);
+				url.includes(redmicConfig.services.getOidcToken);
 
 			const isNotApiTarget = !url.includes(this.apiUrl);
 

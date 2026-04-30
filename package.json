@@ -53,6 +53,7 @@
     "dojox": "1.17.3",
     "draggabilly": "2.4.1",
     "dropzone": "5.9.3",
+    "georaster-layer-for-leaflet": "4.1.2",
     "glob": "11.0.1",
     "grunt": "1.6.1",
     "grunt-contrib-clean": "2.0.1",

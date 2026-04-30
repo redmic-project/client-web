@@ -389,6 +389,22 @@ const profileObj = {
 			ignore: ignoreAllButExceptionsTagger.bind(null, 'handlebars/handlebars.runtime.min')
 		}
 	},{
+		name: 'leaflet-georaster',
+		location: 'dep/leaflet-georaster/dist',
+		main: 'georaster-layer-for-leaflet.min',
+		resourceTags: {
+			amd: amdTagger,
+			ignore: ignoreAllButExceptionsTagger.bind(null, 'leaflet-georaster/georaster-layer-for-leaflet.min')
+		}
+	},{
+		name: 'georaster',
+		location: 'dep/georaster/dist',
+		main: 'georaster.browser.bundle.min',
+		resourceTags: {
+			amd: amdTagger,
+			ignore: ignoreAllButExceptionsTagger.bind(null, 'georaster/georaster.browser.bundle.min')
+		}
+	},{
 		name: 'RWidgets',
 		location: 'src/util/widgets',
 		resourceTags: {

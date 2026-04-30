@@ -85,6 +85,8 @@ define([
 
 		_afterLayerAdded: function(data) {
 
+			this.inherited(arguments);
+
 			this._setRefreshInterval();
 		},
 

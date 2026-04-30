@@ -370,8 +370,6 @@ define([
 				data: atlasLayerItem,
 				target: this.localTarget
 			});
-
-			this._activateLayer(atlasLayerItem);
 		},
 
 		_subLayerRemoved: function(res) {

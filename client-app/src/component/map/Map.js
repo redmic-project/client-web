@@ -348,32 +348,29 @@ define([
 		_getInnerLayer: function(layer, layerId) {
 
 			// Si la capa no es un módulo, no se busca capa interna
-			if (!layer.isInstanceOf || !layer.isInstanceOf(_Module)) {
+			if (!layer.isInstanceOf?.(_Module)) {
 				return layer;
 			}
 
-			var deferredLayer = layer.deferredLayer,
-				innerLayer = layer.layer;
-
-			// Si la capa es un módulo pero no tiene ni tendrá capa interna
-			if (!innerLayer && !deferredLayer) {
-				// Si no contiene una capa de tipo Leaflet pero sí tiene ID (D3, por ejemplo)
-				if (layerId) {
-					this._emitEvt('LAYER_ADD', {
-						layer: layer,
-						mapInstance: this.map
-					});
-				}
-				return;
+			// Si la capa es un módulo y tiene capa interna
+			const innerLayer = layer.layer;
+			if (innerLayer) {
+				return innerLayer;
 			}
 
 			// Si la capa es un módulo y tendrá capa interna
+			const deferredLayer = layer.deferredLayer;
 			if (deferredLayer) {
 				return deferredLayer;
 			}
 
-			// Si la capa es un módulo y tiene capa interna
-			return innerLayer;
+			// Si la capa es un módulo pero no tiene ni tendrá capa interna, pero sí tiene ID (D3, por ejemplo)
+			if (layerId) {
+				this._emitEvt('LAYER_ADD', {
+					layer,
+					mapInstance: this.map
+				});
+			}
 		},
 
 		_addInnerMapLayer: function(obj) {

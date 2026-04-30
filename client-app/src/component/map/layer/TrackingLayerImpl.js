@@ -109,6 +109,8 @@ define([
 
 		_afterLayerAdded: function() {
 
+			this.inherited(arguments);
+
 			if (!this._svg) {
 				this._createElements();
 				this._redraw();
@@ -556,7 +558,7 @@ define([
 			this._emitEvt('LAYER_INFO', {
 				layerId: this.layerId,
 				layerLabel: this.layerLabel,
-				info: info
+				info
 			});
 		}
 	});

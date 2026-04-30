@@ -81,15 +81,13 @@ define([
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.navigateToLayerInfo,
-								href: redmicConfig.viewPaths.ogcServiceDetails
+								href: redmicConfig.viewPaths.ogcServiceDetails,
+								condition: item => !!item.atlasItem
 							},{
 								icon: 'fa-arrows-v',
 								btnId: 'elevation',
 								title: 'showElevation',
-								condition: function(atlasLayerItem) {
-
-									return !!atlasLayerItem.atlasItem.elevationDimension;
-								},
+								condition: item => !!item.atlasItem?.elevationDimension,
 								returnItem: true
 							},{
 								icon: 'fa-map-o',
@@ -131,6 +129,9 @@ define([
 			const browserInstance = this._themesBrowser.getComponentInstance('browser');
 
 			this.subscriptionsConfig.push({
+				channel: browserInstance.getChannel('DATA_ADDED'),
+				callback: '_subThemesBrowserDataAdded'
+			},{
 				channel: browserInstance.getChannel('BUTTON_EVENT'),
 				callback: '_subThemesBrowserButtonEvent'
 			},{
@@ -151,6 +152,13 @@ define([
 				iconClass: 'fa fa-map-o',
 				channel: this._themesBrowser.getChannel()
 			});
+		},
+
+		_subThemesBrowserDataAdded: function(atlasLayerItem) {
+
+			if (atlasLayerItem?.state) {
+				this._activateLayer(atlasLayerItem);
+			}
 		},
 
 		_subThemesBrowserButtonEvent: function(objReceived) {
@@ -233,13 +241,18 @@ define([
 
 		_onThemesBrowserRemoveLayerButtonClick: function(atlasLayerItem) {
 
-			var parentItem = atlasLayerItem.atlasItem[this.parentProperty],
-				path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + atlasLayerItem.id;
-
 			this._emitEvt('TRACK', {
 				event: 'remove_layer',
 				layer_name: atlasLayerItem.label
 			});
+
+			if (!atlasLayerItem.atlasItem) {
+				return;
+			}
+
+			const parentItemId = atlasLayerItem.atlasItem[this.parentProperty]?.id,
+				separator = this.pathSeparator,
+				path = `r${separator}${parentItemId}${separator}${atlasLayerItem.id}`;
 
 			this._emitEvt('DESELECT', [path]);
 		},
@@ -284,18 +297,27 @@ define([
 
 		_fitBounds: function(atlasLayerItem) {
 
-			var geometry = atlasLayerItem.atlasItem.geometry;
-			if (!geometry) {
+			let bounds;
+
+			const atlasGeometry = atlasLayerItem.atlasItem?.geometry;
+			if (atlasGeometry) {
+				const coordinates = atlasGeometry.coordinates[0],
+					southWest = this._getLatLng(coordinates[0]),
+					northEast = this._getLatLng(coordinates[2]);
+
+				bounds = L.latLngBounds(southWest, northEast);
+			} else {
+				const mapLayerId = atlasLayerItem.mapLayerId,
+					innerLayerInstance = this._layerInstances[mapLayerId]?.layer;
+
+				bounds = innerLayerInstance?.getBounds?.();
+			}
+
+			if (!bounds) {
 				return;
 			}
 
-			var coordinates = geometry.coordinates[0],
-				southWest = this._getLatLng(coordinates[0]),
-				northEast = this._getLatLng(coordinates[2]);
-
- 			this._publish(this._buildChannel(this.mapChannel, 'FIT_BOUNDS'), {
-				bounds: L.latLngBounds(southWest, northEast)
-			});
+			this._publish(this._buildChannel(this.mapChannel, 'FIT_BOUNDS'), { bounds });
 		},
 
 		_getLatLng: function(coord) {

@@ -88,11 +88,12 @@ define([
 
 		_onLayerAdd: function(evt) {
 
-			var layer = evt.layer,
-				layerId = layer._leaflet_id;
+			const layerInstance = evt.layer,
+				layerId = layerInstance._leaflet_id;
 
-			var layerAddReq = {
-				layer: layer,
+			const layerAddReq = {
+				layer: layerInstance,
+				layerId,
 				mapInstance: this.map
 			};
 
@@ -106,8 +107,8 @@ define([
 			if (this._isBaseLayer(layerId)) {
 				this._emitEvt('BASE_LAYER_CHANGE', {
 					success: true,
-					baseLayer: layer,
-					layerId: layerId
+					baseLayer: layerInstance,
+					layerId
 				});
 			}
 		},

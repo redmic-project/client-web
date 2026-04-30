@@ -303,9 +303,9 @@ define([
 
 		_createLayerId: function(layerItem) {
 
-			var themeInspire = layerItem.themeInspire ? layerItem.themeInspire.code : 'default';
+			const themeInspire = layerItem?.themeInspire ? layerItem.themeInspire.code : 'default';
 
-			return themeInspire + this.themeSeparator + layerItem.name + this.layerIdSeparator + layerItem.id;
+			return themeInspire + this.themeSeparator + layerItem?.name + this.layerIdSeparator + layerItem?.id;
 		},
 
 		_createLayerLabel: function(layerItem) {

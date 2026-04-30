@@ -191,6 +191,10 @@ define([
 				actions: ['LAYER_ADDED']
 			});
 
+			if (!this.layerId) {
+				this.layerId = response.layerId ?? this.layer?._leaflet_id;
+			}
+
 			this._afterLayerAdded(response);
 			this._emitEvt('LAYER_ADDED', this._getLayerInfoToPublish(response));
 		},
@@ -256,9 +260,9 @@ define([
 
 		_chkLayerIsMe: function(response) {
 
-			var layerAddedId = response.layer.ownChannel || response.layer._leaflet_id || response.layerId;
+			const layerAddedId = response.layer.ownChannel ?? response.layer._leaflet_id ?? response.layerId;
 
-			return layerAddedId === this.getOwnChannel();
+			return layerAddedId === this.getOwnChannel() || layerAddedId === this.layer?._leaflet_id;
 		},
 
 		_chkLayerAdded: function() {

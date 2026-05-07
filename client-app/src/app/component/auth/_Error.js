@@ -33,6 +33,10 @@ define([
 
 					this._notifyInvalidTokenError(res);
 				} else {
+					// TODO parche para omitir errores por usuarios sin registrar en oidc
+					if (res.data?.code === 'invalid_grant' && res.url.includes('oidc')) {
+						return;
+					}
 					this._notifyInvalidUserError(res);
 				}
 			} else if (status === 403) {

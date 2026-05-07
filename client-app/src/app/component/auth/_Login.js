@@ -105,6 +105,11 @@ define([
 				return;
 			}
 
+			// TODO parche para omitir errores por usuarios sin registrar en oidc
+			if (this._oidcLoginTarget === target && resWrapper.res.data?.code === 'invalid_grant') {
+				this._getTokenDfds[target].resolve();
+				return;
+			}
 			this._getTokenDfds[target].reject({ error, status });
 		},
 
@@ -130,6 +135,10 @@ define([
 		},
 
 		_updateAuthOidcData: function(data) {
+
+			if (!data) {
+				return;
+			}
 
 			this._updateAuthRefreshData(data);
 

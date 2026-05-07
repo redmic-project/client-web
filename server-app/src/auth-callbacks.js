@@ -233,8 +233,8 @@ function onOidcTokenPayloadRequest(req, res) {
 	}
 
 	res.status(400).send({
-		code: 'Client error',
-		description: 'Something went wrong. Please, check your request and try again.'
+		code: 'invalid_token',
+		description: 'Missing token. Please, check your request and try again.'
 	});
 
 	logger.error('Missing "token" parameter at request body');
@@ -247,9 +247,9 @@ function jwtVerifyCallback(err, verifiedPayload, res) {
 		return;
 	}
 
-	res.status(500).send({
-		code: 'Server error',
-		description: 'Something went wrong at server. Please, try again.'
+	res.status(401).send({
+		code: 'invalid_token',
+		description: 'Received invalid token. Please, check your request and try again.'
 	});
 
 	const errorMessage = err instanceof Object ? err.toString() : err;

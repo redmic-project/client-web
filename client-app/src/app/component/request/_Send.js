@@ -41,6 +41,7 @@ define([
 
 			optionsDfd.then(options => {
 				this._addAuthHeadersToOptions(options, authHeaders);
+				this._emitLoading(req);
 				this._launchRequest(url, options).then(
 					getResponse => getResponseDfd.resolve(getResponse),
 					getError => getResponseDfd.reject(getError));
@@ -95,6 +96,7 @@ define([
 
 			optionsDfd.then(options => {
 				this._addAuthHeadersToOptions(options, authHeaders);
+				this._emitLoading(req);
 				this._launchRequest(url, options).then(
 					requestResponse => requestResponseDfd.resolve(requestResponse),
 					requestError => requestResponseDfd.reject(requestError));
@@ -204,6 +206,7 @@ define([
 				options = this._getOptionsForSave(req);
 
 			this._addAuthHeadersToOptions(options, authHeaders);
+			this._emitLoading(req);
 			return this._launchRequest(url, options);
 		},
 
@@ -277,6 +280,7 @@ define([
 				options = this._getOptionsForRemove(req);
 
 			this._addAuthHeadersToOptions(options, authHeaders);
+			this._emitLoading(req);
 			return this._launchRequest(url, options);
 		},
 
@@ -313,6 +317,14 @@ define([
 			}
 
 			return `${target}/`;
+		},
+
+		_emitLoading: function(req) {
+
+			this._emitEvt('TARGET_LOADING', {
+				target: req.target,
+				requesterId: req.requesterId
+			});
 		}
 	});
 });

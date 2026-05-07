@@ -49,7 +49,8 @@ define([
 					TARGET_LOADED: 'targetLoaded',
 					ABORT_ALL_LOADING: 'abortAllLoading',
 					ADD_REQUEST_PARAMS: 'addRequestParams',
-					REQUEST_PARAMS_CHANGED: 'requestParamsChanged'
+					REQUEST_PARAMS_CHANGED: 'requestParamsChanged',
+					AUTH_PERMISSION_ERROR: 'authPermissionError'
 				},
 
 				// TODO esto quizá no debería ir aquí, sino en el comunicador de errores
@@ -133,8 +134,6 @@ define([
 
 		_subGet: function(req, _mediatorChannel, componentInfo) {
 
-			this._emitLoading(req);
-
 			const requesterChannel = this._getRequesterChannel(componentInfo);
 
 			this._manageRequestParams(req, requesterChannel);
@@ -149,8 +148,6 @@ define([
 		},
 
 		_subRequest: function(req, _mediatorChannel, componentInfo) {
-
-			this._emitLoading(req);
 
 			const requesterChannel = this._getRequesterChannel(componentInfo);
 
@@ -228,8 +225,6 @@ define([
 
 		_subSave: function(req) {
 
-			this._emitLoading(req);
-
 			const evtName = 'SAVE',
 				notifySuccess = !req.omitSuccessNotification ?? true,
 				notifyError = true;
@@ -256,8 +251,6 @@ define([
 
 		_subRemove: function(req) {
 
-			this._emitLoading(req);
-
 			const evtName = 'REMOVE',
 				notifySuccess = !req.omitSuccessNotification ?? true,
 				notifyError = true;
@@ -265,90 +258,6 @@ define([
 			this._performRemove(req).then(
 				res => this._handleSuccess({ evtName, notifySuccess }, req, res),
 				res => this._handleError({ evtName, notifyError }, req, res));
-		},
-
-		_emitLoading: function(req) {
-
-			this._emitEvt('TARGET_LOADING', {
-				target: req.target,
-				requesterId: req.requesterId
-			});
-		},
-
-		_handleSuccess: function(handleConfig, req, originalRes) {
-
-			const res = this._parseResponse(originalRes),
-				evtName = handleConfig.evtName,
-				notify = handleConfig.notifySuccess;
-
-			notify && this._notifySuccess(res);
-
-			this._emitResponse({ req, res, evtName });
-		},
-
-		_handleError: function(handleConfig, req, originalRes) {
-
-			const res = this._parseError(originalRes),
-				evtName = handleConfig.evtName,
-				notify = handleConfig.notifyError;
-
-			notify && this._notifyError(res);
-
-			this._emitResponse({ req, res, evtName });
-		},
-
-		_notifySuccess: function(response) {
-
-			const description = this.i18n.success;
-
-			this._emitEvt('COMMUNICATION', {
-				type: 'alert',
-				level: 'success',
-				description
-			});
-		},
-
-		_notifyError: function(response) {
-
-			const status = response.status;
-
-			let description = response.error ?? this.defaultErrorDescription;
-
-			if (status) {
-				description += ` - <a href="/feedback/${status}" target="_blank">${this.i18n.contact}</a>`;
-			}
-
-			this._emitEvt('COMMUNICATION', {
-				type: 'alert',
-				level: 'error',
-				description,
-				timeout: 0
-			});
-		},
-
-		_emitResponse: function(params) {
-
-			const req = params.req,
-				res = params.res,
-				target = req.target,
-				requesterId = req.requesterId;
-
-			this._emitLoaded(req);
-
-			this._emitEvt(params.evtName, {
-				target,
-				requesterId,
-				req,
-				res
-			});
-		},
-
-		_emitLoaded: function(req) {
-
-			this._emitEvt('TARGET_LOADED', {
-				target: req.target,
-				requesterId: req.requesterId
-			});
 		}
 	});
 });

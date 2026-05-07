@@ -1,8 +1,10 @@
 define([
 	'dojo/_base/declare'
+	, 'src/redmicConfig'
 	, 'src/util/Credentials'
 ], function(
 	declare
+	, redmicConfig
 	, Credentials
 ) {
 
@@ -12,6 +14,9 @@ define([
 
 		// _filteredAuthPaths: Array
 		//   Define las rutas de URLs a las que no hay que añadirle cabeceras de autenticación.
+		// _subPathsForResponseAuthError: Array
+		//   Define las subrutas de URLs que, si reciben respuesta con error 400, 401 o 403, deben derivarse hacia el
+		//   componente Auth para su manejo.
 
 		postMixInProperties: function() {
 
@@ -27,6 +32,15 @@ define([
 				// TODO medida temporal, mientras convivan oauth y keycloak
 				_oidcPaths: [
 					'acoustic-detection'
+				],
+				_subPathsForResponseAuthError: [
+					this.apiUrl,
+					redmicConfig.services.getOauthToken,
+					redmicConfig.services.getOidcToken,
+					redmicConfig.services.logoutOauth,
+					redmicConfig.services.logoutOidc,
+					redmicConfig.services.refreshToken,
+					redmicConfig.services.getTokenPayload
 				]
 			};
 
@@ -86,8 +100,8 @@ define([
 
 			let isOidcPath = false;
 
-			for (let i = 0; i < this._oidcPaths.length; i++) {
-				if (url.includes(this._oidcPaths[i])) {
+			for (const oidcPath of this._oidcPaths) {
+				if (url.includes(oidcPath)) {
 					isOidcPath = true;
 					break;
 				}
@@ -96,6 +110,24 @@ define([
 			const accessToken = isOidcPath ? Credentials.get('oidcAccessToken') : Credentials.get('accessToken');
 
 			return accessToken ? `Bearer ${accessToken}` : null;
+		},
+
+		_responseHasErrorForAuthComponent: function(res) {
+
+			const status = res.status,
+				url = res.url;
+
+			if (!status || status < 400 || status > 403) {
+				return false;
+			}
+
+			for (const subPath of this._subPathsForResponseAuthError) {
+				if (url.includes(subPath)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 	});
 });

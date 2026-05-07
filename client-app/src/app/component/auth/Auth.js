@@ -1,6 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'src/app/component/auth/_Error'
 	, 'src/app/component/auth/_Login'
 	, 'src/app/component/auth/_Logout'
 	, 'src/app/component/auth/_Refresh'
@@ -9,6 +10,7 @@ define([
 ], function(
 	declare
 	, lang
+	, _Error
 	, _Login
 	, _Logout
 	, _Refresh
@@ -16,7 +18,7 @@ define([
 	, _Store
 ) {
 
-	return declare([_Module, _Store, _Login, _Logout, _Refresh], {
+	return declare([_Module, _Store, _Login, _Logout, _Refresh, _Error], {
 		//	summary:
 		//		Módulo para gestionar la autenticación del usuario, incluyendo inicio, fin y renovación.
 
@@ -40,7 +42,8 @@ define([
 					USER_LOGGED_OUT: 'userLoggedOut',
 					USER_LOGOUT_ERROR: 'userLogoutError',
 					USER_TOKEN_REFRESHED: 'userTokenRefreshed',
-					USER_REFRESH_ERROR: 'userRefreshError'
+					USER_REFRESH_ERROR: 'userRefreshError',
+					AUTH_PERMISSION_ERROR: 'authPermissionError'
 				}
 			};
 
@@ -55,6 +58,9 @@ define([
 			},{
 				channel: this.getChannel('USER_LOGOUT'),
 				callback: '_subUserLogout'
+			},{
+				channel: this.getChannel('AUTH_PERMISSION_ERROR'),
+				callback: '_subAuthPermissionError'
 			});
 		},
 
@@ -94,6 +100,11 @@ define([
 		_subUserLogout: function() {
 
 			this._userLogout();
+		},
+
+		_subAuthPermissionError: function(res) {
+
+			this._authPermissionError(res);
 		}
 	});
 });

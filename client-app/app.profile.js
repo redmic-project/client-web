@@ -457,7 +457,6 @@ const profileObj = {
 				, 'dojo/NodeList-dom'
 				, 'dojo/NodeList-manipulate'
 				, 'dojo/NodeList-traverse'
-				, 'dojo/request/notify'
 				, 'dojo/request/xhr'
 				, 'dojo/store/Observable'
 				, 'dojo/touch'

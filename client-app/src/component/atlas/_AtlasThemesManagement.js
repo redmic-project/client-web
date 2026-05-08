@@ -54,12 +54,8 @@ define([
 			aspect.before(this, '_afterSetConfigurations', lang.hitch(this, this._themesBrowserAfterSetConfigurations));
 			aspect.before(this, '_initialize', lang.hitch(this, this._initializeThemesBrowser));
 			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineThemesBrowserSubscriptions));
-
-			aspect.before(this, '_addTabs', lang.hitch(this, this._addThemesBrowserTabs));
-
 			aspect.before(this, '_reportDeselection', lang.hitch(this, this._themesBrowserReportDeselection));
 			aspect.before(this, '_reportClearSelection', lang.hitch(this, this._themesBrowserReportClearSelection));
-
 			aspect.after(this, '_activateLayer', lang.hitch(this, this._themesBrowserActivateLayer));
 			aspect.after(this, '_deactivateLayer', lang.hitch(this, this._themesBrowserDeactivateLayer));
 		},
@@ -140,10 +136,9 @@ define([
 			});
 		},
 
-		_addThemesBrowserTabs: function() {
+		_addTabs: function() {
 
-			if (!this.addTabChannel) {
-				console.error('Missing channel to add themes tab at module "%s"', this.getChannel());
+			if (this.omitThemesBrowser) {
 				return;
 			}
 

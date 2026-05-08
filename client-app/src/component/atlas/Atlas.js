@@ -83,6 +83,7 @@ define([
 				target: redmicConfig.services.atlasLayer,
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: '.',
+				addThemesBrowserFirst: false,
 
 				_layerIdsById: {} // correspondencia entre ids de las capas con sus layerIds
 			};
@@ -234,11 +235,20 @@ define([
 				return;
 			}
 
+			if (this.addThemesBrowserFirst) {
+				this.inherited(arguments);
+			}
+
 			this._publish(this.addTabChannel, {
 				title: this.i18n.layersCatalog,
 				iconClass: 'fr fr-world',
 				channel: this.catalogView.getChannel()
 			});
+
+
+			if (!this.addThemesBrowserFirst) {
+				this.inherited(arguments);
+			}
 		},
 
 		_checkSelectionAfterShown: function() {

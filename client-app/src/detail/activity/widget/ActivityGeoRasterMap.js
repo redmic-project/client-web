@@ -48,7 +48,8 @@ define([
 			this.inherited(arguments);
 
 			this.mergeComponentAttribute('atlasConfig', {
-				localTarget: this._localLayersTarget
+				localTarget: this._localLayersTarget,
+				addThemesBrowserFirst: true
 			});
 		},
 

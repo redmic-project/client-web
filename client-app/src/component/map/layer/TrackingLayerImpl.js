@@ -3,8 +3,6 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'dojo/dom-class'
-	, 'dojo/mouse'
-	, 'dojo/on'
 	, 'dojo/promise/all'
 	, 'src/component/map/layer/_D3Expansion'
 	, 'src/component/map/layer/_D3MapProjection'
@@ -15,8 +13,6 @@ define([
 	, lang
 	, Deferred
 	, domClass
-	, mouse
-	, on
 	, all
 	, _D3Expansion
 	, _D3MapProjection
@@ -32,10 +28,6 @@ define([
 
 		//	svgClass: String
 		//		Clase que se asigna al elemento svg.
-		//	svgHoverClass: String
-		//		Clase que se asigna al elemento svg cuando se pasa el ratón sobre él.
-		//	_childHoverClass: String
-		//		Clase que se asigna al contenedor de la capa cuando el ratón está sobre ella.
 		//	drawFullTrack: Boolean
 		//		Flag para dibujar directamente toda la capa.
 
@@ -45,8 +37,6 @@ define([
 
 			const defaultConfig = {
 				svgClass: 'trackingSvg',
-				svgHoverClass: 'onHover',
-				_childHoverClass: 'childIsOnHover',
 
 				drawFullTrack: false,
 
@@ -121,8 +111,6 @@ define([
 
 			this._svg = this._getSvgElement();
 			this._svg.attr('class', this.svgClass);
-
-			this._createEventListeners();
 		},
 
 		_afterLayerRemoved: function() {
@@ -151,47 +139,6 @@ define([
 				this._removePublications(this._pubsToLines[lineOwnChannel]);
 				delete this._pubsToLines[lineOwnChannel];
 			});
-		},
-
-		_createEventListeners: function() {
-
-			this._onEnterCallback?.remove();
-			this._onLeaveCallback?.remove();
-
-			const svgNode = this._svg.node();
-
-			this._onLeaveCallback = on(svgNode, mouse.leave, () => this._removeHoverEffects());
-			this._onEnterCallback = on(svgNode, mouse.enter, () => this._addHoverEffects());
-		},
-
-		_addHoverEffects: function() {
-
-			const svgNode = this._svg.node();
-
-			if (!svgNode || this._svg.attr('class').includes(this.svgHoverClass)) {
-				return;
-			}
-
-			const svgParentNode = svgNode.parentNode;
-			svgParentNode && domClass.add(svgParentNode, this._childHoverClass);
-
-			this._svg
-				.attr('class', this.svgClass + ' ' + this.svgHoverClass)
-				.moveToFront();
-		},
-
-		_removeHoverEffects: function() {
-
-			const svgNode = this._svg.node();
-
-			if (!svgNode || !this._svg.attr('class').includes(this.svgHoverClass)) {
-				return;
-			}
-
-			const svgParentNode = svgNode.parentNode;
-			svgParentNode && domClass.remove(svgParentNode, this._childHoverClass);
-
-			this._svg.attr('class', this.svgClass);
 		},
 
 		_addNewData: function(geoJsonData, moduleContext) {
@@ -377,7 +324,6 @@ define([
 
 			this._emitEvt('LAYER_LOADING');
 			this._svg.attr('display', 'none');
-			this._removeHoverEffects();
 		},
 
 		_onZoomSet: function(zoom, res) {

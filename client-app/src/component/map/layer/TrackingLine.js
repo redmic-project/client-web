@@ -3,8 +3,6 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
-	, 'dojo/mouse'
-	, 'dojo/on'
 	, 'src/component/base/_Module'
 	, 'src/component/map/layer/_TrackingDataManagement'
 	, 'src/component/map/layer/_TrackingMarkersManagement'
@@ -14,8 +12,6 @@ define([
 	, declare
 	, lang
 	, Deferred
-	, mouse
-	, on
 	, _Module
 	, _TrackingDataManagement
 	, _TrackingMarkersManagement
@@ -36,8 +32,6 @@ define([
 		//		Tipo de transición de dibujado del track.
 		//	groupClass: String
 		//		Clase que se asigna al elemento g.
-		//	groupHoverClass: String
-		//		Clase que se asigna al elemento g cuando el ratón pasa por encima.
 		//	lineClass: String
 		//		Clase que se asigna al elemento path.
 		//	banClass: String
@@ -62,7 +56,6 @@ define([
 				transitionDuration: 1000,
 				transitionEase: d3.easeLinear,
 				groupClass: 'trackingLineGroup',
-				groupHoverClass: 'onHover',
 				lineClass: 'trackingPath',
 				banClass: 'hidden',
 				fillColor: 'orange',
@@ -147,37 +140,6 @@ define([
 
 			this._line = this._createLine();
 			this._circleGroup = this._createCircleGroup();
-
-			this._createEventListeners();
-		},
-
-		_createEventListeners: function() {
-
-			this._onEnterCallback?.remove();
-			this._onLeaveCallback?.remove();
-
-			const gNode = this._group.node();
-
-			this._onLeaveCallback = on(gNode, mouse.leave, () => this._removeHoverEffects());
-			this._onEnterCallback = on(gNode, mouse.enter, () => this._addHoverEffects());
-		},
-
-		_addHoverEffects: function() {
-
-			if (this._group.attr('class').includes(this.groupHoverClass)) {
-				return;
-			}
-
-			this._group.attr('class', this.groupClass + ' ' + this.groupHoverClass);
-		},
-
-		_removeHoverEffects: function() {
-
-			if (!this._group.attr('class').includes(this.groupHoverClass)) {
-				return;
-			}
-
-			this._group.attr('class', this.groupClass);
 		},
 
 		_createLine: function() {
@@ -204,7 +166,6 @@ define([
 
 		_subRedraw: function() {
 
-			this._removeHoverEffects();
 			this._removeExistingAxes();
 			this._cleanAndRedraw();
 		},

@@ -243,8 +243,6 @@ define([
 
 			this.inherited(arguments);
 
-			const delta = value === '0' ? 1 : this._deltaProgress;
-
 			for (let uuid in this._layerInstances) {
 				const activityId = this._activityIdByUuid[uuid],
 					color = this._getUsedColor?.(uuid);
@@ -258,9 +256,6 @@ define([
 			}
 
 			this._applyTrackingDataLimits?.(true);
-			this._emitEvt('SET_PROGRESS_DELTA', {
-				value: delta
-			});
 		},
 
 		_onTrackingSettingsRateChange: function(value) {
@@ -286,19 +281,6 @@ define([
 			this._trackingTransitionRate = newTransitionRate > 0 ? newTransitionRate : 0;
 
 			return this._trackingTransitionRate;
-		},
-
-		_onTrackingSettingsIntervalChange: function(value) {
-
-			this.inherited(arguments);
-
-			this._deltaProgress = value;
-
-			if (this.timeMode) {
-				this._emitEvt('SET_PROGRESS_DELTA', {
-					value: this._deltaProgress
-				});
-			}
 		},
 
 		_onTrackingSettingsMarkersChange: function(value) {

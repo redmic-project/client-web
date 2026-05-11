@@ -151,6 +151,24 @@ define([
 				this.timeMode = true;
 				this._publish(this._buildChannel(intervalInputChannel, 'SHOW'));
 			}
+
+			const delta = inputValue === '0' ? 1 : this._deltaProgress;
+			this._emitEvt('SET_PROGRESS_DELTA', {
+				value: delta
+			});
+		},
+
+		_onTrackingSettingsIntervalChange: function(value) {
+
+			this.inherited(arguments);
+
+			this._deltaProgress = value;
+
+			if (this.timeMode) {
+				this._emitEvt('SET_PROGRESS_DELTA', {
+					value: this._deltaProgress
+				});
+			}
 		}
 	});
 });

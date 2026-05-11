@@ -43,7 +43,8 @@ define([
 				parentChannel,
 				props: {
 					showValue: true,
-					valueInTooltip: false
+					valueInTooltip: false,
+					delta: this._deltaProgress ?? 1
 				}
 			});
 		},

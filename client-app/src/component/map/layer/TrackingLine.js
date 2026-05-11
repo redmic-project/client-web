@@ -246,20 +246,11 @@ define([
 
 		_subGetClickedPointsIds: function(req) {
 
-			var clickedPoint = req.clickedPoint,
-				filterCbk = lang.partial(this._filterAxesOutsideClickedArea, {
-					self: this,
-					clickedPoint: clickedPoint
-				}),
-				axes = this._circleGroup.selectAll('circle'),
-				axesClicked = axes.filter(filterCbk);
+			const point = req.clickedPoint,
+				axes = this._circleGroup.selectAll('circle').filter(d => this._isAxisFromData(d)),
+				axesClicked = axes.filter((_d, i, nodes) => this._isAxisInsideClickedArea(nodes[i], point));
 
-			if (!axesClicked.size()) {
-				this._emitClickedPointsIds();
-				return;
-			}
-
-			var clickedIds = this._getClickedIds(axesClicked, axes);
+			const clickedIds = this._getClickedIds(axesClicked, axes.data());
 			this._emitClickedPointsIds(clickedIds);
 		},
 

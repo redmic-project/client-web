@@ -76,6 +76,7 @@ define([
 				markerClass: 'trackMarker',
 
 				_positionMarker: null,
+				_positionMarkerId: 'position',
 				_defsElementPrefix: 'trackMarker',
 				_defsElementIdSeparator: '_',
 
@@ -313,7 +314,7 @@ define([
 			this._positionMarker = this._createCircleMarker({
 				point: point,
 				radius: this.axesRadius * this.axesRadiusMultiplier,
-				id: 'position',
+				id: this._positionMarkerId,
 				className: this.currentPositionClass
 			});
 		},
@@ -421,7 +422,7 @@ define([
 				return;
 			}
 
-			pointDfd.then((point) => {
+			pointDfd.then(point => {
 
 				const radiusValue = this._getAxisRadius(pos),
 					radius = animate ? 0 : radiusValue,
@@ -431,20 +432,18 @@ define([
 			});
 		},
 
-		_filterAxesOutsideClickedArea: function(args, d, i) {
+		_isAxisFromData: function(axisId) {
 
-			var self = args.self,
-				clickedPoint = args.clickedPoint;
+			return axisId !== this._positionMarkerId;
+		},
 
-			if (self._positionMarker && this === self._positionMarker.node()) {
-				return;
-			}
+		_isAxisInsideClickedArea: function(axis, clickedPoint) {
 
-			var rAttr = this.getAttributeNode('r'),
+			const rAttr = axis.getAttributeNode('r'),
 				threshold = rAttr ? parseFloat(rAttr.value) + 1 : 0,
-				translation = self._getAxisTranslation(this),
+				translation = this._getAxisTranslation(axis);
 
-				x = clickedPoint.x,
+			const x = clickedPoint.x,
 				y = clickedPoint.y,
 				maxX = translation.x + threshold,
 				maxY = translation.y + threshold,

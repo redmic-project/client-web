@@ -439,18 +439,17 @@ define([
 			return lastAxisProps && lastAxisProps[this.endDatePropName];
 		},
 
-		_getClickedIds: function(axesClicked, axes) {
+		_getClickedIds: function(axesClicked, axesData) {
 
-			var axesIds = axes.data(),
-				clickedIds = [];
+			const clickedIds = [];
 
-			axesClicked.each(lang.hitch(this, function(d) {
+			axesClicked.each(d => {
 
-				var axisId = axesIds.indexOf(d),
-					pointsIds = this._getClusterIds(axisId);
+				const axisIndex = axesData.indexOf(d),
+					pointsIds = this._getClusterIds(axisIndex);
 
-				clickedIds = clickedIds.concat(pointsIds);
-			}));
+				clickedIds.push(...pointsIds);
+			});
 
 			return clickedIds;
 		}

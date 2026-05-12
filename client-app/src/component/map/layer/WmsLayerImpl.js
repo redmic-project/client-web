@@ -1,6 +1,5 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'src/component/map/_StaticLayersManagement'
 	, 'src/component/map/layer/_LayerDimensions'
@@ -9,7 +8,6 @@ define([
 	, 'templates/ServiceOGCImage'
 ], function(
 	declare
-	, lang
 	, Deferred
 	, _StaticLayersManagement
 	, _LayerDimensions
@@ -24,24 +22,34 @@ define([
 		//	description:
 		//		Proporciona la fachada para trabajar con capas servidas mediante protocolos WMS, WMS-C, WMTS y TMS.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				ownChannel: 'wmsLayer',
-				innerLayerDefinition: null,
 				refresh: 0
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
 		_initialize: function() {
+
+			this.inherited(arguments);
 
 			if (!this.innerLayerDefinition) {
 				return;
 			}
 
 			this._setInnerLayer();
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
+			this._getStaticLayersDefinition();
 		},
 
 		_setInnerLayer: function() {
@@ -51,20 +59,18 @@ define([
 			}
 
 			if (typeof this.innerLayerDefinition === 'string') {
-				var innerLayerDefinition = this._getStaticLayerDefinition(this.innerLayerDefinition);
-
-				if (innerLayerDefinition && innerLayerDefinition.then) {
-					innerLayerDefinition.then(lang.hitch(this, this._setInnerLayer));
+				const layerDefinition = this._getStaticLayerDefinition(this.innerLayerDefinition);
+				if (layerDefinition?.then) {
+					layerDefinition.then(() => this._setInnerLayer());
 					return;
 				} else {
-					this.innerLayerDefinition = innerLayerDefinition;
+					this.innerLayerDefinition = layerDefinition;
 				}
 			}
 
-			var layerInstance = this._getLayerInstance(this.innerLayerDefinition);
-
-			if (layerInstance && layerInstance.then) {
-				layerInstance.then(lang.hitch(this, this._setInnerLayerInstance));
+			const layerInstance = this._getLayerInstance(this.innerLayerDefinition);
+			if (layerInstance?.then) {
+				layerInstance.then(() => this._setInnerLayerInstance());
 			} else {
 				this._setInnerLayerInstance(layerInstance);
 			}
@@ -79,6 +85,8 @@ define([
 
 		_afterLayerAdded: function(data) {
 
+			this.inherited(arguments);
+
 			this._setRefreshInterval();
 		},
 
@@ -90,10 +98,9 @@ define([
 		_setRefreshInterval: function() {
 
 			if (this._checkRefreshIsValid() && !this._refreshIntervalHandler) {
-				var cbk = lang.hitch(this, this._redraw),
-					timeout = this.refresh * 1000;
+				const timeout = this.refresh * 1000;
 
-				this._refreshIntervalHandler = setInterval(cbk, timeout);
+				this._refreshIntervalHandler = setInterval(() => this._redraw, timeout);
 			}
 		},
 
@@ -103,6 +110,8 @@ define([
 		},
 
 		_redraw: function() {
+
+			this.inherited(arguments);
 
 			if (!this.layer) {
 				return;
@@ -125,7 +134,7 @@ define([
 
 		_getLayerLegend: function(atlasItem) {
 
-			var legendElement = ServiceOGCImage({
+			const legendElement = ServiceOGCImage({
 				data: atlasItem
 			});
 
@@ -134,7 +143,7 @@ define([
 
 		_chkLayerIsMe: function(response) {
 
-			var layerAddedId = response.layer._leaflet_id;
+			const layerAddedId = response.layer._leaflet_id;
 
 			return layerAddedId === this.layerId;
 		},

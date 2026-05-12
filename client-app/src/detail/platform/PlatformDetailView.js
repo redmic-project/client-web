@@ -3,15 +3,15 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/browser/_Framework'
-	, 'templates/PlatformInfo'
 	, 'src/detail/_DetailRelatedToActivity'
+	, 'templates/PlatformInfo'
 ], function(
 	redmicConfig
 	, declare
 	, lang
 	, _Framework
-	, TemplateInfo
 	, _DetailRelatedToActivity
+	, TemplateInfo
 ) {
 
 	return declare(_DetailRelatedToActivity, {
@@ -31,13 +31,29 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
+
+			this._contactListPrepareDetailWidget();
 
 			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
 				contactList: this._getContactsConfig()
 			}]);
+		},
+
+		_contactListPrepareDetailWidget: function() {
+
+			const configProps = {
+				target: this.contactTarget
+			};
+
+			const contactList = this._merge([this._getContactsConfig(configProps), {
+				width: 3,
+				height: 4
+			}]);
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {contactList}]);
 		},
 
 		_clearModules: function() {
@@ -51,23 +67,25 @@ define([
 
 			this.inherited(arguments);
 
-			if (resWrapper.target === this.target[0]) {
-				this._dataToContacts(res);
+			if (resWrapper.target !== this.target[0]) {
 				return;
 			}
+
+			this._dataToContacts(res);
 		},
 
 		_dataToContacts: function(response) {
 
-			var data = response.data,
-				contacts = data.contacts;
+			const contacts = response?.data?.contacts;
 
-			if (contacts && contacts.length) {
-				this._emitEvt('INJECT_DATA', {
-					data: contacts,
-					target: this.contactTarget
-				});
+			if (!contacts?.length) {
+				return;
 			}
+
+			this._emitEvt('INJECT_DATA', {
+				data: contacts,
+				target: this.contactTarget
+			});
 		}
 	});
 });

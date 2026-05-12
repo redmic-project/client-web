@@ -1,49 +1,43 @@
 define([
-	'alertify'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/base/_Module"
+	'dojo/_base/declare'
+	, 'src/component/base/_Module'
 ], function(
-	alertify
-	, declare
-	, lang
+	declare
 	, _Module
-){
+) {
+
 	return declare(_Module, {
-		//	summary:
-		//		Módulo encargado de procesar las notificaciones de los demás.
-		//	description:
-		//
+		// summary:
+		//   Módulo encargado de procesar las notificaciones de los demás.
 
-		//	config: Object
-		//		Opciones por defecto.
+		postMixInProperties: function() {
 
-		constructor: function(args) {
-
-			this.config = {
+			const defaultConfig = {
+				ownChannel: 'communicationCenter',
 				actions: {
-					ERROR: "error",
-					COMMUNICATION_SEND: "communicationSend",
-					NOTIFICATION_DELETE: "notificationDelete"
+					ERROR: 'error',
+					COMMUNICATION_SEND: 'communicationSend',
+					NOTIFICATION_DELETE: 'notificationDelete'
 				},
 				events: {
-					COMMUNICATION_SEND: "communicationSend",
-					NOTIFICATION_DELETE: "notificationDelete"
-				},
-				ownChannel: "communicationCenter"
+					COMMUNICATION_SEND: 'communicationSend',
+					NOTIFICATION_DELETE: 'notificationDelete'
+				}
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
-		_defineSubscriptions: function () {
+		_defineSubscriptions: function() {
 
 			this.subscriptionsConfig.push({
-				channel : this._buildChannel(this.communicationChannel, this.actions.COMMUNICATION),
-				callback: "_subCommunication"
+				channel : this._buildChannel(this.communicationChannel, 'COMMUNICATION'),
+				callback: '_subCommunication'
 			},{
-				channel : this._buildChannel(this.communicationChannel, this.actions.COMMUNICATION_DELETE),
-				callback: "_subCommunicationDelete"
+				channel : this._buildChannel(this.communicationChannel, 'COMMUNICATION_DELETE'),
+				callback: '_subCommunicationDelete'
 			});
 		},
 
@@ -51,13 +45,13 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'COMMUNICATION_SEND',
-				channel: this._buildChannel(this.notificationChannel, this.actions.COMMUNICATION_SEND)
+				channel: this._buildChannel(this.notificationChannel, 'COMMUNICATION_SEND')
 			},{
 				event: 'COMMUNICATION_SEND',
-				channel: this._buildChannel(this.alertChannel,  this.actions.COMMUNICATION_SEND)
+				channel: this._buildChannel(this.alertChannel, 'COMMUNICATION_SEND')
 			},{
 				event: 'NOTIFICATION_DELETE',
-				channel: this._buildChannel(this.notificationChannel, this.actions.NOTIFICATION_DELETE)
+				channel: this._buildChannel(this.notificationChannel, 'NOTIFICATION_DELETE')
 			});
 		},
 

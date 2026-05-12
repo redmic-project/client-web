@@ -39,26 +39,26 @@ define([
 
 			lang.mixin(this, this.configTitle, args);
 
-			aspect.after(this, "_afterSetConfigurations", lang.hitch(this, this._setTitleConfigurations));
 			aspect.before(this, "_initialize", this._initializeTitle);
 			aspect.before(this, "_defineSubscriptions", this._defineTitleSubscriptions);
-			aspect.after(this, "postCreate", this._postCreateTitle);
 		},
 
-		_setTitleConfigurations: function() {
+		_afterSetConfigurations: function() {
 
-			this._titleWidgetConfig = this._merge([{
+			this.inherited(arguments);
+
+			this.titleWidgetConfig = this._merge([this.titleWidgetConfig || {}, {
 				parentChannel: this.getChannel(),
 				ownChannel: "title",
 				associatedIds: [this.ownChannel],
 				template: TemplateTitle,
 				target: this.target instanceof Array ? this.target[0] : this.target
-			}, this.titleWidgetConfig || {}]);
+			}]);
 		},
 
 		_initializeTitle: function() {
 
-			this.titleWidget = new TemplateDisplayer(this._titleWidgetConfig);
+			this.titleWidget = new TemplateDisplayer(this.titleWidgetConfig);
 
 			aspect.after(this.titleWidget, "_dataAvailable", lang.hitch(this, this._addDataInTitle));
 			aspect.after(this.titleWidget, "_itemAvailable", lang.hitch(this, this._addDataInTitle));
@@ -76,7 +76,9 @@ define([
 
 		},
 
-		_postCreateTitle: function() {
+		postCreate: function() {
+
+			this.inherited(arguments);
 
 			this._createContainerTitle();
 		},

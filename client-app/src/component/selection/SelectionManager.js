@@ -277,7 +277,7 @@ define([
 				this._subscribe(this._loadSelection.getChannel('UPDATE_DATA'), lang.hitch(this,
 					this._subSelectionLoad));
 			} else {
-				this._publish(this._loadSelection.getChannel('UPDATE_TARGET'), {
+				this._publish(this._loadSelection.getChannel('SET_PROPS'), {
 					target: selectionTarget,
 					editionTarget: selectionEditionTarget
 				});

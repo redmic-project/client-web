@@ -17,14 +17,61 @@ define([
 		//		Extensión para el manejo de los datos de servicios OGC vinculados a actividades, permitiendo generar
 		//		capas para el mapa y su control.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				target: redmicConfig.services.atlasLayer,
+				_localLayersTarget: 'ogcServicesLayerDataLocalTarget',
 				defaultLayerItemState: false
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+		},
+
+		_setConfigurations: function() {
+
+			this.inherited(arguments);
+
+			this.mergeComponentAttribute('atlasConfig', {
+				localTarget: this._localLayersTarget,
+				addThemesBrowserFirst: true
+			});
+		},
+
+		_initialize: function() {
+
+			this.inherited(arguments);
+
+			const mapInstance = this.getComponentInstance('map');
+			this.mapChannel = mapInstance?.getChannel();
+		},
+
+		_requestLayersDataFilteredByActivityIds: function(activities) {
+
+			this._emitEvt('REQUEST', {
+				target: this.target,
+				action: '_search',
+				method: 'POST',
+				params: {
+					query: {
+						terms: {activities}
+					}
+				},
+				requesterId: this.getChannel()
+			});
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			this.inherited(arguments);
+
+			if (!resWrapper?.req?.params?.query?.terms?.activities) {
+				return;
+			}
+
+			this._onActivityLayersData(res);
 		},
 
 		_onActivityLayersData: function(res) {
@@ -33,7 +80,7 @@ define([
 
 			this._emitEvt('INJECT_DATA', {
 				data: layersData,
-				target: this._activityLayersTarget
+				target: this._localLayersTarget
 			});
 		},
 
@@ -42,6 +89,14 @@ define([
 			var atlasItems = res.data.data;
 
 			return atlasItems.map(lang.hitch(this, this._getAtlasLayerItemToInject));
+		},
+
+		_getAtlasLayerItemToInject: function(atlasItem) {
+
+			const inheritedAtlasItem = this.inherited(arguments),
+				providedByView = true;
+
+			return this._merge([inheritedAtlasItem, {providedByView}]);
 		}
 	});
 });

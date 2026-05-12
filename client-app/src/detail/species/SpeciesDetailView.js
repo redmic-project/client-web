@@ -9,7 +9,7 @@ define([
 	, 'templates/SpeciesInfo'
 	, 'templates/SpeciesTitle'
 	, 'src/detail/_DetailRelatedToActivity'
-	, 'app/designs/details/main/SpeciesLocation'
+	, 'src/detail/species/widget/SpeciesLocationMap'
 ], function(
 	redmicConfig
 	, declare
@@ -21,7 +21,7 @@ define([
 	, TemplateInfo
 	, TemplateTitle
 	, _DetailRelatedToActivity
-	, SpeciesLocation
+	, SpeciesLocationMap
 ) {
 
 	return declare([_DetailRelatedToActivity, _GenerateReport], {
@@ -31,29 +31,39 @@ define([
 		constructor: function(args) {
 
 			this.config = {
-				templateTitle: TemplateTitle,
-				templateInfo: TemplateInfo,
 				target: redmicConfig.services.species,
-				activitiesTargetBase: redmicConfig.services.activitiesBySpecies,
-				reportService: 'species',
 				ancestorsTarget: redmicConfig.services.taxonAncestors,
 				infoTarget: 'infoTarget',
 				titleWidgetTarget: 'titleWidgetTarget',
+				activitiesTargetBase: redmicConfig.services.activitiesBySpecies,
+				documentTarget: redmicConfig.services.documentsBySpecies,
+				templateTitle: TemplateTitle,
+				templateInfo: TemplateInfo,
+				reportService: 'species',
 				pathParent: redmicConfig.viewPaths.speciesCatalog
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
 
-			this.titleWidgetConfig = this._merge([{
+			this.titleWidgetConfig = this._merge([this.titleWidgetConfig || {}, {
 				target: this.titleWidgetTarget
-			}, this.titleWidgetConfig || {}]);
+			}]);
 
-			var documentListConfig = this._merge([this._getDocumentsConfig(), {
+			this._speciesPrepareDetailWidgets();
+		},
+
+		_speciesPrepareDetailWidgets: function() {
+
+			const documentList = this._merge([this._getDocumentsConfig({
+				target: this.documentTarget
+			}), {
+				width: 3,
+				height: 4,
 				props: {
 					noDataMessage: TemplateCustom({
 						message: this.i18n.noAssociatedDocuments,
@@ -62,26 +72,19 @@ define([
 				}
 			}]);
 
-			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
-				info: {
-					height: 5,
-					props: {
-						target: this.infoTarget
-					}
-				},
-				activityList: {
-					height: 3
-				},
-				documentList: documentListConfig,
-				map: {
-					width: 6,
-					height: 4,
-					type: SpeciesLocation,
-					props: {
-						title: 'location',
-						pathVariableId: this.pathVariableId
-					}
+			const map = {
+				width: 3,
+				height: 3,
+				type: SpeciesLocationMap,
+				props: {
+					title: 'location',
+					pathVariableId: this.pathVariableId
 				}
+			};
+
+			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
+				documentList,
+				map
 			}]);
 		},
 
@@ -105,13 +108,14 @@ define([
 				pathVariableId: this.pathVariableId
 			});
 
-			this.target[2] = lang.replace(redmicConfig.services.documentsBySpecies, {
-				id: this.pathVariableId
-			});
-
-			this._emitEvt('GET', {
-				target: this.target[2],
-				id: ''
+			this._emitEvt('REQUEST', {
+				method: 'GET',
+				target: this.documentTarget,
+				params: {
+					path: {
+						id: this.pathVariableId
+					}
+				}
 			});
 		},
 
@@ -119,69 +123,59 @@ define([
 
 			this.inherited(arguments);
 
-			if (resWrapper.target === this.target[1]) {
-				return;
-			}
+			const data = res.data;
 
-			if (resWrapper.target === this.target[2]) {
-				this._dataToDocument(res.data);
-				return;
-			}
-
-			this._dataToInfoAndTitle(res.data);
+			this._requestDataForTitle(data?.path);
+			this._dataToInfo(data);
 		},
 
-		_dataToDocument: function(data) {
-
-			this._emitEvt('INJECT_DATA', {
-				data: data,
-				target: this.documentTarget
-			});
-		},
-
-		_dataToInfoAndTitle: function(data) {
-
-			this.target[3] = lang.replace(this.ancestorsTarget, { path: data.path });
-
-			this._speciesData = lang.clone(data);
+		_requestDataForTitle: function(path) {
 
 			this._emitEvt('REQUEST', {
 				method: 'POST',
-				target: this.target[3],
+				target: this.ancestorsTarget,
 				action: '_search',
-				query: {
-					returnFields: ['scientificName', 'rank']
+				params: {
+					path: {
+						path
+					},
+					query: {
+						returnFields: ['scientificName', 'rank']
+					}
 				}
 			});
+		},
 
-			this._speciesData.canaryCatalogue = this._hrefDocument('canaryCatalogue');
-			this._speciesData.spainCatalogue = this._hrefDocument('spainCatalogue');
-			this._speciesData.euDirective = this._hrefDocument('euDirective');
+		_dataToInfo: function(resData) {
+
+			const canaryCatalogue = this._hrefDocument(resData.canaryCatalogue),
+				spainCatalogue = this._hrefDocument(resData.spainCatalogue),
+				euDirective = this._hrefDocument(resData.euDirective);
+
+			const data = this._merge([resData, {canaryCatalogue, spainCatalogue, euDirective}]);
+
+			this._speciesData = lang.clone(data);
 
 			this._emitEvt('INJECT_DATA', {
-				data: this._speciesData,
+				data,
 				target: this.infoTarget
 			});
 		},
 
-		_hrefDocument: function(idProperty) {
+		_hrefDocument: function(id) {
 
-			var valueItem = this._speciesData[idProperty];
-
-			if (valueItem) {
-				return lang.replace(redmicConfig.viewPaths.bibliographyDetails, { id: valueItem });
-			}
+			return id && lang.replace(redmicConfig.viewPaths.bibliographyDetails, {id});
 		},
 
 		_dataAvailable: function(res) {
 
-			var data = res.data,
-				ancestors = data.data;
+			this.inherited(arguments);
 
-			this._speciesData.ancestors = ancestors;
+			const ancestors = res.data?.data,
+				data = this._merge([this._speciesData, {ancestors}]);
 
 			this._emitEvt('INJECT_DATA', {
-				data: this._speciesData,
+				data,
 				target: this.titleWidgetTarget
 			});
 		}

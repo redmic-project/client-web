@@ -3,16 +3,18 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'RWidgets/Facet'
+	, 'src/component/base/_Store'
 	, './Search'
 ], function(
 	declare
 	, lang
 	, aspect
 	, Facet
+	, _Store
 	, Search
 ) {
 
-	return declare(Search, {
+	return declare([Search, _Store], {
 		//	summary:
 		//		Implementación de búsqueda a nivel de agregaciones, seleccionando los grupos deseados.
 		//	description:
@@ -63,7 +65,6 @@ define([
 
 		_initialize: function() {
 
-			this._originalAggregationGroupsDefinition = this.aggs;
 			this._updateAgreggationGroupsDefinitions(this.aggs);
 		},
 
@@ -80,34 +81,45 @@ define([
 
 		_beforeShow: function() {
 
-			this._getFacets();
+			if (this.queryChannel) {
+				this._getFacets();
+			}
 		},
 
 		_subUpdateFacets: function(req) {
 
-			var newAggs = req && req.aggs;
+			const availableAggregationGroups = req?.aggs || {};
 
-			if (!newAggs) {
-				return;
-			}
-
-			this._updateAgreggationGroupsDefinitions(newAggs);
-			this._getFacets();
+			this._setFacets(availableAggregationGroups);
 		},
 
-		_updateAgreggationGroupsDefinitions: function(newAggs) {
+		_updateAgreggationGroupsDefinitions: function(aggs) {
 
-			this.aggs = newAggs;
-			this._groupsOrder = Object.keys(newAggs);
+			if (!this._originalAggregationGroupsDefinition) {
+				this._originalAggregationGroupsDefinition = aggs;
+			}
+
+			this._aggregationGroupsDefinition = aggs;
 			this._selectionByAggregationGroup = {};
+
+			this._groupsOrder = this._getAggregationGroupsOrderedKeys(aggs);
+		},
+
+		_getAggregationGroupsOrderedKeys: function(aggs) {
+
+			if (Array.isArray(aggs)) {
+				return aggs.map(agg => agg.name);
+			} else {
+				return Object.keys(aggs);
+			}
 		},
 
 		_getFacets: function() {
 
-			this._setAggs(this.aggs);
+			const aggsGroups = this._parseAggregationsForFacets();
 
 			var obj = {
-				aggs: this._currentAggregationGroups
+				aggs: aggsGroups
 			};
 
 			lang.mixin(obj, this.query || {});
@@ -115,13 +127,12 @@ define([
 			this._emitEvt('SEARCH', obj);
 		},
 
-		_setAggs: function(aggs) {
+		_parseAggregationsForFacets: function() {
 
-			this._aggregationGroupsDefinition = aggs;
-			this._currentAggregationGroups = [];
+			const aggsGroups = [];
 
-			for (const [key, value] of Object.entries(aggs)) {
-				let field = value.field,
+			for (const [key, value] of Object.entries(this._aggregationGroupsDefinition)) {
+				const field = value.field,
 					nested = value.nested,
 					aggObj = {
 						term: key,
@@ -135,8 +146,10 @@ define([
 					this._nestedAggs[field] = nested;
 				}
 
-				this._currentAggregationGroups.push(aggObj);
+				aggsGroups.push(aggObj);
 			}
+
+			return aggsGroups;
 		},
 
 		_onNewSearch: function(query) {
@@ -176,14 +189,27 @@ define([
 			this._setFacets(availableAggregationGroups);
 		},
 
+		_dataAvailable: function(res) {
+
+			this.inherited(arguments);
+
+			const availableAggregationGroups = res.data?.aggregations;
+
+			availableAggregationGroups && this._setFacets(availableAggregationGroups);
+		},
+
 		_setFacets: function(availableAggregationGroups) {
 
-			var cleanAggregationGroups = {};
+			if (Array.isArray(availableAggregationGroups)) {
+				this._showFacetsGroups(availableAggregationGroups);
+				return;
+			}
+
+			const cleanAggregationGroups = {};
 			for (var key in availableAggregationGroups) {
 				var cleanAggGroupName = this._getAggregationGroupNameWithoutPrefix(key);
 				cleanAggregationGroups[cleanAggGroupName] = availableAggregationGroups[key];
 			}
-
 			this._showFacetsGroups(cleanAggregationGroups);
 		},
 
@@ -202,23 +228,24 @@ define([
 			this._cleanChildrenNode();
 
 			for (var i = 0; i < this._groupsOrder.length; i++) {
-				var groupName = this._groupsOrder[i],
-					aggGroup = aggregationGroups[groupName];
+				const aggGroupName = this._groupsOrder[i];
+
+				let aggGroup = this._getAggregationGroupByName(aggregationGroups, aggGroupName);
 
 				if (!aggGroup) {
 					continue;
 				}
 
 				if (!aggGroup.buckets) {
-					if (aggGroup[groupName]) {
-						aggGroup = aggGroup[groupName];
+					if (aggGroup[aggGroupName]) {
+						aggGroup = aggGroup[aggGroupName];
 					} else {
-						var prefixedAggGroupName = this._getAggregationGroupNameWithPrefix(groupName);
+						var prefixedAggGroupName = this._getAggregationGroupNameWithPrefix(aggGroupName);
 						aggGroup = aggGroup[prefixedAggGroupName];
 					}
 				}
 
-				this._showFacetsGroup(aggGroup, groupName);
+				this._showFacetsGroup(aggGroup, aggGroupName);
 			}
 		},
 
@@ -227,6 +254,19 @@ define([
 			for (var aggGroup in this._facetsInstances) {
 				this._facetsInstances[aggGroup].destroy();
 			}
+		},
+
+		_getAggregationGroupByName: function(aggregationGroups, aggGroupName) {
+
+			let aggGroupIndex;
+
+			if (!Array.isArray(aggregationGroups)) {
+				aggGroupIndex = aggGroupName;
+			} else {
+				aggGroupIndex = aggregationGroups.findIndex((aggGroup) => aggGroup.name === aggGroupName);
+			}
+
+			return aggregationGroups[aggGroupIndex];
 		},
 
 		_getAggregationGroupNameWithPrefix: function(cleanAggGroupName) {
@@ -290,15 +330,12 @@ define([
 
 		_onFacetChangeEvent: function(queryTerm, title) {
 
-			var propertyPath = this._getAggregationGroupPropertyPath(title);
+			const propertyPath = this._getAggregationGroupPropertyPath(title),
+				queryTermValue = queryTerm?.[propertyPath];
 
-			if (queryTerm) {
-				this._addFacetToQuery(title, queryTerm);
-				this._selectionByAggregationGroup[title] = queryTerm[propertyPath];
-			} else {
-				this._removeFacetFromQuery(title);
-				this._selectionByAggregationGroup[title] = [];
-			}
+			this._selectionByAggregationGroup[title] = queryTermValue;
+
+			this._addFacetToQuery(title, queryTerm);
 
 			this._onNewSearch(this.query);
 		},
@@ -306,11 +343,6 @@ define([
 		_addFacetToQuery: function(title, queryTerm) {
 
 			this.query[title] = queryTerm;
-		},
-
-		_removeFacetFromQuery: function(title) {
-
-			delete this.query[title];
 		},
 
 		_onFacetShowMoreEvent: function(facetsGroupTitle) {

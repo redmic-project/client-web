@@ -10,15 +10,11 @@ define([
 	, _Module
 	, _Show
 	, _SearchItfc
-){
-	return declare([_Module, _Show, _SearchItfc], {
-		//	summary:
-		//
-		//	description:
-		//
+) {
 
-		//	config: Object
-		//		Opciones por defecto.
+	return declare([_Module, _Show, _SearchItfc], {
+		// summary:
+		//   Componente para realizar búsquedas en los diferentes servicios.
 
 		constructor: function(args) {
 
@@ -127,7 +123,7 @@ define([
 			this._emitEvt('SEARCH', obj);
 		},
 
-		_shouldOmitLoadingEvents: function() {
+		_shouldOmitTargetLoading: function() {
 
 			return true;
 		}

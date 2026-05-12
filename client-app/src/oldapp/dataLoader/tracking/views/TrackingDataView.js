@@ -133,21 +133,18 @@ define([
 				return;
 			}
 
-			var target = lang.replace(this.replaceTarget, {
+			const replacedTarget = lang.replace(this.replaceTarget, {
 				activityid: this.pathVariableId.activityid,
 				elementuuid: this.pathVariableId.id
 			});
 
-			if (target === this.target[1]) {
+			if (replacedTarget === this.target[1]) {
 				return;
 			}
 
-			this.target[1] = target;
+			const target = [this.target[0], replacedTarget];
 
-			this._emitEvt('UPDATE_TARGET', {
-				target: target,
-				refresh: true
-			});
+			this._publish(this.getChannel('SET_PROPS'), {target});
 
 			this._getElement();
 			this._getActivity();

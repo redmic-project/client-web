@@ -58,7 +58,7 @@ define([
 			this.currentStep = "selectElement";
 			this.steps = {
 				selectElement: {
-					definition:declare([Layout, Controller, _AddFilter, _CompleteBySelection]),
+					definition: declare([Layout, Controller, _AddFilter, _CompleteBySelection]),
 					props: {
 						browserExts: [_Select],
 						label: this.i18n.selectElement,
@@ -68,21 +68,19 @@ define([
 
 							var activityCategory = res.activityCategory;
 
+							let target, template;
+
 							if (activityCategory === "at") {
-								this.target = redmicConfig.services.animal;
+								target = redmicConfig.services.animal;
 								template = animalList;
 							} else if (activityCategory === "pt"){
-								this.target = redmicConfig.services.platform;
+								target = redmicConfig.services.platform;
 								template = platformList;
 							}
 
-							this._publish(this.browser.getChannel('UPDATE_TEMPLATE'), {
-								template: template
-							});
+							template && this._publish(this.browser.getChannel('UPDATE_TEMPLATE'), {template});
 
-							this._emitEvt('UPDATE_TARGET', {
-								target: this.target
-							});
+							target && this._publish(this.getChannel('SET_PROPS'), {target});
 
 							this._emitEvt('REFRESH');
 						},

@@ -20,12 +20,8 @@ define([
 				"_dataAvailable": {},
 				"_itemAvailable": {},
 				"_errorAvailable": {},
-				"_shouldAbortRequest": {},
-				"_getRequestObj": {},
-				"_shouldAbortGet": {},
-				"_getGetObj": {},
-				"_removeData": {},
-				"_shouldOmitLoadingEvents": {}
+				"_shouldOmitTargetLoading": {},
+				'_requestParamsChanged': {}
 			});
 		}
 	});

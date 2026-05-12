@@ -1,94 +1,39 @@
 define([
-	'app/designs/mapWithSideContent/Controller'
-	, 'app/designs/mapWithSideContent/layout/MapAndContent'
+	'dojo/_base/declare'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/design/map/_AddAtlasComponent'
+	, 'src/design/map/_AddQueryOnMapComponent'
+	, 'src/design/map/_MapDesignWithContentLayout'
 	, 'src/redmicConfig'
-	, 'dojo/_base/declare'
-	, 'dojo/_base/lang'
-	, 'put-selector'
-	, 'src/component/atlas/Atlas'
-	, 'src/component/layout/TabsDisplayer'
-	, 'src/component/mapQuery/QueryOnMap'
 ], function(
-	Controller
-	, Layout
+	declare
+	, _Module
+	, _Show
+	, _AddAtlasComponent
+	, _AddQueryOnMapComponent
+	, _MapDesignWithContentLayout
 	, redmicConfig
-	, declare
-	, lang
-	, put
-	, Atlas
-	, TabsDisplayer
-	, QueryOnMap
 ) {
 
-	return declare([Layout, Controller], {
-		//	summary:
-		//		Vista de visor atlas. Proporciona un mapa principal y un contenido secundario (componente Atlas) para
-		//		trabajar sobre el mapa.
-		//	description:
-		//		Permite cargar diferentes capas temáticas al mapa, manipularlas y trabajar con los datos que proveen.
+	return declare([_Module, _Show, _MapDesignWithContentLayout, _AddAtlasComponent, _AddQueryOnMapComponent], {
+		// summary:
+		//   Vista de visor atlas. Proporciona un mapa principal y un contenido secundario (componente Atlas) para
+		//   trabajar sobre el mapa.
+		// description:
+		//   Permite cargar diferentes capas temáticas al mapa, manipularlas y trabajar con los datos que proveen.
 
-		//	config: Object
-		//		Opciones y asignaciones por defecto.
-		//	title: String
-		//		Título de la vista.
+		postMixInProperties: function() {
 
-		constructor: function(args) {
-
-			this.config = {
+			const defaultConfig = {
 				title: this.i18n.atlasViewerView,
 				ownChannel: 'atlasViewer',
-				selectionTarget: redmicConfig.services.atlasLayerSelection,
-				_atlasContainerClass: 'atlasContainer',
+				selectionTarget: redmicConfig.services.atlasLayerSelection
 			};
 
-			lang.mixin(this, this.config, args);
-		},
-
-		_setConfigurations: function() {
-
-			this.atlasConfig = this._merge([{
-				parentChannel: this.getChannel(),
-				terms: this.terms
-			}, this.atlasConfig || {}]);
-
-			this.queryOnMapConfig = this._merge([{
-				parentChannel: this.getChannel()
-			}, this.queryOnMapConfig || {}]);
-		},
-
-		_initialize: function() {
-
-			this._tabsDisplayer = new TabsDisplayer({
-				parentChannel: this.getChannel()
-			});
-
-			this._createAtlas();
-		},
-
-		_createAtlas: function() {
-
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
-
-			this.atlasConfig.getMapChannel = getMapChannel;
-			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
-
-			this.atlas = new Atlas(this.atlasConfig);
-
-			this.queryOnMapConfig.getMapChannel = getMapChannel;
-			this.queryOnMapConfig.tabsDisplayerChannel = this._tabsDisplayer.getChannel();
-
-			this._queryOnMap = new QueryOnMap(this.queryOnMapConfig);
-		},
-
-		postCreate: function() {
+			this._mergeOwnAttributes(defaultConfig);
 
 			this.inherited(arguments);
-
-			put(this.contentNode, '.' + this._atlasContainerClass);
-
-			this._publish(this._tabsDisplayer.getChannel('SHOW'), {
-				node: this.contentNode
-			});
 		}
 	});
 });

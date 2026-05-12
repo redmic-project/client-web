@@ -10,6 +10,7 @@ define([
 	, "dojo/on"
 	, "dojo/promise/all"
 	, "RWidgets/Utilities"
+	, 'src/component/base/_ExternalConfig'
 	, "src/util/Mediator"
 	, "./_ChkCollection"
 	, "./_CommunicationCenter"
@@ -27,6 +28,7 @@ define([
 	, on
 	, all
 	, Utilities
+	, _ExternalConfig
 	, Mediator
 	, _ChkCollection
 	, _CommunicationCenter
@@ -34,78 +36,37 @@ define([
 	, _ModuleItfc
 ) {
 
-	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter, _ManageClickEvent], {
-		//	summary:
-		//		Base común para todos los módulos.
-		//	description:
-		//		Permite definir los atributos y métodos comunes entre los módulos.
-
-		//	subscriptions: Object
-		//		Estructura para almacenar las subscripciones del módulo o la vista.
-		//	publications: Object
-		//		Estructura para almacenar las publicaciones del módulo o la vista.
-
-		//	subscriptionsConfig: Array
-		//		Estructura para almacenar las subscripciones propias del módulo o vista.
-		//	publicationsConfig: Array
-		//		Estructura para almacenar las publicaciones propias del módulo o vista.
+	return declare([_WidgetBase, Evented, _ModuleItfc, _ChkCollection, _CommunicationCenter, _ManageClickEvent,
+		_ExternalConfig
+	], {
+		// summary:
+		//   Base común para todos los componentes.
+		// description:
+		//   Permite definir los atributos y métodos comunes entre los componentes.
+		//   Se acopla al ciclo de vida de los widgets Dijit de Dojo. Las fases disponibles son:
+		//     constructor -> postMixInProperties -> buildRendering -> postCreate -> startup
 
 		//	events: Object
 		//		Estructura para almacenar los nombres de los eventos del módulo o vista.
 		//	actions: Object
 		//		Estructura para almacenar los nombres de las acciones del módulo o vista.
-
 		//	commonEvents: Object
 		//		Estructura para almacenar los nombres de los eventos comunes a todos los módulos
 		//		y vistas.
-		commonEvents: {
-			CONNECT: "connect",
-			DISCONNECT: "disconnect",
-			STATUS: "status",
-			TRACK: "track",
-			GOT_PROPS: "gotProps",
-			PROPS_SET: "propsSet",
-			DESTROY: "destroy"
-		},
 		//	commonActions: Object
 		//		Estructura para almacenar los nombres de las acciones comunes a todos los módulos
 		//		y vistas.
-		commonActions: {
-			CONNECT: "connect",
-			DISCONNECT: "disconnect",
-			CONNECTED: "connected",
-			DISCONNECTED: "disconnected",
-			ERROR: "error",
-			GETSTATUS: "getStatus",
-			GOTSTATUS: "gotStatus",
-			TRACK: "track",
-			SET_PROPS: "setProps",
-			GET_PROPS: "getProps",
-			GOT_PROPS: "gotProps",
-			DESTROY: "destroy",
-			DESTROYED: "destroyed"
-		},
-
 		//	globalOwnChannels: Object
 		//		Estructura para almacenar los ownChannel de los módulos que se instancian
 		//		globalmente.
-		globalOwnChannels: {
-			ROUTER: "router",
-			STORE: "data",
-			SELECTOR: "selection",
-			CREDENTIALS: "credentials",
-			EXTERNAL_CONFIG: "externalConfig",
-			ANALYTICS: "analytics",
-			MODULE_STORE: "moduleStore",
-			TASK: "task",
-			NOTIFICATION: "notification",
-			SOCKET: "socket",
-			META_TAGS: "metaTags",
-			LOADING: "loading",
-			ALERT: "alert",
-			COMMUNICATION: "communicationCenter"
-		},
-
+		//	subscriptions: Object
+		//		Estructura para almacenar las subscripciones del módulo o la vista.
+		//	publications: Object
+		//		Estructura para almacenar las publicaciones del módulo o la vista.
+		//	subscriptionsConfig: Array
+		//		Estructura para almacenar las subscripciones propias del módulo o vista.
+		//	publicationsConfig: Array
+		//		Estructura para almacenar las publicaciones propias del módulo o vista.
 		//	actionsPaused: Object
 		//		Estructura para almacenar los nombres de las acciones pausadas.
 		//	associatedIds: Array
@@ -114,38 +75,27 @@ define([
 		//		'target'.
 		//	statusFlags: Object
 		//		Flags para indicar el estado y circunstancias actuales del módulo.
-
 		//	rootChannel: String
 		//		Canal de comunicación correspondiente a la raíz de la aplicación (base para todos
 		//		los demás).
-		rootChannel: "app",
-
 		//	innerAppOwnChannel: String
 		//		Terminación del canal de comunicación correspondiente al módulo "innerApp", encargado de contener los
 		//		elementos que se encuentran en la parte interna (sidebar, vistas...). Es hijo a su vez de la raíz
 		//		de la aplicación.
-		innerAppOwnChannel: 'innerApp',
-
 		//	outerAppOwnChannel: String
 		//		Terminación del canal de comunicación correspondiente al módulo "outerApp", encargado de contener los
 		//		elementos que se encuentran en la parte externa (login, register...). Es hijo a su vez de la raíz
 		//		de la aplicación.
-		outerAppOwnChannel: 'outerApp',
-
 		//	ownChannel: String
 		//		Canal de comunicación correspondiente al módulo.
 		//	parentChannel: String
 		//		Canal de comunicación correspondiente al padre del módulo o vista (por defecto,
 		//		vacío).
-
 		//	channelSeparator: String
 		//		Separador de niveles de los canales. Por ejemplo, se coloca entre el canal del módulo padre y el
 		//		ownChannel del módulo hijo cuando este se instancia.
-		channelSeparator: Mediator.channelSeparator,
-
 		//	ownChannelSeparator: String
 		//		Separador entre el ownChannel definido y el id de la instancia.
-
 		//	propSetSuffix: String
 		//		Sufijo añadido a las propiedades para generar el evento disparado tras su seteo.
 		//	_childrenModules: Object
@@ -156,11 +106,12 @@ define([
 		//	_childrenActionDfdsNameSuffix: String
 		//		Sufijo aplicado al nombre del atributo que almacena los deferred para esperar por publicaciones por
 		//		parte de los hijos.
-
 		//	routerChannel: String
 		//		Nombre del canal por donde se van a gestionar los cambios de ruta.
 		//	storeChannel: String
 		//		Nombre del canal por donde se van a recibir los datos.
+		//	selectionManagerChannel: String
+		//		Nombre del canal por donde se van a seleccionar los elementos.
 		//	selectorChannel: String
 		//		Nombre del canal por donde se van a seleccionar los items.
 		//	credentialsChannel: String
@@ -171,42 +122,112 @@ define([
 		//		Nombre del canal por donde se va a controlar el módulo de moduleStore
 		//	communicationChannel: String
 		//		Nombre del canal por donde se van a publicar las notificaciones.
-
+		//	authChannel: String
+		//		Nombre del canal por donde se gestiona la sesión del usuario autenticado.
+		//	externalConfigChannel: String
+		//		Nombre del canal por donde se comunican las configuraciones externas.
 		//	i18n: Object
 		//		Traducciones globales
-		i18n: i18n,
 
 		constructor: function() {
 
-			this.config = {
-				subscriptions: {},
-				publications: {},
-				events: {},
-				actions: {},
-				actionsPaused: {},
-				associatedIds: [],
-				statusFlags: {},
+			const defaultConfig = {
+				commonEvents: {
+					CONNECT: "connect",
+					DISCONNECT: "disconnect",
+					STATUS: "status",
+					TRACK: "track",
+					GOT_PROPS: "gotProps",
+					PROPS_SET: "propsSet",
+					DESTROY: "destroy"
+				},
+				commonActions: {
+					CONNECT: "connect",
+					DISCONNECT: "disconnect",
+					CONNECTED: "connected",
+					DISCONNECTED: "disconnected",
+					ERROR: "error",
+					GETSTATUS: "getStatus",
+					GOTSTATUS: "gotStatus",
+					TRACK: "track",
+					SET_PROPS: "setProps",
+					GET_PROPS: "getProps",
+					GOT_PROPS: "gotProps",
+					DESTROY: "destroy",
+					DESTROYED: "destroyed"
+				},
+				globalOwnChannels: {
+					ROUTER: "router",
+					STORE: "data",
+					SELECTION_MANAGER: "selectionManager",
+					SELECTOR: "selection",
+					CREDENTIALS: "credentials",
+					EXTERNAL_CONFIG: "externalConfig",
+					ANALYTICS: "analytics",
+					MODULE_STORE: "moduleStore",
+					TASK: "task",
+					NOTIFICATION: "notification",
+					SOCKET: "socket",
+					META_TAGS: "metaTags",
+					LOADING: "loading",
+					ALERT: "alert",
+					COMMUNICATION: "communicationCenter",
+					AUTH: "auth"
+				},
+
+				rootChannel: "app",
+				innerAppOwnChannel: 'innerApp',
+				outerAppOwnChannel: 'outerApp',
+				channelSeparator: Mediator.channelSeparator,
+
+				i18n: i18n,
+
 				ownChannel: "module",
 				parentChannel: "",
 				ownChannelSeparator: "-",
 				childPathSeparator: ".",
 				propSetSuffix: "Set",
-				_childrenModules: {},
-				_childrenActionsAllowedToListen: ['CONNECTED', 'DISCONNECTED', 'DESTROYED'],
-				_childrenActionDfdsNameSuffix: 'ChildrenActionDfds',
 
-				routerChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ROUTER),
-				storeChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.STORE),
-				credentialsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.CREDENTIALS),
-				analyticsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ANALYTICS),
-				moduleStoreChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.MODULE_STORE),
-				metaTagsChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.META_TAGS),
-				loadingChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.LOADING),
-				alertChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT),
-				communicationChannel: this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION)
+				_childrenActionsAllowedToListen: ['CONNECTED', 'DISCONNECTED', 'DESTROYED'],
+				_childrenActionDfdsNameSuffix: 'ChildrenActionDfds'
 			};
 
-			lang.mixin(this, this.config);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this._prepareComponentInternalStructures();
+			this._prepareComponentGlobalChannels();
+
+			aspect.before(this, "postCreate", lang.hitch(this, this._postCreateMediator));
+			aspect.after(this, "_initialize", lang.hitch(this, this._initializeModule));
+		},
+
+		_prepareComponentInternalStructures: function() {
+
+			this.events = {};
+			this.actions = {};
+			this.subscriptions = {};
+			this.publications = {};
+			this.actionsPaused = {};
+			this.associatedIds = [];
+			this.statusFlags = {};
+			this._childrenModules = {};
+		},
+
+		_prepareComponentGlobalChannels: function() {
+
+			this.routerChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.ROUTER);
+			this.storeChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.STORE);
+			this.credentialsChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.CREDENTIALS);
+			this.analyticsChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.ANALYTICS);
+			this.moduleStoreChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.MODULE_STORE);
+			this.metaTagsChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.META_TAGS);
+			this.loadingChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.LOADING);
+			this.alertChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.ALERT);
+			this.communicationChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.COMMUNICATION);
+			this.authChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.AUTH);
+			this.externalConfigChannel = this._buildChannel(this.rootChannel, this.globalOwnChannels.EXTERNAL_CONFIG);
+			this.selectionManagerChannel = this._buildChannel(this.rootChannel,
+				this.globalOwnChannels.SELECTION_MANAGER);
 
 			this.outerAppChannel = this._buildChannel(this.rootChannel, this.outerAppOwnChannel);
 			this.innerAppChannel = this._buildChannel(this.rootChannel, this.innerAppOwnChannel);
@@ -215,9 +236,31 @@ define([
 			this.taskChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.TASK);
 			this.socketChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.SOCKET);
 			this.notificationChannel = this._buildChannel(this.innerAppChannel, this.globalOwnChannels.NOTIFICATION);
+		},
 
-			aspect.after(this, "_initialize", lang.hitch(this, this._initializeModule));
-			aspect.before(this, "postCreate", lang.hitch(this, this._postCreateMediator));
+		postMixInProperties: function() {
+			// summary:
+			//   Método perteneciente al ciclo de vida de un widget Dijit.
+			// description:
+			//   Respetar siempre en la definición del método las posibles definiciones heredadas, llamando siempre a
+			//   this.inherited(arguments) en último lugar, para ejecutar la lógica aquí definida y que prevalezcan los
+			//   valores procedentes del exterior.
+
+			this.params && this._mergeOwnAttributes(this.params);
+
+			this.inherited(arguments);
+		},
+
+		_mergeOwnAttributes: function(/*Object*/ args) {
+			// summary:
+			//   Recibe atributos definidos desde fuera para mezclarlos en profundidad dentro de la instancia.
+			// description:
+			//   Es importante que este método se llame desde la fase de postMixInProperties del componente, ya que
+			//   justo antes Dijit hace una primera mezcla de args en this, que no tiene en cuenta los cambios. Por
+			//   tanto, si se ejecuta antes, los cambios serán sobreescritos, y si se ejecuta después, puede ser
+			//   demasiado tarde para asignar algunos valores necesarios en otras fases tempranas.
+
+			lang.mixin(this, this._merge([this, args]));
 		},
 
 		_setModuleConfigurations: function() {
@@ -238,6 +281,11 @@ define([
 		},
 
 		buildRendering: function() {
+			// summary:
+			//   Método perteneciente al ciclo de vida de un widget Dijit.
+			// description:
+			//   Respetar siempre en la definición del método las posibles definiciones heredadas, llamando siempre a
+			//   this.inherited(arguments) en primer lugar para ejecutar la lógica aquí definida.
 
 			this.inherited(arguments);
 
@@ -365,6 +413,28 @@ define([
 			this._minimalInitialize();
 			this._beforeInitialize();
 			this._initialize();
+		},
+
+		mergeComponentAttribute: function(/*String*/ attrName, /*Object*/ objToMerge, /*Object?*/ mergeOpts) {
+			// summary:
+			//   Recibe un nombre de atributo, un objeto para mezclar con el valor actual del atributo y un objeto
+			//   opcional para configurar parámetros de la mezcla.
+			//   Asigna al atributo indicado el valor resultante entre la mezcla de su valor actual con el valor
+			//   recibido por parámetro, siguiendo las opciones de mezcla establecidas.
+			//   Permite el paso de la opción mergeOpts.avoidOverwrite para preservar los valores de las propiedades
+			//   pre-existentes en el atributo.
+
+			const avoidOverwrite = mergeOpts?.avoidOverwrite ?? false;
+			if (mergeOpts && mergeOpts.avoidOverwrite !== undefined) {
+				delete mergeOpts.avoidOverwrite;
+			}
+
+			const objects = [this[attrName] || {}, objToMerge];
+			if (avoidOverwrite) {
+				objects.reverse();
+			}
+
+			this[attrName] = this._merge(objects, mergeOpts);
 		},
 
 		getOwnChannel: function() {
@@ -626,7 +696,16 @@ define([
 					this.getChannel());
 			}
 
-			return Mediator.publish(chn, obj || {});
+			const info = this._getComponentInfo();
+
+			return Mediator.publish(chn, info, obj || {});
+		},
+
+		_getComponentInfo: function() {
+
+			const publisherChannel = this.getChannel();
+
+			return {publisherChannel};
 		},
 
 		_checkPublicationData: function(publication) {
@@ -656,7 +735,7 @@ define([
 
 		_publicationCallbackWrapper: function(item, evt) {
 
-			if (this._chkActionCanBeTriggered({ namespace: item.channel })) {
+			if (this._chkActionCanBeTriggered({ namespace: item.channel }, this._getComponentInfo())) {
 				lang.hitch(this, this[item.callback], item.channel, evt)();
 			}
 		},
@@ -765,72 +844,104 @@ define([
 
 		_subSetProps: function(req) {
 
-			var propNames = [];
+			const propNames = [];
 
-			for (var prop in req) {
-				var value = this._getUnmutableValue(req[prop]),
-					oldValue = this[prop];
-
-				if (!this._checkPropIsShareable(prop)) {
-					console.error('Tried to set not settable property "%s" at module "%s"', prop, this.getChannel());
+			for (const [propName, propValue] of Object.entries(req)) {
+				if (!this._checkPropIsShareable(propName)) {
+					console.error('Tried to set not settable property "%s" at module "%s"', propName, this.getChannel());
 					continue;
 				}
 
-				if (value === oldValue) {
-					console.warn('Tried to update property "%s" using same value "%s" at module "%s"', prop, value,
-						this.getChannel());
-				}
+				propNames.push(propName);
 
-				this[prop] = value;
-				propNames.push(prop);
+				const newValue = this._getUnmutableValue(propValue),
+					oldValue = this[propName];
 
-				var evtKey = this._createEvent(prop + this.propSetSuffix),
-					methodName = '_on' + Utilities.capitalize(prop) + 'PropSet',
-					changeObj = {
-						prop: prop,
-						oldValue: oldValue,
-						value: value
-					};
-
-				this._emitEvt(evtKey, changeObj);
-				this[methodName] && this[methodName](changeObj);
+				this._propagateBeforeSetProp(propName, newValue, oldValue);
+				this._setProp(propName, newValue, oldValue);
+				this._propagateAfterPropSet(propName, newValue, oldValue);
 			}
 
-			this._emitEvt('PROPS_SET', {
-				propNames: propNames
-			});
+			this._emitEvt('PROPS_SET', {propNames});
 		},
 
 		_getUnmutableValue: function(value) {
 
-			var valueIsObject = value && typeof value === 'object';
+			const valueIsObject = value && typeof value === 'object',
+				objectHasLifecycle = value?.ownChannel || value?.ownerDocument || value?.constructor;
 
-			if (!valueIsObject) {
-				return value;
-			}
-
-			var objectHasLifecycle = value.ownChannel || value.ownerDocument || value.constructor;
-
-			if (objectHasLifecycle) {
+			if (!valueIsObject || objectHasLifecycle) {
 				return value;
 			}
 
 			return lang.clone(value);
 		},
 
-		_subGetProps: function(req) {
+		_propagateBeforeSetProp: function(propName, newValue, oldValue) {
 
-			var props = {};
+			const methodName = `_onSetProp${Utilities.capitalize(propName)}`;
 
-			for (var prop in req) {
-				if (this._checkPropIsShareable(prop)) {
-					props[prop] = this[prop];
-				} else {
-					console.error("Tried to get not gettable property '%s' at module '%s'", prop, this.getChannel());
-				}
+			this[methodName]?.({propName, newValue, oldValue});
+		},
+
+		_setProp: function(propName, newValue, oldValue) {
+
+			if (newValue === oldValue) {
+				console.warn('Tried to update property "%s" using same value "%s" at module "%s"', propName, newValue,
+					this.getChannel());
 			}
 
-			this._emitEvt("GOT_PROPS", props);
+			this[propName] = newValue;
+		},
+
+		_propagateAfterPropSet: function(propName, newValue, oldValue) {
+
+			const evtKey = this._createEvent(propName + this.propSetSuffix),
+				methodName = `_on${Utilities.capitalize(propName)}PropSet`;
+
+			const changeObj = {
+				prop: propName, // TODO eliminar cuando se unifique el uso de los nombres de abajo
+				value: newValue, // TODO eliminar cuando se unifique el uso de los nombres de abajo
+				propName, newValue, oldValue
+			};
+
+			this._emitEvt(evtKey, changeObj);
+			this[methodName]?.(changeObj);
+		},
+
+		_subGetProps: function(req) {
+
+			const props = {};
+
+			for (let prop in req) {
+				props[prop] = this._getProp(prop);
+			}
+
+			all(props).then(propValues => this._emitEvt('GOT_PROPS', propValues));
+		},
+
+		_getProp: function(/*String*/ propName) {
+
+			const dfd = new Deferred();
+
+			if (!this._checkPropIsShareable(propName)) {
+				console.error("Tried to get not gettable property '%s' at module '%s'", prop, this.getChannel());
+				dfd.resolve();
+				return dfd;
+			}
+
+			const getPropCustomMethod = this[`_${propName}GetProp`];
+			if (getPropCustomMethod) {
+				getPropCustomMethod.call(this, dfd, propName);
+				return dfd;
+			}
+
+			const propValue = this[propName];
+			if (propValue === undefined) {
+				console.error(`Tried to get undefined property "${propName}" at module "${this.getChannel()}"`);
+			}
+			dfd.resolve(propValue);
+			return dfd;
 		},
 
 		_subChildActionDone: function(res, channelInfo) {
@@ -1116,35 +1227,68 @@ define([
 			//		Mezcla dos o más objetos y devuelve el resultado, sin alterar los objetos originales.
 			//	description:
 			//		Realiza la mezcla desde la derecha (final del array) hacia la izquierda (principio del array), por
-			//		lo que las propiedades de los últimos objetos se impondrán a las de los primeros.
-			//
-			//		Acepta opciones adicionales para concretar su funcionamiento.
+			//		lo que las propiedades de los últimos objetos se impondrán sobre las de los primeros.
+			//		Acepta opciones adicionales para concretar su funcionamiento, pasándolas directamente hacia
+			// 		deepmerge. También acepta dos opciones propias para personalizar su funcionamiento:
 			//		Con 'cloneDescendants' se puede forzar el clonado recursivo de los objetos a mezclar (por defecto,
 			//		se usan los anidados originales para disminuir la carga).
 			//		Con 'arrayMergingStrategy' se puede alterar el comportamiento de mezclado para los arrays. Permite
-			//		elegir entre 'combine' (se combinan todos los elementos de los arrays coincidentes) y 'overwrite'
-			//		(por defecto, se sobreescribe cualquier array coincidente).
+			//		elegir entre 'combine' (se combinan todos los elementos de los arrays coincidentes), 'overwrite'
+			//		(por defecto, se sobreescribe cualquier array coincidente) y 'concatenate' (acumula todos los
+			//		elementos de los arrays coincidentes).
 
-			options = options || {};
-
-			var cloneDescendants = options.cloneDescendants || false,
-				arrayMergingStrategy = options.arrayMergingStrategy || "overwrite",
-
-				deepmergeOptions = {
-					clone: cloneDescendants
-				};
-
-			if (arrayMergingStrategy === "combine") {
-				// comportamiento por defecto de deepmerge, no se define
-			} else if (arrayMergingStrategy === "overwrite") {
-				deepmergeOptions.arrayMerge = lang.hitch(this, this._overwritingArrayMerge);
-			} else if (arrayMergingStrategy === "concatenate") {
-				deepmergeOptions.arrayMerge = lang.hitch(this, this._concatenateArrayMerge);
-			}
-
-			lang.mixin(deepmergeOptions, options);
+			const deepmergeOptions = this._getMergeOptions(options);
 
 			return deepmerge.all(objects, deepmergeOptions);
+		},
+
+		_getMergeOptions: function(options) {
+
+			const isMergeableObject = this._isMergeableObject;
+
+			const clone = options?.cloneDescendants ?? false;
+			if (options && options.cloneDescendants !== undefined) {
+				delete options.cloneDescendants;
+			}
+
+			const arrayMergingStrategy = options?.arrayMergingStrategy ?? 'overwrite';
+			if (options && options.arrayMergingStrategy !== undefined) {
+				delete options.arrayMergingStrategy;
+			}
+
+			let arrayMerge;
+			if (arrayMergingStrategy === 'overwrite') {
+				arrayMerge = this._overwritingArrayMerge;
+			} else if (arrayMergingStrategy === 'concatenate') {
+				arrayMerge = this._concatenateArrayMerge;
+			} else if (arrayMergingStrategy === 'combine') {
+				// comportamiento por defecto de deepmerge, no se define
+			}
+
+			const deepmergeOptions = {isMergeableObject, clone, arrayMerge};
+			lang.mixin(deepmergeOptions, options);
+
+			return deepmergeOptions;
+		},
+
+		_isMergeableObject: function(value) {
+
+			if (!value) {
+				return false;
+			}
+
+			const isArray = Array.isArray(value);
+			if (isArray) {
+				return true;
+			}
+
+			// Inspirado por https://github.com/jonschlinkert/is-plain-object
+			const isPlainObject = value.constructor?.prototype?.hasOwnProperty('isPrototypeOf');
+			if (isPlainObject) {
+				return true;
+			}
+
+			return false;
 		},
 
 		_overwritingArrayMerge: function(destinationArray, sourceArray, options) {

@@ -27,9 +27,9 @@ define([
 		//	config: Object
 		//		Opciones por defecto.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				actions: {
 					ERROR: "error",
 					COMMUNICATION_SEND: "communicationSend",
@@ -70,7 +70,9 @@ define([
 				notificationIconAnimationClass: 'animate__swing'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {

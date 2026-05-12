@@ -20,9 +20,9 @@ define([
 		//	description:
 		//		Escucha las peticiones de 'cargando' y 'cargado' de todos los módulos.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				ownChannel: 'loading',
 				events: {
 					LOADING_DRAWN: 'loadingDrawn',
@@ -45,7 +45,9 @@ define([
 				loadingAttr: 'loading'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function () {

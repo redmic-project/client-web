@@ -54,7 +54,6 @@ define([
 
 			aspect.before(this, "_setConfigurations", lang.hitch(this, this._setGeographicBaseConfigurations));
 			aspect.before(this, "_initialize", lang.hitch(this, this._initializeGeographicBase));
-			aspect.before(this, "_definePublications", lang.hitch(this, this._defineGeographicBasePublications));
 			aspect.before(this, "_setOwnCallbacksForEvents", lang.hitch(this,
 				this._setGeographicBaseOwnCallbacksForEvents));
 
@@ -160,19 +159,20 @@ define([
 			});
 		},
 
-		_defineGeographicBasePublications: function () {
-
-			this.publicationsConfig.push({
-				event: 'UPDATE_TARGET',
-				channel: this.geoJsonLayer.getChannel("UPDATE_TARGET")
-			});
-		},
-
 		postCreate: function() {
 
 			this.inherited(arguments);
 
 			this._emitEvt('ADD_LAYER', {layer: this.geoJsonLayer});
+		},
+
+		_onTargetPropSet: function(changeObj) {
+
+			this.inherited(arguments);
+
+			const target = changeObj.newValue;
+
+			this._publish(this.geoJsonLayer.getChannel('SET_PROPS'), {target});
 		},
 
 		_replaceVariablesInStringWithItem: function(str) {

@@ -15,7 +15,8 @@ define([
 	, 'src/component/form/FormContainerImpl'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'src/component/layout/TabsDisplayer'
-	, "src/component/map/layer/_AddFilter"
+	, "src/component/map/layer/_RequestData"
+	, "src/component/map/layer/_ListenZoom"
 	, "src/component/map/layer/_PublishInfo"
 	, "src/component/map/layer/TrackingLayerImpl"
 	, "src/component/mapQuery/QueryOnMap"
@@ -36,7 +37,8 @@ define([
 	, FormContainerImpl
 	, GenericWithTopbarDisplayerImpl
 	, TabsDisplayer
-	, _AddFilter
+	, _RequestData
+	, _ListenZoom
 	, _PublishInfo
 	, TrackingLayerImpl
 	, QueryOnMap
@@ -128,7 +130,7 @@ define([
 
 		_initializeMain: function() {
 
-			this.TrackingClusterLayer = declare([TrackingLayerImpl, _AddFilter, _PublishInfo]);
+			this.TrackingClusterLayer = declare([TrackingLayerImpl, _RequestData, _PublishInfo, _ListenZoom]);
 
 			this.progressSlider = new ProgressSlider({
 				parentChannel: this.getChannel(),
@@ -212,17 +214,17 @@ define([
 
 		_createAtlas: function() {
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
+			const mapChannel = this.map.getChannel();
 
 			this.atlas = new Atlas({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
+				mapChannel,
 				addTabChannel: this._tabsDisplayer.getChannel('ADD_TAB')
 			});
 
 			this._queryOnMap = new QueryOnMap({
 				parentChannel: this.getChannel(),
-				getMapChannel: getMapChannel,
+				mapChannel,
 				tabsDisplayerChannel: this._tabsDisplayer.getChannel(),
 				typeGroupProperty: this.typeGroupProperty
 			});
@@ -294,22 +296,31 @@ define([
 
 			this._activityIdByUuid[idProperty] = item.activityId;
 
-			var target = lang.replace(this.layersTarget, {
-					elementuuid: idProperty,
-					activityid: this._activityIdByUuid[idProperty]
-				}),
-				infoTarget = lang.replace(this.infoTarget, {
-					id: this._activityIdByUuid[idProperty]
-				}),
-				layerId = this._generateLayerId(idProperty),
-				color = this._getFreeColor(idProperty, item),
+			const targetPathParams = {
+				elementuuid: idProperty,
+				activityid: this._activityIdByUuid[idProperty]
+			};
+
+			const targetQueryParams = {
+				qFlags: [1]
+			};
+
+			const infoTargetPathParams = {
+				id: this._activityIdByUuid[idProperty]
+			};
+
+			const layerId = this._generateLayerId(idProperty),
+				fillColor = this._getFreeColor(idProperty, item),
 				definition = this.TrackingClusterLayer;
 
 			this._layerInstances[idProperty] = new definition(this._configByLayerInstance({
-				target: target,
-				infoTarget: infoTarget,
-				fillColor: color,
-				layerId: layerId,
+				target: this.layersTarget,
+				infoTarget: this.infoTarget,
+				targetPathParams,
+				targetQueryParams,
+				infoTargetPathParams,
+				fillColor,
+				layerId,
 				layerLabel: layerId
 			}));
 		},

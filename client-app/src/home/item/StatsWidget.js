@@ -65,7 +65,7 @@ define([
 							icon: 'fa-arrow-right',
 							btnId: 'details',
 							title: 'catalog',
-							href: '/catalog/{href}-catalog'
+							href: '/{href}'
 						}]
 					}
 				}
@@ -131,13 +131,13 @@ define([
 
 		_dataAvailable: function(res) {
 
-			var data = res.data;
+			let data = res.data;
 
 			if (!data) {
 				return;
 			}
 
-			var specificStatsData = [{
+			const specificStatsData = [{
 				attachedKey: 'activity',
 				independentKey: 'activityOutProject'
 			},{
@@ -147,20 +147,20 @@ define([
 				attachedKey: 'program'
 			}];
 
-			var id = 1;
+			let id = 1;
 
-			for (var i in specificStatsData) {
-				var specificStatsItem = specificStatsData[i],
+			for (let i in specificStatsData) {
+				const specificStatsItem = specificStatsData[i],
 					attachedKey = specificStatsItem.attachedKey,
 					independentKey = specificStatsItem.independentKey,
-					specificData = this._extractSpecificStats(data, attachedKey, independentKey),
-					href = attachedKey;
+					specificData = this._extractSpecificStats(data, attachedKey, independentKey);
+
+				let href = `catalog/${attachedKey}-catalog`;
 
 				if (attachedKey === 'activity') {
 					this._emitEvt('TOTAL_ACTIVITIES', {
 						value: specificData.total
 					});
-					href = 'activities'; // TODO ruta incorrecta de vista
 				}
 
 				this._addStats({
@@ -173,12 +173,18 @@ define([
 				id++;
 			}
 
-			for (var item in data) {
+			for (let item in data) {
+				let href = `catalog/${item}-catalog`;
+
+				if (item === 'document') {
+					href = 'bibliography';
+				}
+
 				this._addStats({
 					id: id,
 					name: item,
 					stats: data[item],
-					href: item
+					href: href
 				});
 
 				id++;

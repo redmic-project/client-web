@@ -10,7 +10,8 @@ define([
 	, aspect
 	, moment
 	, Utilities
-){
+) {
+
 	return declare(null, {
 		//	summary:
 		//		Extensión de la línea de tracking para gestionar la información a representar.
@@ -25,9 +26,14 @@ define([
 		//	_itemsReviewedInPrevClusters: Integer
 		//		Contador de elementos (dentro de los cluster) revisados hasta la posición actual.
 
-		constructor: function(args) {
+		constructor: function() {
 
-			this._trackingDataManagementConfig = {
+			aspect.after(this, '_clear', lang.hitch(this, this._clearTrackingDataManagement));
+		},
+
+		postMixInProperties: function() {
+
+			const defaultConfig = {
 				axesPropsPropName: 'axesProps',
 				startDatePropName: 'startDate',
 				endDatePropName: 'endDate',
@@ -39,9 +45,9 @@ define([
 				_itemsReviewedInPrevClusters: 0
 			};
 
-			lang.mixin(this, this._trackingDataManagementConfig, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.after(this, '_clear', lang.hitch(this, this._clearTrackingDataManagement));
+			this.inherited(arguments);
 		},
 
 		_addData: function(feature) {
@@ -433,18 +439,17 @@ define([
 			return lastAxisProps && lastAxisProps[this.endDatePropName];
 		},
 
-		_getClickedIds: function(axesClicked, axes) {
+		_getClickedIds: function(axesClicked, axesData) {
 
-			var axesIds = axes.data(),
-				clickedIds = [];
+			const clickedIds = [];
 
-			axesClicked.each(lang.hitch(this, function(d) {
+			axesClicked.each(d => {
 
-				var axisId = axesIds.indexOf(d),
-					pointsIds = this._getClusterIds(axisId);
+				const axisIndex = axesData.indexOf(d),
+					pointsIds = this._getClusterIds(axisIndex);
 
-				clickedIds = clickedIds.concat(pointsIds);
-			}));
+				clickedIds.push(...pointsIds);
+			});
 
 			return clickedIds;
 		}

@@ -1,6 +1,6 @@
-var includeLocales = ['es', 'en'];
+const includeLocales = ['es', 'en'];
 
-var packagesMap = {
+const packagesMap = {
 	'd3Tip/d3-v6-tip.min': {
 		'd3-selection': 'd3'
 	},
@@ -9,17 +9,17 @@ var packagesMap = {
 	}
 };
 
-var amdTagger = function(filename) {
+const amdTagger = function(filename) {
 
 	return /\.js$/.test(filename);
 };
 
-var copyOnlyTagger = function() {
+const copyOnlyTagger = function() {
 
 	return true;
 };
 
-var ignoreAllButExceptionsTagger = function(desiredModuleId, _filename, mid) {
+const ignoreAllButExceptionsTagger = function(desiredModuleId, _filename, mid) {
 
 	if (desiredModuleId instanceof Array) {
 		return desiredModuleId.indexOf(mid) === -1;
@@ -28,12 +28,12 @@ var ignoreAllButExceptionsTagger = function(desiredModuleId, _filename, mid) {
 	return mid !== desiredModuleId;
 };
 
-var declarativeTagger = function(filename) {
+const declarativeTagger = function(filename) {
 
 	return /\.htm(l)?$/.test(filename);
 };
 
-var profileObj = {
+const profileObj = {
 	basePath: '.',
 	releaseDir: 'dist',
 	releaseName: 'js',
@@ -72,7 +72,6 @@ var profileObj = {
 		map: packagesMap,
 		async: true,
 		waitSeconds: 5,
-		requestProvider: 'dojo/request/registry',
 		selectorEngine: 'lite'
 	},
 
@@ -390,6 +389,22 @@ var profileObj = {
 			ignore: ignoreAllButExceptionsTagger.bind(null, 'handlebars/handlebars.runtime.min')
 		}
 	},{
+		name: 'leaflet-georaster',
+		location: 'dep/leaflet-georaster/dist',
+		main: 'georaster-layer-for-leaflet.min',
+		resourceTags: {
+			amd: amdTagger,
+			ignore: ignoreAllButExceptionsTagger.bind(null, 'leaflet-georaster/georaster-layer-for-leaflet.min')
+		}
+	},{
+		name: 'georaster',
+		location: 'dep/georaster/dist',
+		main: 'georaster.browser.bundle.min',
+		resourceTags: {
+			amd: amdTagger,
+			ignore: ignoreAllButExceptionsTagger.bind(null, 'georaster/georaster.browser.bundle.min')
+		}
+	},{
 		name: 'RWidgets',
 		location: 'src/util/widgets',
 		resourceTags: {
@@ -442,20 +457,21 @@ var profileObj = {
 				, 'dojo/NodeList-dom'
 				, 'dojo/NodeList-manipulate'
 				, 'dojo/NodeList-traverse'
-				, 'dojo/request/notify'
-				, 'dojo/request/registry'
+				, 'dojo/request/xhr'
 				, 'dojo/store/Observable'
 				, 'dojo/touch'
 				, 'dojo/window'
 			]
-		},
-		'src/app/App': {
-			includeLocales: includeLocales
 		}
 	}
 };
 
-var viewLayers = {
+const componentLayers = {
+	'src/app/App': {}
+	, 'src/component/layout/widgetProvider/WidgetProvider': {}
+};
+
+const viewLayers = {
 	// especiales
 	'src/error/404': {}
 	, 'src/error/NoSupportBrowser': {}
@@ -557,15 +573,24 @@ var viewLayers = {
 	, 'app/edition/views/LoadDataDocumentEditionView': {}
 };
 
-var viewLayerDefaultConfig = {
-	includeLocales: includeLocales
-};
-
 var profile = (function() {
 
-	for (var viewLayer in viewLayers) {
-		var viewLayerConfig = viewLayers[viewLayer];
-		profileObj.layers[viewLayer] = { ...viewLayerConfig, ...viewLayerDefaultConfig };
+	const layerDefaultConfig = {
+		includeLocales
+	};
+
+	for (let componentLayer in componentLayers) {
+		profileObj.layers[componentLayer] = {
+			...componentLayers[componentLayer],
+			...layerDefaultConfig
+		};
+	}
+
+	for (let viewLayer in viewLayers) {
+		profileObj.layers[viewLayer] = {
+			...viewLayers[viewLayer],
+			...layerDefaultConfig
+		};
 	}
 
 	return profileObj;

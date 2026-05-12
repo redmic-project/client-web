@@ -20,45 +20,48 @@ define([
 	, SpeciesDistributionCitation
 ) {
 
+	const TemplatesByTypeGroup = {
+		//	Podemos sobreescribir las plantillas genéricas de las capas
+		//	de atlas especificando el nombre de la capa completo
+		//'el-batimetriaIslasParent': AtlasPrimaryList',
+		//'el-batimetriaIslasChildren': AtlasBathymetry',
+
+		'defaultParent': AtlasPrimaryList,
+		'defaultChildren': AtlasSecondaryList,
+
+		'trackingParent': TrackingPrimaryList,
+		'trackingChildren': TrackingSecondaryList,
+
+		'taxonDistributionParent': SpeciesDistributionPrimaryList,
+		'taxonDistributionChildren': {
+			'ci': SpeciesDistributionCitation,
+			'at': TrackingSecondaryList
+		},
+
+		'sd-sightings-taxon-yearChildren': AtlasRedpromarSecondaryList,
+		'sd-exotic-species-sightingChildren': AtlasRedpromarSecondaryList
+	};
+
 	return declare(null, {
 		//	summary:
 		//		Extensión del módulo para las tareas de identificar tipos de datos y correspondencia de capas con
 		//		plantillas específicas.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				layerIdSeparator: '_',
 				layerIdPrefix: 'layer-',
 				layerThemeSeparator: '-',
 				typeGroupProperty: 'dataType',
 				parentTemplateSuffix: 'Parent',
 				childrenTemplateSuffix: 'Children',
-
-				_templatesByTypeGroup: {
-					//	Podemos sobreescribir las plantillas genéricas de las capas
-					//	de atlas especificando el nombre de la capa completo
-					//'el-batimetriaIslasParent': AtlasPrimaryList',
-					//'el-batimetriaIslasChildren': AtlasBathymetry',
-
-					'defaultParent': AtlasPrimaryList,
-					'defaultChildren': AtlasSecondaryList,
-
-					'trackingParent': TrackingPrimaryList,
-					'trackingChildren': TrackingSecondaryList,
-
-					'taxonDistributionParent': SpeciesDistributionPrimaryList,
-					'taxonDistributionChildren': {
-						'ci': SpeciesDistributionCitation,
-						'at': TrackingSecondaryList
-					},
-
-					'sd-sightings-taxon-yearChildren': AtlasRedpromarSecondaryList,
-					'sd-exotic-species-sightingChildren': AtlasRedpromarSecondaryList
-				}
+				_templatesByTypeGroup: TemplatesByTypeGroup
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
 		_getLayerTemplatesDefinition: function(layerId) {
@@ -76,24 +79,24 @@ define([
 
 		_getLayerName: function(layerId) {
 
-			var layerIdSplit = layerId.split(this.layerIdSeparator + this.layerIdPrefix);
+			const layerIdSplit = layerId?.split(this.layerIdSeparator + this.layerIdPrefix);
 
-			if (layerIdSplit.length > 1) {
+			if (layerIdSplit?.length > 1) {
 				return layerIdSplit[0];
 			}
 
-			return layerId.split(this.layerIdSeparator)[0];
+			return layerId?.split(this.layerIdSeparator)[0] ?? layerId;
 		},
 
 		_getTemplateForLayer: function(layerName, suffix) {
 
-			var specificTemplate = this._templatesByTypeGroup[layerName + suffix],
-				typeGroup = layerName.split(this.layerThemeSeparator)[0],
-				genericTemplate = this._templatesByTypeGroup[typeGroup + suffix] ||
-					this._templatesByTypeGroup['default' + suffix],
+			const specificTemplate = this._templatesByTypeGroup[layerName + suffix];
 
-				templateDefinition = specificTemplate ? specificTemplate : genericTemplate;
+			const typeGroup = layerName?.split(this.layerThemeSeparator)[0],
+				genericTemplate = this._templatesByTypeGroup[typeGroup + suffix] ??
+					this._templatesByTypeGroup['default' + suffix];
 
+			const templateDefinition = specificTemplate ?? genericTemplate;
 			if (!templateDefinition) {
 				console.error('Layer templates definition is wrong, default template was not found.');
 			}
@@ -137,18 +140,20 @@ define([
 
 		_getDataForAddInfo: function(layerId, layerLabel, data) {
 
-			var layerIdPrefix = this._getLayerName(layerId),
-				method;
+			const layerIdPrefix = this._getLayerName(layerId);
+
+			let method;
 
 			if (layerIdPrefix === 'tracking') {
 				method = '_getTrackingSpecificData';
 			} else if (layerIdPrefix === 'taxonDistribution') {
 				method = '_getTaxonDistributionSpecificData';
-			} else if (layerIdPrefix.indexOf(this.layerThemeSeparator) !== -1) {
+			} else if (layerIdPrefix?.indexOf(this.layerThemeSeparator) !== -1) {
 				method = '_getThemeSpecificData';
 			} else {
 				method = '_showErrorOnGettingSpecificData';
 			}
+
 			return this[method](layerIdPrefix, layerLabel, data);
 		},
 

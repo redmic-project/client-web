@@ -1,10 +1,8 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'src/app/component/layout/Layout'
 ], function(
 	declare
-	, lang
 	, Layout
 ) {
 
@@ -13,18 +11,20 @@ define([
 		//		Implementación del componente Layout, encargada de mostrar las vistas de la parte externa de la
 		//		aplicación.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				ownChannel: this.outerAppOwnChannel,
 				'class': 'outerApp',
 				baseClass: ''
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
-		_getNode: function() {
+		_getContentNode: function() {
 
 			return this.domNode;
 		}

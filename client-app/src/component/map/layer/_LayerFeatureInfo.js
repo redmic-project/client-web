@@ -12,9 +12,11 @@ define([
 		//	summary:
 		//		Extensión de WmsLayerImpl para gestionar las peticiones de información mediante getFeatureInfo.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				getFeatureInfoService: 'WMS',
 				getFeatureInfoVersion: '1.1.1',
 				getFeatureInfoRequest: 'GetFeatureInfo',
@@ -24,12 +26,17 @@ define([
 				getFeatureInfoBuffer: 5
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
 		_requestLayerInfo: function(obj) {
 
 			this.infoTarget = this._obtainLayerInfoTarget(obj);
+
+			if (!this.infoTarget) {
+				this._emitEvt('LAYER_INFO');
+				return;
+			}
 
 			this._emitEvt('GET', {
 				target: this.infoTarget,

@@ -1,10 +1,10 @@
 define([
 	'src/util/Mediator'
-	, 'src/component/store/RestManagerImpl'
+	, 'src/app/component/request/RestManagerXhrImpl'
 
 ], function(
 	Mediator
-	, RestManagerImpl
+	, RestManagerXhrImpl
 ) {
 
 	var timeout, restManager, target, exampleId, originalOpenMethod, communicationChannel, exampleAction;
@@ -22,7 +22,7 @@ define([
 			communicationChannel = 'app:communicationCenter:communication';
 			exampleAction = '_search';
 
-			restManager = new RestManagerImpl({
+			restManager = new RestManagerXhrImpl({
 				parentChannel: 'app'
 			});
 

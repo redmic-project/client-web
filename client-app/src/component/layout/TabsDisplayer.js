@@ -21,9 +21,11 @@ define([
 		//		Visualizador de contenido por pestañas. Recibe publicaciones de módulos que desean mostrarse como una
 		//		nueva pestaña.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				ownChannel: 'tabsDisplayer',
 				actions: {
 					'ADD_TAB': 'addTab',
@@ -35,7 +37,7 @@ define([
 				_tabNodesByChannel: {}
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
 		_defineSubscriptions: function() {
@@ -103,7 +105,7 @@ define([
 
 			var childContainer = this._getTabNode(req),
 				childChannel = req.channel,
-				childShowChannel = this._buildChannel(childChannel, this.actions.SHOW);
+				childShowChannel = this._buildChannel(childChannel, 'SHOW');
 
 			this._publish(childShowChannel, {
 				node: childContainer
@@ -114,10 +116,11 @@ define([
 
 		_getTabNode: function(req) {
 
-			var props = this._getTabProps(req),
+			var prepend = req.prepend,
+				props = this._getTabProps(req),
 				node = new ContentPane(props);
 
-			this._container.addChild(node);
+			this._container.addChild(node, prepend ? 0 : null);
 
 			this._customizeTab(props);
 

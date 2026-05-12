@@ -51,6 +51,9 @@ define([
 			this.textSearchConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this.target,
+				//suggestionsRequestMethod: 'POST',
+				//suggestionsTarget: `${this.target}/_suggest`,
+				//getSuggestionsQueryParams: value => ({suggest: {text: value}})
 				queryChannel: this.queryChannel,
 				legacyMode: false,
 				showExpandIcon: true

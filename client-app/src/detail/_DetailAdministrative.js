@@ -24,15 +24,43 @@ define([
 			lang.mixin(this, this.config, args);
 		},
 
-		_setMainConfigurations: function() {
+		_afterSetConfigurations: function() {
 
 			this.inherited(arguments);
 
+			this.addTargetToArray(this.ancestorsTarget);
+
+			this._administrativePrepareDetailWidgets();
+		},
+
+		_administrativePrepareDetailWidgets: function() {
+
+			const commonConfigProps = {
+				width: 3,
+				height: 4
+			};
+
+			const organisationList = this._merge([this._getOrganisationsConfig({
+				target: this.organisationTarget
+			}), commonConfigProps]);
+
+			const platformList = this._merge([this._getPlatformsConfig({
+				target: this.platformTarget
+			}), commonConfigProps]);
+
+			const contactList = this._merge([this._getContactsConfig({
+				target: this.contactTarget
+			}), commonConfigProps]);
+
+			const documentList = this._merge([this._getDocumentsConfig({
+				target: this.documentTarget
+			}), commonConfigProps]);
+
 			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
-				organisationList: this._getOrganisationsConfig(),
-				platformList: this._getPlatformsConfig(),
-				contactList: this._getContactsConfig(),
-				documentList: this._getDocumentsConfig()
+				organisationList,
+				platformList,
+				contactList,
+				documentList
 			}]);
 		},
 

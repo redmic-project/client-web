@@ -16,19 +16,24 @@ define([
 		//	summary:
 		//		Gestión de dimensiones de capas (como tiempo y elevación) para el módulo Atlas.
 
-		constructor: function(args) {
+		constructor: function() {
 
-			this.config = {
+			aspect.before(this, '_deactivateLayer', lang.hitch(this, this._atlasDimensionsDeactivateLayer));
+			aspect.before(this, '_cleanRowSecondaryContainer', lang.hitch(this,
+				this._atlasDimensionsCleanRowSecondaryContainer));
+		},
+
+		postMixInProperties: function() {
+
+			const defaultConfig = {
 				_elevationTagsContainerClass: 'tagListBottomContentContainer',
 				_elevationTagListByLayerId: {},
 				_elevationShownByLayerId: {}
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.before(this, '_deactivateLayer', lang.hitch(this, this._atlasDimensionsDeactivateLayer));
-			aspect.before(this, '_cleanRowSecondaryContainer', lang.hitch(this,
-				this._atlasDimensionsCleanRowSecondaryContainer));
+			this.inherited(arguments);
 		},
 
 		_getAtlasLayerDimensions: function(atlasItem) {

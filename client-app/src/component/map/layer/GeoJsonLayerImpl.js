@@ -321,23 +321,24 @@ define([
 
 		_setCenter: function(obj) {
 
-			var layer = this._getMarkerById(obj.markerId),
+			const markerId = obj.markerId,
+				item = obj.item,
 				options = obj.options;
 
+			const layer = this._getMarkerById(markerId);
+
 			if (!layer) {
+				const center = this._getLatLng(item?.coordinates?.[1], item?.coordinates?.[0]);
+				this._emitEvt('SET_CENTER', {center, options});
 				return;
 			}
 
 			if (layer.getBounds) {
-				this._emitEvt('FIT_BOUNDS', {
-					bounds: layer.getBounds(),
-					options: options
-				});
+				const bounds = layer.getBounds();
+				this._emitEvt('FIT_BOUNDS', {bounds, options});
 			} else {
-				this._emitEvt('SET_CENTER', {
-					center: layer.getLatLng(),
-					options: options
-				});
+				const center = layer.getLatLng();
+				this._emitEvt('SET_CENTER', {center, options});
 			}
 		}
 	});

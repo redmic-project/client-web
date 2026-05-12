@@ -15,8 +15,8 @@ define([
 
 		_chkActionCanBeTriggered: function() {
 
-			var channel = arguments[arguments.length - 1].namespace,
-				action = channel.split(this.channelSeparator).pop();
+			var channel = arguments[arguments.length - 2]?.namespace,
+				action = channel?.split(this.channelSeparator).pop();
 
 			return this._chkModuleIsOn() && this._chkActionIsOn(action);
 		},
@@ -28,7 +28,7 @@ define([
 
 		_chkActionIsOn: function(action) {
 
-			return !this.actionsPaused[action];
+			return action?.length && !this.actionsPaused[action];
 		},
 
 		_chkTargetIsValid: function(obj) {
@@ -52,19 +52,20 @@ define([
 			return this._chkTargetIsValid(res) && this._targetIsMine(response.target);
 		},
 
-		_targetIsMine: function(target) {
+		_targetIsMine: function(target, /*string?*/ customOwnTarget) {
 
-			var cleanTarget = this._cleanTrailingSlash(target);
+			const cleanTarget = this._cleanTrailingSlash(target);
 
 			if (target.length === cleanTarget.length) {
 				target += '/';
 			}
 
-			if (this.target instanceof Array) {
-				return this.target.indexOf(target) !== -1 || this.target.indexOf(cleanTarget) !== -1;
+			const ownTarget = customOwnTarget ?? this.target;
+			if (ownTarget instanceof Array) {
+				return ownTarget.includes(target) || ownTarget.includes(cleanTarget);
 			}
 
-			return this.target === target || this.target === cleanTarget;
+			return ownTarget && (ownTarget === target || ownTarget === cleanTarget);
 		},
 
 		_chkRequesterIsMe: function(res) {
@@ -75,11 +76,6 @@ define([
 
 			return !requesterId || (requesterId === this.getOwnChannel() || requesterId === this.getChannel() ||
 				this.associatedIds.indexOf(requesterId) !== -1);
-		},
-
-		_chkTargetAndRequester: function(response) {
-
-			return this._chkTargetIsMine(response) && this._chkRequesterIsMe(response);
 		},
 
 		_chkPublicationIsForMe: function(res) {

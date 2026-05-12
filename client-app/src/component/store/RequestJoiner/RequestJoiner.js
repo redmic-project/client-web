@@ -121,9 +121,11 @@ define([
 			}
 
 			return {
-				target: target,
-				query: this._getRequestQuery(target, queryParams),
 				method: 'POST',
+				target: target,
+				params: {
+					query: this._getRequestQuery(target, queryParams)
+				},
 				action: this._getRequestAction(target, queryObj) || '_search'
 			};
 		},

@@ -1,63 +1,58 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'dojo/Deferred'
 	, 'put-selector'
-	, 'src/component/base/_ExternalConfig'
 	, 'src/component/map/layer/_LayerProtocols'
 ], function(
 	declare
-	, lang
-	, aspect
 	, Deferred
 	, put
-	, _ExternalConfig
 	, _LayerProtocols
 ) {
 
-	return declare([_LayerProtocols, _ExternalConfig], {
-		//	summary:
-		//		Permite trabajar con definiciones estáticas de capas para módulo Map.
-		//	description:
-		//		Centraliza la obtención de instancias de capas estáticas (base y superpuestas).
-		//		Obtiene la configuración con la definición de las diferentes capas base y superpuestas, en formato
-		// 		compatible con Leaflet.
-		//		Para declarar una capa como base, se debe indicar con la propiedad 'basemap: true'. Soporta ordenación
-		//		mediante la propiedad 'order' (valores enteros >= 1).
-		//		Para declarar una capa como opcional (superpuesta pero cargada automáticamente, permitiendo su
-		//		desactivación), se debe indicar con la propiedad 'optional: true'.
+	return declare(_LayerProtocols, {
+		// summary:
+		//   Permite trabajar con definiciones estáticas de capas.
+		// description:
+		//   Centraliza la obtención de instancias de capas estáticas (base y superpuestas).
+		//   Obtiene la configuración con la definición de las diferentes capas base y superpuestas, en formato
+		//   compatible con Leaflet.
+		//   Para declarar una capa como base, se debe indicar con la propiedad 'basemap: true'. Soporta ordenación
+		//   mediante la propiedad 'order' (valores enteros >= 1).
+		//   Para declarar una capa como opcional (superpuesta pero cargada automáticamente, permitiendo su
+		//   desactivación), se debe indicar con la propiedad 'optional: true'.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				mapLayersPropertyName: 'mapLayers'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.after(this, '_setOwnCallbacksForEvents', lang.hitch(this,
-				this._setStaticLayersManagementOwnCallbacksForEvents));
+			this.inherited(arguments);
 		},
 
-		_setStaticLayersManagementOwnCallbacksForEvents: function() {
+		_setOwnCallbacksForEvents: function() {
 
-			this._onEvt('GOT_EXTERNAL_CONFIG', lang.hitch(this._onStaticLayersManagementGotExternalConfig));
+			this.inherited(arguments);
+
+			this._onEvt('GOT_EXTERNAL_CONFIG', evt => this._onStaticLayersManagementGotExternalConfig(evt));
 		},
 
 		_onStaticLayersManagementGotExternalConfig: function(evt) {
 
 			this._staticLayersDefinition = evt[this.mapLayersPropertyName];
 
-			if (this._staticLayersDefinitionDfd && !this._staticLayersDefinitionDfd.isFulfilled()) {
-				this._staticLayersDefinitionDfd.resolve(this._staticLayersDefinition);
+			if (!this._staticLayersDefinitionDfd?.isFulfilled()) {
+				this._staticLayersDefinitionDfd?.resolve(this._staticLayersDefinition);
 			}
 		},
 
 		_getStaticLayersDefinition: function() {
 
 			if (this._staticLayersDefinition) {
-				return this._staticLayersDefinition;	// return Object
+				return this._staticLayersDefinition; // return Object
 			}
 
 			if (!this._staticLayersDefinitionDfd) {
@@ -70,54 +65,54 @@ define([
 				});
 			}
 
-			return this._staticLayersDefinitionDfd;	// return Deferred
+			return this._staticLayersDefinitionDfd; // return Deferred
 		},
 
 		_getStaticLayerDefinition: function(/*String*/ layerId) {
 
-			var staticLayersDefinition = this._getStaticLayersDefinition();
+			const staticLayersDefinition = this._getStaticLayersDefinition();
 
-			if (staticLayersDefinition && !staticLayersDefinition.then) {
-				return staticLayersDefinition[layerId];	// return Object
+			if (!staticLayersDefinition?.then) {
+				return staticLayersDefinition?.[layerId]; // return Object
 			}
 
-			var dfd = new Deferred();
+			const dfd = new Deferred();
 
-			staticLayersDefinition.then(lang.hitch(this, function(requestedLayerId, definitionDfd) {
+			staticLayersDefinition.then(() => {
 
-				var staticLayersDefinition = this._getStaticLayersDefinition(),
-					layerDefinition = staticLayersDefinition[requestedLayerId];
+				const staticLayersDefinition = this._getStaticLayersDefinition(),
+					layerDefinition = staticLayersDefinition[layerId];
 
-				definitionDfd.resolve(layerDefinition);
-			}, layerId, dfd));
+				dfd.resolve(layerDefinition);
+			});
 
-			return dfd;	// return Deferred
+			return dfd; // return Deferred
 		},
 
 		_getStaticLayerInstance: function(/*String*/ layerId) {
-			//	summary:
-			//		Busca una definición de capa y la instancia.
-			//	layerId:
-			//		Identificador de la capa deseada.
-			//	returns:
-			//		Instancia creada de la capa deseada.
+			// summary:
+			//   Busca una definición de capa y la instancia.
+			// layerId:
+			//   Identificador de la capa deseada.
+			// returns:
+			//   Instancia creada de la capa deseada.
 
-			var layerDefinition = this._getStaticLayerDefinition(layerId);
+			const layerDefinition = this._getStaticLayerDefinition(layerId);
 
-			if (layerDefinition && layerDefinition.then) {
-				var dfd = new Deferred();
+			if (layerDefinition?.then) {
+				const instanceDfd = new Deferred();
 
-				layerDefinition.then(lang.hitch(this, function(instanceDfd) {
+				layerDefinition.then(() => {
 
 					instanceDfd.resolve(this._getStaticLayerInstance(layerId));
-				}, dfd));
+				});
 
-				return dfd;	// return Deferred
+				return instanceDfd; // return Deferred
 			}
 
 			if (!layerDefinition) {
 				console.error('Layer definition not found for ID: "%s"', layerId);
-				return;	// return undefined
+				return; // return undefined
 			}
 
 			if (!layerDefinition.props) {
@@ -128,79 +123,76 @@ define([
 				layerDefinition.props.id = layerId;
 			}
 
-			return this._getLayerInstance(layerDefinition);	// return Object
+			return this._getLayerInstance(layerDefinition); // return Object
 		},
 
 		_getStaticLayerLabel: function(/*String*/ layerId) {
-			//	summary:
-			//		Genera el código HTML correspondiente a la etiqueta de la capa base, para representarla en el
-			//		selector del mapa.
-			//	layerId:
-			//		Identificador de la capa.
-			//	returns:
-			//		Código HTML de la etiqueta de la capa.
+			// summary:
+			//   Genera el código HTML correspondiente a la etiqueta de la capa base, para representarla en el
+			//   selector del mapa.
+			// layerId:
+			//   Identificador de la capa.
+			// returns:
+			//   Código HTML de la etiqueta de la capa.
 
-			var title = this.i18n[layerId] || layerId,
+			const outerContainerClass = 'sharpContainer.layerThumbnailContainer.relativeContainer',
 				thumbPath = this._getStaticLayerThumbnailPath(layerId),
-				thumbAttr = 'style=background-image:url(' + thumbPath + ')',
-				outerContainer = put('div.sharpContainer.layerThumbnailContainer.relativeContainer[' + thumbAttr + ']'),
-				innerContainerClass = '.wrapContainer.hardTranslucentContainer.absoluteContainer.thumbCaption';
+				thumbAttr = `style=background-image:url(${thumbPath})`;
 
-			put(outerContainer, 'div' + innerContainerClass + '[value=$]', title, title);
+			const outerContainer = put(`div.${outerContainerClass}[${thumbAttr}]`);
 
-			return outerContainer.outerHTML;	// return String
+			const innerContainerClass = 'wrapContainer.hardTranslucentContainer.absoluteContainer.thumbCaption',
+				title = this.i18n[layerId] ?? layerId;
+
+			put(outerContainer, `div.${innerContainerClass}[value=$]`, title, title);
+
+			return outerContainer.outerHTML; // return String
 		},
 
 		_getStaticLayerThumbnailPath: function(/*String*/ layerId) {
 
-			var layerDefinition = this._getStaticLayerDefinition(layerId),
-				layerThumbnail = layerDefinition && layerDefinition.thumbnail;
+			const layerDefinition = this._getStaticLayerDefinition(layerId),
+				layerThumbnail = layerDefinition?.thumbnail;
 
-			return layerThumbnail || '/res/images/map/layer-' + layerId + '.png';
+			return layerThumbnail ?? `/res/images/map/layer-${layerId}.png`;
 		},
 
 		_getBaseLayers: function() {
-			//	summary:
-			//		Busca y devuelve las claves de todas las capas base disponibles, ordenadas.
-			//	returns:
-			//		Colección de cadenas con el valor de clave de capas base.
+			// summary:
+			//   Busca y devuelve las claves de todas las capas base disponibles, ordenadas.
+			// returns:
+			//   Colección de cadenas con el valor de clave de capas base.
 
-			var staticLayersDefinition = this._getStaticLayersDefinition();
+			const staticLayersDefinition = this._getStaticLayersDefinition();
 
 			if (!staticLayersDefinition) {
-				return;	// return undefined
+				return; // return undefined
 			}
 
-			if (staticLayersDefinition.then) {
-				if (this._baseLayersDfd) {
-					return this._baseLayersDfd;	// return Deferred
-				}
-
-				this._baseLayersDfd = new Deferred();
-
-				staticLayersDefinition.then(lang.hitch(this, function() {
-
-					this._baseLayersDfd.resolve(this._getBaseLayers());
-				}));
-
-				return this._baseLayersDfd;	// return Deferred
+			if (!staticLayersDefinition.then) {
+				return this._getBaseLayersArray(staticLayersDefinition); // return Array
 			}
 
-			return this._getBaseLayersArray(staticLayersDefinition);	// return Array
+			if (this._baseLayersDfd) {
+				return this._baseLayersDfd; // return Deferred
+			}
+
+			this._baseLayersDfd = new Deferred();
+
+			staticLayersDefinition.then(() => this._baseLayersDfd.resolve(this._getBaseLayers()));
+
+			return this._baseLayersDfd; // return Deferred
 		},
 
 		_getBaseLayersArray: function(/*Object*/ staticLayersDefinition) {
 
-			var layersArray = Object.entries(staticLayersDefinition);
+			const layersArray = Object.entries(staticLayersDefinition);
 
-			var baseLayersArray = layersArray.filter(function(layerArray) {
+			const baseLayersArray = layersArray.filter(layerArray => layerArray[1].basemap);
 
-				return layerArray[1].basemap;
-			});
+			const orderedBaseLayersArray = baseLayersArray.sort((layerArrayA, layerArrayB) => {
 
-			var layerOrdering = function(layerArrayA, layerArrayB) {
-
-				var layerA = layerArrayA[1],
+				const layerA = layerArrayA[1],
 					layerB = layerArrayB[1],
 					orderA = layerA.order || 0,
 					orderB = layerB.order || 0;
@@ -216,53 +208,44 @@ define([
 				if (!orderB || orderA < orderB) {
 					return -1;
 				}
-			};
+			});
 
-			var orderedBaseLayersArray = baseLayersArray.sort(layerOrdering);
-
-			return orderedBaseLayersArray.map(function(item) { return item[0]; });	// return Array
+			return orderedBaseLayersArray.map(item => item[0]); // return Array
 		},
 
 		_getOptionalLayers: function() {
-			//	summary:
-			//		Busca y devuelve las claves de todas las capas opcionales disponibles.
-			//	returns:
-			//		Colección de cadenas con el valor de clave de capas opcionales.
+			// summary:
+			//   Busca y devuelve las claves de todas las capas opcionales disponibles.
+			// returns:
+			//   Colección de cadenas con el valor de clave de capas opcionales.
 
-			var staticLayersDefinition = this._getStaticLayersDefinition();
+			const staticLayersDefinition = this._getStaticLayersDefinition();
 
 			if (!staticLayersDefinition) {
-				return;	// return undefined
+				return; // return undefined
 			}
 
-			if (staticLayersDefinition.then) {
-				if (this._optionalLayersDfd) {
-					return this._optionalLayersDfd;	// return Deferred
-				}
-
-				this._optionalLayersDfd = new Deferred();
-
-				staticLayersDefinition.then(lang.hitch(this, function() {
-
-					this._optionalLayersDfd.resolve(this._getOptionalLayers());
-				}));
-
-				return this._optionalLayersDfd;	// return Deferred
+			if (!staticLayersDefinition.then) {
+				return this._getOptionalLayersArray(staticLayersDefinition); // return Array
 			}
 
-			return this._getOptionalLayersArray(staticLayersDefinition);	// return Array
+			if (this._optionalLayersDfd) {
+				return this._optionalLayersDfd; // return Deferred
+			}
+
+			this._optionalLayersDfd = new Deferred();
+
+			staticLayersDefinition.then(() => this._optionalLayersDfd.resolve(this._getOptionalLayers()));
+
+			return this._optionalLayersDfd; // return Deferred
 		},
 
 		_getOptionalLayersArray: function(/*Object*/ staticLayersDefinition) {
 
-			var layersArray = Object.entries(staticLayersDefinition);
+			const layersArray = Object.entries(staticLayersDefinition),
+				optionalLayersArray = layersArray.filter(layerArray => layerArray[1].optional);
 
-			var optionalLayersArray = layersArray.filter(function(layerArray) {
-
-				return layerArray[1].optional;
-			});
-
-			return optionalLayersArray.map(function(item) { return item[0]; });	// return Array
+			return optionalLayersArray.map(item => item[0]); // return Array
 		}
 	});
 });

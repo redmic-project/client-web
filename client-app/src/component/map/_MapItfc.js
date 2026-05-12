@@ -34,7 +34,8 @@ define([
 				"addButton": {},
 				"_addQueryableCursor": {},
 				"_removeQueryableCursor": {},
-				"_prepareInfoForLayerAddedEvent": {}
+				"_prepareInfoForLayerAddedEvent": {},
+				"getLayerPoint": {}
 			});
 		}
 	});

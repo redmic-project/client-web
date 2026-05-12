@@ -6,6 +6,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
 	, 'src/component/chart/ChartsContainer/_InfoOnMouseOver'
 	, 'src/component/chart/ChartsContainer/_TemporalAxisWithGridDrawing'
 	, 'src/component/chart/ChartsContainer/_VerticalAxesWithGridDrawing'
@@ -19,6 +20,7 @@ define([
 	, lang
 	, _Module
 	, _Show
+	, _Store
 	, _InfoOnMouseOver
 	, _TemporalAxisWithGridDrawing
 	, _VerticalAxesWithGridDrawing
@@ -26,7 +28,7 @@ define([
 	, redmicConfig
 ) {
 
-	return declare([_Module, _Show, _ActivityTimeSeriesDataManagement], {
+	return declare([_Module, _Show, _Store, _ActivityTimeSeriesDataManagement], {
 		//	summary:
 		//		Widget para representar mediante gráficas lineales los datos producidos por la estación seleccionada.
 		//
@@ -35,10 +37,12 @@ define([
 
 			this.config = {
 				ownChannel: 'activityFixedTimeseriesLineCharts',
-				target: redmicConfig.services.timeSeriesTemporalData
+				stationDataTarget: 'stationData'
 			};
 
 			lang.mixin(this, this.config, args);
+
+			this.target = [this.stationDataTarget];
 		},
 
 		_setOwnCallbacksForEvents: function() {
@@ -52,7 +56,7 @@ define([
 				ChartsWithLegendAndToolbarsAndSlider, _ProcessDataDefinitionAndGetTimeSeries
 			])({
 				parentChannel: this.getChannel(),
-				target: this.target,
+				target: redmicConfig.services.timeSeriesTemporalData,
 				filterConfig: {
 					initQuery: {
 						size: null
@@ -74,19 +78,22 @@ define([
 			});
 		},
 
-		postCreate: function() {
+		_itemAvailable: function(res, resWrapper) {
 
 			this.inherited(arguments);
 
-			this._subscribe(this.timeseriesDataChannel, lang.hitch(this, function(data) {
+			const sourceData = res.data;
 
-				this._buildAndLoadChartData(data);
-			}));
+			this._setSiteData(sourceData);
+			this._buildAndLoadChartData(sourceData);
 		},
 
-		getNodeToShow: function() {
+		_setSiteData: function(sourceData) {
 
-			return this._charts.getNodeToShow();
+			const siteName = sourceData?.site?.name;
+
+			// TODO revisar si se aplica en caliente o necesita algo más (antes venía desde fuera al inicio)
+			this.title = `${this.i18n.charts} | ${siteName}`;
 		},
 
 		_buildAndLoadChartData: function(sourceData) {
@@ -96,6 +103,11 @@ define([
 			this._publish(this._charts.getChannel('SET_PROPS'), {
 				chartsData: this._getChartsDefinitionData()
 			});
+		},
+
+		getNodeToShow: function() {
+
+			return this._charts.getNodeToShow();
 		},
 
 		_onMeOrAncestorHidden: function() {

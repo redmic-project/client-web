@@ -105,6 +105,10 @@ define([
 				rowNodeToUpdate = this._getRowNodeFromRowId(rowId),
 				oldIndex = Array.from(this.contentListNode.firstChild.children).indexOf(rowNodeToUpdate);
 
+			if (!rowNodeAtNewIndex || !rowNodeToUpdate) {
+				return;
+			}
+
 			put(rowNodeAtNewIndex, '-', rowNodeToUpdate);
 
 			this._emitEvt('DRAG_AND_DROP', {
@@ -127,7 +131,7 @@ define([
 			var rowId = req.id,
 				dragHandlerNode = this._getDragHandlerNodeFromRowId(rowId);
 
-			domClass.remove(dragHandlerNode, this.hiddenClass);
+			dragHandlerNode && domClass.remove(dragHandlerNode, this.hiddenClass);
 		},
 
 		_subDisableDragAndDrop: function(req) {
@@ -142,14 +146,14 @@ define([
 
 			var rowInstance = this._getRowInstance(rowId);
 
-			return rowInstance.getNodeToShow();
+			return rowInstance?.getNodeToShow();
 		},
 
 		_getDragHandlerNodeFromRowId: function(rowId) {
 
 			var rowNode = this._getRowNodeFromRowId(rowId);
 
-			return rowNode.firstChild.firstChild;
+			return rowNode?.firstChild?.firstChild;
 		},
 
 		_dragOver: function(id, node, evt) {

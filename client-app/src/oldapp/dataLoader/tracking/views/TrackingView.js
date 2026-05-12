@@ -143,13 +143,10 @@ define([
 
 			this.dataAddPath[this.idProperty] = 'new';
 
-			this._publish(this.getChannel('UPDATE_TARGET'), {
-				target: target,
-				refresh: true
-			});
+			this._publish(this.getChannel('SET_PROPS'), {target});
 		},
 
-		_updateTarget: function() {
+		_onTargetPropSet: function() {
 
 			this.inherited(arguments);
 

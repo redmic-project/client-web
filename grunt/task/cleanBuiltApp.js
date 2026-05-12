@@ -73,25 +73,6 @@ module.exports = function(grunt) {
 	};
 
 	// TODO desaparecerá cuando todo vaya por src/
-	var oldGetCleanAppFilesCmds = function() {
-
-		var fileExtension = '.js',
-			strippedSuffix = 'consoleStripped' + fileExtension,
-			uncompressedSuffix = 'uncompressed' + fileExtension,
-			strippedFiles = '*.' + strippedSuffix,
-			uncompressedFiles = '*.' + uncompressedSuffix,
-			filesToClean = [strippedFiles, uncompressedFiles];
-
-		var cleanAppFilesCmd = 'find ' + path.join(destPath, 'app', '/') + ' -type f';
-
-		for (var j = 0; j < filesToClean.length; j++) {
-			cleanAppFilesCmd += (j === 0 ? '' : ' -o') + ' -name "' + filesToClean[j] + '" -delete';
-		}
-
-		return cleanAppFilesCmd;
-	};
-
-	// TODO desaparecerá cuando todo vaya por src/
 	var getCleanAppFilesCmds = function(fileExceptions) {
 
 		var appDir = path.join(destPath, 'app', '/'),
@@ -141,7 +122,6 @@ module.exports = function(grunt) {
 				getCleanDirectoriesCmd(cleanBuiltAppConfig.directoriesToClean),
 				getCleanRecursiveDirectoriesCmd(cleanBuiltAppConfig.recursiveDirectoriesToClean),
 				keepAndRestoreCmds.restoreFilesCmds,
-				//oldGetCleanAppFilesCmds(),
 				getCleanAppFilesCmds(cleanBuiltAppConfig.cleanSrcFileExceptions),
 				getCleanSrcFilesCmds(cleanBuiltAppConfig.cleanSrcFileExceptions),
 				getCleanEmptyDirectoriesCmds()

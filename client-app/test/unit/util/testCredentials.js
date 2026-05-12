@@ -72,12 +72,20 @@ define([
 				Credentials.set(key1, value1);
 			},
 
-			"check remove event listening": function() {
+			"check remove event listening after null value set": function() {
 				handler = Credentials.on("removed:" + key1, function() {
 					assert.ok(1);
 				});
 				RedmicLocalStorage.setItem(key1, value1);
 				Credentials.set(key1, null);
+			},
+
+			"check remove event listening after value removed": function() {
+				handler = Credentials.on("removed:" + key1, function() {
+					assert.ok(1);
+				});
+				RedmicLocalStorage.setItem(key1, value1);
+				Credentials.remove(key1);
 			}
 		}
 	});

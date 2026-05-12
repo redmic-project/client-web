@@ -1,6 +1,7 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
+	, 'dojo/Deferred'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
 	, 'src/redmicConfig'
@@ -8,6 +9,7 @@ define([
 ], function(
 	declare
 	, lang
+	, Deferred
 	, _Module
 	, _Store
 	, redmicConfig
@@ -35,7 +37,7 @@ define([
 					ACCEPT_COOKIES: 'acceptCookies',
 					REQUEST_FAILED: 'requestFailed',
 					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities',
-					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
+					GOT_USER_GRANTS_FOR_ENTITY: 'gotUserGrantsForEntity'
 				},
 				actions: {
 					GET_CREDENTIALS: 'getCredentials',
@@ -50,15 +52,19 @@ define([
 					REQUEST_FAILED: 'requestFailed',
 					HAS_USER_EDITION_CAPABILITIES: 'hasUserEditionCapabilities',
 					USER_HAS_EDITION_CAPABILITIES: 'userHasEditionCapabilities',
-					GET_USER_GRANTS_FOR_ACTIVITY: 'getUserGrantsForActivity',
-					GOT_USER_GRANTS_FOR_ACTIVITY: 'gotUserGrantsForActivity'
+					GET_USER_GRANTS_FOR_ENTITY: 'getUserGrantsForEntity',
+					GOT_USER_GRANTS_FOR_ENTITY: 'gotUserGrantsForEntity'
 				},
 
-				target: redmicConfig.services.profile,
+				_profileTarget: redmicConfig.services.profile,
+				_tokenPayloadTarget: redmicConfig.services.getTokenPayload,
+
 				_loginPath: '/login'
 			};
 
 			lang.mixin(this, this.config, args);
+
+			this.target = [this._profileTarget, this._tokenPayloadTarget];
 
 			this._initializeCredentials();
 			this._listenCredentials();
@@ -102,8 +108,8 @@ define([
 				channel : this.getChannel('HAS_USER_EDITION_CAPABILITIES'),
 				callback: '_subHasUserEditionCapabilities'
 			},{
-				channel : this.getChannel('GET_USER_GRANTS_FOR_ACTIVITY'),
-				callback: '_subGetUserGrantsForActivity'
+				channel : this.getChannel('GET_USER_GRANTS_FOR_ENTITY'),
+				callback: '_subGetUserGrantsForEntity'
 			});
 		},
 
@@ -131,8 +137,8 @@ define([
 				event: 'USER_HAS_EDITION_CAPABILITIES',
 				channel: this.getChannel('USER_HAS_EDITION_CAPABILITIES')
 			},{
-				event: 'GOT_USER_GRANTS_FOR_ACTIVITY',
-				channel: this.getChannel('GOT_USER_GRANTS_FOR_ACTIVITY')
+				event: 'GOT_USER_GRANTS_FOR_ENTITY',
+				channel: this.getChannel('GOT_USER_GRANTS_FOR_ENTITY')
 			});
 		},
 
@@ -178,15 +184,46 @@ define([
 			});
 		},
 
-		_subGetUserGrantsForActivity: function(req) {
-			// TODO consultar contra el servidor utilizando id de actividad y usuario
+		_subGetUserGrantsForEntity: function(req) {
 
-			var activityId = req.activityId,
-				accessGranted = Credentials.userIsEditor();
+			this._getTokenPayload().then(tokenPayload => this._evaluateUserGrants(tokenPayload, req));
+		},
 
-			this._emitEvt('GOT_USER_GRANTS_FOR_ACTIVITY', {
-				accessGranted: accessGranted
+		_getTokenPayload: function() {
+
+			if (!this._tokenPayloadDfd) {
+				this._tokenPayloadDfd = new Deferred();
+
+				const token = Credentials.get('oidcAccessToken');
+
+				if (token?.length) {
+					this._requestTokenPayload(token);
+				} else {
+					this._tokenPayloadDfd.resolve();
+				}
+			}
+
+			return this._tokenPayloadDfd;
+		},
+
+		_evaluateUserGrants: function(payload, req) {
+
+			const allowedRoles = this._getAllowedRoles(req),
+				userRoles = payload?.resource_access?.['web-client']?.roles;
+
+			const accessGranted = allowedRoles?.some(role => userRoles?.includes(role)) ?? false;
+
+			this._emitEvt('GOT_USER_GRANTS_FOR_ENTITY', {
+				accessGranted
 			});
+		},
+
+		_getAllowedRoles: function(req) {
+
+			const idPlaceholder = '{id}',
+				idValue = req.entityId;
+
+			return req.roles?.map(role => role.replace(idPlaceholder, idValue));
 		},
 
 		_onAccessTokenChanged: function(evt) {
@@ -222,16 +259,54 @@ define([
 			//		private
 
 			this._emitEvt('GET', {
-				target: this.target
+				target: this._profileTarget
+			});
+		},
+
+		_requestTokenPayload: function(token) {
+			// summary:
+			//   Permite obtener el contenido del JWT del usuario pidiéndoselo al servidor para su verificación
+			// tags:
+			//   private
+
+			this._emitEvt('REQUEST', {
+				method: 'POST',
+				target: this._tokenPayloadTarget,
+				params: {
+					query: {
+						token
+					}
+				}
 			});
 		},
 
 		_itemAvailable: function(res) {
 
-			var data = res.data[0];
+			this._onProfileItemAvailable(res);
+		},
+
+		_dataAvailable: function(res, resWrapper) {
+
+			if (resWrapper.target !== this._tokenPayloadTarget) {
+				return;
+			}
+
+			this._onTokenPayloadDataAvailable(res);
+		},
+
+		_errorAvailable: function(err, status, resWrapper) {
+
+			if (resWrapper.target === this._profileTarget) {
+				this._onProfileErrorAvailable();
+			}
+		},
+
+		_onProfileItemAvailable: function(res) {
+
+			const data = res.data[0];
 
 			if (!data) {
-				Credentials.set('accessToken', null);
+				Credentials.remove('accessToken');
 				return;
 			}
 
@@ -248,9 +323,16 @@ define([
 			});
 		},
 
-		_errorAvailable: function(err) {
+		_onProfileErrorAvailable: function() {
 
 			this._emitEvt('REQUEST_FAILED');
+		},
+
+		_onTokenPayloadDataAvailable: function(res) {
+
+			const payload = res.data;
+
+			this._tokenPayloadDfd?.resolve(payload);
 		}
 	});
 });

@@ -3,10 +3,11 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/aspect'
 	, 'dojo/dom-class'
-	, 'app/designs/list/Controller'
-	, 'app/designs/list/layout/Layout'
-	, 'src/component/browser/_DragAndDrop'
-	, 'src/component/browser/bars/Total'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
+	, 'src/design/browser/_AddTotalBarComponent'
+	, 'src/design/browser/_BrowserWithTopbarDesignLayout'
 	, 'src/redmicConfig'
 	, 'templates/AtlasList'
 ], function(
@@ -14,10 +15,11 @@ define([
 	, lang
 	, aspect
 	, domClass
-	, Controller
-	, Layout
-	, _DragAndDrop
-	, Total
+	, _Module
+	, _Show
+	, _Store
+	, _AddTotalBarComponent
+	, _BrowserWithTopbarDesignLayout
 	, redmicConfig
 	, ListTemplate
 ) {
@@ -26,12 +28,11 @@ define([
 		//	summary:
 		//		Gestión de capas temáticas de atlas cargadas en el mapa.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				pathSeparator: '.',
 				parentProperty: 'parent',
-				addThemesBrowserFirst: false,
 				omitThemesBrowser: false,
 				animatedClass: 'animate__animated',
 				animatedOnSelect: 'animate__headShake',
@@ -39,13 +40,13 @@ define([
 				_activeLayers: {} // indicador sobre si la capa está activada en el mapa o no
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			if (this.omitThemesBrowser) {
-				return;
+			this.inherited(arguments);
+
+			if (!this.omitThemesBrowser) {
+				this._prepareThemesBrowserCallbacks();
 			}
-
-			this._prepareThemesBrowserCallbacks();
 		},
 
 		_prepareThemesBrowserCallbacks: function() {
@@ -53,28 +54,22 @@ define([
 			aspect.before(this, '_afterSetConfigurations', lang.hitch(this, this._themesBrowserAfterSetConfigurations));
 			aspect.before(this, '_initialize', lang.hitch(this, this._initializeThemesBrowser));
 			aspect.before(this, '_defineSubscriptions', lang.hitch(this, this._defineThemesBrowserSubscriptions));
-
-			var aspectMethod = this.addThemesBrowserFirst ? 'before' : 'after';
-			aspect[aspectMethod](this, '_addTabs', lang.hitch(this, this._addThemesBrowserTabs));
-
 			aspect.before(this, '_reportDeselection', lang.hitch(this, this._themesBrowserReportDeselection));
 			aspect.before(this, '_reportClearSelection', lang.hitch(this, this._themesBrowserReportClearSelection));
-
 			aspect.after(this, '_activateLayer', lang.hitch(this, this._themesBrowserActivateLayer));
 			aspect.after(this, '_deactivateLayer', lang.hitch(this, this._themesBrowserDeactivateLayer));
 		},
 
 		_themesBrowserAfterSetConfigurations: function() {
 
-			this.themesBrowserConfig = this._merge([{
+			this.mergeComponentAttribute('themesBrowserConfig', {
+				ownChannel: 'themesBrowser',
 				parentChannel: this.getChannel(),
-				classByList: '.borderList',
-				browserExts: [_DragAndDrop],
+				enabledBrowserExtensions: {
+					dragAndDrop: true
+				},
 				browserConfig: {
 					template: ListTemplate,
-					bars: [{
-						instance: Total
-					}],
 					insertInFront: true,
 					rowConfig: {
 						buttonsConfig: {
@@ -82,15 +77,13 @@ define([
 								icon: 'fa-info-circle',
 								btnId: 'details',
 								title: this.i18n.navigateToLayerInfo,
-								href: redmicConfig.viewPaths.ogcServiceDetails
+								href: redmicConfig.viewPaths.ogcServiceDetails,
+								condition: item => !!item.atlasItem
 							},{
 								icon: 'fa-arrows-v',
 								btnId: 'elevation',
 								title: 'showElevation',
-								condition: function(atlasLayerItem) {
-
-									return !!atlasLayerItem.atlasItem.elevationDimension;
-								},
+								condition: item => !!item.atlasItem?.elevationDimension,
 								returnItem: true
 							},{
 								icon: 'fa-map-o',
@@ -113,32 +106,39 @@ define([
 						}
 					}
 				}
-			}, this.themesBrowserConfig || {}], {
+			}, {
+				avoidOverwrite: true,
 				arrayMergingStrategy: 'concatenate'
 			});
 		},
 
 		_initializeThemesBrowser: function() {
 
-			var ThemesBrowser = declare([Layout, Controller]);
-			this._themesBrowser = new ThemesBrowser(this.themesBrowserConfig);
+			const ThemesBrowserDefinition = declare([_Module, _Show, _Store, _BrowserWithTopbarDesignLayout,
+				_AddTotalBarComponent]);
+
+			this._themesBrowser = new ThemesBrowserDefinition(this.themesBrowserConfig);
 		},
 
 		_defineThemesBrowserSubscriptions: function() {
 
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
 			this.subscriptionsConfig.push({
-				channel: this._themesBrowser.getChildChannel('browser', 'BUTTON_EVENT'),
+				channel: browserInstance.getChannel('DATA_ADDED'),
+				callback: '_subThemesBrowserDataAdded'
+			},{
+				channel: browserInstance.getChannel('BUTTON_EVENT'),
 				callback: '_subThemesBrowserButtonEvent'
 			},{
-				channel: this._themesBrowser.getChildChannel('browser', 'DRAG_AND_DROP'),
+				channel: browserInstance.getChannel('DRAG_AND_DROP'),
 				callback: '_subThemesBrowserDragAndDrop'
 			});
 		},
 
-		_addThemesBrowserTabs: function() {
+		_addTabs: function() {
 
-			if (!this.addTabChannel) {
-				console.error('Missing channel to add themes tab at module "%s"', this.getChannel());
+			if (this.omitThemesBrowser) {
 				return;
 			}
 
@@ -147,6 +147,13 @@ define([
 				iconClass: 'fa fa-map-o',
 				channel: this._themesBrowser.getChannel()
 			});
+		},
+
+		_subThemesBrowserDataAdded: function(atlasLayerItem) {
+
+			if (atlasLayerItem?.state) {
+				this._activateLayer(atlasLayerItem);
+			}
 		},
 
 		_subThemesBrowserButtonEvent: function(objReceived) {
@@ -193,7 +200,7 @@ define([
 				});
 			}
 
-			this._publish(this.getMapChannel('REORDER_LAYERS'), {
+			this._publish(this._buildChannel(this.mapChannel, 'REORDER_LAYERS'), {
 				layerId: this._createLayerId(item.atlasItem),
 				index: response.indexList,
 				movedDown: movedDown
@@ -229,13 +236,18 @@ define([
 
 		_onThemesBrowserRemoveLayerButtonClick: function(atlasLayerItem) {
 
-			var parentItem = atlasLayerItem.atlasItem[this.parentProperty],
-				path = 'r' + this.pathSeparator + parentItem.id + this.pathSeparator + atlasLayerItem.id;
-
 			this._emitEvt('TRACK', {
 				event: 'remove_layer',
 				layer_name: atlasLayerItem.label
 			});
+
+			if (!atlasLayerItem.atlasItem) {
+				return;
+			}
+
+			const parentItemId = atlasLayerItem.atlasItem[this.parentProperty]?.id,
+				separator = this.pathSeparator,
+				path = `r${separator}${parentItemId}${separator}${atlasLayerItem.id}`;
 
 			this._emitEvt('DESELECT', [path]);
 		},
@@ -280,18 +292,27 @@ define([
 
 		_fitBounds: function(atlasLayerItem) {
 
-			var geometry = atlasLayerItem.atlasItem.geometry;
-			if (!geometry) {
+			let bounds;
+
+			const atlasGeometry = atlasLayerItem.atlasItem?.geometry;
+			if (atlasGeometry) {
+				const coordinates = atlasGeometry.coordinates[0],
+					southWest = this._getLatLng(coordinates[0]),
+					northEast = this._getLatLng(coordinates[2]);
+
+				bounds = L.latLngBounds(southWest, northEast);
+			} else {
+				const mapLayerId = atlasLayerItem.mapLayerId,
+					innerLayerInstance = this._layerInstances[mapLayerId]?.layer;
+
+				bounds = innerLayerInstance?.getBounds?.();
+			}
+
+			if (!bounds) {
 				return;
 			}
 
-			var coordinates = geometry.coordinates[0],
-				southWest = this._getLatLng(coordinates[0]),
-				northEast = this._getLatLng(coordinates[2]);
-
- 			this._publish(this.getMapChannel('FIT_BOUNDS'), {
-				bounds: L.latLngBounds(southWest, northEast)
-			});
+			this._publish(this._buildChannel(this.mapChannel, 'FIT_BOUNDS'), { bounds });
 		},
 
 		_getLatLng: function(coord) {
@@ -301,14 +322,18 @@ define([
 
 		_themesBrowserReportDeselection: function(id) {
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'REMOVE'), {
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('REMOVE'), {
 				ids: [id]
 			});
 		},
 
 		_themesBrowserReportClearSelection: function() {
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'CLEAR'));
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('CLEAR'));
 		},
 
 		_cleanRowSecondaryContainer: function(layerId, container) {
@@ -329,12 +354,14 @@ define([
 
 			this._activeLayers[mapLayerId] = true;
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'UPDATE_DRAGGABLE_ITEM_ORDER'), {
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('UPDATE_DRAGGABLE_ITEM_ORDER'), {
 				id: itemId,
 				index: 0
 			});
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'ENABLE_DRAG_AND_DROP'), {
+			this._publish(browserInstance.getChannel('ENABLE_DRAG_AND_DROP'), {
 				id: itemId
 			});
 		},
@@ -352,7 +379,9 @@ define([
 
 			this._activeLayers[mapLayerId] = false;
 
-			this._publish(this._themesBrowser.getChildChannel('browser', 'DISABLE_DRAG_AND_DROP'), {
+			const browserInstance = this._themesBrowser.getComponentInstance('browser');
+
+			this._publish(browserInstance.getChannel('DISABLE_DRAG_AND_DROP'), {
 				id: itemId
 			});
 		}

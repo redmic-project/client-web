@@ -53,9 +53,15 @@ define([
 		//	summary:
 		//		Módulo de Atlas, con un catálogo de capas para añadir al mapa y un listado de gestión de las añadidas.
 
-		constructor: function(args) {
+		constructor: function() {
 
-			this.config = {
+			aspect.before(this, '_createAtlasMapLayerInstance',
+				lang.hitch(this, this._beforeCreateAtlasMapLayerInstance));
+		},
+
+		postMixInProperties: function() {
+
+			const defaultConfig = {
 				ownChannel: 'atlas',
 
 				events: {
@@ -63,24 +69,33 @@ define([
 					REMOVE_LAYER: 'removeLayer'
 				},
 
+				actions: {
+					// Map actions
+					LAYER_REMOVED: 'layerRemoved',
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer',
+					FIT_BOUNDS: 'fitBounds',
+					REORDER_LAYERS: 'reorderLayers'
+				},
+
 				_itemsSelected: {},
 				localTarget: 'localAtlas',
 				target: redmicConfig.services.atlasLayer,
 				selectionTarget: redmicConfig.services.atlasLayerSelection,
 				pathSeparator: '.',
+				addThemesBrowserFirst: false,
 
 				_layerIdsById: {} // correspondencia entre ids de las capas con sus layerIds
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.before(this, '_createAtlasMapLayerInstance',
-				lang.hitch(this, this._beforeCreateAtlasMapLayerInstance));
+			this.inherited(arguments);
 		},
 
 		_setConfigurations: function() {
 
-			this.themesBrowserConfig = this._merge([{
+			this.mergeComponentAttribute('themesBrowserConfig', {
 				title: this.i18n.selectedLayers,
 				target: this.localTarget,
 				browserConfig: {
@@ -90,10 +105,7 @@ define([
 								icon: 'fa-trash-o',
 								btnId: 'remove',
 								title: 'remove',
-								condition: function(atlasLayerItem) {
-
-									return !!atlasLayerItem.atlasItem.atlas;
-								},
+								condition: atlasLayerItem => !atlasLayerItem.providedByView,
 								returnItem: true
 							}]
 						}
@@ -106,7 +118,7 @@ define([
 						}
 					}
 				}
-			}, this.themesBrowserConfig || {}], {
+			}, {
 				arrayMergingStrategy: 'concatenate'
 			});
 
@@ -115,7 +127,6 @@ define([
 				browserExts: [_HierarchicalSelect],
 				selectionTarget: this.selectionTarget,
 				target: this.target,
-				classByList: '.borderList',
 				browserConfig: {
 					template: serviceOGCList,
 					rowConfig: {
@@ -168,12 +179,12 @@ define([
 
 		_defineSubscriptions: function() {
 
-			if (!this.getMapChannel) {
+			if (!this.mapChannel) {
 				console.error('Map channel not defined for atlas "%s"', this.getChannel());
 			}
 
 			this.subscriptionsConfig.push({
-				channel : this.getMapChannel('LAYER_REMOVED'),
+				channel : this._buildChannel(this.mapChannel, 'LAYER_REMOVED'),
 				callback: '_subLayerRemoved'
 			},{
 				channel : this.catalogView.getChildChannel('browser', 'BUTTON_EVENT'),
@@ -185,10 +196,10 @@ define([
 
 			this.publicationsConfig.push({
 				event: 'ADD_LAYER',
-				channel: this.getMapChannel('ADD_LAYER')
+				channel: this._buildChannel(this.mapChannel, 'ADD_LAYER')
 			},{
 				event: 'REMOVE_LAYER',
-				channel: this.getMapChannel('REMOVE_LAYER')
+				channel: this._buildChannel(this.mapChannel, 'REMOVE_LAYER')
 			});
 		},
 
@@ -224,11 +235,20 @@ define([
 				return;
 			}
 
+			if (this.addThemesBrowserFirst) {
+				this.inherited(arguments);
+			}
+
 			this._publish(this.addTabChannel, {
 				title: this.i18n.layersCatalog,
 				iconClass: 'fr fr-world',
 				channel: this.catalogView.getChannel()
 			});
+
+
+			if (!this.addThemesBrowserFirst) {
+				this.inherited(arguments);
+			}
 		},
 
 		_checkSelectionAfterShown: function() {
@@ -360,8 +380,6 @@ define([
 				data: atlasLayerItem,
 				target: this.localTarget
 			});
-
-			this._activateLayer(atlasLayerItem);
 		},
 
 		_subLayerRemoved: function(res) {

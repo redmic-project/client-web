@@ -4,6 +4,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
 	, 'src/component/chart/ChartsContainer/_AngularAxisWithGridDrawing'
 	, 'src/component/chart/ChartsContainer/_InfoOnEmptyData'
 	, 'src/component/chart/ChartsContainer/_InfoOnMouseOver'
@@ -17,6 +18,7 @@ define([
 	, lang
 	, _Module
 	, _Show
+	, _Store
 	, _AngularAxisWithGridDrawing
 	, _InfoOnEmptyData
 	, _InfoOnMouseOver
@@ -26,7 +28,7 @@ define([
 	, redmicConfig
 ) {
 
-	return declare([_Module, _Show], {
+	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Widget para representar un par de parámetros de velocidad y dirección mediante gráfica windrose.
 
@@ -34,10 +36,20 @@ define([
 
 			this.config = {
 				ownChannel: 'activityFixedTimeseriesWindrose',
-				target: redmicConfig.services.timeSeriesWindRose
+				stationDataTarget: 'stationData',
+				allowedSpeedParameters: [
+					61, // velocidad viento media
+					66 // velocidad viento máxima
+				],
+				allowedDirectionParameters: [
+					62, // dirección viento media
+					67 // dirección viento máxima
+				]
 			};
 
 			lang.mixin(this, this.config, args);
+
+			this.target = [this.stationDataTarget];
 		},
 
 		_setOwnCallbacksForEvents: function() {
@@ -47,9 +59,12 @@ define([
 
 		_initialize: function() {
 
+			// TODO buscar manera de poder mostrar más de una, quizá con tabs?
+
 			this._windrose = new MultiWindRoseChartWithToolbar({
 				parentChannel: this.getChannel(),
-				target: lang.replace(this.target, { id: this.pathVariableId }),
+				// TODO se puede sin replace aquí?
+				target: lang.replace(redmicConfig.services.timeSeriesWindRose, { id: this.pathVariableId }),
 				chartsContainerExts: [
 					_AngularAxisWithGridDrawing,
 					_RadialAxisWithGridDrawing,
@@ -61,19 +76,35 @@ define([
 			});
 		},
 
-		postCreate: function() {
+		_itemAvailable: function(res, resWrapper) {
 
 			this.inherited(arguments);
 
-			this._subscribe(this.timeseriesDataChannel, lang.hitch(this, function(data) {
+			const sourceData = res.data,
+				measurements = this._getFilteredMeasurementData(sourceData.measurements);
 
-				this._manageMeasurementData(data.measurements);
-			}));
+			if (measurements.length > 2) {
+				console.warn('Unexpected number of measurements for windrose charts.');
+			}
+
+			const siteName = sourceData.site?.name,
+				speedParamTitle = measurements[0]?.parameter.name,
+				directionParamTitle = measurements[1]?.parameter.name;
+
+			// TODO revisar si se aplica en caliente o necesita algo más (antes venía desde fuera al inicio)
+			this.title = `${speedParamTitle} + ${directionParamTitle} | ${siteName}`;
+
+			this._manageMeasurementData(measurements);
 		},
 
-		getNodeToShow: function() {
+		_getFilteredMeasurementData: function(measurements) {
 
-			return this._windrose.getNodeToShow();
+			return measurements.filter((measurement) => {
+
+				const paramId = measurement.parameter?.id;
+				return this.allowedSpeedParameters.includes(paramId) ||
+					this.allowedDirectionParameters.includes(paramId);
+			});
 		},
 
 		_manageMeasurementData: function(data) {
@@ -116,6 +147,11 @@ define([
 				timeInterval: maxTimeInterval,
 				sourceUnit: unitAcronym
 			});
+		},
+
+		getNodeToShow: function() {
+
+			return this._windrose.getNodeToShow();
 		},
 
 		_onMeOrAncestorHidden: function() {

@@ -1,95 +1,107 @@
 define([
-	'app/designs/details/main/ActivityMap'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'dojo/query'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
+	, 'src/design/map/_AddAtlasComponent'
+	, 'src/design/map/_AddBrowserComponent'
+	, 'src/design/map/_AddMapLayerComponent'
+	, 'src/design/map/_AddQueryOnMapComponent'
+	, 'src/design/map/_MapDesignWithContentLayout'
 	, 'src/redmicConfig'
 	, 'templates/ObservationStationPopup'
 	, 'templates/ObservationStationList'
 ], function(
-	ActivityMap
-	, declare
+	declare
 	, lang
-	, aspect
 	, query
+	, _Module
+	, _Show
+	, _Store
+	, _AddAtlasComponent
+	, _AddBrowserComponent
+	, _AddMapLayerComponent
+	, _AddQueryOnMapComponent
+	, _MapDesignWithContentLayout
 	, redmicConfig
 	, TemplatePopup
 	, TemplateList
 ) {
 
-	return declare(ActivityMap, {
-		//	summary:
-		//		Widget para mostrar un mapa de puntos donde se registran observaciones.
+	return declare([_Module, _Show, _Store, _MapDesignWithContentLayout, _AddAtlasComponent, _AddQueryOnMapComponent,
+		_AddBrowserComponent, _AddMapLayerComponent], {
+		// summary:
+		//   Widget para mostrar un mapa de puntos donde se registran observaciones.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				actions: {
-					TIMESERIES_DATA: 'timeseriesData'
-				},
-				target: redmicConfig.services.activity,
-				templateTargetChange: redmicConfig.services.activityObservationSeriesStations,
-				_activeRadius: false,
+			const defaultConfig = {
+				ownChannel: 'activityFixedObservationSeriesMap',
+				mapLayerPopupTemplate: TemplatePopup,
+				target: redmicConfig.services.acousticDetectionReceptors,
+				stationDataTarget: 'stationData',
 				_showObservationsButtonClass: 'showObservations'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.before(this, '_afterSetConfigurations', lang.hitch(this, this._setBaseConfigurations));
+			this.inherited(arguments);
 		},
 
-		_setBaseConfigurations: function() {
-
-			this.widgetConfigs = this._merge([{
-				geographic: {
-					props: {
-						browserConfig: {
-							template: TemplateList,
-							rowConfig: {
-								buttonsConfig: {
-									listButton: [{
-										icon: 'fa-database',
-										btnId: 'showObservations',
-										returnItem: true,
-										href: '#activityFixedObservationSeriesList',
-										title: this.i18n.observations
-									}]
-								}
-							}
-						}
-					}
-				}
-			}, this.widgetConfigs || {}], {
-				arrayMergingStrategy: 'concatenate'
-			});
-		},
-
-		_afterShow: function() {
+		_setOwnCallbacksForEvents: function() {
 
 			this.inherited(arguments);
 
-			this._subscribe(this.getChildChannel('layerInstance', 'POPUP_LOADED'),
-				lang.hitch(this, this._onStationPopupLoaded));
-
-			this._subscribe(this._getWidgetInstance('geographic').getChildChannel('browser', 'BUTTON_EVENT'),
-				lang.hitch(this, this._onBrowserButtonEvent));
+			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
 		},
 
-		_onStationPopupLoaded: function(res) {
+		_setConfigurations: function() {
 
-			if (!res) {
-				return;
-			}
+			this.inherited(arguments);
 
-			var popupNode = res._contentNode,
-				popupData = res._source.feature.properties;
+			this.mergeComponentAttribute('browserConfig', {
+				template: TemplateList,
+				rowConfig: {
+					buttonsConfig: {
+						listButton: [{
+							icon: 'fa-database',
+							btnId: 'showObservations',
+							returnItem: true,
+							href: '#fixedObservationSeriesList',
+							title: this.i18n.observations
+						}]
+					}
+				}
+			}, {
+				arrayMergingStrategy: 'overwrite'
+			});
+		},
+
+		_defineSubscriptions: function() {
+
+			this.inherited(arguments);
+
+			const mapLayerInstance = this.getComponentInstance('mapLayer');
+
+			this.subscriptionsConfig.push({
+				channel : mapLayerInstance.getChannel('POPUP_LOADED'),
+				callback: '_subMapLayerStationPopupLoaded'
+			});
+		},
+
+		_subMapLayerStationPopupLoaded: function(res) {
+
+			const popupNode = res?._contentNode,
+				popupData = res?._source?.feature?.properties;
 
 			if (!popupNode || !popupData) {
 				return;
 			}
+			popupData.id = popupData.id ?? res?._source?.feature?.id;
 
-			var showChartsNode = query('.' + this._showObservationsButtonClass, popupNode)[0];
+			const showChartsNode = query('.' + this._showObservationsButtonClass, popupNode)[0];
 
 			if (!showChartsNode) {
 				return;
@@ -98,24 +110,35 @@ define([
 			showChartsNode.onclick = lang.hitch(this, this._loadObservationSeriesData, popupData);
 		},
 
-		_getPopupContent: function(data) {
+		_showObservationsCallback: function(evt) {
 
-			return TemplatePopup({
-				i18n: this.i18n,
-				feature: data.feature
-			});
-		},
-
-		_onBrowserButtonEvent: function(evt) {
-
-			if (evt.btnId === 'showObservations') {
-				this._loadObservationSeriesData(evt.item);
-			}
+			this._loadObservationSeriesData(evt.item);
 		},
 
 		_loadObservationSeriesData: function(item) {
 
-			this._publish(this.getChannel('TIMESERIES_DATA'), item);
+			this._emitEvt('INJECT_ITEM', {
+				target: this.stationDataTarget,
+				data: item
+			});
+		},
+
+		_onMeOrAncestorShown: function() {
+
+			this._requestData();
+		},
+
+		_requestData: function() {
+
+			const path = {
+				id: this.pathVariableId
+			};
+
+			const method = 'GET',
+				target = this.target,
+				params = {path, sharedParams: true};
+
+			this._emitEvt('REQUEST', {method, target, params});
 		}
 	});
 });

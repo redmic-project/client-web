@@ -1,25 +1,24 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
 	, 'put-selector'
 	, "src/component/base/_Module"
 	, "src/component/base/_Show"
 	, "src/component/base/_Store"
+	, 'src/component/browser/bars/_BarCommons'
 ], function(
 	declare
 	, lang
-	, aspect
 	, put
 	, _Module
 	, _Show
 	, _Store
-){
-	return declare([_Module, _Show, _Store], {
+	, _BarCommons
+) {
+
+	return declare([_Module, _Show, _Store, _BarCommons], {
 		//	summary:
-		//
-		//	description:
-		//
+		//		Componente que aporta un indicador de página y navegación entre ellas.
 
 		constructor: function(args) {
 
@@ -38,7 +37,10 @@ define([
 					SET_TOTAL: "setTotal",
 					RESET_PAGINATION: "resetPagination",
 					CLEAR: "clear"
-				}
+				},
+
+				requestMethod: 'GET',
+				requestQueryOffsetParamName: 'page'
 			};
 
 			lang.mixin(this, this.config);
@@ -56,7 +58,7 @@ define([
 				channel : this.getChannel("RESET_PAGINATION"),
 				callback: "_subResetPagination"
 			},{
-				channel: this._buildChannel(this.browserChannel, this.actions.CLEAR),
+				channel: this._buildChannel(this.browserChannel, 'CLEAR'),
 				callback: "_subClearBrowser"
 			});
 		},
@@ -128,11 +130,30 @@ define([
 
 			this.inherited(arguments);
 
-			this._once(this._buildChannel(this.queryChannel, this.actions.GOT_PROPS),
-				lang.hitch(this, this._subModelChannelGotProps));
+			if (this.queryChannel) {
+				this._once(this._buildChannel(this.queryChannel, 'GOT_PROPS'),
+					lang.hitch(this, this._subModelChannelGotProps));
 
-			this._publish(this._buildChannel(this.queryChannel, this.actions.GET_PROPS), {
-				modelChannel: true
+				this._publish(this._buildChannel(this.queryChannel, 'GET_PROPS'), {
+					modelChannel: true
+				});
+
+				return;
+			}
+
+			this._applyInitialPagination();
+		},
+
+		_applyInitialPagination: function() {
+
+			const query = this._getPaginationRequestQueryParams(1);
+
+			this._emitEvt('ADD_REQUEST_PARAMS', {
+				target: this.target,
+				params: {
+					query,
+					sharedParams: true
+				}
 			});
 		},
 
@@ -141,7 +162,7 @@ define([
 			var modelChannel = res.modelChannel;
 
 			this._setSubscription({
-				channel: this._buildChannel(modelChannel, this.actions.VALUE_CHANGED),
+				channel: this._buildChannel(modelChannel, 'VALUE_CHANGED'),
 				callback: lang.hitch(this, this._subModelValueChanged)
 			});
 		},
@@ -321,27 +342,33 @@ define([
 		_goToPage: function(value) {
 
 			if (this.totalPages && value && value <= this.totalPages && value > 0) {
-				this._publishPagination(this._calcRank(value));
+				this._publishPagination(value);
 			}
 		},
 
-		_publishPagination: function(obj) {
+		_publishPagination: function(value) {
 
 			if (this.queryChannel) {
+				const query = this._calcRank(value);
 
 				this._updateDataByMe = true;
 
-				this._publish(this._buildChannel(this.queryChannel, this.actions.ADD_TO_QUERY), {
-					query: obj
+				this._publish(this._buildChannel(this.queryChannel, 'ADD_TO_QUERY'), {
+					query
 				});
+
+				return;
 			}
+
+			this._emitPaginationRequest(value);
 		},
 
 		_calcRank: function(value) {
 
 			var start = (value - 1) * this.rowPerPage,
 				obj = {
-					size: this.rowPerPage
+					size: this.rowPerPage,
+					page: value
 				};
 
 			if (start !== undefined && start !== null) {
@@ -351,23 +378,46 @@ define([
 			return obj;
 		},
 
-		getNodeToShow: function() {
+		_emitPaginationRequest: function(pageValue) {
 
-			return this.domNode;
+			const method = this.requestMethod,
+				query = this._getPaginationRequestQueryParams(pageValue);
+
+			this._emitEvt('REQUEST', {
+				method,
+				target: this.target,
+				params: {
+					query,
+					sharedParams: true
+				}
+			});
+		},
+
+		_getPaginationRequestQueryParams: function(pageValue) {
+
+			const size = this.rowPerPage,
+				pageIndex = pageValue - 1,
+				offsetParamName = this.requestQueryOffsetParamName;
+
+			let offsetParamValue;
+
+			if (offsetParamName === 'page') {
+				offsetParamValue = pageIndex;
+			} else if (offsetParamName === 'from') {
+				offsetParamValue = pageIndex * size;
+			} else {
+				console.warn(`Unknown pagination offset param name: ${offsetParamName}`);
+			}
+
+			return {
+				size,
+				[offsetParamName]: offsetParamValue
+			};
 		},
 
 		_dataAvailable: function(response) {
 
-			var data = response.data,
-				total = (data.total >= 0) ? data.total : response.total;
-
-			if ((total === undefined || total === null)) {
-				if (data.data) {
-					total = data.data.total;
-				} else {
-					total = data.length;
-				}
-			}
+			const total = this._getTotalValueFromResponse(response);
 
 			this._updateDataByMe = false;
 

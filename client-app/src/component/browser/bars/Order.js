@@ -4,15 +4,17 @@ define([
 	, 'put-selector'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
+	, 'src/component/base/_Store'
 ], function(
 	declare
 	, lang
 	, put
 	, _Module
 	, _Show
+	, _Store
 ) {
 
-	return declare([_Module, _Show], {
+	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Componente que aporta un selector de campo de ordenación y dirección.
 
@@ -50,9 +52,9 @@ define([
 
 			this._createOrder();
 
-			if (this.defaultOrderField !== this.optionDefault) {
+			//if (this.defaultOrderField !== this.optionDefault) {
 				this._publishOrder();
-			}
+			//}
 		},
 
 		_subUpdateOptions: function(req) {
@@ -89,9 +91,9 @@ define([
 
 			this._currentOrderField = this.defaultOrderField;
 
-			this.options.unshift({
+			/*this.options.unshift({
 				value: this.optionDefault
-			});
+			});*/
 
 			this.selectOrderNode = put(this.orderNode, 'select.form-control');
 
@@ -129,11 +131,11 @@ define([
 
 			this.directionOrderNode.setAttribute('class', directionIconClass);
 
-			if (this._currentOrderField === this.optionDefault) {
+			/*if (this._currentOrderField === this.optionDefault) {
 				this._hideDirectionIcon();
-			} else {
+			} else {*/
 				this._showDirectionIcon();
-			}
+			//}
 		},
 
 		_hideDirectionIcon: function() {
@@ -175,11 +177,23 @@ define([
 
 			this._changeDirectionIcon();
 			this._publishOrder();
+			this._requestData();
 		},
 
 		_publishOrder: function() {
 
+			// TODO temporal mientras conviva con Filter
 			if (!this.queryChannel) {
+				this._emitEvt('ADD_REQUEST_PARAMS', {
+					target: this.target,
+					params: {
+						query: {
+							sort: this._getSortQueryParam()
+						},
+						sharedParams: true
+					}
+				});
+
 				return;
 			}
 
@@ -191,16 +205,32 @@ define([
 			});
 		},
 
+		_requestData: function() {
+
+			if (this.queryChannel) {
+				return;
+			}
+
+			this._emitEvt('REQUEST', {
+				target: this.target
+			});
+		},
+
+		_getSortQueryParam: function() {
+
+			return `${this._currentOrderField},${this._currentOrderDirection}`;
+		},
+
 		_createSorts: function() {
 
 			var sorts = [];
 
-			if (this._currentOrderField !== this.optionDefault) {
+			//if (this._currentOrderField !== this.optionDefault) {
 				sorts.push({
 					field: this._currentOrderField,
 					order: this._currentOrderDirection
 				});
-			}
+			//}
 
 			return sorts;
 		}

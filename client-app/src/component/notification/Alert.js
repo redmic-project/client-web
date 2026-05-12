@@ -1,71 +1,57 @@
 define([
 	'alertify'
-	, "dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/base/_Module"
+	, 'dojo/_base/declare'
+	, 'src/component/base/_Module'
 ], function(
 	alertify
 	, declare
-	, lang
 	, _Module
-){
+) {
+
 	return declare(_Module, {
-		//	summary:
-		//		Módulo encargado de procesar las alerts de los demás.
-		//	description:
-		//
+		// summary:
+		//   Módulo encargado de procesar las alerts de los demás.
 
-		//	config: Object
-		//		Opciones por defecto.
+		postMixInProperties: function() {
 
-		constructor: function(args) {
-
-			this.config = {
+			const defaultConfig = {
+				ownChannel: 'alert',
 				actions: {
-					ERROR: "error",
-					COMMUNICATION_SEND: "communicationSend"
+					ERROR: 'error',
+					COMMUNICATION_SEND: 'communicationSend'
 				},
-				ownChannel: "alert",
-				timeout: 5,
-				availableLevel: {
-					"warning": true,
-					"message": true,
-					"error": true,
-					"success": true
-				}
+				typesAvailable: ['warning', 'message', 'error', 'success'],
+				timeout: 5
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this.getChannel("COMMUNICATION_SEND"),
-				callback: "_subAlert"
+				channel : this.getChannel('COMMUNICATION_SEND'),
+				callback: '_subAlert',
+				options: {
+					predicate: communication => communication.type === 'alert' || communication.showAlert
+				}
 			});
 		},
 
 		_subAlert: function(/*Object*/ alert) {
 
-			if (!this.availableLevel[alert.level]) {
-				alert.level = "message";
+			const alertDescription = alert.description ?? '',
+				alertType = this.typesAvailable.includes(alert.level) ? alert.level : 'message',
+				alertTimeout = alert.timeout >= 0 ? alert.timeout : this.timeout,
+				alertCallback = alert.callback ?? null;
+
+			if (alert.position) {
+				alertify.set('notifier', 'position', alert.position);
 			}
 
-			if (alert.type == "alert" || alert.showAlert) {
-
-				var timeout = this.timeout;
-
-				if (alert.timeout >= 0) {
-					timeout = alert.timeout;
-				}
-
-				if (alert.position) {
-					alertify.set('notifier','position', alert.position);
-				}
-
-				alertify.notify(alert.description, alert.level, timeout, alert.callback || null);
-			}
+			alertify.notify(alertDescription, alertType, alertTimeout, alertCallback);
 		}
 	});
 });

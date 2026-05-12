@@ -32,32 +32,46 @@ define([
 
 	return declare([_Module, _Show, _Store], {
 		//	summary:
-		//		Modulo para el menu de usuarios.
-		//	description:
-		//		Muestra un listado de opciones de usuario en un tooltip.
-
-		//	config: Object
-		//		Opciones por defecto.
+		//		Botón para el menú de usuario, que muestra un listado de opciones mediante tooltip.
 
 		constructor: function(args) {
 
 			this.config = {
 				ownChannel: 'userArea',
+				actions: {
+					USER_LOGOUT: 'userLogout',
+					USER_LOGGED_OUT: 'userLoggedOut',
+					USER_LOGOUT_ERROR: 'userLogoutError'
+				},
 
 				omitLoading: true,
 				'class': 'userArea',
 				idProperty: 'id',
-				profileTarget: redmicConfig.services.profile,
-				_logoutTarget: redmicConfig.services.logout,
+				target: redmicConfig.services.profile,
 				repositoryUrl: 'https://gitlab.com/redmic-project/client/web'
 			};
 
 			lang.mixin(this, this.config, args);
 		},
 
+		_defineSubscriptions: function() {
+
+			this.subscriptionsConfig.push({
+				channel: this._buildChannel(this.authChannel, 'USER_LOGGED_OUT'),
+				callback: '_subUserLoggedOut'
+			},{
+				channel: this._buildChannel(this.authChannel, 'USER_LOGOUT_ERROR'),
+				callback: '_subUserLogoutError'
+			},{
+				channel: this.listMenu.getChannel('EVENT_ITEM'),
+				callback: '_subEventItem'
+			});
+		},
+
 		_initialize: function() {
 
 			put(this.domNode, '[title=$]', this.i18n.user);
+
 			this.listMenuDefinition = declare([ListMenu, _ShowOnEvt]).extend(_ShowInTooltip);
 
 			this._commonItems = {
@@ -84,11 +98,8 @@ define([
 				}
 			};
 
-			this.target = [this.profileTarget];
-
 			if (this._checkUserIsRegistered()) {
 				this._initializeRegisteredUserArea();
-				this.target.push(this._logoutTarget);
 			} else {
 				this._initializeGuestUserArea();
 			}
@@ -103,7 +114,7 @@ define([
 				omitLoading: true,
 				template: TemplateTopbarMenu,
 				'class': 'tooltipUser',
-				target: this.profileTarget
+				target: this.target
 			});
 
 			this.listMenu = new this.listMenuDefinition({
@@ -149,7 +160,7 @@ define([
 				]
 			});
 
-			this._showMenu();
+			this._prepareMenuToShow();
 		},
 
 		_initializeUserImage: function() {
@@ -158,19 +169,11 @@ define([
 				parentChannel: this.getChannel(),
 				omitLoading: true,
 				template: TemplateTopbarImage,
-				target: this.profileTarget
+				target: this.target
 			});
 
 			this._publish(this.topbarImage.getChannel('SHOW'), {
 				node: this.domNode
-			});
-		},
-
-		_defineSubscriptions: function () {
-
-			this.subscriptionsConfig.push({
-				channel : this.listMenu.getChannel('EVENT_ITEM'),
-				callback: '_subEventItem'
 			});
 		},
 
@@ -185,10 +188,10 @@ define([
 
 		_showAreaForRegisteredUser: function() {
 
-			this._once(this._buildChannel(this.credentialsChannel, this.actions.GOT_PROPS),
+			this._once(this._buildChannel(this.credentialsChannel, 'GOT_PROPS'),
 				lang.hitch(this, this._subDataCredentialsGotProps));
 
-			this._publish(this._buildChannel(this.credentialsChannel, this.actions.GET_PROPS), {
+			this._publish(this._buildChannel(this.credentialsChannel, 'GET_PROPS'), {
 				dataCredentials: true
 			});
 
@@ -199,11 +202,11 @@ define([
 
 			this._emitEvt('INJECT_DATA', {
 				data: req.dataCredentials,
-				target: this.profileTarget
+				target: this.target
 			});
 		},
 
-		_showMenu: function() {
+		_prepareMenuToShow: function() {
 
 			this._publish(this.listMenu.getChannel('ADD_EVT'), {
 				sourceNode: this.domNode
@@ -229,75 +232,48 @@ define([
 			});
 		},
 
-		_logout: function () {
+		_endLoading: function() {
+
+			this._emitEvt('LOADED');
+		},
+
+		_logout: function() {
+
+			this._requestUserLogout();
+		},
+
+		_requestUserLogout: function() {
+
+			this._startLoading();
+
+			this._publish(this._buildChannel(this.authChannel, 'USER_LOGOUT'));
+		},
+
+		_dataAvailable: function(res) {
+
+			this._prepareMenuToShow();
+		},
+
+		_subUserLoggedOut: function(_res) {
+
+			this._startLoading();
 
 			this._emitEvt('TRACK', {
 				event: 'logout'
 			});
-
-			this._startLoading();
-
-			if (!Credentials.get('accessToken')) {
-				this._removeUserData();
-				return;
-			}
-
-			var data = {
-				'token': Credentials.get('accessToken')
-			};
-
-			this._emitEvt('REQUEST', {
-				method: 'POST',
-				target: this._logoutTarget,
-				query: data,
-				requesterId: this.getOwnChannel()
-			});
 		},
 
-		_errorAvailable: function(_err, status, resWrapper) {
-
-			var target = resWrapper.target;
-
-			if (target !== this._logoutTarget) {
-				return;
-			}
+		_subUserLogoutError: function(res) {
 
 			this._emitEvt('TRACK', {
 				event: 'logout_error',
-				status: status
+				status: res.status
 			});
-
-			this._startLoading();
-			this._removeUserData();
-		},
-
-		_removeUserData: function() {
-
-			Credentials.set('accessToken', null);
-		},
-
-		_dataAvailable: function(response, resWrapper) {
-
-			var target = resWrapper.target;
-
-			if (target === this._logoutTarget) {
-				this._startLoading();
-				this._removeUserData();
-				return;
-			}
-
-			var data = response.data;
-
-			if (data instanceof Array) {
-				data = data[0];
-			}
-
-			this._showMenu();
 		},
 
 		_beforeHide: function() {
 
-			this._emitEvt('LOADED');
+			this._endLoading();
 		}
 	});
 });

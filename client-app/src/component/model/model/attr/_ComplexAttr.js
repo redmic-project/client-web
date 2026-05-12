@@ -6,17 +6,20 @@ define([
 	declare
 	, lang
 	, _Attr
-){
-	return declare(_Attr, {
-		//	summary:
-		//		Base común para los modelos que contienen subinstancias (objects y arrays).
-		//	description:
-		//		Proporciona métodos y atributos a los modelos complejos.
+) {
 
-		//	_unsuitableValueSet: Boolean
-		//		Indica si el último valor seteado fue no apto, para devolverlo como valor propio
-		//	_unsuitableValue: Any
-		//		Último valor seteado (si fue no apto, si no se habrá limpiado)
+	return declare(_Attr, {
+		// summary:
+		//   Base común para los modelos que contienen subinstancias (objects y arrays).
+		// description:
+		//   Proporciona métodos y atributos a los modelos complejos.
+
+		// serializeAdditionalProperties: Boolean
+		//   Indica si al serializar se deben incluir las propiedades asignadas pero no definidas en el schema.
+		// _unsuitableValueSet: Boolean
+		//   Indica si el último valor seteado fue no apto, para devolverlo como valor propio
+		// _unsuitableValue: Any
+		//   Último valor seteado (si fue no apto, si no se habrá limpiado)
 
 		constructor: function(args) {
 
@@ -132,15 +135,11 @@ define([
 			return schema.type;
 		},
 
-		_isTypeNull: function() {
+		_nullTypeIsAllowed: function() {
 
-			var type = this._schema.type;
+			const type = this._schema?.type;
 
-			if (type instanceof Array && type.indexOf("null") !== -1) {
-				return true;
-			}
-
-			return false;
+			return type instanceof Array && type.includes('null');
 		},
 
 		clear: function(/*Array?*/ propsToClear) {

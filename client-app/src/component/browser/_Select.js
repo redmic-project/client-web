@@ -3,13 +3,13 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "src/component/base/_Selection"
-	, "./row/_Select"
+	, 'src/component/browser/row/_BrowserRowSelect'
 ], function(
 	declare
 	, lang
 	, aspect
 	, _Selection
-	, _SelectRow
+	, _BrowserRowSelect
 ) {
 
 	return declare(_Selection, {
@@ -184,7 +184,7 @@ define([
 
 		_definitionSelectRow: function() {
 
-			this._defRow.push(_SelectRow);
+			this._defRow.push(_BrowserRowSelect);
 		},
 
 		_getSelections: function() {

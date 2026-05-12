@@ -2,9 +2,15 @@ services:
   web:
     image: ${IMAGE_NAME:-registry.gitlab.com/redmic-project/client/web}:${IMAGE_TAG:-latest}
     environment:
+      PORT:
+      DEFAULT_LANG:
       OAUTH_URL:
       OAUTH_CLIENT_ID:
       OAUTH_CLIENT_SECRET:
+      OIDC_URL:
+      OIDC_CLIENT_ID:
+      OIDC_CLIENT_SECRET:
+      OIDC_PEM_PUBLIC_KEY:
       API_URL:
       CONFIG_URL:
       SITEMAP_URL:
@@ -22,7 +28,7 @@ services:
       labels:
         traefik.enable: ${TRAEFIK_ENABLE:-true}
 
-        traefik.http.services.redmic-web.loadbalancer.server.port: 3050
+        traefik.http.services.redmic-web.loadbalancer.server.port: ${PORT}
 
         traefik.http.middlewares.redmic-web-error-5xx.errors.status: ${TRAEFIK_ERROR_5XX_STATUS:-500-599}
         traefik.http.middlewares.redmic-web-error-5xx.errors.service: ${TRAEFIK_ERROR_5XX_SERVICE:-static-pages}

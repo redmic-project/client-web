@@ -30,7 +30,8 @@ define([
 	, put
 	, TemplateList
 	, ProgressBar
-){
+) {
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Módulo encargado de procesar las notificaciones de los demás.
@@ -40,11 +41,9 @@ define([
 		//	config: Object
 		//		Opciones por defecto.
 
-		'class': 'flexContainer notificationList',
+		postMixInProperties: function() {
 
-		constructor: function(args) {
-
-			this.config = {
+			const defaultConfig = {
 				actions: {
 					NOTIFICATION: "Notification",
 					NOTIFICATION_DELETED: "notificationDeleted",
@@ -57,10 +56,13 @@ define([
 					REMOVE_TASK: "removeTask"
 				},
 				ownChannel: "taskNotification",
-				idProperty: "id"
+				idProperty: "id",
+				'class': 'flexContainer notificationList'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_setConfigurations: function() {

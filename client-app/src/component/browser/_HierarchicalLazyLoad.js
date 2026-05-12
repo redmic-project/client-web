@@ -20,6 +20,7 @@ define([
 			this.config = {
 				conditionParentProperty: 'activityType',
 				idProperty: 'pathGenerate',
+				pathProperty: 'pathGenerate',
 
 				hierarchicalLazyLoadActions: {
 					SET_QUERY_DATA_CHILDREN: 'setQueryDataChildren'
@@ -56,10 +57,6 @@ define([
 
 		postCreate: function() {
 
-			if (this.generatePath) {
-				this.pathProperty = "pathGenerate";
-			}
-
 			if (!this.childrenIdProperty) {
 				this.childrenIdProperty = this.idProperty;
 			}
@@ -73,20 +70,24 @@ define([
 
 		_addHierarchicalLazyLoadItem: function(item) {
 
-			if (this.generatePath && !item[this.idProperty]) {
-				this._generatePathItem(item);
+			if (!item[this.pathProperty]) {
+				item[this.pathProperty] = this._getGeneratedItemPath(item);
 			}
 		},
 
-		_generatePathItem: function(item) {
+		_getGeneratedItemPath: function(item) {
 
-			var pathGenerate = (this._pathGenerateParent ? this._pathGenerateParent : 'root') + this.pathSeparator;
-
+			let itemPathPropertyName;
 			if (Utilities.getDeepProp(item, this.conditionParentProperty)) {
-				item[this.pathProperty] = pathGenerate + Utilities.getDeepProp(item, this.parentIdProperty);
+				itemPathPropertyName = this.parentIdProperty;
 			} else {
-				item[this.pathProperty] = pathGenerate + Utilities.getDeepProp(item, this.childrenIdProperty);
+				itemPathPropertyName = this.childrenIdProperty;
 			}
+
+			const parentPath = this._currentParentPath ?? 'root',
+				itemPathPropertyValue = Utilities.getDeepProp(item, itemPathPropertyName);
+
+			return `${parentPath}${this.pathSeparator}${itemPathPropertyValue}`;
 		},
 
 		_addRowsWithParentExpanded: function(req) {
@@ -103,62 +104,57 @@ define([
 
 		_requestDataChildren: function(idProperty) {
 
-			var row = this._getRow(idProperty),
-				item = row.data,
-				objRequest,	target;
+			const row = this._getRow(idProperty),
+				item = row.data;
 
-			this._pathGenerateParent = item[this.pathProperty];
+			this._currentParentPath = item[this.pathProperty];
 
-			if (this.targetProperty) {
-				target = Utilities.getDeepProp(item, this.targetProperty);
+			const target = this.targetChildren;
+			if (!(this.target instanceof Array)) {
+				this.target = [this.target];
 			}
 
-			if (!target) {
-				target = lang.replace(this.targetChildren, {
-					id: Utilities.getDeepProp(item, this.parentIdProperty)
-				});
+			if (!this.target.includes(target)) {
+				this.target.push(target);
 			}
 
-			this._lastTarget = this.target;
-			this.target = target;
-
-			objRequest = {
-				method: 'POST',
-				target: target,
-				action: '_search',
-				requesterId: this.getOwnChannel()
+			const path = {
+				id: idProperty
 			};
+			const query = this.queryDataChildren ?? {};
 
-			if (this.queryDataChildren) {
-				objRequest.query = this.queryDataChildren;
-			}
-
-			this._emitEvt('REQUEST', objRequest);
+			this._emitEvt('REQUEST', {
+				method: 'POST',
+				target,
+				action: '_search',
+				requesterId: this.getOwnChannel(),
+				params: {
+					path, query
+				}
+			});
 		},
 
-		_dataAvailable: function(response) {
+		_dataAvailable: function(res, resWrapper) {
 
-			if (!this._lastTarget) {
+			if (resWrapper.target !== this.targetChildren) {
 				return this.inherited(arguments);
 			}
 
-			var data = response.data;
-
-			if (data.data) {
-				data = data.data;
-			}
-
-			this._addChildrenData(data);
-
-			this.target = this._lastTarget;
-			this._lastTarget = null;
+			const data = res.data?.data;
+			data && this._addChildrenData(data);
 		},
 
 		_addChildrenData: function(data) {
 
-			var rowParent = this._getRow(this._pathGenerateParent);
+			const parentItemId = this._currentParentPath?.split(this.pathSeparator).pop(),
+				parentRow = this._getRow(parentItemId);
 
-			rowParent.data[this.leavesProperty] = data.length;
+			if (parentRow) {
+				// TODO a veces se usa row.data.leaves y a veces row.leaves, habría que unificarlo
+				parentRow.data[this.leavesProperty] = data.length;
+				parentRow[this.leavesProperty] = data.length;
+				parentRow.pendingChildren = false;
+			}
 
 			for (var i = 0; i < data.length; i++) {
 				var item = data[i],
@@ -166,7 +162,7 @@ define([
 
 				this._addItem(item);
 
-				idProperty = item[this.idProperty];
+				idProperty = item[this.childrenIdProperty];
 				this._addRow(idProperty, item);
 
 				this._publish(this._getRowInstance(idProperty).getChannel('SHOW'), {
@@ -175,9 +171,7 @@ define([
 				});
 			}
 
-			rowParent.pendingChildren = false;
-
-			this._pathGenerateParent = null;
+			this._currentParentPath = null;
 			this._nodeParent = null;
 		},
 

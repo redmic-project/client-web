@@ -2,7 +2,6 @@ define([
 	"app/base/views/extensions/_AddAtlasCategory"
 	, 'app/components/steps/ActivitySetStep'
 	, "app/components/steps/MainDataStep"
-	//, "app/components/steps/MapSelectAreaStep"
 	, "app/components/steps/DownloadsSetStep"
 	, "app/components/steps/ProtocolsSetStep"
 	, "app/components/steps/SelectLayerStep"
@@ -15,7 +14,6 @@ define([
 	_AddAtlasCategory
 	, ActivitySetStep
 	, MainDataStep
-	//, MapSelectAreaStep
 	, DownloadsSetStep
 	, ProtocolsSetStep
 	, SelectLayerStep
@@ -67,14 +65,6 @@ define([
 						editionTarget: redmicConfig.services.atlasCategoryEdition,
 						label: this.i18n.info
 					}
-				/*},{
-					definition: MapSelectAreaStep,
-					props: {
-						target: this.target,
-						propertyName: "latLonBoundsImage",
-						skippable: true,
-						label: this.i18n.layerImage
-					}*/
 				},{
 					definition: ProtocolsSetStep,
 					props: {

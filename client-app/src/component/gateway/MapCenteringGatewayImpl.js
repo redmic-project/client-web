@@ -1,27 +1,28 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
-	, './Gateway'
+	, 'src/component/gateway/Gateway'
 ], function(
 	declare
-	, lang
 	, Gateway
-){
-	return declare([Gateway], {
+) {
+
+	return declare(Gateway, {
 		//	summary:
 		//		Implementación de gateway entre browser y map/mapLayer para centrar el mapa en un punto y destacar un
 		//		marcador de la capa.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				ownChannel: 'mapCenteringGateway',
 				btnToListen: 'mapCentering',
 				centeringDuration: 1,
 				idProperty: 'uuid'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_subAnimateMarker: function(/*Object*/ objReceived) {
@@ -53,6 +54,7 @@ define([
 
 			this._emitEvt('SET_CENTER', {
 				markerId: itemId,
+				item: item,
 				options: {
 					animate: true,
 					duration: this.centeringDuration

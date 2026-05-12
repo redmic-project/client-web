@@ -3,26 +3,21 @@ define([
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
-	, 'dojo/mouse'
-	, 'dojo/on'
-	, 'leaflet'
 	, 'src/component/base/_Module'
+	, 'src/component/map/layer/_TrackingDataManagement'
+	, 'src/component/map/layer/_TrackingMarkersManagement'
 	, 'RWidgets/Utilities'
-	, './_TrackingDataManagement'
-	, './_TrackingMarkersManagement'
 ], function(
 	d3
 	, declare
 	, lang
 	, Deferred
-	, mouse
-	, on
-	, L
 	, _Module
-	, Utilities
 	, _TrackingDataManagement
 	, _TrackingMarkersManagement
-){
+	, Utilities
+) {
+
 	return declare([_Module, _TrackingDataManagement, _TrackingMarkersManagement], {
 		//	summary:
 		//		Módulo para representar gráficamente los datos que componen una línea de tracking.
@@ -37,8 +32,6 @@ define([
 		//		Tipo de transición de dibujado del track.
 		//	groupClass: String
 		//		Clase que se asigna al elemento g.
-		//	groupHoverClass: String
-		//		Clase que se asigna al elemento g cuando el ratón pasa por encima.
 		//	lineClass: String
 		//		Clase que se asigna al elemento path.
 		//	banClass: String
@@ -55,15 +48,14 @@ define([
 		//	_trackIsBanned: Boolean
 		//		Indica si el track ha sido desautorizado para mostrarse.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				idProperty: 'uuid',
 				idsProperty: 'uuids',
 				transitionDuration: 1000,
 				transitionEase: d3.easeLinear,
 				groupClass: 'trackingLineGroup',
-				groupHoverClass: 'onHover',
 				lineClass: 'trackingPath',
 				banClass: 'hidden',
 				fillColor: 'orange',
@@ -86,20 +78,15 @@ define([
 					ADJUST_POSITION: 'adjustPosition',
 					GET_CLICKED_POINTS_IDS: 'getClickedPointsIds',
 					GOT_CLICKED_POINTS_IDS: 'gotClickedPointsIds',
-					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
+					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated',
+					GET_LAYER_POINT: 'getLayerPoint',
+					GOT_LAYER_POINT: 'gotLayerPoint'
 				}
 			};
 
-			lang.mixin(this, this.config, args);
-		},
+			this._mergeOwnAttributes(defaultConfig);
 
-		_mixEventsAndActions: function() {
-
-			lang.mixin(this.events, this.trackingBaseEvents);
-			lang.mixin(this.actions, this.trackingBaseActions);
-
-			delete this.trackingBaseEvents;
-			delete this.trackingBaseActions;
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function() {
@@ -153,31 +140,6 @@ define([
 
 			this._line = this._createLine();
 			this._circleGroup = this._createCircleGroup();
-
-			this._createEventListeners();
-		},
-
-		_createEventListeners: function() {
-
-			this._onEnterCallback && this._onEnterCallback.remove();
-			this._onLeaveCallback && this._onLeaveCallback.remove();
-
-			var gNode = this._group.node();
-
-			this._onEnterCallback = on(gNode, mouse.enter, lang.hitch(this, this._addHoverEffects));
-			this._onLeaveCallback = on(gNode, mouse.leave, lang.hitch(this, this._removeHoverEffects));
-		},
-
-		_addHoverEffects: function() {
-
-			this._group
-				.attr('class', this.groupClass + ' ' + this.groupHoverClass)
-				.moveToFront();
-		},
-
-		_removeHoverEffects: function() {
-
-			this._group.attr('class', this.groupClass);
 		},
 
 		_createLine: function() {
@@ -185,13 +147,6 @@ define([
 			return this._group.append('svg:path')
 				.attr('class', this.lineClass)
 				.attr('marker-start', this._getMarkerSelector('start'));
-		},
-
-		_getLatLng: function(lat, lng) {
-
-			if (lat && lng) {
-				return new L.latLng(lat, lng);
-			}
 		},
 
 		_subAddData: function(req) {
@@ -211,7 +166,6 @@ define([
 
 		_subRedraw: function() {
 
-			this._removeHoverEffects();
 			this._removeExistingAxes();
 			this._cleanAndRedraw();
 		},
@@ -253,20 +207,11 @@ define([
 
 		_subGetClickedPointsIds: function(req) {
 
-			var clickedPoint = req.clickedPoint,
-				filterCbk = lang.partial(this._filterAxesOutsideClickedArea, {
-					self: this,
-					clickedPoint: clickedPoint
-				}),
-				axes = this._circleGroup.selectAll('circle'),
-				axesClicked = axes.filter(filterCbk);
+			const point = req.clickedPoint,
+				axes = this._circleGroup.selectAll('circle').filter(d => this._isAxisFromData(d)),
+				axesClicked = axes.filter((_d, i, nodes) => this._isAxisInsideClickedArea(nodes[i], point));
 
-			if (!axesClicked.size()) {
-				this._emitClickedPointsIds();
-				return;
-			}
-
-			var clickedIds = this._getClickedIds(axesClicked, axes);
+			const clickedIds = this._getClickedIds(axesClicked, axes.data());
 			this._emitClickedPointsIds(clickedIds);
 		},
 
@@ -512,23 +457,6 @@ define([
 			}
 
 			return lengthAt;
-		},
-
-		_getPointForCoordinatesAt: function(lineStringFeature, /*Integer?*/ pos) {
-
-			if (!lineStringFeature) {
-				return;
-			}
-
-			var coords = this._getCoordinates(lineStringFeature),
-				i = Utilities.isValidNumber(pos) ? pos : coords.length - 1,
-				coord = coords[i];
-
-			if (!coord || !this.mapInstance) {
-				return;
-			}
-
-			return this.mapInstance.latLngToLayerPoint(this._getLatLng(coord[1], coord[0]));
 		},
 
 		_drawTrack: function(lineStringFeature) {

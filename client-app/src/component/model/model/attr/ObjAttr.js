@@ -58,7 +58,7 @@ define([
 
 			var result = this.serializeAdditionalProperties ? (lang.clone(this._additionalProperties) || {}) : {},
 				resultWithoutNulls, prop, instance, value,
-				isRetNull = this._isTypeNull();
+				isRetNull = this._nullTypeIsAllowed();
 
 			if (this.serializeAdditionalProperties && noSerializeNullValue) {
 				for (prop in result) {
@@ -121,7 +121,6 @@ define([
 
 			// Si nos llega un valor no apto, lo preservamos pero no lo procesamos
 			if (!suitable) {
-
 				console.error("Tried to deserialize an unsuitable object '%O' at model '%s' with this schema:", value,
 					this.get("modelName"), this.get("schema"));
 
@@ -130,7 +129,6 @@ define([
 			}
 
 			if (value) {
-
 				this._additionalProperties = lang.clone(value);
 
 				// Propagamos los subvalores a donde corresponda
@@ -153,7 +151,7 @@ define([
 			//	summary:
 			//		Comprueba si el valor recibido es apto
 
-			if (value === null && this._isTypeNull()) {
+			if (value === null && this._nullTypeIsAllowed()) {
 				return true;
 			}
 
@@ -161,21 +159,20 @@ define([
 				return false;
 			}
 
-			var schemaPropRequiredNames = this._schema.required || [],
+			const schemaPropRequiredNames = this._schema.required || [],
 				valuePropNames = Object.keys(value);
 
-			// Si el objeto que llega tiene menos propiedades que las definidas en requiridas del schema, no es apto
+			// Si el objeto que llega tiene menos propiedades que las definidas como requeridas del schema, no es apto
 			if (valuePropNames.length < schemaPropRequiredNames.length) {
 				return false;
 			}
 
-			// Si el objeto que llega no tiene todas las propiedades definidas en requiridas del schema, no es apto
-			for (var i = 0; i < schemaPropRequiredNames.length; i++) {
-				var propName = schemaPropRequiredNames[i];
-				if (valuePropNames.indexOf(propName) < 0) {
+			// Si el objeto que llega no tiene todas las propiedades definidas como requeridas del schema, no es apto
+			schemaPropRequiredNames.forEach(propName => {
+				if (!valuePropNames.includes(propName)) {
 					return false;
 				}
-			}
+			});
 
 			return true;
 		},

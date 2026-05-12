@@ -1,90 +1,84 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "dojo/aspect"
 	, "./_PublishInfoItfc"
 ], function(
 	declare
 	, lang
-	, aspect
 	, _PublishInfoItfc
-){
+) {
+
 	return declare(_PublishInfoItfc, {
-		//	summary:
-		//		Extensión de MapLayer para consumir y publicar información de la capa.
+		// summary:
+		//   Extensión de MapLayer para consumir y publicar información de la capa.
 
+		postMixInProperties: function() {
 
-		queryable: true,
-		layerId: "layerId",
+			const defaultConfig = {
+				events: {
+					LAYER_INFO: "layerInfo",
+					LAYER_QUERYING: "layerQuerying"
+				},
+				actions: {
+					MAP_CLICKED: "mapClicked",
+					LAYER_INFO: "layerInfo",
+					LAYER_INFO_FORWARDED: "layerInfoForwarded",
+					LAYER_QUERYING: "layerQuerying",
+					LAYER_QUERYING_FORWARDED: "layerQueryingForwarded"
+				},
+				queryable: true
+			};
 
-		publishInfoEvents: {
-			LAYER_INFO: "layerInfo",
-			LAYER_QUERYING: "layerQuerying"
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
-		publishInfoActions: {
-			MAP_CLICKED: "mapClicked",
-			LAYER_INFO: "layerInfo",
-			LAYER_INFO_FORWARDED: "layerInfoForwarded",
-			LAYER_QUERYING: "layerQuerying",
-			LAYER_QUERYING_FORWARDED: "layerQueryingForwarded"
-		},
+		_defineSubscriptions: function() {
 
+			this.inherited(arguments);
 
-		constructor: function(args) {
-
-			aspect.after(this, "_mixEventsAndActions", lang.hitch(this, this._mixPublishInfoEventsAndActions));
-			aspect.after(this, "_defineSubscriptions", lang.hitch(this, this._definePublishInfoSubscriptions));
-			aspect.after(this, "_definePublications", lang.hitch(this, this._definePublishInfoPublications));
-		},
-
-		_mixPublishInfoEventsAndActions: function () {
-
-			lang.mixin(this.events, this.publishInfoEvents);
-			lang.mixin(this.actions, this.publishInfoActions);
-			delete this.publishInfoEvents;
-			delete this.publishInfoActions;
-		},
-
-		_definePublishInfoSubscriptions: function () {
+			const infoIsMinePredicate = res => this._chkLayerInfoIsMine(res);
 
 			this.subscriptionsConfig.push({
-				channel: this._buildChannel(this.mapChannel, this.actions.MAP_CLICKED),
+				channel: this._buildChannel(this.mapChannel, 'MAP_CLICKED'),
 				callback: "_subPublishInfoMapClicked",
 				options: {
-					predicate: this._chkCanDoQuery
+					predicate: () => this._chkCanDoQuery()
 				}
 			},{
-				channel: this._buildChannel(this.storeChannel, this.actions.AVAILABLE),
+				channel: this._buildChannel(this.storeChannel, 'AVAILABLE'),
 				callback: "_subInfoAvailable",
 				options: {
-					predicate: lang.hitch(this, this._chkLayerInfoIsMine)
+					predicate: infoIsMinePredicate
 				}
 			},{
-				channel: this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
+				channel: this._buildChannel(this.storeChannel, 'ITEM_AVAILABLE'),
 				callback: "_subInfoAvailable",
 				options: {
-					predicate: lang.hitch(this, this._chkLayerInfoIsMine)
+					predicate: infoIsMinePredicate
 				}
 			});
 
 			this._deleteDuplicatedChannels(this.subscriptionsConfig);
 		},
 
-		_definePublishInfoPublications: function () {
+		_definePublications: function() {
+
+			this.inherited(arguments);
 
 			this.publicationsConfig.push({
 				event: 'LAYER_INFO',
 				channel: this.getChannel("LAYER_INFO")
 			},{
 				event: 'LAYER_INFO',
-				channel: this._buildChannel(this.mapChannel, this.actions.LAYER_INFO_FORWARDED)
+				channel: this._buildChannel(this.mapChannel, 'LAYER_INFO_FORWARDED')
 			},{
 				event: 'LAYER_QUERYING',
 				channel: this.getChannel("LAYER_QUERYING")
 			},{
 				event: 'LAYER_QUERYING',
-				channel: this._buildChannel(this.mapChannel, this.actions.LAYER_QUERYING_FORWARDED)
+				channel: this._buildChannel(this.mapChannel, 'LAYER_QUERYING_FORWARDED')
 			});
 
 			this._deleteDuplicatedChannels(this.publicationsConfig);
@@ -106,22 +100,21 @@ define([
 				return;
 			}
 
-			var lat = response.latLng.lat,
+			const lat = response.latLng.lat,
 				lng = response.latLng.lng;
 
 			if (!lat || !lng) {
 				return;
 			}
 
-			this._emitEvt('LAYER_QUERYING', {
-				layerId: this.layerId
-			});
+			const layerId = this.layerId;
+			this._emitEvt('LAYER_QUERYING', { layerId });
 
 			this._requestLayerInfo(response);
 
 			this._emitEvt('TRACK', {
 				event: 'request_layer_featureinfo',
-				layer_name: this.layerLabel || this.layerId
+				layer_name: this.layerLabel ?? layerId
 			});
 		},
 
@@ -132,13 +125,11 @@ define([
 
 		_getLayerInfoToPublish: function(res) {
 
-			var retObj = {
+			const inherited = this.inherited(arguments);
+
+			return this._merge([inherited, {
 				queryable: this.queryable
-			};
-
-			lang.mixin(retObj, this.inherited(arguments));
-
-			return retObj;
+			}]);
 		}
 	});
 });

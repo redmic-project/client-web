@@ -20,7 +20,6 @@ define([
 	, "src/component/form/FormContainerImpl"
 	, "src/component/form/_ListenModelHasChanged"
 	, "templates/UserImage"
-	, "templates/UserTitle"
 	, "templates/UserEmail"
 	, "templates/UserName"
 	, "templates/UserSector"
@@ -48,7 +47,6 @@ define([
 	, FormContainerImpl
 	, _ListenModelHasChanged
 	, TemplateImage
-	, TemplateTitle
 	, TemplateEmail
 	, TemplateName
 	, TemplateSector
@@ -88,11 +86,6 @@ define([
 		},
 
 		_setConfigurations: function() {
-
-			this.titleWidgetConfig = this._merge([{
-				template: TemplateTitle,
-				target: "user_title"
-			}, this.titleWidgetConfig || {}]);
 
 			this.widgetConfigs = this._merge([{
 				userImage: {
@@ -420,11 +413,6 @@ define([
 		_refreshModules: function() {
 
 			this._clearModules();
-
-			this._emitEvt('INJECT_ITEM', {
-				data: {},
-				target: "user_title"
-			});
 
 			this._emitEvt('ALL_TASK_SOCKET', {});
 

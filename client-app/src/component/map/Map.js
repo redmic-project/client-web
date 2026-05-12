@@ -1,19 +1,19 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
+	'dojo/_base/declare'
+	, 'dojo/_base/lang'
+	, 'src/component/base/_Module'
+	, 'src/component/base/_Show'
+	, 'src/component/map/_StaticLayersManagement'
+	, 'src/component/map/_MapItfc'
 	, 'uuid'
-	, "src/component/base/_Module"
-	, "src/component/base/_Show"
-	, './_StaticLayersManagement'
-	, "./_MapItfc"
 ], function(
 	declare
 	, lang
-	, uuid
 	, _Module
 	, _Show
 	, _StaticLayersManagement
 	, _MapItfc
+	, uuid
 ) {
 
 	return declare([_Module, _MapItfc, _Show, _StaticLayersManagement], {
@@ -22,78 +22,79 @@ define([
 		//	description:
 		//		Permite trabajar con un mapa para representar datos geográficos, en forma de capas superpuestas.
 
+		postMixInProperties: function() {
 
-		constructor: function(args) {
-
-			this.config = {
+			const defaultConfig = {
+				ownChannel: 'map',
 				events: {
-					LAYER_ADD: "layerAdd",
-					LAYER_REMOVE: "layerRemove",
-					LAYER_REMOVE_FAIL: "layerRemoveFail",
-					BASE_LAYER_CHANGE: "baseLayerChange",
-					BASE_LAYER_CHANGE_FAIL: "baseLayerChangeFail",
-					PAN: "pan",
-					MOVE_START: "moveStart",
-					ZOOM_END: "zoomEnd",
-					CLICK: "click",
-					BBOX_CHANGE: "bBoxChange",
-					POPUP_OPEN: "popupOpen",
-					POPUP_CLOSE: "popupClose",
-					ZOOM_START: "zoomStart",
-					GOT_ZOOM: "gotZoom",
-					LAYER_ADDED_FORWARDED: "layerAddedForwarded",
-					LAYER_REMOVED_FORWARDED: "layerRemovedForwarded",
-					LAYER_INFO_FORWARDED: "layerInfoForwarded",
-					LAYER_QUERYING_FORWARDED: "layerQueryingForwarded",
-					LAYER_ADDED_TO_PANE: "layerAddedToPane",
-					LAYER_REMOVED_FROM_PANE: "layerRemovedFromPane"
+					LAYER_ADD: 'layerAdd',
+					LAYER_REMOVE: 'layerRemove',
+					LAYER_REMOVE_FAIL: 'layerRemoveFail',
+					BASE_LAYER_CHANGE: 'baseLayerChange',
+					BASE_LAYER_CHANGE_FAIL: 'baseLayerChangeFail',
+					PAN: 'pan',
+					MOVE_START: 'moveStart',
+					ZOOM_END: 'zoomEnd',
+					CLICK: 'click',
+					BBOX_CHANGE: 'bBoxChange',
+					POPUP_OPEN: 'popupOpen',
+					POPUP_CLOSE: 'popupClose',
+					ZOOM_START: 'zoomStart',
+					GOT_ZOOM: 'gotZoom',
+					LAYER_ADDED_FORWARDED: 'layerAddedForwarded',
+					LAYER_REMOVED_FORWARDED: 'layerRemovedForwarded',
+					LAYER_INFO_FORWARDED: 'layerInfoForwarded',
+					LAYER_QUERYING_FORWARDED: 'layerQueryingForwarded',
+					LAYER_ADDED_TO_PANE: 'layerAddedToPane',
+					LAYER_REMOVED_FROM_PANE: 'layerRemovedFromPane',
+					GOT_LAYER_POINT: 'gotLayerPoint'
 				},
-
 				actions: {
-					ADD_LAYER: "addLayer",
-					REMOVE_LAYER: "removeLayer",
-					CHANGE_BASE_LAYER: "changeBaseLayer",
-					SET_CENTER: "setCenter",
-					SET_ZOOM: "setZoom",
-					GOT_ZOOM: "gotZoom",
-					GET_ZOOM: "getZoom",
-					SET_CENTER_AND_ZOOM: "setCenterAndZoom",
-					FIT_BOUNDS: "fitBounds",
-					LAYER_ADDED: "layerAdded",
-					LAYER_REMOVED: "layerRemoved",
-					BASE_LAYER_CHANGED: "baseLayerChanged",
-					MOVE_START: "moveStart",
-					CENTER_SET: "centerSet",
-					ZOOM_SET: "zoomSet",
-					BBOX_CHANGED: "bBoxChanged",
+					ADD_LAYER: 'addLayer',
+					REMOVE_LAYER: 'removeLayer',
+					CHANGE_BASE_LAYER: 'changeBaseLayer',
+					SET_CENTER: 'setCenter',
+					SET_ZOOM: 'setZoom',
+					GOT_ZOOM: 'gotZoom',
+					GET_ZOOM: 'getZoom',
+					SET_CENTER_AND_ZOOM: 'setCenterAndZoom',
+					FIT_BOUNDS: 'fitBounds',
+					LAYER_ADDED: 'layerAdded',
+					LAYER_REMOVED: 'layerRemoved',
+					BASE_LAYER_CHANGED: 'baseLayerChanged',
+					MOVE_START: 'moveStart',
+					CENTER_SET: 'centerSet',
+					ZOOM_SET: 'zoomSet',
+					BBOX_CHANGED: 'bBoxChanged',
 					POPUP_OPENED: 'popupOpened',
-					POPUP_CLOSED: "popupClosed",
-					MAP_CLICKED: "mapClicked",
-					CLOSE_POPUP: "closePopup",
-					ADD_BUTTON: "addButton",
-					LAYER_LOADING: "layerLoading",
-					LAYER_LOADED: "layerLoaded",
-					REORDER_LAYERS: "reorderLayers",
-					ZOOM_START: "zoomStart",
-					LAYER_INFO: "layerInfo",
-					LAYER_INFO_FORWARDED: "layerInfoForwarded",
-					LAYER_QUERYING: "layerQuerying",
-					LAYER_QUERYING_FORWARDED: "layerQueryingForwarded",
-					LAYER_ADDED_FORWARDED: "layerAddedForwarded",
-					LAYER_ADDED_CONFIRMED: "layerAddedConfirmed",
-					LAYER_REMOVED_FORWARDED: "layerRemovedForwarded",
-					LAYER_REMOVED_CONFIRMED: "layerRemovedConfirmed",
-					SET_QUERYABLE_CURSOR: "setQueryableCursor",
-					MAP_SHOWN: "mapShown",
-					MAP_HIDDEN: "mapHidden",
-					CLEAR: 'clear'
+					POPUP_CLOSED: 'popupClosed',
+					MAP_CLICKED: 'mapClicked',
+					CLOSE_POPUP: 'closePopup',
+					ADD_BUTTON: 'addButton',
+					LAYER_LOADING: 'layerLoading',
+					LAYER_LOADED: 'layerLoaded',
+					REORDER_LAYERS: 'reorderLayers',
+					ZOOM_START: 'zoomStart',
+					LAYER_INFO: 'layerInfo',
+					LAYER_INFO_FORWARDED: 'layerInfoForwarded',
+					LAYER_QUERYING: 'layerQuerying',
+					LAYER_QUERYING_FORWARDED: 'layerQueryingForwarded',
+					LAYER_ADDED_FORWARDED: 'layerAddedForwarded',
+					LAYER_ADDED_CONFIRMED: 'layerAddedConfirmed',
+					LAYER_REMOVED_FORWARDED: 'layerRemovedForwarded',
+					LAYER_REMOVED_CONFIRMED: 'layerRemovedConfirmed',
+					SET_QUERYABLE_CURSOR: 'setQueryableCursor',
+					MAP_SHOWN: 'mapShown',
+					MAP_HIDDEN: 'mapHidden',
+					CLEAR: 'clear',
+					GET_LAYER_POINT: 'getLayerPoint',
+					GOT_LAYER_POINT: 'gotLayerPoint'
 				},
-
-				ownChannel: "map",
 
 				defaultCenter: [28.3, -16.0],
 				defaultZoom: 7,
 				initialBounds: [[27.3, -18.3], [29.5, -13.1]],
+				pepe: [1,2,3],
 
 				minZoom: 1,
 				maxZoom: 21,
@@ -106,7 +107,9 @@ define([
 				_lastAtlasLayerOrder: 0
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function() {
@@ -168,6 +171,9 @@ define([
 			},{
 				channel : this.getChannel('CLEAR'),
 				callback: '_subClear'
+			},{
+				channel : this.getChannel('GET_LAYER_POINT'),
+				callback: '_subGetLayerPoint'
 			});
 		},
 
@@ -239,6 +245,9 @@ define([
 			},{
 				event: 'ME_OR_ANCESTOR_HIDDEN',
 				channel: this.getChannel('MAP_HIDDEN')
+			},{
+				event: 'GOT_LAYER_POINT',
+				channel: this.getChannel('GOT_LAYER_POINT')
 			});
 		},
 
@@ -339,32 +348,29 @@ define([
 		_getInnerLayer: function(layer, layerId) {
 
 			// Si la capa no es un módulo, no se busca capa interna
-			if (!layer.isInstanceOf || !layer.isInstanceOf(_Module)) {
+			if (!layer.isInstanceOf?.(_Module)) {
 				return layer;
 			}
 
-			var deferredLayer = layer.deferredLayer,
-				innerLayer = layer.layer;
-
-			// Si la capa es un módulo pero no tiene ni tendrá capa interna
-			if (!innerLayer && !deferredLayer) {
-				// Si no contiene una capa de tipo Leaflet pero sí tiene ID (D3, por ejemplo)
-				if (layerId) {
-					this._emitEvt('LAYER_ADD', {
-						layer: layer,
-						mapInstance: this.map
-					});
-				}
-				return;
+			// Si la capa es un módulo y tiene capa interna
+			const innerLayer = layer.layer;
+			if (innerLayer) {
+				return innerLayer;
 			}
 
 			// Si la capa es un módulo y tendrá capa interna
+			const deferredLayer = layer.deferredLayer;
 			if (deferredLayer) {
 				return deferredLayer;
 			}
 
-			// Si la capa es un módulo y tiene capa interna
-			return innerLayer;
+			// Si la capa es un módulo pero no tiene ni tendrá capa interna, pero sí tiene ID (D3, por ejemplo)
+			if (layerId) {
+				this._emitEvt('LAYER_ADD', {
+					layer,
+					mapInstance: this.map
+				});
+			}
 		},
 
 		_addInnerMapLayer: function(obj) {
@@ -871,6 +877,17 @@ define([
 				success: true,
 				instance: this._getMapInstance()
 			};
+		},
+
+		_subGetLayerPoint: function(req) {
+
+			if (!req?.lat || !req?.lng || !this.map) {
+				return;
+			}
+
+			const layerPoint = this.getLayerPoint(req.lat, req.lng);
+
+			this._emitEvt('GOT_LAYER_POINT', { layerPoint } );
 		}
 	});
 });

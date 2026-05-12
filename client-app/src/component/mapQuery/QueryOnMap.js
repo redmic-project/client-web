@@ -2,8 +2,8 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
-	, './_ContentManagement'
-	, './_ResultsBrowser'
+	, 'src/component/mapQuery/_ContentManagement'
+	, 'src/component/mapQuery/_ResultsBrowser'
 ], function(
 	declare
 	, lang
@@ -19,9 +19,11 @@ define([
 		//		Escucha las publicaciones de pulsación sobre el mapa, lanza peticiones de información sobre ese punto
 		//		para las capas presentes y recibe los resultados.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				ownChannel: 'queryOnMap',
 				events: {
 					HIDE_LAYERS_INFO: 'hideLayersInfo',
@@ -34,56 +36,70 @@ define([
 					HIDE_LAYERS_INFO: 'hideLayersInfo',
 					ADD_INFO_DATA: 'addInfoData',
 					ADD_NEW_TEMPLATES: 'addNewTemplates',
-					SHOW_LAYERS_INFO: 'showLayersInfo'
-				},
+					SHOW_LAYERS_INFO: 'showLayersInfo',
 
-				_tabsDisplayerActions: {
+					// Map actions
+					MAP_CLICKED: 'mapClicked',
+					LAYER_ADDED_CONFIRMED: 'layerAddedConfirmed',
+					LAYER_REMOVED_CONFIRMED: 'layerRemovedConfirmed',
+					LAYER_QUERYING: 'layerQuerying',
+					LAYER_INFO: 'layerInfo',
+					SET_QUERYABLE_CURSOR: 'setQueryableCursor',
+					LAYER_LOADING: 'layerLoading',
+					LAYER_LOADED: 'layerLoaded',
+
+					// TabsDisplayer actions
 					ADD_TAB: 'addTab',
 					SHOW_TAB: 'showTab'
 				},
-
-				getMapChannel: null,
-
 				title: this.i18n.layersQueryResults,
-
 				_queryableLayersLoaded: 0,
 				_layersWaiting: 0
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+		},
 
-			if (!this.getMapChannel) {
+		_initialize: function() {
+
+			this.inherited(arguments);
+
+			if (!this.mapChannel) {
 				console.error('Map channel not defined for QueryOnMap "%s"', this.getChannel());
 			}
 		},
 
 		_defineSubscriptions: function() {
 
+			this.inherited(arguments);
+
 			var options = {
 				predicate: lang.hitch(this, this._chkLayerIsQueryable)
 			};
 
 			this.subscriptionsConfig.push({
-				channel : this.getMapChannel('MAP_CLICKED'),
+				channel : this._buildChannel(this.mapChannel, 'MAP_CLICKED'),
 				callback: '_subMapClickedQueryOnMap'
 			},{
-				channel: this.getMapChannel('LAYER_ADDED_CONFIRMED'),
+				channel : this._buildChannel(this.mapChannel, 'LAYER_ADDED_CONFIRMED'),
 				callback: '_subLayerAddedQueryOnMap',
 				options: options
 			},{
-				channel: this.getMapChannel('LAYER_REMOVED_CONFIRMED'),
+				channel : this._buildChannel(this.mapChannel, 'LAYER_REMOVED_CONFIRMED'),
 				callback: '_subLayerRemovedQueryOnMap',
 				options: options
 			},{
-				channel: this.getMapChannel('LAYER_QUERYING'),
+				channel : this._buildChannel(this.mapChannel, 'LAYER_QUERYING'),
 				callback: '_subLayerQueryingQueryOnMap'
 			},{
-				channel: this.getMapChannel('LAYER_INFO'),
+				channel : this._buildChannel(this.mapChannel, 'LAYER_INFO'),
 				callback: '_subLayerInfoQueryOnMap'
 			});
 		},
 
 		_definePublications: function() {
+
+			this.inherited(arguments);
 
 			this.publicationsConfig.push({
 				event: 'HIDE_LAYERS_INFO',
@@ -99,11 +115,19 @@ define([
 				channel: this.getChannel('SHOW_LAYERS_INFO')
 			},{
 				event: 'SET_MAP_QUERYABLE_CURSOR',
-				channel: this.getMapChannel('SET_QUERYABLE_CURSOR')
+				channel : this._buildChannel(this.mapChannel, 'SET_QUERYABLE_CURSOR')
+			},{
+				event: 'LOADING',
+				channel : this._buildChannel(this.mapChannel, 'LAYER_LOADING')
+			},{
+				event: 'LOADED',
+				channel : this._buildChannel(this.mapChannel, 'LAYER_LOADED')
 			});
 		},
 
 		_setOwnCallbacksForEvents: function() {
+
+			this.inherited(arguments);
 
 			this.on([
 				this.events.HIDE,
@@ -122,7 +146,7 @@ define([
 
 		_tryToAddOwnTab: function() {
 
-			var tabsChannel = this.tabsDisplayerChannel;
+			const tabsChannel = this.tabsDisplayerChannel;
 			if (!tabsChannel) {
 				console.warn('QueryOnMap "%s" tried to add itself as a tab, but no TabsDisplayer channel was found',
 					this.getChannel());
@@ -132,7 +156,7 @@ define([
 				return;
 			}
 
-			this._publish(this._buildChannel(tabsChannel, this._tabsDisplayerActions.ADD_TAB), {
+			this._publish(this._buildChannel(tabsChannel, 'ADD_TAB'), {
 				title: this.i18n.layersQueryResults,
 				iconClass: 'fa fa-info',
 				channel: this.getChannel()
@@ -141,7 +165,7 @@ define([
 
 		_tryToFocusOwnTab: function() {
 
-			var tabsChannel = this.tabsDisplayerChannel;
+			const tabsChannel = this.tabsDisplayerChannel;
 			if (!tabsChannel) {
 				console.warn('QueryOnMap "%s" tried to focus own tab, but no TabsDisplayer channel was found',
 					this.getChannel());
@@ -150,7 +174,7 @@ define([
 			}
 
 			if (!this._showTabChannel) {
-				this._showTabChannel = this._buildChannel(tabsChannel, this._tabsDisplayerActions.SHOW_TAB);
+				this._showTabChannel = this._buildChannel(tabsChannel, 'SHOW_TAB');
 			}
 
 			this._publish(this._showTabChannel, {
@@ -168,9 +192,7 @@ define([
 			this._emitEvt('HIDE_LAYERS_INFO');
 
 			if (this._queryableLayersLoaded) {
-				this._emitEvt('LOADING', {
-					global: true
-				});
+				this._emitEvt('LOADING');
 			}
 		},
 

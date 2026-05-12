@@ -79,9 +79,9 @@ define([
 
 		postMixInProperties: function() {
 
-			this.inherited(arguments);
-
 			this._mixinInputProps();
+
+			this.inherited(arguments);
 		},
 
 		_mixinInputProps: function() {

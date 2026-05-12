@@ -167,7 +167,7 @@ define([
 		_subRequested: function(req) {
 
 			var queryObj = req.query,
-				text = (queryObj.text && queryObj.text.text) || '';
+				text = (queryObj?.text && queryObj?.text?.text) || '';
 
 			this.textSearch.setValue(text);
 		},
@@ -224,11 +224,13 @@ define([
 			var requesterId = action === '_suggest' ? this.getOwnChannel() : null;
 
 			this._emitEvt('REQUEST', {
+				method: this.methodSuggest,
 				target: this._getTarget(),
 				action: action,
 				requesterId: requesterId,
-				method: this.methodSuggest,
-				query: req.data
+				params: {
+					query: req.data
+				}
 			});
 		},
 

@@ -12,7 +12,8 @@ define([
 	, _Show
 	, _Store
 	, put
-){
+) {
+
 	return declare([_Module, _Show, _Store], {
 		//	summary:
 		//		Módulo encargado de procesar las notificaciones de los demás.
@@ -22,9 +23,9 @@ define([
 		//	config: Object
 		//		Opciones por defecto.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				actions: {
 					SHOW: "show",
 					HIDE: "hide",
@@ -49,7 +50,9 @@ define([
 				}
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {

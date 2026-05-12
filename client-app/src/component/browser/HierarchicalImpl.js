@@ -194,11 +194,39 @@ define([
 			this._processNewData(response);
 		},
 
+		_processNewItem: function(item, index) {
+
+			if (!item[this.pathProperty]) {
+				item[this.pathProperty] = `root.${item[this.idProperty]}`;
+				item[this.leavesProperty] = 1;
+			}
+
+			this.inherited(arguments);
+		},
+
+		_getHierarchicalItemId: function(item) {
+
+			if (!item) {
+				return;
+			}
+
+			let idProperty;
+			if (this._checkItemBelongRootLevel(item)) {
+				idProperty = item[this.idProperty];
+			} else {
+				idProperty = this.childrenIdProperty ? item[this.childrenIdProperty] : item[this.idProperty];
+			}
+			return idProperty;
+		},
+
 		_addItem: function(item) {
 
-			var idProperty = item[this.idProperty],
-				rowInstance = this._getRowInstance(idProperty);
+			const idProperty = this._getHierarchicalItemId(item);
+			if (!idProperty) {
+				return;
+			}
 
+			const rowInstance = this._getRowInstance(idProperty);
 			if (!rowInstance) {
 				this._addRowItem(item);
 			} else {
@@ -210,8 +238,7 @@ define([
 
 		_addRowItem: function(item) {
 
-			var idProperty = item[this.idProperty];
-
+			const idProperty = this._getHierarchicalItemId(item);
 			this._checkParentAndAddChild(item);
 
 			if (this._checkItemBelongRootLevel(item)) {
@@ -225,7 +252,7 @@ define([
 
 		_updateRow: function(rowInstance, item) {
 
-			var idProperty = item[this.idProperty];
+			const idProperty = this._getHierarchicalItemId(item);
 
 			item = this._mergeRowData(idProperty, item);
 
@@ -242,7 +269,7 @@ define([
 
 		_showRow: function(item) {
 
-			var idProperty = item[this.idProperty],
+			const idProperty = this._getHierarchicalItemId(item),
 				rowInstance = this._getRowInstance(idProperty),
 				itemDoesNotBelongToRootLevel = !this._checkItemBelongRootLevel(item);
 
@@ -300,9 +327,8 @@ define([
 
 		_checkItemBelongRootLevel: function(item) {
 
-			var idProperty = item[this.idProperty],
-				path = item[this.pathProperty],
-				pathLength = path ? path.split(this.pathSeparator).length : null;
+			const path = item?.[this.pathProperty],
+				pathLength = path?.split(this.pathSeparator).length;
 
 			return pathLength <= this.pathLengthMinChildren && pathLength >= this.pathLengthMinParent;
 		},
@@ -335,20 +361,20 @@ define([
 
 			row.children = children;
 			row.pendingChildren = !!leaves;
-			row.leaves = item[this.leavesProperty];
+			row.leaves = leaves;
 		},
 
 		_checkParentAndAddChild: function(item) {
 
-			var idProperty = item[this.idProperty],
+			const idProperty = this._getHierarchicalItemId(item),
 				path = item[this.pathProperty],
-				pathSplit = path.split(this.pathSeparator);
+				pathSplit = path?.split(this.pathSeparator);
 
-			pathSplit.pop();
-
-			if (pathSplit.length <= 1) {
+			if (!pathSplit || pathSplit.length <= this.pathLengthMinChildren) {
 				return;
 			}
+
+			pathSplit.pop();
 
 			var pathParent = pathSplit.join('.'),
 				idPropertyParent = pathParent;
@@ -397,15 +423,10 @@ define([
 
 		_removeHierarchicalRow: function(idProperty) {
 
-			var row = this._getRow(idProperty);
+			const row = this._getRow(idProperty),
+				children = row?.children || [];
 
-			if (!row) {
-				return;
-			}
-
-			var children = row.children;
-
-			for (var i = 0; i < children.length; i++) {
+			for (let i = 0; i < children.length; i++) {
 				this._removeRow(children[i]);
 			}
 		}

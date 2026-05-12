@@ -1,33 +1,26 @@
 define([
-	'd3'
-	, 'dojo/_base/declare'
+	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'dojo/Deferred'
 	, 'dojo/dom-class'
-	, 'dojo/mouse'
-	, 'dojo/on'
 	, 'dojo/promise/all'
+	, 'src/component/map/layer/_D3Expansion'
+	, 'src/component/map/layer/_D3MapProjection'
+	, 'src/component/map/layer/MapLayer'
 	, 'src/component/map/layer/TrackingLine'
-	, 'RWidgets/Utilities'
-	, './_D3Expansion'
-	, './MapLayer'
 ], function(
-	d3
-	, declare
+	declare
 	, lang
-	, aspect
 	, Deferred
 	, domClass
-	, mouse
-	, on
 	, all
-	, TrackingLine
-	, Utilities
 	, _D3Expansion
+	, _D3MapProjection
 	, MapLayer
-){
-	return declare([MapLayer, _D3Expansion], {
+	, TrackingLine
+) {
+
+	return declare([MapLayer, _D3Expansion, _D3MapProjection], {
 		//	summary:
 		//		Implementación de capa para datos de tipo tracking.
 		//	description:
@@ -35,19 +28,15 @@ define([
 
 		//	svgClass: String
 		//		Clase que se asigna al elemento svg.
-		//	svgHoverClass: String
-		//		Clase que se asigna al elemento svg cuando se pasa el ratón sobre él.
-		//	_childHoverClass: String
-		//		Clase que se asigna al contenedor de la capa cuando el ratón está sobre ella.
 		//	drawFullTrack: Boolean
 		//		Flag para dibujar directamente toda la capa.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			this.inherited(arguments);
+
+			const defaultConfig = {
 				svgClass: 'trackingSvg',
-				svgHoverClass: 'onHover',
-				_childHoverClass: 'childIsOnHover',
 
 				drawFullTrack: false,
 
@@ -61,7 +50,7 @@ define([
 
 				ownChannel: 'trackingLayer',
 
-				trackingLayerEvents: {
+				events: {
 					GO_TO_POSITION: 'goToPosition',
 					REDRAW: 'redraw',
 					ADJUST_POSITION: 'adjustPosition',
@@ -69,49 +58,28 @@ define([
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
 					GET_CLICKED_POINTS_IDS: 'getClickedPointsIds'
 				},
-				trackingLayerActions: {
+
+				actions: {
 					DRAW_ALL: 'drawAll',
 					GO_TO_POSITION: 'goToPosition',
 					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
-					ZOOM_SET: 'zoomSet',
-					ZOOM_START: 'zoomStart',
 					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
 				}
 			};
 
-			lang.mixin(this, this.config, args);
-
-			this._expandD3(d3);
-
-			aspect.before(this, '_mixEventsAndActions', lang.hitch(this, this._mixTrackingLayerEventsAndActions));
-			aspect.after(this, '_defineSubscriptions', lang.hitch(this, this._defineTrackingLayerSubscriptions));
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
-		_mixTrackingLayerEventsAndActions: function() {
+		_defineSubscriptions: function() {
 
-			lang.mixin(this.events, this.trackingLayerEvents);
-			lang.mixin(this.actions, this.trackingLayerActions);
-
-			delete this.trackingLayerEvents;
-			delete this.trackingLayerActions;
-		},
-
-		_defineTrackingLayerSubscriptions: function() {
+			this.inherited(arguments);
 
 			var options = {
 				predicate: lang.hitch(this, this._chkLayerAdded)
 			};
 
 			this.subscriptionsConfig.push({
-				channel: this._buildChannel(this.mapChannel, this.actions.ZOOM_START),
-				callback: '_subZoomStart',
-				options: options
-			},{
-				channel: this._buildChannel(this.mapChannel, this.actions.ZOOM_SET),
-				callback: '_subZoomSet',
-				options: options
-			},{
 				channel: this.getChannel('GO_TO_POSITION'),
 				callback: '_subGoToPosition',
 				options: options
@@ -126,30 +94,12 @@ define([
 
 		_initialize: function() {
 
-			var transform = d3.geoTransform({
-				point: lang.partial(function(self, x, y) {
-
-					self._projectPoint(x, y, self._mapInstance, this.stream);
-				}, this)
-			});
-
-			this._pathGenerator = d3.geoPath(transform);
-		},
-
-		_projectPoint: function(x, y, map, stream) {
-
-			var point = map.latLngToLayerPoint(this._getLatLng(y, x));
-			stream.point(point.x, point.y);
-		},
-
-		_getLatLng: function(lat, lng) {
-
-			if (lat && lng) {
-				return new L.latLng(lat, lng);
-			}
+			this._pathGenerator = this._getGeoPath();
 		},
 
 		_afterLayerAdded: function() {
+
+			this.inherited(arguments);
 
 			if (!this._svg) {
 				this._createElements();
@@ -159,57 +109,44 @@ define([
 
 		_createElements: function() {
 
-			this._svg = d3.select(this._mapInstance.getPanes().overlayPane)
-				.append('svg:svg')
-					.attr('class', this.svgClass);
-
-			this._createEventListeners();
+			this._svg = this._getSvgElement();
+			this._svg.attr('class', this.svgClass);
 		},
 
 		_afterLayerRemoved: function() {
 
-			//this.clear();
+			this._clear();
+		},
+
+		_clear: function() {
+
 			this._svg.remove();
 			this._svg = null;
-		},
 
-		_createEventListeners: function() {
+			Object.keys(this._trackingLineInstances).forEach((featureId) => {
 
-			this._onEnterCallback && this._onEnterCallback.remove();
-			this._onLeaveCallback && this._onLeaveCallback.remove();
+				const lineInstance = this._trackingLineInstances[featureId],
+					lineOwnChannel = lineInstance.getOwnChannel();
 
-			var svgNode = this._svg.node();
+				this._publish(lineInstance.getChannel('DESTROY'));
 
-			this._onEnterCallback = on(svgNode, mouse.enter, lang.hitch(this, this._addHoverEffects));
-			this._onLeaveCallback = on(svgNode, mouse.leave, lang.hitch(this, this._removeHoverEffects));
-		},
+				delete this._trackingLineInstances[featureId];
+				delete this._trackingLineInstancesByChannel[lineOwnChannel];
 
-		_addHoverEffects: function() {
+				this._removeSubscriptions(this._subsToLines[lineOwnChannel]);
+				delete this._subsToLines[lineOwnChannel];
 
-			var svgNode = this._svg.node(),
-				svgParentNode = svgNode && svgNode.parentNode;
-
-			svgParentNode && domClass.add(svgParentNode, this._childHoverClass);
-
-			this._svg
-				.attr('class', this.svgClass + ' ' + this.svgHoverClass)
-				.moveToFront();
-		},
-
-		_removeHoverEffects: function() {
-
-			var svgNode = this._svg.node(),
-				svgParentNode = svgNode && svgNode.parentNode;
-
-			svgParentNode && domClass.remove(svgParentNode, this._childHoverClass);
-
-			this._svg.attr('class', this.svgClass);
+				this._removePublications(this._pubsToLines[lineOwnChannel]);
+				delete this._pubsToLines[lineOwnChannel];
+			});
 		},
 
 		_addNewData: function(geoJsonData, moduleContext) {
 
-			if (geoJsonData.features) {
-				this._svg && this.addData(geoJsonData, this);
+			if (geoJsonData?.features) {
+				if (geoJsonData.features.length && this._svg) {
+					this.addData(geoJsonData, this);
+				}
 			} else {
 				console.error('Unexpected data format', geoJsonData);
 			}
@@ -271,20 +208,17 @@ define([
 
 		_getFeatureId: function(feature) {
 
-			var props = feature && feature.properties,
-				element = props && props[this._elementPropName];
-
-			return element && element[this._elementIdPropName];
+			return feature?.properties?.[this._elementPropName]?.[this._elementIdPropName];
 		},
 
 		_createTrackingLine: function() {
 
 			return new TrackingLine({
 				parentChannel: this.getChannel(),
-				fillColor: this.fillColor,	// TODO este y otros parámetros seteables desde fuera, deberían pasarse en un objeto para mezclar
+				fillColor: this.fillColor,
 				svg: this._svg,
 				pathGenerator: this._pathGenerator,
-				mapInstance: this._mapInstance
+				mapChannel: this.mapChannel
 			});
 		},
 
@@ -386,34 +320,28 @@ define([
 			}
 		},
 
-		_subZoomStart: function(res) {
-// TODO unificar con listenZoom
-
-			this._onZoomStart(res);
-		},
-
 		_onZoomStart: function(res) {
 
 			this._emitEvt('LAYER_LOADING');
 			this._svg.attr('display', 'none');
-			this._removeHoverEffects();
 		},
 
-		_subZoomSet: function(res) {
-// TODO unificar con listenZoom
+		_onZoomSet: function(zoom, res) {
 
-			this._onZoomSet(res);
-		},
+			const query = {
+				terms: {
+					zoomLevel: zoom
+				}
+			};
 
-		_onZoomSet: function(res) {
-
-			this._emitEvt('ADD_TO_QUERY', {
-				query: {
-					terms: {
-						zoomLevel: res.zoom
-					}
+			this._emitEvt('ADD_REQUEST_PARAMS', {
+				target: this.target,
+				params: {
+					query
 				}
 			});
+
+			this._redraw();
 		},
 
 		_getAllDrawnDfd: function() {
@@ -551,13 +479,17 @@ define([
 				return;
 			}
 
+			const path = this.infoTargetPathParams ?? {};
+
+			const query = {
+				ids
+			};
+
 			this._emitEvt('REQUEST', {
 				method: 'POST',
 				target: target,
 				action: '_mget',
-				query: {
-					ids: ids
-				},
+				params: {path, query},
 				requesterId: this.getOwnChannel()
 			});
 		},
@@ -572,7 +504,7 @@ define([
 			this._emitEvt('LAYER_INFO', {
 				layerId: this.layerId,
 				layerLabel: this.layerLabel,
-				info: info
+				info
 			});
 		}
 	});

@@ -15,16 +15,18 @@ define([
 		//		Permite interpretar las configuraciones de capas procedentes del servicio atlas, para generar
 		//		configuraciones de capa que puedan mostrarse en el mapa.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				layerIdSeparator: '_',
 				themeSeparator: '-',
 				_layerInstances: {}, // capas de las que hemos creado instancia (no se borran, se reciclan)
 				defaultLayerItemState: true
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_getLayerDefinitionByProtocol: function(atlasLayer) {
@@ -260,16 +262,17 @@ define([
 
 		_getMapLayerComponentConfiguration: function(atlasItem) {
 
-			var layerId = this._createLayerId(atlasItem),
+			const layerId = this._createLayerId(atlasItem),
 				layerLabel = this._createLayerLabel(atlasItem),
+				mapChannel = this.mapChannel,
 				innerLayerDefinition = this._getLayerDefinitionByProtocol(atlasItem);
 
 			return {
 				parentChannel: this.getChannel(),
-				mapChannel: this.getMapChannel ? this.getMapChannel() : null,
-				innerLayerDefinition: innerLayerDefinition,
-				layerId: layerId,
-				layerLabel: layerLabel,
+				mapChannel,
+				innerLayerDefinition,
+				layerId,
+				layerLabel,
 				queryable: atlasItem.queryable,
 				refresh: atlasItem.refresh,
 				dimensions: this._getAtlasLayerDimensions(atlasItem)
@@ -300,9 +303,9 @@ define([
 
 		_createLayerId: function(layerItem) {
 
-			var themeInspire = layerItem.themeInspire ? layerItem.themeInspire.code : 'default';
+			const themeInspire = layerItem?.themeInspire ? layerItem.themeInspire.code : 'default';
 
-			return themeInspire + this.themeSeparator + layerItem.name + this.layerIdSeparator + layerItem.id;
+			return themeInspire + this.themeSeparator + layerItem?.name + this.layerIdSeparator + layerItem?.id;
 		},
 
 		_createLayerLabel: function(layerItem) {

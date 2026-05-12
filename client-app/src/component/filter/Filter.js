@@ -39,7 +39,6 @@ define([
 					AVAILABLE_FACETS: "availableFacets",
 					RESET: "reset",
 					RESETTED: "resetted",
-					//REQUEST_FILTER: "requestFilter",
 					CHANGED_MODEL: "changedModel",
 					DESERIALIZE: "deserialize",
 					SERIALIZE: "serialize",
@@ -64,8 +63,8 @@ define([
 			this.modelConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: this._getTarget(),
-				noSerializeNullValue: true,
-				filterSchema: true,
+				noSerializeNullValue: false,
+				idForGet: '_search/_schema',
 				props: {
 					serializeAdditionalProperties: true
 				}
@@ -83,9 +82,6 @@ define([
 			},{
 				channel: this.getChannel("REFRESH"),
 				callback: "_subRefresh"
-			/*},{
-				channel: this.getChannel("REQUEST_FILTER"),
-				callback: "_subRequestFilter"*/
 			},{
 				channel: this.getChannel("SERIALIZE"),
 				callback: "_subSerialize"
@@ -314,11 +310,6 @@ define([
 			this._request(req);
 		},
 
-		/*_subRequestFilter: function(req) {
-
-			this._request(req);
-		},*/
-
 		_request: function(req) {
 
 			this._lastRequest = this._getRequestObj(req.data);
@@ -348,21 +339,23 @@ define([
 			this._once(this.getChannel("AVAILABLE"), lang.hitch(this, this._emitEvt, 'REFRESHED'));
 		},
 
-		_updateTarget: function(res) {
+		_onTargetPropSet: function() {
 
-			if (!this._getTarget()) {
+			this.inherited(arguments);
+
+			const target = this._getTarget();
+
+			if (!target) {
 				return;
 			}
 
-			this.modelConfig.target = this._getTarget();
+			this.modelConfig.target = target;
 
 			delete this.modelChannel;
 
 			this._createModel();
 
-			if (res.refresh) {
-				this._refresh();
-			}
+			this._refresh();
 		},
 
 		_getRequestObj: function(query) {

@@ -4,16 +4,16 @@ define([
 	, "dojo/aspect"
 	, "dojo/dom-class"
 	, 'put-selector'
-	, "./_Select"
+	, 'src/component/browser/row/_BrowserRowSelect'
 ], function(
 	declare
 	, lang
 	, aspect
 	, domClass
 	, put
-	, _Select
+	, _BrowserRowSelect
 ){
-	return declare(_Select, {
+	return declare(_BrowserRowSelect, {
 		//	summary:
 		//
 		//	description:

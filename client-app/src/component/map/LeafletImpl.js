@@ -7,11 +7,11 @@ define([
 	, 'leaflet'
 	, 'put-selector'
 	, 'src/redmicConfig'
-	, "./_LeafletImplItfc"
-	, './_LeafletWidgetsManagement'
-	, "./_ListenContainers"
-	, "./_OverlayLayersManagement"
-	, "./Map"
+	, "src/component/map/_LeafletImplItfc"
+	, 'src/component/map/_LeafletWidgetsManagement'
+	, "src/component/map/_ListenContainers"
+	, "src/component/map/_OverlayLayersManagement"
+	, "src/component/map/Map"
 ], function(
 	declare
 	, lang
@@ -34,18 +34,18 @@ define([
 		//	description:
 		//		Proporciona la fachada para trabajar con Leaflet.
 
+		postMixInProperties: function() {
 
-		constructor: function(args) {
-
-			this.config = {
-				queryableClass: "leaflet-queryable",
+			const defaultConfig = {
+				queryableClass: 'leaflet-queryable',
 				omitContainerSizeCheck: false,
-
 				_mapNodeValidSizeInterval: 100,
 				_infoForAddedLayers: {}
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_initialize: function() {
@@ -88,11 +88,12 @@ define([
 
 		_onLayerAdd: function(evt) {
 
-			var layer = evt.layer,
-				layerId = layer._leaflet_id;
+			const layerInstance = evt.layer,
+				layerId = layerInstance._leaflet_id;
 
-			var layerAddReq = {
-				layer: layer,
+			const layerAddReq = {
+				layer: layerInstance,
+				layerId,
 				mapInstance: this.map
 			};
 
@@ -106,8 +107,8 @@ define([
 			if (this._isBaseLayer(layerId)) {
 				this._emitEvt('BASE_LAYER_CHANGE', {
 					success: true,
-					baseLayer: layer,
-					layerId: layerId
+					baseLayer: layerInstance,
+					layerId
 				});
 			}
 		},
@@ -140,6 +141,8 @@ define([
 		},
 
 		_setOwnCallbacksForEvents: function() {
+
+			this.inherited(arguments);
 
 			this._onEvt('PAN', lang.hitch(this, function(evt) {
 
@@ -194,9 +197,15 @@ define([
 
 		_afterMapLoaded: function() {
 
+			this._addContainerListeners();
+		},
+
+		postCreate: function() {
+
+			this.inherited(arguments);
+
 			this._loadBaseLayers();
 			this._loadOptionalLayers();
-			this._addContainerListeners();
 		},
 
 		_onMapNodeValidSize: function() {
@@ -369,6 +378,26 @@ define([
 			if (nodeType && nodeType.toLowerCase() === 'img') {
 				this._onOverlayLayerRemovedFromPane(node);
 			}
+		},
+
+		getLatLng: function(lat, lng) {
+
+			if (!lat || !lng) {
+				return;
+			}
+
+			return new L.latLng(lat, lng);
+		},
+
+		getLayerPoint: function(lat, lng) {
+
+			if (!lat || !lng || !this.map) {
+				return;
+			}
+
+			const latLng = this.getLatLng(lat, lng);
+
+			return this.map.latLngToLayerPoint(latLng);
 		}
 	});
 });

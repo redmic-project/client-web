@@ -23,7 +23,7 @@ define([
 	, 'src/component/form/FormContainerImpl'
 	, 'src/component/layout/TabsDisplayer'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, "src/component/map/layer/_AddFilter"
+	, "src/component/map/layer/_RequestData"
 	, "src/component/map/layer/_ListenBounds"
 	, "src/component/map/layer/_ListenZoom"
 	, "src/component/map/layer/_RadiusOnClick"
@@ -64,7 +64,7 @@ define([
 	, FormContainerImpl
 	, TabsDisplayer
 	, GenericWithTopbarDisplayerImpl
-	, _AddFilter
+	, _RequestData
 	, _ListenBounds
 	, _ListenZoom
 	, _RadiusOnClick
@@ -147,7 +147,8 @@ define([
 					}
 				}],
 
-				gridLayerTarget: redmicConfig.services.distribution,
+				gridLayerDataTarget: redmicConfig.services.distributionData,
+				gridLayerInfoTarget: redmicConfig.services.distributionInfo,
 				elasticTarget: redmicConfig.services.species,
 				taxonsTarget: redmicConfig.services.taxons,
 				speciesListTarget: "speciesDistributionListSpecies",
@@ -163,7 +164,8 @@ define([
 				browserPageSize: 25,
 
 				events: {
-					SET_LAYER_PROPS: "setLayerProps"
+					SET_GRID_LAYER_PROPS: "setGridLayerProps",
+					SET_MARKER_LAYER_PROPS: "setMarkerLayerProps"
 				},
 
 				actions: {
@@ -256,25 +258,19 @@ define([
 			this.d3LayerConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				layerId: "taxonDistribution",
-				target: this.gridLayerTarget + "/" + this.currentGridLayer,
+				currentGridLayer: this.currentGridLayer,
+				target: this.gridLayerDataTarget,
+				infoTarget: this.gridLayerInfoTarget,
 				externalShouldAbortRequest: lang.hitch(this, this._shouldAbortRequestForDataLayer),
-				confidences: this.confidences
+				confidences: this.confidences,
+				minZoom: this.grid5000MinZoom
 			}, this.d3LayerConfig || {}]);
 
 			this.pruneClusterLayerConfig = this._merge([{
 				parentChannel: this.getChannel(),
 				target: redmicConfig.services.citationAll,
-				filterConfig: {
-					initQuery: {
-						returnFields: ["geometry", "id", "uuid", "properties.collect.radius"]/*,
-						terms: {
-							precision: this.precision
-						},
-						z: {
-							min: -5000,
-							max: 5000
-						}*/
-					}
+				targetQueryParams: {
+					returnFields: ["geometry", "id", "uuid", "properties.collect.radius"]
 				},
 				categoryStyle: "bubbles",
 				idProperty: "uuid",
@@ -303,18 +299,19 @@ define([
 			this._createSpeciesCatalog();
 			this._createSpeciesTree();
 			this._createSettingsForm();
-			this._createMapLayers();
+
+			const mapChannel = this.map.getChannel();
+
+			this._createMapLayers(mapChannel);
 
 			this._tabsDisplayer = new TabsDisplayer({
 				parentChannel: this.getChannel()
 			});
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel);
-
 			this.atlasConfig.addTabChannel = this._tabsDisplayer.getChannel('ADD_TAB');
-			this.atlasConfig.getMapChannel = getMapChannel;
+			this.atlasConfig.mapChannel = mapChannel;
 
-			this.queryOnMapConfig.getMapChannel = getMapChannel;
+			this.queryOnMapConfig.mapChannel = mapChannel;
 			this.queryOnMapConfig.tabsDisplayerChannel = this._tabsDisplayer.getChannel();
 		},
 
@@ -367,44 +364,43 @@ define([
 			});
 		},
 
-		_createMapLayers: function() {
+		_createMapLayers: function(mapChannel) {
 
-			var getMapChannel = lang.hitch(this.map, this.map.getChannel),
-				mapChannel = getMapChannel();
+			const parentChannel = this.getChannel();
 
 			this.d3LayerConfig.mapChannel = mapChannel;
 
-			var d3LayerDefinition = declare(declare([GridLayerImpl, _AddFilter, _PublishInfo])
-				.extend(_ListenBounds)).extend(_ListenZoom);
-			this.gridLayer = new d3LayerDefinition(this.d3LayerConfig);
+			this.gridLayer = new declare([
+				GridLayerImpl, _RequestData, _PublishInfo, _ListenBounds, _ListenZoom
+			])(this.d3LayerConfig);
 
 			this.pruneClusterLayerConfig.mapChannel = mapChannel;
 
-			var pruneClusterLayerDef = declare(declare([PruneClusterLayerImpl, _AddFilter, _RadiusOnClick])
-				.extend(_ListenBounds)).extend(_ListenZoom);
-			this.pruneClusterLayer = new pruneClusterLayerDef(this.pruneClusterLayerConfig);
+			this.pruneClusterLayer = new declare([
+				PruneClusterLayerImpl, _RequestData, _RadiusOnClick, _ListenBounds, _ListenZoom
+			])(this.pruneClusterLayerConfig);
 
 			this.grid5000Layer = new WmsLayerImpl({
-				parentChannel: this.getChannel(),
-				mapChannel: mapChannel,
+				parentChannel,
+				mapChannel,
 				innerLayerDefinition: 'grid5000m'
 			});
 
 			this.grid1000Layer = new WmsLayerImpl({
-				parentChannel: this.getChannel(),
-				mapChannel: mapChannel,
+				parentChannel,
+				mapChannel,
 				innerLayerDefinition: 'grid1000m'
 			});
 
 			this.grid500Layer = new WmsLayerImpl({
-				parentChannel: this.getChannel(),
-				mapChannel: mapChannel,
+				parentChannel,
+				mapChannel,
 				innerLayerDefinition: 'grid500m'
 			});
 
 			this.grid100Layer = new WmsLayerImpl({
-				parentChannel: this.getChannel(),
-				mapChannel: mapChannel,
+				parentChannel,
+				mapChannel,
 				innerLayerDefinition: 'grid100m'
 			});
 		},
@@ -412,9 +408,6 @@ define([
 		_defineSubscriptions: function () {
 
 			this.subscriptionsConfig.push({
-				channel : this.map.getChannel("SHOWN"),
-				callback: "_subMapShown"
-			},{
 				channel : this.map.getChannel("ZOOM_SET"),
 				callback: "_subMapZoomSet",
 				options: {
@@ -426,10 +419,10 @@ define([
 		_definePublications: function () {
 
 			this.publicationsConfig.push({
-				event: 'SET_LAYER_PROPS',
+				event: 'SET_GRID_LAYER_PROPS',
 				channel : this.gridLayer.getChannel("SET_PROPS")
 			},{
-				event: 'SET_LAYER_PROPS',
+				event: 'SET_MARKER_LAYER_PROPS',
 				channel : this.pruneClusterLayer.getChannel("SET_PROPS")
 			});
 		},
@@ -437,11 +430,6 @@ define([
 		postCreate: function() {
 
 			this.inherited(arguments);
-
-			this._publish(this.gridLayer.getChannel('SET_PROPS'), {
-				minZoom: this.grid5000MinZoom,
-				currentGridLayer: this.currentGridLayer
-			});
 
 			this._emitEvt('ADD_LAYER', {layer: this.gridLayer});
 			this._emitEvt('ADD_LAYER', {layer: this.pruneClusterLayer});
@@ -489,29 +477,36 @@ define([
 
 		_updateDataLayer: function(/*response*/) {
 
-			var instance = this[this.currentMode < 3 ? "gridLayer" : "pruneClusterLayer"],
-				selectIds = Credentials.get("selectIds");
+			//selectionId = Credentials.get("selectIds")[this.target.replace("/" + this.currentGridLayer, "")];
+			const selectIds = Credentials.get("selectIds"),
+				selection = selectIds?.[this.selectionTarget];
 
-			if (selectIds && selectIds[this.selectionTarget]) {
+			if (!selection) {
+				return;
+			}
 
-				this.selectIds = selectIds[this.selectionTarget];
+			this.selection = selection;
 
-				var obj = {
-					"terms": {
-						"selection": this.selectIds
+			if (this.currentMode === 3) {
+				this._emitEvt('SET_MARKER_LAYER_PROPS', {
+					targetQueryParams: {
+						terms: {
+							selection: this.selection
+						},
+						precision: this.precision || null,
 					}
-				};
-
-				// TODO cuando los terms en el schema esten con propiedades borrar el if
-				if (this.currentMode === 3) {
-					if (this.precision) {
-						obj.precision = this.precision;
-					}
-				} else {
-					obj.terms.confidences = this.confidences;
-				}
-
-				this._publish(instance.getChannel("REFRESH"), obj);
+				});
+			} else {
+				this._emitEvt('SET_GRID_LAYER_PROPS', {
+					targetQueryParams: {
+						terms: {
+							selection: this.selection,
+							confidences: this.confidences
+						},
+						qFlags: [1]
+					},
+					selection: this.selection
+				});
 			}
 		},
 
@@ -520,11 +515,6 @@ define([
 			this._publish(this.gridLayer.getChannel("CLEAR"));
 
 			this._publish(this.pruneClusterLayer.getChannel("CLEAR"));
-		},
-
-		_subMapShown: function(response) {
-
-			this.mapInstance = response.instance;
 		},
 
 		_subMapZoomSet: function(response) {
@@ -539,7 +529,7 @@ define([
 			var limit = this[this.currentGridLayer + "MinZoom"],
 				zoom = this._currentZoomLevel;
 
-			this._emitEvt('SET_LAYER_PROPS', {
+			this._emitEvt('SET_GRID_LAYER_PROPS', {
 				minZoom: limit
 			});
 
@@ -567,7 +557,7 @@ define([
 				parseData = function(resWrapper) {
 					obj.feature = resWrapper.res.data;
 
-					if (obj.feature.properties.activityId) {
+					if (obj.feature.properties?.activityId) {
 						this._once(this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE),
 							lang.hitch(this, parseDataActivity));
 
@@ -590,7 +580,7 @@ define([
 			this._once(this._buildChannel(this.storeChannel, this.actions.ITEM_AVAILABLE), lang.hitch(this, parseData));
 
 			this._emitEvt("GET", {
-				target: redmicConfig.services.citationAll,
+				target: redmicConfig.services.citationInfo,
 				requesterId: this.getOwnChannel(),
 				id: data.feature.uuid
 			});
@@ -613,16 +603,12 @@ define([
 
 			this.currentGridLayer = newLayer;
 
-			this._emitEvt('SET_LAYER_PROPS', {
+			this._emitEvt('SET_GRID_LAYER_PROPS', {
 				minZoom: this[this.currentGridLayer + "MinZoom"],
 				currentGridLayer: this.currentGridLayer
 			});
 
 			this._emitEvt('ADD_LAYER', {layer: layerInstance});
-
-			this._publish(this.gridLayer.getChannel("CHANGE_TARGET"), {
-				target: this.gridLayerTarget + "/" + this.currentGridLayer
-			});
 
 			this._checkZoomLevel();
 		},
@@ -641,7 +627,7 @@ define([
 
 			this.currentMode = newMode;
 
-			this._emitEvt('SET_LAYER_PROPS', {
+			this._emitEvt('SET_GRID_LAYER_PROPS', {
 				currentMode: this.currentMode
 			});
 
@@ -685,38 +671,27 @@ define([
 
 			this.confidences = confidences;
 
-			// TODO cuando los terms en el schema esten con propiedades, cambiar lo de selection
-			this._publish(this.gridLayer.getChannel("REFRESH"), {
-				"terms": {
-					"selection": this.selectIds,
-					"confidences": this.confidences
-				}
-			});
-
-			this._emitEvt('SET_LAYER_PROPS', {
-				confidences: confidences
+			this._emitEvt('SET_GRID_LAYER_PROPS', {
+				confidences
 			});
 		},
 
 		_changePrecisionSlider: function(value) {
 
-			var obj = {
-				terms: {
-					selection: this.selectIds
-				},
+			const targetQueryParams = {
 				precision: value
 			};
 
-			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
+			this._emitEvt('SET_MARKER_LAYER_PROPS', {targetQueryParams});
 		},
 
 		_changeZSlider: function(value) {
 
-			var obj = {
+			const targetQueryParams = {
 				z: value
 			};
 
-			this._publish(this.pruneClusterLayer.getChannel("REFRESH"), obj);
+			this._emitEvt('SET_MARKER_LAYER_PROPS', {targetQueryParams});
 		},
 
 		_hideInputForm: function(inputKey, hide) {

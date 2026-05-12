@@ -155,6 +155,14 @@ dojoConfig = {
 		name: 'wicket',
 		location: 'dep/wicket',
 		main: 'wicket-leaflet.min'
+	},{
+		name: 'leaflet-georaster',
+		location: 'dep/leaflet-georaster/dist',
+		main: 'georaster-layer-for-leaflet.min'
+	},{
+		name: 'georaster',
+		location: 'dep/georaster/dist',
+		main: 'georaster.browser.bundle.min'
 	}],
 
 	map: {
@@ -170,6 +178,5 @@ dojoConfig = {
 
 	async: true,
 	waitSeconds: 5,
-	requestProvider: 'dojo/request/registry',
 	selectorEngine: 'lite'
 };

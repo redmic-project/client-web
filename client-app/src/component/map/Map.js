@@ -94,7 +94,6 @@ define([
 				defaultCenter: [28.3, -16.0],
 				defaultZoom: 7,
 				initialBounds: [[27.3, -18.3], [29.5, -13.1]],
-				pepe: [1,2,3],
 
 				minZoom: 1,
 				maxZoom: 21,
@@ -103,6 +102,7 @@ define([
 				_optionalLayerKeys: [],
 				_baseLayerKeys: [],
 				_baseLayerInstances: {},
+				_loadingLayers: {},
 
 				_lastAtlasLayerOrder: 0
 			};
@@ -614,12 +614,21 @@ define([
 			this.addButton(button, append);
 		},
 
-		_subLayerLoading: function() {
+		_subLayerLoading: function(_evt, _channelInfo, componentInfo) {
+
+			const loadingLayerOwnChannel = componentInfo.publisherChannel.split(this.channelSeparator).pop();
+			if (this._loadingLayers[loadingLayerOwnChannel]) {
+				return;
+			}
+			this._loadingLayers[loadingLayerOwnChannel] = true;
 
 			this._emitEvt('LOADING');
 		},
 
-		_subLayerLoaded: function() {
+		_subLayerLoaded: function(_evt, _channelInfo, componentInfo) {
+
+			const loadingLayerOwnChannel = componentInfo.publisherChannel.split(this.channelSeparator).pop();
+			delete this._loadingLayers[loadingLayerOwnChannel];
 
 			this._emitEvt('LOADED');
 		},

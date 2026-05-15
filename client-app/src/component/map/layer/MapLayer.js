@@ -23,7 +23,6 @@ define([
 				idProperty: 'id',
 				bounds: null,
 				_mapInstance: null,
-				_errorData: 0,
 				ownChannel: 'mapLayer',
 				events: {
 					ADD_LAYER: 'addLayer',
@@ -239,23 +238,15 @@ define([
 		_dataAvailable: function(response) {
 
 			this.clear();
+			// TODO el contexto pasado como segundo parámetro no se usa, aparentemente, borrarlo si se confirma
+			// TODO se debería unificar _addNewData con addData, y dejar la limpieza de datos al método clear, revisar implementaciones
 			this._addNewData(response.data, this);
 			this._emitEvt('LAYER_LOADED');
-
-			this._resolveLoadedByErrorData();
 		},
 
 		_errorAvailable: function(error) {
 
-			this._errorData++;
-		},
-
-		_resolveLoadedByErrorData: function(response) {
-
-			while (this._errorData !== 0) {
-				this._errorData--;
-				this._emitEvt('LAYER_LOADED');
-			}
+			this._emitEvt('LAYER_LOADED');
 		},
 
 		_chkLayerIsMe: function(response) {

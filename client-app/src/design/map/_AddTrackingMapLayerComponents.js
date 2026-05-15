@@ -31,7 +31,8 @@ define([
 					SET_TRACKING_PROPS: 'setTrackingProps'
 				},
 				_layerInstances: {},
-				_activityIdByUuid: {}
+				_activityIdByUuid: {},
+				_moveTracksTimeout: 100
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
@@ -215,7 +216,13 @@ define([
 
 			this.inherited(arguments);
 
-			let position = res.value,
+			clearTimeout(this._moveTracksTimeoutHandler);
+			this._moveTracksTimeoutHandler = setTimeout(() => this._moveTracks(res.value), this._moveTracksTimeout);
+		},
+
+		_moveTracks: function(value) {
+
+			let position = value,
 				animate = false;
 
 			if (this.timeMode) {

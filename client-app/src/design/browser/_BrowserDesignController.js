@@ -61,6 +61,9 @@ define([
 					multiTemplate: false,
 					select: false,
 					selectionManager: false
+				},
+				actions: {
+					CLEAR: 'clear'
 				}
 			};
 
@@ -102,6 +105,9 @@ define([
 			this.subscriptionsConfig.push({
 				channel : browserInstance.getChannel('BUTTON_EVENT'),
 				callback: '_subBrowserButtonEvent'
+			},{
+				channel : this.getChannel('CLEAR'),
+				callback: '_subClear'
 			});
 		},
 
@@ -111,6 +117,11 @@ define([
 				callbackMethodName = `_${btnId}Callback`;
 
 			this[callbackMethodName]?.(res);
+		},
+
+		_subClear: function() {
+
+			this._publish(this.getComponentInstance('browser').getChannel('CLEAR'));
 		},
 
 		_onBrowserDesignTitlePropSet: function(evt) {

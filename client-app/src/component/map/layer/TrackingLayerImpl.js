@@ -75,7 +75,7 @@ define([
 
 			this.inherited(arguments);
 
-			var options = {
+			const options = {
 				predicate: lang.hitch(this, this._chkLayerAdded)
 			};
 
@@ -113,88 +113,70 @@ define([
 			this._svg.attr('class', this.svgClass);
 		},
 
-		_afterLayerRemoved: function() {
+		_addNewData: function(geoJsonData) {
 
-			this._clear();
-		},
-
-		_clear: function() {
-
-			this._svg.remove();
-			this._svg = null;
-
-			Object.keys(this._trackingLineInstances).forEach((featureId) => {
-
-				const lineInstance = this._trackingLineInstances[featureId],
-					lineOwnChannel = lineInstance.getOwnChannel();
-
-				this._publish(lineInstance.getChannel('DESTROY'));
-
-				delete this._trackingLineInstances[featureId];
-				delete this._trackingLineInstancesByChannel[lineOwnChannel];
-
-				this._removeSubscriptions(this._subsToLines[lineOwnChannel]);
-				delete this._subsToLines[lineOwnChannel];
-
-				this._removePublications(this._pubsToLines[lineOwnChannel]);
-				delete this._pubsToLines[lineOwnChannel];
-			});
-		},
-
-		_addNewData: function(geoJsonData, moduleContext) {
-
-			if (geoJsonData?.features) {
-				if (geoJsonData.features.length && this._svg) {
-					this.addData(geoJsonData, this);
-				}
-			} else {
-				console.error('Unexpected data format', geoJsonData);
-			}
+			this.addData(geoJsonData);
 		},
 
 		addData: function(featureCollection) {
 
-			var features = featureCollection.features;
+			this._createDataAvailableDfdIfNeeded();
 
-			for (var i = 0; i < features.length; i++) {
-				var feature = features[i],
-					geometry = feature.geometry,
-					geometryType = geometry && geometry.type;
-
-				if (geometryType === 'LineString' || geometryType === 'Point') {
-					this._addFeatureToTrackingLine(feature);
-				} else {
-					console.error('Geometries received are not valid');
-					return;
-				}
+			const features = featureCollection?.features;
+			if (!features) {
+				console.error('Unexpected data format', featureCollection);
+				this._dfdDataAvailable.reject();
+				return;
 			}
 
-			if (this._dfdDataAvailable && !this._dfdDataAvailable.isFulfilled()) {
+			if (!features.length) {
+				this._dfdDataAvailable.reject();
+				return;
+			}
+
+			features.every(feature => this._addFeatureData(feature));
+
+			if (!this._dfdDataAvailable.isFulfilled()) {
 				this._dfdDataAvailable.resolve();
 			}
+		},
 
-			var position;
-			if (this._lastPosition !== undefined) {
-				position = this._lastPosition;
-			} else {
-				position = this.drawFullTrack ? Number.POSITIVE_INFINITY : 0;
+		_createDataAvailableDfdIfNeeded: function() {
+
+			if (this._dfdDataAvailable) {
+				return;
 			}
 
-			this._drawUntilPosition({
-				position: position
-			});
+			this._dfdDataAvailable = new Deferred();
+			this._dfdDataAvailable.then(null, () => this._emitEvt('LAYER_LOADED'));
+		},
+
+		_addFeatureData: function(feature) {
+
+			const validGeometryTypes = ['LineString', 'Point'],
+				geometryType = feature.geometry?.type;
+
+			if (!validGeometryTypes.includes(geometryType)) {
+				console.error('Received feature geometry is not valid', feature);
+				this._dfdDataAvailable.reject();
+				return false;
+			}
+
+			this._addFeatureToTrackingLine(feature);
+			return true;
 		},
 
 		_addFeatureToTrackingLine: function(feature) {
 
-			var featureId = this._getFeatureId(feature),
-				lineInstance = this._trackingLineInstances[featureId];
+			const featureId = this._getFeatureId(feature);
+
+			let lineInstance = this._trackingLineInstances[featureId];
 
 			if (!lineInstance) {
 				lineInstance = this._createTrackingLine();
-				var lineId = lineInstance.getOwnChannel();
-
 				this._trackingLineInstances[featureId] = lineInstance;
+
+				const lineId = lineInstance.getOwnChannel();
 				this._trackingLineInstancesByChannel[lineId] = lineInstance;
 
 				this._subscribeToTrackingLine(lineInstance, lineId);
@@ -261,15 +243,13 @@ define([
 
 		_drawUntilPosition: function(req) {
 
-			this._getAllDrawnDfd().then(lang.hitch(this, this._onTrackingLinesDrawn));
-			this._lastPosition = req.position;
-
+			this._getAllDrawnDfd().then(linesBounds => this._onAllTrackingLinesDrawn(linesBounds));
 			this._emitEvt('GO_TO_POSITION', req);
 		},
 
 		_subTrackingLineDrawn: function(res) {
 
-			var bounds = res.bounds,
+			const bounds = res.bounds,
 				lineId = res.id,
 				dfd = this._drawnDfds[lineId];
 
@@ -278,7 +258,7 @@ define([
 
 		_subGotTrackingLineClickedPointsIds: function(res) {
 
-			var pointsIds = res.pointsIds || [],
+			const pointsIds = res.pointsIds ?? [],
 				lineId = res.id,
 				dfd = this._gotClickedPointsIdsDfds[lineId];
 
@@ -293,7 +273,7 @@ define([
 
 		_chkLayerAdded: function() {
 
-			return !!this._mapInstance && !!this._svg;
+			return !!(this._mapInstance && this._svg);
 		},
 
 		_subShowDirectionMarkers: function() {
@@ -308,16 +288,23 @@ define([
 
 		_subGoToPosition: function(req) {
 
+			this._createDataAvailableDfdIfNeeded();
+
+			// Si ya sabemos que esta capa no tendrá datos, se ignora el cambio de posición
+			if (this._dfdDataAvailable.isRejected()) {
+				this._emitEvt('LAYER_LOADED');
+				return;
+			}
+
 			this._emitEvt('LAYER_LOADING');
 
-			if (!Object.keys(this._trackingLineInstances).length) {
-				if (!this._dfdDataAvailable || this._dfdDataAvailable.isFulfilled()) {
-					this._dfdDataAvailable = new Deferred();
-				}
-				this._dfdDataAvailable.then(lang.hitch(this, this._drawUntilPosition, req));
-			} else {
-				this._drawUntilPosition(req);
+			// Si es posible que lleguen datos posteriormente, posponemos el cambio de posición
+			if (!Object.keys(this._trackingLineInstances).length && !this._dfdDataAvailable.isResolved()) {
+				this._dfdDataAvailable.then(() => this._drawUntilPosition(req));
+				return;
 			}
+
+			this._drawUntilPosition(req);
 		},
 
 		_onZoomStart: function(res) {
@@ -327,6 +314,11 @@ define([
 		},
 
 		_onZoomSet: function(zoom, res) {
+
+			if (zoom === this._lastZoomLevel) {
+				return;
+			}
+			this._lastZoomLevel = zoom;
 
 			const query = {
 				terms: {
@@ -360,19 +352,18 @@ define([
 
 		_getLinesDfds: function() {
 
-			var dfds = {};
+			const dfds = {};
 
-			for (var lineId in this._trackingLineInstancesByChannel) {
-				var dfd = new Deferred();
-				dfds[lineId] = dfd;
+			for (let lineId in this._trackingLineInstancesByChannel) {
+				dfds[lineId] = new Deferred();
 			}
 
 			return dfds;
 		},
 
-		_onTrackingLinesDrawn: function(linesBounds) {
+		_onAllTrackingLinesDrawn: function(linesBounds) {
 
-			var bounds = this._getGlobalBounds(linesBounds),
+			const bounds = this._getGlobalBounds(linesBounds),
 				transform = 'translate(' + bounds.left + ',' + bounds.top + ')',
 				height = bounds.bottom - bounds.top,
 				width = bounds.right - bounds.left;
@@ -390,13 +381,13 @@ define([
 
 		_getGlobalBounds: function(linesBounds) {
 
-			var minTop = Number.POSITIVE_INFINITY,
+			let minTop = Number.POSITIVE_INFINITY,
 				minLeft = Number.POSITIVE_INFINITY,
 				maxBottom = Number.NEGATIVE_INFINITY,
 				maxRight = Number.NEGATIVE_INFINITY;
 
-			for (var lineId in linesBounds) {
-				var lineBounds = linesBounds[lineId],
+			for (let lineId in linesBounds) {
+				const lineBounds = linesBounds[lineId],
 					lineTop = lineBounds.top,
 					lineLeft = lineBounds.left,
 					lineBottom = lineBounds.bottom,
@@ -427,54 +418,92 @@ define([
 			};
 		},
 
+		_afterLayerRemoved: function() {
+
+			this._clear();
+		},
+
+		_clear: function() {
+
+			this._svg.remove();
+			this._svg = null;
+			this._dfdDataAvailable = null;
+
+			Object.keys(this._trackingLineInstances).forEach(featureId => this._clearTrackingLine(featureId));
+		},
+
+		_clearTrackingLine: function(featureId) {
+
+			const lineInstance = this._trackingLineInstances[featureId],
+				lineOwnChannel = lineInstance.getOwnChannel();
+
+			this._publish(lineInstance.getChannel('DESTROY'));
+
+			delete this._trackingLineInstances[featureId];
+			delete this._trackingLineInstancesByChannel[lineOwnChannel];
+
+			this._removeSubscriptions(this._subsToLines[lineOwnChannel]);
+			delete this._subsToLines[lineOwnChannel];
+
+			this._removePublications(this._pubsToLines[lineOwnChannel]);
+			delete this._pubsToLines[lineOwnChannel];
+		},
+
 		_requestLayerInfo: function(res) {
 
-			var clickedPoint = res.layerPoint;
+			const clickedPoint = res.layerPoint;
 
 			if (!clickedPoint || !this._svg || !this._checkPointIsInsideLayer(clickedPoint)) {
 				this._emitLayerInfo();
 				return;
 			}
 
-			this._getAllClickedPointsIdsGotDfd().then(lang.hitch(this, this._onGotTrackingLinesClickedPointsIds));
+			this._getAllClickedPointsIdsGotDfd().then(clickedPoints =>
+				this._onGotTrackingLinesClickedPointsIds(clickedPoints));
 
 			this._emitEvt('GET_CLICKED_POINTS_IDS', {
-				clickedPoint: clickedPoint
+				clickedPoint
 			});
 		},
 
 		_checkPointIsInsideLayer: function(point) {
 
-			var x = point.x,
-				y = point.y,
-				width = Number.parseFloat(this._svg.attr('width')),
-				height = Number.parseFloat(this._svg.attr('height')),
+			// TODO si hay más transformaciones, puede que no haya que coger el primer item, sino buscar su índice
+			const svgTranslateTransform = this._svg.node().transform.baseVal[0]?.matrix;
+			if (!svgTranslateTransform) {
+				return false;
+			}
 
-				// TODO si hay más transformaciones, puede que no haya que coger el primer item, sino buscar su índice
-				svgTranslateTransform = this._svg.node().transform.baseVal[0].matrix,
-				topLeftX = svgTranslateTransform.e,
-				topLeftY = svgTranslateTransform.f,
+			const topLeftX = svgTranslateTransform.e,
+				topLeftY = svgTranslateTransform.f;
+
+			const width = Number.parseFloat(this._svg.attr('width')),
+				height = Number.parseFloat(this._svg.attr('height')),
 				bottomRightX = topLeftX + width,
 				bottomRightY = topLeftY + height;
+
+			const x = point.x,
+				y = point.y;
 
 			return x > topLeftX && x < bottomRightX && y > topLeftY && y < bottomRightY;
 		},
 
 		_onGotTrackingLinesClickedPointsIds: function(resolvedPointsIds) {
 
-			var idsToRequest = [];
+			const idsToRequest = [];
 
-			for (var key in resolvedPointsIds) {
-				var linePointsIds = resolvedPointsIds[key];
-				idsToRequest = idsToRequest.concat(linePointsIds);
+			for (let key in resolvedPointsIds) {
+				const linePointsIds = resolvedPointsIds[key];
+				linePointsIds.forEach(linePointId => idsToRequest.push(linePointId));
 			}
 
-			this._requestItems(idsToRequest, this.infoTarget || this.target);
+			const target = this.infoTarget ?? this.target;
+			this._requestItems(idsToRequest, target);
 		},
 
 		_requestItems: function(ids, target) {
 
-			if (!ids || !ids.length) {
+			if (!ids?.length) {
 				this._emitLayerInfo();
 				return;
 			}

@@ -3,7 +3,7 @@ define([
 	, 'dojo/_base/lang'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
-	, 'src/component/map/_StaticLayersManagement'
+	, 'src/component/map/mixin/_StaticLayersManagement'
 	, 'src/component/map/_MapItfc'
 	, 'uuid'
 ], function(

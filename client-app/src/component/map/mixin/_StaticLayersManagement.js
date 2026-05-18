@@ -2,7 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/Deferred'
 	, 'put-selector'
-	, 'src/component/map/layer/_LayerProtocols'
+	, 'src/component/mapLayer/mixin/_LayerProtocols'
 ], function(
 	declare
 	, Deferred

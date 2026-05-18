@@ -5,9 +5,9 @@ define([
 	, 'leaflet'
 	, 'pruneCluster'
 	, "templates/LoadingArrows"
-	, "./_AnimateMarker"
-	, "./_PruneClusterLayerItfc"
-	, "./MapLayer"
+	, "src/component/mapLayer/mixin/_AnimateMarker"
+	, "src/component/mapLayer/cluster/_PruneClusterLayerItfc"
+	, "src/component/mapLayer/MapLayer"
 
 	, 'awesome-markers'
 ], function(

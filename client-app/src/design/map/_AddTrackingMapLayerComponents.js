@@ -1,10 +1,10 @@
 define([
 	'dojo/_base/declare'
 	, 'moment'
-	, 'src/component/map/layer/_RequestData'
-	, 'src/component/map/layer/_ListenZoom'
-	, 'src/component/map/layer/_PublishInfo'
-	, 'src/component/map/layer/TrackingLayerImpl'
+	, 'src/component/mapLayer/mixin/_RequestData'
+	, 'src/component/mapLayer/mixin/_ListenZoom'
+	, 'src/component/mapLayer/mixin/_PublishInfo'
+	, 'src/component/mapLayer/track/TrackingLayerImpl'
 ], function(
 	declare
 	, moment

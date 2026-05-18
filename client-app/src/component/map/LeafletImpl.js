@@ -8,9 +8,9 @@ define([
 	, 'put-selector'
 	, 'src/redmicConfig'
 	, "src/component/map/_LeafletImplItfc"
-	, 'src/component/map/_LeafletWidgetsManagement'
-	, "src/component/map/_ListenContainers"
-	, "src/component/map/_OverlayLayersManagement"
+	, 'src/component/map/widget/_LeafletWidgetsManagement'
+	, "src/component/map/mixin/_ListenContainers"
+	, "src/component/map/mixin/_OverlayLayersManagement"
 	, "src/component/map/Map"
 ], function(
 	declare

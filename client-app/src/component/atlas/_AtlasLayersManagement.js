@@ -1,8 +1,8 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/map/layer/_PublishInfo'
-	, 'src/component/map/layer/WmsLayerImpl'
+	, 'src/component/mapLayer/mixin/_PublishInfo'
+	, 'src/component/mapLayer/wms/WmsLayerImpl'
 ], function(
 	declare
 	, lang

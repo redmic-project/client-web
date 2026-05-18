@@ -4,10 +4,10 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/dom-class'
 	, 'dojo/promise/all'
-	, 'src/component/map/layer/_D3Expansion'
-	, 'src/component/map/layer/_D3MapProjection'
-	, 'src/component/map/layer/MapLayer'
-	, 'src/component/map/layer/TrackingLine'
+	, 'src/component/mapLayer/track/_D3Expansion'
+	, 'src/component/mapLayer/mixin/_D3MapProjection'
+	, 'src/component/mapLayer/MapLayer'
+	, 'src/component/mapLayer/track/TrackingLine'
 ], function(
 	declare
 	, lang

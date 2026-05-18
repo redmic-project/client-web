@@ -2,9 +2,9 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, 'leaflet'
-	, "./_AnimateMarker"
-	, "./_GeoJsonLayerItfc"
-	, "./MapLayer"
+	, "src/component/mapLayer/mixin/_AnimateMarker"
+	, "src/component/mapLayer/marker/_GeoJsonLayerItfc"
+	, "src/component/mapLayer/MapLayer"
 
 	, 'awesome-markers'
 ], function(

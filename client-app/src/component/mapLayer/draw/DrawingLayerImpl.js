@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, 'leaflet'
-	, "./MapLayer"
+	, 'src/component/mapLayer/MapLayer'
 
 	, 'L-draw'
 ], function(

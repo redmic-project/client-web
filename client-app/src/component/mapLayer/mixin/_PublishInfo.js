@@ -1,7 +1,7 @@
 define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "./_PublishInfoItfc"
+	, "src/component/mapLayer/mixin/_PublishInfoItfc"
 ], function(
 	declare
 	, lang

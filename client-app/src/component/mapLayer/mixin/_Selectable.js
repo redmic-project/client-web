@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/lang"
 	, "dojo/aspect"
 	, "src/component/base/_Selection"
-	, "./_SelectableItfc"
+	, "src/component/mapLayer/mixin/_SelectableItfc"
 ], function(
 	declare
 	, lang

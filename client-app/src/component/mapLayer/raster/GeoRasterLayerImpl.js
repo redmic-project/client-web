@@ -3,7 +3,7 @@ define([
 	, 'dojo/Deferred'
 	, 'georaster'
 	, 'leaflet-georaster'
-	, 'src/component/map/layer/MapLayer'
+	, 'src/component/mapLayer/MapLayer'
 ], function(
 	declare
 	, Deferred

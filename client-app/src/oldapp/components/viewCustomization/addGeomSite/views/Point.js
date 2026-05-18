@@ -3,8 +3,8 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "src/component/map/layer/GeoJsonLayerImpl"
-	, "src/component/map/layer/_Editable"
+	, "src/component/mapLayer/marker/GeoJsonLayerImpl"
+	, "src/component/mapLayer/mixin/_Editable"
 ], function (
 	_BaseGeometryForm
 	, declare

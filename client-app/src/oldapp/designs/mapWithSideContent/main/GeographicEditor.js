@@ -26,11 +26,11 @@ define([
 	, "src/component/layout/dataDisplayer/DataDisplayer"
 	, 'src/component/layout/TabsDisplayer'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, "src/component/map/layer/GeoJsonLayerImpl"
-	, "src/component/map/layer/_Editable"
-	, "src/component/map/layer/_RadiusOnSelect"
-	, "src/component/map/layer/_Selectable"
-	, "src/component/map/layer/_SelectOnClick"
+	, "src/component/mapLayer/marker/GeoJsonLayerImpl"
+	, "src/component/mapLayer/mixin/_Editable"
+	, "src/component/mapLayer/mixin/_RadiusOnSelect"
+	, "src/component/mapLayer/mixin/_Selectable"
+	, "src/component/mapLayer/mixin/_SelectOnClick"
 	, "src/component/mapQuery/QueryOnMap"
 	, "src/component/search/TextImpl"
 	, "templates/CitationPopup"

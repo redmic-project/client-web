@@ -4,8 +4,8 @@ define([
 	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 	, 'src/component/base/_Module'
-	, 'src/component/map/layer/_TrackingDataManagement'
-	, 'src/component/map/layer/_TrackingMarkersManagement'
+	, 'src/component/mapLayer/track/_TrackingDataManagement'
+	, 'src/component/mapLayer/track/_TrackingMarkersManagement'
 	, 'RWidgets/Utilities'
 ], function(
 	d3

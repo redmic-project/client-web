@@ -17,8 +17,8 @@ define([
 	, "src/component/browser/bars/Total"
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
 	, 'src/component/layout/TabsDisplayer'
-	, "src/component/map/layer/GeoJsonLayerImpl"
-	, "src/component/map/layer/_RequestData"
+	, "src/component/mapLayer/marker/GeoJsonLayerImpl"
+	, "src/component/mapLayer/mixin/_RequestData"
 	, "src/component/mapQuery/QueryOnMap"
 	, "src/component/search/TextImpl"
 	, "templates/ActivityList"

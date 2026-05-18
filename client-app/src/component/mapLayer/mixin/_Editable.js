@@ -4,7 +4,7 @@ define([
 	, "dojo/aspect"
 	, "dojo/query"
 	, "RWidgets/Utilities"
-	, "src/component/map/layer/_RadiusCommons"
+	, "src/component/mapLayer/mixin/_RadiusCommons"
 ], function(
 	declare
 	, lang

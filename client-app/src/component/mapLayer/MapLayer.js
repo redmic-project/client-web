@@ -2,7 +2,7 @@ define([
 	'dojo/_base/declare'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Store'
-	, 'src/component/map/layer/_MapLayerItfc'
+	, 'src/component/mapLayer/_MapLayerItfc'
 ], function(
 	declare
 	, _Module

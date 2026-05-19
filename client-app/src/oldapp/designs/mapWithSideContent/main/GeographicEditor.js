@@ -115,7 +115,6 @@ define([
 			this.formConfig = this._merge([{
 				target: this.target,
 				idProperty: this.idProperty,
-				i18n: this.i18n,
 				title: this.i18n.modelTitle,
 				parentChannel: this.getChannel(),
 				propertiesToListen: ["geometry/coordinates", "properties/radius"],

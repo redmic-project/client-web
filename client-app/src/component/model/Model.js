@@ -233,13 +233,23 @@ define([
 		_itemAvailable: function(res, _resWrapper) {
 
 			const schema = res.data?.schema ?? res.data;
+			if (!schema) {
+				console.error('Missing schema for building model!');
+				return;
+			}
 
 			this._buildModelWithSchema(schema);
 		},
 
 		_buildModelWithSchema: function(/*Object*/ schema) {
 
-			this.modelInstance.build(schema).then(lang.hitch(this, this._onModelBuilt));
+			const modelDfd = this.modelInstance.build(schema);
+			if (!modelDfd) {
+				console.error('Failed to build model from schema', schema);
+				return;
+			}
+
+			modelDfd.then(() => this._onModelBuilt());
 		},
 
 		_subSetPropertyValue: function(req) {

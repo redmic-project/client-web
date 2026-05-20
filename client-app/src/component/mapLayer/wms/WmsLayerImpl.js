@@ -1,10 +1,10 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/Deferred'
-	, 'src/component/map/_StaticLayersManagement'
-	, 'src/component/map/layer/_LayerDimensions'
-	, 'src/component/map/layer/_LayerFeatureInfo'
-	, 'src/component/map/layer/MapLayer'
+	, 'src/component/map/mixin/_StaticLayersManagement'
+	, 'src/component/mapLayer/wms/_LayerDimensions'
+	, 'src/component/mapLayer/wms/_LayerFeatureInfo'
+	, 'src/component/mapLayer/MapLayer'
 	, 'templates/ServiceOGCImage'
 ], function(
 	declare

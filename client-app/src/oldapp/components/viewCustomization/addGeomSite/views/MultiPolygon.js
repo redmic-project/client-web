@@ -2,7 +2,7 @@ define([
 	"app/components/viewCustomization/addGeomSite/views/_BaseGeometryForm"
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
-	, "src/component/map/layer/DrawingLayerImpl"
+	, "src/component/mapLayer/draw/DrawingLayerImpl"
 ], function (
 	_BaseGeometryForm
 	, declare

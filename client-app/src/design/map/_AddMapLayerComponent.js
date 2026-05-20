@@ -2,12 +2,12 @@ define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
 	, 'src/component/gateway/MapCenteringGatewayImpl'
-	, 'src/component/map/layer/_RequestData'
-	, 'src/component/map/layer/_ListenBounds'
-	, 'src/component/map/layer/_ListenZoom'
-	, 'src/component/map/layer/_RadiusOnClick'
-	, 'src/component/map/layer/GeoJsonLayerImpl'
-	, 'src/component/map/layer/PruneClusterLayerImpl'
+	, 'src/component/mapLayer/mixin/_RequestData'
+	, 'src/component/mapLayer/mixin/_ListenBounds'
+	, 'src/component/mapLayer/mixin/_ListenZoom'
+	, 'src/component/mapLayer/mixin/_RadiusOnClick'
+	, 'src/component/mapLayer/marker/GeoJsonLayerImpl'
+	, 'src/component/mapLayer/cluster/PruneClusterLayerImpl'
 ], function(
 	declare
 	, lang

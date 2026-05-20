@@ -23,14 +23,14 @@ define([
 	, 'src/component/form/FormContainerImpl'
 	, 'src/component/layout/TabsDisplayer'
 	, 'src/component/layout/genericDisplayer/GenericWithTopbarDisplayerImpl'
-	, "src/component/map/layer/_RequestData"
-	, "src/component/map/layer/_ListenBounds"
-	, "src/component/map/layer/_ListenZoom"
-	, "src/component/map/layer/_RadiusOnClick"
-	, "src/component/map/layer/_PublishInfo"
-	, "src/component/map/layer/GridLayerImpl"
-	, "src/component/map/layer/PruneClusterLayerImpl"
-	, "src/component/map/layer/WmsLayerImpl"
+	, "src/component/mapLayer/mixin/_RequestData"
+	, "src/component/mapLayer/mixin/_ListenBounds"
+	, "src/component/mapLayer/mixin/_ListenZoom"
+	, "src/component/mapLayer/mixin/_RadiusOnClick"
+	, "src/component/mapLayer/mixin/_PublishInfo"
+	, "src/component/mapLayer/grid/GridLayerImpl"
+	, "src/component/mapLayer/cluster/PruneClusterLayerImpl"
+	, "src/component/mapLayer/wms/WmsLayerImpl"
 	, "src/component/mapQuery/QueryOnMap"
 	, "src/component/search/TextImpl"
 	, "src/component/tree/_LazyLoad"

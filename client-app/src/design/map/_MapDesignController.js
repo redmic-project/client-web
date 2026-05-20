@@ -1,7 +1,7 @@
 define([
 	'dojo/_base/declare'
-	, 'src/component/map/_LeafletDraw'
-	, 'src/component/map/_PlaceNamesButton'
+	, 'src/component/map/mixin/_LeafletDraw'
+	, 'src/component/map/mixin/_PlaceNamesButton'
 	, 'src/component/map/LeafletImpl'
 	, 'src/design/_DesignController'
 ], function(

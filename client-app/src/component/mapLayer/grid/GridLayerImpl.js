@@ -2,8 +2,8 @@ define([
 	'd3'
 	, 'dojo/_base/declare'
 	, 'leaflet'
-	, 'src/component/map/layer/_D3MapProjection'
-	, 'src/component/map/layer/MapLayer'
+	, 'src/component/mapLayer/mixin/_D3MapProjection'
+	, 'src/component/mapLayer/MapLayer'
 ], function(
 	d3
 	, declare
@@ -80,7 +80,6 @@ define([
 
 		_addNewData: function(geoJsonData, moduleContext) {
 
-			// todo - hay que limpiar si no llegan datos nuevos
 			if (!this._mapInstance || !geoJsonData?.features?.length) {
 				this.clear();
 				return;

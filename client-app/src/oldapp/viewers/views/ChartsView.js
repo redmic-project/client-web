@@ -22,9 +22,9 @@ define([
 	, "src/component/browser/_Framework"
 	, "src/component/browser/bars/SelectionBox"
 	, "src/component/map/LeafletImpl"
-	, "src/component/map/layer/PruneClusterLayerImpl"
-	, "src/component/map/layer/_Highlightable"
-	, "src/component/map/layer/_Selectable"
+	, "src/component/mapLayer/cluster/PruneClusterLayerImpl"
+	, "src/component/mapLayer/mixin/_Highlightable"
+	, "src/component/mapLayer/mixin/_Selectable"
 	, "templates/SurveyStationDataList"
 ], function (
 	alertify

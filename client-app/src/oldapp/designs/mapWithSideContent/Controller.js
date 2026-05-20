@@ -3,7 +3,7 @@ define([
 	, "dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "src/component/map/LeafletImpl"
-	, "src/component/map/_PlaceNamesButton"
+	, "src/component/map/mixin/_PlaceNamesButton"
 ], function (
 	_Controller
 	, declare

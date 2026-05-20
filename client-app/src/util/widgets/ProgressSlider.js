@@ -364,8 +364,18 @@ define([
 
 		_setValueSlider: function(value) {
 
-			if (value <= this.slider.get('maximum') && value >= this.slider.get('minimum'))
-				this.slider.set('value', value);
+			const minValue = this.slider.get('minimum'),
+				maxValue = this.slider.get('maximum');
+
+			let valueToSet = value;
+
+			if (valueToSet < minValue) {
+				valueToSet = minValue;
+			} else if (valueToSet > maxValue) {
+				valueToSet = maxValue;
+			}
+
+			this.slider.set('value', valueToSet);
 		},
 
 		_resetPlayButton: function() {

@@ -11,9 +11,9 @@ define([
 	, "src/component/browser/_Select"
 	, "src/component/browser/bars/Pagination"
 	, "src/component/layout/dataDisplayer/DataDisplayer"
-	, "src/component/map/layer/_Selectable"
-	, "src/component/map/layer/_SelectOnClick"
-	, "src/component/map/layer/GeoJsonLayerImpl"
+	, "src/component/mapLayer/mixin/_Selectable"
+	, "src/component/mapLayer/mixin/_SelectOnClick"
+	, "src/component/mapLayer/marker/GeoJsonLayerImpl"
 	//, "RWidgets/Utilities"
 ], function(
 	_CompositeInTooltipFromIconKeypad

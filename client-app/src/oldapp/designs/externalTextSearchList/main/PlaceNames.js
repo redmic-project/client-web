@@ -9,7 +9,7 @@ define([
 	, "templates/PlaceNamesList"
 	, "src/component/browser/bars/Pagination"
 	, "src/component/browser/bars/Total"
-	, "src/component/map/layer/GeoJsonLayerImpl"
+	, "src/component/mapLayer/marker/GeoJsonLayerImpl"
 	, "RWidgets/Button"
 ], function(
 	_Main

@@ -1,6 +1,5 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'dojo/query'
 	, 'src/component/base/_Module'
 	, 'src/component/base/_Show'
@@ -15,7 +14,6 @@ define([
 	, 'templates/ObservationStationList'
 ], function(
 	declare
-	, lang
 	, query
 	, _Module
 	, _Show
@@ -54,7 +52,7 @@ define([
 
 			this.inherited(arguments);
 
-			this._onEvt('ME_OR_ANCESTOR_SHOWN', lang.hitch(this, this._onMeOrAncestorShown));
+			this._onEvt('ME_OR_ANCESTOR_SHOWN', () => this._onMeOrAncestorShown());
 		},
 
 		_setConfigurations: function() {
@@ -107,7 +105,7 @@ define([
 				return;
 			}
 
-			showChartsNode.onclick = lang.hitch(this, this._loadObservationSeriesData, popupData);
+			showChartsNode.onclick = () => this._loadObservationSeriesData(popupData);
 		},
 
 		_showObservationsCallback: function(evt) {

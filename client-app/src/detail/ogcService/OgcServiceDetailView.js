@@ -7,7 +7,7 @@ define([
 	, 'src/component/atlas/_AtlasDimensionsManagement'
 	, 'src/component/atlas/_AtlasLayersManagement'
 	, 'src/component/map/LeafletImpl'
-	, 'src/component/map/layer/WmsLayerImpl'
+	, 'src/component/mapLayer/wms/WmsLayerImpl'
 	, 'templates/ServiceOGCTitle'
 	, 'templates/ServiceOGCInfo'
 	, 'templates/ServiceOGCSourceInfo'

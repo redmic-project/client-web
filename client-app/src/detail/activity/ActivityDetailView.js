@@ -2,7 +2,7 @@ define([
 	'src/redmicConfig'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'src/component/map/_ImportWkt'
+	, 'src/component/map/mixin/_ImportWkt'
 	, 'src/component/map/LeafletImpl'
 	, 'src/detail/_CustomLayout'
 	, 'src/detail/_DetailAdministrative'

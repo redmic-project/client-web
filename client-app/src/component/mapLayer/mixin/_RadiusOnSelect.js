@@ -2,7 +2,7 @@ define([
 	"dojo/_base/declare"
 	, "dojo/_base/lang"
 	, "dojo/aspect"
-	, "src/component/map/layer/_RadiusCommons"
+	, "src/component/mapLayer/mixin/_RadiusCommons"
 ], function(
 	declare
 	, lang

@@ -5,8 +5,6 @@ define([
 	, "src/component/mapLayer/mixin/_AnimateMarker"
 	, "src/component/mapLayer/marker/_GeoJsonLayerItfc"
 	, "src/component/mapLayer/MapLayer"
-
-	, 'awesome-markers'
 ], function(
 	declare
 	, lang
@@ -14,7 +12,8 @@ define([
 	, _AnimateMarker
 	, _GeoJsonLayerItfc
 	, MapLayer
-){
+) {
+
 	return declare([MapLayer, _GeoJsonLayerItfc, _AnimateMarker], {
 		//	summary:
 		//		Implementación de capa GeoJSON.

@@ -174,8 +174,6 @@ dojoConfig = {
 		}
 	},
 
-	deps: ['leaflet'],
-
 	async: true,
 	waitSeconds: 5,
 	selectorEngine: 'lite'

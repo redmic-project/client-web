@@ -1,18 +1,13 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'leaflet'
 	, 'src/component/map/widget/_LeafletLayersSelector'
 	, 'src/component/map/widget/_LeafletMeasureTools'
 	, 'src/component/map/widget/_LeafletMiniMap'
 	, 'src/component/map/widget/_LeafletTimeDimension'
 
-	, 'awesome-markers'
-	, 'L-coordinates'
-	, 'L-navBar'
 ], function(
 	declare
-	, lang
 	, L
 	, _LeafletLayersSelector
 	, _LeafletMeasureTools
@@ -21,36 +16,47 @@ define([
 ) {
 
 	return declare([_LeafletLayersSelector, _LeafletMeasureTools, _LeafletMiniMap, _LeafletTimeDimension], {
-		//	summary:
-		//		Incluye y configura widgets para Leaflet.
-		//	description:
-		//		Complementa a la implementación de mapa Leaflet con widgets que amplían su funcionalidad.
+		// summary:
+		//   Incluye y configura widgets para Leaflet.
+		// description:
+		//   Complementa a la implementación de mapa Leaflet con widgets que amplían su funcionalidad.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				zoomControl: true,
 				coordinatesViewer: true,
 				navBar: true,
 				scaleBar: true
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
+		},
+
+		_prepareAddMapWidgets: function() {
+			// summary:
+			//   Requiere dependencias que necesitan la variable L disponible, asegurando que Leaflet ya esté cargado.
+
+			require([
+				'awesome-markers'
+				, 'L-coordinates'
+				, 'L-navBar'
+			], () => this._addMapWidgets());
 		},
 
 		_addMapWidgets: function() {
 
-			this._addZoomControl();
-			this._addCoordinatesViewer();
-			this._addNavBar();
-			this._addScaleBar();
+			this.zoomControl && this._addZoomControl();
+			this.coordinatesViewer && this._addCoordinatesViewer();
+			this.navBar && this._addNavBar();
+			this.scaleBar && this._addScaleBar();
+
+			this.inherited(arguments);
 		},
 
 		_addZoomControl: function() {
-
-			if (!this.zoomControl) {
-				return;
-			}
 
 			L.control.zoom({
 				zoomInTitle: this.i18n.leafletZoomInButton,
@@ -60,11 +66,7 @@ define([
 
 		_addCoordinatesViewer: function() {
 
-			if (!this.coordinatesViewer) {
-				return;
-			}
-
-			var awesomeIcon = L.AwesomeMarkers.icon({
+			const icon = L.AwesomeMarkers.icon({
 				icon: 'bullseye',
 				markerColor: 'darkgreen',
 				prefix: 'fa'
@@ -77,16 +79,12 @@ define([
 				decimalSeperator: ',',
 				useDMS: true,
 				markerProps: {
-					icon: awesomeIcon
+					icon
 				}
 			}).addTo(this.map);
 		},
 
 		_addNavBar: function() {
-
-			if (!this.navBar) {
-				return;
-			}
 
 			L.control.navbar({
 				homeTitle: this.i18n.leafletHomeButton,
@@ -96,10 +94,6 @@ define([
 		},
 
 		_addScaleBar: function() {
-
-			if (!this.scaleBar) {
-				return;
-			}
 
 			L.control.scale({
 				position: 'bottomright',

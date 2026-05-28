@@ -1,35 +1,40 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/kernel'
-	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'leaflet'
 	, 'put-selector'
 ], function(
 	declare
 	, kernel
-	, lang
-	, aspect
 	, L
 	, put
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Incluye y configura widget leaflet-measure para Leaflet.
+		// summary:
+		//   Incluye y configura widget leaflet-measure para Leaflet.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				measureTools: true
+			const defaultConfig = {
+				measureTools: true,
+				measureToolsConfig: {
+					position: 'topright',
+					primaryLengthUnit: 'meters',
+					secondaryLengthUnit: 'kilometers',
+					primaryAreaUnit: 'sqmeters',
+					secondaryAreaUnit: 'hectares'
+				}
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.before(this, '_addMapWidgets', lang.hitch(this, this._addMeasureToolsMapWidgets));
+			this.inherited(arguments);
 		},
 
-		_addMeasureToolsMapWidgets: function() {
+		_addMapWidgets: function() {
+
+			this.inherited(arguments);
 
 			if (!this.measureTools) {
 				return;
@@ -40,25 +45,19 @@ define([
 
 		_addMeasureTools: function() {
 
-			var measureToolsPath = 'leaflet-measure/leaflet-measure.' + kernel.locale;
+			const measureToolsPath = `leaflet-measure/leaflet-measure.${kernel.locale}`;
 
-			require([measureToolsPath], lang.hitch(this, this._onMeasureToolsLoaded));
+			require([measureToolsPath], () => this._onMeasureToolsLoaded());
 
-			this.map.on('measurestart', lang.hitch(this, this._onLeafletMeasureStart));
-			this.map.on('measurefinish', lang.hitch(this, this._onLeafletMeasureFinish));
+			this.map.on('measurestart', evt => this._onLeafletMeasureStart(evt));
+			this.map.on('measurefinish', evt => this._onLeafletMeasureFinish(evt));
 		},
 
 		_onMeasureToolsLoaded: function() {
 
 			this._applyAutoJumpIssuePatch();
 
-			var measureTools = new L.Control.Measure({
-				position: 'topright',
-				primaryLengthUnit: 'meters',
-				secondaryLengthUnit: 'kilometers',
-				primaryAreaUnit: 'sqmeters',
-				secondaryAreaUnit: 'hectares'
-			}).addTo(this.map);
+			const measureTools = new L.Control.Measure(this.measureToolsConfig).addTo(this.map);
 
 			this._reorderMeasureToolsMapButton(measureTools._container);
 		},
@@ -68,7 +67,7 @@ define([
 			// TODO workaround >= v1.8 https://github.com/ljagis/leaflet-measure/issues/171#issuecomment-1137483548
 			L.Control.Measure.include({
 				// set icon on the capture marker
-				_setCaptureMarkerIcon: function () {
+				_setCaptureMarkerIcon: function() {
 					// disable autopan
 					this._captureMarker.options.autoPanOnFocus = false;
 
@@ -84,12 +83,12 @@ define([
 
 		_reorderMeasureToolsMapButton: function(buttonContainerNode) {
 
-			var controlsNode = buttonContainerNode.parentNode,
-				childControlNodes = Array.from(controlsNode.children),
-				desiredPreviousControlNode = childControlNodes.find(function(childNode) {
+			const controlsNode = buttonContainerNode.parentNode,
+				childControlNodes = Array.from(controlsNode.children);
 
-					return childNode.firstChild.title === 'Layers';
-				}) || controlsNode.children[0];
+			const desiredPreviousControlNode = childControlNodes.find(
+				childNode => childNode.firstChild.title === 'Layers'
+			) || controlsNode.children[0];
 
 			if (desiredPreviousControlNode) {
 				put(desiredPreviousControlNode, '+', buttonContainerNode);

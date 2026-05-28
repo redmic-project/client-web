@@ -8,8 +8,6 @@ define([
 	, "src/component/mapLayer/mixin/_AnimateMarker"
 	, "src/component/mapLayer/cluster/_PruneClusterLayerItfc"
 	, "src/component/mapLayer/MapLayer"
-
-	, 'awesome-markers'
 ], function(
 	declare
 	, lang
@@ -20,7 +18,8 @@ define([
 	, _AnimateMarker
 	, _PruneClusterLayerItfc
 	, MapLayer
-){
+) {
+
 	return declare([MapLayer, _PruneClusterLayerItfc, _AnimateMarker], {
 		//	summary:
 		//		Implementación de capa pruneCluster.

@@ -21,8 +21,8 @@ define([
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Incluye y configura widget Leaflet.TimeDimension para Leaflet.
+		// summary:
+		//   Incluye y configura widget Leaflet.TimeDimension para Leaflet.
 
 		constructor: function(args) {
 

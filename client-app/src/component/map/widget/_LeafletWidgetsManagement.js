@@ -15,6 +15,13 @@ define([
 	, _LeafletTimeDimension
 ) {
 
+	// Cargar extensiones de Leaflet de forma estática después de que L esté disponible para corregir compilado
+	require([
+		'awesome-markers'
+		, 'L-coordinates'
+		, 'L-navBar'
+	]);
+
 	return declare([_LeafletLayersSelector, _LeafletMeasureTools, _LeafletMiniMap, _LeafletTimeDimension], {
 		// summary:
 		//   Incluye y configura widgets para Leaflet.

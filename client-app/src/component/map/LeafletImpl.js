@@ -214,7 +214,7 @@ define([
 
 			if (!this._getPreviouslyShown()) {
 				this._resetMapPosition();
-				this._prepareAddMapWidgets?.();
+				this._addMapWidgets?.();
 			}
 		},
 

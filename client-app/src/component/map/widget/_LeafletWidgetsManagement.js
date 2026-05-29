@@ -1,26 +1,22 @@
+require(['leaflet']);
+
 define([
 	'dojo/_base/declare'
-	, 'leaflet'
 	, 'src/component/map/widget/_LeafletLayersSelector'
 	, 'src/component/map/widget/_LeafletMeasureTools'
 	, 'src/component/map/widget/_LeafletMiniMap'
 	, 'src/component/map/widget/_LeafletTimeDimension'
 
+	, 'awesome-markers'
+	, 'L-coordinates'
+	, 'L-navBar'
 ], function(
 	declare
-	, L
 	, _LeafletLayersSelector
 	, _LeafletMeasureTools
 	, _LeafletMiniMap
 	, _LeafletTimeDimension
 ) {
-
-	// Cargar extensiones de Leaflet de forma estática después de que L esté disponible para corregir compilado
-	require([
-		'awesome-markers'
-		, 'L-coordinates'
-		, 'L-navBar'
-	]);
 
 	return declare([_LeafletLayersSelector, _LeafletMeasureTools, _LeafletMiniMap, _LeafletTimeDimension], {
 		// summary:
@@ -40,17 +36,6 @@ define([
 			this._mergeOwnAttributes(defaultConfig);
 
 			this.inherited(arguments);
-		},
-
-		_prepareAddMapWidgets: function() {
-			// summary:
-			//   Requiere dependencias que necesitan la variable L disponible, asegurando que Leaflet ya esté cargado.
-
-			require([
-				'awesome-markers'
-				, 'L-coordinates'
-				, 'L-navBar'
-			], () => this._addMapWidgets());
 		},
 
 		_addMapWidgets: function() {

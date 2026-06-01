@@ -308,8 +308,9 @@ define([
 			//	returns:
 			//		Promesa de la instancia del módulo
 
-			var instanceDfd = new Deferred(),
-				viewDefinitionPath = moduleStoreItem.internPath;
+			const instanceDfd = new Deferred();
+
+			let viewDefinitionPath = moduleStoreItem.internPath;
 
 			// TODO parche para compatibilidad con antiguas rutas parciales, las nuevas ya han de empezar con 'src/' e
 			// incluir la terminación 'View' para ser totalmente explícitos
@@ -317,15 +318,15 @@ define([
 				viewDefinitionPath = 'app' + viewDefinitionPath + 'View';
 			}
 
-			var channelToSubscribe = this._buildChannel(this.credentialsChannel, 'USER_HAS_EDITION_CAPABILITIES');
+			const channelToSubscribe = this._buildChannel(this.credentialsChannel, 'USER_HAS_EDITION_CAPABILITIES');
 			this._once(channelToSubscribe, lang.hitch(this, this._requireViewDefinition, {
-				moduleStoreItem: moduleStoreItem,
-				viewDefinitionPath: viewDefinitionPath,
-				instanceDfd: instanceDfd,
+				moduleStoreItem,
+				viewDefinitionPath,
+				instanceDfd,
 				viewBaseDefinition: _View
 			}));
 
-			var channelToPublish = this._buildChannel(this.credentialsChannel, 'HAS_USER_EDITION_CAPABILITIES');
+			const channelToPublish = this._buildChannel(this.credentialsChannel, 'HAS_USER_EDITION_CAPABILITIES');
 			this._publish(channelToPublish);
 
 			return instanceDfd; // return Object
@@ -333,23 +334,20 @@ define([
 
 		_requireViewDefinition: function(/*Object*/ args, /*Object*/ res) {
 
-			var viewDefinitionPath = args.viewDefinitionPath,
+			const viewDefinitionPath = args.viewDefinitionPath,
 				pathsToRequire = [viewDefinitionPath];
 
 			if (res.editionCapabilities) {
-				var viewDefinitionPathSplitted = viewDefinitionPath.split(this.viewSeparator),
+				const viewDefinitionPathSplitted = viewDefinitionPath.split(this.viewSeparator),
 					viewDefinitionParentPath = viewDefinitionPathSplitted.slice(0, -1);
 
 				viewDefinitionParentPath.push('_Edition');
-				var viewEditionDefinitionPath = viewDefinitionParentPath.join(this.viewSeparator);
+				const viewEditionDefinitionPath = viewDefinitionParentPath.join(this.viewSeparator);
 				pathsToRequire.push(viewEditionDefinitionPath);
 			}
 
-			require(pathsToRequire, lang.hitch(this, this._onViewDefinitionRequired, {
-				moduleStoreItem: args.moduleStoreItem,
-				instanceDfd: args.instanceDfd,
-				viewBaseDefinition: args.viewBaseDefinition
-			}));
+			require(pathsToRequire, (ViewDefinition, EditionDefinition) =>
+				this._onViewDefinitionRequired(args, ViewDefinition, EditionDefinition));
 		},
 
 		_onViewDefinitionRequired: function(
@@ -358,7 +356,7 @@ define([
 			/*Object?*/ EditionDefinition
 		) {
 
-			var moduleStoreItem = args.moduleStoreItem,
+			const moduleStoreItem = args.moduleStoreItem,
 				instanceDfd = args.instanceDfd,
 				viewBaseDefinition = args.viewBaseDefinition,
 				isOuterView = redmicConfig.isOuterPath(moduleStoreItem.id),

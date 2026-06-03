@@ -1268,7 +1268,7 @@ define({
 		, "accessibilityFilterInfo": "The accessibility of an activity determines if the contained data is public or has some kind of restriction for viewing and downloading it. Use this filter to differentiate activities with open data or with some kind of restriction."
 		, "dateLimitsFilterInfo": "Activities have a start date and an end date. Use this filter to find activities that have taken place in a certain time range."
 		, "activityStatusFilterInfo": "The start and end date of an activity determines its status. Use this filter to find activities in different phases of their life cycle."
-		, "bboxFilterInfo": "Activities take place in one location. Use this filter to find activities that contain data about the selected geographic region."
+		, "bboxFilterInfo": "Activities take place in one location. Use this filter to find activities that contain data about the geographic region shown in the map (scroll or change the zoom to adjust it)."
 		, "starredFilterInfo": "Some activities have higher relevance, taking into account the importance of their data. Use this filter to differentiate activities based on this distinctive."
 		, "hasResourceFilterInfo": "Activities can reference external elements (resources), such as downloadable datasets or other related content. Use this filter to differentiate activities according to whether they have associated resources or not."
 		, "programFilterInfo": "Activities can be independent or belong to a project, which also belongs to a program. Use this filter to find activities that belong to a specific program."

@@ -1,27 +1,26 @@
 define([
-	"dojo/_base/declare"
-	, "dojo/_base/lang"
-	, "src/component/form/input/Input"
-	, "src/component/search/GeographicImpl"
+	'dojo/_base/declare'
+	, 'src/component/form/input/Input'
+	, 'src/component/textSearch/geographic/GeographicSearchImpl'
 ], function(
 	declare
-	, lang
 	, Input
-	, GeographicImpl
-){
+	, GeographicSearchImpl
+) {
+
 	return declare(Input, {
-		//	summary:
-		//		Extensión para añadir funcionalidades de filtrado a las vistas
-		//	description:
-		//
+		// summary:
+		//   Implementación de componente Input para mostrar un mapa.
 
-		constructor: function (args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				ownChannel: "mapSearch"
+			this.inherited(arguments);
+
+			const defaultConfig = {
+				ownChannel: 'mapSearch'
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 		},
 
 		_createInputInstance: function() {
@@ -31,38 +30,31 @@ define([
 
 		_createMapInstance: function() {
 
-			this.mapSearch = new declare(GeographicImpl)({
-				ownChannel: "mapSearch",
-				parentChannel: this.getChannel(),
-				queryChannel: this.queryChannel,
-				newSearch: lang.hitch(this, this._setValue)
+			this.mapSearch = new GeographicSearchImpl({
+				parentChannel: this.getChannel()
 			});
+
+			this._subscribe(this.mapSearch.getChannel('SEARCH'), res => this._setValue(res.value));
 		},
 
-		_showMap: function() {
+		_enable: function() {
 
 			if (!this.mapSearch) {
 				this._createMapInstance();
 			}
 
-			this._publish(this.mapSearch.getChannel("SHOW"), {
+			this._publish(this.mapSearch.getChannel('SHOW'), {
 				node: this.containerInput
 			});
 		},
 
-		_hideMap: function() {
-
-			this.mapSearch && this._publish(this.mapSearch.getChannel("HIDE"));
-		},
-
 		_disable: function() {
 
-			this._hideMap();
-		},
+			if (!this.mapSearch) {
+				return;
+			}
 
-		_enable: function() {
-
-			this._showMap();
+			this._publish(this.mapSearch.getChannel('HIDE'));
 		}
 	});
 });

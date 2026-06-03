@@ -267,22 +267,29 @@ define([
 			this._emitEvt('ME_OR_ANCESTOR_HIDDEN');
 		},
 
-		_addClass: function(className) {
+		_addClass: function(classNames) {
 
-			this._changeNodeClasses(this._moduleOwnNode, className, '.');
+			this._changeComponentClasses(classNames, 'add');
 		},
 
-		_removeClass: function(className) {
+		_removeClass: function(classNames) {
 
-			this._changeNodeClasses(this._moduleOwnNode, className, '!');
+			this._changeComponentClasses(classNames, 'remove');
 		},
 
-		_changeNodeClasses: function(node, className, modifier) {
+		_changeComponentClasses: function(classNames, methodName) {
 
-			if (className && node && node.firstChild) {
-				var classes = className.split(' ').join(modifier);
-				put(node.firstChild, modifier + classes);
+			if (!classNames?.length) {
+				return;
 			}
+
+			const node = this._getModuleNodeToShow();
+			if (!node) {
+				return;
+			}
+
+			const classNamesArray = classNames.split(' ');
+			node.classList[methodName](...classNamesArray);
 		},
 
 		_chkModuleCanShow: function(req) {
@@ -411,7 +418,7 @@ define([
 
 		_getNodeToShowWrapper: function() {
 
-			var nodeToShow = this._moduleOwnNode || this.getNodeToShow() || this.domNode;
+			const nodeToShow = this._moduleOwnNode ?? this._getModuleNodeToShow();
 
 			if (!nodeToShow) {
 				console.error('Node to show not found at module "%s"', this.getChannel());
@@ -419,6 +426,11 @@ define([
 			}
 
 			return nodeToShow;
+		},
+
+		_getModuleNodeToShow: function() {
+
+			return this.getNodeToShow() ?? this.domNode;
 		},
 
 		_addToNode: function(parentNode, nodeToShow, inFront) {
@@ -698,7 +710,7 @@ define([
 				this._activeLoadings = 1;
 
 				if (!this._loadingContainer) {
-					this._loadingContainer = this._getNodeToShowLoading() || this._getNodeToShowWrapper();
+					this._loadingContainer = this._getNodeToShowLoading() ?? this._getNodeToShowWrapper();
 				}
 
 				objToPub.node = this._loadingContainer;

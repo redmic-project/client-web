@@ -1,41 +1,51 @@
 define([
 	'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'L-miniMap'
 ], function(
 	declare
 	, lang
-	, aspect
 	, MiniMap
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Incluye y configura widget Leaflet-MiniMap para Leaflet.
+		// summary:
+		//   Incluye y configura widget Leaflet-MiniMap para Leaflet.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
-				miniMap: true
+			const defaultConfig = {
+				miniMap: true,
+				miniMapConfig: {
+					position: 'topright',
+					collapsedWidth: 28,
+					collapsedHeight: 28,
+					toggleDisplay: true,
+					minimized: true,
+					strings: {
+						showText: this.i18n.miniMapShowText,
+						hideText: this.i18n.miniMapHideText
+					}
+				}
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.after(this, '_addMapWidgets', lang.hitch(this, this._addMiniMapMapWidgets));
-			aspect.after(this, 'invalidateSize', lang.hitch(this, this._miniMapInvalidateSize));
+			this.inherited(arguments);
 		},
 
-		_addMiniMapMapWidgets: function() {
+		_addMapWidgets: function() {
+
+			this.inherited(arguments);
 
 			if (!this.miniMap) {
 				return;
 			}
 
-			var baseLayer = this._getStaticLayerInstance('eoc-map');
+			const baseLayer = this._getStaticLayerInstance('eoc-map');
 
-			if (baseLayer && baseLayer.then) {
-				baseLayer.then(lang.hitch(this, this._addMiniMap));
+			if (baseLayer?.then) {
+				baseLayer.then(baseLayerResolved => this._addMiniMap(baseLayerResolved));
 			} else {
 				this._addMiniMap(baseLayer);
 			}
@@ -47,23 +57,13 @@ define([
 				return;
 			}
 
-			var miniMapConfig = {
-				position: 'topright',
-				collapsedWidth: 28,
-				collapsedHeight: 28,
-				toggleDisplay: true,
-				minimized: true,
-				strings: {
-					showText: this.i18n.miniMapShowText,
-					hideText: this.i18n.miniMapHideText
-				}
-			};
-
-			this._miniMapInstance = new MiniMap(baseLayer, miniMapConfig);
+			this._miniMapInstance = new MiniMap(baseLayer, this.miniMapConfig);
 			this._miniMapInstance.addTo(this.map);
 		},
 
-		_miniMapInvalidateSize: function() {
+		invalidateSize: function() {
+
+			this.inherited(arguments);
 
 			if (!this.miniMap || !this._miniMapInstance) {
 				return;

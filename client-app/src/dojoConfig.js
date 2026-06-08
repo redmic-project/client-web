@@ -55,10 +55,6 @@ dojoConfig = {
 		location: 'dep/leaflet-nav',
 		main: 'index'
 	},{
-		name: 'L-areaselect',
-		location: 'dep/leaflet-areaselect/src',
-		main: 'leaflet-areaselect'
-	},{
 		name: 'L-timeDimension',
 		location: 'dep/leaflet-timedimension/dist',
 		main: 'leaflet.timedimension.min'
@@ -173,8 +169,6 @@ dojoConfig = {
 			'wicket': 'wicket/wicket.min'
 		}
 	},
-
-	deps: ['leaflet'],
 
 	async: true,
 	waitSeconds: 5,

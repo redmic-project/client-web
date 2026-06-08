@@ -283,7 +283,6 @@ define([
 
 		_reset: function() {
 
-			this.textSearch.setI18n(this.i18n);
 			this.textSearch.emit("reset");
 		},
 

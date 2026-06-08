@@ -214,7 +214,7 @@ define([
 
 			if (!this._getPreviouslyShown()) {
 				this._resetMapPosition();
-				this._addMapWidgets();
+				this._addMapWidgets?.();
 			}
 		},
 
@@ -250,6 +250,8 @@ define([
 			}
 
 			this.map.invalidateSize();
+
+			this.inherited(arguments);
 		},
 
 		hasLayer: function(layer) {

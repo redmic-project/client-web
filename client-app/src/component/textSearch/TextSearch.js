@@ -13,6 +13,8 @@ define([
 	return declare([_Module, _Show, _TextSearchItfc], {
 		// summary:
 		//   Componente para realizar búsquedas por texto en los diferentes servicios.
+		//   TODO este componente puede extrapolarse para sustituir al antiguo Search, y permitir implementaciones como
+		//   la actual TextSearchImpl o GeographicSearchImpl.
 
 		postMixInProperties: function() {
 

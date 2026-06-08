@@ -30,6 +30,11 @@ module.exports = function(grunt) {
 			'cp build/minified/build/pdf.worker.min.mjs build/generic/build/pdf.worker.mjs',
 			'cp build/minified/build/pdf.min.mjs build/generic/build/pdf.mjs'
 		],
+		'client-app/dep/leaflet-georaster': [
+			`sed -i \
+				's/}\\("function"==typeof define&&define\\.amd&&define(\\)/}false\\&\\&\\1/g' \
+				dist/georaster-layer-for-leaflet.min.js`
+		],
 		'client-app/dep/templates': preBuildCmds,
 		'client-app/style': preBuildCmds
 	});

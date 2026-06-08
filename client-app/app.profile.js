@@ -237,13 +237,6 @@ const profileObj = {
 			ignore: ignoreAllButExceptionsTagger.bind(null, 'L-navBar/index')
 		}
 	},{
-		name: 'L-areaselect',
-		location: 'dep/leaflet-areaselect/src',
-		main: 'leaflet-areaselect',
-		resourceTags: {
-			ignore: ignoreAllButExceptionsTagger.bind(null, 'L-areaselect/leaflet-areaselect')
-		}
-	},{
 		name: 'iso8601-js-period',
 		location: 'dep/iso8601-js-period',
 		main: 'iso8601',

@@ -291,7 +291,7 @@ define([
 
 			var layerLabel = this._getStaticLayerLabel(layerId);
 
-			this._addLayerToSelector(layerInstance, layerLabel);
+			this._addLayerToSelector?.(layerInstance, layerLabel);
 
 			return layerInstance;
 		},
@@ -390,7 +390,7 @@ define([
 				layerLabel = obj.layerLabel || layerId;
 
 			if (optional) {
-				this._addLayerToSelector(layer, layerLabel, true);
+				this._addLayerToSelector?.(layer, layerLabel, true);
 			}
 
 			var overlayLayerObj = this._overlayLayers[layerId];
@@ -508,7 +508,7 @@ define([
 			}
 
 			if (layerObj.optional) {
-				this._removeLayerFromSelector(layer);
+				this._removeLayerFromSelector?.(layer);
 			}
 
 			this.removeLayer(layer);
@@ -536,7 +536,7 @@ define([
 				delete this._baseLayerInstances[layerId];
 			}
 
-			this._removeLayerFromSelector(layerInstance);
+			this._removeLayerFromSelector?.(layerInstance);
 			this.removeLayer(layerInstance);
 		},
 

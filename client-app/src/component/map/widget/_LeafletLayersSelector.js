@@ -1,38 +1,36 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'dojo/dom-class'
-	, 'dojo/aspect'
 	, 'leaflet'
 ], function(
 	declare
-	, lang
 	, domClass
-	, aspect
 	, L
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Incluye y configura widget selector de capas para Leaflet y prepara callbacks relacionados con la
-		//		gestión de capas.
+		// summary:
+		//   Incluye y configura widget selector de capas para Leaflet y prepara callbacks relacionados con la
+		//   gestión de capas.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				layersSelector: true
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 
 			if (this.layersSelector) {
 				this._layersSelectorInstance = L.control.layers();
 			}
-
-			aspect.before(this, '_addMapWidgets', lang.hitch(this, this._addLayersSelectorMapWidgets));
 		},
 
-		_addLayersSelectorMapWidgets: function() {
+		_addMapWidgets: function() {
+
+			this.inherited(arguments);
 
 			if (!this.layersSelector || !this._layersSelectorInstance) {
 				return;
@@ -53,8 +51,8 @@ define([
 				return;
 			}
 
-			var addMethod = !optional ? 'addBaseLayer' : 'addOverlay',
-				layerLabel = this.i18n[label] || label;
+			const addMethod = !optional ? 'addBaseLayer' : 'addOverlay',
+				layerLabel = this.i18n[label] ?? label;
 
 			this._layersSelectorInstance[addMethod](layer, layerLabel);
 		},
@@ -70,7 +68,9 @@ define([
 
 		_onBaseLayerChange: function(evt) {
 
-			var layerInstance = evt.layer;
+			this.inherited(arguments);
+
+			const layerInstance = evt.layer;
 
 			this._setLayerZIndex(layerInstance, 0);
 

@@ -36,10 +36,6 @@ define([
 			this.inherited(arguments);
 
 			this._contactListPrepareDetailWidget();
-
-			this.widgetConfigs = this._merge([this.widgetConfigs || {}, {
-				contactList: this._getContactsConfig()
-			}]);
 		},
 
 		_contactListPrepareDetailWidget: function() {

@@ -86,9 +86,9 @@ define([
 
 			this._emitEvt('GET_WIDGETS_CONFIG', {
 				externalConfigPropName: this.layoutConfigPropName,
-				activityCategory: this._activityData?.activityCategory,
 				entityId: this._activityData?.id,
-				entityName: 'activity'
+				entityName: 'activity',
+				entityFullData: this._activityData
 			});
 		},
 

@@ -35,21 +35,7 @@ define([
 
 			this._mergeOwnAttributes(defaultConfig);
 
-			// TODO por algún motivo, si el atributo content es una instancia de componente Browser, la mezcla de
-			// parámetros sufre un bucle infinito, seguramente por alguna referencia cíclica en sus estructuras.
-			// Mantener este parche hasta que se solucione o se deje de pasar la instancia al construir este componente
-			// (publicarla posteriormente en su lugar, o recibir su channel para gestionarla sin recibir la instancia).
-			let externalContent;
-			if (this.params?.content) {
-				externalContent = this.params.content;
-				delete this.params.content;
-			}
-
 			this.inherited(arguments);
-
-			if (externalContent) {
-				this.content = externalContent;
-			}
 		},
 
 		_defineSubscriptions: function () {

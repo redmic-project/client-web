@@ -33,7 +33,7 @@ define([
 
 			if (!detailLayouts?.length) {
 				// retrocompatibilidad con activityCategory
-				if (entityData.entityName === 'activity' && entityData.activityCategory) {
+				if (entityData.entityName === 'activity' && entityData.entityFullData?.activityCategory) {
 					this._prepareActivityCategoryLayoutWidgets(entityData);
 				}
 				return;
@@ -107,8 +107,13 @@ define([
 		},
 
 		_prepareActivityCategoryLayoutWidgets: function(entityData) {
+			// retrocompatibilidad con activityCategory
 
-			const activityCategory = entityData.activityCategory;
+			const layoutConfig = {
+				pathVariableId: entityData.entityId
+			};
+
+			const activityCategory = entityData.entityFullData.activityCategory;
 			let layoutType;
 
 			if (activityCategory === 'ci') {
@@ -125,13 +130,10 @@ define([
 				layoutType = 'featureTimeseriesMapChart';
 			} else if (activityCategory === 'ec') {
 				layoutType = 'embeddedContent';
+				layoutConfig.embeddedContents = entityData.entityFullData?.embeddedContents;
 			} else {
 				return;
 			}
-
-			const layoutConfig = {
-				pathVariableId: entityData.entityId
-			};
 
 			this._prepareLayoutWidgets({
 				type: layoutType,
@@ -327,9 +329,26 @@ define([
 			this._publishLayoutWidget(windroseChartsKey, windroseChartsConfig);
 		},
 
-		_embeddedContentPrepareLayoutWidgets: function(layoutConfig) {
+		_embeddedContentPrepareLayoutWidgets: function(layoutConfig, /*string?*/ widgetKey) {
 
-			const key = 'embeddedContent';
+			// retrocompatibilidad con activityCategory y activityEmbeddedContents
+			const defaultKey = 'embeddedContent';
+			if (layoutConfig.embeddedContents?.length) {
+				layoutConfig.embeddedContents.forEach((item, index) => {
+
+					const customLayoutConfig = {
+						...layoutConfig,
+						content: item.embeddedContent
+					};
+					delete customLayoutConfig.embeddedContents;
+
+					this._embeddedContentPrepareLayoutWidgets(customLayoutConfig, `${defaultKey}${index}`);
+				});
+
+				return;
+			}
+
+			const key = widgetKey ?? defaultKey;
 
 			const windowConfig = {
 				width: 6,

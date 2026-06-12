@@ -155,14 +155,19 @@ define([
 
 		_getEmbeddedContentConfig: function(config) {
 
-			const contentNode = globalThis.document.createElement('object');
-			contentNode.innerHTML = config.content;
+			const content = globalThis.document.createElement('div');
+
+			content.classList.add('embeddedContent');
+			content.innerHTML = config.content ?? `
+				<div class="missingEmbeddedContent">
+					<i class="fa fa-eye-slash"></i><span>${this.i18n.missingEmbeddedContent}</span>
+				</div>`;
 
 			return {
 				type: GenericDisplayer,
 				props: {
-					title: 'embeddedContent',
-					content: contentNode
+					title: config.title ?? 'embeddedContent',
+					content
 				}
 			};
 		},

@@ -80,7 +80,7 @@ define([
 			const widgetRequestData = {
 				entityId: this._currentWidgetRequestData.entityId,
 				entityName: this._currentWidgetRequestData.entityName,
-				activityCategory: this._currentWidgetRequestData.activityCategory
+				entityFullData: this._currentWidgetRequestData.entityFullData
 			};
 
 			const propertyName = this._currentWidgetRequestData.externalConfigPropName,

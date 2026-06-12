@@ -52,7 +52,8 @@ define([
 			this._emitEvt('GET_WIDGETS_CONFIG', {
 				externalConfigPropName: 'detailLayouts.project',
 				entityId: res.data?.id,
-				entityName: 'project'
+				entityName: 'project',
+				entityFullData: res.data
 			});
 		}
 	});

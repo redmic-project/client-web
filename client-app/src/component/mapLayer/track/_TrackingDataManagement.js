@@ -394,9 +394,9 @@ define([
 		_getClusterIds: function(i) {
 
 			var axisProps = this._getAxisProps(i),
-				axisIds = axisProps && axisProps[this.idsProperty];
+				axisIds = axisProps?.[this.idsProperty] ?? [axisProps?.[this.idProperty]];
 
-			return axisIds || [];
+			return axisIds ?? [];
 		},
 
 		_getClusterSize: function(i) {

@@ -33,23 +33,8 @@ define([
 
 		postMixInProperties: function() {
 
-			this.inherited(arguments);
-
 			const defaultConfig = {
-				svgClass: 'trackingSvg',
-
-				drawFullTrack: false,
-
-				_trackingLineInstances: {},
-				_trackingLineInstancesByChannel: {},
-				_subsToLines: {},
-				_pubsToLines: {},
-
-				_elementPropName: 'element',
-				_elementIdPropName: 'uuid',
-
 				ownChannel: 'trackingLayer',
-
 				events: {
 					GO_TO_POSITION: 'goToPosition',
 					REDRAW: 'redraw',
@@ -58,17 +43,28 @@ define([
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
 					GET_CLICKED_POINTS_IDS: 'getClickedPointsIds'
 				},
-
 				actions: {
 					DRAW_ALL: 'drawAll',
 					GO_TO_POSITION: 'goToPosition',
 					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
 					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
-				}
+				},
+
+				svgClass: 'trackingSvg',
+				drawFullTrack: false,
+				elementPropName: 'element',
+				elementIdPropName: 'uuid',
+
+				_trackingLineInstances: {},
+				_trackingLineInstancesByChannel: {},
+				_subsToLines: {},
+				_pubsToLines: {}
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		_defineSubscriptions: function() {
@@ -168,7 +164,8 @@ define([
 
 		_addFeatureToTrackingLine: function(feature) {
 
-			const featureId = this._getFeatureId(feature);
+			const data = this._transformFeatureForTrackingLine(feature),
+				featureId = this._getFeatureId(feature);
 
 			let lineInstance = this._trackingLineInstances[featureId];
 
@@ -184,13 +181,27 @@ define([
 			}
 
 			this._publish(lineInstance.getChannel('ADD_DATA'), {
-				data: feature
+				data
 			});
+		},
+
+		_transformFeatureForTrackingLine: function(feature) {
+
+			// TODO temporal, hasta que se unifiquen servicios
+			if (!feature?.properties?.axesProps) {
+				feature.properties.axesProps = {
+					uuid: this._getFeatureId(feature),
+					startDate: feature?.properties?.detectionLimits?.[0],
+					endDate: feature?.properties?.detectionLimits?.[1]
+				};
+			}
+
+			return feature;
 		},
 
 		_getFeatureId: function(feature) {
 
-			return feature?.properties?.[this._elementPropName]?.[this._elementIdPropName];
+			return feature?.properties?.[this.elementPropName]?.[this.elementIdPropName];
 		},
 
 		_createTrackingLine: function() {

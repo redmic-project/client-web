@@ -10,13 +10,14 @@ define([
 
 		postMixInProperties: function() {
 
-			this.inherited(arguments);
-
 			const defaultConfig = {
+				requestMethod: 'POST',
 				_requestDataTimeoutMs: 100
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
+
+			this.inherited(arguments);
 		},
 
 		postCreate: function() {
@@ -65,7 +66,7 @@ define([
 				query = this.targetQueryParams ?? {};
 
 			this._emitEvt('REQUEST', {
-				method: 'POST',
+				method: this.requestMethod,
 				target: this.target,
 				params: {path, query},
 				requesterId: this.getOwnChannel()

@@ -266,8 +266,8 @@ define([], function() {
 		'acousticDetectionEvents': '{apiUrl}/v1/acoustic-detection/activities/{activityid}/receptors/{receptorid}/detections',
 		'acousticDistribution': '{apiUrl}/v1/acoustic-detection/stats/distribution',
 		'acousticTrackingAnimals': '{apiUrl}/v1/acoustic-detection/activities/{id}/animal-trackings/animals',
-		'acousticTrackingAnimalTrack': '{apiUrl}/v1/acoustic-detection/activities/{activityId}/animal-trackings/animals/{animalId}',
-		'acousticTrackingPointInfo': '{apiUrl}/v1/acoustic-detection/activities/{activityId}/animal-trackings/{id}',
+		'acousticTrackingAnimalTrack': '{apiUrl}/v1/acoustic-detection/activities/{activityid}/animal-trackings/animals/{elementuuid}',
+		'acousticTrackingPointInfo': '{apiUrl}/v1/acoustic-detection/activities/{activityid}/animal-trackings/{id}',
 
 		'timeSeriesStations': '{apiUrl}/surveystations',
 		'surveyStationsTimeSeries': '{apiUrl}/datadefinitions/{datadefinitionid}/timeseries',

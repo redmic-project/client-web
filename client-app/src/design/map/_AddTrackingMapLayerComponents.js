@@ -23,6 +23,8 @@ define([
 
 		postMixInProperties: function() {
 
+			this.inherited(arguments);
+
 			const defaultConfig = {
 				events: {
 					MOVE_TRACK_TO: 'moveTrackTo',
@@ -30,14 +32,13 @@ define([
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
 					SET_TRACKING_PROPS: 'setTrackingProps'
 				},
+				requestMethod: 'POST',
 				_layerInstances: {},
 				_activityIdByUuid: {},
 				_moveTracksTimeout: 100
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
-
-			this.inherited(arguments);
 		},
 
 		_setConfigurations: function() {
@@ -49,6 +50,8 @@ define([
 			this.mergeComponentAttribute('trackingMapLayerConfig', {
 				parentChannel,
 				target: this.layersTarget,
+				requestMethod: this.requestMethod,
+				elementPropName: this.elementPropName,
 				infoTarget: this.infoTarget,
 				transitionDuration: this.trackingTransitionRate
 			});
@@ -84,7 +87,7 @@ define([
 
 		_addTrackingLayer: function(item) {
 
-			const uuid = item.uuid;
+			const uuid = item[this.idProperty];
 
 			let layerInstance = this._layerInstances[uuid];
 			if (!layerInstance) {
@@ -99,7 +102,7 @@ define([
 
 		_createLayerInstance: function(item) {
 
-			const uuid = item.uuid,
+			const uuid = item[this.idProperty],
 				activityId = item.activityId,
 				color = item.color;
 

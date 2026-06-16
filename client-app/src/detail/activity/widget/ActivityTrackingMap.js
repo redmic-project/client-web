@@ -37,8 +37,10 @@ define([
 			const defaultConfig = {
 				ownChannel: 'activityTrackingMap',
 				target: redmicConfig.services.elementsTrackingActivity,
-				method: 'POST',
+				requestMethod: 'POST',
 				getRequestQueryParams: text => (text ? {text: {text}} : {text: null}),
+				idProperty: 'uuid',
+				elementPropName: 'element',
 				layersTarget: redmicConfig.services.pointTrackingCluster,
 				infoTarget: redmicConfig.services.trackingActivity,
 				timeMode: true
@@ -49,9 +51,10 @@ define([
 			// TODO temporal, hasta que se unifiquen servicios
 			if (this.usePrivateTarget) {
 				this.target = redmicConfig.services.acousticTrackingAnimals;
-				this.method = 'GET';
+				this.requestMethod = 'GET';
 				this.getRequestQueryParams = null;
-
+				this.idProperty = 'id';
+				this.elementPropName = 'animal';
 				this.layersTarget = redmicConfig.services.acousticTrackingAnimalTrack;
 				this.infoTarget = redmicConfig.services.acousticTrackingPointInfo;
 			}
@@ -62,7 +65,7 @@ define([
 			this.inherited(arguments);
 
 			this.mergeComponentAttribute('searchConfig', {
-				requestMethod: this.method,
+				requestMethod: this.requestMethod,
 				getRequestQueryParams: this.getRequestQueryParams
 			});
 		},
@@ -87,7 +90,7 @@ define([
 				id: this.pathVariableId
 			};
 
-			const method = this.method,
+			const method = this.requestMethod,
 				target = this.target,
 				params = {path, sharedParams: true};
 

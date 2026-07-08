@@ -1,5 +1,0 @@
-dependency_scanning:
-  stage: pre-build
-  variables:
-    DS_MAX_DEPTH: 0
-    DS_REMEDIATE: 'false'

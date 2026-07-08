@@ -1,5 +1,0 @@
-.deploy:
-  variables:
-    STACK: client
-  environment:
-    url: https://${PUBLIC_HOSTNAME}

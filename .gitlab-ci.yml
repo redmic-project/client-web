@@ -1,27 +1,18 @@
 include:
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
-    file: '/scanning/dependency-scanning.yml'
+    ref: main
+    file: '/test/auto.yml'
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
-    file: '/packaging-docker/docker-build.yml'
+    ref: main
+    file: '/build/docker/docker-build.yml'
   - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
-    file: '/deployment-service/docker-deploy.yml'
-  - project: 'redmic-project/gitlab-ci-templates'
-    ref: master
-    file: '/deployment-service/custom-image.yml'
-  - local: '/.gitlab-ci/scan.yml'
-  - local: '/.gitlab-ci/test.yml'
+    ref: main
+    file: '/deploy/service/docker-deploy.yml'
   - local: '/.gitlab-ci/build.yml'
-  - local: '/.gitlab-ci/package.yml'
+  - local: '/.gitlab-ci/test.yml'
   - local: '/.gitlab-ci/deploy.yml'
 
-stages:
-  - pre-build
-  - build
-  - pre-package
-  - package
-  - post-package
-  - deploy
-  - test-deploy
+.docker-deploy:
+  variables:
+    STACK: client
+    DEPLOY_ENVIRONMENT_URL: https://${PUBLIC_HOSTNAME}

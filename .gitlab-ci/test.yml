@@ -1,43 +1,40 @@
 .run-tests:
-  extends: .web-build
+  extends:
+    - .web-build
+  stage: test
   tags:
     - custom-runner
-  cache:
-    policy: pull
-
-.run-pre-build-tests:
-  extends: .run-tests
-  stage: pre-build
-  needs: ["prepare-unbuilt-version"]
-  rules:
-    - if: $CI_MERGE_REQUEST_ID ||
-          $CI_COMMIT_TAG ||
-          $CI_PIPELINE_SOURCE == "schedule" ||
-          $CI_COMMIT_BRANCH == "master"
-      when: never
-    - if: $CI_COMMIT_BRANCH
-  allow_failure: true
 
 .run-local-tests:
-  variables: &run-local-tests-variables
+  variables:
     TEST_BROWSER: chrome
 
 .run-remote-tests:
-  variables: &run-remote-tests-variables
+  variables:
     TEST_REMOTE_HOST: selenium-hub
 
+.run-build-tests:
+  extends:
+    - .run-tests
+    - .rules-branches-only
+  needs:
+    - job: ⚒️ prepare-dependencies
+  allow_failure: true
+
 .run-unit-tests:
-  extends: .run-pre-build-tests
+  extends:
+    - .run-build-tests
+    - .run-local-tests
   coverage: '/^Coverage\s-\s(\d+(?:\.\d+)?%)/'
   after_script:
     - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
     - echo "Coverage - ${coverage}%"
     - rm test.out
 
-run-local-unit-tests:
-  extends: .run-unit-tests
-  variables:
-    <<: *run-local-tests-variables
+🤖 run-local-unit-tests:
+  extends:
+    - .run-unit-tests
+    - .run-local-tests
   script:
     - >
       grunt test-unit-local
@@ -48,9 +45,9 @@ run-local-unit-tests:
       | tee test.out
 
 .run-remote-unit-tests:
-  extends: .run-unit-tests
-  variables:
-    <<: *run-remote-tests-variables
+  extends:
+    - .run-unit-tests
+    - .run-remote-tests
   script:
     - >
       grunt test-unit-remote
@@ -63,12 +60,12 @@ run-local-unit-tests:
       --firefoxBrowserVersion=${REMOTE_FIREFOX_BROWSER_VERSION}
       | tee test.out
 
-run-remote-unit-tests-chrome:
+🤖 run-remote-unit-tests-chrome:
   extends: .run-remote-unit-tests
   variables:
     TEST_BROWSER: chrome
 
-run-remote-unit-tests-firefox:
+🤖 run-remote-unit-tests-firefox:
   extends: .run-remote-unit-tests
   variables:
     TEST_BROWSER: firefox
@@ -81,10 +78,10 @@ run-remote-unit-tests-firefox:
     paths:
       - test_reports/test-functional*
 
-run-local-modules-functional-tests:
-  extends: .run-pre-build-tests
-  variables:
-    <<: *run-local-tests-variables
+🤖 run-local-modules-functional-tests:
+  extends:
+    - .run-build-tests
+    - .run-local-tests
   script:
     - grunt buildStyles
     - npm start &
@@ -98,9 +95,9 @@ run-local-modules-functional-tests:
   artifacts: *run-functional-tests-artifacts
 
 .run-remote-modules-functional-tests:
-  extends: .run-pre-build-tests
-  variables:
-    <<: *run-remote-tests-variables
+  extends:
+    - .run-build-tests
+    - .run-remote-tests
   script:
     - grunt buildStyles
     - npm start &
@@ -116,21 +113,21 @@ run-local-modules-functional-tests:
       --firefoxBrowserVersion=${REMOTE_FIREFOX_BROWSER_VERSION}
   artifacts: *run-functional-tests-artifacts
 
-run-remote-modules-functional-tests-chrome:
+🤖 run-remote-modules-functional-tests-chrome:
   extends: .run-remote-modules-functional-tests
   variables:
     TEST_BROWSER: chrome
 
-run-remote-modules-functional-tests-firefox:
+🤖 run-remote-modules-functional-tests-firefox:
   extends: .run-remote-modules-functional-tests
   variables:
     TEST_BROWSER: firefox
 
 .run-scheduled-remote-functional-tests:
-  extends: .run-tests
-  stage: test-deploy
+  extends:
+    - .run-tests
+    - .run-remote-tests
   variables:
-    <<: *run-remote-tests-variables
     SERVER_URL: https://${DEV_PUBLIC_HOSTNAME}
     TEST_ROLE: administrator
   script:
@@ -151,12 +148,12 @@ run-remote-modules-functional-tests-firefox:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
-run-scheduled-remote-functional-tests-chrome:
+🤖 run-scheduled-remote-functional-tests-chrome:
   extends: .run-scheduled-remote-functional-tests
   variables:
     TEST_BROWSER: chrome
 
-run-scheduled-remote-functional-tests-firefox:
+🤖 run-scheduled-remote-functional-tests-firefox:
   extends: .run-scheduled-remote-functional-tests
   variables:
     TEST_BROWSER: firefox

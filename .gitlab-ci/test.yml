@@ -22,7 +22,6 @@
 .run-unit-tests:
   extends:
     - .run-build-tests
-    - .run-local-tests
   coverage: '/^Coverage\s-\s(\d+(?:\.\d+)?%)/'
   after_script:
     - coverage=$(grep '^All files.*' test.out | cut -d '|' -f 2 | tr -d ' ')
@@ -60,12 +59,14 @@
   when: manual
 
 🤖 run-remote-unit-tests-chrome:
-  extends: .run-remote-unit-tests
+  extends:
+    - .run-remote-unit-tests
   variables:
     TEST_BROWSER: chrome
 
 🤖 run-remote-unit-tests-firefox:
-  extends: .run-remote-unit-tests
+  extends:
+    - .run-remote-unit-tests
   variables:
     TEST_BROWSER: firefox
 
@@ -114,12 +115,14 @@
   when: manual
 
 🤖 run-remote-modules-functional-tests-chrome:
-  extends: .run-remote-modules-functional-tests
+  extends:
+    - .run-remote-modules-functional-tests
   variables:
     TEST_BROWSER: chrome
 
 🤖 run-remote-modules-functional-tests-firefox:
-  extends: .run-remote-modules-functional-tests
+  extends:
+    - .run-remote-modules-functional-tests
   variables:
     TEST_BROWSER: firefox
 
@@ -148,12 +151,14 @@
   dependencies: []
 
 🤖 run-scheduled-remote-functional-tests-chrome:
-  extends: .run-scheduled-remote-functional-tests
+  extends:
+    - .run-scheduled-remote-functional-tests
   variables:
     TEST_BROWSER: chrome
 
 🤖 run-scheduled-remote-functional-tests-firefox:
-  extends: .run-scheduled-remote-functional-tests
+  extends:
+    - .run-scheduled-remote-functional-tests
   variables:
     TEST_BROWSER: firefox
 

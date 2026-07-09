@@ -57,7 +57,7 @@
       --chromeBrowserVersion=${REMOTE_CHROME_BROWSER_VERSION}
       --firefoxBrowserVersion=${REMOTE_FIREFOX_BROWSER_VERSION}
       | tee test.out
-  manual: true
+  when: manual
 
 🤖 run-remote-unit-tests-chrome:
   extends: .run-remote-unit-tests
@@ -111,7 +111,7 @@
       --seleniumVersion=${REMOTE_SELENIUM_VERSION}
       --chromeBrowserVersion=${REMOTE_CHROME_BROWSER_VERSION}
       --firefoxBrowserVersion=${REMOTE_FIREFOX_BROWSER_VERSION}
-  manual: true
+  when: manual
 
 🤖 run-remote-modules-functional-tests-chrome:
   extends: .run-remote-modules-functional-tests

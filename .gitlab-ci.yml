@@ -10,7 +10,6 @@ include:
     file: '/deploy/service/docker-deploy.yml'
   - local: '/.gitlab-ci/build.yml'
   - local: '/.gitlab-ci/test.yml'
-  - local: '/.gitlab-ci/deploy.yml'
 
 .docker-deploy:
   variables:

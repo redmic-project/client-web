@@ -2,14 +2,12 @@ define([
 	'd3'
 	, 'dojo/_base/declare'
 	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'dojo/Deferred'
 	, 'RWidgets/Utilities'
 ], function(
 	d3
 	, declare
 	, lang
-	, aspect
 	, Deferred
 	, Utilities
 ) {
@@ -50,17 +48,6 @@ define([
 		//	_defsData: Array
 		//		Definiciones de los distintos marcadores disponibles.
 
-		constructor: function() {
-
-			aspect.before(this, '_mixEventsAndActions', lang.hitch(this,
-				this._mixTrackingMarkersManagementEventsAndActions));
-
-			aspect.after(this, '_defineSubscriptions', lang.hitch(this,
-				this._defineTrackingMarkersManagementSubscriptions));
-
-			aspect.after(this, '_clear', lang.hitch(this, this._clearTrackingMarkersManagement));
-		},
-
 		postMixInProperties: function() {
 
 			const defaultConfig = {
@@ -80,9 +67,9 @@ define([
 				_defsElementPrefix: 'trackMarker',
 				_defsElementIdSeparator: '_',
 
-				trackingMarkersManagementEvents: {
+				events: {
 				},
-				trackingMarkersManagementActions: {
+				actions: {
 					SHOW_DIRECTION_MARKERS: 'showDirectionMarkers',
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers'
 				},
@@ -113,16 +100,9 @@ define([
 			this.inherited(arguments);
 		},
 
-		_mixTrackingMarkersManagementEventsAndActions: function() {
+		_defineSubscriptions: function() {
 
-			lang.mixin(this.events, this.trackingMarkersManagementEvents);
-			lang.mixin(this.actions, this.trackingMarkersManagementActions);
-
-			delete this.trackingMarkersManagementEvents;
-			delete this.trackingMarkersManagementActions;
-		},
-
-		_defineTrackingMarkersManagementSubscriptions: function() {
+			this.inherited(arguments);
 
 			this.subscriptionsConfig.push({
 				channel: this.getChannel('SHOW_DIRECTION_MARKERS'),
@@ -487,11 +467,13 @@ define([
 				.attr('marker-end', null);
 		},
 
-		_clearTrackingMarkersManagement: function() {
+		_clear: function() {
+
+			this.inherited(arguments);
 
 			this._removeExistingAxes();
 
-			this._positionMarker && this._positionMarker.remove();
+			this._positionMarker?.remove();
 			this._positionMarker = null;
 		}
 	});

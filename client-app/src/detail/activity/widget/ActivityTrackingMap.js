@@ -47,17 +47,6 @@ define([
 			};
 
 			this._mergeOwnAttributes(defaultConfig);
-
-			// TODO temporal, hasta que se unifiquen servicios
-			if (this.usePrivateTarget) {
-				this.target = redmicConfig.services.acousticTrackingAnimals;
-				this.requestMethod = 'GET';
-				this.getRequestQueryParams = null;
-				this.idProperty = 'id';
-				this.elementPropName = 'animal';
-				this.layersTarget = redmicConfig.services.acousticTrackingAnimalTrack;
-				this.infoTarget = redmicConfig.services.acousticTrackingPointInfo;
-			}
 		},
 
 		_setConfigurations: function() {

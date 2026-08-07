@@ -101,10 +101,6 @@ define([
 			};
 
 			lang.mixin(this, this.config, args);
-
-			if (this.usePrivateTarget) {
-				this.layersTarget = redmicConfig.services.privatePointTrackingCluster;
-			}
 		},
 
 		_setMainConfigurations: function() {

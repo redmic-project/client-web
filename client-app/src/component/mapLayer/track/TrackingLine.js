@@ -91,8 +91,8 @@ define([
 
 		_defineSubscriptions: function() {
 
-			var options = {
-				predicate: lang.hitch(this, this._chkDataIsAdded)
+			const options = {
+				predicate: () => this._chkDataIsAdded()
 			};
 
 			this.subscriptionsConfig.push({
@@ -101,20 +101,22 @@ define([
 			},{
 				channel: this.getChannel('DRAW_UNTIL_POSITION'),
 				callback: '_subDrawUntilPosition',
-				options: options
+				options
 			},{
 				channel: this.getChannel('REDRAW'),
 				callback: '_subRedraw',
-				options: options
+				options
 			},{
 				channel: this.getChannel('ADJUST_POSITION'),
 				callback: '_subAdjustPosition',
-				options: options
+				options
 			},{
 				channel: this.getChannel('GET_CLICKED_POINTS_IDS'),
 				callback: '_subGetClickedPointsIds',
-				options: options
+				options
 			});
+
+			this.inherited(arguments);
 		},
 
 		_definePublications: function() {
@@ -129,6 +131,8 @@ define([
 				event: 'DATA_BOUNDS_UPDATED',
 				channel: this.getChannel('DATA_BOUNDS_UPDATED')
 			});
+
+			this.inherited(arguments);
 		},
 
 		_createElements: function() {

@@ -1,13 +1,9 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'moment'
 	, 'RWidgets/Utilities'
 ], function(
 	declare
-	, lang
-	, aspect
 	, moment
 	, Utilities
 ) {
@@ -25,11 +21,6 @@ define([
 		//		Puntero dentro del cluster actual para indicar cuantos elementos suyos ya han sido consumidos.
 		//	_itemsReviewedInPrevClusters: Integer
 		//		Contador de elementos (dentro de los cluster) revisados hasta la posición actual.
-
-		constructor: function() {
-
-			aspect.after(this, '_clear', lang.hitch(this, this._clearTrackingDataManagement));
-		},
 
 		postMixInProperties: function() {
 
@@ -56,16 +47,15 @@ define([
 				this._createElements();
 			}
 
-			var geometry = feature && feature.geometry,
-				geometryType = geometry && geometry.type;
+			const geometryType = feature?.geometry?.type;
 
 			if (geometryType === 'Point') {
-				var newFeature = this._createLineStringFeatureFromPointFeature(feature);
-				if (newFeature) {
-					this._lineStringFeature = newFeature;
-				} else {
+				const newFeature = this._createLineStringFeatureFromPointFeature(feature);
+				if (!newFeature) {
 					console.error('Cannot create a valid LineString from this feature:', feature);
+					return;
 				}
+				this._lineStringFeature = newFeature;
 			} else {
 				this._lineStringFeature = feature;
 			}
@@ -73,14 +63,13 @@ define([
 
 		_createLineStringFeatureFromPointFeature: function(feature) {
 
-			var geometry = feature && feature.geometry,
-				geometryCoordinates = geometry && geometry.coordinates;
+			const geometryCoordinates = feature?.geometry?.coordinates;
 
 			if (!geometryCoordinates) {
 				return;
 			}
 
-			var featureCopy = lang.clone(feature);
+			const featureCopy = structuredClone(feature);
 
 			featureCopy.geometry = {
 				type: 'LineString',
@@ -90,7 +79,7 @@ define([
 			return featureCopy;
 		},
 
-		_chkDataIsAdded: function(req) {
+		_chkDataIsAdded: function() {
 
 			return !!this._lineStringFeature;
 		},
@@ -178,7 +167,9 @@ define([
 			return clusterIds[0];
 		},
 
-		_clearTrackingDataManagement: function() {
+		_clear: function() {
+
+			this.inherited(arguments);
 
 			this._lineStringFeature = null;
 			this._cleanTrackingCluster();

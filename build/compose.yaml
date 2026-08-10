@@ -6,5 +6,4 @@ services:
       dockerfile: ${DOCKERFILE:-build/Dockerfile}
       args:
         NODE_IMAGE_TAG:
-        PORT:
         VERSION:

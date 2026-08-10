@@ -9,7 +9,7 @@ ENV NODE_ENV="production"
 EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=15s --start-period=1m --retries=3 \
-	CMD ["wget", "--spider", "-q", "http://127.0.0.1", "||", "exit", "1"]
+	CMD ["wget", "--spider", "-q", "http://127.0.0.1"]
 
 ADD redmic-project-web-*.tgz /
 WORKDIR /package

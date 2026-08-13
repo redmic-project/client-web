@@ -4,8 +4,7 @@ define([
 	, 'src/design/map/_AddBrowserComponent'
 	, 'src/design/map/_AddColorUsageManagement'
 	, 'src/design/map/_AddProgressSliderComponent'
-	, 'src/design/map/_AddTrackingMapLayerComponents'
-	, 'src/design/map/_AddTrackingSettingsComponent'
+	, 'src/design/map/_AddDetectionMapLayerComponents'
 	, 'src/redmicConfig'
 	, 'templates/ActivityList'
 	, 'templates/AnimalList'
@@ -16,18 +15,17 @@ define([
 	, _AddBrowserComponent
 	, _AddColorUsageManagement
 	, _AddProgressSliderComponent
-	, _AddTrackingMapLayerComponents
-	, _AddTrackingSettingsComponent
+	, _AddDetectionMapLayerComponents
 	, redmicConfig
 	, TemplateActivityList
 	, TemplateAnimalList
 	, TemplatePlatformList
 ) {
 
-	return declare([_AddBrowserComponent, _AddColorUsageManagement, _AddTrackingSettingsComponent,
-		_AddProgressSliderComponent, _AddTrackingMapLayerComponents], {
+	return declare([_AddBrowserComponent, _AddColorUsageManagement, _AddProgressSliderComponent,
+		_AddDetectionMapLayerComponents], {
 		// summary:
-		//   Lógica de diseño para añadir los componentes necesarios para visualizar datos de seguimiento sobre el mapa.
+		//   Lógica de diseño para añadir los componentes necesarios para visualizar datos de detección sobre el mapa.
 		//   Debe asociarse como mixin a un componente al instanciarlo, junto con la parte de controlador y alguna
 		//   maquetación de este diseño.
 
@@ -165,6 +163,7 @@ define([
 
 		_setTrackingItemLineLimits: function(lineLimits) {
 
+			console.log('llegan limites', lineLimits);
 			const itemId = lineLimits.layerId,
 				itemLineId = lineLimits.lineId,
 				count = lineLimits.count,

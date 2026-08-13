@@ -14,6 +14,7 @@ define([
 	, 'src/detail/activity/widget/ActivityLayerMap'
 	, 'src/detail/activity/widget/ActivityTrackingMap'
 	, 'src/detail/project/widget/ProjectAcousticDetectionMap'
+	, 'src/detail/activity/widget/ActivityAcousticDetectionMap'
 ], function(
 	declare
 	, GenericDisplayer
@@ -30,6 +31,7 @@ define([
 	, ActivityLayerMap
 	, ActivityTrackingMap
 	, ProjectAcousticDetectionMap
+	, ActivityAcousticDetectionMap
 ) {
 
 	return declare(null, {
@@ -64,8 +66,7 @@ define([
 				type: ActivityTrackingMap,
 				props: {
 					title: 'tracking',
-					pathVariableId: config.pathVariableId,
-					usePrivateTarget: config.accessGranted ?? false
+					pathVariableId: config.pathVariableId
 				}
 			};
 		},
@@ -195,13 +196,24 @@ define([
 			};
 		},
 
-		_getAcousticDetectionMapConfig: function(config) {
+		_getProjectAcousticDetectionMapConfig: function(config) {
 
 			return {
 				type: ProjectAcousticDetectionMap,
 				props: {
 					title: 'acoustic-detection',
 					activityIds: config.activityIds
+				}
+			};
+		},
+
+		_getAcousticDetectionMapConfig: function(config) {
+
+			return {
+				type: ActivityAcousticDetectionMap,
+				props: {
+					title: 'acoustic-detection',
+					pathVariableId: config.pathVariableId
 				}
 			};
 		}

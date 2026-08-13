@@ -3,8 +3,8 @@ define([
 	, 'dojo/Deferred'
 	, 'dojo/promise/all'
 	, 'src/component/mapLayer/MapLayer'
+	, 'src/component/mapLayer/mixin/_D3Expansion'
 	, 'src/component/mapLayer/mixin/_D3MapProjection'
-	, 'src/component/mapLayer/track/_D3Expansion'
 	, 'src/component/mapLayer/track/_PublishInfoManagement'
 	, 'src/component/mapLayer/track/TrackingLine'
 ], function(
@@ -12,8 +12,8 @@ define([
 	, Deferred
 	, all
 	, MapLayer
-	, _D3MapProjection
 	, _D3Expansion
+	, _D3MapProjection
 	, _PublishInfoManagement
 	, TrackingLine
 ) {
@@ -126,6 +126,7 @@ define([
 				return;
 			}
 
+			// TODO creo que ya no existe posibilidad de recibir datos de distintos tracks en la misma petición.
 			features.every(feature => this._addFeatureData(feature));
 
 			if (!this._dfdDataAvailable.isFulfilled()) {
@@ -160,11 +161,9 @@ define([
 
 		_addFeatureToTrackingLine: function(feature) {
 
-			const data = this._transformFeatureForTrackingLine(feature),
-				featureId = this._getFeatureId(feature);
+			const featureId = this._getFeatureId(feature);
 
 			let lineInstance = this._trackingLineInstances[featureId];
-
 			if (!lineInstance) {
 				lineInstance = this._createTrackingLine();
 				this._trackingLineInstances[featureId] = lineInstance;
@@ -177,22 +176,8 @@ define([
 			}
 
 			this._publish(lineInstance.getChannel('ADD_DATA'), {
-				data
+				data: feature
 			});
-		},
-
-		_transformFeatureForTrackingLine: function(feature) {
-
-			// TODO temporal, hasta que se unifiquen servicios
-			if (!feature?.properties?.axesProps) {
-				feature.properties.axesProps = {
-					uuid: this._getFeatureId(feature),
-					startDate: feature?.properties?.detectionLimits?.[0],
-					endDate: feature?.properties?.detectionLimits?.[1]
-				};
-			}
-
-			return feature;
 		},
 
 		_getFeatureId: function(feature) {

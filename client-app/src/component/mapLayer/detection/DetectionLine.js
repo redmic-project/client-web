@@ -181,7 +181,6 @@ define([
 
 			const position = this._getPositionInDomain(req.position);
 
-			console.log('position', req.position, position);
 			this._drawUntilPosition(position, req.animate);
 		},
 

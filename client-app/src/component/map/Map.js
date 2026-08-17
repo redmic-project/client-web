@@ -313,36 +313,32 @@ define([
 
 		_addMapLayer: function(req) {
 
-			var layer = req.layer;
+			const layer = req.layer;
 
 			if (!layer) {
 				console.error('Tried to add invalid layer to map "%s"', this.getChannel());
 				return;
 			}
 
-			var layerId = this._getLayerId(req) || uuid(),
-				innerLayer = this._getInnerLayer(layer, layerId),
-				obj = {
-					layerId: layerId,
-					req: req
-				};
+			const layerId = this._getLayerId(req) ?? uuid(),
+				innerLayer = this._getInnerLayer(layer, layerId);
 
 			if (!innerLayer) {
 				return;
 			}
 
+			const addInnerLayerArgs = { layerId, req };
+
 			if (innerLayer.then) {
-				innerLayer.then(lang.hitch(this, function(objArg, innerLayerArg) {
-
-					objArg.innerLayer = innerLayerArg;
-					this._addInnerMapLayer(objArg);
-				}, obj));
-
+				innerLayer.then(resolvedInnerLayer => {
+					addInnerLayerArgs.innerLayer = resolvedInnerLayer;
+					this._addInnerMapLayer(addInnerLayerArgs);
+				});
 				return;
 			}
 
-			obj.innerLayer = innerLayer;
-			this._addInnerMapLayer(obj);
+			addInnerLayerArgs.innerLayer = innerLayer;
+			this._addInnerMapLayer(addInnerLayerArgs);
 		},
 
 		_getInnerLayer: function(layer, layerId) {
@@ -591,11 +587,15 @@ define([
 
 		_subFitBounds: function(req) {
 
-			var bounds = req.bounds,
-				options = req.options;
+			const bounds = req.bounds,
+				options = req.options ?? {};
 
 			if (!bounds) {
 				return;
+			}
+
+			if (req.useInitialZoom) {
+				options.maxZoom = this.map.getBoundsZoom(this.initialBounds);
 			}
 
 			this.fitBounds(bounds, options);
@@ -617,19 +617,38 @@ define([
 		_subLayerLoading: function(_evt, _channelInfo, componentInfo) {
 
 			const loadingLayerOwnChannel = componentInfo.publisherChannel.split(this.channelSeparator).pop();
-			if (this._loadingLayers[loadingLayerOwnChannel]) {
-				return;
-			}
-			this._loadingLayers[loadingLayerOwnChannel] = true;
-
-			this._emitEvt('LOADING');
+			this._addLayerLoadingFlag(loadingLayerOwnChannel);
 		},
 
 		_subLayerLoaded: function(_evt, _channelInfo, componentInfo) {
 
 			const loadingLayerOwnChannel = componentInfo.publisherChannel.split(this.channelSeparator).pop();
-			delete this._loadingLayers[loadingLayerOwnChannel];
+			this._removeLayerLoadingFlag(loadingLayerOwnChannel);
+		},
 
+		_addLayerLoadingFlag: function(layerOwnChannel) {
+
+			if (this._loadingLayers[layerOwnChannel]) {
+				return;
+			}
+			this._loadingLayers[layerOwnChannel] = true;
+
+			if (Object.keys(this._loadingLayers).length !== 1) {
+				return;
+			}
+			this._emitEvt('LOADING');
+		},
+
+		_removeLayerLoadingFlag: function(layerOwnChannel) {
+
+			if (!this._loadingLayers[layerOwnChannel]) {
+				return;
+			}
+			delete this._loadingLayers[layerOwnChannel];
+
+			if (Object.keys(this._loadingLayers).length) {
+				return;
+			}
 			this._emitEvt('LOADED');
 		},
 
@@ -726,6 +745,9 @@ define([
 
 		_pubLayerRemoveFailed: function(channel, layer) {
 
+			const layerOwnChannel = layer?.getOwnChannel?.();
+			this._removeLayerLoadingFlag(layerOwnChannel);
+
 			this._publish(channel, {
 				success: false,
 				errorCode: 1,
@@ -734,6 +756,9 @@ define([
 		},
 
 		_pubLayerRemoved: function(channel, evt) {
+
+			const layerOwnChannel = evt.layer?.getOwnChannel?.();
+			this._removeLayerLoadingFlag(layerOwnChannel);
 
 			evt.success = true;
 			this._publish(channel, evt);

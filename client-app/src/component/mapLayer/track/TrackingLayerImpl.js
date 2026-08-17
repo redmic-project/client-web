@@ -355,18 +355,10 @@ define([
 
 		_onAllTrackingLinesDrawn: function(linesBounds) {
 
-			const bounds = this._getGlobalBounds(linesBounds),
-				transform = 'translate(' + bounds.left + ',' + bounds.top + ')',
-				height = bounds.bottom - bounds.top,
-				width = bounds.right - bounds.left;
+			const bounds = this._getGlobalBounds(linesBounds);
 
-			this._emitEvt('ADJUST_POSITION', bounds);
-
-			this._svg
-				.attr('transform', transform)
-				.attr('width', width)
-				.attr('height', height)
-				.attr('display', null);
+			this._fitTrackingBounds(bounds);
+			this._adjustTrackingPosition(bounds);
 
 			this._emitEvt('LAYER_LOADED');
 		},
@@ -408,6 +400,40 @@ define([
 				bottom: maxBottom,
 				right: maxRight
 			};
+		},
+
+		_fitTrackingBounds: function(bounds) {
+
+			if (this._alreadyFitted) {
+				return;
+			}
+			this._alreadyFitted = true;
+
+			const topLeftLatLng = this._mapInstance.layerPointToLatLng([bounds.left, bounds.top]),
+				bottomRightLatLng = this._mapInstance.layerPointToLatLng([bounds.right, bounds.bottom]);
+
+			this._emitEvt('FIT_BOUNDS', {
+				bounds: [topLeftLatLng, bottomRightLatLng],
+				useInitialZoom: true,
+				options: {
+					animate: true
+				}
+			});
+		},
+
+		_adjustTrackingPosition: function(bounds) {
+
+			this._emitEvt('ADJUST_POSITION', bounds);
+
+			const transform = 'translate(' + bounds.left + ',' + bounds.top + ')',
+				height = bounds.bottom - bounds.top,
+				width = bounds.right - bounds.left;
+
+			this._svg
+				.attr('transform', transform)
+				.attr('width', width)
+				.attr('height', height)
+				.attr('display', null);
 		},
 
 		_afterLayerRemoved: function() {

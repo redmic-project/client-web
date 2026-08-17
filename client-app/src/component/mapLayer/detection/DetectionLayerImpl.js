@@ -114,7 +114,6 @@ define([
 				return;
 			}
 
-			console.log('entran features', features)
 			this._addFeaturesToDetectionLine(features);
 
 			if (!this._dfdDataAvailable.isFulfilled()) {

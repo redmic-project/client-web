@@ -461,7 +461,7 @@ define([
 
 		_updateMarkerByPosition: function(pos) {
 
-			const markerSelector = `circle:not(circle#${this._positionMarkerId}):nth-child(${pos + 2})`
+			const markerSelector = `circle:not(circle#${this._positionMarkerId}):nth-child(${pos + 2})`,
 				marker = this._circleGroup.select(markerSelector);
 
 			console.log('circulos', marker, pos);

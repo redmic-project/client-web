@@ -163,7 +163,6 @@ define([
 
 		_setTrackingItemLineLimits: function(lineLimits) {
 
-			console.log('llegan limites', lineLimits);
 			const itemId = lineLimits.layerId,
 				itemLineId = lineLimits.lineId,
 				count = lineLimits.count,

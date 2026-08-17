@@ -230,7 +230,7 @@ define([
 
 		fitBounds: function(bounds, options) {
 
-			this.map.fitBounds(bounds, options || {});
+			this.map.fitBounds(bounds, options ?? {});
 		},
 
 		setZoom: function(zoomLevel, options) {

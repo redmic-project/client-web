@@ -465,18 +465,19 @@ define([
 
 		_drawTrack: function(lineStringFeature) {
 
-			var dfd = new Deferred(),
-				boundsWithOffset = this._getBoundsWithOffset(lineStringFeature);
+			const dfd = new Deferred();
 
-			this._adjustPosition(-boundsWithOffset.left, -boundsWithOffset.top);
+			dfd.then(boundsWithOffset => {
+				this._adjustPosition(-boundsWithOffset.left, -boundsWithOffset.top);
 
-			dfd.then(lang.hitch(this, this._emitEvt, 'DRAWN', {
-				bounds: boundsWithOffset,
-				id: this.getOwnChannel()
-			}));
+				this._emitEvt('DRAWN', {
+					bounds: boundsWithOffset,
+					id: this.getOwnChannel()
+				})
+			});
 
 			this._line.attr('d', this.pathGenerator);
-			dfd.resolve();
+			dfd.resolve(this._getBoundsWithOffset(lineStringFeature));
 
 			return dfd;
 		},

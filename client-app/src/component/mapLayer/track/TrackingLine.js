@@ -473,7 +473,7 @@ define([
 				this._emitEvt('DRAWN', {
 					bounds: boundsWithOffset,
 					id: this.getOwnChannel()
-				})
+				});
 			});
 
 			this._line.attr('d', this.pathGenerator);

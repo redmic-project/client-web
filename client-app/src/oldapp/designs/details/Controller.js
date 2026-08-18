@@ -45,7 +45,7 @@ define([
 				_rowsParameterName: "data-rows",
 				_colsParameterName: "data-cols",
 				_transitionDuration: '0.4s',
-				_restoreTransitionTimeout: 500,
+				_restoreTransitionTimeout: 5000,
 
 				_widgets: {},
 				_nodes: {},

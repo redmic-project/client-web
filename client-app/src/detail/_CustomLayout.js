@@ -1,16 +1,14 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
 	, 'dojo/Deferred'
 ], function(
 	declare
-	, lang
 	, Deferred
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Base para vistas detalle personalizables con widgets provistos por el componente WidgetProvider.
+		// summary:
+		//   Base para vistas detalle personalizables con widgets provistos por el componente WidgetProvider.
 
 		postMixInProperties: function() {
 
@@ -32,22 +30,20 @@ define([
 
 			this.inherited(arguments);
 
-			this._getWidgetsConfigHandler = this._onceEvt('GET_WIDGETS_CONFIG', (obj) => this._onGetWidgetsConfig(obj));
-			this._onEvt('ME_OR_ANCESTOR_HIDDEN', lang.hitch(this, this._onCustomLayoutHidden));
+			this._getWidgetsConfigHandler = this._onceEvt('GET_WIDGETS_CONFIG', obj => this._onGetWidgetsConfig(obj));
+			this._onEvt('ME_OR_ANCESTOR_HIDDEN', () => this._onCustomLayoutHidden());
 		},
 
 		_initialize: function() {
 
 			this.inherited(arguments);
 
-			const dfd = new Deferred();
+			this._widgetProviderDfd = new Deferred();
 
 			require(['src/component/layout/widgetProvider/WidgetProvider'],
-				(WidgetProvider) => this._onWidgetProviderRequired(WidgetProvider, dfd));
+				WidgetProvider => this._onWidgetProviderRequired(WidgetProvider));
 
-			this._widgetProviderDfd = dfd;
-
-			return dfd;
+			return this._widgetProviderDfd;
 		},
 
 		_onGetWidgetsConfig: function(obj) {
@@ -60,7 +56,7 @@ define([
 			console.error('WidgetProvider component not available, failed to get widgets configuration!');
 		},
 
-		_onWidgetProviderRequired: function(WidgetProvider, dfd) {
+		_onWidgetProviderRequired: function(WidgetProvider) {
 
 			this._widgetProvider = new WidgetProvider({
 				parentChannel: this.getChannel()
@@ -76,9 +72,9 @@ define([
 				channel: this._widgetProvider.getChannel('GET_WIDGETS_CONFIG')
 			});
 
-			this._getWidgetsConfigHandler?.remove?.();
+			this._getWidgetsConfigHandler?.remove();
 
-			dfd.resolve();
+			this._widgetProviderDfd.resolve();
 		},
 
 		_subGotWidgetConfig: function(res) {
@@ -90,13 +86,13 @@ define([
 
 		_addLayoutWidget: function(key, config) {
 
-			if (this._layoutWidgets?.includes(key)) {
+			if (this._layoutWidgets.includes(key)) {
 				console.error('Tried to add duplicated widget "%s" at component "%s"', key, this.getChannel());
 				return;
 			}
 
-			this._addWidget(key, config);
 			this._layoutWidgets.push(key);
+			this._addWidget(key, config);
 		},
 
 		_onCustomLayoutHidden: function() {
@@ -105,10 +101,6 @@ define([
 		},
 
 		_removeLayoutWidgets: function() {
-
-			if (!this._layoutWidgets) {
-				return;
-			}
 
 			while (this._layoutWidgets.length) {
 				const key = this._layoutWidgets.pop();

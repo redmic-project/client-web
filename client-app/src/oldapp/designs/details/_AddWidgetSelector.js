@@ -1,92 +1,103 @@
 define([
 	'dojo/_base/declare'
-	, 'dojo/_base/lang'
-	, 'dojo/aspect'
 	, 'put-selector'
 	, 'src/component/form/input/SelectImpl'
 ], function (
 	declare
-	, lang
-	, aspect
 	, put
 	, SelectImpl
 ) {
 
 	return declare(null, {
-		//	summary:
-		//		Extensión para añadir un componente selector de widget a enfocar.
+		// summary:
+		//   Extensión para añadir un componente selector de widget a enfocar.
 
-		constructor: function(args) {
+		postMixInProperties: function() {
 
-			this.config = {
+			const defaultConfig = {
 				widgetSelectorClass: 'detailWidgetSelector',
 				_widgetSelector: null,
-				_widgetKeys: [],
 				_widgetsShown: {},
-				_restoreTransitionWithSelectorTimeout: 2000
+				_applyAnchorTimeout: 500
 			};
 
-			lang.mixin(this, this.config, args);
+			this._mergeOwnAttributes(defaultConfig);
 
-			aspect.before(this, '_buildVisualization', lang.hitch(this, this._beforeBuildVisualizationSetWidgetKeys));
-			aspect.after(this, '_showWidget', lang.hitch(this, this._afterShowWidgetUpdateSelector));
-			aspect.after(this, '_hideWidget', lang.hitch(this, this._afterHideWidgetUpdateSelector));
-			aspect.after(this, '_onWidgetHidden', lang.hitch(this, this._afterWidgetHiddenUpdateSelector));
-			aspect.after(this, '_destroyWidget', lang.hitch(this, this._afterDestroyWidgetUpdateSelector));
-			aspect.after(this, '_addDataInTitle', lang.hitch(this, this._afterAddDataInTitleShowSelector));
-			aspect.after(this, '_onLayoutComplete', lang.hitch(this, this._afterLayoutCompleteApplyAnchor));
-			aspect.before(this, '_prepareRestorePackeryTransitionDuration',
-				lang.hitch(this, this._beforePrepareRestoreTransitionUpdateTimeout));
-			aspect.after(this, '_onControllerMeOrAncestorShown',
-				lang.hitch(this, this._afterControllerOrAncestorShownUpdateSelectorInstance));
+			this.inherited(arguments);
 		},
 
-		_beforeBuildVisualizationSetWidgetKeys: function() {
+		_buildVisualization: function() {
 
 			this._generateWidgetKeys();
+
+			return this.inherited(arguments);
 		},
 
-		_afterShowWidgetUpdateSelector: function(retValue, params) {
+		_showWidget: function(widgetKey) {
 
-			this._addWidgetToSelector(params[0]);
+			const originalRet = this.inherited(arguments);
+
+			this._addWidgetToSelector(widgetKey);
+
+			return originalRet;
 		},
 
-		_afterHideWidgetUpdateSelector: function(retValue, params) {
+		_hideWidget: function(widgetKey) {
 
-			this._removeWidgetFromSelector(params[0]);
+			this.inherited(arguments);
+
+			this._removeWidgetFromSelector(widgetKey);
 		},
 
-		_afterWidgetHiddenUpdateSelector: function(retValue, params) {
+		_onWidgetHidden: function(widgetKey) {
 
-			this._removeWidgetFromSelector(params[0]);
+			this.inherited(arguments);
+
+			this._removeWidgetFromSelector(widgetKey);
 		},
 
-		_afterDestroyWidgetUpdateSelector: function(retValue, params) {
+		_destroyWidget: function(widgetKey) {
 
-			this._removeWidgetFromSelector(params[0]);
+			this.inherited(arguments);
+
+			this._removeWidgetFromSelector(widgetKey);
 		},
 
-		_afterAddDataInTitleShowSelector: function() {
+		_addDataInTitle: function() {
+
+			this.inherited(arguments);
 
 			this._showWidgetSelector();
 		},
 
-		_beforePrepareRestoreTransitionUpdateTimeout: function() {
+		_addWidget: function() {
 
-			if (!globalThis.location.hash || this._restoreTransitionTimeoutUpdated) {
+			this.inherited(arguments);
+
+			this._applyCurrentAnchorOnLayoutChange();
+		},
+
+		_onLayoutComplete: function() {
+
+			this.inherited(arguments);
+
+			this._applyCurrentAnchorOnLayoutChange();
+		},
+
+		_applyCurrentAnchorOnLayoutChange: function() {
+
+			const hash = globalThis.location.hash;
+			if (!hash || !this._widgetSelector) {
 				return;
 			}
 
-			this._restoreTransitionTimeout = this._restoreTransitionWithSelectorTimeout;
-			this._restoreTransitionTimeoutUpdated = true;
+			clearTimeout(this._applyAnchorTimeoutId);
+			this._applyAnchorTimeoutId = setTimeout(() => this._applyAnchor(hash), this._applyAnchorTimeout);
 		},
 
-		_afterLayoutCompleteApplyAnchor: function() {
+		_onControllerMeOrAncestorShown: function() {
 
-			this._applyCurrentAnchor();
-		},
-
-		_afterControllerOrAncestorShownUpdateSelectorInstance: function() {
+			this.inherited(arguments);
 
 			this._addWidgetsToSelector();
 		},
@@ -98,16 +109,11 @@ define([
 
 		_getHrefWithoutHashValue: function() {
 
-			return globalThis.location.origin + globalThis.location.pathname + globalThis.location.search;
+			const locationObj = globalThis.location;
+			return locationObj.origin + locationObj.pathname + locationObj.search;
 		},
 
-		_applyCurrentAnchor: function() {
-
-			var hash = globalThis.location.hash;
-
-			if (!hash || !this._widgetSelector) {
-				return;
-			}
+		_applyAnchor: function(hash) {
 
 			this._publish(this._widgetSelector.getChannel('SET_VALUE'), {
 				name: hash.substring(1)
@@ -130,7 +136,7 @@ define([
 
 			this._setSubscription({
 				channel: this._widgetSelector.getChannel('VALUE_CHANGED'),
-				callback: lang.hitch(this, this._onWidgetSelectorValueChanged)
+				callback: '_subWidgetSelectorValueChanged'
 			});
 
 			if (this._getPreviouslyShown()) {
@@ -142,7 +148,7 @@ define([
 
 			this._widgetKeys = Object.keys(this._widgets);
 
-			this._widgetKeys.forEach((key) => this._widgetsShown[key] = !this.widgetConfigs[key]?.hidden);
+			this._widgetKeys.forEach(key => this._widgetsShown[key] = !this.widgetConfigs[key]?.hidden);
 		},
 
 		_showWidgetSelector: function() {
@@ -190,29 +196,27 @@ define([
 				return;
 			}
 
-			var selectorOptions = this._widgetKeys
-				.filter((key) => this._widgetsShown[key])
-				.map(lang.hitch(this, this._getWidgetOptionObject));
+			const options = this._widgetKeys
+				.filter(key => this._widgetsShown[key])
+				.map(key => this._getWidgetOptionObject(key));
 
-			this._publish(this._widgetSelector.getChannel('SET_OPTIONS'), {
-				options: selectorOptions
-			});
+			this._publish(this._widgetSelector.getChannel('SET_OPTIONS'), { options });
 		},
 
 		_getWidgetOptionObject: function(widgetKey) {
 
-			var widgetInstance = this._getWidgetInstance(widgetKey),
-				widgetLabel = widgetInstance?.get('windowTitle') || this.i18n[widgetKey];
+			const widgetInstance = this._getWidgetInstance(widgetKey),
+				widgetLabel = widgetInstance?.get('windowTitle') ?? this.i18n[widgetKey] ?? widgetKey;
 
 			return {
 				value: widgetKey,
-				label: widgetLabel || widgetKey
+				label: widgetLabel
 			};
 		},
 
-		_onWidgetSelectorValueChanged: function(res) {
+		_subWidgetSelectorValueChanged: function(res) {
 
-			var value = res.value,
+			const value = res.value,
 				newHref = this._getHrefWithoutHashValue();
 
 			if (!value) {
@@ -220,14 +224,18 @@ define([
 				return;
 			}
 
-			var newAnchor = '#' + value;
+			const newAnchor = `#${value}`;
 
 			this._applyHrefValueWithoutHistory(newHref + newAnchor);
+			this._findWidgetElement(newAnchor);
+		},
 
-			var contentSelectedElement = globalThis.document.querySelector(newAnchor);
+		_findWidgetElement: function(anchor) {
+
+			const contentSelectedElement = globalThis.document.querySelector(anchor);
 
 			if (!contentSelectedElement) {
-				console.warn('Tried to focus non-existant content:', newAnchor);
+				console.warn('Tried to focus non-existant content:', anchor);
 				return;
 			}
 

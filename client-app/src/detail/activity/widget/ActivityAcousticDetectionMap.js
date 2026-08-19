@@ -41,7 +41,6 @@ define([
 				idProperty: 'id',
 				elementPropName: 'animal',
 				layersTarget: redmicConfig.services.acousticTrackingAnimalTrack,
-				infoTarget: redmicConfig.services.acousticTrackingPointInfo,
 				//timeMode: true
 			};
 

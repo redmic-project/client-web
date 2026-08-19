@@ -32,7 +32,6 @@ define([
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
 					SET_TRACKING_PROPS: 'setTrackingProps'
 				},
-				requestMethod: 'POST',
 				_layerInstances: {},
 				_activityIdByUuid: {},
 				_moveTracksTimeout: 100
@@ -52,7 +51,6 @@ define([
 				target: this.layersTarget,
 				requestMethod: this.requestMethod,
 				elementPropName: this.elementPropName,
-				infoTarget: this.infoTarget,
 				transitionDuration: this.trackingTransitionRate
 			});
 		},
@@ -219,8 +217,8 @@ define([
 
 			this.inherited(arguments);
 
-			clearTimeout(this._moveTracksTimeoutHandler);
-			this._moveTracksTimeoutHandler = setTimeout(() => this._moveTracks(res.value), this._moveTracksTimeout);
+			clearTimeout(this._moveTracksTimeoutId);
+			this._moveTracksTimeoutId = setTimeout(() => this._moveTracks(res.value), this._moveTracksTimeout);
 		},
 
 		_moveTracks: function(value) {

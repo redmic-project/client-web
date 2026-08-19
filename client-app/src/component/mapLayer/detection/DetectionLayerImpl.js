@@ -40,7 +40,6 @@ define([
 					HIDE_DIRECTION_MARKERS: 'hideDirectionMarkers',
 					DATA_BOUNDS_UPDATED: 'dataBoundsUpdated'
 				},
-
 				svgClass: 'trackingSvg',
 				elementPropName: 'element',
 				elementIdPropName: 'uuid'
@@ -197,13 +196,12 @@ define([
 
 		_drawUntilPosition: function(req) {
 
-			this._getDetectionLineDrawnDfd().then(lineBounds => this._onDetectionLineDrawn(lineBounds));
 			this._emitEvt('GO_TO_POSITION', req);
 		},
 
 		_subDetectionLineDrawn: function(res) {
 
-			this._drawnDfd.resolve(res.bounds);
+			this._onDetectionLineDrawn(res.bounds);
 		},
 
 		_subGotDetectionLineClickedPointsIds: function(res) {
@@ -265,39 +263,14 @@ define([
 
 		_onZoomSet: function(zoom, res) {
 
-			if (zoom === this._lastZoomLevel) {
-				return;
-			}
-			this._lastZoomLevel = zoom;
-
-			const query = {
-				terms: {
-					zoomLevel: zoom
-				}
-			};
-
-			this._emitEvt('ADD_REQUEST_PARAMS', {
-				target: this.target,
-				params: {
-					query
-				}
-			});
-
-			this._redraw();
+			this._emitEvt('REDRAW');
 		},
 
-		_getDetectionLineDrawnDfd: function() {
+		_shouldAbortRequest: function() {
 
-			this._drawnDfd = new Deferred();
+			const originalReturn = this.inherited(arguments);
 
-			return this._drawnDfd;
-		},
-
-		_getDetectionLineClickedPointsIdsDfd: function() {
-
-			this._gotPointsDfd = new Deferred();
-
-			return this._gotPointsDfd;
+			return originalReturn || this._dfdDataAvailable?.isResolved();
 		},
 
 		_onDetectionLineDrawn: function(lineBounds) {

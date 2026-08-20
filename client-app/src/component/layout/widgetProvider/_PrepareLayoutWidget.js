@@ -374,14 +374,27 @@ define([
 			this._publishLayoutWidget(key, config);
 		},
 
+		_projectAcousticDetectionMapPrepareLayoutWidgets: function(layoutConfig) {
+
+			const key = 'projectAcousticDetectionMap';
+
+			const windowConfig = {
+				width: 6,
+				height: 6
+			};
+
+			const config = this._merge([windowConfig, this._getProjectAcousticDetectionMapConfig(layoutConfig)]);
+
+			this._publishLayoutWidget(key, config);
+		},
+
 		_acousticDetectionMapPrepareLayoutWidgets: function(layoutConfig) {
 
 			const key = 'acousticDetectionMap';
 
 			const windowConfig = {
 				width: 6,
-				height: 6,
-				hidden: true
+				height: 6
 			};
 
 			const config = this._merge([windowConfig, this._getAcousticDetectionMapConfig(layoutConfig)]);

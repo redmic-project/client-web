@@ -308,6 +308,7 @@ define({
 	, "link": "enlace"
 	, "formContact": " formulario de contacto"
 
+	, "receiver": "Receptor"
 	, "animal": "Animal"
 	, "animals": "Animales"
 	, "newAnimal": "Nuevo animal"

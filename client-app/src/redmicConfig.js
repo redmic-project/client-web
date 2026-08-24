@@ -375,6 +375,9 @@ define([], function() {
 			},
 			organisation: {
 				field: 'organisations'
+			},
+			receiver: {
+				field: 'observation.receiver'
 			}
 		},
 		organisation: {
